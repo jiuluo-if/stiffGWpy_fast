@@ -37,7 +37,7 @@ TCMB_GeV = 1e-9*kB*TCMB   # GeV
 m_nu = 60                 # meV, for a single massive neutrino eigenstate
 
 Neff0 = 3.044
-tau_n = 878.4             # s, neutron lifetime from PDG 2022
+#tau_n = 878.4             # s, neutron lifetime from PDG 2022
 
 # Derived
 
