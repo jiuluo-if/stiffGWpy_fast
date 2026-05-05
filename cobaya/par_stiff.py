@@ -8,6 +8,10 @@ from mpi4py import MPI
 #from pathlib import Path
 
 class par_stiff(Theory):
+    speed = 1
+    params = {'Yp': {'derived': True, 'latex': 'Y_\mathrm{p}'},
+              'DH': {'derived': True, 'latex': '[\mathrm{D}/\mathrm{H}]'},
+             }
     
     def initialize(self):
         """called from __init__ to initialize"""
@@ -37,7 +41,7 @@ class par_stiff(Theory):
         Return dictionary of quantities that are always needed by this component 
         and should be calculated by another component or provided by input parameters.
         """
-        return ['tau_n', 'Omega_bh2', 'dnnu', 'kappa',]
+        return {'tau_n': None, 'Omega_bh2': None, 'Delta_Neff': None, 'kappa10': None,}
 
 #    def must_provide(self, **requirements):
 #        if 'A' in requirements:
@@ -47,8 +51,8 @@ class par_stiff(Theory):
     def get_can_provide(self):
         return ['Y_p', 'D_to_H']
 
-#    def get_can_provide_params(self):
-#        return ['Yp', 'DH',]
+    def get_can_provide_params(self):
+        return ['Yp', 'DH',]
 
     
     def calculate(self, state, want_derived=True, **params_values_dict):
@@ -68,8 +72,12 @@ class par_stiff(Theory):
         eta10 = 273.3036 * params_values_dict['Omega_bh2'] * (1 + 7.16958e-3*.25)
         contents.insert(1, 'TAU ' + str(params_values_dict['tau_n'])+'\n')
         contents.insert(2, 'ETA10 ' + str(eta10)+'\n')
-        contents.insert(3, 'DNNU ' + str(params_values_dict['dnnu'])+'\n')
-        contents.insert(4, 'KAPPA ' + str(params_values_dict['kappa'])+'\n')
+        try:
+            Delta_Neff = self.provider.get_result('Delta_Neff')
+            contents.insert(3, 'DNNU ' + str(Delta_Neff)+'\n')
+        except AttributeError as e:
+            contents.insert(3, 'DNNU ' + str(params_values_dict['Delta_Neff'])+'\n')
+        contents.insert(4, 'KAPPA ' + str(params_values_dict['kappa10'])+'\n')
         contents.insert(5, 'FILES ' + 'abun_'+self.model_uid + ' evo_'+self.model_uid + ' info_'+self.model_uid+'\n')
 
         with open(self.input_card, 'w') as f:
@@ -80,8 +88,13 @@ class par_stiff(Theory):
             contents = ['c\n',]
             contents.append(self.input_card)
             f.writelines(contents)
-        
+
         os.system(self.path + 'parthenope3.0 < ' + self.parthenope_input + ' > parthenope.log')
+
+        if not os.path.isfile('abun_'+self.model_uid):
+            self.close()
+            #self.log.debug("Parthenope is not able to produce results for this set of parameters. Assigning 0 likelihood and going on.")
+            return False
         
         with open('abun_'+self.model_uid, 'r') as f:
             lines = f.readlines()
@@ -90,9 +103,9 @@ class par_stiff(Theory):
         state['Y_p'] = D_to_E(result[-1])       # Y_p
         state['D_to_H'] = D_to_E(result[-2])    # [D/H]
         
-#        if want_derived:
-#            state['derived'] = {'Yp': state['Y_p'], 
-#                                'DH': state['D_to_H'],}
+        if want_derived:
+            state['derived'] = {'Yp': state['Y_p'], 
+                                'DH': state['D_to_H'],}
         
         self.close()
         

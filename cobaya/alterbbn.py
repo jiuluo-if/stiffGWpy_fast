@@ -69,8 +69,7 @@ class alterbbn(Theory):
         try:
             kappa_s = self.provider.get_result('kappa_s')
             kappa_r = self.provider.get_result('kappa_r')
-            tau_n = self.provider.get_result('tau_n')
-            self.BBNstiff_model.calculateAbundances(kappa_s, kappa_r, args['Omega_bh2'], tau = tau_n,
+            self.BBNstiff_model.calculateAbundances(kappa_s, kappa_r, args['Omega_bh2'], tau = args['tau_n'],
                                                    failsafe = 3, fast = True)
         except AttributeError as e:
             self.BBNstiff_model.calculateAbundances(args['kappa_s'], args['kappa_r'], args['Omega_bh2'], tau = args['tau_n'],
