@@ -7,10 +7,12 @@ import astropy.units as u
 from scipy import interpolate
 import sys, os, math
 from mpi4py import MPI
+from sagenetgw.classes import GWPredictor
+from sagenetgw.stiffGWpy.global_param import *
 #from pathlib import Path
 
-class stiffGW(Theory):
-    speed = 0.1
+class sagenet(Theory):
+    speed = 1000
     params = {'Delta_Neff_GW': {'derived': True, 'latex': '\Delta N_\mathrm{eff,GW}'},
               'Delta_Neff_total': {'derived': True, 'latex': '\Delta N_\mathrm{eff,total}'},
               'log10hc_prim_fyr': {'derived': True, 'latex': '\log_{10}h_{c,\mathrm{prim}}'},
@@ -19,9 +21,7 @@ class stiffGW(Theory):
     
     def initialize(self):
         """called from __init__ to initialize"""
-        stiff_SGWB_path = os.path.dirname(__file__) + '/../'
-        stiff_SGWB = load_module('stiff_SGWB', path=stiff_SGWB_path)
-        self.stiffGW_model = stiff_SGWB.LCDM_SG()
+        self.sagenet_model = GWPredictor(model_type='Transformer', device="cpu",)
         #self.comm = MPI.COMM_WORLD
         #self.rank = self.comm.Get_rank()
         self.log.info("Initialized!")
@@ -43,8 +43,8 @@ class stiffGW(Theory):
         Return dictionary of quantities that are always needed by this component 
         and should be calculated by another component or provided by input parameters.
         """
-        return {'Omega_bh2': None, 'Omega_ch2': None, 'H0': None, 'DN_eff': None, 
-                'A_s': None, 'r': None, 'n_t': None, 'cr': None, 
+        return {'Omega_bh2': None, 'Omega_ch2': None, 'H0': None, #'DN_eff': None,  # Currently SageNet does not consider extra radiation other than SGWB.
+                'A_s': None, 'r': None, 'n_t': None, #'cr': None, 
                 'T_re': None, 'DN_re': None, 'kappa10': None}
 
 #    def must_provide(self, **requirements):
@@ -67,44 +67,41 @@ class stiffGW(Theory):
         """
         
         # Set parameters
-        self.stiffGW_model.reset()
-        #args = {p: v for p, v in params_values_dict.items()}
-        #self.log.debug("Setting parameters: %r", args)
-        #print(self.rank, ": ", params_values_dict)
-        for key in self.stiffGW_model.cosmo_param:
+        input_params = {}; param_keys = ['r', 'n_t', 'kappa10', 'T_re', 'DN_re', 'Omega_bh2', 'Omega_ch2', 'H0', 'A_s']
+        for key in param_keys:
             if key in params_values_dict:
-                self.stiffGW_model.cosmo_param[key] = params_values_dict[key]
+                input_params[key] = params_values_dict[key]
         
         # Compute!
         sys.path.append(os.path.abspath('../'))
-        if __name__ == 'stiffGW':
-            self.stiffGW_model.SGWB_iter()
+        if __name__ == 'sagenet':
+            prediction = self.sagenet_model.predict(input_params)
 
         
-        if self.stiffGW_model.SGWB_converge:
-            state['f'] = self.stiffGW_model.f                                    # Output frequency in log10(f/Hz)
-            state['omGW_stiff'] = self.stiffGW_model.log10OmegaGW                # log10(Omega_GW(f))
-            state['hubble'] = self.stiffGW_model.derived_param['H_0']            # H_0 in units of s^-1
-            state['kappa_s'] = self.stiffGW_model.derived_param['kappa_s']       # kappa_stiff(T_i) for AlterBBN
-            state['kappa_r'] = self.stiffGW_model.kappa_r                        # kappa_rad(T_i) for AlterBBN, related to Delta_Neff
+        if not np.isnan(prediction['delta_N_eff']):
+            state['f'] = prediction['f']                                                             # Output frequency in log10(f/Hz)
+            state['omGW_stiff'] = prediction['log10OmegaGW']                                         # log10(Omega_GW(f))
+            state['hubble'] = input_params['H0']/(10*parsec)                                         # H_0 in units of s^-1
+            state['kappa_s'] = input_params['kappa10'] * (1e-2/T_i)**4 * math.exp(6*(N_i-N_10))      # kappa_stiff(T_i) for AlterBBN
+            state['kappa_r'] = prediction['delta_N_eff'] * 7/8*(4/11)**(4/3) * z_ratio**4            # kappa_rad(T_i) for AlterBBN, related to Delta_Neff
             
             if want_derived:
-                yr = u.yr.to(u.s); log10f_yr = -math.log10(yr)
-                if self.stiffGW_model.f[0] >= log10f_yr:
-                    f_t = np.flip(state['f']); Ogw_t = np.flip(state['omGW_stiff'])
+                log10f_yr = -math.log10(yr)
+                if prediction['f'][-1] >= log10f_yr:
+                    f_t = np.array(state['f']); Ogw_t = np.array(state['omGW_stiff'])
                     spec_prim = interpolate.CubicSpline(f_t[f_t>-13], Ogw_t[f_t>-13])
                     omGW_stiff_fyr = spec_prim(log10f_yr)    # log10(Omega_GW(f_yr))
-                else:    
+                else:
                     omGW_stiff_fyr = -100.
                 
-                state['derived'] = {'Delta_Neff_GW': self.stiffGW_model.DN_gw[-1],                  # Delta N_eff due to the primordial SGWB today
-                                    'Delta_Neff_total': self.stiffGW_model.cosmo_param['DN_eff'],   # Total Delta N_eff after GW calculation
+                state['derived'] = {'Delta_Neff_GW': prediction['delta_N_eff'],        # Delta N_eff due to the primordial SGWB today
+                                    'Delta_Neff_total': prediction['delta_N_eff'],     # Total Delta N_eff after GW calculation
                                     'log10hc_prim_fyr': omGW_stiff_fyr/2 + math.log10(math.sqrt(1.5)*state['hubble']/math.pi)-log10f_yr,
-                                                                                                    # log10(h_c(f_yr)) of the primordial SGWB
-                                    'f_end': np.power(10., self.stiffGW_model.f[0]),                # Hz, UV cutoff frequency
+                                                                                       # log10(h_c(f_yr)) of the primordial SGWB
+                                    'f_end': np.power(10., prediction['f'][-1]),       # Hz, UV cutoff frequency
                                    }
         else:
-            #self.log.debug("SGWB calculation not converged, mostly due to total N_eff too large. Assigning 0 likelihood and going on.")
+            #self.log.debug("No output, most likely to be an extrapolated case (total N_eff > 5). Assigning 0 likelihood and going on.")
             return False
 
         
