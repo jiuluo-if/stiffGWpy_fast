@@ -41,7 +41,7 @@ class par_stiff(Theory):
         Return dictionary of quantities that are always needed by this component 
         and should be calculated by another component or provided by input parameters.
         """
-        return {'tau_n': None, 'Omega_bh2': None, 'Delta_Neff': None, 'kappa10': None,}
+        return {'tau_n': None, 'Omega_bh2': None, 'Delta_Neff_total': None, 'kappa10': None,}
 
 #    def must_provide(self, **requirements):
 #        if 'A' in requirements:
@@ -73,10 +73,10 @@ class par_stiff(Theory):
         contents.insert(1, 'TAU ' + str(params_values_dict['tau_n'])+'\n')
         contents.insert(2, 'ETA10 ' + str(eta10)+'\n')
         try:
-            Delta_Neff = self.provider.get_result('Delta_Neff')
+            Delta_Neff = self.provider.get_param('Delta_Neff_total')
             contents.insert(3, 'DNNU ' + str(Delta_Neff)+'\n')
         except AttributeError as e:
-            contents.insert(3, 'DNNU ' + str(params_values_dict['Delta_Neff'])+'\n')
+            contents.insert(3, 'DNNU ' + str(params_values_dict['Delta_Neff_total'])+'\n')
         contents.insert(4, 'KAPPA ' + str(params_values_dict['kappa10'])+'\n')
         contents.insert(5, 'FILES ' + 'abun_'+self.model_uid + ' evo_'+self.model_uid + ' info_'+self.model_uid+'\n')
 

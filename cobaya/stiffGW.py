@@ -53,7 +53,7 @@ class stiffGW(Theory):
 #            return {'B': {'kmax': requirements['A'].get('kmax', 10)}}
         
     def get_can_provide(self):
-        return ['f', 'omGW_stiff', 'hubble', 'kappa_s', 'kappa_r', 'Delta_Neff',]
+        return ['f', 'omGW_stiff', 'hubble', 'kappa_s', 'kappa_r',]
 
     def get_can_provide_params(self):
         return ['Delta_Neff_GW', 'Delta_Neff_total', 'log10hc_prim_fyr', 'f_end',]
@@ -87,7 +87,6 @@ class stiffGW(Theory):
             state['hubble'] = self.stiffGW_model.derived_param['H_0']            # H_0 in units of s^-1
             state['kappa_s'] = self.stiffGW_model.derived_param['kappa_s']       # kappa_stiff(T_i) for AlterBBN
             state['kappa_r'] = self.stiffGW_model.kappa_r                        # kappa_rad(T_i) for AlterBBN, related to Delta_Neff
-            state['Delta_Neff'] = self.stiffGW_model.cosmo_param['DN_eff']       # Total Delta N_eff after GW calculation
             
             if want_derived:
                 yr = u.yr.to(u.s); log10f_yr = -math.log10(yr)
@@ -98,11 +97,11 @@ class stiffGW(Theory):
                 else:    
                     omGW_stiff_fyr = -100.
                 
-                state['derived'] = {'Delta_Neff_GW': self.stiffGW_model.DN_gw[-1],            # Delta N_eff due to the primordial SGWB today
-                                    'Delta_Neff_total': state['Delta_Neff'],
+                state['derived'] = {'Delta_Neff_GW': self.stiffGW_model.DN_gw[-1],                  # Delta N_eff due to the primordial SGWB today
+                                    'Delta_Neff_total': self.stiffGW_model.cosmo_param['DN_eff'],   # Total Delta N_eff after GW calculation
                                     'log10hc_prim_fyr': omGW_stiff_fyr/2 + math.log10(math.sqrt(1.5)*state['hubble']/math.pi)-log10f_yr,
-                                    # log10(h_c(f_yr)) of the primordial SGWB
-                                    'f_end': np.power(10., self.stiffGW_model.f[0]),          # Hz, UV cutoff frequency
+                                                                                                    # log10(h_c(f_yr)) of the primordial SGWB
+                                    'f_end': np.power(10., self.stiffGW_model.f[0]),                # Hz, UV cutoff frequency
                                    }
         else:
             #self.log.debug("SGWB calculation not converged, mostly due to total N_eff too large. Assigning 0 likelihood and going on.")
