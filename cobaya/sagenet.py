@@ -13,15 +13,16 @@ from sagenetgw.stiffGWpy.global_param import *
 
 class sagenet(Theory):
     speed = 1000
-    params = {'Delta_Neff_GW': {'derived': True, 'latex': '\Delta N_\mathrm{eff,GW}'},
-              'Delta_Neff_total': {'derived': True, 'latex': '\Delta N_\mathrm{eff,total}'},
-              'log10hc_prim_fyr': {'derived': True, 'latex': '\log_{10}h_{c,\mathrm{prim}}'},
-              'f_end': {'derived': True, 'latex': 'f_\mathrm{end}'},
+    params = {'Delta_Neff_GW': {'derived': True, 'latex': '\\Delta N_\\mathrm{eff,GW}'},
+              'Delta_Neff_total': {'derived': True, 'latex': '\\Delta N_\\mathrm{eff,total}'},
+              'log10hc_prim_fyr': {'derived': True, 'latex': '\\log_{10}h_{c,\\mathrm{prim}}'},
+              'f_end': {'derived': True, 'latex': 'f_\\mathrm{end}'},
              }
     
     def initialize(self):
         """called from __init__ to initialize"""
         self.sagenet_model = GWPredictor(model_type='Transformer', device="cpu",)
+        #self.sagenet_model = GWPredictor(model_type='Numerical', device="cpu",)
         #self.comm = MPI.COMM_WORLD
         #self.rank = self.comm.Get_rank()
         self.log.info("Initialized!")
@@ -79,8 +80,8 @@ class sagenet(Theory):
 
         
         if not np.isnan(prediction['delta_N_eff']):
-            state['f'] = prediction['f']                                                             # Output frequency in log10(f/Hz)
-            state['omGW_stiff'] = prediction['log10OmegaGW']                                         # log10(Omega_GW(f))
+            state['f'] = np.flip(prediction['f'])                                                    # Output frequency in log10(f/Hz)
+            state['omGW_stiff'] = np.flip(prediction['log10OmegaGW'])                                # log10(Omega_GW(f))
             state['hubble'] = input_params['H0']/(10*parsec)                                         # H_0 in units of s^-1
             state['kappa_s'] = input_params['kappa10'] * (1e-2/T_i)**4 * math.exp(6*(N_i-N_10))      # kappa_stiff(T_i) for AlterBBN
             state['kappa_r'] = prediction['delta_N_eff'] * 7/8*(4/11)**(4/3) * z_ratio**4            # kappa_rad(T_i) for AlterBBN, related to Delta_Neff
@@ -88,7 +89,7 @@ class sagenet(Theory):
             if want_derived:
                 log10f_yr = -math.log10(yr)
                 if prediction['f'][-1] >= log10f_yr:
-                    f_t = np.array(state['f']); Ogw_t = np.array(state['omGW_stiff'])
+                    f_t = np.array(prediction['f']); Ogw_t = np.array(prediction['log10OmegaGW'])
                     spec_prim = interpolate.CubicSpline(f_t[f_t>-13], Ogw_t[f_t>-13])
                     omGW_stiff_fyr = spec_prim(log10f_yr)    # log10(Omega_GW(f_yr))
                 else:
