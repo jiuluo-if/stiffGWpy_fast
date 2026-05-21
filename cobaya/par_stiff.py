@@ -9,13 +9,13 @@ from mpi4py import MPI
 
 class par_stiff(Theory):
     speed = 1
-    params = {'Yp': {'derived': True, 'latex': 'Y_\mathrm{p}'},
-              'DH': {'derived': True, 'latex': '[\mathrm{D}/\mathrm{H}]'},
+    params = {'Yp': {'derived': True, 'latex': 'Y_\\mathrm{p}'},
+              'DH': {'derived': True, 'latex': '[\\mathrm{D}/\\mathrm{H}]'},
              }
     
     def initialize(self):
         """called from __init__ to initialize"""
-        self.path = '/Users/bohuali/Documents/bbn_codes/parthenope3.0/'
+        self.path = os.path.dirname(__file__) + '/../../../bbn_codes/parthenope3.0/'
         self.model_uid = str(uuid.uuid1())
         self.input_card = 'input_' + self.model_uid + '.card'
         self.parthenope_input = 'in_' + self.model_uid
