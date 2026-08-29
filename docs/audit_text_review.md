@@ -1,7 +1,7 @@
 # 粘贴审计文本逐项复核（2026-08-30）
 
 复核对象：用户粘贴的独立审计报告文本（落款 2026-08-29，审计快照 `6b01ca8`）。
-复核基准：当前 fast 分支 `444988d`（相对上游 `origin/main = c8a8733` 领先 17 个提交）。
+复核基准：当前 fast 分支 `444988d`（相对上游 `origin/main = c8a8733` 领先 18 个提交（写本文档时 `HEAD=444988d`））。
 结论：**文本中大部分“当前仓库没有/做不到”的指控已被后续提交修复，仅“全参数认证”与
 “posterior shift 收敛链”两项仍为待办（因用户要求停止长跑而未做）。**
 
@@ -9,7 +9,7 @@
 
 | 文本主张 | 复核判定 | 当前证据 |
 |---|---|---|
-| “fast 仓库比上游只多一个提交，物理/Cobaya 代码未修改” | 过时 | `fast/main=444988d` 已领先 17 提交，新增 Cobaya 适配器、测试、CI、打包 |
+| “fast 仓库比上游只多一个提交，物理/Cobaya 代码未修改” | 过时 | `fast/main=444988d` 已领先 18 提交，新增 Cobaya 适配器、测试、CI、打包 |
 | “脚本把 `F:\codex\stiffGWpy` 硬编码进 sys.path[0]”（bench_fast.py:17 / validate_fast.py:3） | 已修复 | 脚本改用仓库相对路径 |
 | “Cobaya 仍调用原求解器 / 未接入” | 已修复 | `stiffgwpy/cobaya/stiffGW.py`：engine=lsoda\|fast、fallback、全部旋钮、MPI-safe；`tests/test_mcmc_compare.py` |
 | “pytest 0 tests / coverage 0%” | 已修复 | `tests/` 6 个文件共 38 项测试全绿 |
