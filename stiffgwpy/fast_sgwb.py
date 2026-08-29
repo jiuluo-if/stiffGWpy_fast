@@ -50,10 +50,11 @@ import numpy as np
 from numba import get_num_threads, njit, prange, set_num_threads
 from scipy import interpolate
 
-import global_param as gp
-from functions import int_FD
+from . import global_param as gp
+from .functions import int_FD
 
-__all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h', 'set_z_tail']
+__all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
+           'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES']
 
 # Default OpenMP threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -140,6 +141,49 @@ def set_z_tail(z):
     if not 2.0 <= z <= 15.0:
         raise ValueError('z_tail must be in [2.0, 15.0], got %r' % z)
     _Z_TAIL = z
+
+
+def get_settings():
+    """Snapshot the current fast-solver module settings (threads/col_step/h/z_tail)."""
+    return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL)
+
+
+# Named accuracy presets (audit phase "three recommended modes").
+# Values come from the phase-2 convergence study: engine-vs-LSODA difference
+# at h=0.01 is ~1e-5 on Delta N_eff while the shared sigma-grid bias vs a
+# deep reference is ~0.73% (h=0.01) / ~0.33% (h=0.005); z_tail=7 reduces the
+# analytic-tail error to ~2e-5 and z_tail=10 to ~2.4e-7; col_step has <1e-9
+# effect on the final Delta N_eff (it only shapes early small-value curves);
+# freq_res=2.0 halves the low-frequency-tail undersampling error.
+ACCURACY_MODES = {
+    'reference': dict(h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0,
+                      tol=1e-8, threads=8),
+    'production': dict(h=0.01, col_step=4, z_tail=7.0, freq_res=1.0,
+                       tol=1e-7, threads=8),
+    'ultra-fast': dict(h=0.01, col_step=8, z_tail=5.0, freq_res=1.0,
+                       tol=1e-6, threads=16),
+}
+
+
+def apply_accuracy_mode(name):
+    """Apply a named accuracy preset to the module settings and return its table.
+
+    ``name`` must be a key of :data:`ACCURACY_MODES`.  The preset's
+    threads/col_step/h/z_tail are applied through the usual setters (threads is
+    clamped to the numba-detected maximum); the preset's freq_res/tol are
+    returned in the table so the caller can forward them to
+    :func:`SGWB_iter_fast`.  Module settings are process-global, as documented
+    for the setters.
+    """
+    if name not in ACCURACY_MODES:
+        raise ValueError('unknown accuracy mode %r; choose from %s'
+                         % (name, sorted(ACCURACY_MODES)))
+    cfg = dict(ACCURACY_MODES[name])
+    set_col_step(cfg['col_step'])
+    set_h(cfg['h'])
+    set_z_tail(cfg['z_tail'])
+    set_threads(min(cfg['threads'], _MAX_THREADS))
+    return cfg
 
 
 # ================= module-level tables (once) =================

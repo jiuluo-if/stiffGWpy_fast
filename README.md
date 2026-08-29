@@ -45,6 +45,17 @@ outputs (`log10OmegaGW`, `DN_gw`, `kappa_r`, `hubble`, `g2`, `w2`); it does **no
 arrays `N_hc`, `Th`, `Oj`, `Ogw`, `Opgw` of the original solver, so it is **not** a drop-in replacement
 for code that reads those attributes.
 
+The unified entry point accepts the audit-tuned fast-path knobs directly:
+
+```python
+m.SGWB_iter(engine='fast', accuracy_mode='production')   # named preset, see below
+m.SGWB_iter(engine='fast', h=0.005, col_step=4, z_tail=7.0,
+            freq_res=1.0, threads=8, tol=1e-7)           # explicit overrides
+```
+
+Explicit `h`/`col_step`/`threads` and non-default `z_tail`/`freq_res`/`tol` override the preset.
+These settings are process-global module state (same semantics as the setters below).
+
 ### Original LSODA path (unchanged)
 
 ```python
@@ -52,8 +63,9 @@ m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m.SGWB_iter()            # engine='lsoda', original slow path
 ```
 
-The legacy top-level modules `stiff_SGWB`, `functions`, `global_param`, `LCDM_stiff_Neff` remain as
-thin shims, so old scripts keep working unchanged.
+Import everything through the package (`stiffgwpy.*`); the legacy top-level modules
+`stiff_SGWB` / `functions` / `global_param` / `LCDM_stiff_Neff` were removed to avoid a
+duplicate import channel (old scripts should switch to `from stiffgwpy import LCDM_SG`).
 
 ## Performance (independent re-measurement, 2026-08-29)
 
@@ -84,8 +96,13 @@ Known limits (please do not overclaim):
   ≈ 8e-4–1e-3 on the 12-case grid and up to ≈ 1.3e-3 on random points.
 - Full `DN_gw` evolution curves differ by up to **1%–37%** at the largest relative difference,
   concentrated in the early near-zero region.
-- Full 11-parameter random validation, convergence studies (`h`, `COL_STEP`, `z_tail`) and Cobaya
-  posterior comparisons are still **open**; `scripts/validate_random.py` is the starting point.
+- Convergence studies (`h`, `COL_STEP`, `z_tail`, `freq_res`) are complete (see
+  `docs/audit_phase2.md`); the 1000-point parameter-space sweep tooling is in place
+  (`scripts/param_sweep.py`) but the full run is **NOT CERTIFIED** (blocked by a host
+  commit-memory wall; see `docs/audit_phase3.md`).
+- Cobaya **posterior** comparisons (LSODA chain vs fast chain, `Delta logL`, posterior shift) are
+  still **open**; the adapter (engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy mode)
+  is implemented and unit-tested.
 
 ## Model and parameters
 
@@ -105,13 +122,17 @@ Main base parameters (can be given as kwargs, dict or YAML file):
 | `DN_re` | e-folds of matter-like reheating |
 | `kappa10` | `rho_stiff / rho_photon` at 10 MeV |
 
-## Tuning the fast solver
+## Tuning the fast solver and accuracy modes
 
 Set these environment variables **before importing** `stiffgwpy`:
 
 ```bash
 export FAST_THREADS=8     # OpenMP threads; default = numba's own default (>=1, <= detected cores)
 export FAST_COL_STEP=4    # coarse-column stride, speed/accuracy trade-off (1-8, default 4)
+export FAST_H=0.01        # fixed step / expansion-grid spacing (1e-4 .. 0.1)
+export FAST_Z_TAIL=5.0    # analytic deep-subhorizon tail threshold (2.0 .. 15.0)
+export SGWB_POOL_SIZE=4   # LSODA reference-path frequency-parallel workers (>=1);
+                          # under MPI (world size > 1) the default is 1 unless set
 ```
 
 or at runtime:
@@ -120,9 +141,44 @@ or at runtime:
 from stiffgwpy import fast_sgwb
 fast_sgwb.set_threads(8)     # validated against numba's detected core count
 fast_sgwb.set_col_step(4)    # validated to 1..8
+fast_sgwb.set_h(0.01)        # validated to 1e-4..0.1
+fast_sgwb.set_z_tail(5.0)    # validated to 2.0..15.0
 ```
 
-Both setters validate their input; invalid values raise `ValueError` instead of failing later.
+All setters validate their input; invalid values raise `ValueError` instead of failing later.
+
+Three named accuracy modes (audit phase 8 recommendations; see `docs/audit_modes.md` for the
+validation evidence) can be selected through `SGWB_iter(accuracy_mode=...)` or the Cobaya theory yaml:
+
+| Mode | h | col_step | z_tail | freq_res | outer tol | target use |
+|---|---|---|---|---|---|---|
+| `reference` | 0.00125 | 1 | 10 | 2.0 | 1e-8 | closest to the LSODA reference (slowest) |
+| `production` | 0.01 | 4 | 7 | 1.0 | 1e-7 | default for science runs |
+| `ultra-fast` | 0.01 | 8 | 5 | 1.0 | 1e-6 | fast exploratory scans |
+
+`fast_sgwb.ACCURACY_MODES` holds the tables; `fast_sgwb.apply_accuracy_mode(name)` applies one and
+returns it. `fast_sgwb.get_settings()` snapshots the current module settings.
+
+## Cobaya
+
+`pip install .[cobaya]` provides the `stiffgwpy.cobaya.stiffGW` theory. The production adapter is
+configurable through the theory yaml (all knobs validated at call time):
+
+```yaml
+stiffGW:
+  engine: fast          # lsoda (default) | fast
+  fallback: True        # engine=fast: rerun with LSODA on failure
+  fast_threads: 8       # OpenMP threads (0 = module default)
+  h: 0.01               # step size (0 = module default)
+  col_step: 4           # column stride (0 = module default)
+  z_tail: 7.0           # analytic-tail threshold (0 = module default)
+  freq_res: 1.0         # frequency-grid density
+  accuracy_mode: production   # reference | production | ultra-fast | '' (none)
+```
+
+MPI note: the fast engine spawns no subprocesses (Numba OpenMP threads only), so it is MPI-safe.
+The LSODA reference path spawns `SGWB_POOL_SIZE` worker processes per solve; under MPI (world
+size > 1) it automatically falls back to 1 worker per rank unless `SGWB_POOL_SIZE` is set.
 
 ## Reproduce the benchmark / validation
 
@@ -148,10 +204,6 @@ stiffgwpy/            pip package (import stiffgwpy)
   LCDM_stiff_Neff.py  base cosmology class
   fd_table.npz        precomputed Fermi-Dirac lookup table
   cobaya/             optional Cobaya theory/likelihood interfaces
-stiff_SGWB.py         legacy top-level shims (old channel)
-functions.py
-global_param.py
-LCDM_stiff_Neff.py
 tests/                pytest regression tests (unit + slow gates)
 scripts/              benchmark / validation scripts
 docs/                 report + raw validation data
