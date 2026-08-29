@@ -79,7 +79,10 @@ RSS 增量 −24.7 MB（95.8→71.1 MB），数值逐位不变、测试全绿。
 ### 续跑命令（补齐后刷新本页）
 
 ```bash
-python scripts/param_sweep.py --out docs/paramsweep --workers 1 --retry-failed --no-warmup
+python scripts/param_sweep.py --out docs/paramsweep --workers 1 --no-warmup
 python scripts/plot_param_sweep.py
 python scripts/mcmc_compare.py --samples 2000 --fast-mode production --n-eval 50
 ```
+
+续跑不要加 `--retry-failed`：221 个 `fast_failed` 是确定性护栏拒绝，重跑只会重复落盘
+（`plot_param_sweep` 已按 id 去重兜底，避免污染统计）。
