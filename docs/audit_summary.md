@@ -58,6 +58,10 @@ posterior mean/std/CI/MAP 与 shift。
 `accuracy_mode: production` + `fast_threads: 8` + `fallback: true`（护栏触发自动回退 LSODA）。
 内存受限设 `SGWB_POOL_SIZE=2`。
 
+内存优化（2026-08-30，已实施）：`global_param` 移除 `astropy.cosmology` 顶层导入
+（`TCMB` 硬编码为 Planck18 精确值 2.7255 K）；A/B 实测每个子进程 `import global_param`
+RSS 增量 −24.7 MB（95.8→71.1 MB），数值逐位不变、测试全绿。
+
 ## 7. 验证等级（诚实声明）
 
 - **未声称**“完全等价 / 无损 / 全参数空间验证通过”。
