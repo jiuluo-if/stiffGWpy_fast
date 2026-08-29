@@ -99,8 +99,12 @@ Known limits (please do not overclaim):
 - Convergence studies (`h`, `COL_STEP`, `z_tail`, `freq_res`) are complete (see
   `docs/audit_phase2.md`); the 1000-point parameter-space sweep is **91% complete**
   (918/1030 points, stopped on request before the extreme-corner set): `DN_gw_last_rel`
-  max 2.0e-4 (inside the `validate_fast` 1e-3 gate), dex tail p95 7.7e-2, and 221/918
-  points failed in the `cr=0` high-`T_re` region (see `docs/audit_phase3.md`).
+  max 2.0e-4 (inside the `validate_fast` 1e-3 gate), dex tail p95 7.7e-2. All 221
+  non-ok points are safety-guard aborts shared by **both** engines (production
+  `engine='lsoda'` also returns None there; the sweep reference loop has no guard
+  and returns divergent non-physical values `DN_eff > 5`, up to 4.2e13); within
+  the physical region (`DN_eff <= 5`, n=697) fast failure rate is 0.00%
+  (see `docs/audit_phase3.md`).
 - Cobaya **posterior** comparisons (LSODA chain vs fast chain, `Delta logL`, posterior shift) are
   still **open**; the adapter (engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy mode)
   is implemented and unit-tested.
