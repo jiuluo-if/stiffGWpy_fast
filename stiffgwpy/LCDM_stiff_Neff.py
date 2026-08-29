@@ -38,7 +38,7 @@ class LCDM_SN:
         if len(args) > 0:
             if type(args[0]) == str:
                 if os.path.exists(args[0]): 
-                    if Path(args[0]).suffix == 'yml' or 'yaml':
+                    if Path(args[0]).suffix in ('.yml', '.yaml'):
                         with open(args[0], 'r') as stream:
                             try:
                                 self.cosmo_param = yaml.safe_load(stream)

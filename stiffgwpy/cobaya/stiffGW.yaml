@@ -17,6 +17,12 @@ path: null
 # Speed in evaluations/second
 speed: 0.1
 
+# Solver engine:
+#   lsoda  - original adaptive LSODA path (default, conservative)
+#   fast   - experimental approximate fast solver (~1e3x warm speedup; close
+#            but not bit-identical results; falls back to lsoda on failure)
+engine: lsoda
+
 
 ### Default values or priors of nuisance parameters of the theoretical model
 ### Derived parameters are also specified here.

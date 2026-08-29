@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "stiffgwpy"
 version = "0.2.0"
-description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with an accelerated non-AI solver (~1900-3900x)."
+description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with an experimental approximate fast solver (~1000x warm) plus the original LSODA implementation."
 readme = "README.md"
 license = {file = "LICENSE.md"}
 authors = [{name = "jiuluo-if"}]
@@ -27,7 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 cobaya = ["cobaya", "mpi4py"]
-dev = ["matplotlib", "pytest", "build"]
+dev = ["matplotlib", "pytest", "pytest-cov", "build", "ruff"]
 
 [project.urls]
 Homepage = "https://github.com/jiuluo-if/stiffGWpy_fast"
@@ -47,10 +47,26 @@ packages = [
 ]
 
 [tool.setuptools.package-data]
-stiffgwpy = ["*.dat"]
+stiffgwpy = ["*.dat", "*.npz"]
 "stiffgwpy.cobaya" = ["*.yaml"]
 "stiffgwpy.cobaya.likelihoods.LIGO_SGWB" = ["*.dat", "*.yaml"]
 "stiffgwpy.cobaya.likelihoods.PTA" = ["*.yaml"]
 "stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2" = ["*.dat", "*.txt"]
 "stiffgwpy.cobaya.likelihoods.PTA.IPTAdr2" = ["*.dat", "*.txt"]
 "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr" = ["*.npy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-m 'not slow'"
+markers = [
+    "slow: long-running tests that run the full LSODA solve",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "W"]
+exclude = ["docs", "LICENSE.md", "stiffgwpy/cobaya/likelihoods"]
