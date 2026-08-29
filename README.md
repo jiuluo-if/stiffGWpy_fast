@@ -82,7 +82,8 @@ from the new numerical scheme, not from raw thread count.
 ## Accuracy and validation status
 
 Quick summary of the audit (MCMC speedup, max errors, max ΔlogL, failure
-rate, recommended modes): `docs/audit_summary.md`.
+rate, recommended modes): `docs/audit_summary.md`. Independent review of the
+external audit text vs. the current repo: `docs/audit_text_review.md`.
 
 Verified positive results (covered by regression tests in `tests/`):
 
