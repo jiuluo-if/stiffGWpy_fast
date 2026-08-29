@@ -81,6 +81,9 @@ from the new numerical scheme, not from raw thread count.
 
 ## Accuracy and validation status
 
+Quick summary of the audit (MCMC speedup, max errors, max ΔlogL, failure
+rate, recommended modes): `docs/audit_summary.md`.
+
 Verified positive results (covered by regression tests in `tests/`):
 
 - `gen_fast` expansion vs original: max abs diff ≈ 1.7e-11 (`sigma`), 1.35e-13 (`f_hor`).
