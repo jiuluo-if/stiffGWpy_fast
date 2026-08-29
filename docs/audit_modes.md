@@ -77,8 +77,17 @@ python scripts/validate_modes.py --thread-scaling --out docs/modes/thread_scalin
 ## 6. NOT CERTIFIED 清单
 
 - **Cobaya MCMC 后验对比未完成**（LSODA chain vs fast chain、ΔlogL、后验偏移）；adapter
-  （engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy_mode）已实现并通过单测，
-  但需在装有 cobaya 的环境做真实采样对比。
+  （engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy_mode）已实现并通过单测。
+  对比工具 `scripts/mcmc_compare.py` 已就绪（同一 yaml + 同一 seed 跑两条链，输出 posterior
+  mean/std/CI/MAP、逐点 ΔlogL 分布、后验偏移、failure rate 与 MCMC 墙钟加速；`--skip-lsoda-chain`
+  可跳过昂贵的 LSODA 链、仅做逐点 LSODA 对照），但真实采样需在装有 cobaya 的环境运行：
+
+  ```bash
+  python scripts/mcmc_compare.py --samples 2000 --fast-mode production --n-eval 50
+  ```
+
+  注意逐点 LSODA 评估很贵（本机数十秒/点），`--n-eval` 从小到大试；内存受限时设
+  `SGWB_POOL_SIZE=2`。
 - **1000 点参数空间扫描未完成**（`docs/audit_phase3.md`：本机提交内存墙）；本轮仅补了
   三模式 × 三点的 LSODA 对照。
 - 因此三档模式是**经验推荐配置**，不是全面认证；跨参数空间的最坏情况误差仍以
