@@ -92,3 +92,33 @@ Other attributes:
 
 \
 Other details of both classes and all methods can be found in relevant docstrings. 
+
+
+## Accelerated solver (fast_sgwb.py)
+
+`fast_sgwb.py` is a drop-in accelerated replacement for `LCDM_SG.SGWB_iter()`
+that keeps the exact same numerical scheme (same expansion history, same ODE,
+same Simpson quadrature, same 1e-4 bisection convergence criterion) but replaces
+the per-frequency LSODA solves and scipy integrations with numba-JIT kernels,
+a fixed-step analytic-rotation solver with an analytic deep-subhorizon tail,
+a precomputed Simpson weight matrix, PCHIP grid refinement and OpenMP
+parallelism over frequency channels.
+
+Typical speedup on a 32-core machine: **1900x - 3900x** (original ~7-22 s per
+self-consistent run, accelerated ~5-9 ms warm), with all physical outputs
+agreeing within the algorithm's own 1e-4 convergence tolerance.
+
+```python
+from stiff_SGWB import LCDM_SG
+import fast_sgwb
+
+model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+fast_sgwb.SGWB_iter_fast(model)     # same output attributes as model.SGWB_iter()
+```
+
+Tunables (set before importing `fast_sgwb`):
+`FAST_THREADS` (default 32) and `FAST_COL_STEP` (default 4).
+
+See `benchmark_report.md` for the full performance/accuracy analysis,
+`bench_fast.py` for the reproducible benchmark, and `validate_fast.py` for the
+12-combination parameter-grid validation.
