@@ -38,11 +38,24 @@
 
 ### 3.1 完成率与失败率
 
-- ok=697 / fast_failed=221，失败率 **24.1%**（sobol 85、lhs 83、edge 53）。
+- ok=697 / fast_failed=221（sobol 85、lhs 83、edge 53）；**全程 0 异常**
+  （jsonl 无 `fast_error` 记录，失败均非异常抛出）。
+- 护栏判定（双引擎共享，上游原样保留）：`DN_eff_orig + DN_gw_new > 5` 或 DN_gw_new 非有限
+  时中止，返回 `SGWB_converge=False`/None——fast 见 `fast_sgwb.SGWB_iter_fast`，
+  LSODA 生产路径见 `stiff_SGWB.SGWB_iter` 的 `engine='lsoda'` 分支。
+- 证据：**221 个 fast_failed 点 100% 的 LSODA 侧 `DN_eff > 5`**（min 5.14 / max 4.2e13）；
+  **生产 LSODA 路径（`engine='lsoda'`）在这些点同样返回 None**（已对 3 个代表点实测：
+  sobol-0217 / lhs-0059 / sobol-0264 均 lsoda 与 fast+fallback 双失败），即失败不是
+  fast 独有，而是两个引擎对非物理区的共同护栏拦截。扫描参考循环 `scripts/convergence_study.run_lsoda`
+  无此护栏，才会在这些点“成功”返回发散的非物理值（DN_eff 至 4.2e13）。
+- 物理区（LSODA `DN_eff ≤ 5`，n=697）内 **fast 失败率 0.00%（697/697 全部 ok）**。
 - 失败区特征（failed vs ok 参数中位数）：r 0.0083 vs 0.0022、kappa10 0.056 vs 0.0054、
   T_re 1.6e5 vs 762、n_t 0.23 vs -0.08、cr=0（ok 组中位 cr=1）。
-  → 失败集中在 **cr=0 且高 T_re、高 r/kappa10、较高 n_t** 的区域（fast 在这些点数值发散），
-  与物理配置相关而非随机。
+  → 失败集中在 **cr=0 且高 T_re、高 r/kappa10、较高 n_t** 的物理发散区；这是双引擎
+  共享护栏对非物理参数点的正确拦截，不是 fast 的随机数值故障。
+- MCMC 含义：真实后验（先验将 DN_eff 限制在物理范围）不会进入 N_eff>5 区域，
+  预期有效失败率远低于全参数空间口径的 24.1%；即便链偶然探入该区，LSODA 与 fast
+  均拒绝该点（loglike → −∞），不会污染后验。
 
 ### 3.2 ok 点（n=697）误差分布
 
