@@ -41,7 +41,6 @@ packages = [
     "stiffgwpy.cobaya.likelihoods.LIGO_SGWB",
     "stiffgwpy.cobaya.likelihoods.PTA",
     "stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2",
-    "stiffgwpy.cobaya.likelihoods.PTA.IPTAdr2",
     "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr",
 ]
 
@@ -51,7 +50,6 @@ stiffgwpy = ["*.dat", "*.npz"]
 "stiffgwpy.cobaya.likelihoods.LIGO_SGWB" = ["*.dat", "*.yaml"]
 "stiffgwpy.cobaya.likelihoods.PTA" = ["*.yaml"]
 "stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2" = ["*.dat", "*.txt"]
-"stiffgwpy.cobaya.likelihoods.PTA.IPTAdr2" = ["*.dat", "*.txt"]
 "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr" = ["*.npy"]
 
 [tool.pytest.ini_options]
