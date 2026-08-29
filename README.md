@@ -104,7 +104,9 @@ Known limits (please do not overclaim):
   `engine='lsoda'` also returns None there; the sweep reference loop has no guard
   and returns divergent non-physical values `DN_eff > 5`, up to 4.2e13); within
   the physical region (`DN_eff <= 5`, n=697) fast failure rate is 0.00%
-  (see `docs/audit_phase3.md`).
+  and within the MCMC-relevant region (`DN_eff <= 2`, n=624) spectrum dex error
+  is p95 0.019 / max 0.128 with `DN_gw_last_rel` max 2.0e-4 — the large dex tails
+  (0.1-0.24) sit only next to the guard boundary (see `docs/audit_phase3.md`).
 - Cobaya **posterior** comparisons (LSODA chain vs fast chain, `Delta logL`, posterior shift) are
   still **open**; the adapter (engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy mode)
   is implemented and unit-tested.
