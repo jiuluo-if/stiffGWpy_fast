@@ -87,7 +87,11 @@ python scripts/validate_modes.py --thread-scaling --out docs/modes/thread_scalin
   ```
 
   注意逐点 LSODA 评估很贵（本机数十秒/点），`--n-eval` 从小到大试；内存受限时设
-  `SGWB_POOL_SIZE=2`。
+  `SGWB_POOL_SIZE=2`。该工具已按 cobaya 3.6 接口做端到端冒烟验证：`run()` 返回
+  `(info, sampler)`，样本经 `sampler.products()['sample'].to_numpy()` 读取；逐点
+  minuslogpost 用 `model.logpost()` 计算（`loglikes()` 返回的是各 likelihood 分量
+  的 logL 数组，不是 minuslogpost）。冒烟记录：fast 链 3 样本无失败、逐点
+  LSODA 对照 ΔlogL=1.9、单点评估加速约 1.5e3×（production，本机）。
 - **1000 点参数空间扫描未完成**（`docs/audit_phase3.md`：本机提交内存墙）；本轮仅补了
   三模式 × 三点的 LSODA 对照。
 - 因此三档模式是**经验推荐配置**，不是全面认证；跨参数空间的最坏情况误差仍以
