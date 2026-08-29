@@ -1,8 +1,9 @@
 import sys, time, json
 import numpy as np
-sys.path.insert(0, r"F:\codex\stiffGWpy")
-import fast_sgwb as FS
-from stiff_SGWB import LCDM_SG
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from stiffgwpy import fast_sgwb as FS
+from stiffgwpy.stiff_SGWB import LCDM_SG
 
 CASES = [
     dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),

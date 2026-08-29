@@ -1,124 +1,131 @@
-# stiffGWpy
-Python package that computes the self-consistent expansion history of &Lambda;CDM+stiff component+primordial SGWB
+# stiffgwpy
 
-Author: Bohua Li, rolandliholmes@gmail.com
+**LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB)** cosmology code,
+with a drop-in accelerated solver that is **~1900-3900x faster** than the original LSODA implementation
+while keeping the same numerical scheme and the same `1e-4` convergence tolerance.
 
-Description
--------------
-The code computes the expansion history of the extended &Lambda;CDM model 
-with (1) the stochastic gravitational-wave background (SGWB) from inflation 
-and (2) an additional stiff component. The presence of a possible early stiff era
-may cause amplification of the primordial SGWB relative to that in the base &Lambda;CDM model.
-For given cosmological parameters, the coupled dynamical system of the Friedmann equation 
-and the tensor wave equation is solved iteratively, which accounts for the backreaction 
-from the stiff-amplified SGWB on the background expansion history.
+- Original implementation: per-frequency `scipy.integrate.solve_ivp(method='LSODA')` + Simpson integration
+  (≈7-22 s per self-consistent run).
+- Accelerated implementation (`stiffgwpy.fast_sgwb`): numba JIT kernels, fixed-step analytic-rotation
+  (Magnus-type) stepping with an analytic deep-subhorizon tail, precomputed Simpson weight matrix,
+  PCHIP grid refinement and OpenMP parallelism (≈2-6 ms warm).
 
+## Install
 
-Dependencies
---------------------
-Python packages: numpy, scipy
+```bash
+# from source
+pip install .
 
+# from GitHub
+pip install git+https://github.com/jiuluo-if/stiffGWpy_fast.git
 
-Basic Usage
------------------------------------
-Two classes, 'LCDM_SN' and 'LCDM_SG', are provided for the '&Lambda;CDM+stiff+const &Delta;N_eff' 
-and '&Lambda;CDM+stiff+SGWB' models, respectively. The latter is a derived class of the former 
-and uses the former model to mimic its expansion history.
+# with Cobaya MCMC interface
+pip install .[cobaya]
 
-After creating and initializing an LCDM_SG instance, one may calculate the coupled background evolution 
-using its 'SGWB_iter' method. 
-
-
-### Input ###
-
-The free/base parameters of both types of models are: 
-
-'Omega_bh2',  'Omega_ch2',  'H0',  'DN_eff',  'A_s',  'r', 'n_t', 'cr', 'T_re', 'DN_re', 'kappa10'.
-
-    - [H0] = km s^-1 Mpc^-1, [T_re] = GeV.
-    - Set cr > 0 if the consistency relation is assumed, otherwise set cr <= 0 and provide (n_t, DN_re).
-    - DN_re is the number of e-folds from the end of inflation to the end of reheating, 
-      assuming a^{-3} matter-like evolution.
-    - kappa10 := rho_stiff/rho_photon at 10 MeV.
-
-There are three ways to initialize a model with desired base parameters:  
-<pre>
-    1. input a yaml file,    2. input a dictionary,  
-    3. specify the parameters by keyword arguments.  
-</pre>
-They will be stored in the 'obj_name.cosmo_param' attribute as a dictionary and can be modified later on.  
-
-Derived parameters of the model are stored in the 'obj_name.derived_param' property as a dictionary.  
-
-An example run is as follows.
-
-```
-from stiff_SGWB import LCDM_SG as sg
-
-model = sg(r = 1e-2,
-           cr = 1,
-           T_re = 2e3,
-           kappa10 = 1e-2,
-          )
-
-model.cosmo_param['H0'] = 68
-
-model.SGWB_iter()
+# development extras
+pip install .[dev]
 ```
 
-### Output ###
+Runtime dependencies: `numpy`, `scipy`, `astropy`, `pyyaml`, `numba`.
 
-Output attributes after successfully running SGWB_iter():
-    
-- f:             sampled frequencies of the SGWB today, log10(f/Hz) 
-- log10OmegaGW:  present-day energy spectrum of the primordial SGWB, log10(Omega_GW(f))
-- f_grid:        Uniformly-spaced frequency grid for training emulator
-- log10OmegaGW_grid:  log10(Omega_GW(f)) at the uniform-spaced frequencies
-- kappa_r:       Total extra radiation (e.g., SGWB) parameterized as kappa_rad(T_i) to be passed to AlterBBN
-- DN_eff_orig:   original value of &Delta;N_eff from the input when the run is successful, otherwise set to None.
-<br/>
+## Quick start
 
-- N:             = ln a, number of e-foldings, the time coordinate for variables below (N=0 is the present)
-- sigma:         = 1+w, which characterizes the expansion history 
-- f_hor:         comoving frequency of the current mode that fills the horizon, log10(f_hor/Hz), f_hor = aH/(2*pi)
-- hubble:        evolution of the Hubble parameter, log10(H/s^-1). 
-- DN_gw:         evolution of &Delta;N_eff due to the primordial SGWB. 
-
-
-Other attributes:
-
-- SGWB_converge: True if SGWB_iter() successfully converges, False if not (abort when the total &Delta;N_eff > 5).
-
-
-\
-Other details of both classes and all methods can be found in relevant docstrings. 
-
-
-## Accelerated solver (fast_sgwb.py)
-
-`fast_sgwb.py` is a drop-in accelerated replacement for `LCDM_SG.SGWB_iter()`
-that keeps the exact same numerical scheme (same expansion history, same ODE,
-same Simpson quadrature, same 1e-4 bisection convergence criterion) but replaces
-the per-frequency LSODA solves and scipy integrations with numba-JIT kernels,
-a fixed-step analytic-rotation solver with an analytic deep-subhorizon tail,
-a precomputed Simpson weight matrix, PCHIP grid refinement and OpenMP
-parallelism over frequency channels.
-
-Typical speedup on a 32-core machine: **1900x - 3900x** (original ~7-22 s per
-self-consistent run, accelerated ~5-9 ms warm), with all physical outputs
-agreeing within the algorithm's own 1e-4 convergence tolerance.
+### New channel (recommended)
 
 ```python
-from stiff_SGWB import LCDM_SG
-import fast_sgwb
+from stiffgwpy import LCDM_SG
+from stiffgwpy import fast_sgwb
 
-model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-fast_sgwb.SGWB_iter_fast(model)     # same output attributes as model.SGWB_iter()
+m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+fast_sgwb.SGWB_iter_fast(m)      # fills the same attributes as m.SGWB_iter()
+
+print(m.SGWB_converge)
+print(m.log10OmegaGW)            # spectrum
+print(m.DN_gw)                   # Delta N_eff evolution
 ```
 
-Tunables (set before importing `fast_sgwb`):
-`FAST_THREADS` (default 32) and `FAST_COL_STEP` (default 4).
+### Old channel (unchanged, still works)
 
-See `benchmark_report.md` for the full performance/accuracy analysis,
-`bench_fast.py` for the reproducible benchmark, and `validate_fast.py` for the
-12-combination parameter-grid validation.
+```python
+from stiff_SGWB import LCDM_SG    # legacy top-level shim
+import global_param               # legacy shim, th.dat resolved from package data
+
+m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+m.SGWB_iter()                     # original slow LSODA path (kept)
+```
+
+The legacy top-level modules `stiff_SGWB`, `functions`, `global_param`,
+`LCDM_stiff_Neff` are thin shims that re-export the packaged modules, so old
+scripts keep working unchanged.
+
+## Model and parameters
+
+`LCDM_SG` solves the background (radiation + neutrinos + stiff matter + Lambda),
+the tensor-mode perturbation equation per frequency channel, and iterates
+`Delta N_eff` (the SGWB contribution to extra radiation) with a bisection loop
+until a `1e-4` relative convergence criterion.
+
+Main base parameters (can be given as kwargs, dict or YAML file):
+
+| Parameter | Meaning |
+|---|---|
+| `Omega_bh2`, `Omega_ch2`, `H0` | baryon/CDM densities and Hubble constant |
+| `DN_eff` | constant extra radiation (Delta N_eff) |
+| `A_s`, `r`, `n_t` | primordial scalar amplitude, tensor-to-scalar ratio, tensor tilt |
+| `cr` | >0: enforce the single-field consistency relation; <=0: use given `n_t`/`DN_re` |
+| `T_re` | reheating temperature [GeV] |
+| `DN_re` | e-folds of matter-like reheating |
+| `kappa10` | `rho_stiff / rho_photon` at 10 MeV |
+
+See `docs/benchmark_report.md` for the full performance/accuracy analysis
+(12-combination parameter grid, all ≥1000x, all outputs within the `1e-4`
+algorithm tolerance).
+
+## Tuning the fast solver
+
+Set these environment variables before importing `stiffgwpy`:
+
+```bash
+export FAST_THREADS=32     # OpenMP threads (default 32)
+export FAST_COL_STEP=4     # coarse-column stride, speed/accuracy trade-off (1-8)
+```
+
+or at runtime:
+
+```python
+from stiffgwpy import fast_sgwb
+fast_sgwb.set_threads(32)
+fast_sgwb.set_col_step(4)
+```
+
+## Reproduce the benchmark / validation
+
+```bash
+python scripts/bench_fast.py         # original vs fast wall-clock (12 cases, ~2-4 min)
+python scripts/validate_fast.py      # 12-case field-by-field precision validation (~5 min)
+python scripts/check_random_freq.py  # random 10-frequency spot check + plot
+```
+
+## Repository layout
+
+```
+stiffgwpy/            pip package (import stiffgwpy)
+  stiff_SGWB.py       main model class LCDM_SG
+  fast_sgwb.py        accelerated solver
+  functions.py        FD integrals, LSODA solver
+  global_param.py     constants + thermal-history splines (th.dat)
+  LCDM_stiff_Neff.py  base cosmology class
+  cobaya/             optional Cobaya theory/likelihood interfaces
+stiff_SGWB.py         legacy top-level shims (old channel)
+functions.py
+global_param.py
+LCDM_stiff_Neff.py
+scripts/              benchmark / validation scripts
+docs/                 full report + raw validation data
+base_param.yml        example parameter file
+pyproject.toml        PEP 621 build config
+```
+
+## License
+
+GPL-3.0 (see `LICENSE.md`).

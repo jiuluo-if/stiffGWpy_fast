@@ -19,9 +19,8 @@ class stiffGW(Theory):
     
     def initialize(self):
         """called from __init__ to initialize"""
-        stiff_SGWB_path = os.path.dirname(__file__) + '/../'
-        stiff_SGWB = load_module('stiff_SGWB', path=stiff_SGWB_path)
-        self.stiffGW_model = stiff_SGWB.LCDM_SG()
+        from ..stiff_SGWB import LCDM_SG
+        self.stiffGW_model = LCDM_SG()
         #self.comm = MPI.COMM_WORLD
         #self.rank = self.comm.Get_rank()
         self.log.info("Initialized!")

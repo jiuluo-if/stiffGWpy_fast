@@ -14,10 +14,11 @@ import statistics
 
 import numpy as np
 
-sys.path.insert(0, r"F:\codex\stiffGWpy")  # noqa: E402  (edit if needed)
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
 
-import fast_sgwb                      # noqa: E402
-from stiff_SGWB import LCDM_SG        # noqa: E402
+from stiffgwpy import fast_sgwb          # noqa: E402
+from stiffgwpy.stiff_SGWB import LCDM_SG    # noqa: E402
 
 CASES = {
     "A baseline r=1e-2 cr=1 T_re=2e3 k10=1e-2": dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),

@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stiffgwpy"
+version = "0.2.0"
+description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with an accelerated non-AI solver (~1900-3900x)."
+readme = "README.md"
+license = {file = "LICENSE.md"}
+authors = [{name = "jiuluo-if"}]
+keywords = ["cosmology", "gravitational-waves", "stiff", "sgwb", "cobaya", "numba"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Intended Audience :: Science/Research",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "scipy",
+    "astropy",
+    "pyyaml",
+    "numba",
+]
+
+[project.optional-dependencies]
+cobaya = ["cobaya", "mpi4py"]
+dev = ["matplotlib", "pytest", "build"]
+
+[project.urls]
+Homepage = "https://github.com/jiuluo-if/stiffGWpy_fast"
+Source = "https://github.com/jiuluo-if/stiffGWpy_fast"
+
+[tool.setuptools]
+py-modules = ["stiff_SGWB", "functions", "global_param", "LCDM_stiff_Neff"]
+packages = [
+    "stiffgwpy",
+    "stiffgwpy.cobaya",
+    "stiffgwpy.cobaya.likelihoods",
+    "stiffgwpy.cobaya.likelihoods.LIGO_SGWB",
+    "stiffgwpy.cobaya.likelihoods.PTA",
+    "stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2",
+    "stiffgwpy.cobaya.likelihoods.PTA.IPTAdr2",
+    "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr",
+]
+
+[tool.setuptools.package-data]
+stiffgwpy = ["*.dat"]
+"stiffgwpy.cobaya" = ["*.yaml"]
+"stiffgwpy.cobaya.likelihoods.LIGO_SGWB" = ["*.dat", "*.yaml"]
+"stiffgwpy.cobaya.likelihoods.PTA" = ["*.yaml"]
+"stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2" = ["*.dat", "*.txt"]
+"stiffgwpy.cobaya.likelihoods.PTA.IPTAdr2" = ["*.dat", "*.txt"]
+"stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr" = ["*.npy"]

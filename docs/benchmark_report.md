@@ -131,16 +131,16 @@ fast_sgwb.SGWB_iter_fast(model)     # 输出属性与 model.SGWB_iter() 完全�
 ## 7. 复现与交付物
 
 ```bash
-python bench_fast.py          # 性能对比（原始 vs fast，12 组，约 2-4 分钟）
-python validate_fast.py       # 12 组参数网格的精度验证（约 5 分钟）
+python scripts/bench_fast.py          # 性能对比（原始 vs fast，12 组，约 2-4 分钟）
+python scripts/validate_fast.py       # 12 组参数网格的精度验证（约 5 分钟）
 ```
 
 交付文件（仓库 `F:\codex\stiffGWpy`）：
-- `fast_sgwb.py` — 加速模块（`SGWB_iter_fast`）
+- `stiffgwpy/fast_sgwb.py` — 加速模块（`SGWB_iter_fast`）
 - `benchmark_report.md` — 本报告
-- `bench_fast.py` — 可复现性能基准
-- `validate_fast.py` — 可复现精度验证
-- `benchmark_results_12cases.jsonl` — 12 组验证原始数据
+- `scripts/bench_fast.py` — 可复现性能基准
+- `scripts/validate_fast.py` — 可复现精度验证
+- `docs/benchmark_results_12cases.jsonl` — 12 组验证原始数据
 - `README.md` — 已追加加速模块章节
 
 **环境**：Python 3.11.9、numba 0.67、numpy 2.4.4、scipy 1.17.1、AMD 32 核、Windows。
