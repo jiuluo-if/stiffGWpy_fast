@@ -107,6 +107,8 @@
 - 恢复：`python scripts/param_sweep.py --out docs/paramsweep --workers 1 --retry-failed --no-warmup`
   （checkpoint 续跑，`--retry-failed` 重跑失败点），完成后 `python scripts/plot_param_sweep.py`
   刷新汇总与图。
-- 低内存主机建议：将 `stiff_SGWB.run_SGWB` 的硬编码 `mp.Pool(4)` 改为可配置池大小
-  （env var，默认 4；纯进程管理改动，不改变任何数值结果），或延迟化 `global_param` 的
-  astropy 顶层 import（每子进程私有提交可降至 ~0.8 GB）。
+- 内存优化（已实施，2026-08-30）：`run_SGWB` 进程池已可通过 `SGWB_POOL_SIZE` 配置
+  （MPI 下默认 1，避免嵌套池死锁/超订）；`global_param` 移除最重的 `astropy.cosmology`
+  顶层导入（`TCMB` 硬编码为 Planck18 精确值 2.7255 K）——A/B 实测 `import global_param`
+  RSS 增量 95.8 → 71.1 MB（每子进程 −24.7 MB，−26%），数值逐位不变（38 项测试全绿）。
+  其余更激进的内存项（如完全去掉 astropy.constants/units 改为硬编码常数）未做，风险/收益比低。

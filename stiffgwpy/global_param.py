@@ -1,7 +1,6 @@
 import numpy as np
 import os, sys, math
 from scipy import interpolate
-from astropy.cosmology import Planck18 as cosmo
 from astropy import constants as const
 import astropy.units as u
 from .functions import int_FD
@@ -31,7 +30,7 @@ f_piv = 0.05 *c/(2*math.pi*1e6*parsec)     # s^-1, CMB pivot scale = 0.05 Mpc^-1
 
 # Base
 
-TCMB = cosmo.Tcmb0.value  # K
+TCMB = 2.7255  # K (Planck18.Tcmb0; hardcoded to drop the astropy.cosmology import)
 TCMB_GeV = 1e-9*kB*TCMB   # GeV
 
 m_nu = 60                 # meV, for a single massive neutrino eigenstate
