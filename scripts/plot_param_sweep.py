@@ -41,13 +41,14 @@ def pct(a, q):
 
 def load_records(out_dir):
     path = os.path.join(out_dir, 'sweep_phase3.jsonl')
-    recs = []
+    recs = {}
     with open(path, encoding='utf-8') as fh:
         for line in fh:
             line = line.strip()
             if line:
-                recs.append(json.loads(line))
-    return recs
+                r = json.loads(line)
+                recs[r['id']] = r   # last wins (append-only checkpoint + retries)
+    return list(recs.values())
 
 
 def spearman(x, y):

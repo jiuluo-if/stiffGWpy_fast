@@ -104,9 +104,10 @@
 
 - 未完成：edge 余 32 点 + extreme 80 点（共 112 点，9%）；严格 ≥1000 点认证、extreme
   角点失败率与最坏误差（阶段四输入）。
-- 恢复：`python scripts/param_sweep.py --out docs/paramsweep --workers 1 --retry-failed --no-warmup`
-  （checkpoint 续跑，`--retry-failed` 重跑失败点），完成后 `python scripts/plot_param_sweep.py`
-  刷新汇总与图。
+- 恢复：`python scripts/param_sweep.py --out docs/paramsweep --workers 1 --no-warmup`
+  （checkpoint 续跑，按 id 跳过已落盘点），完成后 `python scripts/plot_param_sweep.py`
+  刷新汇总与图。不要加 `--retry-failed`：221 个 `fast_failed` 是确定性护栏拒绝，
+  重跑只会重复落盘（`plot_param_sweep` 已按 id 去重兜底）。
 - 内存优化（已实施，2026-08-30）：`run_SGWB` 进程池已可通过 `SGWB_POOL_SIZE` 配置
   （MPI 下默认 1，避免嵌套池死锁/超订）；`global_param` 移除最重的 `astropy.cosmology`
   顶层导入（`TCMB` 硬编码为 Planck18 精确值 2.7255 K）——A/B 实测 `import global_param`
