@@ -71,6 +71,10 @@ RSS 增量 −24.7 MB（95.8→71.1 MB），数值逐位不变、测试全绿。
 - 工程化（2026-08-30）：`pip wheel` 构建 + 全新目录安装 + 导入/快速求解冒烟通过
   （wheel 33 文件 4.0 MB，无已删除的陈旧数据）；CI 门禁（pytest + ruff + wheel build）
   已加入 `.github/workflows/ci.yml`。
+- 缓存/冷启动证据（2026-08-30）：numba `cache=True` 使新进程首次 fast 求解仅 **0.25 s**
+  （无缓存约 5.5 s，~20× 冷启动加速）；同参数重复调用命中结果缓存（~0.09 ms）；
+  真实 warm 求解 **~3 ms**（8 线程 production 档 4–10 ms）。MCMC worker 全链路导入
+  RSS ≈ 162 MB（含 cobaya，其中 fast 模块 +25 MB、numpy +13 MB）。
 
 ### 续跑命令（补齐后刷新本页）
 
