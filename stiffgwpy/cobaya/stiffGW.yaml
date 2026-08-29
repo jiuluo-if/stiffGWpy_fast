@@ -22,6 +22,21 @@ speed: 0.1
 #   fast   - experimental approximate fast solver (~1e3x warm speedup; close
 #            but not bit-identical results; falls back to lsoda on failure)
 engine: lsoda
+# engine='fast': rerun with the LSODA path if the fast solve fails
+fallback: True
+# engine='fast': OpenMP threads for the frequency-parallel kernel (0 = module default)
+fast_threads: 0
+# engine='fast': fixed step size / expansion-grid spacing (0 = module default 0.01)
+h: 0.0
+# engine='fast': output-column stride 1-8 (0 = module default 4)
+col_step: 0
+# analytic-tail threshold (0 = module default 5.0 for fast; LSODA path uses 5.0)
+z_tail: 0.0
+# frequency-grid density; 1.0 = default grid
+freq_res: 1.0
+# engine='fast': named accuracy preset ('reference'|'production'|'ultra-fast',
+# '' = none; explicit knobs above still override the preset)
+accuracy_mode: ''
 
 
 ### Default values or priors of nuisance parameters of the theoretical model

@@ -15,6 +15,33 @@ from .LCDM_stiff_Neff import LCDM_SN
 MAX_ITER = 60            # cap on the outer bisection loop
 
 
+def _mpi_world_size():
+    """MPI world size, or 1 when mpi4py is unavailable / not initialized."""
+    try:
+        from mpi4py import MPI
+        return int(MPI.COMM_WORLD.Get_size())
+    except Exception:
+        return 1
+
+
+def _sgwb_pool_size():
+    """Number of frequency-parallel worker processes for ``run_SGWB``.
+
+    ``SGWB_POOL_SIZE`` (default 4) overrides the process count.  Under MPI
+    (world size > 1) the default is 1 unless the variable is set explicitly:
+    the reference path already parallelizes across ranks, and nested
+    ``mp.Pool`` workers inside MPI ranks deadlock/oversubscribe.  This is a
+    pure process-management knob; it does not change any numerical result.
+    """
+    env = os.environ.get('SGWB_POOL_SIZE')
+    if env is not None:
+        n = int(env)
+        if n < 1:
+            raise ValueError('SGWB_POOL_SIZE must be >= 1, got %r' % env)
+        return n
+    return 1 if _mpi_world_size() > 1 else 4
+
+
 class LCDM_SG(LCDM_SN):
     """
     Cosmological model: LCDM + stiff component + constant Delta N_eff
@@ -105,7 +132,7 @@ class LCDM_SG(LCDM_SN):
         using multiprocessing parallelism
         """
         
-        with mp.Pool(processes=4) as pool:
+        with mp.Pool(processes=_sgwb_pool_size()) as pool:
             worker = partial(self.run_SGWB_single, z_tail=z_tail, rtol=rtol, atol=atol)
             res_it = pool.imap(worker, self.f, chunksize=3)
             res = [y for y in res_it]
@@ -119,7 +146,8 @@ class LCDM_SG(LCDM_SN):
         
              
     def SGWB_iter(self, engine='lsoda', fallback=False, tol=1e-4,
-                  z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0):
+                  z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0,
+                  h=None, col_step=None, threads=None, accuracy_mode=None):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -133,14 +161,55 @@ class LCDM_SG(LCDM_SN):
         stopping criterion (default 1e-4); ``z_tail``, ``rtol`` and ``atol``
         tune the reference LSODA path (analytic-tail threshold and ODE
         tolerances).  ``freq_res`` scales the frequency-grid density
-        (audit-only; 1.0 = default grid).  On success the model object
-        is returned.
+        (audit-only; 1.0 = default grid).
+
+        Fast-path tuning (ignored by the LSODA path): ``accuracy_mode`` selects
+        a named preset from ``fast_sgwb.ACCURACY_MODES`` ('reference',
+        'production' or 'ultra-fast'); explicit ``h``, ``col_step``, ``threads``
+        and non-default ``z_tail``/``freq_res``/``tol`` override the preset.
+        Without a preset, ``h``/``col_step``/``threads`` default to the
+        module-level settings (env FAST_H/FAST_COL_STEP/FAST_THREADS) and
+        ``z_tail``/``freq_res``/``tol`` are applied as passed.  These settings
+        are process-global module state, as documented in ``fast_sgwb``.
+        On success the model object is returned.
 
         """
         if engine == 'fast':
             from . import fast_sgwb
             try:
-                result = fast_sgwb.SGWB_iter_fast(self)
+                if accuracy_mode is not None:
+                    cfg = fast_sgwb.apply_accuracy_mode(accuracy_mode)
+                    f_tol = cfg['tol']
+                    f_freq = cfg['freq_res']
+                    if h is not None:
+                        cfg['h'] = h
+                    if col_step is not None:
+                        cfg['col_step'] = col_step
+                    if threads is not None:
+                        cfg['threads'] = threads
+                    if z_tail != 5.0:
+                        cfg['z_tail'] = z_tail
+                    if tol != 1e-4:
+                        f_tol = tol
+                    if freq_res != 1.0:
+                        f_freq = freq_res
+                    fast_sgwb.set_h(cfg['h'])
+                    fast_sgwb.set_col_step(cfg['col_step'])
+                    fast_sgwb.set_threads(min(cfg['threads'],
+                                              fast_sgwb._MAX_THREADS))
+                    fast_sgwb.set_z_tail(cfg['z_tail'])
+                else:
+                    if h is not None:
+                        fast_sgwb.set_h(h)
+                    if col_step is not None:
+                        fast_sgwb.set_col_step(col_step)
+                    if threads is not None:
+                        fast_sgwb.set_threads(threads)
+                    fast_sgwb.set_z_tail(z_tail)
+                    f_tol = tol
+                    f_freq = freq_res
+                result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
+                                                  freq_res=f_freq)
             except Exception:
                 if not fallback:
                     raise
