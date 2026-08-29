@@ -3,6 +3,7 @@
 
 import os, yaml, math
 import multiprocessing as mp
+from functools import partial
 import numpy as np
 from numpy import concatenate as cat
 from scipy import interpolate, integrate
@@ -56,7 +57,7 @@ class LCDM_SG(LCDM_SN):
     #@property
 
 
-    def run_SGWB_single(self, freq):
+    def run_SGWB_single(self, freq, z_tail=5.0, rtol=1e-6, atol=None):
         """
         Integrate the equation of motion of primordial tensor fluctuations 
         for a single frequency and given expansion history
@@ -67,7 +68,8 @@ class LCDM_SG(LCDM_SN):
         j = self.find_index_hc(freq+3)           # solver begins at kc/aH <= 10^{-3}
         z0 = (freq-self.f_hor[j]) * ln10         # convert to ln(kc/aH)
         
-        result = solve_SGWB(self.Nv, self.sigma, j, z0)
+        result = solve_SGWB(self.Nv, self.sigma, j, z0,
+                            z_tail=z_tail, rtol=rtol, atol=atol)
                 
         N_this = self.Nv[(self.Nv >= result.sol.t_min) & (self.Nv <= result.sol.t_max)]
         [zf_this, xf_this, yf_this] = result.sol(N_this)
@@ -97,14 +99,15 @@ class LCDM_SG(LCDM_SN):
         return [N_this, Th_this, Oj_this, Ogw_this, Opgw_this]
         
     
-    def run_SGWB(self):
+    def run_SGWB(self, z_tail=5.0, rtol=1e-6, atol=None):
         """
         Solve for selected frequencies and given expansion history
         using multiprocessing parallelism
         """
         
         with mp.Pool(processes=4) as pool:
-            res_it = pool.imap(self.run_SGWB_single, self.f, chunksize=3)
+            worker = partial(self.run_SGWB_single, z_tail=z_tail, rtol=rtol, atol=atol)
+            res_it = pool.imap(worker, self.f, chunksize=3)
             res = [y for y in res_it]
 
         # Each element in the following lists is for a frequency channel
@@ -115,7 +118,8 @@ class LCDM_SG(LCDM_SN):
         self.Opgw = [single_sol[4] for single_sol in res]  # dOmega_pGW / dlnf
         
              
-    def SGWB_iter(self, engine='lsoda', fallback=False):
+    def SGWB_iter(self, engine='lsoda', fallback=False, tol=1e-4,
+                  z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -125,7 +129,12 @@ class LCDM_SG(LCDM_SN):
         LSODA path) or 'fast' (the experimental approximate fast solver in
         ``stiffgwpy.fast_sgwb``).  When ``engine='fast'`` and the fast solver
         fails (returns None or raises), ``fallback=True`` automatically reruns
-        the LSODA path.  On success the model object is returned.
+        the LSODA path.  ``tol`` is the outer Delta N_eff self-consistency
+        stopping criterion (default 1e-4); ``z_tail``, ``rtol`` and ``atol``
+        tune the reference LSODA path (analytic-tail threshold and ODE
+        tolerances).  ``freq_res`` scales the frequency-grid density
+        (audit-only; 1.0 = default grid).  On success the model object
+        is returned.
 
         """
         if engine == 'fast':
@@ -166,8 +175,8 @@ class LCDM_SG(LCDM_SN):
             try:
                 for _iter in range(MAX_ITER):    # main iteration
                     self.gen_expansion()
-                    self.construct_f()
-                    self.run_SGWB()
+                    self.construct_f(freq_res)
+                    self.run_SGWB(z_tail=z_tail, rtol=rtol, atol=atol)
                     self.int_SGWB()
 
                     DN_gw_new = Neff0 * self.g2[-1] / Omega_nu
@@ -180,7 +189,7 @@ class LCDM_SG(LCDM_SN):
                         break
 
                     # Break when the required convergence precision is met!
-                    if abs((Neff0+self.DN_eff_orig+DN_gw_new)/(Neff0+self.DN_eff_orig+self.DN_gw[-1]) - 1) < 1e-4:
+                    if abs((Neff0+self.DN_eff_orig+DN_gw_new)/(Neff0+self.DN_eff_orig+self.DN_gw[-1]) - 1) < tol:
                         self.cosmo_param['DN_eff'] = self.DN_eff_orig + DN_gw_new
                         converged = True
                         break
@@ -260,36 +269,47 @@ class LCDM_SG(LCDM_SN):
         return j
 
 
-    def construct_f(self):
+    def construct_f(self, freq_res=1.0):
         """
         Construct the array of sampled frequencies to calculate tensor transfer functions,
         chosen empirically -- more points around transition!
+
+        ``freq_res`` scales the density of the sampled frequency grid
+        (0.25 .. 8.0; 1.0 reproduces the original grid).  It is an
+        audit-only knob used to measure the frequency-grid error of the
+        Delta N_eff integral; both the LSODA and the fast path consume it.
         """
+        r = float(freq_res)
+        if not 0.25 <= r <= 8.0:
+            raise ValueError('freq_res must be in [0.25, 8.0], got %r' % freq_res)
         fmax = self.f_hor[0]; fmin = min(self.f_hor); fcmb = math.log10(f_piv)
         if self.derived_param['nt']>0:            # Only count modes whose superhorizon power is less than unity
             fmax = min(fmax, (-math.log10(self.derived_param['A_t']))/self.derived_param['nt']+math.log10(f_piv))
             
-        f = fmax+np.zeros(1); f = cat((f, f[-1]-np.arange(1,25)*1e-3), axis=None); f = cat((f, f[-1]-np.arange(1,14)*2e-3), axis=None)
-        f = cat((f, f[-1]+5e-2-np.logspace(-1.28,-1, num=17)), axis=None); f = cat((f, f[-1]+1e-1-np.logspace(-1,0, num=38)[1:]), axis=None)
-        f = cat((f, f[-1]-np.arange(1,11)*.2), axis=None)
+        f = fmax+np.zeros(1)
+        f = cat((f, f[-1]-np.linspace(1,24,int(24*r))*1e-3/r), axis=None)
+        f = cat((f, f[-1]-np.linspace(1,13,int(13*r))*2e-3/r), axis=None)
+        f = cat((f, f[-1]+5e-2-np.logspace(-1.28,-1, num=max(2,int(17*r)))), axis=None)
+        f = cat((f, f[-1]+1e-1-np.logspace(-1,0, num=max(2,int(38*r)))[1:]), axis=None)
+        f = cat((f, f[-1]-np.linspace(1,10,int(10*r))*.2/r), axis=None)
         
         if fmax >= self.f_re: 
             f = f[np.logical_or(f>=self.f_re+.2, f>=fmax)]; f = f[f>=fmax-.4]
-            f = cat((f, np.arange(f[-1]-.5, self.f_re+1.5, -.5)), axis=None)          # before T_re, during reheating
-            f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1)), axis=None);          # approaching f_re
-            f = cat((f, np.arange(f[-1]-.05, self.f_re+.4, -.05)), axis=None)
-            f = cat((f, np.arange(f[-1]-.01, self.f_re-.22, -.01)), axis=None);        # through f_re
-            f = cat((f, np.arange(f[-1]-.022, self.f_re-.5, -.02)), axis=None)
-            f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05)), axis=None);         # away from f_re
-            f = cat((f, np.arange(f[-1]-.2, self.f_re-3, -.2)), axis=None)
+            f = cat((f, np.arange(f[-1]-.5, self.f_re+1.5, -.5/r)), axis=None)          # before T_re, during reheating
+            f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1/r)), axis=None);          # approaching f_re
+            f = cat((f, np.arange(f[-1]-.05, self.f_re+.4, -.05/r)), axis=None)
+            f = cat((f, np.arange(f[-1]-.01, self.f_re-.22, -.01/r)), axis=None);        # through f_re
+            f = cat((f, np.arange(f[-1]-.022, self.f_re-.5, -.02/r)), axis=None)
+            f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05/r)), axis=None);         # away from f_re
+            f = cat((f, np.arange(f[-1]-.2, self.f_re-3, -.2/r)), axis=None)
 
         if self.rhostiff_re > self.rhorad_re:
-            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1)), axis=None)     # after T_re, before T_sr 
-            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2)), axis=None)   # through T_sr (the ankle)    
+            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1/r)), axis=None)     # after T_re, before T_sr 
+            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2/r)), axis=None)   # through T_sr (the ankle)    
 
         f = f[f>=fcmb]
-        f = cat((f, np.arange(f[-1]-1, fcmb, -1)), axis=None)                         # RD, before z_eq
-        f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2)), axis=None); f = f[f>=fmin]     # through z_eq to the present
+        f = cat((f, np.arange(f[-1]-1, fcmb, -1/r)), axis=None)                         # RD, before z_eq
+        f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2/r)), axis=None); f = f[f>=fmin]     # through z_eq to the present
         
         self.f = f
 
