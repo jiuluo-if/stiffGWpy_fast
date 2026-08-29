@@ -68,6 +68,9 @@ RSS 增量 −24.7 MB（95.8→71.1 MB），数值逐位不变、测试全绿。
 - 参数空间扫描完成 **918/1030（91%）**：edge 余 32 点 + extreme 80 点未跑；extreme 角点
   失败率与最坏误差未知（阶段四输入）。
 - MCMC 对比为 **N=20 短链**：逐点 ΔlogL 与 failure rate 可信，posterior shift 不可信。
+- 工程化（2026-08-30）：`pip wheel` 构建 + 全新目录安装 + 导入/快速求解冒烟通过
+  （wheel 33 文件 4.0 MB，无已删除的陈旧数据）；CI 门禁（pytest + ruff + wheel build）
+  已加入 `.github/workflows/ci.yml`。
 
 ### 续跑命令（补齐后刷新本页）
 
