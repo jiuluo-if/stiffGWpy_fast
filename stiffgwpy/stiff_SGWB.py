@@ -11,6 +11,8 @@ from .global_param import *
 from .functions import int_FD, solve_SGWB
 from .LCDM_stiff_Neff import LCDM_SN
 
+MAX_ITER = 60            # cap on the outer bisection loop
+
 
 class LCDM_SG(LCDM_SN):
     """
@@ -113,63 +115,96 @@ class LCDM_SG(LCDM_SN):
         self.Opgw = [single_sol[4] for single_sol in res]  # dOmega_pGW / dlnf
         
              
-    def SGWB_iter(self):
+    def SGWB_iter(self, engine='lsoda', fallback=False):
         """
-        Main numerical scheme: 
-        Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB, 
+        Main numerical scheme:
+        Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
         for which the extra radiation due to the SGWB is mimicked by a constant Delta N_eff.
-        
+
+        ``engine`` selects the solver: 'lsoda' (default; the original adaptive
+        LSODA path) or 'fast' (the experimental approximate fast solver in
+        ``stiffgwpy.fast_sgwb``).  When ``engine='fast'`` and the fast solver
+        fails (returns None or raises), ``fallback=True`` automatically reruns
+        the LSODA path.  On success the model object is returned.
+
         """
+        if engine == 'fast':
+            from . import fast_sgwb
+            try:
+                result = fast_sgwb.SGWB_iter_fast(self)
+            except Exception:
+                if not fallback:
+                    raise
+                self.reset()
+                result = self.SGWB_iter(engine='lsoda')
+            if result is None and fallback:
+                self.reset()
+                result = self.SGWB_iter(engine='lsoda')
+            return result
+        if engine != 'lsoda':
+            raise ValueError("engine must be 'lsoda' or 'fast', got %r" % (engine,))
+
         # Exclude some corner cases
         if self.cosmo_param['r'] <= 0:
             print('Must set a positive r to calculate the inflationary GWs!')
-            return
-            
+            return None
+
         if self.derived_param['N_inf'] is None:
             print('High-end cutoff frequency has not been set properly.')
-            return
+            return None
 
         # Main calculation starts here!
         if self.SGWB_converge == False:
             Omega_nu = Omega_nh2/self.derived_param['h']**2
-        
+
             self.DN_eff_orig = self.cosmo_param['DN_eff']
             # Record the original input value of DN_eff before entering the iterations
-            
+
             self.DN_gw = [0]; DN_gw_new = 0
             DN_gw_min = 0; DN_gw_max = 10
-            while True:    # main iteration
-                self.gen_expansion()
-                self.construct_f()
-                self.run_SGWB()
-                self.int_SGWB()
+            converged = False
+            try:
+                for _iter in range(MAX_ITER):    # main iteration
+                    self.gen_expansion()
+                    self.construct_f()
+                    self.run_SGWB()
+                    self.int_SGWB()
 
-                DN_gw_new = Neff0 * self.g2[-1] / Omega_nu
-                   
-                #print(DN_gw_new, self.DN_gw[-1], DN_gw_min, DN_gw_max, 7/8*(4/11)**(4/3)*self.cosmo_param['DN_eff']/self.derived_param['rho_re'])
-                if self.DN_eff_orig + DN_gw_new > 5:     
-                    #print('Total N_eff too large! Shorten the stiff era or lower the blue tilt n_t.')
+                    DN_gw_new = Neff0 * self.g2[-1] / Omega_nu
+
+                    if not math.isfinite(DN_gw_new):
+                        print('SGWB_iter: non-finite DN_gw_new, aborting.')
+                        break
+                    if self.DN_eff_orig + DN_gw_new > 5:
+                        #print('Total N_eff too large! Shorten the stiff era or lower the blue tilt n_t.')
+                        break
+
+                    # Break when the required convergence precision is met!
+                    if abs((Neff0+self.DN_eff_orig+DN_gw_new)/(Neff0+self.DN_eff_orig+self.DN_gw[-1]) - 1) < 1e-4:
+                        self.cosmo_param['DN_eff'] = self.DN_eff_orig + DN_gw_new
+                        converged = True
+                        break
+
+                    # Use bisection method to find the next point to shoot
+                    if DN_gw_new > self.DN_gw[-1] > DN_gw_min and DN_gw_max >= self.DN_gw[-1]:
+                        DN_gw_min = self.DN_gw[-1]
+                    elif DN_gw_new < self.DN_gw[-1] < DN_gw_max and DN_gw_min <= self.DN_gw[-1]:
+                        DN_gw_max = self.DN_gw[-1]
+
+                    if 0 < DN_gw_min <= DN_gw_max < 10:
+                        DN_gw_new = (DN_gw_min + DN_gw_max)/2
+
+                    self.cosmo_param['DN_eff'] = self.DN_eff_orig + DN_gw_new
+                    self.DN_gw.append(DN_gw_new)
+                else:
+                    print('SGWB_iter: did not converge within %d iterations.' % MAX_ITER)
+            finally:
+                if not converged:
                     self.cosmo_param['DN_eff'] = self.DN_eff_orig
                     self.DN_eff_orig = None
-                    return
-
-                # Break when the required convergence precision is met!
-                if abs((Neff0+self.DN_eff_orig+DN_gw_new)/(Neff0+self.DN_eff_orig+self.DN_gw[-1]) - 1) < 1e-4:
-                    self.cosmo_param['DN_eff'] = self.DN_eff_orig + DN_gw_new
-                    break
-
-                # Use bisection method to find the next point to shoot
-                if DN_gw_new > self.DN_gw[-1] > DN_gw_min and DN_gw_max >= self.DN_gw[-1]:
-                    DN_gw_min = self.DN_gw[-1]
-                elif DN_gw_new < self.DN_gw[-1] < DN_gw_max and DN_gw_min <= self.DN_gw[-1]:
-                    DN_gw_max = self.DN_gw[-1]
-
-                if 0 < DN_gw_min <= DN_gw_max < 10:
-                    DN_gw_new = (DN_gw_min + DN_gw_max)/2
-                        
-                self.cosmo_param['DN_eff'] = self.DN_eff_orig + DN_gw_new
-                self.DN_gw.append(DN_gw_new)
             # End of main iteration
+            if not converged:
+                return None
 
             
             #print(DN_gw_new, self.DN_gw, self.cosmo_param['DN_eff']) 
@@ -201,6 +236,8 @@ class LCDM_SG(LCDM_SN):
             self.kappa_r = self.cosmo_param['DN_eff']* 7/8*(4/11)**(4/3) * z_ratio**4
             # Using the final asymptotic value of Delta N_eff, since for all reasonable T_re (>~ 1 MeV), 
             # Delta N_eff,GW has already (or almost) reached its asymptotic value by T_i=27e9 K for AlterBBN.
+
+        return self if self.SGWB_converge else None
 
     # End of SGWB_iter
     

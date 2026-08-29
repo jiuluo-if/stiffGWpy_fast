@@ -1,42 +1,53 @@
 # -*- coding: utf-8 -*-
 """
-fast_sgwb.py -- drop-in accelerated replacement for LCDM_SG.SGWB_iter().
+fast_sgwb.py -- experimental approximate fast solver for LCDM_SG.SGWB_iter().
 
 The original SGWB_iter() solves the tensor-mode Boltzmann equations with
 scipy.integrate.solve_ivp (LSODA) per frequency channel and integrates the
 resulting spectrum with scipy.integrate.simpson, repeating both inside a
-bisection loop on Delta N_eff.  A typical call chain takes ~20 s.
+bisection loop on Delta N_eff.  A typical call chain takes ~7-24 s.
 
-This module reproduces the exact same numerical scheme (same expansion
-history, same ODE, same Simpson quadrature, same bisection loop, same
-convergence criterion) but executes it with:
+This module implements a *different, approximate* numerical scheme for the
+same physical equations and the same outer bisection target:
 
   * numba JIT kernels for the expansion history and the ODE stepping,
-  * a fixed-step analytic-rotation (Magnus-type) solver on the same N grid,
-  * an analytic tail beyond z = 5 where the mode is deeply sub-horizon,
+  * a fixed-step analytic-rotation (Magnus-type) solver (h = 0.01) instead of
+    the adaptive LSODA solver,
+  * an analytic deep-subhorizon tail beyond z = 5 (the original code uses
+    such a tail as well),
   * a precomputed Simpson weight matrix instead of per-column scipy calls,
   * PCHIP refinement of the bolometric integrals onto the fine N grid,
   * OpenMP parallelism over frequency channels.
 
+Because the ODE solver and the time-column integration scheme differ from the
+original, results are close but NOT bit-identical to SGWB_iter(): on the
+12-case spot validation the final Delta N_eff agrees to ~5e-5-8e-5 relative,
+the spectrum agrees to ~4e-4 dex (linear-Omega relative difference
+~8e-4-1e-3), while the full DN_gw(N) evolution can differ by up to ~1%-37%
+in the early near-zero region.  Treat it as an experimental fast solver;
+keep the LSODA path for cross-checks and fallback.
+
 Usage
 -----
-    from stiff_SGWB import LCDM_SG
-    import fast_sgwb
+    from stiffgwpy import LCDM_SG
+    from stiffgwpy import fast_sgwb
 
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-    fast_sgwb.SGWB_iter_fast(m)   # fills the same attributes as SGWB_iter()
+    fast_sgwb.SGWB_iter_fast(m)     # fills the fast-path output attributes
+    # or, to keep a single API with automatic LSODA fallback:
+    m.SGWB_iter(engine='fast', fallback=True)
 
 Optional tuning (read before importing this module):
-    os.environ['FAST_THREADS']  = '32'   # OpenMP threads (default 32)
-    os.environ['FAST_COL_STEP'] = '4'    # output-column stride (default 4)
+    os.environ['FAST_THREADS']  = '8'    # OpenMP threads; default = numba default
+    os.environ['FAST_COL_STEP'] = '4'    # output-column stride (1-8, default 4)
 
 The module is deterministic; its numba kernels are cache-compiled on first use.
 """
-import os as _os
 import math
+import os as _os
 
 import numpy as np
-from numba import njit, prange, set_num_threads
+from numba import get_num_threads, njit, prange, set_num_threads
 from scipy import interpolate
 
 import global_param as gp
@@ -44,28 +55,92 @@ from functions import int_FD
 
 __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step']
 
-_THREADS = int(_os.environ.get('FAST_THREADS', '32'))
-set_num_threads(_THREADS)
-_COL_STEP = int(_os.environ.get('FAST_COL_STEP', '4'))
+# Default OpenMP threads: numba's own default (no more than the detected core
+# count).  We do NOT force a fixed number at import time -- that previously
+# raised ValueError on machines with fewer than 32 cores -- and only call
+# set_num_threads() when FAST_THREADS is explicitly set.
+_MAX_THREADS = get_num_threads()
+_THREADS = _MAX_THREADS
+_fast_threads_env = _os.environ.get('FAST_THREADS')
+if _fast_threads_env is not None:
+    _THREADS = int(_fast_threads_env)
+    if not 1 <= _THREADS <= _MAX_THREADS:
+        raise ValueError('FAST_THREADS must be an integer in [1, %d], got %r'
+                         % (_MAX_THREADS, _fast_threads_env))
+    set_num_threads(_THREADS)
+
+_COL_STEP = 4
+_fast_col_step_env = _os.environ.get('FAST_COL_STEP')
+if _fast_col_step_env is not None:
+    _COL_STEP = int(_fast_col_step_env)
+    if not 1 <= _COL_STEP <= 8:
+        raise ValueError('FAST_COL_STEP must be an integer in [1, 8], got %r'
+                         % _fast_col_step_env)
+
+MAX_ITER = 60            # cap on the outer bisection loop
 ln10 = math.log(10.0)
 
 
 def set_threads(n):
-    """Set the number of OpenMP threads used by the frequency-parallel kernel."""
+    """Set the number of OpenMP threads used by the frequency-parallel kernel.
+
+    `n` must be an integer in [1, numba's detected thread count].
+    """
     global _THREADS
-    _THREADS = int(n)
+    n = int(n)
+    if not 1 <= n <= _MAX_THREADS:
+        raise ValueError('thread count must be an integer in [1, %d], got %d'
+                         % (_MAX_THREADS, n))
+    _THREADS = n
     set_num_threads(_THREADS)
 
 
 def set_col_step(n):
     """Set the output-column stride (1..8); 4 is a good speed/accuracy trade-off."""
     global _COL_STEP
-    _COL_STEP = int(n)
+    n = int(n)
+    if not 1 <= n <= 8:
+        raise ValueError('column stride must be an integer in [1, 8], got %d' % n)
+    _COL_STEP = n
 
 
 # ================= module-level tables (once) =================
-_FD_NU = np.logspace(-1.0, 2.0, 3001)
-_FD_VALS = np.array([int_FD(u) for u in _FD_NU])
+def _build_fd_table():
+    """Fermi-Dirac rho/p table, loaded from a cached copy when available.
+
+    A precomputed table is shipped inside the package (``fd_table.npz``); when
+    that is missing (e.g. an editable install without data files) we fall back
+    to the user cache and finally to recomputation, saving the result to the
+    user cache so the next import is cheap.
+    """
+    table_file = None
+    pkg_file = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'fd_table.npz')
+    if _os.path.exists(pkg_file):
+        table_file = pkg_file
+    else:
+        cache_file = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy', 'fd_table.npz')
+        if _os.path.exists(cache_file):
+            table_file = cache_file
+    if table_file is not None:
+        try:
+            data = np.load(table_file)
+            nu, vals = data['nu'], data['vals']
+            if nu.shape == (3001,) and vals.shape == (3001, 2):
+                return nu, vals
+        except (IOError, ValueError, KeyError):
+            pass
+    nu = np.logspace(-1.0, 2.0, 3001)
+    vals = np.array([int_FD(u) for u in nu])
+    try:
+        cache_dir = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy')
+        _os.makedirs(cache_dir, exist_ok=True)
+        np.savez(_os.path.join(cache_dir, 'fd_table.npz'), nu=nu, vals=vals)
+    except OSError:
+        pass
+    return nu, vals
+
+
+_FD_NU, _FD_VALS = _build_fd_table()
 _FD_RHO = interpolate.CubicSpline(np.log10(_FD_NU), _FD_VALS[:, 0])
 _FD_P = interpolate.CubicSpline(np.log10(_FD_NU), _FD_VALS[:, 1])
 _FD_X0 = float(np.log10(_FD_NU[0]))
@@ -291,7 +366,7 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
         xh, yh = 0.0, math.exp(z0)*S2inv[j0]
         k = j0
         zz = z0 + Phi_grid[k] - Phi0
-        lxh = 0.0; lyh = yh; last_z = zz; last_k = j0
+        lxh = 0.0; lyh = yh; last_z = zz
         if k % col_step == 0:
             if assemble:
                 slot = k//col_step
@@ -312,7 +387,7 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                 elif k == nv-1:
                     assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
                 if zz < 5.0:
-                    lxh = xh; lyh = yh; last_z = zz; last_k = k
+                    lxh = xh; lyh = yh; last_z = zz
             if zz < 5.0:
                 kend = nv-1
             else:
@@ -439,6 +514,15 @@ def pchip_fine(idx_out, y, nv, out):
 
 # ================= full fast SGWB_iter =================
 def SGWB_iter_fast(m):
+    """Accelerated (approximate) self-consistent SGWB iteration.
+
+    Solves the same physics as ``LCDM_SG.SGWB_iter()`` with a fixed-step
+    approximate solver.  On success fills the fast-path output attributes and
+    returns the model; on failure restores ``m.cosmo_param['DN_eff']`` and
+    ``m.DN_eff_orig`` and returns ``None``.  Stale per-channel full-evolution
+    attributes from a previous original ``SGWB_iter()`` run are removed so they
+    cannot be confused with fast-path results.
+    """
     if m.cosmo_param['r'] <= 0:
         print('Must set a positive r to calculate the inflationary GWs!')
         return None
@@ -447,7 +531,19 @@ def SGWB_iter_fast(m):
         return None
     if getattr(m, 'SGWB_converge', False):
         return m
-    Omega_nu = gp.Omega_nh2/m.derived_param['h']**2
+
+    # The fast path does not produce the per-channel full-evolution outputs of
+    # the original run_SGWB(); drop any leftovers from an earlier LSODA run so
+    # stale data cannot be mixed with a fast-path result.
+    for stale in ('N_hc', 'Th', 'Oj', 'Ogw', 'Opgw'):
+        if hasattr(m, stale):
+            try:
+                delattr(m, stale)
+            except AttributeError:
+                pass
+
+    col_step = _COL_STEP        # snapshot; a mid-run set_col_step() must not
+    Omega_nu = gp.Omega_nh2/m.derived_param['h']**2    # change array layouts
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
@@ -457,55 +553,65 @@ def SGWB_iter_fast(m):
     ev_minus = P_t = fp_freq = Wmat = W_last = None
     Ogw = Oj = Opgw = None
     first = True
-    while True:
-        gen_fast(m)
-        m.construct_f()
-        freqs_new = m.f.astype(np.float64)
-        nv_new = len(m.Nv)
-        # Reuse grid-dependent quantities across bisection iterations when the
-        # frequency/e-fold grids are unchanged (they drift only at the 1e-13
-        # level); this is bit-safe at the 1e-9 tolerance and saves ~10%.
-        grid_same = (not first and nv_new == nv and len(freqs_new) == Nf
-                     and np.max(np.abs(freqs_new - freqs)) < 1e-9
-                     and np.max(np.abs(m.Nv - Nv)) < 1e-9)
-        if not grid_same:
-            Nf = len(freqs_new); nv = nv_new
-            freqs = freqs_new
-            Nv = m.Nv.astype(np.float64)
-            ev_minus = np.exp(-Nv)
-            idx_out = np.unique(np.append(np.arange(0, nv, _COL_STEP), nv-1))
-            n_coarse = len(idx_out)
-            P_t = m.derived_param['A_t']*np.power((10**freqs)/gp.f_piv, m.derived_param['nt'])
-            fp_freq = np.power(10.0, freqs)
-            Xf = np.flip(freqs); hf = np.diff(Xf)
-            Wmat = np.zeros((Nf, Nf))
-            build_Wmat(Nf, Xf, hf, Wmat)
-            Wmat = np.ascontiguousarray(Wmat)
-            W_last = Wmat[Nf-1].copy()
-            Ogw = Oj = Opgw = None
-        first = False
-        Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(m, Nv, freqs, h)
-        if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
-            Ogw = np.empty((Nf, n_coarse)); Oj = np.empty((Nf, n_coarse)); Opgw = np.empty((Nf, n_coarse))
-        solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                     1, n_coarse, _COL_STEP, Ogw, Oj, Opgw)
-        g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
-        DN_gw_new = gp.Neff0 * g2_last / Omega_nu
-        if DN_eff_orig + DN_gw_new > 5:
+    try:
+        for _iter in range(MAX_ITER):
+            gen_fast(m)
+            m.construct_f()
+            freqs_new = m.f.astype(np.float64)
+            nv_new = len(m.Nv)
+            # Reuse grid-dependent quantities across bisection iterations when
+            # the frequency/e-fold grids are unchanged (they drift only at the
+            # 1e-13 level); this is bit-safe at the 1e-9 tolerance and saves ~10%.
+            grid_same = (not first and nv_new == nv and len(freqs_new) == Nf
+                         and np.max(np.abs(freqs_new - freqs)) < 1e-9
+                         and np.max(np.abs(m.Nv - Nv)) < 1e-9)
+            if not grid_same:
+                Nf = len(freqs_new); nv = nv_new
+                freqs = freqs_new
+                Nv = m.Nv.astype(np.float64)
+                ev_minus = np.exp(-Nv)
+                idx_out = np.unique(np.append(np.arange(0, nv, col_step), nv-1))
+                n_coarse = len(idx_out)
+                P_t = m.derived_param['A_t']*np.power((10**freqs)/gp.f_piv, m.derived_param['nt'])
+                fp_freq = np.power(10.0, freqs)
+                Xf = np.flip(freqs); hf = np.diff(Xf)
+                Wmat = np.zeros((Nf, Nf))
+                build_Wmat(Nf, Xf, hf, Wmat)
+                Wmat = np.ascontiguousarray(Wmat)
+                W_last = Wmat[Nf-1].copy()
+                Ogw = Oj = Opgw = None
+            first = False
+            Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(m, Nv, freqs, h)
+            if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
+                Ogw = np.empty((Nf, n_coarse)); Oj = np.empty((Nf, n_coarse)); Opgw = np.empty((Nf, n_coarse))
+            solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
+                         1, n_coarse, col_step, Ogw, Oj, Opgw)
+            g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
+            DN_gw_new = gp.Neff0 * g2_last / Omega_nu
+            if not math.isfinite(DN_gw_new):
+                print('SGWB_iter_fast: non-finite DN_gw_new, aborting.')
+                break
+            if DN_eff_orig + DN_gw_new > 5:
+                print('SGWB_iter_fast: total N_eff too large, aborting.')
+                break
+            if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < 1e-4:
+                converged = True
+                break
+            if DN_gw_new > DN_gw_list[-1] > DN_gw_min and DN_gw_max >= DN_gw_list[-1]:
+                DN_gw_min = DN_gw_list[-1]
+            elif DN_gw_new < DN_gw_list[-1] < DN_gw_max and DN_gw_min <= DN_gw_list[-1]:
+                DN_gw_max = DN_gw_list[-1]
+            if 0 < DN_gw_min <= DN_gw_max < 10:
+                DN_gw_new = (DN_gw_min + DN_gw_max)/2
+            m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
+            DN_gw_list.append(DN_gw_new)
+        else:
+            print('SGWB_iter_fast: did not converge within %d iterations.' % MAX_ITER)
+    finally:
+        if not converged:
             m.cosmo_param['DN_eff'] = DN_eff_orig
             m.DN_eff_orig = None
-            return None
-        if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < 1e-4:
-            converged = True
-            break
-        if DN_gw_new > DN_gw_list[-1] > DN_gw_min and DN_gw_max >= DN_gw_list[-1]:
-            DN_gw_min = DN_gw_list[-1]
-        elif DN_gw_new < DN_gw_list[-1] < DN_gw_max and DN_gw_min <= DN_gw_list[-1]:
-            DN_gw_max = DN_gw_list[-1]
-        if 0 < DN_gw_min <= DN_gw_max < 10:
-            DN_gw_new = (DN_gw_min + DN_gw_max)/2
-        m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
-        DN_gw_list.append(DN_gw_new)
+            m.SGWB_converge = False
     if not converged:
         return None
     m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new

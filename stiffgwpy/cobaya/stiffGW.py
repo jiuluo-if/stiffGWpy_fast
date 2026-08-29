@@ -5,12 +5,14 @@ from multiprocessing import freeze_support
 import numpy as np
 import astropy.units as u
 from scipy import interpolate
-import sys, os, math
+import math
 from mpi4py import MPI
 #from pathlib import Path
 
 class stiffGW(Theory):
     speed = 0.1
+    engine: str = 'lsoda'    # solver engine: 'lsoda' (default) or 'fast';
+                             # can be overridden per-run through the theory yaml
     params = {'Delta_Neff_GW': {'derived': True, 'latex': '\Delta N_\mathrm{eff,GW}'},
               'Delta_Neff_total': {'derived': True, 'latex': '\Delta N_\mathrm{eff,total}'},
               'log10hc_prim_fyr': {'derived': True, 'latex': '\log_{10}h_{c,\mathrm{prim}}'},
@@ -74,10 +76,10 @@ class stiffGW(Theory):
             if key in params_values_dict:
                 self.stiffGW_model.cosmo_param[key] = params_values_dict[key]
         
-        # Compute!
-        sys.path.append(os.path.abspath('../'))
-        if __name__ == 'stiffGW':
-            self.stiffGW_model.SGWB_iter()
+        # Compute!  The engine is configurable through the theory yaml
+        # ('lsoda' by default; 'fast' opts into the experimental accelerated
+        # solver with automatic LSODA fallback).
+        self.stiffGW_model.SGWB_iter(engine=self.engine, fallback=True)
 
         
         if self.stiffGW_model.SGWB_converge:

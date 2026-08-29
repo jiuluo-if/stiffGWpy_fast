@@ -4,6 +4,29 @@
 **对象：** https://github.com/bohuarolandli/stiffGWpy（本地克隆 `F:\codex\stiffGWpy`）
 **目标：** 通过非 AI 方法，把运行速度提升 1000 倍（争取 10000 倍），精度保持不变。
 
+> ## 修订声明（2026-08-29 独立审计后）
+>
+> 本文档是旧版性能报告，下列结论经独立审计后**不再成立或需要限定口径**，正文表格保留仅为可追溯：
+>
+> 1. **加速比口径**：正文“12/12 ≥1894×、中位 3580×、几何平均 2958×”来自另一轮未交付的
+>    “10 次取最小值”测试，无法由仓库内脚本/JSON 复现。交付的
+>    `docs/benchmark_results_12cases.jsonl` 重算为 min **463.95×** / median **1991.81×** /
+>    max **4257.54×** / 几何平均 **2257.03×**（case L：9.293 s / 20.031 ms = 463.95×）。
+>    独立中位数口径复测为 **906–3099×**（跨 case 中位 2162×）；“接近 10000×”不成立。
+> 2. **误差口径**：正文对 log10Ω 本身算“相对误差”（2.2e-5–3.6e-5），该指标依赖对数零点与
+>    单位，不是物理相对误差。换回线性 Ω 后为 **8.15e-4–9.64e-4（0.0815%–0.0964%）**，
+>    “Ω 谱 2.8–4.5 倍精度余量”的推导随之失效。
+> 3. **1e-4 只是外层 ΔN_eff 自洽迭代的停止条件**，不是 ODE 误差界或所有物理量的统一精度标准。
+> 4. **完整演化曲线并非无损**：入库 JSON 中完整 `DN_gw` 有限点最大相对差为 **1.1%–37.4%**
+>    （集中在早期近零区）；`g2` 最大相对差约 0.37，且 fast 用 `g2` 构造正式输出 `DN_gw`。
+> 5. **首次冷启动**：全新 Numba 缓存下模块导入 1.3–1.6 s、首次求解/JIT 5.4–5.7 s，
+>    端到端 **6.8–7.2 s**，首次端到端仅约 **3.2–3.4×**。千倍级只在同进程充分预热后的重复调用成立。
+> 6. **非 drop-in**：fast 不产出 `N_hc/Th/Oj/Ogw/Opgw`，返回语义不同，且未接入 Cobaya。
+>
+> 当前项目定位为 **experimental approximate fast solver**；数值组件（膨胀历史、Simpson、
+> PCHIP、线程一致性）已由 `tests/` 回归覆盖，全参数精度认证、收敛研究与 Cobaya posterior
+> 对比仍为待办。正文第 5 节的“无损/完全一致/无精度损失”表述请以上述修订为准。
+
 ## 摘要
 
 | 指标 | 结果 |
@@ -123,10 +146,16 @@ from stiff_SGWB import LCDM_SG
 import fast_sgwb
 
 model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-fast_sgwb.SGWB_iter_fast(model)     # 输出属性与 model.SGWB_iter() 完全一致
+model.SGWB_iter(engine='fast', fallback=True)   # 统一入口；失败自动回退 LSODA
+# 或直接调用：fast_sgwb.SGWB_iter_fast(model)
 ```
 
-可调参数（import 前设置环境变量）：`FAST_THREADS`（默认 32）、`FAST_COL_STEP`（默认 4）。
+注意：fast 路径填充核心输出（`log10OmegaGW/DN_gw/kappa_r/hubble/g2/w2`），但**不产出**
+原版的 `N_hc/Th/Oj/Ogw/Opgw` 属性，不能视为 drop-in 替换。
+
+可调参数（import 前设置环境变量）：`FAST_THREADS`（默认 = numba 检测到的可用线程数，
+不再强设 32）、`FAST_COL_STEP`（默认 4，合法范围 1–8）；运行期可用
+`fast_sgwb.set_threads(n)` / `fast_sgwb.set_col_step(n)`（带范围校验）。
 
 ## 7. 复现与交付物
 
