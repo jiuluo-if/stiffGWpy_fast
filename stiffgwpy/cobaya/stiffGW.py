@@ -30,7 +30,10 @@ class stiffGW(Theory):
 
     def initialize(self):
         """called from __init__ to initialize"""
-        from ..stiff_SGWB import LCDM_SG
+        try:
+            from ..stiff_SGWB import LCDM_SG
+        except ImportError:  # imported as a top-level module by cobaya
+            from stiffgwpy.stiff_SGWB import LCDM_SG
         self.stiffGW_model = LCDM_SG()
         #self.comm = MPI.COMM_WORLD
         #self.rank = self.comm.Get_rank()
@@ -100,7 +103,10 @@ class stiffGW(Theory):
         if self.freq_res and self.freq_res != 1.0:
             sgwb_kwargs['freq_res'] = self.freq_res
         if self.engine == 'fast' and self.fast_threads:
-            from .. import fast_sgwb
+            try:
+                from .. import fast_sgwb
+            except ImportError:
+                from stiffgwpy import fast_sgwb
             fast_sgwb.set_threads(self.fast_threads)
         self.stiffGW_model.SGWB_iter(engine=self.engine,
                                      fallback=self.fallback, **sgwb_kwargs)

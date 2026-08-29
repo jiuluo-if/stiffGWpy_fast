@@ -43,6 +43,17 @@ def test_split_sample_columns():
                         'minuslogpost': 4, 'weight': 5}
 
 
+def test_split_sample_columns_chi2_and_param_indices():
+    cols = ['weight', 'minuslogpost', 'log10r', 'h', 'minuslogprior',
+            'minuslogprior__ext', 'chi2', 'chi2__likA', 'chi2__likB']
+    params, specials = MC.split_sample_columns(cols)
+    assert params == ['log10r', 'h']
+    assert specials == {'weight': 0, 'minuslogpost': 1,
+                        'minuslogprior': 4, 'minuslogprior__ext': 5,
+                        'chi2': 6, 'chi2__likA': 7, 'chi2__likB': 8}
+    assert MC.param_indices(cols) == {'log10r': 2, 'h': 3}
+
+
 def test_chain_stats_matches_numpy():
     sample, sample_params = _chain()
     st = MC.chain_stats(sample, sample_params)
@@ -97,5 +108,5 @@ def test_build_info_overrides_engine(tmp_path):
     assert info['theory']['stiffGW']['engine'] == 'fast'
     assert info['theory']['stiffGW']['accuracy_mode'] == 'production'
     assert info['theory']['stiffGW']['fast_threads'] == 8
-    assert info['samplers']['mcmc']['max_samples'] == 500
-    assert info['samplers']['mcmc']['seed'] == 42
+    assert info['sampler']['mcmc']['max_samples'] == 500
+    assert info['sampler']['mcmc']['seed'] == 42

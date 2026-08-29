@@ -46,11 +46,19 @@ def split_sample_columns(sample_params):
     specials = {}
     params = []
     for i, name in enumerate(sample_params):
-        if name == 'weight' or name.startswith('minuslog'):
+        if (name == 'weight' or name.startswith('minuslog') or
+                name == 'chi2' or name.startswith('chi2__')):
             specials[name] = i
         else:
             params.append(name)
     return params, specials
+
+
+def param_indices(sample_params):
+    """Map each parameter name to its column index in the full chain array."""
+    params, _ = split_sample_columns(sample_params)
+    pset = set(params)
+    return {name: i for i, name in enumerate(sample_params) if name in pset}
 
 
 def _finite_rows(mlpost):
@@ -144,6 +152,28 @@ def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed):
     with open(yaml_path, encoding='utf-8') as f:
         info = yaml.safe_load(f)
     info = copy.deepcopy(info)
+    info.setdefault('likelihood', {})
+    info.pop('debug', None)
+    info.pop('output', None)
+    info.pop('resume', None)
+    base = os.path.dirname(os.path.abspath(yaml_path))
+    for section in ('theory', 'likelihood'):
+        for cfg in (info.get(section) or {}).values():
+            if not isinstance(cfg, dict):
+                continue
+            pp = cfg.get('python_path')
+            if isinstance(pp, str):
+                cfg['python_path'] = (pp if os.path.isabs(pp)
+                                      else os.path.join(base, pp))
+            elif isinstance(pp, list):
+                cfg['python_path'] = [p if os.path.isabs(p)
+                                      else os.path.join(base, p) for p in pp]
+            if section == 'likelihood':
+                for key in cfg:
+                    if key == 'path' or key == 'CC_file' or key.endswith('_file'):
+                        val = cfg[key]
+                        if isinstance(val, str) and not os.path.isabs(val):
+                            cfg[key] = os.path.join(base, val)
     th = info.setdefault('theory', {}).setdefault('stiffGW', {})
     th['engine'] = engine
     th['fallback'] = True
@@ -152,7 +182,9 @@ def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed):
             th['accuracy_mode'] = accuracy_mode
         if fast_threads:
             th['fast_threads'] = int(fast_threads)
-    info['samplers'] = {'mcmc': {'max_samples': int(samples), 'seed': int(seed)}}
+    mcmc = info.setdefault('sampler', {}).setdefault('mcmc', {})
+    mcmc['max_samples'] = int(samples)
+    mcmc['seed'] = int(seed)
     return info
 
 
@@ -161,33 +193,39 @@ def run_chain(info, label, out_dir, samples):
     from cobaya.run import run
     chain_out = os.path.join(out_dir, 'chains', label)
     t0 = time.time()
-    _, products = run(info, output=chain_out)
+    _, sampler = run(info, output=chain_out, force=True, resume=False)
+    products = sampler.products()
     wall_s = time.time() - t0
     return {
         'label': label,
         'wall_s': wall_s,
         'per_sample_s': wall_s / max(samples, 1),
-        'sample': np.asarray(products['sample']),
-        'sample_params': list(products['sample_params']),
+        'sample': products['sample'].to_numpy(),
+        'sample_params': list(products['sample'].columns),
     }
 
 
-def _point_dict(model, row, names):
-    d = dict(zip(names, row))
-    params = getattr(getattr(model, 'parameterization', None), 'params', None)
-    if isinstance(params, dict):
-        d = {k: v for k, v in d.items() if k in params}
+def _point_dict(model, row, indices):
+    """Parameter dict for one chain row: only sampled params the model can set."""
+    d = {name: row[i] for name, i in indices.items()}
+    try:
+        sampled = set(model.parameterization.sampled_params())
+    except Exception:
+        sampled = None
+    if sampled:
+        d = {k: v for k, v in d.items() if k in sampled}
     return d
 
 
-def eval_minuslogpost_batch(model, rows, names):
+def eval_minuslogpost_batch(model, rows, sample_params):
     """Minuslogpost of every point (inf on failure); also returns fail count."""
+    indices = param_indices(sample_params)
     out = np.empty(len(rows))
     fails = 0
     for i, row in enumerate(rows):
         try:
-            p = _point_dict(model, row, names)
-            ml, _ = model.loglikes(p)  # (minuslogpost, {logname: minusloglike})
+            p = _point_dict(model, row, indices)
+            ml = -float(model.logpost(p))  # minuslogpost (inf when the point fails)
             if not np.isfinite(ml):
                 fails += 1
                 ml = float('inf')
@@ -198,7 +236,8 @@ def eval_minuslogpost_batch(model, rows, names):
     return out, fails
 
 
-def compare_engines_at_points(yaml_path, fast_mode, fast_threads, points, names,
+def compare_engines_at_points(yaml_path, fast_mode, fast_threads, points,
+                              sample_params,
                               n_eval, engine_labels=('lsoda', 'fast')):
     """Evaluate both engines at thinned points; returns (delta, meta)."""
     from cobaya.model import get_model
@@ -210,7 +249,7 @@ def compare_engines_at_points(yaml_path, fast_mode, fast_threads, points, names,
                           samples=1, seed=1)
         model = get_model(info)
         t0 = time.time()
-        ml, fails = eval_minuslogpost_batch(model, rows, names)
+        ml, fails = eval_minuslogpost_batch(model, rows, sample_params)
         results[engine] = {'minuslogpost': ml, 'failures': fails,
                            'wall_s': time.time() - t0}
     ml_l = results['lsoda']['minuslogpost']
@@ -250,7 +289,7 @@ def parse_args(argv=None):
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--yaml', default=os.path.join(
-        repo, 'stiffgwpy', 'cobaya', 'PTA_LVK_BBN.yaml'))
+        repo, 'stiffgwpy', 'cobaya', 'mcmc_compare.yaml'))
     p.add_argument('--out', default=os.path.join(repo, 'docs', 'mcmc'))
     p.add_argument('--samples', type=int, default=2000)
     p.add_argument('--seed', type=int, default=20260830)
@@ -300,11 +339,11 @@ def main(argv=None):
     # Per-point Delta logL on the fast chain (or lsoda chain if available).
     ref_engine = 'lsoda' if 'lsoda' in engines else 'fast'
     points = engines[ref_engine]['sample']
-    names, _ = split_sample_columns(engines[ref_engine]['sample_params'])
     print('[mcmc_compare] evaluating both engines at %d thinned points '
           '(LSODA eval, may take a while)...' % args.n_eval)
     delta, eval_meta = compare_engines_at_points(
-        args.yaml, args.fast_mode, args.fast_threads, points, names,
+        args.yaml, args.fast_mode, args.fast_threads, points,
+        engines[ref_engine]['sample_params'],
         args.n_eval)
     dl = delta_logl_stats(delta)
 
