@@ -53,7 +53,7 @@ from scipy import interpolate
 import global_param as gp
 from functions import int_FD
 
-__all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step']
+__all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h', 'set_z_tail']
 
 # Default OpenMP threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -76,6 +76,26 @@ if _fast_col_step_env is not None:
     if not 1 <= _COL_STEP <= 8:
         raise ValueError('FAST_COL_STEP must be an integer in [1, 8], got %r'
                          % _fast_col_step_env)
+
+# Fixed step size / Nv grid spacing.  Both the expansion grid and the Magnus
+# step use this h; 0.01 is the default.  Tunable for convergence studies.
+_FAST_H = 0.01
+_fast_h_env = _os.environ.get('FAST_H')
+if _fast_h_env is not None:
+    _FAST_H = float(_fast_h_env)
+    if not 1e-4 <= _FAST_H <= 0.1:
+        raise ValueError('FAST_H must be in [1e-4, 0.1], got %r' % _fast_h_env)
+
+# Deep-subhorizon analytic-tail threshold (z = ln(k/aH) at which the numerical
+# stepping hands over to the analytic tail).  The original LSODA path uses the
+# same z_tail value when configured (see functions.solve_SGWB).
+_Z_TAIL = 5.0
+_fast_ztail_env = _os.environ.get('FAST_Z_TAIL')
+if _fast_ztail_env is not None:
+    _Z_TAIL = float(_fast_ztail_env)
+    if not 2.0 <= _Z_TAIL <= 15.0:
+        raise ValueError('FAST_Z_TAIL must be in [2.0, 15.0], got %r'
+                         % _fast_ztail_env)
 
 MAX_ITER = 60            # cap on the outer bisection loop
 ln10 = math.log(10.0)
@@ -102,6 +122,24 @@ def set_col_step(n):
     if not 1 <= n <= 8:
         raise ValueError('column stride must be an integer in [1, 8], got %d' % n)
     _COL_STEP = n
+
+
+def set_h(h):
+    """Set the fixed step size / expansion-grid spacing (1e-4 .. 0.1); 0.01 default."""
+    global _FAST_H
+    h = float(h)
+    if not 1e-4 <= h <= 0.1:
+        raise ValueError('step size must be in [1e-4, 0.1], got %r' % h)
+    _FAST_H = h
+
+
+def set_z_tail(z):
+    """Set the analytic-tail threshold z_tail (2.0 .. 15.0); 5.0 default."""
+    global _Z_TAIL
+    z = float(z)
+    if not 2.0 <= z <= 15.0:
+        raise ValueError('z_tail must be in [2.0, 15.0], got %r' % z)
+    _Z_TAIL = z
 
 
 # ================= module-level tables (once) =================
@@ -217,7 +255,7 @@ def gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
     for i in range(n):
         f_hor[i] = (f_hor[i] - f0)/ln10v
 
-def gen_fast(m):
+def gen_fast(m, h=0.01):
     d = m.derived_param
     p = m.cosmo_param
     Omh2 = d['Omega_mh2']; Osh2 = d['Omega_sh2']
@@ -225,9 +263,9 @@ def gen_fast(m):
     Otrh2 = gp.Omega_orh2 + Oerh2
     Otreh2 = gp.Omega_ph2*gp.rho_th[-1] + Oerh2
     OLh2 = d['h']**2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2*2/3 - gp.Omega_ph2 - Oerh2 - Osh2
-    len_inf = math.floor(d['N_inf']*100)+1
-    Nv = np.arange(0, len_inf)*0.01
-    index_re = len_inf-1 - math.floor(d['N_re']*100)
+    len_inf = math.floor(d['N_inf']/h)+1
+    Nv = np.arange(0, len_inf)*h
+    index_re = len_inf-1 - math.floor(d['N_re']/h)
     Sv = np.empty(len_inf); f_hor = np.empty(len_inf)
     Delta_f = math.log(2*math.pi/d['H_0'])
     gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
@@ -357,7 +395,7 @@ def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, f
 @njit(parallel=True, cache=True)
 def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                  j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                 assemble, n_coarse, col_step, Ogw, Oj, Opgw):
+                 assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw):
     nv = len(Nv)
     for m in prange(len(j0s)):
         j0 = j0s[m]; z0 = z0s[m]
@@ -374,9 +412,9 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                 assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
         elif k == nv-1:
             assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
-        if zz < 5.0:
-            while k < nv-1 and (z0 + Phi_grid[k] - Phi0) < 5.0:
-                xh, yh = scaled_step(xh, yh, z0 + Phi_mid[k] - Phi0, 0.01)
+        if zz < z_tail:
+            while k < nv-1 and (z0 + Phi_grid[k] - Phi0) < z_tail:
+                xh, yh = scaled_step(xh, yh, z0 + Phi_mid[k] - Phi0, h)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k % col_step == 0:
@@ -386,9 +424,9 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                         assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
                 elif k == nv-1:
                     assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
-                if zz < 5.0:
+                if zz < z_tail:
                     lxh = xh; lyh = yh; last_z = zz
-            if zz < 5.0:
+            if zz < z_tail:
                 kend = nv-1
             else:
                 kend = k - 1
@@ -513,7 +551,7 @@ def pchip_fine(idx_out, y, nv, out):
         out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
 
 # ================= full fast SGWB_iter =================
-def SGWB_iter_fast(m):
+def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
     Solves the same physics as ``LCDM_SG.SGWB_iter()`` with a fixed-step
@@ -521,7 +559,9 @@ def SGWB_iter_fast(m):
     returns the model; on failure restores ``m.cosmo_param['DN_eff']`` and
     ``m.DN_eff_orig`` and returns ``None``.  Stale per-channel full-evolution
     attributes from a previous original ``SGWB_iter()`` run are removed so they
-    cannot be confused with fast-path results.
+    cannot be confused with fast-path results.  ``tol`` is the outer Delta
+    N_eff self-consistency stopping criterion (default 1e-4) and ``freq_res``
+    scales the frequency-grid density (audit-only; 1.0 = default grid).
     """
     if m.cosmo_param['r'] <= 0:
         print('Must set a positive r to calculate the inflationary GWs!')
@@ -547,7 +587,10 @@ def SGWB_iter_fast(m):
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
-    h = 0.01
+    h = _FAST_H
+    z_tail = _Z_TAIL
+    if not 0.0 < tol < 1.0:
+        raise ValueError('outer tol must be in (0, 1), got %r' % tol)
     freqs = None; Nf = 0; nv = 0; Nv = None
     idx_out = None; n_coarse = 0
     ev_minus = P_t = fp_freq = Wmat = W_last = None
@@ -555,8 +598,8 @@ def SGWB_iter_fast(m):
     first = True
     try:
         for _iter in range(MAX_ITER):
-            gen_fast(m)
-            m.construct_f()
+            gen_fast(m, h)
+            m.construct_f(freq_res)
             freqs_new = m.f.astype(np.float64)
             nv_new = len(m.Nv)
             # Reuse grid-dependent quantities across bisection iterations when
@@ -583,9 +626,15 @@ def SGWB_iter_fast(m):
             first = False
             Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(m, Nv, freqs, h)
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
-                Ogw = np.empty((Nf, n_coarse)); Oj = np.empty((Nf, n_coarse)); Opgw = np.empty((Nf, n_coarse))
+                # Zero-fill, not np.empty: solve_kernel starts each channel at
+                # j0 = horizon-crossing + 3 decades, so the early columns
+                # (N < N_j0) are never written.  Those cells are read by
+                # int_SGWB_W and physically equal 0 (modes still far outside
+                # the horizon); np.empty made the result depend on stale
+                # heap contents and could occasionally leak NaN into g2/w2.
+                Ogw = np.zeros((Nf, n_coarse)); Oj = np.zeros((Nf, n_coarse)); Opgw = np.zeros((Nf, n_coarse))
             solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                         1, n_coarse, col_step, Ogw, Oj, Opgw)
+                         1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw)
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
@@ -594,7 +643,7 @@ def SGWB_iter_fast(m):
             if DN_eff_orig + DN_gw_new > 5:
                 print('SGWB_iter_fast: total N_eff too large, aborting.')
                 break
-            if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < 1e-4:
+            if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < tol:
                 converged = True
                 break
             if DN_gw_new > DN_gw_list[-1] > DN_gw_min and DN_gw_max >= DN_gw_list[-1]:
