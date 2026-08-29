@@ -23,24 +23,25 @@ MC = _load_mcmc_compare()
 
 def _chain(n=1000, seed=0):
     rng = np.random.default_rng(seed)
-    sample = np.column_stack([rng.normal(0.0, 1.0, n),
-                              rng.normal(5.0, 2.0, n),
-                              rng.random(n),                 # minuslogprior
-                              rng.random(n) + 1.0,           # minusloglike
+    sample = np.column_stack([np.ones(n),                    # weight
                               rng.random(n) + 2.0,           # minuslogpost
-                              np.ones(n)])                   # weight
-    sample_params = ['r', 'n_t', 'minuslogprior', 'minusloglike',
-                     'minuslogpost', 'weight']
-    sample[0] = np.inf                                    # one failed sample
+                              rng.normal(0.0, 1.0, n),       # r
+                              rng.normal(5.0, 2.0, n),       # n_t
+                              rng.random(n),                 # minuslogprior
+                              rng.random(n) + 1.0])          # minusloglike
+    sample_params = ['weight', 'minuslogpost', 'r', 'n_t',
+                     'minuslogprior', 'minusloglike']
+    sample[0, 1] = np.inf                                # one failed sample
     return sample, sample_params
 
 
 def test_split_sample_columns():
     params, specials = MC.split_sample_columns(
-        ['r', 'n_t', 'minuslogprior', 'minusloglike', 'minuslogpost', 'weight'])
+        ['weight', 'minuslogpost', 'r', 'n_t',
+         'minuslogprior', 'minusloglike'])
     assert params == ['r', 'n_t']
-    assert specials == {'minuslogprior': 2, 'minusloglike': 3,
-                        'minuslogpost': 4, 'weight': 5}
+    assert specials == {'weight': 0, 'minuslogpost': 1,
+                        'minuslogprior': 4, 'minusloglike': 5}
 
 
 def test_split_sample_columns_chi2_and_param_indices():
@@ -60,20 +61,22 @@ def test_chain_stats_matches_numpy():
     assert st['n_total'] == 1000
     assert st['n_finite'] == 999
     assert st['failure_rate'] == pytest.approx(1.0 - 999 / 1000)
-    ok = np.isfinite(sample[:, 4])
-    assert st['stats']['r']['mean'] == np.mean(sample[ok, 0])
-    assert st['stats']['n_t']['std'] == np.std(sample[ok, 1])
-    i_map = int(np.argmin(sample[ok, 4]))
-    assert st['map']['r'] == sample[ok, 0][i_map]
-    assert st['map']['minuslogpost'] == sample[ok, 4][i_map]
+    ok = np.isfinite(sample[:, 1])
+    assert st['stats']['r']['mean'] == np.mean(sample[ok, 2])
+    assert st['stats']['n_t']['std'] == np.std(sample[ok, 3])
+    i_map = int(np.argmin(sample[ok, 1]))
+    assert st['map']['r'] == sample[ok, 2][i_map]
+    assert st['map']['n_t'] == sample[ok, 3][i_map]
+    assert st['map']['minuslogpost'] == sample[ok, 1][i_map]
 
 
 def test_posterior_shift():
     sample, sample_params = _chain()
     ls = MC.chain_stats(sample, sample_params)
     fa_sample = sample.copy()
-    std_r = np.std(sample[np.isfinite(sample[:, 4]), 0])
-    fa_sample[:, 0] += 0.5 * std_r
+    ok = np.isfinite(sample[:, 1])
+    std_r = np.std(sample[ok, 2])
+    fa_sample[ok, 2] += 0.5 * std_r
     fa = MC.chain_stats(fa_sample, sample_params)
     shift = MC.posterior_shift(ls, fa)
     assert np.isclose(shift['r'], 0.5, atol=1e-9)

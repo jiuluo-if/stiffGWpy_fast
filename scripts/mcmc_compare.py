@@ -73,13 +73,14 @@ def chain_stats(sample, sample_params):
     samples with non-finite minuslogpost (cobaya rejects those points).
     """
     params, specials = split_sample_columns(sample_params)
+    indices = param_indices(sample_params)
     mlpost = sample[:, specials['minuslogpost']].astype(float)
     ok = _finite_rows(mlpost)
     total = int(sample.shape[0])
     failure_rate = float(1.0 - ok.sum() / total) if total else 0.0
     stats = {}
-    for j, name in enumerate(params):
-        col = sample[ok, j].astype(float)
+    for name in params:
+        col = sample[ok, indices[name]].astype(float)
         if col.size:
             stats[name] = {
                 'mean': float(col.mean()),
@@ -94,8 +95,8 @@ def chain_stats(sample, sample_params):
     if ok.any():
         i_map = int(np.nanargmin(mlpost[ok]))
         row = sample[ok, :][i_map]
-        for j, name in enumerate(params):
-            map_row[name] = float(row[j])
+        for name in params:
+            map_row[name] = float(row[indices[name]])
         map_row['minuslogpost'] = float(mlpost[ok][i_map])
     return {'params': params, 'n_finite': int(ok.sum()), 'n_total': total,
             'failure_rate': failure_rate, 'stats': stats, 'map': map_row}

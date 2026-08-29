@@ -76,22 +76,23 @@ python scripts/validate_modes.py --thread-scaling --out docs/modes/thread_scalin
 
 ## 6. NOT CERTIFIED 清单
 
-- **Cobaya MCMC 后验对比未完成**（LSODA chain vs fast chain、ΔlogL、后验偏移）；adapter
-  （engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy_mode）已实现并通过单测。
-  对比工具 `scripts/mcmc_compare.py` 已就绪（同一 yaml + 同一 seed 跑两条链，输出 posterior
-  mean/std/CI/MAP、逐点 ΔlogL 分布、后验偏移、failure rate 与 MCMC 墙钟加速；`--skip-lsoda-chain`
-  可跳过昂贵的 LSODA 链、仅做逐点 LSODA 对照），但真实采样需在装有 cobaya 的环境运行：
+- **Cobaya MCMC 短链对比已跑通，收敛后验对比未完成**；adapter（engine/fallback/threads/
+  h/col_step/z_tail/freq_res/accuracy_mode）已实现并通过单测。工具
+  `scripts/mcmc_compare.py`（同一 yaml + 同一 seed 跑两条链，输出 posterior mean/std/CI/MAP、
+  逐点 ΔlogL 分布、后验偏移、failure rate 与 MCMC 墙钟加速；`--skip-lsoda-chain` 可跳过
+  昂贵的 LSODA 链）实测（N=20 短链，production）：MCMC 墙钟加速 ~585×、逐点评估加速
+  ~1061×、两引擎 failure rate 0、逐点 max|ΔlogL| = 0.09。完整结果与局限见
+  `docs/audit_mcmc.md`。真实收敛链采样：
 
   ```bash
   python scripts/mcmc_compare.py --samples 2000 --fast-mode production --n-eval 50
   ```
 
   注意逐点 LSODA 评估很贵（本机数十秒/点），`--n-eval` 从小到大试；内存受限时设
-  `SGWB_POOL_SIZE=2`。该工具已按 cobaya 3.6 接口做端到端冒烟验证：`run()` 返回
-  `(info, sampler)`，样本经 `sampler.products()['sample'].to_numpy()` 读取；逐点
-  minuslogpost 用 `model.logpost()` 计算（`loglikes()` 返回的是各 likelihood 分量
-  的 logL 数组，不是 minuslogpost）。冒烟记录：fast 链 3 样本无失败、逐点
-  LSODA 对照 ΔlogL=1.9、单点评估加速约 1.5e3×（production，本机）。
+  `SGWB_POOL_SIZE=2`。工具按 cobaya 3.6 接口适配：`run()` 返回 `(info, sampler)`，
+  样本经 `sampler.products()['sample'].to_numpy()` 读取；逐点 minuslogpost 用
+  `model.logpost()` 计算（`loglikes()` 返回各 likelihood 分量 logL 数组，不是
+  minuslogpost）。N=20 的后验偏移数字不作为 bias 结论（未收敛，见 audit_mcmc）。
 - **1000 点参数空间扫描未完成**（`docs/audit_phase3.md`：本机提交内存墙）；本轮仅补了
   三模式 × 三点的 LSODA 对照。
 - 因此三档模式是**经验推荐配置**，不是全面认证；跨参数空间的最坏情况误差仍以
