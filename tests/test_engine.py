@@ -39,7 +39,7 @@ def test_engine_fast_fallback_reruns_lsoda_on_none(monkeypatch):
             return self
 
     f = Fake()
-    monkeypatch.setattr(FS, 'SGWB_iter_fast', lambda m: None)
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', lambda m, **kw: None)
     result = wrapper(f, engine='fast', fallback=True)
     assert result is f
     assert calls == ['reset', 'lsoda']
@@ -55,7 +55,7 @@ def test_engine_fast_no_fallback_returns_none(monkeypatch):
             return self
 
     f = Fake()
-    monkeypatch.setattr(FS, 'SGWB_iter_fast', lambda m: None)
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', lambda m, **kw: None)
     result = wrapper(f, engine='fast', fallback=False)
     assert result is None
     assert calls == []
@@ -75,7 +75,7 @@ def test_engine_fast_fallback_on_exception(monkeypatch):
 
     f = Fake()
 
-    def boom(m):
+    def boom(m, **kw):
         raise RuntimeError('jit failure')
 
     monkeypatch.setattr(FS, 'SGWB_iter_fast', boom)
