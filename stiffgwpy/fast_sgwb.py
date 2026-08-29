@@ -63,21 +63,6 @@ def set_col_step(n):
     _COL_STEP = int(n)
 
 
-import sys, time, math
-import numpy as np
-from numba import njit, prange, set_num_threads
-from scipy import interpolate
-
-import global_param as gp
-from stiff_SGWB import LCDM_SG
-from functions import int_FD
-
-import os as _os
-_THREADS = int(_os.environ.get('FAST_THREADS', '32'))
-set_num_threads(_THREADS)
-_COL_STEP = int(_os.environ.get('FAST_COL_STEP', '4'))
-ln10 = math.log(10.0)
-
 # ================= module-level tables (once) =================
 _FD_NU = np.logspace(-1.0, 2.0, 3001)
 _FD_VALS = np.array([int_FD(u) for u in _FD_NU])
