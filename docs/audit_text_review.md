@@ -25,7 +25,7 @@
 | “import 时强改宿主线程数” | 已修复 | 默认 = numba 默认；仅显式 `FAST_THREADS` 时设置并校验 |
 | “无随包 FD 表” | 已修复 | `stiffgwpy/fd_table.npz` 随包发布 |
 | “报告数字无 commit/环境链路” | 已修复 | bench/validate 等脚本记录 env + git commit 元数据 |
-| “报告 10 次取最小值 vs 脚本 3 次中位数” | 已声明 | `docs/benchmark_report.md` 顶部修订声明承认口径差异；`bench_fast.py` 记录 min/median/p95 |
+| “报告 10 次取最小值 vs 脚本 3 次中位数” | 已声明 | 旧版 `benchmark_report.md` 已删除；口径差异记录于 README Performance 章节；`bench_fast.py` 记录 min/median/p95 |
 | “报告无正式测试/打包/CI” | 已修复 | `.github/workflows/ci.yml`：pytest + ruff + wheel build |
 
 ## 2. 仍成立（非纰漏，属诚实声明）
