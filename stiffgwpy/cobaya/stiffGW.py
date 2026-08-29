@@ -5,10 +5,6 @@ import numpy as np
 from cobaya.theory import Theory
 from scipy import interpolate
 
-try:
-    from mpi4py import MPI
-except ImportError:  # pragma: no cover - mpi4py is an optional dependency
-    MPI = None
 
 class stiffGW(Theory):
     speed = 0.1
@@ -35,8 +31,6 @@ class stiffGW(Theory):
         except ImportError:  # imported as a top-level module by cobaya
             from stiffgwpy.stiff_SGWB import LCDM_SG
         self.stiffGW_model = LCDM_SG()
-        #self.comm = MPI.COMM_WORLD
-        #self.rank = self.comm.Get_rank()
         self.log.info("Initialized!")
 
     def initialize_with_provider(self, provider):
@@ -60,11 +54,6 @@ class stiffGW(Theory):
                 'A_s': None, 'r': None, 'n_t': None, 'cr': None,
                 'T_re': None, 'DN_re': None, 'kappa10': None}
 
-#    def must_provide(self, **requirements):
-#        if 'A' in requirements:
-#            # e.g. calculating A requires B computed using same kmax (default 10)
-#            return {'B': {'kmax': requirements['A'].get('kmax', 10)}}
-
     def get_can_provide(self):
         return ['f', 'omGW_stiff', 'hubble', 'kappa_s', 'kappa_r',]
 
@@ -81,9 +70,6 @@ class stiffGW(Theory):
 
         # Set parameters
         self.stiffGW_model.reset()
-        #args = {p: v for p, v in params_values_dict.items()}
-        #self.log.debug("Setting parameters: %r", args)
-        #print(self.rank, ": ", params_values_dict)
         for key in self.stiffGW_model.cosmo_param:
             if key in params_values_dict:
                 self.stiffGW_model.cosmo_param[key] = params_values_dict[key]
@@ -137,9 +123,4 @@ class stiffGW(Theory):
                                     'f_end': np.power(10., self.stiffGW_model.f[0]),                # Hz, UV cutoff frequency
                                    }
         else:
-            #self.log.debug("SGWB calculation not converged, mostly due to total N_eff too large. Assigning 0 likelihood and going on.")
             return False
-
-
-#    def get_A(self, normalization=1):
-#        return self.current_state['A'] * normalization
