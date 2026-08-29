@@ -97,9 +97,10 @@ Known limits (please do not overclaim):
 - Full `DN_gw` evolution curves differ by up to **1%–37%** at the largest relative difference,
   concentrated in the early near-zero region.
 - Convergence studies (`h`, `COL_STEP`, `z_tail`, `freq_res`) are complete (see
-  `docs/audit_phase2.md`); the 1000-point parameter-space sweep tooling is in place
-  (`scripts/param_sweep.py`) but the full run is **NOT CERTIFIED** (blocked by a host
-  commit-memory wall; see `docs/audit_phase3.md`).
+  `docs/audit_phase2.md`); the 1000-point parameter-space sweep is **91% complete**
+  (918/1030 points, stopped on request before the extreme-corner set): `DN_gw_last_rel`
+  max 2.0e-4 (inside the `validate_fast` 1e-3 gate), dex tail p95 7.7e-2, and 221/918
+  points failed in the `cr=0` high-`T_re` region (see `docs/audit_phase3.md`).
 - Cobaya **posterior** comparisons (LSODA chain vs fast chain, `Delta logL`, posterior shift) are
   still **open**; the adapter (engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy mode)
   is implemented and unit-tested.
