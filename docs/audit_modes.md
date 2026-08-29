@@ -93,10 +93,12 @@ python scripts/validate_modes.py --thread-scaling --out docs/modes/thread_scalin
   样本经 `sampler.products()['sample'].to_numpy()` 读取；逐点 minuslogpost 用
   `model.logpost()` 计算（`loglikes()` 返回各 likelihood 分量 logL 数组，不是
   minuslogpost）。N=20 的后验偏移数字不作为 bias 结论（未收敛，见 audit_mcmc）。
-- **1000 点参数空间扫描未完成**（`docs/audit_phase3.md`：本机提交内存墙）；本轮仅补了
-  三模式 × 三点的 LSODA 对照。
+- **1000 点参数空间扫描完成 918/1030（91%，用户要求停止长跑）**（`docs/audit_phase3.md`）；
+  DN_gw 终值相对差全样本 max 2.0e-4（在 `validate_fast` 的 1e-3 门禁内），频谱 dex 尾部
+  p95 7.7e-2；extreme 80 点未跑，严格 ≥1000 点认证未完成。本轮另补了三模式 × 三点的
+  LSODA 对照。
 - 因此三档模式是**经验推荐配置**，不是全面认证；跨参数空间的最坏情况误差仍以
-  阶段三全量扫描为准（未完成）。
+  阶段三现有 918 点扫描为准（91%）。
 
 ## 7. 使用建议
 
