@@ -46,7 +46,7 @@ CASES = [
 ]
 
 # Tolerance gates.  Measured values on the 12-case grid are roughly one order
-# of magnitude below these limits (see docs/audit_summary.md).
+# of magnitude below these limits (see docs/audit_final_report.md).
 GATES = {
     'status_match': True,
     'DN_gw_last_rel': 1e-3,

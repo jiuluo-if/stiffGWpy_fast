@@ -14,7 +14,7 @@ are skipped unless ``--force``).
 
 The ``reference`` preset runs LSODA at h=0.00125, which costs tens of minutes
 per point; its same-grid engine difference is already measured in the phase-2
-convergence study (docs/audit_phase2.md, h=0.00125 row), so by default the
+convergence study (docs/audit_final_report.md, h=0.00125 row), so by default the
 reference mode is validated with the fast engine only (status ``fast_only``)
 unless ``--include-reference-lsoda`` is given.
 
