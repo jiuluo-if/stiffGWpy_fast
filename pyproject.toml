@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-cobaya = ["cobaya", "mpi4py"]
+cobaya = ["cobaya>=3.6,<3.7", "mpi4py"]
 dev = ["matplotlib", "pytest", "pytest-cov", "build", "ruff"]
 
 [project.urls]
@@ -58,6 +58,7 @@ pythonpath = ["."]
 addopts = "-m 'not slow'"
 markers = [
     "slow: long-running tests that run the full LSODA solve",
+    "cobaya: integration tests requiring the Cobaya runtime",
 ]
 
 [tool.ruff]

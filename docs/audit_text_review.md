@@ -12,7 +12,7 @@
 | “fast 仓库比上游只多一个提交，物理/Cobaya 代码未修改” | 过时 | `fast/main=444988d` 已领先 18 提交，新增 Cobaya 适配器、测试、CI、打包 |
 | “脚本把 `F:\codex\stiffGWpy` 硬编码进 sys.path[0]”（bench_fast.py:17 / validate_fast.py:3） | 已修复 | 脚本改用仓库相对路径 |
 | “Cobaya 仍调用原求解器 / 未接入” | 已修复 | `stiffgwpy/cobaya/stiffGW.py`：engine=lsoda\|fast、fallback、全部旋钮、MPI-safe；`tests/test_mcmc_compare.py` |
-| “pytest 0 tests / coverage 0%” | 已修复 | `tests/` 6 个文件共 38 项测试全绿 |
+| “pytest 0 tests / coverage 0%” | 已修复 | `tests/` integration + unit tests; current suite 46 passed |
 | “无 pyproject.toml / pip install . 失败” | 已修复 | `pyproject.toml` + wheel 构建冒烟通过 |
 | “README 只列 NumPy/SciPy” | 已修复 | README 列出 numpy/scipy/astropy/pyyaml/numba |
 | “Ruff 133 项，fast_sgwb.py 26 项含重复导入/重复定义” | 过时 | 维护集 ruff 全绿；`fast_sgwb.py` 的 F/I 类问题为 0（仅 E701/E702 风格债，CI 有意排除并注释说明） |
@@ -30,8 +30,8 @@
 
 ## 2. 仍成立（非纰漏，属诚实声明）
 
-- **全参数精度认证未完成**：`docs/audit_phase3.md` 标注 PARTIALLY CERTIFIED，扫描 918/1030（91%），
-  extreme 角点未跑；此为用户要求停止长跑所致，非能力缺失。
+- **全参数精度认证未完成**：`docs/audit_phase3.md` 已完成 1030/1030 点扫描（含
+  edge/extreme）；这是相对于 continuum/reference truth 的认证仍未完成，而非覆盖不足。
 - **posterior shift 无收敛链证据**：`docs/audit_mcmc.md` 明确 NOT CERTIFIED，仅 N=20 短链，
   max|ΔlogL|=0.09、failure rate=0；≥2000 样本收敛链待跑。
 - **fast 非 drop-in**：不产出 `N_hc/Th/Oj/Ogw/Opgw`，README 已如实说明。

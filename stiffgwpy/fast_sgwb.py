@@ -607,10 +607,15 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
     N_eff self-consistency stopping criterion (default 1e-4) and ``freq_res``
     scales the frequency-grid density (audit-only; 1.0 = default grid).
     """
+    # Machine-readable reason used by the engine wrapper to distinguish a
+    # deterministic physical rejection from a recoverable numerical failure.
+    m.fast_failure_reason = None
     if m.cosmo_param['r'] <= 0:
+        m.fast_failure_reason = 'invalid_r'
         print('Must set a positive r to calculate the inflationary GWs!')
         return None
     if m.derived_param['N_inf'] is None:
+        m.fast_failure_reason = 'invalid_cutoff'
         print('High-end cutoff frequency has not been set properly.')
         return None
     if getattr(m, 'SGWB_converge', False):
@@ -682,9 +687,11 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
+                m.fast_failure_reason = 'nonfinite'
                 print('SGWB_iter_fast: non-finite DN_gw_new, aborting.')
                 break
             if DN_eff_orig + DN_gw_new > 5:
+                m.fast_failure_reason = 'shared_Neff_guard'
                 print('SGWB_iter_fast: total N_eff too large, aborting.')
                 break
             if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < tol:
@@ -699,6 +706,7 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
             m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
             DN_gw_list.append(DN_gw_new)
         else:
+            m.fast_failure_reason = 'max_iter'
             print('SGWB_iter_fast: did not converge within %d iterations.' % MAX_ITER)
     finally:
         if not converged:
@@ -706,6 +714,8 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
             m.DN_eff_orig = None
             m.SGWB_converge = False
     if not converged:
+        if m.fast_failure_reason is None:
+            m.fast_failure_reason = 'failed'
         return None
     m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
     m.DN_eff_orig = DN_eff_orig

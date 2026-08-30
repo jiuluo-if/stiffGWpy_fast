@@ -7,6 +7,7 @@ and produces::
 
     docs/paramsweep/summary.json          totals + error distribution stats
     docs/paramsweep/worst_cases.json      worst-20 points (by DN_gw and dex)
+    docs/paramsweep/failure_map.json      structured failure classifications
     docs/paramsweep/error_distribution.png
     docs/paramsweep/parameter_error_map/  scatter of error vs each parameter
 
@@ -94,10 +95,42 @@ def main(argv=None):
     for r in recs:
         status_counts[r.get('status')] = status_counts.get(r.get('status'), 0) + 1
 
+    # Structured failure map alongside the plots.  A fast rejection is only
+    # labeled a shared guard failure when the independent LSODA result is
+    # finite and beyond the physical N_eff guard; otherwise it remains an
+    # explicitly unresolved numerical failure.
+    failure_rows = []
+    failure_classes = {}
+    for r in recs:
+        status = r.get('status')
+        if status == 'ok':
+            continue
+        if status == 'fast_failed':
+            dn = r.get('DN_eff_lsoda')
+            cls = ('shared_Neff_guard' if dn is not None and np.isfinite(dn)
+                   and dn > 5 else 'fast_failure_unresolved')
+        elif status == 'lsoda_failed':
+            cls = 'lsoda_failure'
+        else:
+            cls = 'both_failed'
+        failure_classes[cls] = failure_classes.get(cls, 0) + 1
+        failure_rows.append({
+            'id': r.get('id'), 'method': r.get('method'), 'status': status,
+            'classification': cls, 'params': r.get('params'),
+            'DN_eff_lsoda': r.get('DN_eff_lsoda'),
+            'fast_error': r.get('fast_error'),
+            'lsoda_error': r.get('lsoda_error'),
+        })
+    with open(os.path.join(args.out, 'failure_map.json'), 'w', encoding='utf-8') as fh:
+        json.dump({'n_total': len(recs), 'n_failures': len(failure_rows),
+                   'class_counts': failure_classes, 'rows': failure_rows},
+                  fh, ensure_ascii=False, indent=1)
+
     summary = {
         'n_points': len(recs),
         'n_ok': len(ok),
         'status_counts': status_counts,
+        'failure_classes': failure_classes,
         'DN_gw_last_rel': stats(dn_rel),
         'dex_max': stats(dex),
         'lin_max': stats(lin),
@@ -153,7 +186,12 @@ def main(argv=None):
         ax.set_title(label)
         ax.legend()
     fig.tight_layout()
-    fig.savefig(os.path.join(args.out, 'error_distribution.png'), dpi=140)
+    # Matplotlib/Pillow on Windows can reject a relative path containing
+    # mixed separators (OSError 22). Resolve output targets once so the
+    # report generator is reproducible from any working directory.
+    fig.savefig(os.path.abspath(os.path.join(args.out,
+                                             'error_distribution.png')),
+                dpi=140)
     plt.close(fig)
 
     # ---- parameter error maps ----
@@ -170,7 +208,9 @@ def main(argv=None):
         if mode == 'log':
             ax.set_xscale('log')
         fig.tight_layout()
-        fig.savefig(os.path.join(map_dir, 'map_%s.png' % name), dpi=130)
+        fig.savefig(os.path.abspath(os.path.join(map_dir,
+                                                  'map_%s.png' % name)),
+                    dpi=130)
         plt.close(fig)
 
     print('summary: n=%d ok=%d status=%s' %

@@ -100,6 +100,31 @@ params:
     value: 'lambda log10kappa10: np.power(10.,log10kappa10)'
     latex: \kappa_{10}
 
+  # Explicitly repeat the nuisance priors from PTA/NANOGrav.yaml. Keeping
+  # them in the shared run-info makes an optional deterministic initial-point
+  # override safe: Cobaya will not replace the likelihood-owned definition
+  # with a ref-only (derived) parameter.
+  A_BBH:
+    prior:
+      min: -18
+      max: -11
+    ref:
+      dist: uniform
+      min: -16.5
+      max: -14.5
+    proposal: 0.01
+    latex: \log_{10}\,h_{c,\mathrm{BH}}
+  gamma_BBH:
+    prior:
+      min: 0
+      max: 7
+    ref:
+      dist: uniform
+      min: 4
+      max: 5
+    proposal: 0.01
+    latex: \gamma_\mathrm{BH}
+
 sampler:
   mcmc:
     proposal_scale: 2.4

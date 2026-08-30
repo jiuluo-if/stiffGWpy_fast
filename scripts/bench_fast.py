@@ -100,6 +100,17 @@ def run_case(name, kw, reps):
     rec['speedup_min'] = rec['t_orig'] / min(warm)
     rec['speedup_med'] = rec['t_orig'] / statistics.median(warm)
     rec['speedup_p95'] = rec['t_orig'] / p95(warm)
+    # Exercise the public safety wrapper once so benchmark records include
+    # numerical-failure observability (direct ``SGWB_iter_fast`` calls above
+    # intentionally measure the fast kernel without fallback overhead).
+    mf_fb = LCDM_SG(**kw)
+    mf_fb.SGWB_iter(engine='fast', fallback=True)
+    rec['fast_evals'] = int(getattr(mf_fb, 'fast_evals', 0))
+    rec['fast_failures'] = int(getattr(mf_fb, 'fast_failures', 0))
+    rec['fast_guard_rejections'] = int(getattr(mf_fb, 'fast_guard_rejections', 0))
+    rec['lsoda_fallbacks'] = int(getattr(mf_fb, 'lsoda_fallbacks', 0))
+    rec['fallback_fraction'] = (float(mf_fb.lsoda_fallbacks / mf_fb.fast_evals)
+                                if mf_fb.fast_evals else 0.0)
     rel_dn = 0.0
     if m.SGWB_converge and last.SGWB_converge and m.DN_gw[-1] != 0:
         rel_dn = abs(m.DN_gw[-1] - last.DN_gw[-1]) / abs(m.DN_gw[-1])
@@ -119,20 +130,20 @@ def main(argv=None):
     names = list(CASES)
     which = args.cases if args.cases is not None else list(range(len(names)))
     rows = []
-    print('%-34s %11s %12s %12s %9s %9s %9s %11s' %
+    print('%-34s %11s %12s %12s %9s %9s %9s %11s %9s' %
           ('case', 'orig (s)', 'cold (s)', 'min (ms)', 'med (ms)',
-           'spd min', 'spd med', 'p95 (ms)'))
-    print('-' * 118)
+           'spd min', 'spd med', 'p95 (ms)', 'fallback'))
+    print('-' * 130)
     for i in which:
         rec = run_case(names[i], CASES[names[i]], args.reps)
         rows.append(rec)
         if rec.get('skip'):
             print('%-34s %s' % (names[i], 'invalid combo'))
             continue
-        print('%-34s %11.3f %12.3f %12.3f %9.3f %8.0fx %8.0fx %11.3f' %
+        print('%-34s %11.3f %12.3f %12.3f %9.3f %8.0fx %8.0fx %11.3f %9.3g' %
               (names[i], rec['t_orig'], rec['t_fast_cold_s'], rec['t_fast_min_ms'],
                rec['t_fast_med_ms'], rec['speedup_min'], rec['speedup_med'],
-               rec['t_fast_p95_ms']))
+               rec['t_fast_p95_ms'], rec['fallback_fraction']))
     if args.json:
         payload = {'meta': env_meta(), 'reps': args.reps, 'results': rows}
         with open(args.json, 'w', encoding='utf-8') as fh:

@@ -7,6 +7,13 @@
 **命令：**
 `python scripts/mcmc_compare.py --samples 20 --n-eval 10 --fast-mode production --fast-threads 8 --seed 20260830`
 
+认证运行可额外传入 `--initial-point docs/mcmc/initial_point_baseline.json`。
+该选项只把相同的确定性 `ref` 起点注入两条链，不改变 prior；NANOGrav 的
+`A_BBH`/`gamma_BBH` prior 已在共享 run-info 中显式声明，避免 Cobaya 合并
+likelihood yaml 时将 ref-only 覆盖误判为 derived 参数。
+`docs/mcmc/initial_point_map.json` 另提供了来自既有短链的高-likelihood 起点，
+可用于减少 LSODA 链的初始 burn-in；它同样不构成 posterior 认证证据。
+
 ## 1. 真实 MCMC 对比结果
 
 两条链同一 seed、同一 run-info，仅 `engine` 不同（lsoda / fast），各 20 个接受样本。
@@ -21,6 +28,7 @@
 | **逐点评估加速** | **1061×** |
 | LSODA 链 failure rate | 0/20 |
 | fast 链 failure rate | 0/20 |
+| fast 链 fallback fraction | 0/12 fast evaluations（0.0） |
 | 逐点对照 n_both_ok | 10/10（两引擎均有限） |
 
 ## 2. 逐点 ΔlogL（同一批点，fast − lsoda，logL = −minuslogpost 方向）
@@ -62,6 +70,10 @@
 - 能证明引擎一致性的指标是 §2 的逐点 ΔlogL（max 0.09）以及 failure rate=0，
   而不是未收敛链的均值差。
 
+使用当前分析脚本重算的加权 ESS/协方差/分布距离见 `docs/mcmc/reanalysis.json`：两条 N=20
+链的最小 ESS 均为 1，KS/Wasserstein/KL 仅作诊断，认证门槛（每条链至少 2000
+effective samples）明确未达到。
+
 ## 4. 推荐参数（本机）
 
 - **MCMC 主运行：`accuracy_mode: production`，`fast_threads: 8`**（8 线程后无增益，
@@ -77,7 +89,8 @@
 - **NOT CERTIFIED：**
   1. “fast 不造成 posterior bias”尚无收敛链证据——需 `--samples >= 2000` 的
      收敛链（LSODA 链约 2–15 小时，本机）才能给出可信的 posterior mean/std/CI/MAP
-     偏移结论；
-  2. 1000 点全参数空间扫描仍未完成（`docs/audit_phase3.md`），worst-case 误差
-     与失败区域仍以阶段三全量扫描为准；
+  偏移结论；
+  2. 1030 点全参数空间扫描已经完成（`docs/audit_phase3.md`）；3 个 extreme 点初次
+     并发运行的 LSODA `MemoryError` 已在串行重试中成功复现为 `ok`，其余 worst-case
+     与失败区域已写入 `docs/paramsweep/`；
   3. 三档模式（ultra-fast/production/reference）仍是经验推荐，不是全面认证。
