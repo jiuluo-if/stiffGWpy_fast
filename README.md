@@ -84,6 +84,37 @@ from the new numerical scheme, not from raw thread count.
 Quick summary of the audit (MCMC speedup, max errors, max ΔlogL, failure
 rate, recommended modes): `docs/audit_summary.md`. Independent review of the
 external audit text vs. the current repo: `docs/audit_text_review.md`.
+Physics-first error budget and an independent high-accuracy reference pipeline:
+`docs/audit_error_budget.md`, `docs/audit_reference.md`,
+`stiffgwpy/reference.py`.
+Requirement-by-requirement acceptance audit (VERIFIED / PARTIALLY VERIFIED /
+NOT VERIFIED per the 14 audit sections): `docs/audit_acceptance.md`.
+
+The reference pipeline (`stiffgwpy/reference.py`) is a *different*, higher-order
+implementation of the same physics (continuous `sigma(N)` evaluator, so the
+instantaneous-reheating kink is not smeared by the fixed-step grid; high-order
+adaptive `DOP853` ODE; shape-preserving PCHIP + adaptive Gauss-Kronrod
+quadrature with error estimates). It is the new accuracy anchor, replacing
+LSODA as the "truth" target. On the default point it shows that fast *and*
+LSODA both underestimate the integrated `Delta N_eff` by ~1% because both share
+the fixed-step `sigma` grid through the reheating kink (fast −1.32%, LSODA
+−0.95% vs the continuous-`sigma` reference). It is intentionally slow
+(~30 s / point, 246 frequencies, no parallelism) and is meant for benchmark
+points, pathological points and convergence certification, not for MCMC.
+
+Curvature-adaptive frequency sampling (`stiffgwpy/freq_adaptive.py`) refines
+the `log10 f` grid where `Omega_GW` is locally curved (spectral knee, stiff
+peak, high-f cutoff) and stays sparse in smooth regions. On the default point
+it reproduces the fine-grid bolometric integral to ~0.13% (203 points) versus a
+~2% error for a 60-point coarse grid, at a similar point count to a 220-point
+uniform grid. The sub-horizon-today (very low f) region is physically
+ill-defined for a static `Omega_GW` (sign-changing `Ogw - Oj`) and carries no
+`Delta N_eff` weight, so the refinement targets the re-entered spectral region.
+`grid_independent_freqs` builds the frequency set from continuous background
+quantities (not the grid `f_hor`), so the sampling is invariant to the
+`sigma`-grid resolution (verified identical for the fixed-grid and variable-grid
+models), which is a prerequisite for transition-refined `sigma` without
+polluting `Delta N_eff`.
 
 Verified positive results (covered by regression tests in `tests/`):
 
@@ -159,17 +190,41 @@ fast_sgwb.set_z_tail(5.0)    # validated to 2.0..15.0
 
 All setters validate their input; invalid values raise `ValueError` instead of failing later.
 
-Three named accuracy modes (audit phase 8 recommendations; see `docs/audit_modes.md` for the
-validation evidence) can be selected through `SGWB_iter(accuracy_mode=...)` or the Cobaya theory yaml:
+Four named accuracy modes plus a backward-compatible `ultra-fast` alias (see
+`docs/audit_modes.md` for the validation evidence) can be selected through
+`SGWB_iter(accuracy_mode=...)` or the Cobaya theory yaml:
 
 | Mode | h | col_step | z_tail | freq_res | outer tol | target use |
 |---|---|---|---|---|---|---|
-| `reference` | 0.00125 | 1 | 10 | 2.0 | 1e-8 | closest to the LSODA reference (slowest) |
+| `debug` | 0.005 | 1 | 10 | 2.0 | 1e-8 | highest grid accuracy + diagnostics |
+| `reference` | 0.00125 | 1 | 10 | 2.0 | 1e-8 | tightest fixed-grid mode (slowest) |
 | `production` | 0.01 | 4 | 7 | 1.0 | 1e-7 | default for science runs |
-| `ultra-fast` | 0.01 | 8 | 5 | 1.0 | 1e-6 | fast exploratory scans |
+| `fast` | 0.02 | 8 | 5 | 1.0 | 1e-6 | fast exploratory scans |
+| `ultra-fast` | 0.02 | 8 | 5 | 1.0 | 1e-6 | alias of `fast` |
 
 `fast_sgwb.ACCURACY_MODES` holds the tables; `fast_sgwb.apply_accuracy_mode(name)` applies one and
 returns it. `fast_sgwb.get_settings()` snapshots the current module settings.
+`fast_sgwb.estimate_error(mode)` returns a calibrated error budget per mode
+(`DN_gw_error`, `spectrum_error`, `quadrature_error`, `integration_error`,
+`ODE_error`, `tail_error`, `model_bias_error`); the model exposes it as
+`m.error_estimates` after a fast solve with an `accuracy_mode`.
+
+`SGWB_iter(engine='fast', sigma_exact=True)` re-computes the expansion integrals
+(`F`/`Phi`/`S2`) from the continuous piecewise-exact `sigma` (reheating kink as
+an exact breakpoint) instead of the fixed-grid cubic spline. On the default
+point this halves the continuous-sigma-vs-grid `model_bias` (0.94% -> 0.42% at
+`z_tail=5`). The residual ~0.2-0.4% is the transition-region step-phase
+oscillation; the reference pipeline (`stiffgwpy/reference.py`) removes it with
+an adaptive high-order ODE, while the fixed-step fast kernel still needs
+transition-aware stepping (see `docs/audit_reference.md` §7).
+
+`SGWB_iter(engine='fast', accuracy_mode=..., auto_escalate=True,
+error_tol=...)` escalates to `reference` when the calibrated integration error
+exceeds `error_tol` (default 5e-3). Note the honest caveat: every fast-grid mode,
+*including* `reference`, carries a `model_bias` (the continuous-sigma vs
+fixed-grid-sigma bias) that a fast-vs-fast convergence check cannot see. Only
+the independent `stiffgwpy/reference.py` pipeline (continuous `sigma(N)`)
+removes it, at ~30 s/point, so it is not for MCMC.
 
 ## Cobaya
 
@@ -178,19 +233,28 @@ configurable through the theory yaml (all knobs validated at call time):
 
 ```yaml
 stiffGW:
-  engine: fast          # lsoda (default) | fast
+  engine: fast          # lsoda (default) | fast | reference (slow: continuous-sigma)
   fallback: True        # engine=fast: rerun with LSODA on failure
   fast_threads: 8       # OpenMP threads (0 = module default)
   h: 0.01               # step size (0 = module default)
   col_step: 4           # column stride (0 = module default)
   z_tail: 7.0           # analytic-tail threshold (0 = module default)
   freq_res: 1.0         # frequency-grid density
-  accuracy_mode: production   # reference | production | ultra-fast | '' (none)
+accuracy_mode: production   # reference | production | ultra-fast | '' (none)
+  auto_escalate: False       # escalate to 'reference' when integration error > error_tol
+  error_tol: 0.005           # reference-escalation tolerance (relative Delta N_eff)
+  reference_rtol: 1e-11      # engine='reference': continuous-sigma ODE tolerance
+  reference_z_tail: 5.0      # engine='reference': analytic-tail threshold
 ```
 
 MPI note: the fast engine spawns no subprocesses (Numba OpenMP threads only), so it is MPI-safe.
 The LSODA reference path spawns `SGWB_POOL_SIZE` worker processes per solve; under MPI (world
 size > 1) it automatically falls back to 1 worker per rank unless `SGWB_POOL_SIZE` is set.
+
+`engine: reference` also works directly through the native API (not only Cobaya):
+`m.SGWB_iter(engine='reference')` runs the independent continuous-sigma
+high-accuracy pipeline (`reference.py`) and exposes the same derived outputs; it is
+slow (~30-140 s/point) and is for certification/benchmark points, not MCMC.
 
 For observability, `theory.engine_stats` exposes cumulative `fast_evals`,
 `fast_failures`, deterministic `fast_guard_rejections`, `lsoda_fallbacks`, and
@@ -207,6 +271,7 @@ python scripts/bench_fast.py           # warm/cold wall-clock + speedup (12 case
 python scripts/validate_fast.py        # 12-case accuracy gates; exits non-zero on violation
 python scripts/validate_random.py      # stratified-random 11-parameter-space gates (P1 starting point)
 python scripts/check_random_freq.py    # random 10-frequency spot check + plot
+python scripts/benchmark_reference.py --point default --freq-full --with-lsoda  # physics-first benchmark vs the high-accuracy reference
 python -m pytest                       # regression tests (slow LSODA gates are deselected by default)
 python -m pytest -m slow                # opt in to the two long LSODA reference gates
 ```
@@ -230,6 +295,9 @@ All scripts record environment and git-commit metadata; `--json` emits machine-r
 stiffgwpy/            pip package (import stiffgwpy)
   stiff_SGWB.py       main model class LCDM_SG (engine='lsoda'|'fast')
   fast_sgwb.py        experimental accelerated solver
+  exact_background.py continuous-sigma expansion integrals (sigma_exact path)
+  reference.py        independent high-accuracy reference solver (physics-first anchor)
+  freq_adaptive.py    curvature-adaptive frequency sampling
   _metrics.py         physically meaningful comparison metrics
   functions.py        FD integrals, LSODA solver
   global_param.py     constants + thermal-history splines (th.dat)

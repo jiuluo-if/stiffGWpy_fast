@@ -83,6 +83,9 @@ class LCDM_SG(LCDM_SN):
         self.fast_failure_reason = None
         self.fast_guard_rejections = 0
         self.fast_physical_rejections = 0
+        self.reference_evals = 0
+        self.escalations = 0
+        self.escalated_from = None
         self.reset()    
       
         
@@ -160,7 +163,9 @@ class LCDM_SG(LCDM_SN):
              
     def SGWB_iter(self, engine='lsoda', fallback=False, tol=1e-4,
                   z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0,
-                  h=None, col_step=None, threads=None, accuracy_mode=None):
+                  h=None, col_step=None, threads=None, accuracy_mode=None,
+                  auto_escalate=False, error_tol=None, sigma_exact=False,
+                  escalate_to_reference=False):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -187,6 +192,15 @@ class LCDM_SG(LCDM_SN):
         On success the model object is returned.
 
         """
+        if engine == 'reference':
+            # Independent continuous-sigma high-accuracy pipeline (slow; for
+            # certification / benchmark points, not the MCMC thermal path).
+            from .reference import apply_reference_to_model
+            apply_reference_to_model(self, freq_res=freq_res, z_tail=z_tail,
+                                     rtol=rtol)
+            self.last_engine = 'reference'
+            self.reference_evals = getattr(self, 'reference_evals', 0) + 1
+            return self
         if engine == 'fast':
             from . import fast_sgwb
             self.fast_evals = getattr(self, 'fast_evals', 0) + 1
@@ -227,7 +241,8 @@ class LCDM_SG(LCDM_SN):
                     f_tol = tol
                     f_freq = freq_res
                 result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
-                                                  freq_res=f_freq)
+                                                  freq_res=f_freq,
+                                                  sigma_exact=sigma_exact)
             except Exception as exc:
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = repr(exc)
@@ -261,6 +276,33 @@ class LCDM_SG(LCDM_SN):
             elif result is None and reason != 'shared_Neff_guard':
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = self.last_fast_error or 'fast solver returned None'
+            if result is not None and accuracy_mode is not None:
+                self.error_estimates = fast_sgwb.estimate_error(accuracy_mode)
+                self.DN_gw_error = self.error_estimates['DN_gw_error']
+                self.spectrum_error = self.error_estimates['spectrum_error']
+                self.quadrature_error = self.error_estimates['quadrature_error']
+                if auto_escalate:
+                    tol_err = error_tol if error_tol is not None else 5e-3
+                    if self.error_estimates['DN_gw_error'] > tol_err:
+                        # The estimated integration error exceeds the requested
+                        # tolerance.  Either tighten the fast grid ('reference'
+                        # mode) or, with escalate_to_reference, run the
+                        # independent continuous-sigma pipeline.
+                        self.escalated_from = accuracy_mode
+                        self.reference_evals = getattr(self, 'reference_evals', 0) + 1
+                        self.escalations = getattr(self, 'escalations', 0) + 1
+                        if escalate_to_reference:
+                            result = self.SGWB_iter(engine='reference')
+                            self.DN_gw_error = 0.0
+                            self.spectrum_error = 0.0
+                            self.quadrature_error = 0.0
+                        else:
+                            result = self.SGWB_iter(engine='fast',
+                                                    accuracy_mode='reference')
+                            self.error_estimates = fast_sgwb.estimate_error('reference')
+                            self.DN_gw_error = self.error_estimates['DN_gw_error']
+                            self.spectrum_error = self.error_estimates['spectrum_error']
+                            self.quadrature_error = self.error_estimates['quadrature_error']
             return result
         if engine != 'lsoda':
             raise ValueError("engine must be 'lsoda' or 'fast', got %r" % (engine,))

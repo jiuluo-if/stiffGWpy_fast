@@ -49,11 +49,15 @@ class stiffGW(Theory):
     z_tail: float
     freq_res: float
     accuracy_mode: str
+    auto_escalate: bool
+    error_tol: float
+    reference_rtol: float
+    reference_z_tail: float
     # Canonical public names.  In particular, do not use the ambiguous
     # historical ``Delta_Neff`` alias: GW-only and total contributions are
     # distinct quantities and are kept explicit throughout the adapter.
     DERIVED_PARAMS = ('Delta_Neff_GW', 'Delta_Neff_total',
-                      'log10hc_prim_fyr', 'f_end')
+                      'log10hc_prim_fyr', 'f_end', 'Delta_Neff_GW_error')
 
     def initialize(self):
         """Create the model object used for every parameter evaluation."""
@@ -118,6 +122,11 @@ class stiffGW(Theory):
                     fast_guard_rejections=getattr(m, 'fast_guard_rejections', 0),
                     fast_physical_rejections=getattr(
                         m, 'fast_physical_rejections', 0),
+                    reference_evals=getattr(m, 'reference_evals', 0),
+                    escalations=getattr(m, 'escalations', 0),
+                    escalated_from=getattr(m, 'escalated_from', None),
+                    DN_gw_error=getattr(m, 'DN_gw_error', None),
+                    spectrum_error=getattr(m, 'spectrum_error', None),
                     fast_failure_fraction=_failure_fraction(m),
                     fallback_fraction=_fallback_fraction(m))
 
@@ -140,6 +149,10 @@ class stiffGW(Theory):
             sgwb_kwargs['z_tail'] = self.z_tail
         if self.freq_res and self.freq_res != 1.0:
             sgwb_kwargs['freq_res'] = self.freq_res
+        if self.auto_escalate:
+            sgwb_kwargs['auto_escalate'] = True
+        if self.error_tol:
+            sgwb_kwargs['error_tol'] = self.error_tol
         if self.engine == 'fast' and self.fast_threads:
             try:
                 from .. import fast_sgwb
@@ -149,7 +162,16 @@ class stiffGW(Theory):
             # default cannot hard-fail on small cores.
             fast_sgwb.set_threads(min(int(self.fast_threads),
                                       fast_sgwb._MAX_THREADS))
-        m.SGWB_iter(engine=self.engine, fallback=self.fallback, **sgwb_kwargs)
+        if self.engine == 'reference':
+            # Independent continuous-sigma high-accuracy pipeline (slow; for
+            # certification/benchmark points, not for MCMC thermal path).
+            from ..reference import apply_reference_to_model
+            apply_reference_to_model(
+                m, freq_res=getattr(self, 'freq_res', 1.0) or 1.0,
+                z_tail=getattr(self, 'reference_z_tail', 5.0) or 5.0,
+                rtol=getattr(self, 'reference_rtol', 1e-11) or 1e-11)
+        else:
+            m.SGWB_iter(engine=self.engine, fallback=self.fallback, **sgwb_kwargs)
 
         if not m.SGWB_converge:
             # logpost will be -inf; make sure any previous derived values are
@@ -181,6 +203,7 @@ class stiffGW(Theory):
                                                   state['hubble'] / math.pi)
                                      - log10f_yr),
                 'f_end': np.power(10., m.f[0]),
+                'Delta_Neff_GW_error': getattr(m, 'DN_gw_error', 0.0),
             }
             if tuple(derived) != self.DERIVED_PARAMS:
                 raise RuntimeError('derived parameter contract drift: %s != %s'
