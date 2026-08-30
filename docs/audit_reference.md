@@ -275,7 +275,21 @@ ODE（reference 的 DOP853）或更高阶 Magnus 才能消除。
 这是不依赖 benchmark 调参的真实物理误差源修复（今日锚点量化）。剩余 ~±0.2% 的非单调性仍来自
 σ-kink 的网格相位，需要 transition-aware 方法进一步压制。
 
-### 7.4 单频原型反例（提示根因在“内核 vs 单频”，而非数值方法）
+### 7.4 transition-aware kink 细化（现已是 production 默认）
+
+把 §7.3 的“今日锚点”与 transition-aware σ-kink（`build_kink_refined_grid` + `exact_phi_s2_grid`
+变步长）结合（并将 `sigma_vec`/`H2_vec` 向量化以提速），得到（default 点，z_tail=5）：
+
+| 路径 | DN_eff | 相对连续 σ 参考 (0.0022708) | 运行时间 |
+|---|---:|---:|---:|
+| 纯 grid（plain, h=0.01） | 0.0022667 | −0.18% | ~5 ms |
+| transition-refine（production, h=0.01） | 0.0022698 | **−0.04%** | ~80 ms |
+
+即 `transition-refine`（kink 节点 + 邻域细化 + 精确 Φ/S2 + 变步长）叠加今日锚点修复后达
+**−0.04%（<1e-3）**，且 ~80 ms/点（相对 LSODA ~17 s 为 ~200×）。因此 `production` / `reference` /
+`debug` 档已默认启用 `transition_refine`；`fast` 档保留纯 grid（最快、−0.18%）。
+
+### 7.5 单频原型反例（提示根因在“内核 vs 单频”，而非数值方法）
 
 用**独立单频原型**（连续精确 Φ(N)、2 阶 Magnus、精确 z_tail 尾部、深超视界起点）对照 reference：
 单频误差仅 **~1.4e-4 到 8.3e-4 dex**（0.03%~0.19%），显著优于生产内核的 ~6e-3 dex (~1.4%)。且该

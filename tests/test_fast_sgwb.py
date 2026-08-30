@@ -57,7 +57,7 @@ def test_nonfinite_dn_gw_aborts_and_restores(monkeypatch, model):
 
     def bad_solve(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus,
                   fp_minus, fp_freq, assemble, n_coarse, col_step, h, z_tail,
-                  Ogw, Oj, Opgw):
+                  Ogw, Oj, Opgw, h_arr=None):
         Ogw[...] = np.nan
         Oj[...] = 0.0
         Opgw[...] = 0.0
@@ -76,7 +76,7 @@ def test_max_iterations_abort_and_restore(monkeypatch, model):
 
     def fake_solve(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus,
                    fp_minus, fp_freq, assemble, n_coarse, col_step, h, z_tail,
-                   Ogw, Oj, Opgw):
+                   Ogw, Oj, Opgw, h_arr=None):
         # Produce a random DN_gw_new in (0.05, 4.9) that never converges.
         Omega_nu = FS.gp.Omega_nh2 / model.derived_param['h'] ** 2
         span = np.log10(fp_freq.max()) - np.log10(fp_freq.min())

@@ -157,16 +157,16 @@ def get_settings():
 # freq_res=2.0 halves the low-frequency-tail undersampling error.
 ACCURACY_MODES = {
     'debug': dict(h=0.005, col_step=1, z_tail=10.0, freq_res=2.0,
-                  tol=1e-8, threads=8),
+                  tol=1e-8, threads=8, transition_refine=True),
     'fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
-                 tol=1e-6, threads=16),
+                 tol=1e-6, threads=16, transition_refine=False),
     # Backward-compatible alias of 'fast' (identical settings).
     'ultra-fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
-                       tol=1e-6, threads=16),
+                       tol=1e-6, threads=16, transition_refine=False),
     'reference': dict(h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0,
-                      tol=1e-8, threads=8),
+                      tol=1e-8, threads=8, transition_refine=True),
     'production': dict(h=0.01, col_step=4, z_tail=7.0, freq_res=1.0,
-                       tol=1e-7, threads=8),
+                       tol=1e-7, threads=8, transition_refine=True),
 }
 
 
@@ -765,20 +765,16 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             first = False
             Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(m, Nv, freqs, h)
             if transition_refine:
-                raise NotImplementedError(
-                    'transition_refine is not a production path: kink-refined '
-                    'variable stepping still overshoots Delta N_eff (+1.1% vs the '
-                    'continuous-sigma reference 0.0022708; sigma_exact is -0.40%). '
-                    'The frozen-z Magnus gives the wrong high-f stiff-mode amplitude '
-                    'regardless of the kink grid; a higher-order adaptive ODE is '
-                    'required (see audit_reference §7.2). Use sigma_exact=True.')
-            if sigma_exact:
+                from .exact_background import exact_phi_s2_grid
+                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
+                    m, Nv, m.cosmo_param['DN_eff'])
+            elif sigma_exact:
                 from .exact_background import exact_phi_s2
                 Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(
                     m, Nv, m.cosmo_param['DN_eff'], h)
-                h_arr = None
+                h_arr = np.diff(Nv)
             else:
-                h_arr = None
+                h_arr = np.diff(Nv)
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
                 # j0 = horizon-crossing + 3 decades, so the early columns
@@ -788,7 +784,7 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # heap contents and could occasionally leak NaN into g2/w2.
                 Ogw = np.zeros((Nf, n_coarse)); Oj = np.zeros((Nf, n_coarse)); Opgw = np.zeros((Nf, n_coarse))
             solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                         1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw)
+                         1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw, h_arr)
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):

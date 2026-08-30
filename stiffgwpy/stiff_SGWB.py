@@ -165,7 +165,7 @@ class LCDM_SG(LCDM_SN):
                   z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0,
                   h=None, col_step=None, threads=None, accuracy_mode=None,
                   auto_escalate=False, error_tol=None, sigma_exact=False,
-                  escalate_to_reference=False):
+                  escalate_to_reference=False, transition_refine=None):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -213,6 +213,7 @@ class LCDM_SG(LCDM_SN):
                     cfg = fast_sgwb.apply_accuracy_mode(accuracy_mode)
                     f_tol = cfg['tol']
                     f_freq = cfg['freq_res']
+                    tr_mode = cfg.get('transition_refine', False)
                     if h is not None:
                         cfg['h'] = h
                     if col_step is not None:
@@ -240,9 +241,13 @@ class LCDM_SG(LCDM_SN):
                     fast_sgwb.set_z_tail(z_tail)
                     f_tol = tol
                     f_freq = freq_res
+                    tr_mode = bool(transition_refine)
+                if transition_refine is not None:
+                    tr_mode = bool(transition_refine)
                 result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
                                                   freq_res=f_freq,
-                                                  sigma_exact=sigma_exact)
+                                                  sigma_exact=sigma_exact,
+                                                  transition_refine=tr_mode)
             except Exception as exc:
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = repr(exc)
