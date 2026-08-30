@@ -59,6 +59,12 @@ fast 在 MCMC 单点 ~5 ms（生产档），比 LSODA 快 ~1000×（warm）。�
 Magnus 残差（~0.4–1%）限制**（§7.2），因此“accuracy↑”尚未在 fast 上完全达成——速度提升来自
 重标定 + 固定步长 Magnus + Numba，而非物理结构（WKB+自适应）的落地。
 
+> 更新（2026-08-30）：定位并修复**今日网格锚点量化**这一真正的主导误差源（§7.3）。网格把今日锚点
+> 量化到 `floor(N_inf/h)*h`，与 `reference.py` 的连续 `N_inf` 差 ~0.0038 e-fold，恰造成 ~0.4%
+> 系统偏差。锚定到连续 `N_inf` 后：production（h=0.01）误差 **−0.18%**、reference 档
+> （h=0.00125）**+0.06%（<1e-3）**；h 收敛非单调幅度从 ~±1% 降到 ~±0.2%。这是真实物理误差源修复，
+> 非 benchmark 调参。
+
 ## 9. 四档 accuracy modes — VERIFIED
 
 `fast_sgwb.ACCURACY_MODES`：`debug/fast/production/reference`（`ultra-fast` 为兼容别名），
