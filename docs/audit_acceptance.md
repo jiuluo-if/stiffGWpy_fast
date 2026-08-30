@@ -29,7 +29,7 @@ model），逐项给出量级与缺口；并量化出**共享 σ 网格偏差是
 
 ## 4. 物理收敛测试 — PARTIALLY VERIFIED
 
-已有 h 收敛曲线（`docs/audit_phase2.md`）与 reference 的 ODE 收敛（rtol 1e-10 vs 1e-11 差 ~1e-7 dex）、
+已有 h 收敛曲线（`docs/audit_reference.md` / `docs/audit_final_report.md`）与 reference 的 ODE 收敛（rtol 1e-10 vs 1e-11 差 ~1e-7 dex）、
 尾部灵敏度（z_tail 5→7 差 ~0.003 相对）、`freq_res` 灵敏度。但**相对连续 σ 真值**的收敛序
 （h/freq/tail/quadrature tolerance 逐项 slope）尚未完整建立；且
 `sigma_exact` 的模型偏差随 h 呈非单调（0.40%→0.21%→0.44%→0.25%），说明现阶段无干净二阶收敛。
