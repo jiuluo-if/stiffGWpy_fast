@@ -88,6 +88,8 @@ Requirement-by-requirement acceptance audit (VERIFIED / PARTIALLY VERIFIED /
 NOT VERIFIED per the 14 audit sections): `docs/audit_acceptance.md`.
 Final architecture/accuracy/speed report (supersedes the earlier phased audit
 reports): `docs/audit_final_report.md`.
+Cross-cutting speed-vs-accuracy comparison across all engines/modes plus the
+prioritized research roadmap: `docs/audit_speed_accuracy.md`.
 
 The reference pipeline (`stiffgwpy/reference.py`) is a *different*, higher-order
 implementation of the same physics (continuous `sigma(N)` evaluator, so the
