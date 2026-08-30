@@ -99,6 +99,11 @@ fast-`reference` 档（网格仍有 ~0.2% 偏差），而非连续 σ 的 `refer
 > `DN_gw_error/spectrum_error` 置 0（自洽高精度），`m.escalations/escalated_from/reference_evals`
 > 记录。单测 `test_auto_escalate_to_reference_engine` 通过。这补齐 §11 的
 > “production→误差大→reference 计算→accept”完整回退链。
+> Cobaya 双引擎验证（default 点）：`engine='fast'`（production，含 transition-refine）与
+> `engine='reference'` 均 `ok=True`、无 silent fallback、`f_end`/derived 正常；`Delta_Neff_GW`
+> 差 −0.35%，正是 production `z_tail=7` 与 reference `z_tail=5` 的尾部阈值差（共享近似），
+> 非求解器失配（匹配 z_tail 时求解器为 −0.02%）。建议 production 与 reference 用相同 `z_tail`
+> 做苹果对苹果比较。
 
 ## 12. 四维 benchmark — VERIFIED
 
