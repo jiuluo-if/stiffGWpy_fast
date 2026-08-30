@@ -16,7 +16,7 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install .[dev]
+          pip install .[dev,cobaya]
       - name: Lint (maintained modules/scripts/tests)
         # Legacy solver modules (functions.py, stiff_SGWB.py,
         # LCDM_stiff_Neff.py, fast_sgwb.py, global_param.py) carry
@@ -24,5 +24,7 @@ jobs:
         run: ruff check stiffgwpy/__init__.py stiffgwpy/cobaya/__init__.py stiffgwpy/cobaya/stiffGW.py stiffgwpy/_metrics.py scripts tests
       - name: Tests (fast unit tests; slow LSODA gates deselected by default)
         run: python -m pytest
+      - name: Cobaya adapter smoke test
+        run: python -m pytest -m cobaya -q
       - name: Wheel build gate
         run: python -m build --wheel

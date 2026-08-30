@@ -101,19 +101,20 @@ Known limits (please do not overclaim):
 - Full `DN_gw` evolution curves differ by up to **1%–37%** at the largest relative difference,
   concentrated in the early near-zero region.
 - Convergence studies (`h`, `COL_STEP`, `z_tail`, `freq_res`) are complete (see
-  `docs/audit_phase2.md`); the 1000-point parameter-space sweep is **91% complete**
-  (918/1030 points, stopped on request before the extreme-corner set): `DN_gw_last_rel`
-  max 2.0e-4 (inside the `validate_fast` 1e-3 gate), dex tail p95 7.7e-2. All 221
-  non-ok points are safety-guard aborts shared by **both** engines (production
-  `engine='lsoda'` also returns None there; the sweep reference loop has no guard
-  and returns divergent non-physical values `DN_eff > 5`, up to 4.2e13); within
-  the physical region (`DN_eff <= 5`, n=697) fast failure rate is 0.00%
-  and within the MCMC-relevant region (`DN_eff <= 2`, n=624) spectrum dex error
-  is p95 0.019 / max 0.128 with `DN_gw_last_rel` max 2.0e-4 — the large dex tails
-  (0.1-0.24) sit only next to the guard boundary (see `docs/audit_phase3.md`).
+  `docs/audit_phase2.md`). The deterministic 1030-point parameter-space sweep is
+  complete (Sobol 400 + LHS 350 + edge 200 + extreme 80): after de-duplicating
+  append-only retries, 782 points are physical (`ok`) and 248 are shared
+  fast/LSODA guard rejections. Three transient LSODA `MemoryError` records from
+  an overloaded initial run were successfully reproduced as `ok` in the serial
+  retry; they remain documented as an infrastructure risk, not solver accuracy.
+  On
+  `ok` points `DN_gw_last_rel` has max 2.0e-4 and spectrum dex p95 7.05e-2 (max
+  0.237); these are same-grid engine diagnostics, not continuum truth claims.
 - Cobaya **posterior** comparisons (LSODA chain vs fast chain, `Delta logL`, posterior shift) are
-  still **open**; the adapter (engine/fallback/threads/h/col_step/z_tail/freq_res/accuracy mode)
-  is implemented and unit-tested.
+  still **open**; `scripts/mcmc_compare.py` now reports ESS, covariance, KS/Wasserstein/KL and
+  refuses to label posterior equivalence certified until both chains exceed the configured
+  `--min-effective-samples` threshold (default 2000; output schema `mcmc_compare_v2`).
+  Requirement-by-requirement evidence is tracked in `docs/audit_completion_matrix.md`.
 
 ## Model and parameters
 
@@ -191,6 +192,14 @@ MPI note: the fast engine spawns no subprocesses (Numba OpenMP threads only), so
 The LSODA reference path spawns `SGWB_POOL_SIZE` worker processes per solve; under MPI (world
 size > 1) it automatically falls back to 1 worker per rank unless `SGWB_POOL_SIZE` is set.
 
+For observability, `theory.engine_stats` exposes cumulative `fast_evals`,
+`fast_failures`, deterministic `fast_guard_rejections`, `lsoda_fallbacks`, and
+`fallback_fraction`, plus the last failure reason. The adapter logs the same
+summary from `close()` when Cobaya finishes a run and warns above a 5% fallback
+fraction. A shared `DN_eff>5` physical rejection is not retried through LSODA;
+exceptions, non-finite results, and iteration failures still use `fallback=True`
+as the numerical safety mechanism.
+
 ## Reproduce the benchmark / validation
 
 ```bash
@@ -198,8 +207,20 @@ python scripts/bench_fast.py           # warm/cold wall-clock + speedup (12 case
 python scripts/validate_fast.py        # 12-case accuracy gates; exits non-zero on violation
 python scripts/validate_random.py      # stratified-random 11-parameter-space gates (P1 starting point)
 python scripts/check_random_freq.py    # random 10-frequency spot check + plot
-python -m pytest                       # regression tests (fast unit tests + 2 slow LSODA gates)
+python -m pytest                       # regression tests (slow LSODA gates are deselected by default)
+python -m pytest -m slow                # opt in to the two long LSODA reference gates
 ```
+
+For chain pilots, `scripts/mcmc_compare.py --skip-pointwise` omits the expensive
+same-point LSODA diagnostic and is explicitly non-certifying; production
+validation must leave this flag off and require the ESS gate.
+Certification also requires every finite per-parameter posterior shift to be
+within `--max-posterior-shift` (default `0.1`).
+
+For reproducible engine twins, pass `--initial-point <json>`; the file is
+applied as deterministic Cobaya `ref` values to both chains while leaving the
+prior unchanged. The comparison record stores the point and a SHA-256 hash of
+the shared YAML.
 
 All scripts record environment and git-commit metadata; `--json` emits machine-readable records.
 
