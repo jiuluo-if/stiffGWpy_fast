@@ -306,6 +306,21 @@ radDominant/cr0_nt/tinyR/edge/norad/highT）均产出有限物理 ΔN_eff，`hig
 > 参考比较时会看到 ~0.35% 的差异——这是**尾部阈值（z_tail）**这一共享近似，不是求解器数值误差；
 > 求解器在匹配的 z_tail 下为 −0.04%。
 
+### 7.7 runtime vs physical-error Pareto（§13，default 点，z_tail=5 同口径）
+
+`scripts/benchmark_pareto.py` 输出（参考为连续 σ 自洽锚点）：
+
+| 引擎 | runtime | ΔN_eff 相对参考 |
+|---|---:|---:|
+| reference（连续 σ DOP853，锚点） | 171.7 s | 0 |
+| fast transition-refine（production） | ~0.08–0.28 s | **−0.022%** |
+| fast plain grid | 0.012 s | −0.161% |
+| LSODA | 18.6 s | −0.168% |
+
+关键结论：**fast transition-refine 在 runtime 与物理精度两个维度都优于 LSODA**（更快且更接近
+连续 σ 参考），同时比 reference 快 ~600×。fast plain grid 最快（0.012 s）但 −0.16%。
+数据存 `docs/reference/pareto_default.json`。
+
 ### 7.6 单频原型反例（提示根因在“内核 vs 单频”，而非数值方法）
 
 用**独立单频原型**（连续精确 Φ(N)、2 阶 Magnus、精确 z_tail 尾部、深超视界起点）对照 reference：
