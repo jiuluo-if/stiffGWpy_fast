@@ -81,15 +81,13 @@ from the new numerical scheme, not from raw thread count.
 
 ## Accuracy and validation status
 
-Quick summary of the audit (MCMC speedup, max errors, max ΔlogL, failure
-rate, recommended modes): `docs/audit_summary.md`. Independent review of the
-external audit text vs. the current repo: `docs/audit_text_review.md`.
 Physics-first error budget and an independent high-accuracy reference pipeline:
 `docs/audit_error_budget.md`, `docs/audit_reference.md`,
 `stiffgwpy/reference.py`.
 Requirement-by-requirement acceptance audit (VERIFIED / PARTIALLY VERIFIED /
 NOT VERIFIED per the 14 audit sections): `docs/audit_acceptance.md`.
-Final architecture/accuracy/speed report: `docs/audit_final_report.md`.
+Final architecture/accuracy/speed report (supersedes the earlier phased audit
+reports): `docs/audit_final_report.md`.
 
 The reference pipeline (`stiffgwpy/reference.py`) is a *different*, higher-order
 implementation of the same physics (continuous `sigma(N)` evaluator, so the
@@ -133,7 +131,7 @@ Known limits (please do not overclaim):
 - Full `DN_gw` evolution curves differ by up to **1%–37%** at the largest relative difference,
   concentrated in the early near-zero region.
 - Convergence studies (`h`, `COL_STEP`, `z_tail`, `freq_res`) are complete (see
-  `docs/audit_phase2.md`). The deterministic 1030-point parameter-space sweep is
+  `docs/audit_final_report.md`). The deterministic 1030-point parameter-space sweep is
   complete (Sobol 400 + LHS 350 + edge 200 + extreme 80): after de-duplicating
   append-only retries, 782 points are physical (`ok`) and 248 are shared
   fast/LSODA guard rejections. Three transient LSODA `MemoryError` records from
@@ -146,7 +144,7 @@ Known limits (please do not overclaim):
   still **open**; `scripts/mcmc_compare.py` now reports ESS, covariance, KS/Wasserstein/KL and
   refuses to label posterior equivalence certified until both chains exceed the configured
   `--min-effective-samples` threshold (default 2000; output schema `mcmc_compare_v2`).
-  Requirement-by-requirement evidence is tracked in `docs/audit_completion_matrix.md`.
+  Requirement-by-requirement evidence is tracked in `docs/audit_acceptance.md`.
 
 ## Model and parameters
 
@@ -192,7 +190,7 @@ fast_sgwb.set_z_tail(5.0)    # validated to 2.0..15.0
 All setters validate their input; invalid values raise `ValueError` instead of failing later.
 
 Four named accuracy modes plus a backward-compatible `ultra-fast` alias (see
-`docs/audit_modes.md` for the validation evidence) can be selected through
+`docs/audit_final_report.md` for the validation evidence) can be selected through
 `SGWB_iter(accuracy_mode=...)` or the Cobaya theory yaml:
 
 | Mode | h | col_step | z_tail | freq_res | outer tol | target use |
