@@ -140,8 +140,9 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     Nv = np.asarray(Nv, dtype=float)
     # Fine sub-grid (a few points per base step) plus its midpoints for Phi_mid.
     half = 0.5 * h
+    frac = 0.125 * h      # fine sub-grid spacing for the F/Phi integral
     sub = np.concatenate([
-        np.arange(Nv[0], Nv[-1] + 1e-12, h / 2.0),
+        np.arange(Nv[0], Nv[-1] + 1e-12, frac),
         np.arange(Nv[0] + half, Nv[-1] + 1e-12, h),
     ])
     sub = np.unique(np.sort(np.concatenate((sub, Nv))))
