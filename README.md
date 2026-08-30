@@ -89,6 +89,7 @@ Physics-first error budget and an independent high-accuracy reference pipeline:
 `stiffgwpy/reference.py`.
 Requirement-by-requirement acceptance audit (VERIFIED / PARTIALLY VERIFIED /
 NOT VERIFIED per the 14 audit sections): `docs/audit_acceptance.md`.
+Final architecture/accuracy/speed report: `docs/audit_final_report.md`.
 
 The reference pipeline (`stiffgwpy/reference.py`) is a *different*, higher-order
 implementation of the same physics (continuous `sigma(N)` evaluator, so the
