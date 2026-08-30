@@ -21,6 +21,21 @@ def test_engine_fast_deterministic(model):
     np.testing.assert_array_equal(model.log10OmegaGW, m2.log10OmegaGW)
 
 
+def test_fast_state_isolation_across_parameters_and_threads(fast_settings):
+    """A→B→A and thread changes must not reuse parameter-dependent results."""
+    m_a1 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    m_b = LCDM_SG(r=2e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    m_a2 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    FS.set_threads(1)
+    m_a1.SGWB_iter(engine='fast')
+    FS.set_threads(min(8, FS._MAX_THREADS))
+    m_b.SGWB_iter(engine='fast')
+    FS.set_threads(1)
+    m_a2.SGWB_iter(engine='fast')
+    np.testing.assert_array_equal(m_a1.log10OmegaGW, m_a2.log10OmegaGW)
+    assert not np.array_equal(m_a1.log10OmegaGW, m_b.log10OmegaGW)
+
+
 def test_engine_invalid_raises(model):
     with pytest.raises(ValueError):
         model.SGWB_iter(engine='bogus')
@@ -83,9 +98,131 @@ def test_engine_fast_fallback_on_exception(monkeypatch):
     assert result is f
     assert calls == ['reset', 'lsoda']
 
-    calls.clear()
-    with pytest.raises(RuntimeError):
-        wrapper(f, engine='fast', fallback=False)
+
+def test_failed_fallback_is_attempted_only_once(monkeypatch):
+    """A failed LSODA retry must not recurse and double-count fallbacks."""
+    wrapper = LCDM_SG.SGWB_iter
+    calls = []
+
+    class Fake:
+        def __init__(self):
+            self.fast_failure_reason = None
+            self.fast_evals = self.fast_failures = 0
+            self.lsoda_fallbacks = self.lsoda_evals = 0
+
+        def reset(self):
+            calls.append('reset')
+
+        def SGWB_iter(self, engine='lsoda', fallback=False, **kwargs):
+            calls.append(engine)
+            if engine == 'lsoda':
+                return None
+            return self
+
+    f = Fake()
+
+    def boom(m, **kwargs):
+        raise RuntimeError('jit failure')
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', boom)
+    assert wrapper(f, engine='fast', fallback=True) is None
+    assert calls == ['reset', 'lsoda']
+    assert f.lsoda_fallbacks == 1
+
+
+def test_engine_telemetry_counts_fast_failures_and_fallback(monkeypatch):
+    """Numerical failures are observable even when LSODA recovery succeeds."""
+    class Fake:
+        def __init__(self):
+            self.SGWB_converge = False
+            self.fast_evals = self.fast_failures = 0
+            self.lsoda_evals = self.lsoda_fallbacks = 0
+            self.last_engine = None
+
+        def reset(self):
+            self.SGWB_converge = False
+
+        def SGWB_iter(self, engine='lsoda', fallback=False, **kwargs):
+            if engine == 'lsoda':
+                self.lsoda_evals += 1
+                self.last_engine = 'lsoda'
+                self.SGWB_converge = True
+            return self
+
+    f = Fake()
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', lambda m, **kw: None)
+    result = LCDM_SG.SGWB_iter(f, engine='fast', fallback=True)
+    assert result is f
+    assert (f.fast_evals, f.fast_failures, f.lsoda_fallbacks,
+            f.lsoda_evals) == (1, 1, 1, 1)
+    assert f.last_engine == 'lsoda'
+
+
+def test_shared_guard_rejection_does_not_retry_lsoda(monkeypatch):
+    """Deterministic physical guard failures must not trigger slow fallback."""
+    wrapper = LCDM_SG.SGWB_iter
+    calls = []
+
+    class Fake:
+        def __init__(self):
+            self.fast_failure_reason = None
+            self.fast_evals = self.fast_failures = 0
+            self.fast_guard_rejections = 0
+            self.lsoda_fallbacks = self.lsoda_evals = 0
+
+        def reset(self):
+            calls.append('reset')
+
+        def SGWB_iter(self, engine='lsoda', fallback=False, **kwargs):
+            calls.append(engine)
+            if engine == 'lsoda':
+                raise AssertionError('shared guard should not retry LSODA')
+            return self
+
+    f = Fake()
+
+    def guard(m, **kwargs):
+        m.fast_failure_reason = 'shared_Neff_guard'
+        return None
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', guard)
+    result = wrapper(f, engine='fast', fallback=True)
+    assert result is None
+    assert calls == []
+    assert f.fast_guard_rejections == 1
+    assert f.fast_failures == 0
+
+
+@pytest.mark.parametrize('reason', ['invalid_r', 'invalid_cutoff'])
+def test_invalid_physical_rejection_does_not_retry_lsoda(monkeypatch, reason):
+    """Deterministic input validation failures are not numerical fallbacks."""
+    wrapper = LCDM_SG.SGWB_iter
+    calls = []
+
+    class Fake:
+        def __init__(self):
+            self.fast_failure_reason = None
+            self.fast_evals = self.fast_failures = 0
+            self.fast_physical_rejections = 0
+            self.lsoda_fallbacks = self.lsoda_evals = 0
+
+        def SGWB_iter(self, engine='lsoda', fallback=False, **kwargs):
+            calls.append(engine)
+            if engine == 'lsoda':
+                raise AssertionError('input rejection should not retry LSODA')
+            return self
+
+    f = Fake()
+
+    def reject(m, **kwargs):
+        m.fast_failure_reason = reason
+        return None
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', reject)
+    assert wrapper(f, engine='fast', fallback=True) is None
+    assert calls == []
+    assert f.fast_physical_rejections == 1
+    assert f.lsoda_fallbacks == 0
 
 
 @pytest.mark.slow

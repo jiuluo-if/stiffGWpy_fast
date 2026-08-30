@@ -70,6 +70,19 @@ class LCDM_SG(LCDM_SN):
     def __init__(self, *args, 
                  **kwargs):
         LCDM_SN.__init__(self, *args, **kwargs)
+        # Evaluation telemetry is intentionally persistent across ``reset``
+        # calls.  Cobaya reuses one theory instance and resets the cosmology
+        # for every point; clearing counters there would make the reported
+        # fallback fraction meaningless.
+        self.fast_evals = 0
+        self.fast_failures = 0
+        self.lsoda_evals = 0
+        self.lsoda_fallbacks = 0
+        self.last_engine = None
+        self.last_fast_error = None
+        self.fast_failure_reason = None
+        self.fast_guard_rejections = 0
+        self.fast_physical_rejections = 0
         self.reset()    
       
         
@@ -176,6 +189,11 @@ class LCDM_SG(LCDM_SN):
         """
         if engine == 'fast':
             from . import fast_sgwb
+            self.fast_evals = getattr(self, 'fast_evals', 0) + 1
+            self.last_engine = 'fast'
+            self.last_fast_error = None
+            self.fast_failure_reason = None
+            fallback_attempted = False
             try:
                 if accuracy_mode is not None:
                     cfg = fast_sgwb.apply_accuracy_mode(accuracy_mode)
@@ -210,17 +228,45 @@ class LCDM_SG(LCDM_SN):
                     f_freq = freq_res
                 result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
                                                   freq_res=f_freq)
-            except Exception:
+            except Exception as exc:
+                self.fast_failures = getattr(self, 'fast_failures', 0) + 1
+                self.last_fast_error = repr(exc)
+                self.fast_failure_reason = 'exception'
                 if not fallback:
                     raise
+                print('SGWB_iter: fast engine failed (%s); falling back to LSODA.' % exc)
+                self.lsoda_fallbacks = getattr(self, 'lsoda_fallbacks', 0) + 1
+                fallback_attempted = True
                 self.reset()
                 result = self.SGWB_iter(engine='lsoda')
-            if result is None and fallback:
+            reason = getattr(self, 'fast_failure_reason', None)
+            if result is None and reason == 'shared_Neff_guard':
+                # Both engines reject this deterministic non-physical point;
+                # retrying LSODA would only waste time and obscure telemetry.
+                self.fast_guard_rejections = getattr(self, 'fast_guard_rejections', 0) + 1
+            elif result is None and reason in ('invalid_r', 'invalid_cutoff'):
+                # Input/cutoff validation failures are also deterministic
+                # physical rejections, not recoverable numerical failures.
+                self.fast_physical_rejections = getattr(
+                    self, 'fast_physical_rejections', 0) + 1
+            elif result is None and fallback and not fallback_attempted:
+                self.fast_failures = getattr(self, 'fast_failures', 0) + 1
+                self.last_fast_error = self.last_fast_error or 'fast solver returned None'
+                self.fast_failure_reason = reason or 'failed'
+                print('SGWB_iter: fast engine returned no solution; falling back to LSODA.')
+                self.lsoda_fallbacks = getattr(self, 'lsoda_fallbacks', 0) + 1
+                fallback_attempted = True
                 self.reset()
                 result = self.SGWB_iter(engine='lsoda')
+            elif result is None and reason != 'shared_Neff_guard':
+                self.fast_failures = getattr(self, 'fast_failures', 0) + 1
+                self.last_fast_error = self.last_fast_error or 'fast solver returned None'
             return result
         if engine != 'lsoda':
             raise ValueError("engine must be 'lsoda' or 'fast', got %r" % (engine,))
+
+        self.lsoda_evals = getattr(self, 'lsoda_evals', 0) + 1
+        self.last_engine = 'lsoda'
 
         # Exclude some corner cases
         if self.cosmo_param['r'] <= 0:

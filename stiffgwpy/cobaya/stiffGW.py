@@ -1,3 +1,33 @@
+# -*- coding: utf-8 -*-
+"""Cobaya theory adapter for :class:`stiffgwpy.stiff_SGWB.LCDM_SG`.
+
+The theory is registered under the fully-qualified class name
+``stiffgwpy.cobaya.stiffGW.stiffGW`` so it can be used from any working
+directory after ``pip install .`` (no ``python_path`` needed):
+
+.. code-block:: yaml
+
+   theory:
+     stiffgwpy.cobaya.stiffGW.stiffGW:
+       engine: fast
+       fallback: True
+       accuracy_mode: production
+       fast_threads: 8
+
+The class exposes these derived parameters (must stay in sync with
+:meth:`get_can_provide_params` and the ``params`` section of ``stiffGW.yaml``):
+
+* ``Delta_Neff_GW``     -- SGWB contribution to Delta N_eff today
+* ``Delta_Neff_total``  -- total Delta N_eff after the self-consistent loop
+* ``log10hc_prim_fyr``  -- log10 h_c of the primordial SGWB at f = 1/yr
+* ``f_end``             -- UV cutoff frequency (Hz) of the spectrum
+
+Per-run observability: the underlying ``LCDM_SG`` instance counts fast
+evaluations / fast failures / LSODA fallbacks and records the engine used on
+the last solve, so a run can report the fallback fraction (see
+:attr:`engine_stats`).
+"""
+
 import math
 
 import astropy.units as u
@@ -7,25 +37,26 @@ from scipy import interpolate
 
 
 class stiffGW(Theory):
+    # Type annotations only: the default *values* live in stiffGW.yaml (the
+    # same-name file Cobaya loads next to this module).  Declaring values here
+    # AND in the yaml raises a duplicate-option error in Cobaya 3.6.
     speed = 0.1
-    engine: str = 'lsoda'    # solver engine: 'lsoda' (default) or 'fast';
-                             # can be overridden per-run through the theory yaml
-    fallback: bool = True    # engine='fast': rerun with LSODA on failure
-    fast_threads: int = 0    # engine='fast': OpenMP threads (0 = module default)
-    h: float = 0.0           # engine='fast': step size (0 = module default)
-    col_step: int = 0        # engine='fast': column stride (0 = module default)
-    z_tail: float = 0.0      # analytic-tail threshold (0 = module default)
-    freq_res: float = 1.0    # frequency-grid density (1.0 = default grid)
-    accuracy_mode: str = ''  # engine='fast': 'reference'|'production'|'ultra-fast'
-                             # ('' = no preset; explicit knobs still apply)
-    params = {'Delta_Neff_GW': {'derived': True, 'latex': r'\Delta N_\mathrm{eff,GW}'},
-              'Delta_Neff_total': {'derived': True, 'latex': r'\Delta N_\mathrm{eff,total}'},
-              'log10hc_prim_fyr': {'derived': True, 'latex': r'\log_{10}h_{c,\mathrm{prim}}'},
-              'f_end': {'derived': True, 'latex': r'f_\mathrm{end}'},
-             }
+    engine: str
+    fallback: bool
+    fast_threads: int
+    h: float
+    col_step: int
+    z_tail: float
+    freq_res: float
+    accuracy_mode: str
+    # Canonical public names.  In particular, do not use the ambiguous
+    # historical ``Delta_Neff`` alias: GW-only and total contributions are
+    # distinct quantities and are kept explicit throughout the adapter.
+    DERIVED_PARAMS = ('Delta_Neff_GW', 'Delta_Neff_total',
+                      'log10hc_prim_fyr', 'f_end')
 
     def initialize(self):
-        """called from __init__ to initialize"""
+        """Create the model object used for every parameter evaluation."""
         try:
             from ..stiff_SGWB import LCDM_SG
         except ImportError:  # imported as a top-level module by cobaya
@@ -34,49 +65,70 @@ class stiffGW(Theory):
         self.log.info("Initialized!")
 
     def initialize_with_provider(self, provider):
-        """
-        Initialization after other components initialized, using theory.Provider class instance.
-        It is used to return any dependencies (requirements of this theory)
-        via methods like "provider.get_X()" and "provider.get_param(‘Y’)".
-        """
         self.provider = provider
 
     def close(self):
-        pass
-
+        # Cobaya calls ``close`` when a run finishes.  Emit the accumulated
+        # telemetry so numerical fallbacks are visible in MCMC logs rather
+        # than silently disappearing behind a successful LSODA retry.
+        stats = self.engine_stats
+        if stats is not None:
+            self.log.info(
+                "SGWB engine summary: fast_evals=%d fast_failures=%d "
+                "fast_guard_rejections=%d fast_physical_rejections=%d "
+                "lsoda_evals=%d lsoda_fallbacks=%d "
+                "fast_failure_fraction=%.6g fallback_fraction=%.6g",
+                stats['fast_evals'], stats['fast_failures'],
+                stats['fast_guard_rejections'],
+                stats['fast_physical_rejections'], stats['lsoda_evals'],
+                stats['lsoda_fallbacks'],
+                stats['fast_failure_fraction'],
+                stats['fallback_fraction'])
+            if stats['fallback_fraction'] > 0.05:
+                self.log.warning(
+                    "SGWB fast fallback fraction %.3f exceeds 5%%; "
+                    "inspect fast numerical failures before using this chain.",
+                    stats['fallback_fraction'])
 
     def get_requirements(self):
-        """
-        Return dictionary of quantities that are always needed by this component
-        and should be calculated by another component or provided by input parameters.
-        """
         return {'Omega_bh2': None, 'Omega_ch2': None, 'H0': None, 'DN_eff': None,
                 'A_s': None, 'r': None, 'n_t': None, 'cr': None,
                 'T_re': None, 'DN_re': None, 'kappa10': None}
 
     def get_can_provide(self):
-        return ['f', 'omGW_stiff', 'hubble', 'kappa_s', 'kappa_r',]
+        return ['f', 'omGW_stiff', 'hubble', 'kappa_s', 'kappa_r']
 
     def get_can_provide_params(self):
-        return ['Delta_Neff_GW', 'Delta_Neff_total', 'log10hc_prim_fyr', 'f_end',]
+        # Must be exactly the keys written into state['derived'] in calculate().
+        return list(self.DERIVED_PARAMS)
 
+    @property
+    def engine_stats(self):
+        """Fast/fallback counters accumulated on the shared model instance."""
+        m = getattr(self, 'stiffGW_model', None)
+        if m is None:
+            return None
+        return dict(fast_evals=getattr(m, 'fast_evals', 0),
+                    fast_failures=getattr(m, 'fast_failures', 0),
+                    lsoda_evals=getattr(m, 'lsoda_evals', 0),
+                    lsoda_fallbacks=getattr(m, 'lsoda_fallbacks', 0),
+                    last_engine=getattr(m, 'last_engine', None),
+                    last_fast_error=getattr(m, 'last_fast_error', None),
+                    fast_failure_reason=getattr(m, 'fast_failure_reason', None),
+                    fast_guard_rejections=getattr(m, 'fast_guard_rejections', 0),
+                    fast_physical_rejections=getattr(
+                        m, 'fast_physical_rejections', 0),
+                    fast_failure_fraction=_failure_fraction(m),
+                    fallback_fraction=_fallback_fraction(m))
 
     def calculate(self, state, want_derived=True, **params_values_dict):
-        """
-        The 'Theory.calculate()' method takes a dictionary 'params_values_dict'
-        of the parameter values as keyword arguments and saves all needed results
-        in the 'state' dictionary (which is cached and reused as needed).
-        """
-
-        # Set parameters
-        self.stiffGW_model.reset()
-        for key in self.stiffGW_model.cosmo_param:
+        """Evaluate the model; on failure return False (logpost -> -inf)."""
+        m = self.stiffGW_model
+        m.reset()
+        for key in m.cosmo_param:
             if key in params_values_dict:
-                self.stiffGW_model.cosmo_param[key] = params_values_dict[key]
+                m.cosmo_param[key] = params_values_dict[key]
 
-        # Compute!  The engine is configurable through the theory yaml
-        # ('lsoda' by default; 'fast' opts into the experimental accelerated
-        # solver with automatic LSODA fallback).
         sgwb_kwargs = {}
         if self.accuracy_mode:
             sgwb_kwargs['accuracy_mode'] = self.accuracy_mode
@@ -93,34 +145,64 @@ class stiffGW(Theory):
                 from .. import fast_sgwb
             except ImportError:
                 from stiffgwpy import fast_sgwb
-            fast_sgwb.set_threads(self.fast_threads)
-        self.stiffGW_model.SGWB_iter(engine=self.engine,
-                                     fallback=self.fallback, **sgwb_kwargs)
+            # Clamp to the machine's thread budget so an over-large yaml
+            # default cannot hard-fail on small cores.
+            fast_sgwb.set_threads(min(int(self.fast_threads),
+                                      fast_sgwb._MAX_THREADS))
+        m.SGWB_iter(engine=self.engine, fallback=self.fallback, **sgwb_kwargs)
 
-
-        if self.stiffGW_model.SGWB_converge:
-            state['f'] = self.stiffGW_model.f                                    # Output frequency in log10(f/Hz)
-            state['omGW_stiff'] = self.stiffGW_model.log10OmegaGW                # log10(Omega_GW(f))
-            state['hubble'] = self.stiffGW_model.derived_param['H_0']            # H_0 in units of s^-1
-            state['kappa_s'] = self.stiffGW_model.derived_param['kappa_s']       # kappa_stiff(T_i) for AlterBBN
-            state['kappa_r'] = self.stiffGW_model.kappa_r                        # kappa_rad(T_i) for AlterBBN, related to Delta_Neff
-
-            if want_derived:
-                yr = u.yr.to(u.s)
-                log10f_yr = -math.log10(yr)
-                if self.stiffGW_model.f[0] >= log10f_yr:
-                    f_t = np.flip(state['f'])
-                    Ogw_t = np.flip(state['omGW_stiff'])
-                    spec_prim = interpolate.CubicSpline(f_t[f_t>-13], Ogw_t[f_t>-13])
-                    omGW_stiff_fyr = spec_prim(log10f_yr)    # log10(Omega_GW(f_yr))
-                else:
-                    omGW_stiff_fyr = -100.
-
-                state['derived'] = {'Delta_Neff_GW': self.stiffGW_model.DN_gw[-1],                  # Delta N_eff due to the primordial SGWB today
-                                    'Delta_Neff_total': self.stiffGW_model.cosmo_param['DN_eff'],   # Total Delta N_eff after GW calculation
-                                    'log10hc_prim_fyr': omGW_stiff_fyr/2 + math.log10(math.sqrt(1.5)*state['hubble']/math.pi)-log10f_yr,
-                                                                                                    # log10(h_c(f_yr)) of the primordial SGWB
-                                    'f_end': np.power(10., self.stiffGW_model.f[0]),                # Hz, UV cutoff frequency
-                                   }
-        else:
+        if not m.SGWB_converge:
+            # logpost will be -inf; make sure any previous derived values are
+            # not reused for this point.
+            state.pop('derived', None)
             return False
+
+        state['f'] = m.f                                     # log10(f/Hz)
+        state['omGW_stiff'] = m.log10OmegaGW                 # log10 Omega_GW(f)
+        state['hubble'] = m.derived_param['H_0']             # s^-1
+        state['kappa_s'] = m.derived_param['kappa_s']
+        state['kappa_r'] = m.kappa_r
+        if want_derived:
+            yr = u.yr.to(u.s)
+            log10f_yr = -math.log10(yr)
+            if m.f[0] >= log10f_yr:
+                f_t = np.flip(state['f'])
+                Ogw_t = np.flip(state['omGW_stiff'])
+                spec_prim = interpolate.CubicSpline(f_t[f_t > -13],
+                                                    Ogw_t[f_t > -13])
+                omGW_stiff_fyr = spec_prim(log10f_yr)
+            else:
+                omGW_stiff_fyr = -100.0
+            derived = {
+                'Delta_Neff_GW': m.DN_gw[-1],
+                'Delta_Neff_total': m.cosmo_param['DN_eff'],
+                'log10hc_prim_fyr': (omGW_stiff_fyr / 2
+                                     + math.log10(math.sqrt(1.5) *
+                                                  state['hubble'] / math.pi)
+                                     - log10f_yr),
+                'f_end': np.power(10., m.f[0]),
+            }
+            if tuple(derived) != self.DERIVED_PARAMS:
+                raise RuntimeError('derived parameter contract drift: %s != %s'
+                                   % (tuple(derived), self.DERIVED_PARAMS))
+            state['derived'] = derived
+        else:
+            # Cobaya may reuse the state dictionary between calls; never leave
+            # derived values from a previous parameter point visible when the
+            # caller did not request them.
+            state.pop('derived', None)
+        return True
+
+
+def _fallback_fraction(m):
+    fast_total = getattr(m, 'fast_evals', 0)
+    if fast_total <= 0:
+        return 0.0
+    return getattr(m, 'lsoda_fallbacks', 0) / float(fast_total)
+
+
+def _failure_fraction(m):
+    fast_total = getattr(m, 'fast_evals', 0)
+    if fast_total <= 0:
+        return 0.0
+    return getattr(m, 'fast_failures', 0) / float(fast_total)

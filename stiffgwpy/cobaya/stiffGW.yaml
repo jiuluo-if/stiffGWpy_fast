@@ -1,54 +1,57 @@
-# The options and parameters defined in this associated yaml file 
-# are only recognized by the theory as its class variables/attributes.
-# They are loaded automatically with their default values or priors 
-# by simply mentioning the theory in the input of the Cobaya run, 
-# and will be overridden by redefinitions from the input. 
-# Private class attributes that cannot be changed by input parameters should start with an underscore.
+# Default options for the stiffGW cobaya theory.
+#
+# NOTE: default *values* live here; the class in stiffGW.py declares the same
+# options as type-only annotations (no values).  Declaring a value both here
+# and in the class raises a duplicate-option error in Cobaya 3.6.
 
-### Default options
-
-# Theory or likelihood class options are inherited from any ancestor class .yaml files or class attributes. 
-# So there are some user-defined options that are common to all classes 
-# and do not need to be specified in the defaults [ClassName].yaml file, e.g., the computational speed 
-
-# Path to local theory code, if desired,
-# or 'global' to force global-scope import
+# Path to the local theory code, if desired, or 'global' to force a
+# global-scope import.  When the package is pip-installed, the fully-qualified
+# class name (stiffgwpy.cobaya.stiffGW.stiffGW) resolves without a path.
 path: null
-# Speed in evaluations/second
-speed: 0.1
 
 # Solver engine:
-#   lsoda  - original adaptive LSODA path (default, conservative)
-#   fast   - experimental approximate fast solver (~1e3x warm speedup; close
-#            but not bit-identical results; falls back to lsoda on failure)
+#   lsoda - original adaptive LSODA path (default, conservative)
+#   fast  - experimental approximate fast solver; falls back to LSODA on
+#           failure when `fallback: True`
 engine: lsoda
+
 # engine='fast': rerun with the LSODA path if the fast solve fails
 fallback: True
-# engine='fast': OpenMP threads for the frequency-parallel kernel (0 = module default)
-fast_threads: 0
-# engine='fast': fixed step size / expansion-grid spacing (0 = module default 0.01)
-h: 0.0
-# engine='fast': output-column stride 1-8 (0 = module default 4)
-col_step: 0
-# analytic-tail threshold (0 = module default 5.0 for fast; LSODA path uses 5.0)
-z_tail: 0.0
+
+# engine='fast': OpenMP threads for the frequency-parallel kernel.
+# Default 8 (production science default; clamped to the machine's thread
+# budget at call time).
+fast_threads: 8
+
+# engine='fast': fixed step size / expansion-grid spacing (production: 0.01)
+h: 0.01
+
+# engine='fast': output-column stride 1-8 (production: 4)
+col_step: 4
+
+# analytic-tail threshold (production: 7.0; LSODA path uses 5.0)
+z_tail: 7.0
+
 # frequency-grid density; 1.0 = default grid
 freq_res: 1.0
+
 # engine='fast': named accuracy preset ('reference'|'production'|'ultra-fast',
-# '' = none; explicit knobs above still override the preset)
-accuracy_mode: ''
+# '' = none; explicit knobs above override the preset).
+# Default 'production' so that a plain engine: fast yaml runs at the science
+# settings (h=0.01, col_step=4, z_tail=7, freq_res=1, 8 threads) -- NOT
+# ultra-fast.
+accuracy_mode: production
 
-
-### Default values or priors of nuisance parameters of the theoretical model
-### Derived parameters are also specified here.
-
+### Derived parameters provided by this theory.
+### Must match get_can_provide_params() and the keys written into
+### state['derived'] in calculate().
 params:
-  Delta_Neff_GW: 
+  Delta_Neff_GW:
     derived: True
     latex: \Delta N_\mathrm{eff,GW}
-  Delta_Neff: 
+  Delta_Neff_total:
     derived: True
-    latex: \Delta N_\mathrm{eff,tot}
+    latex: \Delta N_\mathrm{eff,total}
   log10hc_prim_fyr:
     derived: True
     latex: \log_{10}h_{c,\mathrm{prim}}

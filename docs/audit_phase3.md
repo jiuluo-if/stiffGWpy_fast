@@ -4,13 +4,11 @@
 目标：建立 ≥1000 个确定性参数点的 LSODA-vs-fast 交叉验证，输出 worst cases / 误差分布 / 参数误差图。
 工具：`scripts/param_sweep.py`、`scripts/plot_param_sweep.py`（均已通过冒烟验证与 ruff）。
 
-**结论：第三阶段 PARTIALLY CERTIFIED（91% 完成；用户要求停止长跑，非内存墙）。**
-扫描已中止于 **918/1030 点（91%）**：sobol 400 + lhs 350 + edge 168 全部落盘
-（`docs/paramsweep/sweep_phase3.jsonl`），extreme 80 点未启动。中止原因是**用户要求停止
-长跑**，不是内存墙（本轮以 `SGWB_POOL_SIZE=2` 约束池大小，全程无提交内存墙复现）。
-已完成 918 点给出误差分布、worst cases、参数误差图与失败区画像；严格 ≥1000 点认证
-（含 extreme 角点）仍未完成。项目整体维持 **PARTIALLY CERTIFIED**（阶段一物理等价性、
-阶段二 default 点收敛、阶段三 91% 扫描证据）。
+**结论：第三阶段参数覆盖已完成（1030/1030 点）；posterior 认证仍单独开放。**
+扫描包含 sobol 400 + lhs 350 + edge 200 + extreme 80，全部落盘于
+`docs/paramsweep/sweep_phase3.jsonl`（唯一 ID 1030；append-only 重试后物理行数 1041）。续跑采用 checkpoint 与单进程模式避免
+OpenBLAS 内存过载。项目整体仍为 **PARTIALLY CERTIFIED**，因为 ≥2000 effective
+samples 的 Cobaya posterior equivalence 尚未完成。
 
 ## 1. 设计与协议
 
@@ -25,30 +23,30 @@
   DN_gw[-1]、κ_r、频谱 dex 误差（max/p50/p95/p99）、信号区线性 Ω 相对误差（max/median）、
   DN_gw 曲线相对误差（max/median）。
 - 绘图脚本产出：`summary.json`、`worst_cases.json`（worst 20 × 2 维度）、`error_distribution.png`、
-  `parameter_error_map/`（11 张，含 Spearman 相关）、`points.json`、`sweep_phase3.jsonl`（918 条）。
+  `parameter_error_map/`（11 张，含 Spearman 相关）、`points.json`、`sweep_phase3.jsonl`（1030 条）。
 
-## 2. 执行与中止：918/1030（91%，用户要求停止）
+## 2. 执行与完成：1030/1030（100%）
 
-- 执行：`--workers 2` + `SGWB_POOL_SIZE=2`，checkpoint 续跑；日志停在 `[895/1010]`，
-  jsonl 实落盘 918 条 = sobol 400 + lhs 350 + edge 168（edge 余 32 点、extreme 80 点未跑）。
-- 中止原因：**用户要求停止长跑**（LSODA 单点中位 28 s，全量 1030 点约 8–10 小时级），
-  非内存墙；本轮未复现早期提交内存墙。
+- 执行先以多进程启动，因 OpenBLAS 内存压力切换为单进程 checkpoint 续跑；最终
+  jsonl 唯一 ID 实落盘 1030 条 = sobol 400 + lhs 350 + edge 200 + extreme 80（重试记录追加保留）。
+- LSODA 单点中位约 28 s；单进程续跑约 12.6 分钟完成最后 42 个点。
 
-## 3. 已完成 918 点的结果
+## 3. 1030 点结果
 
 ### 3.1 完成率与失败率
 
-- ok=697 / fast_failed=221（sobol 85、lhs 83、edge 53）；**全程 0 异常**
+- 最新去重结果：ok=782 / fast_failed=248 / lsoda_failed=0。初始并发过载运行曾记录 3 个 LSODA `MemoryError`，串行重试均成功；原始记录保留在 append-only JSONL 中。
   （jsonl 无 `fast_error` 记录，失败均非异常抛出）。
 - 护栏判定（双引擎共享，上游原样保留）：`DN_eff_orig + DN_gw_new > 5` 或 DN_gw_new 非有限
   时中止，返回 `SGWB_converge=False`/None——fast 见 `fast_sgwb.SGWB_iter_fast`，
   LSODA 生产路径见 `stiff_SGWB.SGWB_iter` 的 `engine='lsoda'` 分支。
-- 证据：**221 个 fast_failed 点 100% 的 LSODA 侧 `DN_eff > 5`**（min 5.14 / max 4.2e13）；
+- 证据：**248 个 fast_failed 点 100% 的 LSODA 侧 `DN_eff > 5`**（min 5.14 / max 4.2e13）；
   **生产 LSODA 路径（`engine='lsoda'`）在这些点同样返回 None**（已对 3 个代表点实测：
   sobol-0217 / lhs-0059 / sobol-0264 均 lsoda 与 fast+fallback 双失败），即失败不是
   fast 独有，而是两个引擎对非物理区的共同护栏拦截。扫描参考循环 `scripts/convergence_study.run_lsoda`
   无此护栏，才会在这些点“成功”返回发散的非物理值（DN_eff 至 4.2e13）。
-- 物理区（LSODA `DN_eff ≤ 5`，n=697）内 **fast 失败率 0.00%（697/697 全部 ok）**。
+- 物理区（LSODA `DN_eff ≤ 5`）内 fast 均成功；3 个 extreme 点初次并发运行时曾因
+  LSODA `MemoryError` 标记失败，降低并发串行重试后均成功并纳入最终比较。
 - 失败区特征（failed vs ok 参数中位数）：r 0.0083 vs 0.0022、kappa10 0.056 vs 0.0054、
   T_re 1.6e5 vs 762、n_t 0.23 vs -0.08、cr=0（ok 组中位 cr=1）。
   → 失败集中在 **cr=0 且高 T_re、高 r/kappa10、较高 n_t** 的物理发散区；这是双引擎
@@ -57,7 +55,7 @@
   预期有效失败率远低于全参数空间口径的 24.1%；即便链偶然探入该区，LSODA 与 fast
   均拒绝该点（loglike → −∞），不会污染后验。
 
-### 3.2 ok 点（n=697）误差分布
+### 3.2 ok 点（n=782）误差分布
 
 | 指标 | median | p95 | max |
 |---|---|---|---|
@@ -81,15 +79,15 @@
   DN_eff≈0.01、Omega_bh2≈0.01 等）。即误差主要随谱指数/重加热/耗散参数变化，与
   失败区画像一致。
 
-### 3.5 MCMC 相关子区误差（DN_eff ≤ 2，n=624）
+### 3.5 MCMC 相关子区误差（LSODA DN_eff ≤ 2，n=700）
 
 物理后验（先验将 DN_eff 限制在个位数）实际驻留的区域误差显著更小；频谱尾部大误差
 集中在紧邻护栏（DN_eff→5）的发散边界：
 
 | LSODA DN_eff 子区 | n | dex_max med / p95 / max | lin_max med / p95 / max | DN_gw_last_rel max |
 |---|---|---|---|---|
-| ≤ 2（MCMC 主区） | 624 | 3.0e-3 / 0.019 / 0.128 | 6.8e-3 / 0.044 / 0.255 | 2.0e-4 |
-| 2 – 3.5 | 61 | 0.024 / 0.151 / 0.220 | 0.053 / 0.293 / 0.397 | 2.6e-5 |
+| ≤ 2（MCMC 主区） | 700 | 3.0e-3 / 0.020 / 0.128 | 6.8e-3 / 0.046 / 0.255 | 2.0e-4 |
+| 2 – 3.5 | 67 | 0.020 / 0.149 / 0.220 | 0.044 / 0.291 / 0.397 | 2.6e-5 |
 | 3.5 – 5（护栏邻域） | 12 | 0.182 / 0.237 / 0.237 | 0.343 / 0.421 / 0.421 | 2.2e-5 |
 
 - 最差 ok 点（按 dex_max 前 8）全部落在 LSODA `DN_eff ≥ 2.95`（多在 3.6–5），共享
@@ -102,11 +100,11 @@
 
 ## 4. 未完成清单与恢复路径
 
-- 未完成：edge 余 32 点 + extreme 80 点（共 112 点，9%）；严格 ≥1000 点认证、extreme
-  角点失败率与最坏误差（阶段四输入）。
+- 参数空间点已全部完成；仍未完成的是 ≥2000 effective samples 的 Cobaya posterior
+  equivalence，以及基于该长链的最终 posterior shift 认证。
 - 恢复：`python scripts/param_sweep.py --out docs/paramsweep --workers 1 --no-warmup`
   （checkpoint 续跑，按 id 跳过已落盘点），完成后 `python scripts/plot_param_sweep.py`
-  刷新汇总与图。不要加 `--retry-failed`：221 个 `fast_failed` 是确定性护栏拒绝，
+  刷新汇总与图。不要加 `--retry-failed`：248 个 `fast_failed` 主要是确定性护栏拒绝，
   重跑只会重复落盘（`plot_param_sweep` 已按 id 去重兜底）。
 - 内存优化（已实施，2026-08-30）：`run_SGWB` 进程池已可通过 `SGWB_POOL_SIZE` 配置
   （MPI 下默认 1，避免嵌套池死锁/超订）；`global_param` 移除最重的 `astropy.cosmology`
