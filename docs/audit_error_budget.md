@@ -102,3 +102,24 @@ LSODA 参考：
 
 结论：**当前实现未发现需要 log-domain/任意精度重写才能修复的浮点缺陷**；但为把 Ω 下探到更小量级或
 推更大 k/N 时更稳健，可在后续阶段把 `scaled_step`/尾部公式改为归一化（无量纲）形式，作为加固项。
+
+## 6. physics-first 分项实测误差预算（post-fix，§六，2026-08-30）
+
+关键修复（今日锚点量化 + transition-refine）之后，按用户要求把误差拆到九类（default 点，
+相对连续 σ 自洽参考 0.00227081；括号为 `ΔN_eff` 积分误差 / 逐频 Ω_GW(f) 信号区误差）：
+
+| 误差类别 | 量级 | 来源/说明 |
+|---|---:|---|
+| background（今日锚点/σ 背景） | ~0（修复前 ~0.4%） | `floor(N_inf/h)*h` vs 连续 `N_inf` 的 0.0038 e-fold 已修复（§7.3） |
+| transition（σ-kink 分段） | 0.02% / 0.2–0.4% | transition-refine（kink 节点+邻域细化+精确 Φ+变步长）处理；逐频仍 ~0.4% |
+| ODE/integration（Magnus 逐模） | 0.02% / 0.2–0.4% | 2 阶冻结-z Magnus 的逐模极限；4 阶/自适应-h/精确定位切换均无改善（§7.2） |
+| WKB matching | 未计入（fast 未实现） | 仅 `reference.py` 返回 `eps_handoff`/`matching_error_rel`（~e^-z 量级） |
+| tail（解析尾部，z_tail） | ~0.35%（z_tail=5 vs 7） | 共享近似；z_tail 越大尾误差越小 |
+| frequency quadrature | ~1e-15（reference quad） | fast 用固定 Simpson；reference 用自适应 GK |
+| interpolation | ~3e-11（reference PCHIP 半密度） | 频谱插值误差 |
+| self-consistency ΔN_eff | ~1e-7（外层 tol） | bisection 停止容差；非物理误差 |
+| **total model bias（积分 ΔN_eff）** | **−0.022%**（<1e-3） | transition-refine 实测；逐频信号区 ~0.2–0.4% |
+
+**说明**：积分量 `ΔN_eff`（MCMC 实际依赖量）已 <1e-3（−0.022%，因各频正负相消）；但逐频
+`Ω_GW(f)` 信号区 ~0.2–0.4%、低频尾 ~1%，这是 transition-refine 逐模 Magnus 极限（§7.8）。要
+逐频 <1e-3 需更高阶/自适应逐模积分器，或对低频尾做曲率自适应加密采样（`freq_adaptive`）。
