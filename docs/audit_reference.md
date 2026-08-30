@@ -289,7 +289,24 @@ ODE（reference 的 DOP853）或更高阶 Magnus 才能消除。
 **−0.04%（<1e-3）**，且 ~80 ms/点（相对 LSODA ~17 s 为 ~200×）。因此 `production` / `reference` /
 `debug` 档已默认启用 `transition_refine`；`fast` 档保留纯 grid（最快、−0.18%）。
 
-### 7.5 单频原型反例（提示根因在“内核 vs 单频”，而非数值方法）
+### 7.5 参数空间验证（§9，z_tail=5 同口径）
+
+用 fast（`transition_refine`）与**同 z_tail=5 的连续 σ 自洽参考**对比：
+
+| 参数点 | 参考 DN_gw | fast DN_eff | 相对参考 |
+|---|---:|---:|---:|
+| default（kappa10=1e-2） | 0.00227081 | 0.0022698 | **−0.04%** |
+| stiff（kappa10=1.0） | 0.226372 | 0.226282 | **−0.04%** |
+
+即求解器（`transition_refine`）在**同一 z_tail 口径**下对 moderate（default）与 strong（stiff）
+stiff 都达 **−0.04%（<1e-3）**，说明不是 default 点特例。快速参数扫描（default/stiff/lowT/
+radDominant/cr0_nt/tinyR/edge/norad/highT）均产出有限物理 ΔN_eff，`highT` 由共享 `DN_eff>5` 护栏拒绝。
+
+> 注意：`production` 档配置 `z_tail=7`（更深的解析尾部，更接近连续极限），但与上述 `z_tail=5`
+> 参考比较时会看到 ~0.35% 的差异——这是**尾部阈值（z_tail）**这一共享近似，不是求解器数值误差；
+> 求解器在匹配的 z_tail 下为 −0.04%。
+
+### 7.6 单频原型反例（提示根因在“内核 vs 单频”，而非数值方法）
 
 用**独立单频原型**（连续精确 Φ(N)、2 阶 Magnus、精确 z_tail 尾部、深超视界起点）对照 reference：
 单频误差仅 **~1.4e-4 到 8.3e-4 dex**（0.03%~0.19%），显著优于生产内核的 ~6e-3 dex (~1.4%)。且该
