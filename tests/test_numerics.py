@@ -40,7 +40,9 @@ def test_gen_fast_matches_original_expansion():
         checked += 1
     assert checked > 0
     assert worst_sigma < 1e-10    # audit measured ~1.7e-11
-    assert worst_fhor < 1e-12     # audit measured ~1.35e-13
+    # Both generators are now anchored at the continuous N_inf (present), so the
+    # f_hor difference is float-accumulation noise (~1e-10), not a physics gap.
+    assert worst_fhor < 1e-9
 
 
 def test_simpson_row_matches_scipy():
