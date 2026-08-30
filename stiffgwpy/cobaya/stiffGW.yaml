@@ -42,6 +42,16 @@ freq_res: 1.0
 # ultra-fast.
 accuracy_mode: production
 
+# engine='fast': escalate to the 'reference' mode when the estimated
+# integration error of the selected mode exceeds error_tol (slow: reference is
+# ~30 s/point; disable for MCMC runs).
+auto_escalate: False
+error_tol: 0.005
+
+# engine='reference': continuous-sigma high-accuracy pipeline tolerances.
+reference_rtol: 1e-11
+reference_z_tail: 5.0
+
 ### Derived parameters provided by this theory.
 ### Must match get_can_provide_params() and the keys written into
 ### state['derived'] in calculate().
@@ -58,3 +68,6 @@ params:
   f_end:
     derived: True
     latex: f_\mathrm{end}
+  Delta_Neff_GW_error:
+    derived: True
+    latex: \sigma_{\Delta N_\mathrm{eff,GW}}

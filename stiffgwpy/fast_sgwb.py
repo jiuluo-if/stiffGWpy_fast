@@ -156,12 +156,42 @@ def get_settings():
 # effect on the final Delta N_eff (it only shapes early small-value curves);
 # freq_res=2.0 halves the low-frequency-tail undersampling error.
 ACCURACY_MODES = {
+    'debug': dict(h=0.005, col_step=1, z_tail=10.0, freq_res=2.0,
+                  tol=1e-8, threads=8),
+    'fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
+                 tol=1e-6, threads=16),
+    # Backward-compatible alias of 'fast' (identical settings).
+    'ultra-fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
+                       tol=1e-6, threads=16),
     'reference': dict(h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0,
                       tol=1e-8, threads=8),
     'production': dict(h=0.01, col_step=4, z_tail=7.0, freq_res=1.0,
                        tol=1e-7, threads=8),
-    'ultra-fast': dict(h=0.01, col_step=8, z_tail=5.0, freq_res=1.0,
-                       tol=1e-6, threads=16),
+}
+
+
+# Calibrated error budgets per accuracy mode, from the physics-first benchmark
+# (see docs/audit_reference.md).  ``model_bias`` is the dominant *shared*
+# continuous-sigma-vs-fixed-grid bias (~1% at h=0.01) that a fast-vs-fast
+# convergence check cannot detect; ``ode``/``quadrature`` are engine + grid
+# convergence terms; ``tail`` is the analytic-tail error at the mode's z_tail;
+# ``spectrum_dex`` is the pointwise log10(Omega_GW) error (dominated by the
+# frequency-grid resolution of the spectral features).
+ERROR_BUDGET = {
+    # model_bias is the continuous-sigma (reference.py) vs fixed-grid sigma bias
+    # at the mode's h, taken from the measured h-convergence curve (default point):
+    # h=0.02 -> +3.9%, h=0.01 -> +1.3%, h=0.005 -> +0.55%,
+    # h=0.0025 -> +0.46%, h=0.00125 -> +0.22%, h~0 -> +0.10%.
+    'fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=1.0e-3,
+                 tail=3.8e-3, spectrum_dex=0.20),
+    'ultra-fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=1.0e-3,
+                       tail=3.8e-3, spectrum_dex=0.20),
+    'production': dict(model_bias=1.3e-2, ode=1.0e-5, quadrature=1.0e-4,
+                       tail=2.0e-5, spectrum_dex=0.07),
+    'debug': dict(model_bias=5.5e-3, ode=5.0e-6, quadrature=5.0e-5,
+                  tail=2.4e-7, spectrum_dex=0.02),
+    'reference': dict(model_bias=2.2e-3, ode=2.6e-7, quadrature=1.0e-5,
+                      tail=2.4e-7, spectrum_dex=0.002),
 }
 
 
@@ -184,6 +214,34 @@ def apply_accuracy_mode(name):
     set_z_tail(cfg['z_tail'])
     set_threads(min(cfg['threads'], _MAX_THREADS))
     return cfg
+
+
+def estimate_error(name='production'):
+    """Return the calibrated error budget for the named accuracy mode.
+
+    The returned dict carries the per-stage relative errors used by the
+    production error gate (``DN_gw_error`` / ``spectrum_error`` /
+    ``quadrature_error`` / ``integration_error``).  The engine terms
+    (``ode``, ``quadrature``) are converged to ~1e-5; the physically dominant
+    ``model_bias`` is the continuous-sigma vs fixed-grid bias that a fast-only
+    convergence study cannot detect, so it is derived from the reference
+    benchmark rather than from a fast-vs-fast comparison.
+    """
+    if name not in ERROR_BUDGET:
+        raise ValueError('unknown accuracy mode %r; choose from %s'
+                         % (name, sorted(ERROR_BUDGET)))
+    b = ERROR_BUDGET[name]
+    integration = max(b['model_bias'], b['ode'], b['quadrature'], b['tail'])
+    return dict(
+        accuracy_mode=name,
+        DN_gw_error=integration,
+        spectrum_error=b['spectrum_dex'],
+        quadrature_error=b['quadrature'],
+        integration_error=integration,
+        ODE_error=b['ode'],
+        tail_error=b['tail'],
+        model_bias_error=b['model_bias'],
+    )
 
 
 # ================= module-level tables (once) =================
@@ -439,7 +497,8 @@ def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, f
 @njit(parallel=True, cache=True)
 def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                  j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                 assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw):
+                 assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw,
+                 h_arr=None):
     nv = len(Nv)
     for m in prange(len(j0s)):
         j0 = j0s[m]; z0 = z0s[m]
@@ -458,7 +517,8 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
             assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
         if zz < z_tail:
             while k < nv-1 and (z0 + Phi_grid[k] - Phi0) < z_tail:
-                xh, yh = scaled_step(xh, yh, z0 + Phi_mid[k] - Phi0, h)
+                h_step = h_arr[k] if h_arr is not None else h
+                xh, yh = scaled_step(xh, yh, z0 + Phi_mid[k] - Phi0, h_step)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k % col_step == 0:
@@ -595,7 +655,8 @@ def pchip_fine(idx_out, y, nv, out):
         out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
 
 # ================= full fast SGWB_iter =================
-def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
+def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
+                   transition_refine=False, freq_grid='construct'):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
     Solves the same physics as ``LCDM_SG.SGWB_iter()`` with a fixed-step
@@ -605,7 +666,21 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
     attributes from a previous original ``SGWB_iter()`` run are removed so they
     cannot be confused with fast-path results.  ``tol`` is the outer Delta
     N_eff self-consistency stopping criterion (default 1e-4) and ``freq_res``
-    scales the frequency-grid density (audit-only; 1.0 = default grid).
+    scales the frequency-grid density (audit-only; 1.0 = default grid).  When
+    ``sigma_exact`` is set, ``F``/``Phi``/``S2`` are recomputed from the
+    continuous piecewise-exact ``sigma`` (reheating kink as an exact breakpoint)
+    instead of the fixed-grid cubic spline, removing the ~1% continuous-sigma-vs-
+    grid model bias (see ``stiffgwpy.exact_background``).
+
+    ``transition_refine`` is an experimental kink-refined path that is NOT a
+    production choice: even with a refined grid around the reheating kink it
+    overshoots ``Delta N_eff`` by ~+1% vs the continuous-sigma reference, so it
+    raises ``NotImplementedError`` (docs/audit_reference.md §7.2).
+
+    ``freq_grid`` selects the frequency sampling: ``'construct'`` (the model's
+    empirical grid, the default) or ``'grid_independent'`` (built from continuous
+    background quantities, invariant to the sigma-grid resolution; see
+    ``freq_adaptive.grid_independent_freqs``).
     """
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.
@@ -647,8 +722,16 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
     first = True
     try:
         for _iter in range(MAX_ITER):
-            gen_fast(m, h)
-            m.construct_f(freq_res)
+            if transition_refine:
+                from .exact_background import build_kink_refined_grid
+                build_kink_refined_grid(m, h)
+            else:
+                gen_fast(m, h)
+            if freq_grid == 'grid_independent':
+                from .freq_adaptive import grid_independent_freqs
+                m.f = grid_independent_freqs(m, freq_res)[0]
+            else:
+                m.construct_f(freq_res)
             freqs_new = m.f.astype(np.float64)
             nv_new = len(m.Nv)
             # Reuse grid-dependent quantities across bisection iterations when
@@ -674,6 +757,21 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0):
                 Ogw = Oj = Opgw = None
             first = False
             Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(m, Nv, freqs, h)
+            if transition_refine:
+                raise NotImplementedError(
+                    'transition_refine is not a production path: kink-refined '
+                    'variable stepping still overshoots Delta N_eff (+1.1% vs the '
+                    'continuous-sigma reference 0.0022708; sigma_exact is -0.40%). '
+                    'The frozen-z Magnus gives the wrong high-f stiff-mode amplitude '
+                    'regardless of the kink grid; a higher-order adaptive ODE is '
+                    'required (see audit_reference §7.2). Use sigma_exact=True.')
+            if sigma_exact:
+                from .exact_background import exact_phi_s2
+                Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(
+                    m, Nv, m.cosmo_param['DN_eff'], h)
+                h_arr = None
+            else:
+                h_arr = None
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
                 # j0 = horizon-crossing + 3 decades, so the early columns

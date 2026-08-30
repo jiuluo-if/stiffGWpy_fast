@@ -18,7 +18,8 @@ def fast_settings():
 
 
 def test_accuracy_modes_valid(fast_settings):
-    assert set(FS.ACCURACY_MODES) == {'reference', 'production', 'ultra-fast'}
+    assert set(FS.ACCURACY_MODES) == {'debug', 'fast', 'production',
+                                      'reference', 'ultra-fast'}
     for cfg in FS.ACCURACY_MODES.values():
         assert 1 <= cfg['col_step'] <= 8
         assert 1e-4 <= cfg['h'] <= 0.1
@@ -28,6 +29,26 @@ def test_accuracy_modes_valid(fast_settings):
         assert 1 <= cfg['threads']
     assert FS.ACCURACY_MODES['reference']['h'] < FS.ACCURACY_MODES['production']['h']
     assert FS.ACCURACY_MODES['production']['z_tail'] > FS.ACCURACY_MODES['ultra-fast']['z_tail']
+    # The four canonical tiers requested by the audit; ultra-fast is an alias.
+    assert FS.ACCURACY_MODES['fast'] == FS.ACCURACY_MODES['ultra-fast']
+    assert FS.ACCURACY_MODES['debug']['h'] < FS.ACCURACY_MODES['fast']['h']
+
+
+def test_error_budget_available(fast_settings):
+    for name, cfg in FS.ACCURACY_MODES.items():
+        assert name in FS.ERROR_BUDGET
+        est = FS.estimate_error(name)
+        assert set(est) == {'accuracy_mode', 'DN_gw_error', 'spectrum_error',
+                            'quadrature_error', 'integration_error',
+                            'ODE_error', 'tail_error', 'model_bias_error'}
+        assert est['accuracy_mode'] == name
+        # The integration error is the worst per-stage relative error, so it
+        # dominates the engine terms and is reported as such.
+        assert est['integration_error'] >= max(est['ODE_error'],
+                                               est['quadrature_error'],
+                                               est['tail_error'])
+    with pytest.raises(ValueError):
+        FS.estimate_error('bogus')
 
 
 def test_apply_accuracy_mode_sets_state(fast_settings):
@@ -121,3 +142,38 @@ def test_pool_size_mpi_default(monkeypatch):
     assert _sgwb_pool_size() == 1
     monkeypatch.setattr('stiffgwpy.stiff_SGWB._mpi_world_size', lambda: 1)
     assert _sgwb_pool_size() == 4
+
+
+def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
+    """error-too-large escalates to the continuous-sigma reference engine."""
+    import numpy as np
+
+    from stiffgwpy import fast_sgwb as FS
+    from stiffgwpy import reference as REF
+    from stiffgwpy.stiff_SGWB import LCDM_SG
+
+    def fake_fast(m, **kw):
+        m.SGWB_converge = True
+        m.cosmo_param['DN_eff'] = 0.002
+        return m
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
+
+    def fake_ref(m, **kw):
+        m.cosmo_param['DN_eff'] = 0.00227
+        m.DN_gw = np.array([0.0, 0.00227])
+        m.kappa_r = 1.9e-3
+        m.log10OmegaGW = np.array([-15.0])
+        m.f = np.array([6.0])
+        m.SGWB_converge = True
+        m.reference_evals = getattr(m, 'reference_evals', 0) + 1
+        return m
+
+    monkeypatch.setattr(REF, 'apply_reference_to_model', fake_ref)
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    m.SGWB_iter(engine='fast', accuracy_mode='production',
+                auto_escalate=True, error_tol=5e-3, escalate_to_reference=True)
+    assert m.escalations == 1
+    assert m.escalated_from == 'production'
+    assert m.reference_evals >= 1
+    assert m.cosmo_param['DN_eff'] == pytest.approx(0.00227)
