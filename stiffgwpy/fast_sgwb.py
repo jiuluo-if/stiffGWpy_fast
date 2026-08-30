@@ -365,10 +365,17 @@ def gen_fast(m, h=0.01):
     Otrh2 = gp.Omega_orh2 + Oerh2
     Otreh2 = gp.Omega_ph2*gp.rho_th[-1] + Oerh2
     OLh2 = d['h']**2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2*2/3 - gp.Omega_ph2 - Oerh2 - Osh2
+    # Use the *continuous* present-day anchor N_inf (not the grid-quantised
+    # floor(N_inf/h)*h) so the fast path is anchored identically to the
+    # continuous-sigma reference.  The floor(N_inf/h)*h anchor attenuates the
+    # analytic-tail amplitude by exp(N_inf - floor(N_inf/h)*h) ~ 0.996 -> a ~0.4%
+    # systematic bias (grid-anchor error, not a numerical-order issue).
     len_inf = math.floor(d['N_inf']/h)+1
     Nv = np.arange(0, len_inf)*h
-    index_re = len_inf-1 - math.floor(d['N_re']/h)
-    Sv = np.empty(len_inf); f_hor = np.empty(len_inf)
+    if Nv[-1] != d['N_inf']:
+        Nv = np.append(Nv, d['N_inf'])
+    index_re = int(np.argmin(np.abs(Nv - (d['N_inf'] - d['N_re']))))
+    Sv = np.empty(len(Nv)); f_hor = np.empty(len(Nv))
     Delta_f = math.log(2*math.pi/d['H_0'])
     gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
                gp.Omega_mnuh2, gp.Omega_ph2, gp.Omega_nh2, gp.nu_today, gp.N_fin, gp.N_max,

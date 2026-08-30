@@ -138,15 +138,17 @@ class LCDM_SN:
         #####   Construct output arrays    #####
     
         len_inf = math.floor(self.derived_param['N_inf']*100)+1; Nv = np.arange(0, len_inf)*.01
+        if Nv[-1] != self.derived_param['N_inf']:
+            Nv = np.append(Nv, self.derived_param['N_inf'])
         # Nv is equivalent to ln(a), its present-day value is set at Nv[-1] = N_inf.
         Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv proportional to f_H = aH/(2*pi)
 
     
         #####    Main loop: Calculating expansion history    #####  
 
-        index_re = len_inf-1 - math.floor(self.derived_param['N_re']*100)
+        index_re = int(np.argmin(np.abs(Nv - (self.derived_param['N_inf'] - self.derived_param['N_re']))))
 
-        for i in range(index_re, len_inf, 1):
+        for i in range(index_re, len(Nv), 1):
             eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 1/a and 1/a^3
             nu = nu_today / eN          #  (m_nu*c^2)/(kB*T_nu) 
             if (nu > 100):              #  massive neutrinos become highly non-relativistic

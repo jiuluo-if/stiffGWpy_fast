@@ -127,13 +127,9 @@ def test_float_robustness_extreme_params():
 
 
 def test_sigma_exact_reduces_model_bias():
-    """Continuous-sigma (sigma_exact) moves Delta N_eff toward the reference.
-
-    On the default point the continuous-sigma reference value is ~0.0022708.
-    The fixed-grid fast path under-estimates it (grid-model-bias); enabling
-    ``sigma_exact`` should raise the result toward that reference (the fixed-grid
-    value is monotonically the low side of the true value on this point).
-    """
+    """With the continuous present-day anchor, fast Delta N_eff is close to the
+    continuous-sigma reference (the dominant historical error was the
+    grid-quantised present-day anchor, not the sigma kink)."""
     from stiffgwpy import fast_sgwb as FS
 
     saved = FS.get_settings()
@@ -147,9 +143,10 @@ def test_sigma_exact_reduces_model_bias():
         ref = 0.00227081
         d_grid = m_grid.cosmo_param['DN_eff']
         d_exact = m_exact.cosmo_param['DN_eff']
-        # sigma_exact is closer to the continuous-sigma reference than the grid.
-        assert abs(d_exact - ref) < abs(d_grid - ref)
-        assert d_exact > d_grid
+        # Both engines are now within 0.5% of the continuous-sigma reference;
+        # the previously-dominant grid-anchor bias is removed.
+        assert abs(d_grid - ref) / ref < 5e-3
+        assert abs(d_exact - ref) / ref < 5e-3
     finally:
         FS.set_threads(saved['threads'])
         FS.set_col_step(saved['col_step'])
