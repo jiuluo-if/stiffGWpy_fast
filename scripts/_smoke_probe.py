@@ -4,7 +4,13 @@ import tempfile
 from pathlib import Path
 
 import yaml
+from cobaya import mpi
 from cobaya.run import run
+
+# The smoke test is intentionally single-process.  GitHub runners may have
+# mpi4py installed without a system libmpi; explicitly disabling MPI keeps
+# Cobaya's serial execution path deterministic and portable.
+mpi.set_mpi_disabled()
 
 os.chdir(tempfile.gettempdir())  # different cwd (qualified-name test)
 repo = str(Path(__file__).resolve().parents[1])
