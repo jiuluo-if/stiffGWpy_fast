@@ -65,6 +65,9 @@ reference.py（独立锚点）: 连续 σ(N) + DOP853 + PCHIP/adaptive GK + 网�
 
 - 双引擎在同一参数点 `ok=True`、无 silent fallback，`Delta_Neff_GW` 差 −0.35%（=z_tail 配置差，
   非求解器失配；匹配 z_tail 时 −0.02%）。
+- **点位 ΔlogL（匹配 z_tail=5）**：default 点 fast=0.0022698 vs reference=0.0022703，
+  ΔΔN_eff=−5.44e-7（0.024% 相对）；对高斯似然 `|ΔlogL|=1.5e-5`（σ_Neff=1e-4）、
+  `1.7e-6`（σ_Neff=3e-4）、`1.5e-7`（σ_Neff=1e-3）——似然层面两引擎几乎不可区分，后验应一致。
 - **尚未执行**：同参数同种子的 fast vs reference **收敛后验链**对比（ΔlogL/posterior mean/std/
   16–84%/MAP/ESS/covariance/KS/Wasserstein/KL/posterior shift）。reference 引擎 ~171 s/点，完整
   MCMC 链需数小时；这是唯一尚未执行的长任务。
