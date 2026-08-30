@@ -15,7 +15,7 @@ def test_adapter_exports_canonical_derived_names():
 
     expected = {
         "Delta_Neff_GW", "Delta_Neff_total",
-        "log10hc_prim_fyr", "f_end",
+        "log10hc_prim_fyr", "f_end", "Delta_Neff_GW_error",
     }
     adapter = stiffGW()
     assert set(adapter.get_can_provide_params()) == expected
@@ -24,6 +24,64 @@ def test_adapter_exports_canonical_derived_names():
                           "stiffgwpy" / "cobaya" / "stiffGW.yaml").read_text(
                               encoding="utf-8"))
     assert tuple(cfg["params"]) == adapter.DERIVED_PARAMS
+
+
+def test_adapter_exposes_error_telemetry():
+    pytest.importorskip("cobaya")
+    from stiffgwpy.cobaya.stiffGW import stiffGW
+
+    class Model:
+        fast_evals = 5
+        fast_failures = 0
+        fast_guard_rejections = 0
+        fast_physical_rejections = 0
+        lsoda_evals = 0
+        lsoda_fallbacks = 0
+        reference_evals = 1
+        escalations = 1
+        escalated_from = "production"
+        DN_gw_error = 1.0e-2
+        spectrum_error = 0.07
+
+    adapter = stiffGW()
+    adapter.stiffGW_model = Model()
+    stats = adapter.engine_stats
+    assert stats['reference_evals'] == 1
+    assert stats['escalations'] == 1
+    assert stats['escalated_from'] == 'production'
+    assert stats['DN_gw_error'] == 1.0e-2
+    assert stats['spectrum_error'] == 0.07
+
+
+def test_reference_engine_sets_state(monkeypatch):
+    pytest.importorskip("cobaya")
+    import numpy as np
+
+    from stiffgwpy.cobaya.stiffGW import stiffGW
+
+    freqs = np.array([6.0, 4.0, 2.0, 0.0, -2.0, -4.0])
+    logO = np.array([-15.6, -15.6, -11.6, -7.9, -11.7, -13.5])
+    fake = dict(
+        freqs=freqs, log10OmegaGW=logO, DN_eff=2.27e-3, DN_gw=2.27e-3,
+        kappa_r=1.94e-3, g2=2.81e-8, n_iter=2)
+
+    def fake_run(m, **kw):
+        return fake
+
+    monkeypatch.setattr("stiffgwpy.reference.run_reference", fake_run)
+    adapter = stiffGW()
+    adapter.engine = "reference"
+    adapter.freq_res = 1.0
+    m = adapter.stiffGW_model
+    params = {k: 0.0 for k in ("A_s", "r", "n_t", "cr", "DN_re", "kappa10")}
+    params.update(Omega_bh2=0.022, Omega_ch2=0.12, H0=67.0, DN_eff=0.0,
+                  T_re=2e3)
+    state = {}
+    assert adapter.calculate(state, want_derived=True, **params)
+    assert np.allclose(state['f'], freqs)
+    assert np.allclose(state['omGW_stiff'], logO)
+    assert state['derived']['Delta_Neff_GW'] == pytest.approx(2.27e-3, rel=1e-9)
+    assert m.reference_evals == 1
 
 
 def test_qualified_module_import_resolves_class():
