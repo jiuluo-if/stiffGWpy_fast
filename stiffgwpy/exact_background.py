@@ -46,47 +46,52 @@ def sigma_vec(N, m, DN_eff):
     N_re_abs = N_inf - d['N_re']
     fd_rho, fd_p = _fd_from_ref()
 
-    sigma = np.empty_like(N)
-    for i in range(N.size):
-        Ni = float(N[i])
-        if Ni < N_re_abs:
-            sigma[i] = 1.0
-            continue
-        eN = math.exp(N_inf - Ni)
-        e3N = eN * eN * eN
-        nu = gp.nu_today / eN
-        if nu > 100.0:
-            H2 = (Omh2 + gp.Omega_mnuh2
-                  + (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2 + Oerh2) * eN
-                  + Osh2 * e3N + OLh2 / e3N)
-            s = (Omh2 + gp.Omega_mnuh2
-                 + 4.0 / 3.0 * (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2 + Oerh2) * eN
-                 + 2.0 * Osh2 * e3N) / H2
-        elif nu >= 0.1:
-            lognu = math.log10(nu)
-            rho_nu = float(fd_rho(lognu))
-            p_nu = float(fd_p(lognu))
-            H2 = (Omh2
-                  + (gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2 + Oerh2) * eN
-                  + Osh2 * e3N + OLh2 / e3N)
-            s = (Omh2
-                 + 4.0 / 3.0 * (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2 + Oerh2) * eN
-                 + (rho_nu + p_nu) * gp.Omega_nh2 / 3.0 * eN
-                 + 2.0 * Osh2 * e3N) / H2
-        elif Ni > N_inf - gp.N_fin:
-            H2 = Omh2 + Otrh2 * eN + Osh2 * e3N + OLh2 / e3N
-            s = (Omh2 + 4.0 / 3.0 * Otrh2 * eN + 2.0 * Osh2 * e3N) / H2
-        elif Ni >= N_inf - gp.N_max:
-            Nl = N_inf - Ni
-            rho_i = float(gp.spl_rho(Nl))
-            rhop_i = float(gp.spl_rhop(Nl))
-            H2 = Omh2 + (gp.Omega_ph2 * rho_i + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
-            s = (Omh2 + (gp.Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN
-                 + 2.0 * Osh2 * e3N) / H2
-        else:
-            H2 = Omh2 + Otreh2 * eN + Osh2 * e3N + OLh2 / e3N
-            s = (Omh2 + 4.0 / 3.0 * Otreh2 * eN + 2.0 * Osh2 * e3N) / H2
-        sigma[i] = s
+    sigma = np.ones_like(N)
+    running = N >= N_re_abs
+    Nr = N[running]
+    eN = np.exp(N_inf - Nr)
+    e3N = eN * eN * eN
+    nu = gp.nu_today / eN
+    Omega_ph2 = gp.Omega_ph2
+    Omega_nh2 = gp.Omega_nh2
+    Omega_mnuh2 = gp.Omega_mnuh2
+
+    m1 = nu > 100.0
+    out = np.empty(running.sum())
+    if m1.any():
+        H2 = (Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1]
+              + Osh2 * e3N[m1] + OLh2 / e3N[m1])
+        out[m1] = (Omh2 + Omega_mnuh2
+                   + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1]
+                   + 2.0 * Osh2 * e3N[m1]) / H2
+    m2 = (~m1) & (nu >= 0.1)
+    if m2.any():
+        lognu = np.log10(nu[m2])
+        rho_nu = fd_rho(lognu)
+        p_nu = fd_p(lognu)
+        H2 = (Omh2 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2 + Oerh2) * eN[m2]
+              + Osh2 * e3N[m2] + OLh2 / e3N[m2])
+        out[m2] = (Omh2
+                   + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m2]
+                   + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN[m2]
+                   + 2.0 * Osh2 * e3N[m2]) / H2
+    m3 = (~m1) & (~m2) & (Nr > N_inf - gp.N_fin)
+    if m3.any():
+        H2 = Omh2 + Otrh2 * eN[m3] + Osh2 * e3N[m3] + OLh2 / e3N[m3]
+        out[m3] = (Omh2 + 4.0 / 3.0 * Otrh2 * eN[m3] + 2.0 * Osh2 * e3N[m3]) / H2
+    m4 = (~m1) & (~m2) & (~m3) & (Nr >= N_inf - gp.N_max)
+    if m4.any():
+        Nl = N_inf - Nr[m4]
+        rho_i = gp.spl_rho(Nl)
+        rhop_i = gp.spl_rhop(Nl)
+        H2 = Omh2 + (Omega_ph2 * rho_i + Oerh2) * eN[m4] + Osh2 * e3N[m4] + OLh2 / e3N[m4]
+        out[m4] = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN[m4]
+                   + 2.0 * Osh2 * e3N[m4]) / H2
+    m5 = (~m1) & (~m2) & (~m3) & (~m4)
+    if m5.any():
+        H2 = Omh2 + Otreh2 * eN[m5] + Osh2 * e3N[m5] + OLh2 / e3N[m5]
+        out[m5] = (Omh2 + 4.0 / 3.0 * Otreh2 * eN[m5] + 2.0 * Osh2 * e3N[m5]) / H2
+    sigma[running] = out
     return sigma
 
 
@@ -216,7 +221,7 @@ def build_kink_refined_grid(m, h, refine_radius=2.0, refine_factor=8):
     N_re_abs = N_inf - d['N_re']
     len_inf = math.floor(N_inf / h) + 1
     Nv = np.arange(0, len_inf) * h
-    present = Nv[-1]
+    present = N_inf
     lo = N_re_abs - refine_radius
     hi = N_re_abs + refine_radius
     if lo < 0.0:

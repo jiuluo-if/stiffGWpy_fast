@@ -204,6 +204,10 @@ Four named accuracy modes plus a backward-compatible `ultra-fast` alias (see
 
 `fast_sgwb.ACCURACY_MODES` holds the tables; `fast_sgwb.apply_accuracy_mode(name)` applies one and
 returns it. `fast_sgwb.get_settings()` snapshots the current module settings.
+`production`/`reference`/`debug` also enable `transition_refine` (a kink-aware
+non-uniform grid + exact continuous-`sigma` F/Phi + variable Magnus steps), which
+brings `Delta N_eff` to ~0.04% of the continuous-`sigma` reference at ~80 ms/point
+(`fast` keeps the fastest plain grid at ~0.18%).
 `fast_sgwb.estimate_error(mode)` returns a calibrated error budget per mode
 (`DN_gw_error`, `spectrum_error`, `quadrature_error`, `integration_error`,
 `ODE_error`, `tail_error`, `model_bias_error`); the model exposes it as
