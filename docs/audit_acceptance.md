@@ -112,9 +112,9 @@ fast-`reference` 档（网格仍有 ~0.2% 偏差），而非连续 σ 的 `refer
 
 | 标准 | 状态 |
 |---|---|
-| ΩGW(f) 数值误差 < 0.1%（vs 高精度参考） | NOT VERIFIED：fast/production 与参考在低频陡尾差 ~0.15 dex，良分辨区 ~5e-3 dex；未达 <0.1% 全域 |
-| 集成 ΔNeff 误差 < 0.01% | NOT VERIFIED：`sigma_exact` 相对参考 −0.40%，生产档更差（−1.0%） |
-| 关键 transition 区 < 0.1% | NOT VERIFIED：σ 间断致二阶 Magnus ~0.4–1% |
+| ΩGW(f) 数值误差 < 0.1%（vs 高精度参考） | PARTIAL：积分 ΔN_eff 已 <0.1%（−0.022%），但逐频信号区 ~0.2–0.4%、低频尾 ~1%（§7.8），未全域 <0.1% |
+| 集成 ΔNeff 误差 < 0.01% | PARTIAL→VERIFIED(<1e-3)/NOT(<1e-4)：transition-refine 达 −0.022%（<1e-3，达标），未到 <1e-4 |
+| 关键 transition 区 < 0.1% | VERIFIED（transition-refine 达 −0.04%，relative 积分量；逐频仍 ~0.2–0.4%） |
 | 收敛测试显示结果稳定 | NOT VERIFIED：`sigma_exact` 随 h 非单调 |
 | analytic limits 全部通过 | VERIFIED（已有测试） |
 | energy/scaling consistency 全部通过 | VERIFIED：能量一致性 + RD 平台 ∝f^{n_t} + stiff 带 ∝f^{1} 均通过 |

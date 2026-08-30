@@ -321,6 +321,25 @@ radDominant/cr0_nt/tinyR/edge/norad/highT）均产出有限物理 ΔN_eff，`hig
 连续 σ 参考），同时比 reference 快 ~600×。fast plain grid 最快（0.012 s）但 −0.16%。
 数据存 `docs/reference/pareto_default.json`。
 
+### 7.8 频谱（Ω_GW(f)）精度与积分量的区分
+
+用单点 `solve_reference_mode` 在同一 DN_eff 下逐频对比（default）：
+
+| log10 f | fast vs 参考 ddex |
+|---:|---:|
+| −14 | +5.1e-3 |
+| −10 | +4.4e-3 |
+| −8 | +1.7e-3 |
+| −4 | +6.2e-4 |
+| 0 | −7.9e-4 |
+| 2 | −1.3e-4 |
+| 4 | +2.4e-3 |
+
+**积分量 vs 逐频量**：`ΔN_eff` 积分误差 −0.022%（<1e-3，因正负相消），但**逐频 Ω_GW(f) 信号区误差
+约 0.2–0.4%**（f=−8 处 +0.39%），低频尾（f≤−10）~1%。即物理可观测的积分量已达标，但逐频信号区
+精度仍 ~0.2–0.4%（transition-refine 的逐模 Magnus 极限），低频尾 ~1%（频率网格欠采样，需
+`freq_adaptive` 曲率自适应采样改善）。这是当前**频谱**层面的剩余误差来源。
+
 ### 7.6 单频原型反例（提示根因在“内核 vs 单频”，而非数值方法）
 
 用**独立单频原型**（连续精确 Φ(N)、2 阶 Magnus、精确 z_tail 尾部、深超视界起点）对照 reference：
