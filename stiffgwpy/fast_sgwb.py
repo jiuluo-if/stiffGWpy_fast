@@ -809,6 +809,7 @@ def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, f
     Opgw[m,slot] = Op
     Ogw[m,slot] = 3.0*Op + oj
 
+@njit(parallel=True, cache=True)
 def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                  j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
                  assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw,

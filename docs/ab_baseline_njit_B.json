@@ -1,0 +1,77 @@
+{
+  "threads": 4,
+  "case": {
+    "r": 0.001,
+    "cr": 1,
+    "T_re": 2000.0,
+    "kappa10": 0.01
+  },
+  "case_id": "B",
+  "reps": 2,
+  "records": [
+    {
+      "total_s": 0.4091468000005989,
+      "iterations": 1,
+      "n_freq": 244,
+      "DN_eff": 0.00023064037745620843,
+      "DN_gw_last": 0.00023064037745620833,
+      "digest_f": "6bfe763a3c1eec1cc0b895c080d38cf249802d80dbe990d51f294946995fd233",
+      "digest_spectrum": "e210194bed8b090e30c82d0a05e20ea88347d39f507f6a4e52aa22d55dde9043",
+      "digest_DN_gw": "73fe6addf8ee431fd8c61edb6a77bd8a343f5e8edd1faa452ee7947eac283e12",
+      "digest_g2": "42c8cd828a7c4e7782f86c64ebfd7bda5c92c6ab3b52af45dcdf56eb6982ad8e",
+      "digest_w2": "a738b0a50961d5eb0f745bde44897158c930937ef4217e7b1aa112f291f57a61",
+      "expansion_background_s": 0.16309829999954673,
+      "expansion_background_calls": 1,
+      "frequency_grid_s": 0.00045089999912306666,
+      "frequency_grid_calls": 1,
+      "kernel_prepare_s": 0.008940699999584467,
+      "kernel_prepare_calls": 1,
+      "j0_cv": 0.9810654624386551,
+      "j0_span": 2824.0,
+      "tensor_solve_kernel_s": 0.21093010000004142,
+      "tensor_solve_kernel_calls": 1,
+      "column_integration_s": 0.00956399999995483,
+      "column_integration_calls": 1
+    },
+    {
+      "total_s": 0.189652400000341,
+      "iterations": 1,
+      "n_freq": 244,
+      "DN_eff": 0.00023064037745620843,
+      "DN_gw_last": 0.00023064037745620833,
+      "digest_f": "6bfe763a3c1eec1cc0b895c080d38cf249802d80dbe990d51f294946995fd233",
+      "digest_spectrum": "e210194bed8b090e30c82d0a05e20ea88347d39f507f6a4e52aa22d55dde9043",
+      "digest_DN_gw": "73fe6addf8ee431fd8c61edb6a77bd8a343f5e8edd1faa452ee7947eac283e12",
+      "digest_g2": "42c8cd828a7c4e7782f86c64ebfd7bda5c92c6ab3b52af45dcdf56eb6982ad8e",
+      "digest_w2": "a738b0a50961d5eb0f745bde44897158c930937ef4217e7b1aa112f291f57a61",
+      "expansion_background_s": 0.0001346000008197734,
+      "expansion_background_calls": 1,
+      "frequency_grid_s": 0.00023020000116957817,
+      "frequency_grid_calls": 1,
+      "kernel_prepare_s": 0.00017469999875174835,
+      "kernel_prepare_calls": 1,
+      "j0_cv": 0.9810654624386551,
+      "j0_span": 2824.0,
+      "tensor_solve_kernel_s": 0.187709800000448,
+      "tensor_solve_kernel_calls": 1,
+      "column_integration_s": 0.0002580999989731936,
+      "column_integration_calls": 1
+    }
+  ],
+  "median_s": {
+    "column_integration_s": 0.004911049999464012,
+    "expansion_background_s": 0.08161645000018325,
+    "frequency_grid_s": 0.0003405500001463224,
+    "kernel_prepare_s": 0.004557699999168108,
+    "tensor_solve_kernel_s": 0.19931995000024472,
+    "total_s": 0.29939960000046995
+  },
+  "p95_s": {
+    "column_integration_s": 0.00909870499990575,
+    "expansion_background_s": 0.15495011499961037,
+    "frequency_grid_s": 0.00043986499922539225,
+    "kernel_prepare_s": 0.008502399999542831,
+    "tensor_solve_kernel_s": 0.20976908500006175,
+    "total_s": 0.39817208000058596
+  }
+}
