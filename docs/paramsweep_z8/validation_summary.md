@@ -49,7 +49,9 @@ DN_re in [0,30], kappa10 in [1e-6,1] log (LCDM anchors fixed).
 - 240 draws: 212 ok (88.3%), 28 rejected by the shared_Neff_guard (extreme
   (r, DN_re, kappa10) corners where the shared background Delta_Neff grows past
   the documented guard; rejection is explicit and traceable, never silent).
-- fast runtime: median 5.34 s, p95 8.82 s, max 14.2 s per production point.
+- fast runtime: median 5.34 s, p95 8.82 s, max 14.2 s per production point；这是
+  JIT 优化前的历史 validation artifact 计时，当前 runtime 见
+  `docs/performance_comparison_20260903.md`。
 - adaptive frequency grid: median 236 nodes, p95 266, max 286 (sparse in smooth
   regions, refined at knee/stiff/cutoff).
 - WKB/adiabatic handoff defect (per-mode max eps): median 6.84e-4, max 6.84e-4
@@ -81,9 +83,11 @@ DN_re in [0,30], kappa10 in [1e-6,1] log (LCDM anchors fixed).
   points (max 7.09e-4). Per-mode error < 1e-4 is NOT met (would require a
   higher-order per-mode integrator or continuous-sigma fast sigma).
 - 100x-vs-LSODA production runtime: the honest comparison at matched accuracy
-  settings (z8 production) is 3-16x vs the documented 18.6 s LSODA anchor; the
-  100x+ figure is only true for the plain-grid coarser mode (12 ms, -0.16% DN),
-  not for the accuracy mode that meets the 1e-3 physics gate.
+  settings (z8 production) is 3-16x vs the documented 18.6 s LSODA anchor；这是
+  JIT 优化前的历史 runtime 对照，当前执行层 benchmark 见
+  `docs/performance_comparison_20260903.md`。The 100x+ figure is only true for
+  the plain-grid coarser mode (12 ms, -0.16% DN), not for the accuracy mode that
+  meets the 1e-3 physics gate.
 
 
 ## 5. Layer C posterior validation (fast production vs continuous-sigma reference)

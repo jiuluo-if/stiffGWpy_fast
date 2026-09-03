@@ -17,8 +17,10 @@ how the hard features are treated.
 * **no** phase-aware horizon-crossing sub-stepping (`phase_max = 0.0`),
 * the deep-subhorizon hand-off to the analytic tail at `z_tail = 5.0`.
 
-Cost: it skips the transition refine and the adaptive grid, so it runs in
-`~0.37 s/point`.  Its accuracy is **not** certified (see `accuracy.md`).
+Cost: it skips the transition refine and the adaptive grid. After the
+execution-layer JIT fix, the default point is `6.879 ms/point` warm median
+(`7.642 ms` p95 at 4 threads; cold JIT measured separately). Its accuracy is
+**not** certified (see `accuracy.md`); the speedup does not alter this status.
 
 ## fast transition-refine (production)
 
