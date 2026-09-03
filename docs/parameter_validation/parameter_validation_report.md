@@ -128,7 +128,7 @@ fast vs reference 逐 bin dex（11 个 likelihood bin 全为原生求解节点�
 - docs/paramsweep_ref/fast_sweep.jsonl
 - docs/mcmc_posterior/is_pointwise.json
 - docs/mcmc_posterior/is_report.json
-- docs/reference/pareto_default.json
+- docs/benchmark_current_fast_preset_20260903.json
 - docs/paramsweep_plain/plain_points.jsonl
 - docs/paramsweep_plain/validation_summary.json
 - docs/paramsweep_z8b/reference_points.jsonl
