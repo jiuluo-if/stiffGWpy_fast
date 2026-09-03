@@ -42,11 +42,18 @@ freq_res: 1.0
 # ultra-fast.
 accuracy_mode: production
 
-# engine='fast': escalate to the 'reference' mode when the estimated
-# integration error of the selected mode exceeds error_tol (slow: reference is
-# ~30 s/point; disable for MCMC runs).
+# engine='fast': escalate to the 'reference' mode when the estimated error of
+# the selected mode exceeds the budget (slow; disable for production MCMC).
+# With likelihood_sigma set, the gate is likelihood-aware:
+#   |Delta logL| = 0.5 * (Delta_Neff_abs_error / likelihood_sigma)^2
+# is compared against dlogl_tol; without it, the relative error_tol gate is
+# used.  escalate_to_reference: True runs the independent continuous-sigma
+# pipeline on escalation (very slow), False tightens the fast grid instead.
 auto_escalate: False
 error_tol: 0.005
+likelihood_sigma: null
+dlogl_tol: 0.001
+escalate_to_reference: False
 
 # engine='reference': continuous-sigma high-accuracy pipeline tolerances.
 reference_rtol: 1e-11

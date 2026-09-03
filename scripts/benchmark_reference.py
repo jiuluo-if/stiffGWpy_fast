@@ -78,11 +78,16 @@ def env_meta():
     return meta
 
 
-def run_fast(kw):
-    FS.apply_accuracy_mode('production')
+def run_fast(kw, z_tail=None):
+    cfg = FS.apply_accuracy_mode('production')
+    if z_tail is not None:
+        FS.set_z_tail(z_tail)
     m = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    FS.SGWB_iter_fast(m, tol=1e-7)
+    # Forward the preset's continuous-sigma (kink breakpoint) path: production
+    # mode is defined with transition_refine=True (see ACCURACY_MODES), and
+    # running the plain spline-sigma path silently loses ~0.2% of Delta N_eff.
+    FS.SGWB_iter_fast(m, tol=cfg['tol'], transition_refine=cfg.get('transition_refine', False))
     dt = time.perf_counter() - t0
     return m, dt
 
@@ -131,7 +136,10 @@ def main(argv=None):
     ap.add_argument('--no-ode-error', action='store_true',
                     help='skip the extra reference rtol=1e-10 run (saves ~1/3 time)')
     ap.add_argument('--no-tail-error', action='store_true',
-                    help='skip the extra reference z_tail=7 run')
+                    help='skip the extra reference tail-sensitivity run')
+    ap.add_argument('--z-tail', type=float, default=7.0,
+                    help='reference z_tail for the primary run (default 7.0 = '
+                         'matched to fast production mode)')
     args = ap.parse_args(argv)
 
     kw = CASES[args.point]
@@ -147,7 +155,7 @@ def main(argv=None):
     subset = None if args.freq_full else np.array(FREQ_SUBSET)
 
     # ---- fast production ----
-    m_fast, dt_fast = run_fast(kw)
+    m_fast, dt_fast = run_fast(kw, z_tail=args.z_tail)
     dn_fast = float(m_fast.cosmo_param['DN_eff'])
     dn_gw_fast = float(m_fast.DN_gw[-1])
     kappa_r_fast = float(m_fast.kappa_r)
@@ -157,7 +165,7 @@ def main(argv=None):
     # ---- reference (physics-first truth) at the fast-converged DN_eff ----
     t0 = time.perf_counter()
     ref = REF.run_reference(_ref_model(kw),
-                            dn_eff=dn_fast, freq_res=1.0, z_tail=5.0, rtol=1e-11,
+                            dn_eff=dn_fast, freq_res=1.0, z_tail=args.z_tail, rtol=1e-11,
                             freq_subset=subset, self_consistent=False)
     dt_ref = time.perf_counter() - t0
     rec({'kind': 'reference', 'runtime_s': dt_ref, 'DN_gw': float(ref['DN_gw']),
@@ -176,7 +184,7 @@ def main(argv=None):
     # ---- reference ODE sensitivity (rtol) ----
     if not args.no_ode_error:
         ref_lo = REF.run_reference(_ref_model(kw),
-                                   dn_eff=dn_fast, freq_res=1.0, z_tail=5.0,
+                                   dn_eff=dn_fast, freq_res=1.0, z_tail=args.z_tail,
                                    rtol=1e-10, freq_subset=subset, self_consistent=False)
         ode_err = dex_abs(ref['log10OmegaGW'], ref_lo['log10OmegaGW'])
         rec({'kind': 'ode_error', 'rtol_lo': 1e-10, 'rtol_hi': 1e-11,
@@ -188,10 +196,10 @@ def main(argv=None):
     # ---- reference tail sensitivity (z_tail) ----
     if not args.no_tail_error:
         ref_tail = REF.run_reference(_ref_model(kw),
-                                     dn_eff=dn_fast, freq_res=1.0, z_tail=7.0,
+                                     dn_eff=dn_fast, freq_res=1.0, z_tail=5.0,
                                      rtol=1e-11, freq_subset=subset, self_consistent=False)
         tail_err = dex_abs(ref['log10OmegaGW'], ref_tail['log10OmegaGW'])
-        rec({'kind': 'tail_error', 'zt_lo': 5.0, 'zt_hi': 7.0,
+        rec({'kind': 'tail_error', 'zt_lo': 5.0, 'zt_hi': args.z_tail,
              'dex_max': float(tail_err.max()),
              'dex_p95': float(np.percentile(tail_err, 95)),
              'DN_gw_rel': (float(abs(ref['DN_gw'] - ref_tail['DN_gw']) /

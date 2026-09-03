@@ -42,6 +42,17 @@ def _sgwb_pool_size():
     return 1 if _mpi_world_size() > 1 else 4
 
 
+def _mark_eval_status(m, label):
+    """Record the engine status of one evaluation for telemetry."""
+    counts = getattr(m, 'eval_status_counts', None)
+    if counts is None:
+        counts = {'FAST': 0, 'FAST_ESCALATED': 0, 'REFERENCE': 0,
+                  'LSODA': 0, 'LSODA_FALLBACK': 0}
+        m.eval_status_counts = counts
+    counts[label] = counts.get(label, 0) + 1
+    m.last_eval_status = label
+
+
 class LCDM_SG(LCDM_SN):
     """
     Cosmological model: LCDM + stiff component + constant Delta N_eff
@@ -165,7 +176,8 @@ class LCDM_SG(LCDM_SN):
                   z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0,
                   h=None, col_step=None, threads=None, accuracy_mode=None,
                   auto_escalate=False, error_tol=None, sigma_exact=False,
-                  escalate_to_reference=False, transition_refine=None):
+                  escalate_to_reference=False, transition_refine=None,
+                  likelihood_sigma=None, dlogl_tol=None):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -200,6 +212,7 @@ class LCDM_SG(LCDM_SN):
                                      rtol=rtol)
             self.last_engine = 'reference'
             self.reference_evals = getattr(self, 'reference_evals', 0) + 1
+            _mark_eval_status(self, 'REFERENCE')
             return self
         if engine == 'fast':
             from . import fast_sgwb
@@ -259,6 +272,7 @@ class LCDM_SG(LCDM_SN):
                 fallback_attempted = True
                 self.reset()
                 result = self.SGWB_iter(engine='lsoda')
+                _mark_eval_status(self, 'LSODA_FALLBACK')
             reason = getattr(self, 'fast_failure_reason', None)
             if result is None and reason == 'shared_Neff_guard':
                 # Both engines reject this deterministic non-physical point;
@@ -278,23 +292,46 @@ class LCDM_SG(LCDM_SN):
                 fallback_attempted = True
                 self.reset()
                 result = self.SGWB_iter(engine='lsoda')
+                _mark_eval_status(self, 'LSODA_FALLBACK')
             elif result is None and reason != 'shared_Neff_guard':
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = self.last_fast_error or 'fast solver returned None'
-            if result is not None and accuracy_mode is not None:
-                self.error_estimates = fast_sgwb.estimate_error(accuracy_mode)
-                self.DN_gw_error = self.error_estimates['DN_gw_error']
-                self.spectrum_error = self.error_estimates['spectrum_error']
-                self.quadrature_error = self.error_estimates['quadrature_error']
+            if result is not None:
+                # Local a-posteriori error budget (physics-first, per point):
+                # WKB handoff / frequency grid / quadrature / phase truncation
+                # / tail / cancellation / self-consistency, computed from this
+                # solve's telemetry (see fast_sgwb.estimate_local_error).
+                try:
+                    self.local_error_budget = fast_sgwb.estimate_local_error(self)
+                    self.DN_gw_error = self.local_error_budget['DN_gw_error']
+                    self.Delta_Neff_abs_error = self.local_error_budget['Delta_Neff_abs_error']
+                    self.quadrature_error = self.local_error_budget['categories']['quadrature']['value']
+                    self.spectrum_error = self.local_error_budget['DN_gw_error']
+                except Exception:
+                    self.local_error_budget = None
+                if accuracy_mode is not None:
+                    self.error_estimates = fast_sgwb.estimate_error(accuracy_mode)
+                _mark_eval_status(self, 'FAST')
                 if auto_escalate:
-                    tol_err = error_tol if error_tol is not None else 5e-3
-                    if self.error_estimates['DN_gw_error'] > tol_err:
-                        # The estimated integration error exceeds the requested
-                        # tolerance.  Either tighten the fast grid ('reference'
-                        # mode) or, with escalate_to_reference, run the
-                        # independent continuous-sigma pipeline.
+                    # Likelihood-aware accuracy gate: escalate when the
+                    # estimated |Delta logL| from the local Delta N_eff error
+                    # exceeds the requested budget (sigma = effective sigma of
+                    # the likelihood on Delta N_eff; dlogl_tol = budget in
+                    # natural log-units).  Without a likelihood sigma, fall
+                    # back to the relative error_tol gate.
+                    if likelihood_sigma is not None:
+                        abs_err = float(getattr(self, 'Delta_Neff_abs_error', 0.0) or 0.0)
+                        dlogl = 0.5*(abs_err/float(likelihood_sigma))**2
+                        self.dlogl_estimated = dlogl
+                        do_escalate = dlogl > (dlogl_tol if dlogl_tol is not None else 1e-3)
+                    else:
+                        tol_err = error_tol if error_tol is not None else 5e-3
+                        do_escalate = float(getattr(self, 'DN_gw_error', 0.0) or 0.0) > tol_err
+                    if do_escalate:
+                        # The estimated error exceeds the requested budget.
+                        # Tighten the fast grid ('reference' mode) or run the
+                        # independent continuous-sigma reference pipeline.
                         self.escalated_from = accuracy_mode
-                        self.reference_evals = getattr(self, 'reference_evals', 0) + 1
                         self.escalations = getattr(self, 'escalations', 0) + 1
                         if escalate_to_reference:
                             result = self.SGWB_iter(engine='reference')
@@ -304,16 +341,22 @@ class LCDM_SG(LCDM_SN):
                         else:
                             result = self.SGWB_iter(engine='fast',
                                                     accuracy_mode='reference')
-                            self.error_estimates = fast_sgwb.estimate_error('reference')
-                            self.DN_gw_error = self.error_estimates['DN_gw_error']
-                            self.spectrum_error = self.error_estimates['spectrum_error']
-                            self.quadrature_error = self.error_estimates['quadrature_error']
+                            if result is not None:
+                                try:
+                                    self.local_error_budget = fast_sgwb.estimate_local_error(self)
+                                    self.DN_gw_error = self.local_error_budget['DN_gw_error']
+                                    self.spectrum_error = self.local_error_budget['DN_gw_error']
+                                    self.quadrature_error = self.local_error_budget['categories']['quadrature']['value']
+                                except Exception:
+                                    pass
+                        _mark_eval_status(self, 'FAST_ESCALATED')
             return result
         if engine != 'lsoda':
             raise ValueError("engine must be 'lsoda' or 'fast', got %r" % (engine,))
 
         self.lsoda_evals = getattr(self, 'lsoda_evals', 0) + 1
         self.last_engine = 'lsoda'
+        _mark_eval_status(self, 'LSODA')
 
         # Exclude some corner cases
         if self.cosmo_param['r'] <= 0:

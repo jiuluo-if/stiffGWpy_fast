@@ -51,6 +51,13 @@ class stiffGW(Theory):
     accuracy_mode: str
     auto_escalate: bool
     error_tol: float
+    # Likelihood-aware escalation: |Delta logL| = 0.5*(Delta_Neff_abs_error /
+    # likelihood_sigma)^2 is compared against dlogl_tol (natural log-units).
+    # The effective sigma is the likelihood's sensitivity to Delta N_eff
+    # (e.g. ~0.25 for CMB/BAO-scale Neff constraints; set per likelihood).
+    likelihood_sigma: float
+    dlogl_tol: float
+    escalate_to_reference: bool
     reference_rtol: float
     reference_z_tail: float
     # Canonical public names.  In particular, do not use the ambiguous
@@ -77,18 +84,23 @@ class stiffGW(Theory):
         # than silently disappearing behind a successful LSODA retry.
         stats = self.engine_stats
         if stats is not None:
+            counts = stats['eval_status_counts']
             self.log.info(
                 "SGWB engine summary: fast_evals=%d fast_failures=%d "
                 "fast_guard_rejections=%d fast_physical_rejections=%d "
                 "lsoda_evals=%d lsoda_fallbacks=%d "
-                "fast_failure_fraction=%.6g fallback_fraction=%.6g",
+                "fast_failure_fraction=%.6g fallback_fraction=%.6g "
+                "escalation_fraction=%.6g eval_status=%s",
                 stats['fast_evals'], stats['fast_failures'],
                 stats['fast_guard_rejections'],
                 stats['fast_physical_rejections'], stats['lsoda_evals'],
                 stats['lsoda_fallbacks'],
                 stats['fast_failure_fraction'],
-                stats['fallback_fraction'])
-            if stats['fallback_fraction'] > 0.05:
+                stats['fallback_fraction'],
+                stats['escalation_fraction'],
+                {k: v for k, v in counts.items() if v})
+            if (stats['fallback_fraction'] > 0.05
+                    or stats['escalation_fraction'] > 0.05):
                 self.log.warning(
                     "SGWB fast fallback fraction %.3f exceeds 5%%; "
                     "inspect fast numerical failures before using this chain.",
@@ -128,7 +140,12 @@ class stiffGW(Theory):
                     DN_gw_error=getattr(m, 'DN_gw_error', None),
                     spectrum_error=getattr(m, 'spectrum_error', None),
                     fast_failure_fraction=_failure_fraction(m),
-                    fallback_fraction=_fallback_fraction(m))
+                    fallback_fraction=_fallback_fraction(m),
+                    last_eval_status=getattr(m, 'last_eval_status', None),
+                    eval_status_counts=dict(getattr(m, 'eval_status_counts', {})),
+                    escalation_fraction=_escalation_fraction(m),
+                    dlogl_estimated=getattr(m, 'dlogl_estimated', None),
+                    Delta_Neff_abs_error=getattr(m, 'Delta_Neff_abs_error', None))
 
     def calculate(self, state, want_derived=True, **params_values_dict):
         """Evaluate the model; on failure return False (logpost -> -inf)."""
@@ -151,8 +168,14 @@ class stiffGW(Theory):
             sgwb_kwargs['freq_res'] = self.freq_res
         if self.auto_escalate:
             sgwb_kwargs['auto_escalate'] = True
+            if getattr(self, 'escalate_to_reference', False):
+                sgwb_kwargs['escalate_to_reference'] = True
         if self.error_tol:
             sgwb_kwargs['error_tol'] = self.error_tol
+        if getattr(self, 'likelihood_sigma', None):
+            sgwb_kwargs['likelihood_sigma'] = self.likelihood_sigma
+        if getattr(self, 'dlogl_tol', None):
+            sgwb_kwargs['dlogl_tol'] = self.dlogl_tol
         if self.engine == 'fast' and self.fast_threads:
             try:
                 from .. import fast_sgwb
@@ -178,6 +201,7 @@ class stiffGW(Theory):
             # not reused for this point.
             state.pop('derived', None)
             return False
+        self.last_eval_status = getattr(m, 'last_eval_status', 'UNKNOWN')
 
         state['f'] = m.f                                     # log10(f/Hz)
         state['omGW_stiff'] = m.log10OmegaGW                 # log10 Omega_GW(f)
@@ -229,3 +253,10 @@ def _failure_fraction(m):
     if fast_total <= 0:
         return 0.0
     return getattr(m, 'fast_failures', 0) / float(fast_total)
+
+
+def _escalation_fraction(m):
+    total = getattr(m, 'fast_evals', 0)
+    if total <= 0:
+        return 0.0
+    return getattr(m, 'escalations', 0) / float(total)

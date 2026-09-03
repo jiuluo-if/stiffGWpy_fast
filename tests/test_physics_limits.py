@@ -74,7 +74,9 @@ def test_superhorizon_mode_frozen_until_today():
     sol = REF.solve_reference_mode(m, -18.4, dn, z_tail=5.0, rtol=1e-11)
     assert sol['used_tail'] is False
     assert math.isfinite(sol['Ogw_today'])
-    assert sol['Ogw_today'] > 0.0
+    # Physical GW density is Ogw - Oj (the shear/j bookkeeping term is
+    # negative at super-horizon, so Ogw itself need not be positive).
+    assert sol['Ogw_today'] - sol['Oj_today'] > 0.0
     assert sol['Oj_today'] < 0.0  # super-horizon negative Omega_j contribution
 
 

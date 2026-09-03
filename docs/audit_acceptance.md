@@ -4,6 +4,61 @@
 `VERIFIED` / `PARTIALLY VERIFIED` / `NOT VERIFIED`。不做“让 benchmark 数字更好看”的调参；凡声明都
 指向可复现的文件/数字。
 
+## 0. 状态更新 2026-09-03（现行结论；以下历史条目如有冲突以此节为准）
+
+三层验证（Layer A/B/C）与最终门槛在本 session 完成，全部以连续 σ reference 为真值
+（`stiffgwpy/reference.py`，DOP853 rtol=1e-9，z_tail=8，matched `grid_independent`
+网格）。LSODA 在任何结论中都不是真值锚点。
+
+**关键修复（2026-09-03）— likelihood-bin 插值伪影：**
+`SGWB_iter_fast` 新增 `eval_freqs` kwarg，把 likelihood 的 11 个 log10(f/Hz) bin 作为
+**原生求解节点**并入频率网格（`grid_independent`/`adaptive` 网格；`construct` 网格不
+动）。此前 driver 用 CubicSpline 跨 0.105-dex 节点对陡峭高频墙插值，r≈1e-2 时产生
+~1e-2-dex 级伪影。修复后（240 个 posterior-bulk 点、fast vs reference 同 bin 同解）：
+dex max 6.86e-3 → 3.10e-4，|ΔlogL| max 0.1035 → 7.30e-3（<0.1 门槛由 FAIL 转 PASS）。
+
+**引擎/遥测（现行代码，非规划）：** `stiff_SGWB.SGWB_iter` 支持 engine
+fast/lsoda/reference、fallback、accuracy_mode、error_tol、auto_escalate
+（likelihood-aware：dlogl>tol 或 DN_gw_error>tol_err 触发 escalate，可升到连续 σ
+reference）；`_mark_eval_status` 维护 `last_eval_status` ∈
+{FAST, FAST_ESCALATED, REFERENCE, LSODA, LSODA_FALLBACK} 与 `eval_status_counts`；
+fast 物理拒绝与数值失败显式区分（`fast_failure_reason`：invalid_r / shared_Neff_guard /
+exception），无 silent fallback。单测 `tests/test_engine.py`、`tests/test_cobaya_adapter.py`
+覆盖。
+
+**修正历史过时条目（§2/§4/§8 早期“未落地/未实现”表述，以代码为准）：**
+- horizon-crossing 自适应：已实现为视界穿越附近的 phase 子步进 `phase_max`
+  （Richardson 收敛 |ΔDN(pm 0.5→0.125)|=7.5e-6 相对），production 预设 phase_max=0.5；
+  z=ln(k/aH) 驱动的事件位置解析进入步进控制。
+- deep-subhorizon WKB/adiabatic handoff：`solve_kernel` 在 z_tail 处切到解析冻结尾
+  （O(eps) 近似，eps=|1.5σ−1|/e^z），`handoff_eps`/`matching_error_rel` 逐点返回；
+  240 点 sweep per-mode handoff eps median 6.84e-4。
+- freq_adaptive 已接 production：production 预设 freq_grid='adaptive'
+  （曲率 `|y''|h²/8` 打分细化，median 236 节点），wrapper 测试断言
+  `freq_grid_used=='adaptive'`。
+- σ(N) 间断：production 用 kink breakpoint（`transition_refine`），连续 σ 由
+  `exact_background` 提供（`sigma_exact=True` 路径，文档见 §7）。
+- 11 类 local error budget：`estimate_local_error`（estimate_local_error_categories 测试）。
+
+**§13 验收门槛现行状态（2026-09-03 实测）：**
+| 门槛 | 状态 | 实测 |
+|---|---|---|
+| 信号区 ΩGW rel err < 1e-3 | PASS | 9 个 matched z8 单点 rel max 7.09e-4；240 posterior-bulk 点 dex≤3.10e-4 |
+| transition-region < 1e-3 | PASS | matched z8 transition 带 rel max 7.09e-4 |
+| 集成 ΔNeff rel < 1e-4 | NOT MET（诚实极限） | matched z8 单点 median 4.34e-4、p95 1.18e-3（lowT DN-of-DN 伪影）；deep oracle default −2.94e-4；剩余为 Magnus+z_tail 架构残差 ~3e-4..7.6e-4，非调参可消除 |
+| analytic limits | PASS | tests/test_physics_limits.py（MD/辐射/stiff σ、能量、RD ∝f^{n_t}、stiff 带 ∝f¹） |
+| energy/scaling consistency | PASS | 同上 + test_energy_consistency |
+| production runtime ≥100× LSODA | PARTIAL | 诚实口径：production z8 ≈4.1 s/点 vs LSODA 18.56 s ≈4.5×（精度 6–30× 更接近 reference）；100× 仅 plain-grid coarser 0.012 s 模式成立 |
+| posterior ESS ≥ 2000 | PASS | IS posterior ess=4167.4（9000 production draws） |
+| posterior shift < 0.1σ | PASS | log10r −0.0011σ、n_t +0.0002σ |
+| fallback/escalation 可追踪 | PASS | eval_status_counts/last_eval_status/无 silent fallback |
+
+Layer A/B/C 详细数字与产物：`docs/paramsweep_z8/validation_summary.md`、
+`docs/mcmc_posterior/posterior_validation.md`、`docs/paramsweep_z8/validation_summary.json`、
+`docs/mcmc_posterior/is_report.json`。测试套件 2026-09-03 全绿：`pytest tests/` = 105 passed
+（含 6 个 slow 标记测试；另修复 3 个预存 slow 测试缺陷：np.sort 破坏配对、Ogw−Oj 物理量
+断言、matched-grid/可分辨频带比较）。
+
 ## 1. 重建 SGWB 误差预算 — VERIFIED
 
 `docs/audit_error_budget.md`：把 inflationary tensor spectrum → … → ΔN_eff 全链路拆成 10 类误差
