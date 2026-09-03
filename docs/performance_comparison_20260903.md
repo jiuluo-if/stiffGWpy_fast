@@ -181,4 +181,4 @@ max `2.725e-2`。本轮没有修改 reference 或 validation artifact，也没�
 plain-grid matched-reference AB 后再决定。
 
 复现入口：`scripts/bench_fast.py`、`scripts/profile_fast_breakdown.py`，以及
-`docs/performance_fast_plain_20260903.md` 的实验记录。
+`docs/benchmark_current_fast_preset_20260903.json` 的当前 benchmark 记录。

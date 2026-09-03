@@ -15,5 +15,6 @@ The detailed before/after comparison, breakdown, thread scaling and numerical AB
 are in `docs/performance_comparison_20260903.md`. The plain-grid oracle envelope
 is unchanged: signal relative median `1.867e-2`, max `7.019e-2`.
 
-Runtime-vs-physical-error Pareto artifacts under `docs/archive/reference/` are
-historical. Their old `~1000x` headline is not a current claim.
+Older runtime-vs-physical-error Pareto artifacts were removed from the active
+tree; their old `~1000x` headline is not a current claim and remains traceable
+through Git history.

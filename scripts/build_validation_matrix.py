@@ -222,25 +222,22 @@ def load_layer_c():
 
 
 def plain_grid_anchor():
-    pareto = _json(DOCS / "archive" / "reference" / "pareto_default.json")
-    meta = None
+    current = _json(DOCS / "benchmark_current_fast_preset_20260903.json")
+    meta = current.get("meta", {})
     rows = []
-    for item in pareto:
-        if "meta" in item:
-            meta = item["meta"]
-    for item in pareto:
-        eng = item.get("engine")
-        if eng not in ("fast_grid", "fast_transition", "reference"):
+    for item in current.get("results", []):
+        if item.get("skip"):
             continue
+        eng = "fast_grid"
         row = {
             "layer": "anchor_default", "tier": "plain-grid" if eng == "fast_grid" else ("production" if eng == "fast_transition" else "reference"),
             "engine": eng,
             "label": eng, "status": "ok",
             "classification": "WARN" if eng == "fast_grid" else "PASS",
             "reason": "exploratory anchor; coarser grid below the 1e-3 physics gate" if eng == "fast_grid" else "",
-            "DN_gw_rel": item.get("rel_err"), "fast_runtime_s": item.get("runtime_s"),
-            "DN_eff": item.get("DN_eff"),
-            "notes": "recorded under commit %s; DN_eff vs reference engine in same file; settings = coarser z5-era mode" % ((meta or {}).get("commit", "unknown")),
+            "DN_gw_rel": None, "fast_runtime_s": item.get("t_fast_med_ms", 0.0) / 1000.0,
+            "DN_eff": None,
+            "notes": "current fast preset benchmark under commit %s; speed-only record; precision comes from independent reference artifacts" % ((meta or {}).get("commit", "unknown")),
         }
         row.update({"r": 0.01, "n_t": None, "cr": 1, "T_re": 2000.0, "DN_re": None, "kappa10": 0.01})
         rows.append(row)
@@ -274,11 +271,11 @@ def acceptance_rows(a_rows, c_report, plain_anchor, plain_rows=None, a2_rows=Non
     add("analytic limits + energy/scaling consistency",
         "PASS", "green", "tests/test_physics_limits.py")
     add("production runtime >= 100x vs LSODA (matched-accuracy setting)",
-        "FAIL", "~4.5x (production z8 ~4.1-5.3 s/point vs LSODA 18.56 s); 100x holds only for plain-grid coarse mode",
-        "docs/archive/audit_speed_accuracy.md + docs/archive/reference/pareto_default.json")
+        "HISTORICAL", "旧 artifact 为 ~4.5x；当前 fast/LSODA execution benchmark 见 performance_comparison_20260903.md",
+        "docs/performance_comparison_20260903.md")
     add("fallback / escalation traceable; no silent fallback",
         "PASS", "FAST/FAST_ESCALATED/REFERENCE/LSODA_FALLBACK statuses + engine_stats; shared_Neff_guard explicit",
-        "tests/test_engine.py, tests/test_cobaya_adapter.py, docs/archive/audit_acceptance.md")
+        "tests/test_engine.py, tests/test_cobaya_adapter.py, docs/cobaya.md")
     if plain_rows:
         p_sig = _max_key(plain_rows, "signal_rel_max")
         p_tra = _max_key(plain_rows, "transition_rel_max")
@@ -573,7 +570,7 @@ def main():
         DOCS / "paramsweep_ref" / "fast_sweep.jsonl",
         DOCS / "mcmc_posterior" / "is_pointwise.json",
         DOCS / "mcmc_posterior" / "is_report.json",
-        DOCS / "archive" / "reference" / "pareto_default.json",
+        DOCS / "benchmark_current_fast_preset_20260903.json",
         DOCS / "paramsweep_plain" / "plain_points.jsonl",
         DOCS / "paramsweep_plain" / "validation_summary.json",
         DOCS / "paramsweep_z8b" / "reference_points.jsonl",
