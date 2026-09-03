@@ -23,7 +23,7 @@ Why importance sampling (physics-first, no threshold tuning):
 The mock likelihood is the diagonal Gaussian on log10 Omega_GW at the same
 bins as scripts/cobaya_posterior_fast_vs_reference.py and the engine-neutral
 truth vector produced by the reference oracle
-(docs/reference/deep_oracle_default.json).
+(docs/mcmc_posterior/oracle_truth.json).
 """
 import argparse
 import json
