@@ -51,6 +51,8 @@
 
 临时关闭非最终 coarse-column assembly 后，A 点 kernel 约从 `408 ms` 降至 `307 ms`，B 点约从 `187 ms` 降至 `149 ms`，说明 assembly 数学本身约占 20–25%。随后实现了“保存每个 coarse slot 的 x/y，收敛后一次性重建”的候选；A 点实际 warm median `437.9 ms`、B 点 `201.8 ms`，由于 history 写入、清零和最终重建开销而失败，已完整回退。该实验没有作为数值结果使用。
 
+随后将该方案改为专用的无 optional-参数 deferred kernel，避免通用 kernel 的 optional 分支。结果仍未改善：A 点 warm median `400.2 ms`、B 点 `200.7 ms`，与 baseline 基本持平；完整输出的 history 写入成本约等价于原 assembly。候选已回退，说明下一步不能继续在相同 coarse-state 存储策略上叠加复杂度。
+
 ## 数值与兼容性
 
 最终工作树中的 `fast_sgwb.py` 与 baseline solver 相比无差异；因此本轮没有引入新的数值 diff。已有 plain-grid matched-reference artifact（9 点）记录的 envelope 为：signal relative median `1.867e-2`、max `7.019e-2`；integrated `DN_gw` relative median `9.142e-3`、max `2.725e-2`。本轮没有修改 reference、validation artifact、preset、alias、Cobaya adapter 或 telemetry。
