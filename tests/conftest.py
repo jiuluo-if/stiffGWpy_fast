@@ -20,8 +20,11 @@ def model():
 def fast_settings():
     """Snapshot and restore process-global fast-solver settings."""
     saved = FS.get_settings()
+    freq_grid = FS._FREQ_GRID
     yield saved
     FS.set_threads(saved['threads'])
     FS.set_col_step(saved['col_step'])
     FS.set_h(saved['h'])
     FS.set_z_tail(saved['z_tail'])
+    FS.set_phase_max(saved['phase_max'])
+    FS.set_freq_grid(freq_grid)

@@ -10,15 +10,18 @@ from stiffgwpy.stiff_SGWB import _sgwb_pool_size
 def fast_settings():
     """Snapshot and restore the process-global fast-solver settings."""
     saved = FS.get_settings()
+    freq_grid = FS._FREQ_GRID
     yield saved
     FS.set_threads(saved['threads'])
     FS.set_col_step(saved['col_step'])
     FS.set_h(saved['h'])
     FS.set_z_tail(saved['z_tail'])
+    FS.set_phase_max(saved['phase_max'])
+    FS.set_freq_grid(freq_grid)
 
 
 def test_accuracy_modes_valid(fast_settings):
-    assert set(FS.ACCURACY_MODES) == {'debug', 'fast', 'production',
+    assert set(FS.ACCURACY_MODES) == {'debug', 'deep', 'fast', 'production',
                                       'reference', 'ultra-fast'}
     for cfg in FS.ACCURACY_MODES.values():
         assert 1 <= cfg['col_step'] <= 8
@@ -58,6 +61,7 @@ def test_apply_accuracy_mode_sets_state(fast_settings):
         assert st['col_step'] == cfg['col_step']
         assert st['h'] == cfg['h']
         assert st['z_tail'] == cfg['z_tail']
+        assert st['phase_max'] == cfg.get('phase_max', 0.0)
         assert st['threads'] == min(cfg['threads'], FS._MAX_THREADS)
 
 
@@ -120,12 +124,13 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
     FS.set_col_step(4)
     FS.set_h(0.01)
     FS.set_z_tail(5.0)
+    FS.set_phase_max(0.0)
     monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     m.SGWB_iter(engine='fast', tol=1e-7)
     assert captured['tol'] == 1e-7
     assert captured['freq_res'] == 1.0
-    assert FS.get_settings() == dict(threads=4, col_step=4, h=0.01, z_tail=5.0)
+    assert FS.get_settings() == dict(threads=4, col_step=4, h=0.01, z_tail=5.0, phase_max=0.0)
 
 
 def test_pool_size_env_override(monkeypatch):
@@ -171,9 +176,14 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
 
     monkeypatch.setattr(REF, 'apply_reference_to_model', fake_ref)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    # error_tol=1e-6: any a-posteriori estimate above machine level triggers
+    # the escalation mechanism (the fake model carries no solve telemetry).
     m.SGWB_iter(engine='fast', accuracy_mode='production',
-                auto_escalate=True, error_tol=5e-3, escalate_to_reference=True)
+                auto_escalate=True, error_tol=1e-6, escalate_to_reference=True)
     assert m.escalations == 1
     assert m.escalated_from == 'production'
     assert m.reference_evals >= 1
     assert m.cosmo_param['DN_eff'] == pytest.approx(0.00227)
+    assert m.last_eval_status == 'FAST_ESCALATED'
+    assert m.eval_status_counts['FAST_ESCALATED'] == 1
+    assert m.eval_status_counts['REFERENCE'] >= 1
