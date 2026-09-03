@@ -11081,7 +11081,7 @@
     "gate": "production runtime >= 100x vs LSODA (matched-accuracy setting)",
     "status": "FAIL",
     "measured": "~4.5x (production z8 ~4.1-5.3 s/point vs LSODA 18.56 s); 100x holds only for plain-grid coarse mode",
-    "evidence": "docs/audit_speed_accuracy.md + docs/reference/pareto_default.json"
+    "evidence": "docs/performance_comparison_20260903.md"
    },
    {
     "gate": "fallback / escalation traceable; no silent fallback",
