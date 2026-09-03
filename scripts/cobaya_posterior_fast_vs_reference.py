@@ -78,7 +78,7 @@ def out_dir(args):
 
 def oracle_truth(bins):
     """Reference (DOP853 oracle) log10 Omega_GW at the bins, engine-neutral."""
-    p = os.path.join(REPO, 'docs', 'archive', 'reference', 'deep_oracle_default.json')
+    p = os.path.join(REPO, 'docs', 'mcmc_posterior', 'oracle_truth.json')
     d = json.load(open(p, encoding='utf-8'))
     order = np.argsort(np.asarray(d['G'], dtype=float))
     G = np.asarray(d['G'], dtype=float)[order]
@@ -133,7 +133,7 @@ def phase_truth(args):
     truth = oracle_truth(BINS)
     rec = {'fiducial': FIDUCIAL, 'fixed': FIXED, 'bins': BINS,
            'truth_log10Om': truth.tolist(),
-           'source': 'deep_oracle_default (continuous-sigma DOP853, z8, rtol=1e-10)',
+           'source': 'mcmc_posterior/oracle_truth (continuous-sigma DOP853, z8, rtol=1e-10)',
            'sigma_dex_default': 0.05}
     with open(os.path.join(out_dir(args), 'mock_truth.json'), 'w',
               encoding='utf-8') as fh:

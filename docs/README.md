@@ -10,6 +10,10 @@ from `docs/validation/validation_manifest.json`, which is itself generated from
 the committed validation artifacts (`docs/paramsweep_*`, `docs/mcmc_posterior/`)
 by `scripts/build_two_mode_manifest.py` (a read-only replay — no physics re-run).
 
+The independent reference truth used by the posterior mock is kept at
+`mcmc_posterior/oracle_truth.json`; it is required test data, not a temporary
+benchmark output.
+
 | Document | Content | Status |
 |---|---|---|
 | `physics.md` | background + tensor-mode + `Delta N_eff` closure | current |

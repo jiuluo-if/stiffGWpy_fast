@@ -119,8 +119,8 @@ def test_sgwb_mock_likelihood_registered(cp):
 
 
 def test_oracle_truth_engine_neutral_source(cp):
-    d = json.loads((REPO / "docs" / "archive" / "reference" /
-                    "deep_oracle_default.json").read_text(encoding="utf-8"))
+    d = json.loads((REPO / "docs" / "mcmc_posterior" /
+                    "oracle_truth.json").read_text(encoding="utf-8"))
     # the mock data vector must come from the reference (not fast) spectrum
     lo_ref = np.asarray(d["ref"]["log10Om"], dtype=float)
     lo_fast = np.asarray(d["fast"]["log10Om"], dtype=float)
