@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "measurement": "reference.oracle_variants (run_reference single-pass) at the default point",
+  "method": {
+    "profile": "default (r=1e-2 cr=1 T_re=2000 kappa10=1e-2)",
+    "frequency_subset": "12 log-spaced signal-band modes, log10(f/Hz) in [-4, +2]",
+    "rtol": 1e-08,
+    "z_tail_range": [
+      7.0,
+      8.0,
+      10.0
+    ],
+    "used_tail_fraction": 1.0,
+    "quadrature_error": 3e-22,
+    "interpolation_error": 4e-09
+  },
+  "oracle_tail_sensitivity": {
+    "DN_gw_partial_z7": 0.002180741,
+    "DN_gw_partial_z8": 0.00217981592,
+    "DN_gw_partial_z10": 0.00217915416,
+    "z7_to_z8_rel": 0.000424,
+    "z8_to_z10_rel": 0.000304
+  },
+  "deep_tail_note": "z_tail >= 14 is numerically infeasible: the deep-subhorizon mode equation becomes stiff, so the frozen-analytic-tail hand-off is a practical necessity. The residual is reported, not removed.",
+  "conclusion": "the reference oracle itself carries ~3e-4 frozen-tail z_tail sensitivity, i.e. the production fast residual (~4e-4 integrated DN_gw) is at the same level as the oracle's own model choice."
+}

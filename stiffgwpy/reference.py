@@ -45,6 +45,7 @@ __all__ = [
     'integrate_spectrum',
     'run_reference',
     'apply_reference_to_model',
+    'oracle_variants',
 ]
 
 ln10 = math.log(10.0)
@@ -526,3 +527,68 @@ def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11):
     m.reference_evals = getattr(m, 'reference_evals', 0) + 1
     m.SGWB_converge = True
     return m
+
+
+def oracle_variants(m, freqs=None, dn_eff=None, z_tail_conservative=8.0,
+                    z_tail_deep=14.0, rtol_conservative=1e-9, rtol_deep=1e-11,
+                    freq_res=1.0):
+    """Run three *independent-approximation* oracle realisations of the same
+    physics and report how much the answer depends on the oracle's own choices.
+
+    This is the oracle-independence audit behind "is the reference really the
+    truth anchor?".  The three variant labels follow the project convention:
+
+    * ``oracle_A`` -- conservative frozen analytic tail (``z_tail`` =
+      ``z_tail_conservative``), moderate tolerance.  This is the default oracle.
+    * ``oracle_B`` -- deeper / effectively no frozen tail (``z_tail`` =
+      ``z_tail_deep``); where a mode now reaches today before the tail event, the
+      full ODE is integrated to today, so the frozen-amplitude approximation is
+      removed.  This is the stricter (deeper-tail) oracle.
+    * ``oracle_C`` -- deeper tail PLUS tight ODE tolerance (``rtol`` =
+      ``rtol_deep``): the tolerance-converged result.
+
+    All three are single-pass at ``dn_eff`` (no outer bisection) so the residual
+    isolates the oracle's own approximations rather than the self-consistency
+    loop.  If A and B (or B and C) disagree by more than the fast-vs-reference
+    residual, the reference itself carries an unquantified approximation and the
+    fast result cannot be certified against it without that caveat.
+
+    Returns a dict of per-variant results plus ``delta_AB``/``delta_BC``
+    (relative ``DN_gw`` difference) and a ``status`` flag.
+    """
+    if freqs is None:
+        from .freq_adaptive import grid_independent_freqs
+        freqs = grid_independent_freqs(m, freq_res)[0]
+    freqs = np.asarray(freqs, dtype=float)
+    dn = dn_eff if dn_eff is not None else float(m.cosmo_param['DN_eff'])
+
+    def _run(z_tail, rtol):
+        d = run_reference(m, dn_eff=dn, freq_subset=freqs, z_tail=z_tail,
+                          rtol=rtol, self_consistent=False)
+        return d
+
+    A = _run(z_tail_conservative, rtol_conservative)
+    B = _run(z_tail_deep, rtol_conservative)
+    C = _run(z_tail_deep, rtol_deep)
+
+    dA = float(A['DN_gw']); dB = float(B['DN_gw']); dC = float(C['DN_gw'])
+    denom = max(abs(dA), 1e-300)
+    delta_AB = abs(dB - dA) / denom
+    delta_BC = abs(dC - dB) / max(abs(dB), 1e-300)
+    # B used a frozen tail on some fraction of modes?
+    used_tail_B = float(np.mean(np.asarray(B['used_tail'], dtype=bool))) \
+        if len(np.asarray(B['used_tail'])) else 0.0
+
+    def _mini(d):
+        return dict(DN_gw=float(d['DN_gw']), DN_eff=float(d['DN_eff']),
+                    n_freq=int(d['n_freq']), quadrature_error=float(d['quadrature_error']),
+                    interpolation_error=float(d['interpolation_error']),
+                    used_tail_fraction=float(np.mean(np.asarray(d['used_tail'], dtype=bool)))
+                    if len(np.asarray(d['used_tail'])) else 0.0,
+                    z_tail=float(d['z_tail']), rtol=float(d['rtol']))
+
+    status = ('CONSISTENT' if (delta_AB < 1e-3 and delta_BC < 1e-4)
+              else 'ORACLE-SENSITIVE')
+    return dict(oracle_A=_mini(A), oracle_B=_mini(B), oracle_C=_mini(C),
+                delta_AB=delta_AB, delta_BC=delta_BC,
+                used_tail_fraction_B=used_tail_B, status=status)

@@ -29,11 +29,29 @@ the last solve, so a run can report the fallback fraction (see
 """
 
 import math
+import os
 
 import astropy.units as u
 import numpy as np
 from cobaya.theory import Theory
 from scipy import interpolate
+
+
+def _resolve_freqs_input(value):
+    """Resolve ``eval_freqs`` to a numpy array of log10(f/Hz).
+
+    Accepts a sequence of floats or a path to a text file with one log10 f per
+    line.  Returns ``None`` when unset so the caller can skip the kwarg.
+    """
+    if value is None:
+        return None
+    if isinstance(value, (str, os.PathLike)):
+        with open(value, 'r', encoding='utf-8') as fh:
+            arr = np.array([float(line.strip()) for line in fh if line.strip()],
+                           dtype=float)
+    else:
+        arr = np.asarray(value, dtype=float)
+    return arr
 
 
 class stiffGW(Theory):
@@ -60,6 +78,12 @@ class stiffGW(Theory):
     escalate_to_reference: bool
     reference_rtol: float
     reference_z_tail: float
+    # Optional log10(f/Hz) user-supplied native solve nodes (e.g. the
+    # likelihood frequency bins).  If set, these are force-added to the fast
+    # solve grid as native nodes so the likelihood does not inherit
+    # interpolation error at steep spectral features.  A list of floats or a
+    # path to a text file (one log10 f per line).
+    eval_freqs: object
     # Canonical public names.  In particular, do not use the ambiguous
     # historical ``Delta_Neff`` alias: GW-only and total contributions are
     # distinct quantities and are kept explicit throughout the adapter.
@@ -158,14 +182,21 @@ class stiffGW(Theory):
         sgwb_kwargs = {}
         if self.accuracy_mode:
             sgwb_kwargs['accuracy_mode'] = self.accuracy_mode
+        # 0 is the yaml sentinel for "use the accuracy_mode preset".  Only an
+        # explicit non-zero value here is an override that wins over the preset.
+        # This prevents the Cobaya default values from silently masking the
+        # selected accuracy_mode (accuracy_mode -> preset defaults -> explicit
+        # user overrides only).
         if self.h:
             sgwb_kwargs['h'] = self.h
         if self.col_step:
             sgwb_kwargs['col_step'] = self.col_step
         if self.z_tail:
             sgwb_kwargs['z_tail'] = self.z_tail
-        if self.freq_res and self.freq_res != 1.0:
+        if self.freq_res:
             sgwb_kwargs['freq_res'] = self.freq_res
+        if getattr(self, 'eval_freqs', None) is not None:
+            sgwb_kwargs['eval_freqs'] = _resolve_freqs_input(self.eval_freqs)
         if self.auto_escalate:
             sgwb_kwargs['auto_escalate'] = True
             if getattr(self, 'escalate_to_reference', False):

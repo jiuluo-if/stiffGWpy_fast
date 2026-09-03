@@ -54,7 +54,9 @@ from . import global_param as gp
 from .functions import int_FD
 
 __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
-           'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES']
+           'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES',
+           'USER_FAST_PROFILES', 'FAST_PROFILES', 'normalize_accuracy_mode',
+           'is_validation_mode', 'MODE_ROLE']
 
 # Default OpenMP threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -210,6 +212,69 @@ ACCURACY_MODES = {
                  freq_grid='adaptive'),
 }
 
+# Role tagging: exactly two user-facing fast profiles (speed-first plain-grid
+# and precision-first transition-refine) plus backward-compatible aliases.
+# The remaining modes (debug/deep/reference) are validation/benchmark variants
+# of the SAME internal solver: they are usable for certification but are NOT
+# advertised as third/fourth production tiers and are NOT meant for the MCMC
+# thermal path (the true precision anchor is the continuous-sigma
+# ``stiffgwpy.reference`` pipeline, engine='reference').
+USER_FAST_PROFILES = ('fast', 'production')
+
+# Alias -> canonical mode name (accepts the human-facing names used in docs).
+FAST_PROFILE_ALIASES = {
+    'plain_grid': 'fast',
+    'plain-grid': 'fast',
+    'plain': 'fast',
+    'transition_refine': 'production',
+    'transition-refine': 'production',
+    'tr': 'production',
+}
+
+# Role per canonical mode: 'fast' = user-facing fast profile, 'validation' =
+# certification/benchmark variant (not a production tier).
+MODE_ROLE = {
+    'fast': 'fast',
+    'ultra-fast': 'fast',       # alias of 'fast'
+    'production': 'fast',
+    'debug': 'validation',
+    'deep': 'validation',
+    'reference': 'validation',
+}
+
+# The two user-facing fast profiles, described as delivered (plain-grid vs
+# transition-refine).  ``profile`` is the human-facing name in docs.
+FAST_PROFILES = {
+    'fast': dict(ACCURACY_MODES['fast'], profile='plain-grid',
+                 role='user_fast'),
+    'production': dict(ACCURACY_MODES['production'], profile='transition-refine',
+                       role='user_fast'),
+}
+
+
+def normalize_accuracy_mode(name):
+    """Resolve an accuracy-mode name/alias to a canonical :data:`ACCURACY_MODES` key.
+
+    Accepts the user-facing names ``plain_grid`` / ``plain-grid`` (alias of
+    ``fast``) and ``transition_refine`` / ``transition-refine`` (alias of
+    ``production``), plus the historical keys.  ``None`` is returned unchanged.
+    """
+    if name is None:
+        return None
+    name = str(name)
+    name = FAST_PROFILE_ALIASES.get(name, name)
+    if name not in ACCURACY_MODES:
+        raise ValueError(
+            'unknown accuracy mode %r; choose from %s '
+            '(user-facing fast profiles: %s)' % (name, sorted(ACCURACY_MODES),
+                                                 list(USER_FAST_PROFILES)))
+    return name
+
+
+def is_validation_mode(name):
+    """True if ``name`` is a validation/benchmark variant, not a user-facing fast profile."""
+    return MODE_ROLE.get(normalize_accuracy_mode(name), 'fast') == 'validation'
+
 
 # Calibrated error budgets per accuracy mode, from the physics-first benchmark
 # (see docs/audit_reference.md).  ``model_bias`` is the dominant *shared*
@@ -259,8 +324,7 @@ def apply_accuracy_mode(name):
     :func:`SGWB_iter_fast`.  Module settings are process-global, as documented
     for the setters.
     """
-    if name not in ACCURACY_MODES:
-        raise ValueError(f'unknown accuracy mode {name!r}; choose from {sorted(ACCURACY_MODES)!s}')
+    name = normalize_accuracy_mode(name)
     cfg = dict(ACCURACY_MODES[name])
     set_col_step(cfg['col_step'])
     set_h(cfg['h'])
@@ -281,6 +345,7 @@ def estimate_error(name='production'):
     convergence study cannot detect, so it is derived from the reference
     benchmark rather than from a fast-vs-fast comparison.
     """
+    name = normalize_accuracy_mode(name)
     if name not in ERROR_BUDGET:
         raise ValueError('unknown accuracy mode %r; choose from %s'
                          % (name, sorted(ERROR_BUDGET)))
@@ -412,29 +477,79 @@ def estimate_local_error(m):
     else:
         self_consistency = _LOCAL_SELF_CONS_FLOOR
 
+    # Honest certification tagging: each term is either *measured from this
+    # solve's telemetry* ('local-measured') or *anchored to a fiducial-point
+    # measurement* ('calibrated-at-fiducial').  A calibrated term is NOT a
+    # universal / per-point error estimate; it is an empirical bound measured
+    # at the reference point and scaled by the solve's settings.
+    def _cert(kind, local):
+        return 'local-measured' if local else 'calibrated-at-fiducial'
+
     cats = dict(
-        background_model=dict(value=model, kind='calibrated'),
-        sigma_transition=dict(value=transition, kind='calibrated'),
-        ode_integration=dict(value=ode, kind='local'),
-        horizon_crossing=dict(value=horizon, kind='local'),
-        wkb_handoff=dict(value=wkb_max, aggregate=wkb_agg, kind='local'),
-        interpolation=dict(value=interp, kind='calibrated'),
-        frequency_grid=dict(value=freq_grid, kind='local' if fg == 'adaptive' else 'calibrated'),
-        quadrature=dict(value=quadrature, kind='local'),
-        tail_approximation=dict(value=tail, kind='calibrated'),
-        floating_point=dict(value=fp_err, cancellation_ratio=float(getattr(m, 'cancellation_ratio', 0.0)), kind='local'),
-        self_consistency=dict(value=self_consistency, kind='local'),
+        background_model=dict(value=model, kind='calibrated',
+                              certification='calibrated-at-fiducial'),
+        sigma_transition=dict(value=transition, kind='calibrated',
+                              certification='calibrated-at-fiducial'),
+        ode_integration=dict(value=ode, kind='local',
+                             certification='calibrated-at-fiducial'),
+        horizon_crossing=dict(value=horizon, kind='local',
+                              certification='calibrated-at-fiducial'),
+        wkb_handoff=dict(value=wkb_max, aggregate=wkb_agg, kind='local',
+                         certification='local-measured'),
+        interpolation=dict(value=interp, kind='calibrated',
+                           certification='calibrated-at-fiducial'),
+        frequency_grid=dict(value=freq_grid,
+                            kind='local' if fg == 'adaptive' else 'calibrated',
+                            certification=_cert('local' if fg == 'adaptive' else 'calibrated',
+                                                fg == 'adaptive')),
+        quadrature=dict(value=quadrature, kind='local',
+                        certification='local-measured'),
+        tail_approximation=dict(value=tail, kind='calibrated',
+                                certification='calibrated-at-fiducial'),
+        floating_point=dict(value=fp_err,
+                            cancellation_ratio=float(getattr(m, 'cancellation_ratio', 0.0)),
+                            kind='local', certification='local-measured'),
+        self_consistency=dict(value=self_consistency, kind='local',
+                              certification='local-measured'),
     )
     systematic = max(model, transition)
     rss = math.sqrt(sum(float(cats[k]['value'])**2 for k in cats
                         if k not in ('background_model', 'sigma_transition',
                                      'wkb_handoff')))
     dn_gw_error = systematic + rss
-    return dict(categories=cats, DN_gw_error=dn_gw_error,
-                Delta_Neff_abs_error=dn_gw_error*dn,
-                systematic_error=systematic, random_rss=rss,
-                handoff_eps_max=wkb_max, handoff_eps_mean=wkb_agg,
-                z_tail_used=z_tail, phase_max_used=pm, freq_grid_used=fg)
+    local_terms = [k for k, c in cats.items() if c['kind'] == 'local']
+    calibrated_terms = [k for k, c in cats.items()
+                        if c['certification'] == 'calibrated-at-fiducial']
+    # Has this solve produced the telemetry needed to certify a per-point
+    # budget at all?  Without it the numbers are defaults, not a measurement.
+    has_telemetry = (hasattr(m, 'z_tail_used') and hasattr(m, 'handoff_eps')
+                     and hasattr(m, 'freq_grid_used'))
+    if not has_telemetry:
+        certification_status = 'uncertified'
+    else:
+        # The dominant systematic terms (background_model / sigma_transition)
+        # are always fiducial-calibrated, so the budget is point-local only
+        # in the random terms (RSS), never fully certified per point.
+        certification_status = 'certified-fiducial-calibrated'
+    return dict(
+        categories=cats,
+        DN_gw_error=dn_gw_error,
+        Delta_Neff_abs_error=dn_gw_error*dn,
+        systematic_error=systematic,
+        random_rss=rss,
+        handoff_eps_max=wkb_max,
+        handoff_eps_mean=wkb_agg,
+        z_tail_used=z_tail,
+        phase_max_used=pm,
+        freq_grid_used=fg,
+        # Honest certification metadata (see module docstring):
+        certification_status=certification_status,
+        local_terms=local_terms,
+        calibrated_terms=calibrated_terms,
+        explicit_uncertainty='uncertainty is a mix of point-local and '
+                             'fiducial-calibrated terms; calibrated terms are '
+                             'NOT universal per-point error estimates',
+    )
 
 
 # ================= module-level tables (once) =================
@@ -897,10 +1012,15 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     instead of the fixed-grid cubic spline, removing the ~1% continuous-sigma-vs-
     grid model bias (see ``stiffgwpy.exact_background``).
 
-    ``transition_refine`` is an experimental kink-refined path that is NOT a
-    production choice: even with a refined grid around the reheating kink it
-    overshoots ``Delta N_eff`` by ~+1% vs the continuous-sigma reference, so it
-    raises ``NotImplementedError`` (docs/audit_reference.md \u00a77.2).
+    ``transition_refine`` (the ``production`` / ``transition-refine`` profile)
+    treats the reheating transition as an ODE integration breakpoint: the
+    kink-aware grid from ``stiffgwpy.exact_background.build_kink_refined_grid``
+    keeps the instantaneous-reheating kink inside a refined sub-step so it is
+    never crossed by a spline/grid, and (with ``phase_max > 0``) horizon
+    crossing uses phase-aware sub-stepping.  This is the default scientific
+    path.  When ``False`` (the ``fast`` / ``plain-grid`` profile) the plain
+    fixed-step grid is used — faster but with a larger sigma-kink bias that is
+    only certified for the coarse exploratory envelope.
 
     ``freq_grid`` selects the frequency sampling: ``'construct'`` (the model's
     empirical grid), ``'grid_independent'`` (built from continuous background

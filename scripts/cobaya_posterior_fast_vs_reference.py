@@ -78,7 +78,7 @@ def out_dir(args):
 
 def oracle_truth(bins):
     """Reference (DOP853 oracle) log10 Omega_GW at the bins, engine-neutral."""
-    p = os.path.join(REPO, 'docs', 'reference', 'deep_oracle_default.json')
+    p = os.path.join(REPO, 'docs', 'archive', 'reference', 'deep_oracle_default.json')
     d = json.load(open(p, encoding='utf-8'))
     order = np.argsort(np.asarray(d['G'], dtype=float))
     G = np.asarray(d['G'], dtype=float)[order]

@@ -143,7 +143,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     kw = CASES[args.point]
-    out_dir = args.out or 'docs/reference'
+    out_dir = args.out or 'docs/archive/reference'
     os.makedirs(out_dir, exist_ok=True)
     prefix = os.path.join(out_dir, 'benchmark_%s' % args.point)
     records = []

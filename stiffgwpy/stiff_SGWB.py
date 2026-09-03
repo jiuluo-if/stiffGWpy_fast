@@ -173,11 +173,11 @@ class LCDM_SG(LCDM_SN):
         
              
     def SGWB_iter(self, engine='lsoda', fallback=False, tol=1e-4,
-                  z_tail=5.0, rtol=1e-6, atol=None, freq_res=1.0,
+                  z_tail=None, rtol=1e-6, atol=None, freq_res=None,
                   h=None, col_step=None, threads=None, accuracy_mode=None,
                   auto_escalate=False, error_tol=None, sigma_exact=False,
                   escalate_to_reference=False, transition_refine=None,
-                  likelihood_sigma=None, dlogl_tol=None):
+                  likelihood_sigma=None, dlogl_tol=None, eval_freqs=None):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -204,6 +204,17 @@ class LCDM_SG(LCDM_SN):
         On success the model object is returned.
 
         """
+        # None sentinel means "engine default" and is resolved to a concrete
+        # value before any engine branch consumes it.  We capture the
+        # explicit-override flag first so an explicitly-passed z_tail/freq_res
+        # wins over a named accuracy preset (and so a default-valued 5.0/1.0 is
+        # not misread as an override, see test_modes).
+        z_tail_explicit = z_tail is not None
+        freq_res_explicit = freq_res is not None
+        if z_tail is None:
+            z_tail = 5.0
+        if freq_res is None:
+            freq_res = 1.0
         if engine == 'reference':
             # Independent continuous-sigma high-accuracy pipeline (slow; for
             # certification / benchmark points, not the MCMC thermal path).
@@ -224,6 +235,12 @@ class LCDM_SG(LCDM_SN):
             try:
                 if accuracy_mode is not None:
                     cfg = fast_sgwb.apply_accuracy_mode(accuracy_mode)
+                    canonical = fast_sgwb.normalize_accuracy_mode(accuracy_mode)
+                    self.accuracy_mode_used = canonical
+                    self.accuracy_profile = (
+                        'plain-grid' if canonical == 'fast'
+                        else 'transition-refine' if canonical == 'production'
+                        else 'validation')
                     f_tol = cfg['tol']
                     f_freq = cfg['freq_res']
                     tr_mode = cfg.get('transition_refine', False)
@@ -233,11 +250,11 @@ class LCDM_SG(LCDM_SN):
                         cfg['col_step'] = col_step
                     if threads is not None:
                         cfg['threads'] = threads
-                    if z_tail != 5.0:
+                    if z_tail_explicit:
                         cfg['z_tail'] = z_tail
                     if tol != 1e-4:
                         f_tol = tol
-                    if freq_res != 1.0:
+                    if freq_res_explicit:
                         f_freq = freq_res
                     fast_sgwb.set_h(cfg['h'])
                     fast_sgwb.set_col_step(cfg['col_step'])
@@ -245,13 +262,16 @@ class LCDM_SG(LCDM_SN):
                                               fast_sgwb._MAX_THREADS))
                     fast_sgwb.set_z_tail(cfg['z_tail'])
                 else:
+                    self.accuracy_mode_used = 'none'
+                    self.accuracy_profile = 'manual'
                     if h is not None:
                         fast_sgwb.set_h(h)
                     if col_step is not None:
                         fast_sgwb.set_col_step(col_step)
                     if threads is not None:
                         fast_sgwb.set_threads(threads)
-                    fast_sgwb.set_z_tail(z_tail)
+                    if z_tail_explicit:
+                        fast_sgwb.set_z_tail(z_tail)
                     f_tol = tol
                     f_freq = freq_res
                     tr_mode = bool(transition_refine)
@@ -260,7 +280,8 @@ class LCDM_SG(LCDM_SN):
                 result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
                                                   freq_res=f_freq,
                                                   sigma_exact=sigma_exact,
-                                                  transition_refine=tr_mode)
+                                                  transition_refine=tr_mode,
+                                                  eval_freqs=eval_freqs)
             except Exception as exc:
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = repr(exc)

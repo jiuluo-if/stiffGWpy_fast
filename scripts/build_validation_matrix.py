@@ -222,7 +222,7 @@ def load_layer_c():
 
 
 def plain_grid_anchor():
-    pareto = _json(DOCS / "reference" / "pareto_default.json")
+    pareto = _json(DOCS / "archive" / "reference" / "pareto_default.json")
     meta = None
     rows = []
     for item in pareto:
@@ -275,10 +275,10 @@ def acceptance_rows(a_rows, c_report, plain_anchor, plain_rows=None, a2_rows=Non
         "PASS", "green", "tests/test_physics_limits.py")
     add("production runtime >= 100x vs LSODA (matched-accuracy setting)",
         "FAIL", "~4.5x (production z8 ~4.1-5.3 s/point vs LSODA 18.56 s); 100x holds only for plain-grid coarse mode",
-        "docs/audit_speed_accuracy.md + docs/reference/pareto_default.json")
+        "docs/archive/audit_speed_accuracy.md + docs/archive/reference/pareto_default.json")
     add("fallback / escalation traceable; no silent fallback",
         "PASS", "FAST/FAST_ESCALATED/REFERENCE/LSODA_FALLBACK statuses + engine_stats; shared_Neff_guard explicit",
-        "tests/test_engine.py, tests/test_cobaya_adapter.py, docs/audit_acceptance.md")
+        "tests/test_engine.py, tests/test_cobaya_adapter.py, docs/archive/audit_acceptance.md")
     if plain_rows:
         p_sig = _max_key(plain_rows, "signal_rel_max")
         p_tra = _max_key(plain_rows, "transition_rel_max")
@@ -573,7 +573,7 @@ def main():
         DOCS / "paramsweep_ref" / "fast_sweep.jsonl",
         DOCS / "mcmc_posterior" / "is_pointwise.json",
         DOCS / "mcmc_posterior" / "is_report.json",
-        DOCS / "reference" / "pareto_default.json",
+        DOCS / "archive" / "reference" / "pareto_default.json",
         DOCS / "paramsweep_plain" / "plain_points.jsonl",
         DOCS / "paramsweep_plain" / "validation_summary.json",
         DOCS / "paramsweep_z8b" / "reference_points.jsonl",
