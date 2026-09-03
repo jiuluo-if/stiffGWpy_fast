@@ -1,0 +1,70 @@
+{
+  "threads": 8,
+  "case": {
+    "r": 0.01,
+    "cr": 1,
+    "T_re": 2000.0,
+    "kappa10": 0.01
+  },
+  "reps": 3,
+  "records": [
+    {
+      "total_s": 0.6144908000005671,
+      "iterations": 2,
+      "expansion_background_s": 0.18040019999898504,
+      "expansion_background_calls": 2,
+      "frequency_grid_s": 0.0006110999984230148,
+      "frequency_grid_calls": 2,
+      "kernel_prepare_s": 0.007977900000696536,
+      "kernel_prepare_calls": 2,
+      "tensor_solve_kernel_s": 0.3994507000006706,
+      "tensor_solve_kernel_calls": 2,
+      "column_integration_s": 0.009721200000058161,
+      "column_integration_calls": 1
+    },
+    {
+      "total_s": 0.38190620000023046,
+      "iterations": 2,
+      "expansion_background_s": 0.0003570000008039642,
+      "expansion_background_calls": 2,
+      "frequency_grid_s": 0.0004711999990831828,
+      "frequency_grid_calls": 2,
+      "kernel_prepare_s": 0.0003819999983534217,
+      "kernel_prepare_calls": 2,
+      "tensor_solve_kernel_s": 0.3791698000004544,
+      "tensor_solve_kernel_calls": 2,
+      "column_integration_s": 0.000173700000232202,
+      "column_integration_calls": 1
+    },
+    {
+      "total_s": 0.38932569999997213,
+      "iterations": 2,
+      "expansion_background_s": 0.0003882000000885455,
+      "expansion_background_calls": 2,
+      "frequency_grid_s": 0.0004709999993792735,
+      "frequency_grid_calls": 2,
+      "kernel_prepare_s": 0.0003040999999939231,
+      "kernel_prepare_calls": 2,
+      "tensor_solve_kernel_s": 0.3866299000001163,
+      "tensor_solve_kernel_calls": 2,
+      "column_integration_s": 0.00022390000049199443,
+      "column_integration_calls": 1
+    }
+  ],
+  "median_s": {
+    "column_integration_s": 0.00022390000049199443,
+    "expansion_background_s": 0.0003882000000885455,
+    "frequency_grid_s": 0.0004711999990831828,
+    "kernel_prepare_s": 0.0003819999983534217,
+    "tensor_solve_kernel_s": 0.3866299000001163,
+    "total_s": 0.38932569999997213
+  },
+  "p95_s": {
+    "column_integration_s": 0.008771470000101544,
+    "expansion_background_s": 0.16239899999909538,
+    "frequency_grid_s": 0.0005971099984890315,
+    "kernel_prepare_s": 0.007218310000462224,
+    "tensor_solve_kernel_s": 0.3981686200006152,
+    "total_s": 0.5919742900005076
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "threads": 16,
+  "case": {
+    "r": 0.01,
+    "cr": 1,
+    "T_re": 2000.0,
+    "kappa10": 0.01
+  },
+  "reps": 3,
+  "records": [
+    {
+      "total_s": 0.622978500001409,
+      "iterations": 2,
+      "expansion_background_s": 0.18889760000092792,
+      "expansion_background_calls": 2,
+      "frequency_grid_s": 0.000577899998461362,
+      "frequency_grid_calls": 2,
+      "kernel_prepare_s": 0.007935600000564591,
+      "kernel_prepare_calls": 2,
+      "tensor_solve_kernel_s": 0.40038559999811696,
+      "tensor_solve_kernel_calls": 2,
+      "column_integration_s": 0.009475400000155787,
+      "column_integration_calls": 1
+    },
+    {
+      "total_s": 0.3814196000002994,
+      "iterations": 2,
+      "expansion_background_s": 0.0003636999990703771,
+      "expansion_background_calls": 2,
+      "frequency_grid_s": 0.00045870000030845404,
+      "frequency_grid_calls": 2,
+      "kernel_prepare_s": 0.00037759999941044953,
+      "kernel_prepare_calls": 2,
+      "tensor_solve_kernel_s": 0.37889800000084506,
+      "tensor_solve_kernel_calls": 2,
+      "column_integration_s": 0.00018210000052931719,
+      "column_integration_calls": 1
+    },
+    {
+      "total_s": 0.5221651000010752,
+      "iterations": 2,
+      "expansion_background_s": 0.00033650000113993883,
+      "expansion_background_calls": 2,
+      "frequency_grid_s": 0.0005254999996395782,
+      "frequency_grid_calls": 2,
+      "kernel_prepare_s": 0.0003012000015587546,
+      "kernel_prepare_calls": 2,
+      "tensor_solve_kernel_s": 0.5195175999997446,
+      "tensor_solve_kernel_calls": 2,
+      "column_integration_s": 0.00030080000033194665,
+      "column_integration_calls": 1
+    }
+  ],
+  "median_s": {
+    "column_integration_s": 0.00030080000033194665,
+    "expansion_background_s": 0.0003636999990703771,
+    "frequency_grid_s": 0.0005254999996395782,
+    "kernel_prepare_s": 0.00037759999941044953,
+    "tensor_solve_kernel_s": 0.40038559999811696,
+    "total_s": 0.5221651000010752
+  },
+  "p95_s": {
+    "column_integration_s": 0.008557940000173403,
+    "expansion_background_s": 0.17004421000074216,
+    "frequency_grid_s": 0.0005726599985791836,
+    "kernel_prepare_s": 0.007179800000449176,
+    "tensor_solve_kernel_s": 0.5076043999995818,
+    "total_s": 0.6128971600013756
+  }
+}
