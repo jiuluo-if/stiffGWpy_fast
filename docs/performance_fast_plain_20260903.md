@@ -47,6 +47,10 @@
 
 为验证 `prange` 负载均衡，额外测量了 `FAST_CHUNKSIZE=1/2/4/8/16/32/64`。短样本曾显示 A 点 chunk16 约有 8% 优势，但长样本串行复测不支持全局采用：A 点 baseline 默认 chunk 的 median `401.3 ms`、chunk16 `405.5 ms`；B 点分别为 `198.2 ms`、`192.9 ms`。方向不一致且接近机器调度噪声，因此没有改变 solver 默认调度；chunk 仅作为 profiler 的实验参数保留。
 
+### coarse-column assembly 上限与 history 重建实验
+
+临时关闭非最终 coarse-column assembly 后，A 点 kernel 约从 `408 ms` 降至 `307 ms`，B 点约从 `187 ms` 降至 `149 ms`，说明 assembly 数学本身约占 20–25%。随后实现了“保存每个 coarse slot 的 x/y，收敛后一次性重建”的候选；A 点实际 warm median `437.9 ms`、B 点 `201.8 ms`，由于 history 写入、清零和最终重建开销而失败，已完整回退。该实验没有作为数值结果使用。
+
 ## 数值与兼容性
 
 最终工作树中的 `fast_sgwb.py` 与 baseline solver 相比无差异；因此本轮没有引入新的数值 diff。已有 plain-grid matched-reference artifact（9 点）记录的 envelope 为：signal relative median `1.867e-2`、max `7.019e-2`；integrated `DN_gw` relative median `9.142e-3`、max `2.725e-2`。本轮没有修改 reference、validation artifact、preset、alias、Cobaya adapter 或 telemetry。

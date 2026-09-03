@@ -54,7 +54,14 @@ def run_once(case):
         j0s = np.asarray(args[5])
         totals['j0_cv'].append(float(np.std(j0s) / max(np.mean(j0s), 1.0)))
         totals['j0_span'].append(float(np.max(j0s) - np.min(j0s)))
-        return timed_call(totals, 'tensor_solve_kernel', original['solve_kernel'], *args, **kwargs)
+        solve_args = args
+        if os.environ.get('PROFILE_ASSEMBLE') == '0':
+            # 仅用于估算 assembly 的理论上限；该模式的完整输出不作为
+            # 数值结果，正式 benchmark 必须保持默认 assemble=1。
+            solve_args = list(args)
+            solve_args[11] = 0
+            solve_args = tuple(solve_args)
+        return timed_call(totals, 'tensor_solve_kernel', original['solve_kernel'], *solve_args, **kwargs)
     FS.solve_kernel = profiled_solve
     FS.int_SGWB_W = lambda *a, **k: timed_call(totals, 'column_integration', original['int_SGWB_W'], *a, **k)
     LCDM_SG.construct_f = lambda *a, **k: timed_call(totals, 'frequency_grid', original['construct_f'], *a, **k)
