@@ -10,7 +10,8 @@ runtime benchmarking.
 > `docs/validation/validation_manifest.json`; current performance measurements
 > are maintained in `docs/benchmarks.md` and
 > `docs/performance_comparison_20260903.md`.  `docs/` holds the canonical
-> per-topic documents; superseded historical audits live in `docs/archive/`.
+> per-topic documents; superseded historical audits remain available in Git
+> history rather than in the active `docs/` tree.
 
 ---
 
@@ -308,7 +309,7 @@ stiffgwpy/            pip package
 tests/                pytest suite (99 unit + 6 slow gates)
 scripts/              validation drivers (validate_two_modes, build_two_mode_manifest, ...)
 docs/                 canonical docs + validation artifacts (validation/manifest, paramsweep_*, mcmc_posterior)
-docs/archive/         superseded historical audits / benchmarks
+Git history           superseded historical audits / benchmarks
 ```
 
 ## License

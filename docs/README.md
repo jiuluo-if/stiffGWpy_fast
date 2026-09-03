@@ -20,4 +20,4 @@ by `scripts/build_two_mode_manifest.py` (a read-only replay — no physics re-ru
 | `benchmarks.md` | current cold/warm runtime and method comparison pointer | current |
 | `performance_comparison_20260903.md` | optimization before/after, breakdown, AB and gates | current |
 | `reproducibility.md` | drivers, gates, environment metadata | current |
-| `archive/` | superseded historical audits / benchmarks (LSODA-era, pre-fix) | archived |
+| Git history | superseded historical audits / benchmarks (LSODA-era, pre-fix) | archived |
