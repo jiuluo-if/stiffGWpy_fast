@@ -13,9 +13,21 @@ JIT 时实际在 Python 层执行；修复后进入 Numba 并行 kernel。公式
 频率节点生成、outer `Delta N_eff` 收敛条件、返回对象、fallback 和 telemetry
 均未改变。
 
-默认 fast/plain-grid 点的 warm 单点 median 从 `398.9 ms` 降至 `6.879 ms`
-（约 `58.0x`）；第二个 validation point 从 `200.6 ms` 降至 `4.085 ms`
-（约 `49.1x`）。candidate 的 cold call 单独计量为 `0.253 s`，不混入 warm
+具体代码变化只有一行：
+
+```python
+@njit(parallel=True, cache=True)
+def solve_kernel(...):
+    ...  # 原有 channel-level prange 与计算顺序保持不变
+```
+
+也就是说，本轮没有放大 `h`、减少频率节点、降低 `tol`、提前 tail、使用
+`float32`、删除物理项或改变 outer convergence criterion；优化目标是让已有
+`prange` 真正进入 Numba 编译并行执行。
+
+默认 fast/plain-grid 点的 warm 单点 median 从 `398.9 ms` 降至 `4.442 ms`
+（约 `89.8x`）；第二个 validation point 从 `200.6 ms` 降至 `2.501 ms`
+（约 `80.2x`）。candidate 的首个 A 点 cold call 单独计量为 `0.325 s`，不混入 warm
 runtime。production 同一 kernel 的当前测量为 cold `0.226 s`、warm median
 `21.772 ms`、p95 `22.149 ms`。
 
@@ -41,10 +53,13 @@ runtime。production 同一 kernel 的当前测量为 cold `0.226 s`、warm medi
 
 | 点位 | baseline warm median | candidate cold | candidate warm median | candidate p95 | speedup |
 |---|---:|---:|---:|---:|---:|
-| A：`r=1e-2, T_re=2e3, kappa10=1e-2` | 398.9 ms | 0.253 s | 6.879 ms | 7.642 ms | 58.0x |
-| B：`r=1e-3` | 200.6 ms | 0.005 s | 4.085 ms | 4.684 ms | 49.1x |
+| A：`r=1e-2, T_re=2e3, kappa10=1e-2` | 398.9 ms | 0.325 s | 4.442 ms | 5.105 ms | 89.8x |
+| B：`r=1e-3` | 200.6 ms | 0.003 s* | 2.501 ms | 3.060 ms | 80.2x |
 
-candidate 使用 15 次 warm 重复，speedup 采用 median，不采用最佳一次。
+candidate 使用当前提交 `b0909d0` 重新运行的 15 次 warm 重复，原始记录为
+`docs/benchmark_current_fast_preset_20260903.json`；speedup 采用 median，不采用最佳一次。
+`*` B 点的 cold 字段发生在同一进程 A 点之后，Numba cache 已可用，不能解释为
+独立的全冷启动；全冷启动以独立首个 A 点记录为准。
 baseline 的 breakdown profiler 使用 7 次重复；其较大的 p95 受到独立进程
 首次 JIT/Windows 调度噪声影响，因此 public benchmark 的 15 次 p95 作为
 单点尾延迟口径。
@@ -65,17 +80,26 @@ batch 平均低于单点重复是参数点负载不同和连续调度的结果�
 
 | 方法 | 当前 runtime 证据 | 数值定位 |
 |---|---:|---|
-| fast/plain-grid | warm median `6.879 ms`（A） | 探索档；plain-grid oracle envelope 未改变 |
+| fast/plain-grid | warm median `4.442 ms`（A） | 探索档；plain-grid oracle envelope 未改变 |
 | fast/production | warm median `21.772 ms`（A），p95 `22.149 ms` | 科学生产档；仍需按现有 oracle/误差预算解释 |
 | LSODA | 近期 A 点 `22.137 s` | 回归/fallback/历史 runtime anchor，未修改 |
 | independent reference | 历史 full-oracle 约 `360–383 s/点` | 精度锚点，未修改、不进 MCMC 热路径 |
 
-不同表格中的 LSODA/reference 数值来自不同频率子集、tail 和历史测量，不能
-把它们误读为同一轮严格配对计时；严格的 fast AB 使用上表 3.1 的同点同配置
-数据。旧的 `0.37 s`、`3.7–4.1 s` 和 `~1000x` 只代表 JIT 修复前的历史口径，
+### 3.4 速度对比：只与 LSODA 比
+
+以下是同一当前提交、同一机器、同一参数点的 `bench_fast.py` 结果；LSODA
+没有被优化，fast 的 cold/JIT 不计入 warm speedup：
+
+| 点位 | LSODA median/单次 | fast warm median | LSODA / fast |
+|---|---:|---:|---:|
+| A | `21.117182 s` | `4.442 ms` | `4753.87x` |
+| B | `8.621666 s` | `2.501 ms` | `3446.87x` |
+
+这里的速度结论不使用 independent reference 的耗时，也不使用 fast 与
+reference 的精度差异推导 speedup。旧的 `0.37 s`、`3.7–4.1 s` 和 `~1000x` 只代表 JIT 修复前的历史口径，
 已从活动文档移除并保留在 archive 的历史材料中。
 
-### 3.4 线程 scaling
+### 3.5 线程 scaling
 
 candidate A 点，独立进程、15 次 warm 重复的 median：
 
@@ -104,7 +128,20 @@ baseline A 点 7 次 warm profiler 的 median：
 channel reorder、chunk 调度和 deferred assembly/history 均未形成稳定收益，
 已回退。
 
-## 5. 数值和行为 AB
+## 5. 精度对比：只与 independent reference 比
+
+精度基准是 `stiffgwpy.reference` 的 continuous-sigma + DOP853 独立实现，
+不是 LSODA。已有 matched-reference 结果：
+
+| fast 档位 | 对 independent reference 的结果 | 结论 |
+|---|---|---|
+| plain-grid | signal relative median `1.867e-2`、max `7.019e-2`；integrated `DN_gw` median `9.142e-3`、max `2.725e-2` | 仅探索档，未通过 `1e-3` science gate |
+| production/transition-refine | signal relative max `7.09e-4`（dex max `3.1e-4`）；integrated `DN_gw` median `4.3e-4`、p95 `1.2e-3` | signal gate `<1e-3` 通过；integrated `<1e-4` 未通过 |
+
+这些是物理方法之间的精度结果，不是 JIT 优化造成的误差；本轮 candidate
+与 baseline 的 AB 结果如下。
+
+## 6. 数值和行为 AB
 
 candidate 与 `80af01b` 的 A/B fast 输出逐位一致：
 
@@ -119,7 +156,7 @@ max `2.725e-2`。本轮没有修改 reference 或 validation artifact，也没�
 消耗完整 continuous-sigma oracle，因此这里报告“既有 envelope 未改变”，不把
 它表述为本轮重新跑出的 oracle PASS。
 
-## 6. 验证状态
+## 7. 验证状态
 
 | 检查 | 结果 |
 |---|---|
@@ -129,14 +166,14 @@ max `2.725e-2`。本轮没有修改 reference 或 validation artifact，也没�
 | `ruff check .` | 未通过；仓库既有约 399 条 lint 问题，本轮未扩大范围 |
 | plain-grid oracle | 既有 artifact envelope 未改变；本轮未重跑完整 oracle |
 
-## 7. 本轮修改和风险
+## 8. 本轮修改和风险
 
 采用修改只有 `stiffgwpy/fast_sgwb.py` 的一行 JIT 装饰器；本报告和活动文档
 同步更新了现行 runtime 口径。风险为低到中：执行顺序只在独立 channel 之间
 并行，channel 内浮点 evaluation order 未改变；Numba cache/cold startup
 会影响首次调用延迟，因此生产部署和 benchmark 必须分开报告 cold 与 warm。
 
-## 8. 后续方向
+## 9. 后续方向
 
 本轮不采用：继续做 kernel fusion、按 work 量重排 channel、改变 chunk policy、
 减少中间 array 或调整 outer iteration。这些方向若改变浮点 evaluation order，
