@@ -71,6 +71,7 @@ def _model_kw(log10r, n_t):
 def fast_point(kw, freq_res=1.0):
     """Production fast solve; returns log10OmegaGW at the 11 bins + DN."""
     from scipy import interpolate
+
     from stiffgwpy import fast_sgwb as FS
     from stiffgwpy.stiff_SGWB import LCDM_SG
     cfg = FS.apply_accuracy_mode('production')

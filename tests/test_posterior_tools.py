@@ -8,7 +8,6 @@ scripts/importance_posterior.py and scripts/cobaya_posterior_fast_vs_reference.p
 """
 import importlib.util
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -94,7 +93,6 @@ def test_reweighted_shift_recovers_injected_bias(ip):
     dll = -(x - bias) ** 2 / 2 + x ** 2 / 2   # L_ref/L_fast ratio
     w1 = w0 * np.exp(dll)
     w1 /= w1.sum()
-    mean0 = np.sum(w0 * x)
     mean1 = np.sum(w1 * x)
     assert mean1 == pytest.approx(bias, abs=0.05)
     assert ip._boot(x, n=200, seed=1).size == 200

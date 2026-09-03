@@ -47,7 +47,6 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from cobaya.likelihood import Likelihood  # noqa: E402
-
 from scipy import interpolate  # noqa: E402
 
 # re-use the (LSODA-era but engine-agnostic) chain statistics helpers
@@ -157,7 +156,6 @@ def model_kwargs(log10r, n_t, truth=None):
 
 def build_info(truth, samples, sigma_dex=0.05, seed=SEED):
     """Cobaya run-info: stiffGW(fast) + diagonal-Gaussian mock likelihood."""
-    from stiffgwpy.cobaya.stiffGW import stiffGW
     bins = np.asarray(truth['bins'], dtype=float)
     y = np.asarray(truth['truth_log10Om'], dtype=float)
     info = {
@@ -259,7 +257,6 @@ def fast_log10_at_bins(kw, bins):
 
 def ref_log10_at_bins(kw, bins, dn, rtol=1e-9, z_tail=8.0):
     """Continuous-sigma DOP853 reference at the SAME bins and matched DN."""
-    from stiffgwpy import global_param as gp
     from stiffgwpy import reference as REF
     from stiffgwpy.stiff_SGWB import LCDM_SG
     m = LCDM_SG(**kw)
@@ -407,7 +404,7 @@ def _bootstrap_shift(shifts, n=2000, seed=42):
 
 
 def phase_report(args):
-    truth = _load_truth(args.out)
+    _load_truth(args.out)  # verify the artifact exists (chain files checked below)
     chain_jsons = sorted(f for f in os.listdir(args.out)
                          if f.startswith('fast_chain_s') and f.endswith('.json'))
     if not chain_jsons:
