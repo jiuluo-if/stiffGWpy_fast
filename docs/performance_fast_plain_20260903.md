@@ -6,7 +6,7 @@
 
 ## 结论
 
-本轮没有采用 solver 优化。现有 warm 单点默认物理点约 0.40 s，约 99% 时间在 `tensor_solve_kernel`；已验证的两个低风险候选均未产生可重复加速，因此已回退，避免改变数值轨迹或提交无收益改动。新增的 `scripts/profile_fast_breakdown.py` 只做阶段计时，不改变公开 API 或求解行为。
+本轮发现并修复了一个实现级热点：`solve_kernel` 外层缺少 Numba JIT 装饰器，导致 `prange` 在 Python 层执行。补上 `@njit(parallel=True, cache=True)` 后，fast/plain-grid 获得数量级加速；公式、步长、频率网格、outer criterion 和公开行为均未改变。
 
 ## 基线与 breakdown
 
@@ -22,6 +22,8 @@
 | column integration | 0.203 ms | 312.3 ms | 最终一次调用 |
 
 首个 cold call 总计约 3.24 s，其中包含 Numba JIT；未混入 warm runtime。
+
+修复后的 public benchmark（`FAST_THREADS=4`，15 次 warm 重复）：A 点 cold `0.253 s`、warm median `6.879 ms`、p95 `7.642 ms`；B 点 warm median `4.085 ms`、p95 `4.684 ms`。相对 baseline warm median A `398.9 ms`、B `200.6 ms`，speedup 约 `58.0x` / `49.1x`。修复后 cold 仍单独计量，未混入 warm。
 
 线程探索的 3 次 warm 小样本受并发测量噪声影响，不能作为正式 speedup：1/2/4/8/16 threads 的 median total 分别约 528/496/521/389/522 ms。它没有显示单调扩展，正式结论以固定线程、串行复测为准；不能声称更多线程必然更快。
 
@@ -41,7 +43,18 @@
 - 数值：代数上等价，未形成可接受性能收益；候选已删除。
 - 风险：低；不采用。
 
-因此累计 solver speedup：`1.00x`（没有可交付的性能改动）。
+## 采用的优化：JIT 并行化外层 tensor kernel
+
+- change：为 `solve_kernel` 添加 `@njit(parallel=True, cache=True)`。
+- hotspot：Python 外层 channel loop；原有 `prange` 未进入 Numba 编译。
+- baseline runtime：A `398.9 ms`、B `200.6 ms` warm median。
+- candidate runtime：A `6.879 ms`、B `4.085 ms` warm median。
+- speedup：A 约 `58.0x`、B 约 `49.1x`。
+- numerical max diff：A/B 的 `DN_eff`、频率、完整 spectrum、`DN_gw`、g2、w2 digest 均逐位相同；max diff 为 `0`（逐位比较）。
+- tests：定向 fast/engine、A/B baseline digest、线程 scaling 已通过；全量门禁见下节。
+- risk level：低到中；改变执行层和并行调度，但每个 channel 独立写入，未改变 channel 内浮点顺序。
+
+线程 scaling（A 点，warm median，15 次；每个线程数独立进程）：1 `6.123 ms`，2 `4.124 ms`，4 `3.568 ms`，8 `3.386 ms`，16 `3.233 ms`。本机在允许范围内没有反向变慢。
 
 ### 调度 chunk-size 实验
 
@@ -55,15 +68,15 @@
 
 ## 数值与兼容性
 
-最终工作树中的 `fast_sgwb.py` 与 baseline solver 相比无差异；因此本轮没有引入新的数值 diff。已有 plain-grid matched-reference artifact（9 点）记录的 envelope 为：signal relative median `1.867e-2`、max `7.019e-2`；integrated `DN_gw` relative median `9.142e-3`、max `2.725e-2`。本轮没有修改 reference、validation artifact、preset、alias、Cobaya adapter 或 telemetry。
+本轮唯一 solver 变化是执行层的 Numba 装饰器；A/B fast 与 production AB 的频率、完整 spectrum、`DN_gw`、g2、w2 均逐位一致。已有 plain-grid matched-reference artifact（9 点）记录的 envelope 为：signal relative median `1.867e-2`、max `7.019e-2`；integrated `DN_gw` relative median `9.142e-3`、max `2.725e-2`。本轮没有修改 reference、validation artifact、preset、alias、Cobaya adapter 或 telemetry。
 
 ## 测试与构建
 
-- `python -m pytest`：基线已运行，`99 passed, 6 deselected`；本轮最终 solver 代码回退到相同内容，需以最终门禁复跑结果为准。
-- fast/engine/modes 定向回归：`39 passed, 3 deselected`。
-- `python -m pytest -m cobaya`：待门禁执行。
+- `python -m pytest`：JIT 候选最终门禁 `99 passed, 6 deselected`。
+- fast/engine 定向回归：`29 passed, 3 deselected`。
+- `python -m pytest -m cobaya`：JIT 候选最终门禁 `1 passed, 104 deselected`。
 - `ruff check .`：未通过；仓库既有约 399 条 lint 问题，非本轮 profiler 文件引入。新增 profiler 单文件需单独检查。
-- `wheel build`：待门禁执行。
+- `wheel build`：JIT 候选最终门禁成功。
 - plain-grid validation：已有 artifact envelope 如上；本轮未重新消耗完整连续-sigma oracle 运行，不能声称本轮 validation PASS。
 
 ## 修改文件
@@ -71,7 +84,8 @@
 - `scripts/profile_fast_breakdown.py`：新增阶段级 profiler/benchmark 工具。
 - `docs/profile_*`：保存 baseline、候选和 chunk-size 实验记录。
 - `docs/performance_fast_plain_20260903.md`：本报告。
-- solver、公开 API、preset、alias、Cobaya 配置均未修改。
+- `stiffgwpy/fast_sgwb.py`：为原有 `solve_kernel` 添加 `@njit(parallel=True, cache=True)`。
+- solver 公式、公开 API、preset、alias、Cobaya 配置均未修改。
 
 ## 后续方向（本轮未采用）
 
