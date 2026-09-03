@@ -1,0 +1,49 @@
+{
+ "n_points": 9,
+ "n_total": 9,
+ "meta": {
+  "python": "3.11.9",
+  "platform": "win32",
+  "numpy": "2.4.4",
+  "numba": "0.67.0",
+  "scipy": "1.17.1",
+  "commit": "c95c31914b6f77a904159aa9fa125fd2b1edd520"
+ },
+ "settings": {
+  "z_tail": 8.0,
+  "rtol": 1e-09,
+  "freq_res": 1.0,
+  "mode": "fast(plain-grid)",
+  "reference": "continuous-sigma DOP853"
+ },
+ "acceptance": {
+  "signal_rel_lt_1e-3": false,
+  "transition_rel_lt_1e-3": false,
+  "DN_gw_rel_lt_1e-4": false
+ },
+ "signal": {
+  "n": 9,
+  "median": 0.018671337338332063,
+  "p95": 0.06911660291973683,
+  "p99": 0.06997276967368397,
+  "max": 0.07018681136217077
+ },
+ "transition": {
+  "n": 9,
+  "median": 0.017684216706345925,
+  "p95": 0.05278345519975617,
+  "p99": 0.06456572324481998,
+  "max": 0.06751129025608593
+ },
+ "DN_gw_rel_abs": {
+  "n": 9,
+  "median": 0.009141698166592062,
+  "p95": 0.027008507102370297,
+  "p99": 0.027202854027699327,
+  "max": 0.027251440759031586
+ },
+ "runtime_s": {
+  "fast_median": 0.758910300000025,
+  "ref_median": 382.9978431000004
+ }
+}

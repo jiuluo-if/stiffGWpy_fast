@@ -140,6 +140,36 @@ def load_layer_b():
         row.update(_param_row(x.get("params")))
         rows.append(row)
     return rows
+def load_layer_plain():
+    path = DOCS / "paramsweep_plain" / "plain_points.jsonl"
+    if not path.exists():
+        return []
+    rows = []
+    for x in _jsonl(path):
+        sig_rel = ((x.get("signal") or {}).get("rel") or {})
+        tra_rel = ((x.get("transition") or {}).get("rel") or {})
+        ok = x.get("status") == "ok"
+        met = ok and sig_rel.get("max", 1.0) < 1e-3 and tra_rel.get("max", 1.0) < 1e-3
+        row = {
+            "layer": "P_plain9", "tier": "plain-grid",
+            "engine": "fast-plain-grid-vs-reference",
+            "label": x.get("label"), "status": x.get("status"),
+            "classification": "PASS" if met else "WARN",
+            "reason": "" if met else "exploratory tier: 1e-3 science gate not met at this corner",
+            "DN_gw_rel": x.get("DN_gw_rel"),
+            "signal_rel_max": sig_rel.get("max"),
+            "signal_dex_max": ((x.get("signal") or {}).get("dex") or {}).get("max"),
+            "transition_rel_max": tra_rel.get("max"),
+            "all_dex_max": ((x.get("all") or {}).get("dex") or {}).get("max"),
+            "fast_runtime_s": x.get("fast_dt"), "ref_runtime_s": x.get("ref_dt"),
+            "n_freq": x.get("n_freq"), "z_tail": x.get("z_tail"), "rtol": x.get("rtol"),
+            "notes": "plain-grid construct grid nodes; reference evaluated on the SAME nodes, z_tail=8 matched",
+        }
+        row.update(_param_row(x.get("params")))
+        rows.append(row)
+    return rows
+
+
 def load_layer_c():
     pw = _json(DOCS / "mcmc_posterior" / "is_pointwise.json")
     report = _json(DOCS / "mcmc_posterior" / "is_report.json")
@@ -193,7 +223,7 @@ def plain_grid_anchor():
     return rows, (meta or {})
 
 
-def acceptance_rows(a_rows, c_report, plain_anchor):
+def acceptance_rows(a_rows, c_report, plain_anchor, plain_rows=None):
     """Every gate row is explicit PASS / FAIL / NOT YET VERIFIED with numbers."""
     dn = _stats_abs([r["DN_gw_rel"] for r in a_rows])
     sig_max = _max_key(a_rows, "signal_rel_max")
@@ -225,9 +255,22 @@ def acceptance_rows(a_rows, c_report, plain_anchor):
     add("fallback / escalation traceable; no silent fallback",
         "PASS", "FAST/FAST_ESCALATED/REFERENCE/LSODA_FALLBACK statuses + engine_stats; shared_Neff_guard explicit",
         "tests/test_engine.py, tests/test_cobaya_adapter.py, docs/audit_acceptance.md")
-    add("plain-grid tier accuracy vs reference across parameter space",
-        "NOT YET VERIFIED", "default-point anchor only: DN rel -1.61e-3 (coarse, below 1e-3 gate); no full-spectrum sweep",
-        "docs/reference/pareto_default.json (commit 59563da9-era settings)")
+    if plain_rows:
+        p_sig = _max_key(plain_rows, "signal_rel_max")
+        p_tra = _max_key(plain_rows, "transition_rel_max")
+        p_dn = _stats_abs([r["DN_gw_rel"] for r in plain_rows])
+        p_fast = np.median([r["fast_runtime_s"] for r in plain_rows])
+        add("plain-grid tier: 9-corner accuracy boundary vs reference (matched z8, plain-grid own nodes)",
+            "FAIL",
+            "signal rel max %.3e, transition rel max %.3e; DN rel abs median %.3e / max %.3e; fast runtime median %.2f s/pt" % (p_sig, p_tra, p_dn["median"], p_dn["max"], p_fast),
+            "docs/paramsweep_plain/validation_summary.json (exploratory tier; science gate 1e-3 -> escalation)")
+        add("plain-grid full parameter-space sweep vs oracle",
+            "NOT YET VERIFIED", "9 matched corners only; no 240-point plain-grid oracle sweep",
+            "docs/paramsweep_plain/plain_points.jsonl")
+    else:
+        add("plain-grid tier accuracy vs reference across parameter space",
+            "NOT YET VERIFIED", "no matched plain-grid records committed yet",
+            "docs/paramsweep_plain/plain_points.jsonl")
     add("production full-spectrum oracle coverage over the 240 Sobol points",
         "NOT YET VERIFIED", "oracle (360 s/pt) run for 9 singles + 240 posterior-bulk points at 11 bins only",
         "docs/paramsweep_ref/fast_sweep.jsonl is fast-only")
@@ -292,7 +335,7 @@ def _fnum(x):
     if x is None:
         return "-"
     return "%.3e" % float(x)
-def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources):
+def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources, p_rows):
     L = []
     L.append("# parameter_validation_report — fast vs 连续-σ reference 参数空间验证矩阵")
     L.append("")
@@ -317,6 +360,9 @@ def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload,
             ["C_posterior_bulk", "production", "fast vs reference", str(len(c_rows)),
              "240/240 点 x 11 likelihood bin",
              "likelihood bin 为原生求解节点；IS 后验 + e^ΔlogL 重加权"],
+            ["P_plain9", "plain-grid", "fast-plain-grid-vs-reference", str(len(p_rows)),
+             "9/9 全谱 oracle（plain-grid 原生节点，matched z8）",
+             "plain-grid(fast) 引擎误差边界量化；1e-3 science gate 不满足 -> escalation 到 production/reference"],
             ["anchor_default", "plain-grid / production / reference", "multi-engine", str(len(pga)),
              "default 点同文件对照（commit %s 时代设置）" % ((pga_meta or {}).get("commit", "unknown")),
              "plain-grid coarser 探索档 anchor；低于 1e-3 物理门槛，不作生产认证"],
@@ -328,7 +374,7 @@ def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload,
              "`NUMERICAL_FAILURE`。分类规则：")
     L.append("")
     L.append("- `PASS`：求解成功且该行门槛满足（Layer C 门槛 = 逐 bin dex < 1e-3 vs reference）。")
-    L.append("- `WARN`：可运行但带明确警示（plain-grid coarser 档：default 点 DN rel -1.61e-3，低于 1e-3 物理门槛）。")
+    L.append("- `WARN`：可运行但带明确警示（plain-grid 探索档 9-corner 边界：signal rel max 7.0e-2、DN rel abs med 9.1e-3，matched z8，远高于 1e-3 science gate）。")
     L.append("- `FAIL`：求解成功但认证门槛未达到（当前记录集中没有此类逐点行；集成 ΔNeff 门槛见 §5）。")
     L.append("- `PHYSICAL_INVALID`：显式物理/自洽拒绝 `shared_Neff_guard`（极端 r/DN_re/kappa10 角落），"
              "**不算 numerical failure**。")
@@ -358,6 +404,31 @@ def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload,
              "（门槛 <1e-4 → FAIL，见 §5，诚实的架构极限）。" % (
                  max(r["signal_rel_max"] for r in a_rows), dn["median"], dn["p95"], dn["max"]))
     L.append("")
+    if p_rows:
+        L.append("## 2b. Plain-grid tier — 9 个 matched z8 角落（fast plain-grid vs reference）")
+        L.append("")
+        L.append("Plain-grid 引擎（`accuracy_mode='fast'`：h=0.02 / col_step=8 / 无 transition_refine / "
+                 "phase_max=0）在自身 construct 频率节点上与连续-sigma reference（z_tail=8, rtol=1e-9）逐点对照；"
+                 "reference 直接在 plain-grid 节点上求解，残差纯为引擎误差（无频率网格插值项）。")
+        L.append("")
+        L.append(_md_table(
+            ["label", "signal rel max", "transition rel max", "DN_gw rel", "classification"],
+            [[r["label"], _fnum(r["signal_rel_max"]), _fnum(r["transition_rel_max"]),
+              _fnum(r["DN_gw_rel"]), r["classification"]] for r in p_rows]))
+        L.append("")
+        p_dn = _stats_abs([r["DN_gw_rel"] for r in p_rows])
+        L.append("明确精度包络（exploratory tier 边界）：signal 带 rel max **%.3e**（median %.3e）、"
+                 "transition 带 rel max **%.3e**；集成 ΔNeff rel abs median **%.3e** / max **%.3e**；"
+                 "fast runtime median %.2f s/点（reference 中位 %.0f s/点）。1e-3 science gate 不满足 "
+                 "-> 该档仅用于探索；科学结论必须 escalation 到 production/reference"
+                 "（adapter 已实现 likelihood-aware auto_escalate，无 silent fallback）。"
+                 % (max(r["signal_rel_max"] for r in p_rows),
+                    float(np.median([r["signal_rel_max"] for r in p_rows])),
+                    max(r["transition_rel_max"] for r in p_rows),
+                    p_dn["median"], p_dn["max"],
+                    float(np.median([r["fast_runtime_s"] for r in p_rows])),
+                    float(np.median([r["ref_runtime_s"] for r in p_rows]))))
+        L.append("")
     L.append("## 3. Layer B — 240 点 Sobol（production fast-only）")
     L.append("")
     ok_b = [r for r in b_rows if r["status"] == "ok"]
@@ -412,11 +483,11 @@ def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload,
          "frozen-z Magnus + z_tail/网格架构残差 ~3e-4..7.6e-4（deep-oracle default -2.94e-4 仍 >1e-4）；"
          "非步长或调参可消除，需换高阶/自适应 ODE 内核"],
         ["production matched-accuracy runtime >= 100x vs LSODA", "FAIL",
-         "诚实口径 ~4.5x（z8 ~4.1-5.3 s/点 vs LSODA 18.56 s）；100x 仅 plain-grid coarse 探索档"
-         "（0.012-0.24 s/点，DN rel ~ -1.6e-3，低于 1e-3 物理门槛）"],
-        ["plain-grid tier 全参数空间 vs oracle 精度统计", "NOT YET VERIFIED",
-         "仅 default 点 anchor（DN rel -1.61e-3，docs/reference/pareto_default.json，commit 59563da9 "
-         "时代设置）；plain-grid 全谱参考扫描未跑"],
+         "诚实口径 ~4.5x（z8 ~4.1-5.3 s/点 vs LSODA 18.56 s）；100x 仅 plain-grid coarse z5 探索档"
+         "（0.012-0.24 s/点；matched-z8 精度边界见 §5：signal rel max 7.0e-2 / DN rel abs med 9.1e-3）"],
+        ["plain-grid tier 全参数空间 vs oracle 扫描", "NOT YET VERIFIED",
+         "9-corner matched z8 边界已量化（signal rel max 7.0e-2、DN rel abs med 9.1e-3，"
+         "docs/paramsweep_plain/）；240 点 plain-grid 全谱 oracle 扫描未跑"],
         ["240 Sobol 点全谱 oracle 对照", "NOT YET VERIFIED",
          "reference ~360 s/点 -> 240 点约 24 CPU.h；当前 oracle 覆盖 9 singles 全谱 + 240 点 x 11 bin"],
         ["收敛的 real-Cobaya 三链 MCMC（plain/production/reference，KS/Wasserstein/KL/covariance、R-1）",
@@ -453,6 +524,7 @@ def main():
     a_rows = load_layer_a()
     b_rows = load_layer_b()
     c_rows, c_report = load_layer_c()
+    p_rows = load_layer_plain()
     pga, pga_meta = plain_grid_anchor()
     sources = [
         DOCS / "paramsweep_z8" / "reference_points.jsonl",
@@ -460,17 +532,20 @@ def main():
         DOCS / "mcmc_posterior" / "is_pointwise.json",
         DOCS / "mcmc_posterior" / "is_report.json",
         DOCS / "reference" / "pareto_default.json",
+        DOCS / "paramsweep_plain" / "plain_points.jsonl",
+        DOCS / "paramsweep_plain" / "validation_summary.json",
     ]
     all_rows = {
         "A_single_point": a_rows,
         "B_sobol240": b_rows,
         "C_posterior_bulk": c_rows,
+        "P_plain9": p_rows,
         "anchor_default": pga,
     }
-    acc = acceptance_rows(a_rows, c_report, pga)
+    acc = acceptance_rows(a_rows, c_report, pga, p_rows)
     payload = _write_json(all_rows, acc, pga_meta, sources, OUT / "validation_results.json")
     _write_csv(all_rows, OUT / "validation_results.csv")
-    md = _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources)
+    md = _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources, p_rows)
     (OUT / "parameter_validation_report.md").write_text(md, encoding="utf-8")
     print("wrote:", OUT / "validation_results.json")
     print("wrote:", OUT / "validation_results.csv")

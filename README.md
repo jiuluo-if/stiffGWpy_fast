@@ -87,8 +87,7 @@ Matched-accuracy production numbers — the honest comparison (default point unl
 - The documented LSODA anchor is **18.56 s/point** (z5 settings) → **≈4.5x** faster, while the
   integrated-`Delta_Neff` error vs the continuous-sigma reference drops from LSODA's **-1.68e-3** to
   fast production's -7.6e-4..+3.0e-4 at the default point (≈6x closer to the reference).
-- A 100x+ speedup vs LSODA holds only for the plain-grid coarser mode (0.012-0.24 s/pt,
-  `Delta_Neff` ≈ -1.6e-3 relative vs the reference), which does not pass the 1e-3 physics gate.
+- A 100x+ speedup vs LSODA holds only for the plain-grid coarser z5-era mode (0.012-0.24 s/pt warm; matched-z8 9-corner validation in `docs/paramsweep_plain/`: signal-band rel max 7.0e-2, integrated `Delta_Neff` rel abs median 9.1e-3), far outside the 1e-3 physics gate.
 
 Warm-cache coarsest-mode measurements (independent re-measurement, 2026-08-29; repeated
 in-process calls — the regime behind the historical `10^3x` headline):
@@ -246,8 +245,7 @@ authoritative table lives in `fast_sgwb.ACCURACY_MODES`:
 transition is an integration breakpoint, σ(N) never crosses a discontinuity on a spline/grid) plus
 `phase_max`-capped Magnus sub-stepping (per-substep phase `e^z dh` bounded). At matched z8 this
 preset delivers the Layer A/B/C numbers above at ≈4-5 s/point; `fast`/`ultra-fast` keep the plain
-grid for quick exploration (0.012-0.24 s/pt, `Delta_Neff` ≈ -1.6e-3 relative vs the reference —
-below the 1e-3 physics gate).
+grid for quick exploration only (0.012-0.24 s/pt warm z5 coarse; matched-z8 9-corner bounds in `docs/paramsweep_plain/`: signal rel max 7.0e-2, DN rel abs median 9.1e-3 — far outside the 1e-3 physics gate; scientific results must escalate to production/reference).
 
 `fast_sgwb.estimate_local_error(m)` returns a point-local a-posteriori error budget for the last
 fast solve: 11 physics categories (background_model / sigma_transition / ode_integration /
@@ -329,11 +327,13 @@ python scripts/validate_fast_vs_reference.py      # Layer A: 9 matched single po
 python scripts/importance_posterior.py --help     # Layer C: IS posterior validation phases (draw/posterior/pointwise/report)
 python scripts/cobaya_posterior_fast_vs_reference.py  # bounded real-Cobaya scaffold (adapter plumbing)
 python scripts/build_validation_matrix.py           # consolidate Layer A/B/C artifacts -> docs/parameter_validation/ (read-only replay)
+python scripts/validate_plain_grid_vs_reference.py --phase plain --pool 6 --workers 2  # plain-grid tier vs oracle, 9 corners (checkpointed)
+python scripts/validate_plain_grid_vs_reference.py --phase summary                    # -> docs/paramsweep_plain/validation_summary.{json,md}
 python -m pytest                                  # regression tests (slow gates deselected by default)
 python -m pytest -m slow                          # opt in to the 6 long slow gates
 ```
 
-Artifacts: Layer A/B summaries in `docs/paramsweep_z8/`; the 240-point production sweep in
+Artifacts: plain-grid matched tier validation in `docs/paramsweep_plain/`; Layer A/B summaries in `docs/paramsweep_z8/`; the 240-point production sweep in
 `docs/paramsweep_ref/fast_sweep.jsonl`; Layer C posterior artifacts in `docs/mcmc_posterior/`
 (`is_report.json`, `is_pointwise.json`, `is_draws.npz`, `posterior_validation.md`); deep-oracle
 default anchor in `docs/reference/deep_oracle_default.json`.
@@ -365,7 +365,7 @@ stiffgwpy/            pip package (import stiffgwpy)
   cobaya/             Cobaya theory adapter (engine fast|lsoda|reference + telemetry)
 tests/                pytest regression tests (unit + 6 slow gates)
 scripts/              benchmark / validation drivers (incl. Layer A-C certification)
-docs/                 audit reports + validation artifacts (paramsweep_z8/, mcmc_posterior/, parameter_validation/, reference/)
+docs/                 audit reports + validation artifacts (paramsweep_z8/, paramsweep_plain/, mcmc_posterior/, parameter_validation/, reference/)
 base_param.yml        example parameter file
 pyproject.toml        PEP 621 build config
 ```
