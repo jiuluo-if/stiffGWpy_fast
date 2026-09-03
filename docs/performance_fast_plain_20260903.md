@@ -43,6 +43,10 @@
 
 因此累计 solver speedup：`1.00x`（没有可交付的性能改动）。
 
+### 调度 chunk-size 实验
+
+为验证 `prange` 负载均衡，额外测量了 `FAST_CHUNKSIZE=1/2/4/8/16/32/64`。短样本曾显示 A 点 chunk16 约有 8% 优势，但长样本串行复测不支持全局采用：A 点 baseline 默认 chunk 的 median `401.3 ms`、chunk16 `405.5 ms`；B 点分别为 `198.2 ms`、`192.9 ms`。方向不一致且接近机器调度噪声，因此没有改变 solver 默认调度；chunk 仅作为 profiler 的实验参数保留。
+
 ## 数值与兼容性
 
 最终工作树中的 `fast_sgwb.py` 与 baseline solver 相比无差异；因此本轮没有引入新的数值 diff。已有 plain-grid matched-reference artifact（9 点）记录的 envelope 为：signal relative median `1.867e-2`、max `7.019e-2`；integrated `DN_gw` relative median `9.142e-3`、max `2.725e-2`。本轮没有修改 reference、validation artifact、preset、alias、Cobaya adapter 或 telemetry。
@@ -59,6 +63,7 @@
 ## 修改文件
 
 - `scripts/profile_fast_breakdown.py`：新增阶段级 profiler/benchmark 工具。
+- `docs/profile_*`：保存 baseline、候选和 chunk-size 实验记录。
 - `docs/performance_fast_plain_20260903.md`：本报告。
 - solver、公开 API、preset、alias、Cobaya 配置均未修改。
 
