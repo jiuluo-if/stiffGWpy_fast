@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "stiffgwpy"
 version = "0.2.0"
-description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with an experimental approximate fast solver (~1000x warm) plus the original LSODA implementation."
+description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with a two-profile fast solver (plain-grid speed-first, transition-refine precision-first) and an independent continuous-sigma reference oracle."
 readme = "README.md"
 license = {file = "LICENSE.md"}
 authors = [{name = "jiuluo-if"}]

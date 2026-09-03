@@ -92,15 +92,18 @@ def test_qualified_module_import_resolves_class():
         "stiffgwpy.cobaya.stiffGW.stiffGW"
 
 
-def test_yaml_keeps_production_science_defaults():
+def test_yaml_modes_supply_science_defaults_via_sentinel():
     cfg = yaml.safe_load((Path(__file__).resolve().parents[1] /
                           "stiffgwpy" / "cobaya" / "stiffGW.yaml").read_text(
                               encoding="utf-8"))
     assert cfg["accuracy_mode"] == "production"
-    assert cfg["h"] == 0.01
-    assert cfg["col_step"] == 4
-    assert cfg["z_tail"] == 7.0
-    assert cfg["freq_res"] == 1.0
+    # The science defaults now come from the named accuracy_mode preset, not
+    # from the yaml: a 0 sentinel means "use the preset" so the yaml can never
+    # silently override accuracy_mode.
+    assert cfg["h"] == 0
+    assert cfg["col_step"] == 0
+    assert cfg["z_tail"] == 0
+    assert cfg["freq_res"] == 0
     assert cfg["fast_threads"] == 8
 
 

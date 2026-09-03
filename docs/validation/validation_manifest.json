@@ -1,0 +1,1014 @@
+{
+  "schema_version": 1,
+  "commit": "06e670978ff6b5f8d5aebc45b2ff43ce94a32c15",
+  "date": "2026-09-03",
+  "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
+  "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
+  "fast_plain_grid": {
+    "profile": "plain-grid",
+    "config": {
+      "h": 0.02,
+      "col_step": 8,
+      "z_tail": 5.0,
+      "freq_res": 1.0,
+      "transition_refine": false,
+      "phase_max": 0.0,
+      "freq_grid": "construct",
+      "outer_tol": 1e-06
+    },
+    "definition": "maximum practical speed under a documented accuracy envelope; fixed/plain frequency grid, no expensive transition refinement, reduced frequency nodes and ODE steps; NOT a gross-error mode",
+    "oracle_points": 9,
+    "parameter_points": 400,
+    "status_counts": {
+      "total": 400,
+      "success": 255,
+      "physical_invalid": 0,
+      "physical_guard": 145,
+      "numerical_failure": 0
+    },
+    "accuracy": {
+      "source": "docs/paramsweep_plain/validation_summary.json (9 matched z8 points vs continuous-sigma reference)",
+      "signal_rel_abs": {
+        "n": 9,
+        "median": 0.018671337338332063,
+        "p95": 0.06911660291973683,
+        "p99": 0.06997276967368397,
+        "max": 0.07018681136217077
+      },
+      "transition_rel_abs": {
+        "n": 9,
+        "median": 0.017684216706345925,
+        "p95": 0.05278345519975617,
+        "p99": 0.06456572324481998,
+        "max": 0.06751129025608593
+      },
+      "DN_gw_rel_abs": {
+        "n": 9,
+        "median": 0.009141698166592062,
+        "p95": 0.027008507102370297,
+        "p99": 0.027202854027699327,
+        "max": 0.027251440759031586
+      },
+      "acceptance": {
+        "signal_rel_lt_1e-3": false,
+        "transition_rel_lt_1e-3": false,
+        "DN_gw_rel_lt_1e-4": false
+      }
+    },
+    "runtime": {
+      "matched_single_point_s": 0.758910300000025,
+      "reference_s": 382.9978431000004,
+      "lhs_screen": {
+        "median": 0.3650052547454834,
+        "p95": 0.42747066020965574,
+        "max": 0.4848973751068115,
+        "mean": 0.3108439651190066,
+        "n": 255
+      }
+    },
+    "regime_map": "plain-grid is safe only for exploratory coverage of the signal shape; it carries a ~7e-3 .. 3e-2 relative DN_gw / spectrum bias from the fixed sigma grid across the reheating kink, so it is NOT certified for science or MCMC",
+    "status": "NOT VERIFIED",
+    "oracle_independence": {
+      "DN_gw_partial_z7": 0.002180741,
+      "DN_gw_partial_z8": 0.00217981592,
+      "DN_gw_partial_z10": 0.00217915416,
+      "z7_to_z8_rel": 0.000424,
+      "z8_to_z10_rel": 0.000304
+    },
+    "convergence": {
+      "generated": {
+        "python": "3.11.9",
+        "platform": "win32",
+        "cpu_count": 32,
+        "numpy": "2.4.4",
+        "commit": "06e670978ff6b5f8d5aebc45b2ff43ce94a32c15"
+      },
+      "reference": {
+        "plain_grid_ref_DN_gw": 0.002255106433768934,
+        "production_ref_DN_gw": 0.0022622866327866196
+      },
+      "rows": [
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.04,
+          "DN_gw": 0.0022231231252922757,
+          "DN_eff": 0.0022231231252922757,
+          "n_freq": 246,
+          "runtime_s": 0.1865215301513672,
+          "rel_ref": 0.014182615950061886
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.02,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.38283205032348633,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.01,
+          "DN_gw": 0.002266687706524231,
+          "DN_eff": 0.002266687706524231,
+          "n_freq": 246,
+          "runtime_s": 0.7905116081237793,
+          "rel_ref": 0.0051355770095254825
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.005,
+          "DN_gw": 0.0022758626016095816,
+          "DN_eff": 0.0022758626016095816,
+          "n_freq": 246,
+          "runtime_s": 1.584547996520996,
+          "rel_ref": 0.009204074597028173
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 1,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.9601075649261475,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 2,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.6409580707550049,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 4,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.4553959369659424,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 8,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.3782517910003662,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 5.0,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.3705153465270996,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 7.0,
+          "DN_gw": 0.002246862994239244,
+          "DN_eff": 0.002246862994239244,
+          "n_freq": 246,
+          "runtime_s": 0.4193563461303711,
+          "rel_ref": 0.0036554547520460242
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 8.0,
+          "DN_gw": 0.0022467133165926796,
+          "DN_eff": 0.0022467133165926796,
+          "n_freq": 246,
+          "runtime_s": 0.45343685150146484,
+          "rel_ref": 0.003721827515798115
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 10.0,
+          "DN_gw": 0.0022466856558237534,
+          "DN_eff": 0.0022466856558237534,
+          "n_freq": 246,
+          "runtime_s": 0.4877626895904541,
+          "rel_ref": 0.0037340933532379874
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 0.5,
+          "DN_gw": 0.002243288981264069,
+          "DN_eff": 0.002243288981264069,
+          "n_freq": 122,
+          "runtime_s": 0.19688820838928223,
+          "rel_ref": 0.0052403080971724705
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 1.0,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.37023258209228516,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 2.0,
+          "DN_gw": 0.0022435349024030396,
+          "DN_eff": 0.0022435349024030396,
+          "n_freq": 470,
+          "runtime_s": 0.7070119380950928,
+          "rel_ref": 0.005131257306802681
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 4.0,
+          "DN_gw": 0.0022467795283079147,
+          "DN_eff": 0.0022467795283079147,
+          "n_freq": 921,
+          "runtime_s": 1.3641228675842285,
+          "rel_ref": 0.0036924667218933755
+        },
+        {
+          "profile": "production",
+          "knob": "h",
+          "value": 0.02,
+          "DN_gw": 0.0022601539869160163,
+          "DN_eff": 0.0022601539869160163,
+          "n_freq": 247,
+          "runtime_s": 2.548279285430908,
+          "rel_ref": 0.0009426948113892788
+        },
+        {
+          "profile": "production",
+          "knob": "h",
+          "value": 0.01,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.970438003540039,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "h",
+          "value": 0.005,
+          "DN_gw": 0.002261489137104216,
+          "DN_eff": 0.002261489137104216,
+          "n_freq": 247,
+          "runtime_s": 6.175211429595947,
+          "rel_ref": 0.00035251752401554645
+        },
+        {
+          "profile": "production",
+          "knob": "phase_max",
+          "value": 0.5,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.670666217803955,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "phase_max",
+          "value": 0.25,
+          "DN_gw": 0.0022617416195747668,
+          "DN_eff": 0.0022617416195747668,
+          "n_freq": 247,
+          "runtime_s": 5.056118726730347,
+          "rel_ref": 0.0002409125368793432
+        },
+        {
+          "profile": "production",
+          "knob": "phase_max",
+          "value": 0.125,
+          "DN_gw": 0.0022617495560939773,
+          "DN_eff": 0.0022617495560939773,
+          "n_freq": 247,
+          "runtime_s": 7.298513889312744,
+          "rel_ref": 0.00023740435224196387
+        },
+        {
+          "profile": "production",
+          "knob": "z_tail",
+          "value": 7.0,
+          "DN_gw": 0.002261614411768443,
+          "DN_eff": 0.002261614411768443,
+          "n_freq": 247,
+          "runtime_s": 2.77976393699646,
+          "rel_ref": 0.0002971422844631172
+        },
+        {
+          "profile": "production",
+          "knob": "z_tail",
+          "value": 8.0,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.6711208820343018,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "z_tail",
+          "value": 10.0,
+          "DN_gw": 0.0022615952481422493,
+          "DN_eff": 0.0022615952481422493,
+          "n_freq": 247,
+          "runtime_s": 10.987988710403442,
+          "rel_ref": 0.0003056131943451803
+        },
+        {
+          "profile": "production",
+          "knob": "freq_res",
+          "value": 1.0,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.6783242225646973,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "freq_res",
+          "value": 2.0,
+          "DN_gw": 0.0022622648325368736,
+          "DN_eff": 0.0022622648325368736,
+          "n_freq": 484,
+          "runtime_s": 4.75510048866272,
+          "rel_ref": 9.636378268822136e-06
+        },
+        {
+          "profile": "production",
+          "knob": "freq_res",
+          "value": 4.0,
+          "DN_gw": 0.0022622692027515295,
+          "DN_eff": 0.0022622692027515295,
+          "n_freq": 967,
+          "runtime_s": 9.404375076293945,
+          "rel_ref": 7.704609503302609e-06
+        }
+      ]
+    },
+    "regime_plain_vs_prod": [
+      {
+        "point": 290,
+        "kappa10": 0.025013530003896566,
+        "T_re": 32490.957862184667,
+        "r": 0.009791599339011851,
+        "n_t": 0.22274588268224538,
+        "DN_gw_plain": 3.079671832856246,
+        "DN_gw_prod": 3.168857117870944,
+        "rel": -0.028144306195357568,
+        "t_plain": 1.6507339477539062,
+        "t_prod": 3.7919695377349854
+      },
+      {
+        "point": 114,
+        "kappa10": 0.0593488368856839,
+        "T_re": 9411.873183330265,
+        "r": 0.04118695669682536,
+        "n_t": 0.1954984582262006,
+        "DN_gw_plain": 2.898367325116471,
+        "DN_gw_prod": 2.9051299123559677,
+        "rel": -0.002327808891001539,
+        "t_plain": 1.5407688617706299,
+        "t_prod": 6.66682767868042
+      },
+      {
+        "point": 266,
+        "kappa10": 0.6335634618796958,
+        "T_re": 5113.126168130463,
+        "r": 0.020527523406512052,
+        "n_t": -0.4071528214061897,
+        "DN_gw_plain": 2.7330022853612514,
+        "DN_gw_prod": 2.7602781596582386,
+        "rel": -0.009881567262179232,
+        "t_plain": 1.614424705505371,
+        "t_prod": 5.6668970584869385
+      },
+      {
+        "point": 340,
+        "kappa10": 0.0411641911503863,
+        "T_re": 24118.86434048132,
+        "r": 0.026847710401000216,
+        "n_t": -0.27471184512131747,
+        "DN_gw_plain": 2.562823987395734,
+        "DN_gw_prod": 2.600777042959649,
+        "rel": -0.014592967769634374,
+        "t_plain": 1.569991111755371,
+        "t_prod": 5.214379072189331
+      },
+      {
+        "point": 317,
+        "kappa10": 0.06208876126412446,
+        "T_re": 83841.79922180819,
+        "r": 0.001121941161782076,
+        "n_t": -0.2189423150545028,
+        "DN_gw_plain": 2.2266312519150446,
+        "DN_gw_prod": 2.2307051689384934,
+        "rel": -0.0018262911119658837,
+        "t_plain": 1.6180658340454102,
+        "t_prod": 3.716661214828491
+      },
+      {
+        "point": 360,
+        "kappa10": 2.5743200442127883,
+        "T_re": 910.6448150876367,
+        "r": 0.08194532898810009,
+        "n_t": 0.20070049504623289,
+        "DN_gw_plain": 1.8398718904480234,
+        "DN_gw_prod": 1.833131427580612,
+        "rel": 0.0036770210613362277,
+        "t_plain": 1.5470950603485107,
+        "t_prod": 7.087888956069946
+      },
+      {
+        "point": 233,
+        "kappa10": 0.012090919671381654,
+        "T_re": 41524.56474004477,
+        "r": 0.00683703215106502,
+        "n_t": 0.25308342243459536,
+        "DN_gw_plain": 1.8005832794279055,
+        "DN_gw_prod": 1.7959350453671532,
+        "rel": 0.0025881972027568824,
+        "t_plain": 1.6035752296447754,
+        "t_prod": 3.8346619606018066
+      },
+      {
+        "point": 352,
+        "kappa10": 9.229564785737377,
+        "T_re": 16785.55158925943,
+        "r": 0.00011382369758179674,
+        "n_t": 0.3003744004740315,
+        "DN_gw_plain": 1.49880740650453,
+        "DN_gw_prod": 1.4990586983782295,
+        "rel": -0.00016763311134600358,
+        "t_plain": 1.5606367588043213,
+        "t_prod": 4.916784763336182
+      },
+      {
+        "point": 21,
+        "kappa10": 1.180585086977975,
+        "T_re": 2837.217706113922,
+        "r": 0.08337134873742164,
+        "n_t": -0.300686191381695,
+        "DN_gw_plain": 1.392442461213009,
+        "DN_gw_prod": 1.3815324151182007,
+        "rel": 0.007897061245482938,
+        "t_plain": 1.6010491847991943,
+        "t_prod": 5.205698728561401
+      },
+      {
+        "point": 7,
+        "kappa10": 0.002443507162345336,
+        "T_re": 142244.34577359175,
+        "r": 0.001968399904284758,
+        "n_t": -0.18527088684042292,
+        "DN_gw_plain": 1.0566332153036697,
+        "DN_gw_prod": 1.0588395147585972,
+        "rel": -0.0020836958048646888,
+        "t_plain": 1.5399608612060547,
+        "t_prod": 3.7904884815216064
+      },
+      {
+        "point": 22,
+        "kappa10": 0.006090640648371578,
+        "T_re": 14.845413436895104,
+        "r": 0.06453221887685849,
+        "n_t": -0.06435956361221307,
+        "DN_gw_plain": 2.6600145195270655e-07,
+        "DN_gw_prod": 2.5772329349096247e-07,
+        "rel": 0.03212033475753472,
+        "t_plain": 0.8417239189147949,
+        "t_prod": 4.32842230796814
+      },
+      {
+        "point": 0,
+        "kappa10": 0.8879798962333808,
+        "T_re": 16.02708871782607,
+        "r": 0.0001287748444463608,
+        "n_t": 0.08322127095571019,
+        "DN_gw_plain": 1.665568925805225e-07,
+        "DN_gw_prod": 1.6866163638550588e-07,
+        "rel": -0.012479090385276526,
+        "t_plain": 0.8840658664703369,
+        "t_prod": 4.037720680236816
+      },
+      {
+        "point": 6,
+        "kappa10": 3.840218800436266,
+        "T_re": 856.8863987679855,
+        "r": 0.00012121883776506146,
+        "n_t": -0.4340192124288925,
+        "DN_gw_plain": 0.0057477131009391015,
+        "DN_gw_prod": 0.005843192723196039,
+        "rel": -0.01634031714851832,
+        "t_plain": 1.9278769493103027,
+        "t_prod": 3.9699723720550537
+      }
+    ]
+  },
+  "fast_transition_refine": {
+    "profile": "transition-refine",
+    "config": {
+      "h": 0.01,
+      "col_step": 4,
+      "z_tail": 8.0,
+      "freq_res": 1.0,
+      "transition_refine": true,
+      "phase_max": 0.5,
+      "freq_grid": "adaptive",
+      "outer_tol": 1e-07
+    },
+    "definition": "default scientific-production solver; transition-aware kink breakpoint, phase_max-capped horizon-crossing sub-stepping, adaptive frequency grid, per-solve local error estimate; built for Cobaya / MCMC",
+    "oracle_points": 25,
+    "parameter_points": 240,
+    "status_counts": {
+      "total": 240,
+      "ok": 212,
+      "guard": 28
+    },
+    "accuracy": {
+      "matched_z8": {
+        "n_points": 9,
+        "meta": {
+          "python": "3.11.9",
+          "platform": "win32",
+          "numpy": "2.4.4",
+          "numba": "0.67.0",
+          "scipy": "1.17.1",
+          "commit": "9317d60061d05466d76f5367996c1d61a6156483"
+        },
+        "settings": {
+          "z_tail": 8.0,
+          "rtol": 1e-09,
+          "freq_res": 1.0
+        },
+        "DN_gw_rel_abs": {
+          "max": 0.0014636635956796018,
+          "p95": 0.0011805683905497175,
+          "p99": 0.001407044554653625,
+          "median": 0.0004339557538149006
+        },
+        "acceptance": {
+          "signal_rel_lt_1e-3": true,
+          "transition_rel_lt_1e-3": true,
+          "DN_gw_rel_lt_1e-4": false
+        },
+        "signal": {
+          "dex_max": 0.00030793916845972547,
+          "dex_p95": 0.00030494488304348976,
+          "rel_max": 0.0007093075785732458,
+          "rel_p95": 0.0007024081506808368
+        },
+        "transition": {
+          "dex_max": 0.00030793916845972547,
+          "dex_p95": 0.0003048784756376932,
+          "rel_max": 0.0007093075785732458,
+          "rel_p95": 0.0007022551361855908
+        }
+      },
+      "axis_edges_z8b": {
+        "n_points": 14,
+        "n_total": 16,
+        "meta": {
+          "python": "3.11.9",
+          "platform": "win32",
+          "numpy": "2.4.4",
+          "numba": "0.67.0",
+          "scipy": "1.17.1",
+          "commit": "5125a5cda0c10850d893267fda98715e414ba77e"
+        },
+        "settings": {
+          "z_tail": 8.0,
+          "rtol": 1e-09,
+          "freq_res": 1.0,
+          "grid": "grid_independent (matched fast/reference)",
+          "engine": "production fast vs continuous-sigma DOP853"
+        },
+        "DN_gw_rel_abs": {
+          "max": 0.019175104329270432,
+          "p95": 0.009713011666899946,
+          "p99": 0.017282685796796326,
+          "median": 0.000523034898962002
+        },
+        "acceptance": {
+          "signal_rel_lt_1e-3": false,
+          "transition_rel_lt_1e-3": false,
+          "DN_gw_rel_lt_1e-4": false
+        },
+        "signal": {
+          "dex_max": 0.0007122532485155375,
+          "dex_p95": 0.0004467274956523325,
+          "rel_max": 0.0016413692868479375,
+          "rel_p95": 0.0010292580441763556
+        },
+        "transition": {
+          "dex_max": 0.0007122532485155375,
+          "dex_p95": 0.0004467274956523325,
+          "rel_max": 0.0016413692868479375,
+          "rel_p95": 0.0010292580441763556
+        }
+      }
+    },
+    "runtime": {
+      "matched_single_point_s": {
+        "median": 2.624104299999999,
+        "p95": 3.8723568800000066,
+        "max": 4.111966200000097,
+        "mean": 2.5813701555556086,
+        "n": 9
+      },
+      "reference_s": {
+        "median": 359.3749620000008,
+        "p95": 372.29307696000035,
+        "max": 374.95925700000043,
+        "mean": 349.43347174444466,
+        "n": 9
+      }
+    },
+    "regime_map": "transition-refine is certified in the posterior-bulk / signal region to ~7e-4 (signal rel) and ~4.3e-4 (integrated DN_gw median); the axis-edge suite has a single 1.64e-3 signal-rel outlier (edge_r_hi) and 2 explicit shared-Neff guard rejections, so a certified band requires the local error / quadratic escalation",
+    "oracle_tail_caveat": "the reference oracle itself carries ~3e-4 frozen-tail z_tail sensitivity, i.e. the production fast residual (~4e-4 integrated DN_gw) is at the same level as the oracle's own model choice.",
+    "convergence": {
+      "generated": {
+        "python": "3.11.9",
+        "platform": "win32",
+        "cpu_count": 32,
+        "numpy": "2.4.4",
+        "commit": "06e670978ff6b5f8d5aebc45b2ff43ce94a32c15"
+      },
+      "reference": {
+        "plain_grid_ref_DN_gw": 0.002255106433768934,
+        "production_ref_DN_gw": 0.0022622866327866196
+      },
+      "rows": [
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.04,
+          "DN_gw": 0.0022231231252922757,
+          "DN_eff": 0.0022231231252922757,
+          "n_freq": 246,
+          "runtime_s": 0.1865215301513672,
+          "rel_ref": 0.014182615950061886
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.02,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.38283205032348633,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.01,
+          "DN_gw": 0.002266687706524231,
+          "DN_eff": 0.002266687706524231,
+          "n_freq": 246,
+          "runtime_s": 0.7905116081237793,
+          "rel_ref": 0.0051355770095254825
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "h",
+          "value": 0.005,
+          "DN_gw": 0.0022758626016095816,
+          "DN_eff": 0.0022758626016095816,
+          "n_freq": 246,
+          "runtime_s": 1.584547996520996,
+          "rel_ref": 0.009204074597028173
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 1,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.9601075649261475,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 2,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.6409580707550049,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 4,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.4553959369659424,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "col_step",
+          "value": 8,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.3782517910003662,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 5.0,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.3705153465270996,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 7.0,
+          "DN_gw": 0.002246862994239244,
+          "DN_eff": 0.002246862994239244,
+          "n_freq": 246,
+          "runtime_s": 0.4193563461303711,
+          "rel_ref": 0.0036554547520460242
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 8.0,
+          "DN_gw": 0.0022467133165926796,
+          "DN_eff": 0.0022467133165926796,
+          "n_freq": 246,
+          "runtime_s": 0.45343685150146484,
+          "rel_ref": 0.003721827515798115
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "z_tail",
+          "value": 10.0,
+          "DN_gw": 0.0022466856558237534,
+          "DN_eff": 0.0022466856558237534,
+          "n_freq": 246,
+          "runtime_s": 0.4877626895904541,
+          "rel_ref": 0.0037340933532379874
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 0.5,
+          "DN_gw": 0.002243288981264069,
+          "DN_eff": 0.002243288981264069,
+          "n_freq": 122,
+          "runtime_s": 0.19688820838928223,
+          "rel_ref": 0.0052403080971724705
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 1.0,
+          "DN_gw": 0.0022465585229324834,
+          "DN_eff": 0.0022465585229324834,
+          "n_freq": 246,
+          "runtime_s": 0.37023258209228516,
+          "rel_ref": 0.003790468914659938
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 2.0,
+          "DN_gw": 0.0022435349024030396,
+          "DN_eff": 0.0022435349024030396,
+          "n_freq": 470,
+          "runtime_s": 0.7070119380950928,
+          "rel_ref": 0.005131257306802681
+        },
+        {
+          "profile": "plain_grid",
+          "knob": "freq_res",
+          "value": 4.0,
+          "DN_gw": 0.0022467795283079147,
+          "DN_eff": 0.0022467795283079147,
+          "n_freq": 921,
+          "runtime_s": 1.3641228675842285,
+          "rel_ref": 0.0036924667218933755
+        },
+        {
+          "profile": "production",
+          "knob": "h",
+          "value": 0.02,
+          "DN_gw": 0.0022601539869160163,
+          "DN_eff": 0.0022601539869160163,
+          "n_freq": 247,
+          "runtime_s": 2.548279285430908,
+          "rel_ref": 0.0009426948113892788
+        },
+        {
+          "profile": "production",
+          "knob": "h",
+          "value": 0.01,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.970438003540039,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "h",
+          "value": 0.005,
+          "DN_gw": 0.002261489137104216,
+          "DN_eff": 0.002261489137104216,
+          "n_freq": 247,
+          "runtime_s": 6.175211429595947,
+          "rel_ref": 0.00035251752401554645
+        },
+        {
+          "profile": "production",
+          "knob": "phase_max",
+          "value": 0.5,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.670666217803955,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "phase_max",
+          "value": 0.25,
+          "DN_gw": 0.0022617416195747668,
+          "DN_eff": 0.0022617416195747668,
+          "n_freq": 247,
+          "runtime_s": 5.056118726730347,
+          "rel_ref": 0.0002409125368793432
+        },
+        {
+          "profile": "production",
+          "knob": "phase_max",
+          "value": 0.125,
+          "DN_gw": 0.0022617495560939773,
+          "DN_eff": 0.0022617495560939773,
+          "n_freq": 247,
+          "runtime_s": 7.298513889312744,
+          "rel_ref": 0.00023740435224196387
+        },
+        {
+          "profile": "production",
+          "knob": "z_tail",
+          "value": 7.0,
+          "DN_gw": 0.002261614411768443,
+          "DN_eff": 0.002261614411768443,
+          "n_freq": 247,
+          "runtime_s": 2.77976393699646,
+          "rel_ref": 0.0002971422844631172
+        },
+        {
+          "profile": "production",
+          "knob": "z_tail",
+          "value": 8.0,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.6711208820343018,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "z_tail",
+          "value": 10.0,
+          "DN_gw": 0.0022615952481422493,
+          "DN_eff": 0.0022615952481422493,
+          "n_freq": 247,
+          "runtime_s": 10.987988710403442,
+          "rel_ref": 0.0003056131943451803
+        },
+        {
+          "profile": "production",
+          "knob": "freq_res",
+          "value": 1.0,
+          "DN_gw": 0.002261731150563835,
+          "DN_eff": 0.002261731150563835,
+          "n_freq": 247,
+          "runtime_s": 3.6783242225646973,
+          "rel_ref": 0.00024554016044386895
+        },
+        {
+          "profile": "production",
+          "knob": "freq_res",
+          "value": 2.0,
+          "DN_gw": 0.0022622648325368736,
+          "DN_eff": 0.0022622648325368736,
+          "n_freq": 484,
+          "runtime_s": 4.75510048866272,
+          "rel_ref": 9.636378268822136e-06
+        },
+        {
+          "profile": "production",
+          "knob": "freq_res",
+          "value": 4.0,
+          "DN_gw": 0.0022622692027515295,
+          "DN_eff": 0.0022622692027515295,
+          "n_freq": 967,
+          "runtime_s": 9.404375076293945,
+          "rel_ref": 7.704609503302609e-06
+        }
+      ]
+    },
+    "status": "PARTIALLY VERIFIED",
+    "honest_limits": {
+      "DN_gw_rel_lt_1e-4": false,
+      "note": "integrated DN_gw relative < 1e-4 is NOT met (median 4.3e-4): the residual is at the level of the reference's own z_tail frozen-tail sensitivity (~3-4e-4), not a tuning artifact",
+      "oracle_AB": {
+        "z_tail_7_vs_8_rel": 0.000424,
+        "z_tail_8_vs_10_rel": 0.000304,
+        "deep_tail_z14": "infeasible (ODE becomes deep-subhorizon stiff)"
+      }
+    }
+  },
+  "posterior": {
+    "ess_is": 4167.399758058812,
+    "fast_posterior": {
+      "log10r": {
+        "mean": -1.999743537068146,
+        "std": 0.015860190684739903,
+        "median": -1.9996605756179706,
+        "p16": -2.015498127157443,
+        "p84": -1.9838802539390334,
+        "ess": 4167.399758058812
+      },
+      "n_t": {
+        "mean": 0.007978364069817143,
+        "std": 0.2887765252009369,
+        "median": 0.007753378710846921,
+        "p16": -0.33017904660599323,
+        "p84": 0.34820716872064045,
+        "ess": 4167.399758058812
+      }
+    },
+    "dll_stats": {
+      "n": 240,
+      "max": 0.006358381689275383,
+      "max_abs": 0.0073025389005079155,
+      "p95_abs": 0.004695421332267677,
+      "mean": -0.00046221110073766254
+    },
+    "dex_max_fast_vs_ref": {
+      "max": 0.00031021537623487916,
+      "p95": 0.0003015809071308162,
+      "n": 240
+    },
+    "posterior_shift": {
+      "log10r": {
+        "shift_sigma": -0.0010957068350483925,
+        "mean_fast": -1.998657787952835,
+        "mean_reweighted": -1.9986751660721735,
+        "std": 0.015860190684739903,
+        "n": 240
+      },
+      "n_t": {
+        "shift_sigma": 0.00022511106495312391,
+        "mean_fast": 0.029160306492611386,
+        "mean_reweighted": 0.02922531328373283,
+        "std": 0.2887765252009369,
+        "n": 240
+      }
+    },
+    "ess_reweighted": 239.99918006979107,
+    "verdicts": {
+      "ess_is_ge_2000": true,
+      "dll_max_abs_lt_0.1": true,
+      "posterior_shift_lt_0.1sigma": true
+    }
+  }
+}

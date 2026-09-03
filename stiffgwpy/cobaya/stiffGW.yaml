@@ -23,23 +23,37 @@ fallback: True
 # budget at call time).
 fast_threads: 8
 
-# engine='fast': fixed step size / expansion-grid spacing (production: 0.01)
-h: 0.01
+# engine='fast': fixed step size / expansion-grid spacing.
+# 0 = use the preselected accuracy_mode (production: 0.01); a non-zero value
+# is an explicit user override that wins over the preset (see calculate()).
+h: 0
 
-# engine='fast': output-column stride 1-8 (production: 4)
-col_step: 4
+# engine='fast': output-column stride 1-8.  0 = use the accuracy_mode preset.
+col_step: 0
 
-# analytic-tail threshold (production: 7.0; LSODA path uses 5.0)
-z_tail: 7.0
+# analytic-tail threshold (z = ln(k/aH)).  0 = use the accuracy_mode preset
+# (production: 8.0); the LSODA path keeps its own default (5.0).
+z_tail: 0
 
-# frequency-grid density; 1.0 = default grid
-freq_res: 1.0
+# frequency-grid density.  0 = use the accuracy_mode preset (1.0 = default grid).
+freq_res: 0
 
-# engine='fast': named accuracy preset ('reference'|'production'|'ultra-fast',
-# '' = none; explicit knobs above override the preset).
-# Default 'production' so that a plain engine: fast yaml runs at the science
-# settings (h=0.01, col_step=4, z_tail=7, freq_res=1, 8 threads) -- NOT
-# ultra-fast.
+# Optional native solve nodes: a list of log10(f/Hz) or a path to a text file
+# (one log10 f per line).  If set, these are force-added to the fast solve grid
+# so the likelihood (or a point evaluation at f = 1/yr) does not inherit
+# interpolation error at steep spectral features.  The default (null) leaves the
+# frequency grid to the solver and the likelihood interpolates over the returned
+# spectrum.  Layer C measured the per-bin dex error of that interpolation at
+# <= 3.10e-4 across 11 PTA-like bins (see docs/mcmc_posterior/is_pointwise.json).
+eval_freqs: null
+
+# engine='fast': named accuracy preset.  Default 'production' so that a plain
+# engine: fast yaml runs at the transition-refine science settings (h=0.01,
+# col_step=4, z_tail=8, freq_res=1, adaptive grid, 8 threads) -- NOT a coarser
+# plain-grid scan.  User-facing fast profiles: 'fast' (plain-grid, speed-first)
+# and 'production' (transition-refine, precision-first); 'reference' / 'deep' /
+# 'debug' are validation variants only (not defined for the MCMC thermal path).
+# '' = none (module defaults, explicit knobs only).
 accuracy_mode: production
 
 # engine='fast': escalate to the 'reference' mode when the estimated error of
