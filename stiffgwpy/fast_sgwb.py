@@ -98,6 +98,21 @@ if _fast_ztail_env is not None:
         raise ValueError('FAST_Z_TAIL must be in [2.0, 15.0], got %r'
                          % _fast_ztail_env)
 
+# Maximum phase increment per (sub-)step, dTheta = e^z * dh <= _PHASE_MAX,
+# used by the horizon-crossing adaptive step control in solve_kernel.  0.0
+# disables sub-stepping (pure fixed-step Magnus on the grid).
+_PHASE_MAX = 0.0
+_fast_phase_env = _os.environ.get('FAST_PHASE_MAX')
+if _fast_phase_env is not None:
+    _PHASE_MAX = float(_fast_phase_env)
+    if not 0.0 <= _PHASE_MAX <= 10.0:
+        raise ValueError('FAST_PHASE_MAX must be in [0, 10], got %r'
+                         % _fast_phase_env)
+
+# Default frequency-grid builder for SGWB_iter_fast (overridable per call via
+# the freq_grid argument; apply_accuracy_mode sets it from the preset).
+_FREQ_GRID = 'construct'
+
 MAX_ITER = 60            # cap on the outer bisection loop
 ln10 = math.log(10.0)
 
@@ -143,9 +158,27 @@ def set_z_tail(z):
     _Z_TAIL = z
 
 
+def set_phase_max(pm):
+    """Set the max phase increment per (sub-)step (0 disables sub-stepping)."""
+    global _PHASE_MAX
+    pm = float(pm)
+    if not 0.0 <= pm <= 10.0:
+        raise ValueError('phase_max must be in [0, 10], got %r' % pm)
+    _PHASE_MAX = pm
+
+
+def set_freq_grid(name):
+    """Set the default frequency-grid builder ('construct'/'grid_independent'/'adaptive')."""
+    global _FREQ_GRID
+    if name not in ('construct', 'grid_independent', 'adaptive'):
+        raise ValueError('freq_grid must be construct/grid_independent/adaptive, got %r' % name)
+    _FREQ_GRID = name
+
+
 def get_settings():
-    """Snapshot the current fast-solver module settings (threads/col_step/h/z_tail)."""
-    return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL)
+    """Snapshot the current fast-solver module settings (threads/col_step/h/z_tail/phase_max)."""
+    return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL,
+                phase_max=_PHASE_MAX)
 
 
 # Named accuracy presets (audit phase "three recommended modes").
@@ -157,16 +190,24 @@ def get_settings():
 # freq_res=2.0 halves the low-frequency-tail undersampling error.
 ACCURACY_MODES = {
     'debug': dict(h=0.005, col_step=1, z_tail=10.0, freq_res=2.0,
-                  tol=1e-8, threads=8, transition_refine=True),
+                  tol=1e-8, threads=8, transition_refine=True, phase_max=0.25),
     'fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
-                 tol=1e-6, threads=16, transition_refine=False),
+                 tol=1e-6, threads=16, transition_refine=False, phase_max=0.0),
     # Backward-compatible alias of 'fast' (identical settings).
     'ultra-fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
-                       tol=1e-6, threads=16, transition_refine=False),
+                       tol=1e-6, threads=16, transition_refine=False, phase_max=0.0),
     'reference': dict(h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0,
-                      tol=1e-8, threads=8, transition_refine=True),
-    'production': dict(h=0.01, col_step=4, z_tail=7.0, freq_res=1.0,
-                       tol=1e-7, threads=8, transition_refine=True),
+                      tol=1e-8, threads=8, transition_refine=True, phase_max=0.1),
+    'production': dict(h=0.01, col_step=4, z_tail=8.0, freq_res=1.0,
+                       tol=1e-7, threads=8, transition_refine=True, phase_max=0.5,
+                       freq_grid='adaptive'),
+    # Deep-tail variant of production: the frozen-tail (WKB handoff) error at
+    # z_tail=8 is ~2.5e-4 relative per mode vs the deep limit, so production
+    # already keeps the tail term subdominant in the error budget; this mode
+    # pushes it to ~3e-5 for the validation chain.
+    'deep': dict(h=0.01, col_step=4, z_tail=10.0, freq_res=1.0,
+                 tol=1e-7, threads=8, transition_refine=True, phase_max=0.25,
+                 freq_grid='adaptive'),
 }
 
 
@@ -188,11 +229,24 @@ ERROR_BUDGET = {
                        tail=3.8e-3, spectrum_dex=0.20),
     'production': dict(model_bias=1.3e-2, ode=1.0e-5, quadrature=1.0e-4,
                        tail=2.0e-5, spectrum_dex=0.07),
+    'deep': dict(model_bias=1.3e-2, ode=2.5e-6, quadrature=1.0e-4,
+                 tail=2.4e-7, spectrum_dex=0.02),
     'debug': dict(model_bias=5.5e-3, ode=5.0e-6, quadrature=5.0e-5,
                   tail=2.4e-7, spectrum_dex=0.02),
     'reference': dict(model_bias=2.2e-3, ode=2.6e-7, quadrature=1.0e-5,
                       tail=2.4e-7, spectrum_dex=0.002),
 }
+
+# Calibrated coefficient for the ODE/horizon-crossing phase-truncation error:
+# the constant-z Magnus sub-stepping leaves an O(phase_max^2) relative
+# amplitude/phase error per sub-step (validated by a phase_max Richardson
+# study, see docs/audit_reference.md); the coefficient is the relative
+# Delta N_eff error per phase_max^2 at the default point.
+_ODE_PHASE_COEF = 0.0   # filled by calibrate_ode_phase_coef() from measurement
+
+
+
+
 
 
 def apply_accuracy_mode(name):
@@ -206,15 +260,15 @@ def apply_accuracy_mode(name):
     for the setters.
     """
     if name not in ACCURACY_MODES:
-        raise ValueError('unknown accuracy mode %r; choose from %s'
-                         % (name, sorted(ACCURACY_MODES)))
+        raise ValueError(f'unknown accuracy mode {name!r}; choose from {sorted(ACCURACY_MODES)!s}')
     cfg = dict(ACCURACY_MODES[name])
     set_col_step(cfg['col_step'])
     set_h(cfg['h'])
     set_z_tail(cfg['z_tail'])
+    set_phase_max(cfg.get('phase_max', 0.0))
+    set_freq_grid(cfg.get('freq_grid', 'construct'))
     set_threads(min(cfg['threads'], _MAX_THREADS))
     return cfg
-
 
 def estimate_error(name='production'):
     """Return the calibrated error budget for the named accuracy mode.
@@ -242,6 +296,145 @@ def estimate_error(name='production'):
         tail_error=b['tail'],
         model_bias_error=b['model_bias'],
     )
+
+
+# Measured anchors for :func:`estimate_local_error` (default point, this
+# session; see docs/audit_reference.md and docs/reference/deep_oracle_default.json):
+#   * phase_max Richardson: |dDeltaN(pm 0.5 -> 0.125)| = 7.5e-6 relative,
+#     so the frozen-z Magnus phase-truncation error at pm=0.5 is ~8e-6 (pm^2 scaling).
+#   * kink-breakpoint (transition_refine) residual envelope: ~1e-4.
+#   * plain-grid sigma-kink residual: ~2.4e-3; sigma_exact residual at z8: ~4.2e-3.
+#   * frozen-tail aggregate: 2e-5 at z_tail=8, 2.4e-7 at z_tail=10 (z-decay e^-(z-8)).
+#   * uniform grid_independent quadrature bias: 5.6e-4 at freq_res=1 (242 pt),
+#     ~0 at freq_res>=2; construct-grid bias ~1.6e-3 (246 pt).
+#   * col_step PCHIP interpolation: <1e-9 on Delta N_eff.
+_LOCAL_ODE_PM05 = 8.0e-6          # relative DN error at phase_max=0.5
+_LOCAL_ODE_NO_SUBSTEP = 1.0e-5    # h=0.01 fixed-step (calibrated engine term)
+_LOCAL_TRANSITION_REFINED = 1.0e-4
+_LOCAL_TRANSITION_PLAIN = 2.4e-3
+_LOCAL_TRANSITION_SIGMA_EXACT = 4.2e-3
+_LOCAL_TAIL_ANCHOR = 2.0e-5       # relative DN error at z_tail=8
+_LOCAL_TAIL_FLOOR = 2.4e-7        # z_tail=10 limit
+_LOCAL_GRID_UNIFORM_1 = 5.6e-4    # grid_independent freq_res=1 (242 pt)
+_LOCAL_GRID_UNIFORM_2 = 2.0e-5    # grid_independent freq_res>=2 (converged)
+_LOCAL_GRID_CONSTRUCT = 1.6e-3    # construct grid (246 pt)
+_LOCAL_INTERP = 1.0e-9            # col_step PCHIP interpolation on DN_eff
+_LOCAL_SELF_CONS_FLOOR = 1.0e-5   # bisection floor when bracket is not recorded
+
+
+def estimate_local_error(m):
+    """A-posteriori, point-local error budget for the last fast solve on ``m``.
+
+    Returns a dict with one entry per physics error category plus the combined
+    ``DN_gw_error`` (relative error on the integrated Delta N_eff) and
+    ``Delta_Neff_abs_error`` (absolute).  Each category carries ``value`` and
+    ``kind``:
+
+    * ``'local'`` -- computed a-posteriori from this solve's telemetry
+      (``handoff_eps``, ``freq_grid_error``, ``phase_max_used``, ``z_tail_used``,
+      ``quadrature_error_local``, ``dn_bracket``, ``cancellation_ratio``);
+    * ``'calibrated'`` -- measured anchors (default-point fast-vs-reference,
+      see docs/audit_reference.md) scaled to the solve's settings.
+
+    Categories (physics meaning): ``background_model`` (continuous-sigma vs
+    fixed-grid / present-day-anchor bias), ``sigma_transition`` (reheating-kink
+    grid-phase residual), ``ode_integration`` (frozen-z Magnus phase truncation),
+    ``horizon_crossing`` (the z~0 crossing-band share of that truncation),
+    ``wkb_handoff`` (adiabaticity defect at the WKB handoff node, per-mode max
+    and weighted aggregate), ``interpolation`` (PCHIP fine-grid, col_step),
+    ``frequency_grid`` (sampling of the spectral features), ``quadrature``
+    (Simpson-rule integral error on the frequency grid), ``tail_approximation``
+    (frozen analytic tail beyond z_tail), ``floating_point`` (Ogw-Oj cancellation
+    plus accumulation rounding), ``self_consistency`` (outer bisection bracket).
+    The combined error is systematic (max of model/transition) plus the RSS of
+    the remaining independent terms.
+    """
+    dn_gw = np.asarray(getattr(m, 'DN_gw', [0.0]))
+    dn = abs(float(dn_gw[-1])) if dn_gw.size else 0.0
+    eps64 = np.finfo(float).eps
+    he = getattr(m, 'handoff_eps', None)
+    if he is None:
+        handoff = np.array([0.0])
+    else:
+        handoff = np.asarray(he, dtype=float)
+        handoff = handoff[handoff >= 0.0]
+    eps_max = float(np.max(handoff)) if handoff.size else 0.0
+    eps_mean = float(np.mean(handoff)) if handoff.size else 0.0
+    z_tail = float(getattr(m, 'z_tail_used', 8.0))
+    pm = float(getattr(m, 'phase_max_used', 0.0))
+    fg = getattr(m, 'freq_grid_used', 'construct')
+    tr = bool(getattr(m, 'transition_refine_used', False))
+    se = bool(getattr(m, 'sigma_exact_used', False))
+    nf = int(getattr(m, 'freq_grid_n', 0))
+
+    # 1. background/model error (present-day anchor + continuous-sigma bias)
+    if se:
+        model = _LOCAL_TRANSITION_SIGMA_EXACT
+    elif tr:
+        model = _LOCAL_TRANSITION_REFINED
+    else:
+        model = _LOCAL_TRANSITION_PLAIN
+    # 2. sigma-transition error (reheating-kink grid-phase residual)
+    transition = _LOCAL_TRANSITION_REFINED if tr else _LOCAL_TRANSITION_PLAIN
+    # 3. ODE integration error: frozen-z Magnus phase truncation (local)
+    ode = _LOCAL_ODE_PM05*(pm/0.5)**2 if pm > 0.0 else _LOCAL_ODE_NO_SUBSTEP
+    # 4. horizon-crossing error: the crossing band carries the leading
+    #    observable (phase-averaged amplitude) effect of the same truncation.
+    horizon = ode
+    # 5. WKB handoff error: per-mode adiabaticity defect at the handoff node
+    #    (local, verifiable per mode).  The aggregate Delta N_eff effect is
+    #    reported under tail_approximation (the frozen-tail weight share).
+    wkb_max = eps_max
+    wkb_agg = eps_mean
+    # 6. interpolation error: col_step PCHIP fine-grid on Delta N_eff
+    interp = _LOCAL_INTERP
+    # 7. frequency-grid error: adaptive -> local criterion; else calibrated
+    if fg == 'adaptive':
+        freq_grid = max(float(getattr(m, 'freq_grid_error', 0.0)), 0.0)
+    elif fg == 'grid_independent':
+        fr = float(getattr(m, 'freq_res_used', 1.0) or 1.0)
+        freq_grid = _LOCAL_GRID_UNIFORM_2 if fr >= 2.0 else _LOCAL_GRID_UNIFORM_1
+    else:  # 'construct'
+        freq_grid = _LOCAL_GRID_CONSTRUCT
+    # 8. quadrature error: local Richardson estimate on the final grid
+    quadrature = max(float(getattr(m, 'quadrature_error_local', 0.0)), 0.0)
+    # 9. tail approximation error: calibrated anchor scaled by z_tail
+    tail = max(_LOCAL_TAIL_FLOOR, _LOCAL_TAIL_ANCHOR*math.exp(-(z_tail - 8.0)))
+    # 10. floating-point/cancellation error (local)
+    fp_err = float(getattr(m, 'floating_point_error', 0.0))
+    if fp_err <= 0.0:
+        fp_err = eps64*math.sqrt(max(nf, 1))
+    # 11. self-consistency iteration error: converged successive difference
+    #     (local; the outer criterion bounds |DN_gw_new - DN_gw_prev|).
+    dn_delta = float(getattr(m, 'dn_converged_delta', 0.0))
+    if dn > 0.0 and dn_delta > 0.0:
+        self_consistency = max(dn_delta/dn, _LOCAL_SELF_CONS_FLOOR)
+    else:
+        self_consistency = _LOCAL_SELF_CONS_FLOOR
+
+    cats = dict(
+        background_model=dict(value=model, kind='calibrated'),
+        sigma_transition=dict(value=transition, kind='calibrated'),
+        ode_integration=dict(value=ode, kind='local'),
+        horizon_crossing=dict(value=horizon, kind='local'),
+        wkb_handoff=dict(value=wkb_max, aggregate=wkb_agg, kind='local'),
+        interpolation=dict(value=interp, kind='calibrated'),
+        frequency_grid=dict(value=freq_grid, kind='local' if fg == 'adaptive' else 'calibrated'),
+        quadrature=dict(value=quadrature, kind='local'),
+        tail_approximation=dict(value=tail, kind='calibrated'),
+        floating_point=dict(value=fp_err, cancellation_ratio=float(getattr(m, 'cancellation_ratio', 0.0)), kind='local'),
+        self_consistency=dict(value=self_consistency, kind='local'),
+    )
+    systematic = max(model, transition)
+    rss = math.sqrt(sum(float(cats[k]['value'])**2 for k in cats
+                        if k not in ('background_model', 'sigma_transition',
+                                     'wkb_handoff')))
+    dn_gw_error = systematic + rss
+    return dict(categories=cats, DN_gw_error=dn_gw_error,
+                Delta_Neff_abs_error=dn_gw_error*dn,
+                systematic_error=systematic, random_rss=rss,
+                handoff_eps_max=wkb_max, handoff_eps_mean=wkb_agg,
+                z_tail_used=z_tail, phase_max_used=pm, freq_grid_used=fg)
 
 
 # ================= module-level tables (once) =================
@@ -501,11 +694,10 @@ def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, f
     Opgw[m,slot] = Op
     Ogw[m,slot] = 3.0*Op + oj
 
-@njit(parallel=True, cache=True)
 def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                  j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
                  assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw,
-                 h_arr=None):
+                 h_arr=None, Sv=None, phase_max=0.0, handoff_eps=None):
     nv = len(Nv)
     for m in prange(len(j0s)):
         j0 = j0s[m]; z0 = z0s[m]
@@ -525,7 +717,20 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
         if zz < z_tail:
             while k < nv-1 and (z0 + Phi_grid[k] - Phi0) < z_tail:
                 h_step = h_arr[k] if h_arr is not None else h
-                xh, yh = scaled_step(xh, yh, z0 + Phi_mid[k] - Phi0, h_step)
+                z_mid_step = z0 + Phi_mid[k] - Phi0
+                if phase_max > 0.0 and z_mid_step > 0.0:
+                    n_sub = int(math.ceil(h_step*math.exp(z_mid_step)/phase_max))
+                    if n_sub > 1:
+                        z_node = z0 + Phi_grid[k] - Phi0
+                        dPhi = z_mid_step - z_node
+                        h_sub = h_step/n_sub
+                        for _s in range(n_sub):
+                            zs = z_node + dPhi*(2.0*_s + 1.0)/n_sub
+                            xh, yh = scaled_step(xh, yh, zs, h_sub)
+                    else:
+                        xh, yh = scaled_step(xh, yh, z_mid_step, h_step)
+                else:
+                    xh, yh = scaled_step(xh, yh, z_mid_step, h_step)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k % col_step == 0:
@@ -547,8 +752,20 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
             kend = j0
         if kend < nv-1:
             s2k = S2[kend]
-            coeff = math.sqrt(0.5*s2k*(lxh*lxh + lyh*lyh))
+            e_z = math.exp(-last_z)
+            if Sv is not None:
+                gamma = (3.0 - 1.5*Sv[kend])*0.5
+                amp2 = (lxh*lxh + lyh*lyh*(1.0 + gamma*gamma*e_z*e_z)
+                        + 2.0*gamma*lxh*lyh*e_z)
+            else:
+                amp2 = lxh*lxh + lyh*lyh
+            coeff = math.sqrt(0.5*s2k*amp2)
             eNz = math.exp(Nv[kend] - last_z)
+            if handoff_eps is not None:
+                if Sv is not None:
+                    handoff_eps[m] = abs(1.5*Sv[kend] - 1.0)*e_z
+                else:
+                    handoff_eps[m] = 0.0
             slot_start = kend//col_step
             if slot_start >= n_coarse-1: slot_start = n_coarse-1
             while slot_start < n_coarse:
@@ -562,6 +779,7 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                 kk2 = col_step*slot
                 if slot == n_coarse-1: kk2 = nv-1
                 assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus)
+
 
 # ================= simpson weights (precomputed matrix) =================
 @njit(cache=True)
@@ -661,9 +879,9 @@ def pchip_fine(idx_out, y, nv, out):
         c1 = 3.0*(y1 - y0)/(hh*hh) - (2.0*d0 + d1)/hh
         out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
 
-# ================= full fast SGWB_iter =================
 def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, freq_grid='construct'):
+                   transition_refine=False, freq_grid=None,
+                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
     Solves the same physics as ``LCDM_SG.SGWB_iter()`` with a fixed-step
@@ -682,12 +900,22 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     ``transition_refine`` is an experimental kink-refined path that is NOT a
     production choice: even with a refined grid around the reheating kink it
     overshoots ``Delta N_eff`` by ~+1% vs the continuous-sigma reference, so it
-    raises ``NotImplementedError`` (docs/audit_reference.md §7.2).
+    raises ``NotImplementedError`` (docs/audit_reference.md \u00a77.2).
 
     ``freq_grid`` selects the frequency sampling: ``'construct'`` (the model's
-    empirical grid, the default) or ``'grid_independent'`` (built from continuous
-    background quantities, invariant to the sigma-grid resolution; see
-    ``freq_adaptive.grid_independent_freqs``).
+    empirical grid), ``'grid_independent'`` (built from continuous background
+    quantities, invariant to the sigma-grid resolution) or ``'adaptive'``
+    (seeded from the grid-independent grid and refined where the PCHIP
+    curvature ``|y''| h^2 / 8`` of ``log10 Omega_GW`` exceeds
+    ``freq_grid_target`` dex, up to ``freq_grid_max_points``; see
+    ``freq_adaptive``).  ``None`` uses the module default set by
+    :func:`apply_accuracy_mode` / :func:`set_freq_grid`.
+
+    ``eval_freqs`` optionally force-adds log10(f/Hz) values to the solve grid
+    as native nodes (so point evaluations at steep spectral features, e.g.
+    likelihood bins, do not inherit interpolation error).  Values outside the
+    solved frequency range are ignored; ``'construct'`` grids are left
+    untouched.
     """
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.
@@ -715,6 +943,12 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
 
     col_step = _COL_STEP        # snapshot; a mid-run set_col_step() must not
     Omega_nu = gp.Omega_nh2/m.derived_param['h']**2    # change array layouts
+    # Resolve the frequency-grid builder: per-call argument wins, otherwise the
+    # module default set by apply_accuracy_mode()/set_freq_grid().
+    if freq_grid is None:
+        freq_grid = _FREQ_GRID
+    if freq_grid not in ('construct', 'grid_independent', 'adaptive'):
+        raise ValueError('freq_grid must be construct/grid_independent/adaptive, got %r' % freq_grid)
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
@@ -726,6 +960,9 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     idx_out = None; n_coarse = 0
     ev_minus = P_t = fp_freq = Wmat = W_last = None
     Ogw = Oj = Opgw = None
+    adaptive_grid = None
+    adaptive_done = freq_grid != 'adaptive'
+    freq_grid_error = 0.0
     first = True
     try:
         for _iter in range(MAX_ITER):
@@ -737,8 +974,20 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             if freq_grid == 'grid_independent':
                 from .freq_adaptive import grid_independent_freqs
                 m.f = grid_independent_freqs(m, freq_res)[0]
+            elif freq_grid == 'adaptive':
+                from .freq_adaptive import grid_independent_freqs
+                if adaptive_grid is None:
+                    adaptive_grid = grid_independent_freqs(m, freq_res)[0]
+                m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
             else:
                 m.construct_f(freq_res)
+            if eval_freqs is not None and freq_grid != 'construct':
+                ef = np.asarray(eval_freqs, dtype=float)
+                fmin_g, fmax_g = float(np.min(m.f)), float(np.max(m.f))
+                ef = ef[(ef >= fmin_g) & (ef <= fmax_g)]
+                if ef.size:
+                    m.f = np.sort(np.concatenate(
+                        (np.asarray(m.f, dtype=float), ef)))[::-1]
             freqs_new = m.f.astype(np.float64)
             nv_new = len(m.Nv)
             # Reuse grid-dependent quantities across bisection iterations when
@@ -783,8 +1032,14 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # the horizon); np.empty made the result depend on stale
                 # heap contents and could occasionally leak NaN into g2/w2.
                 Ogw = np.zeros((Nf, n_coarse)); Oj = np.zeros((Nf, n_coarse)); Opgw = np.zeros((Nf, n_coarse))
+                handoff_eps = np.full(Nf, -1.0)
+            # phase_max caps the per-(sub-)step phase increment dTheta = e^z dh
+            # (horizon-crossing adaptive step control); Sv supplies sigma at the
+            # handoff node for the damping-corrected WKB amplitude, handoff_eps
+            # receives the per-mode adiabaticity error |1.5*sigma-1|*e^{-z}.
             solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                         1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw, h_arr)
+                         1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw, h_arr,
+                         m.sigma, _PHASE_MAX, handoff_eps)
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
@@ -795,6 +1050,39 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 m.fast_failure_reason = 'shared_Neff_guard'
                 print('SGWB_iter_fast: total N_eff too large, aborting.')
                 break
+            if freq_grid == 'adaptive' and not adaptive_done:
+                # Quadrature-weighted frequency refinement: PCHIP second
+                # derivative of log10(Omega_GW) estimates the local interval
+                # interpolation error |y''| h^2 / 8; weighting by the local
+                # integrand share 0.5(Om_i+Om_{i+1}) h_i / sum(w) makes the
+                # criterion sensitive to the Delta N_eff integral, not to
+                # weightless low-amplitude tail structure.
+                Om_cur = np.maximum(Ogw[:, -1] - Oj[:, -1], 1e-300)
+                lo_cur = np.log10(Om_cur)
+                srt = np.argsort(freqs)
+                x = freqs[srt]; y = lo_cur[srt]; Om = Om_cur[srt]
+                from scipy.interpolate import PchipInterpolator
+                c2 = np.abs(np.asarray(PchipInterpolator(x, y).derivative(2)(x)))
+                hh = np.diff(x)
+                err_i = c2[:-1]*hh*hh/8.0
+                w_i = 0.5*(Om[:-1] + Om[1:])*hh
+                wsum = float(np.sum(w_i))
+                frac_i = err_i*w_i/wsum if wsum > 0 else np.zeros_like(err_i)
+                freq_grid_error = float(np.max(frac_i)) if frac_i.size else 0.0
+                if freq_grid_error > freq_grid_target and adaptive_grid.size < freq_grid_max_points:
+                    mids = 0.5*(x[:-1] + x[1:])
+                    add = mids[frac_i > freq_grid_target]
+                    if add.size:
+                        room = freq_grid_max_points - int(adaptive_grid.size)
+                        if room <= 0:
+                            adaptive_done = True
+                        else:
+                            add = np.sort(add)
+                            if add.size > room:
+                                add = add[np.linspace(0, add.size-1, room).astype(int)]
+                            adaptive_grid = np.unique(np.concatenate([adaptive_grid, add]))
+                            continue
+                adaptive_done = True
             if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < tol:
                 converged = True
                 break
@@ -833,4 +1121,40 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     m.Ogw_today = Ogw[:, -1].copy(); m.Opgw_today = Opgw[:, -1].copy(); m.Oj_today = Oj[:, -1].copy()
     m.log10OmegaGW = np.log10(m.Ogw_today - m.Oj_today)
     m.kappa_r = m.cosmo_param['DN_eff'] * 7/8*(4/11)**(4/3) * gp.z_ratio**4
+    # Local a-posteriori quadrature error: Richardson estimate from the
+    # Simpson-vs-trapezoid difference on the final frequency grid,
+    # |I_simp - I_trap|/15 (standard result for a smooth integrand).
+    _Om = m.Ogw_today - m.Oj_today
+    _rev = _Om[::-1]
+    _hf = np.diff(np.flip(freqs))
+    _wt = np.empty(Nf)
+    if Nf == 2:
+        _wt[0] = 0.5*_hf[0]; _wt[1] = 0.5*_hf[0]
+    else:
+        _wt[0] = 0.5*_hf[0]; _wt[-1] = 0.5*_hf[-1]
+        _wt[1:-1] = 0.5*(_hf[:-1] + _hf[1:])
+    _I_simp = float(np.dot(W_last, _rev))*ln10
+    _I_trap = float(np.dot(_wt, _rev))*ln10
+    m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
+    # Local floating-point/cancellation: Ogw = Oj + remainder near the peak;
+    # eps64 * max|Oj|/|Ogw-Oj| bounds the relative subtraction error.
+    _num = float(np.max(np.abs(m.Oj_today)/np.maximum(np.abs(_Om), 1e-300)))
+    m.cancellation_ratio = _num
+    m.floating_point_error = 2.2e-16*_num + 2.2e-16*math.sqrt(Nf)
+    # Physics telemetry for the Cobaya adapter / error budget:
+    # handoff_eps = per-mode adiabaticity error at the WKB handoff node,
+    # z_tail_used/phase_max_used = the frozen-tail threshold and the max
+    # phase increment that were actually used, freq_grid_* = the adaptive
+    # frequency-grid status (used builder, final quadrature-weighted error
+    # estimate, point count).
+    m.handoff_eps = np.asarray(handoff_eps)
+    m.z_tail_used = z_tail
+    m.phase_max_used = _PHASE_MAX
+    m.freq_grid_used = freq_grid
+    m.freq_grid_error = float(freq_grid_error)
+    m.freq_grid_n = int(Nf)
+    m.freq_res_used = float(freq_res)
+    m.sigma_exact_used = bool(sigma_exact)
+    m.transition_refine_used = bool(transition_refine)
+    m.dn_converged_delta = abs(DN_gw_new - DN_gw_list[-1])
     return m

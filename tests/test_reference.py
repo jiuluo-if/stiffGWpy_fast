@@ -66,7 +66,11 @@ def test_reference_mode_vs_fast_mid_frequency():
     FS.SGWB_iter_fast(m, tol=1e-7)
     dn = m.cosmo_param['DN_eff']
     logf = -8.0
-    lo_fast = np.interp(logf, np.sort(m.f), np.sort(m.log10OmegaGW))
+    # m.f / m.log10OmegaGW are stored descending; sort with a shared
+    # argsort so the (f, log10Omega) pairing survives interpolation.
+    o = np.argsort(np.asarray(m.f, dtype=float))
+    lo_fast = np.interp(logf, np.asarray(m.f)[o],
+                        np.asarray(m.log10OmegaGW)[o])
     sol = REF.solve_reference_mode(m, logf, dn, z_tail=5.0, rtol=1e-11)
     lo_ref = math.log10(sol['Ogw_today'] - sol['Oj_today'])
     assert abs(lo_ref - lo_fast) < 5e-2
