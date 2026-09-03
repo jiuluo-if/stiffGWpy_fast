@@ -43,9 +43,9 @@ exception），无 silent fallback。单测 `tests/test_engine.py`、`tests/test
 **§13 验收门槛现行状态（2026-09-03 实测）：**
 | 门槛 | 状态 | 实测 |
 |---|---|---|
-| 信号区 ΩGW rel err < 1e-3 | PASS | 9 个 matched z8 单点 rel max 7.09e-4；240 posterior-bulk 点 dex≤3.10e-4 |
-| transition-region < 1e-3 | PASS | matched z8 transition 带 rel max 7.09e-4 |
-| 集成 ΔNeff rel < 1e-4 | NOT MET（诚实极限） | matched z8 单点 median 4.34e-4、p95 1.18e-3（lowT DN-of-DN 伪影）；deep oracle default −2.94e-4；剩余为 Magnus+z_tail 架构残差 ~3e-4..7.6e-4，非调参可消除 |
+| 信号区 ΩGW rel err < 1e-3 | PARTIAL | 9 个 matched z8 单点 rel max 7.09e-4（PASS）；240 posterior-bulk 点 dex≤3.10e-4；扩展 A2（16 轴边界/内部点）14 可解点中 13 PASS、**r 上边界（r=0.0794, cr=1）rel max 1.641e-3 超 1e-3（如实 FAIL）**，2 点 shared_Neff_guard 物理拒绝 |
+| transition-region < 1e-3 | PARTIAL | 9 个 matched z8 transition 带 rel max 7.09e-4（PASS）；A2 边界层除 edge_r_hi（rel 1.641e-3）外全部 ≤6.9e-4 |
+| 集成 ΔNeff rel < 1e-4 | NOT MET（诚实极限） | matched z8 单点 median 4.34e-4、p95 1.18e-3（lowT DN-of-DN 伪影）；A2 边界层 median 5.23e-4、max 1.9e-2（edge_nt_red：DN~3.3e-8 的 DN-of-DN 放大）；deep oracle default −2.94e-4；剩余为 Magnus+z_tail 架构残差 ~3e-4..7.6e-4，非调参可消除 |
 | analytic limits | PASS | tests/test_physics_limits.py（MD/辐射/stiff σ、能量、RD ∝f^{n_t}、stiff 带 ∝f¹） |
 | energy/scaling consistency | PASS | 同上 + test_energy_consistency |
 | production runtime ≥100× LSODA | PARTIAL | 诚实口径：production z8 ≈4.1 s/点 vs LSODA 18.56 s ≈4.5×（精度 6–30× 更接近 reference）；100× 仅 plain-grid coarser 0.012 s 模式成立 |
@@ -58,6 +58,7 @@ Layer A/B/C 详细数字与产物：`docs/paramsweep_z8/validation_summary.md`�
 `docs/mcmc_posterior/is_report.json`。plain-grid 档 matched-z8 验证：`docs/paramsweep_plain/validation_summary.{json,md}`（9 corner 边界：signal rel max 7.0e-2、DN rel abs med 9.1e-3，1e-3 science gate 不满足 -> 仅探索+escalation）。统一参数验证矩阵（机器可读+显式 PASS/FAIL/NOT YET VERIFIED 门槛表）：`docs/parameter_validation/validation_results.json` / `validation_results.csv` / `parameter_validation_report.md`。测试套件 2026-09-03 全绿：`pytest tests/` = 105 passed
 （含 6 个 slow 标记测试；另修复 3 个预存 slow 测试缺陷：np.sort 破坏配对、Ogw−Oj 物理量
 断言、matched-grid/可分辨频带比较）。
+扩展 oracle 边界/内部点（Layer A2，16 matched z8 点）：`docs/paramsweep_z8b/validation_summary.{json,md}`（14 可解点：13 PASS + 1 FAIL=edge_r_hi；2 点 shared_Neff_guard；DN_re 轴按设计在 cr=0 自由倾斜分支探测——cr=1 一致性关系会覆盖输入 DN_re 使其物理无效；cr=0 下 DN_re=0.6/29.4 的 DN_gw_rel 分别为 −2.07e-4/+1.12e-4，证实该轴有真实物理响应）。
 
 ## 1. 重建 SGWB 误差预算 — VERIFIED
 
