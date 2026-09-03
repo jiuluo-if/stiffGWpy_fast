@@ -55,7 +55,7 @@ exception），无 silent fallback。单测 `tests/test_engine.py`、`tests/test
 
 Layer A/B/C 详细数字与产物：`docs/paramsweep_z8/validation_summary.md`、
 `docs/mcmc_posterior/posterior_validation.md`、`docs/paramsweep_z8/validation_summary.json`、
-`docs/mcmc_posterior/is_report.json`。统一参数验证矩阵（机器可读+显式 PASS/FAIL/NOT YET VERIFIED 门槛表）：`docs/parameter_validation/validation_results.json` / `validation_results.csv` / `parameter_validation_report.md`。测试套件 2026-09-03 全绿：`pytest tests/` = 105 passed
+`docs/mcmc_posterior/is_report.json`。plain-grid 档 matched-z8 验证：`docs/paramsweep_plain/validation_summary.{json,md}`（9 corner 边界：signal rel max 7.0e-2、DN rel abs med 9.1e-3，1e-3 science gate 不满足 -> 仅探索+escalation）。统一参数验证矩阵（机器可读+显式 PASS/FAIL/NOT YET VERIFIED 门槛表）：`docs/parameter_validation/validation_results.json` / `validation_results.csv` / `parameter_validation_report.md`。测试套件 2026-09-03 全绿：`pytest tests/` = 105 passed
 （含 6 个 slow 标记测试；另修复 3 个预存 slow 测试缺陷：np.sort 破坏配对、Ogw−Oj 物理量
 断言、matched-grid/可分辨频带比较）。
 

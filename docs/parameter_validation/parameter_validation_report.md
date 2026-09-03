@@ -1,6 +1,6 @@
 # parameter_validation_report — fast vs 连续-σ reference 参数空间验证矩阵
 
-> 生成日期：2026-09-03　git commit：`519a6f9`
+> 生成日期：2026-09-03　git commit：`c95c319`
 >
 > **本报告未重跑任何物理计算**：所有数字均回读自已提交的验证产物（见 §7 源文件），与认证运行完全一致，可仅凭仓库复现。配套机器可读文件：`docs/parameter_validation/validation_results.json`（逐点结构化）与`docs/parameter_validation/validation_results.csv`（逐点平表）。
 
@@ -11,6 +11,7 @@
 | A_single_point | production | fast vs reference | 9 | 9/9 全谱 oracle（matched z8 grid_independent） | default/stiff/lowT/highT/rad_dominant/tiny_r/transition/cr0_blue/extreme |
 | B_sobol240 | production | fast only | 240 | 无全谱 oracle（成本）；Layer C 提供 240 点 x 11 bin 参考对照 | 240 点 Sobol（r/n_t/cr/T_re/DN_re/kappa10），本地 a-posteriori 误差预算 |
 | C_posterior_bulk | production | fast vs reference | 240 | 240/240 点 x 11 likelihood bin | likelihood bin 为原生求解节点；IS 后验 + e^ΔlogL 重加权 |
+| P_plain9 | plain-grid | fast-plain-grid-vs-reference | 9 | 9/9 全谱 oracle（plain-grid 原生节点，matched z8） | plain-grid(fast) 引擎误差边界量化；1e-3 science gate 不满足 -> escalation 到 production/reference |
 | anchor_default | plain-grid / production / reference | multi-engine | 3 | default 点同文件对照（commit 59563da9b527d80e26bd37f813b957f22ed2a168 时代设置） | plain-grid coarser 探索档 anchor；低于 1e-3 物理门槛，不作生产认证 |
 
 ## 1. 逐点分类统计与分类规则
@@ -18,7 +19,7 @@
 状态编码（与需求 §6 一致）：`PASS` / `WARN` / `FAIL` / `PHYSICAL_INVALID` / `NUMERICAL_FAILURE`。分类规则：
 
 - `PASS`：求解成功且该行门槛满足（Layer C 门槛 = 逐 bin dex < 1e-3 vs reference）。
-- `WARN`：可运行但带明确警示（plain-grid coarser 档：default 点 DN rel -1.61e-3，低于 1e-3 物理门槛）。
+- `WARN`：可运行但带明确警示（plain-grid 探索档 9-corner 边界：signal rel max 7.0e-2、DN rel abs med 9.1e-3，matched z8，远高于 1e-3 science gate）。
 - `FAIL`：求解成功但认证门槛未达到（当前记录集中没有此类逐点行；集成 ΔNeff 门槛见 §5）。
 - `PHYSICAL_INVALID`：显式物理/自洽拒绝 `shared_Neff_guard`（极端 r/DN_re/kappa10 角落），**不算 numerical failure**。
 - `NUMERICAL_FAILURE`：异常 / 非有限 / 迭代失败（本批产物中 0 行）。
@@ -30,6 +31,7 @@
 | A_single_point | 9 | 0 | 0 | 0 | 0 |
 | B_sobol240 | 212 | 0 | 0 | 28 | 0 |
 | C_posterior_bulk | 240 | 0 | 0 | 0 | 0 |
+| P_plain9 | 0 | 9 | 0 | 0 | 0 |
 | anchor_default | 2 | 1 | 0 | 0 | 0 |
 
 ## 2. Layer A — 9 个 matched z8 单点（production vs reference）
@@ -47,6 +49,24 @@
 | extreme | 3.000e-02 | 1.000e+00 | 1.000e+04 | - | 1.000e-01 | 6.921e-04 | 6.746e-04 | -4.340e-04 | PASS |
 
 汇总：signal/transition 带 ΩGW 相对误差 max **7.093e-04**（门槛 <1e-3 → PASS）；集成 ΔNeff 相对误差 |DN| median **4.340e-04** / p95 **1.181e-03** / max **1.464e-03**（门槛 <1e-4 → FAIL，见 §5，诚实的架构极限）。
+
+## 2b. Plain-grid tier — 9 个 matched z8 角落（fast plain-grid vs reference）
+
+Plain-grid 引擎（`accuracy_mode='fast'`：h=0.02 / col_step=8 / 无 transition_refine / phase_max=0）在自身 construct 频率节点上与连续-sigma reference（z_tail=8, rtol=1e-9）逐点对照；reference 直接在 plain-grid 节点上求解，残差纯为引擎误差（无频率网格插值项）。
+
+| label | signal rel max | transition rel max | DN_gw rel | classification |
+| --- | --- | --- | --- | --- |
+| stiff | 1.768e-02 | 1.768e-02 | 2.061e-03 | WARN |
+| default | 1.867e-02 | 1.620e-02 | -7.345e-03 | WARN |
+| lowT | 4.786e-02 | 3.069e-02 | 9.265e-04 | WARN |
+| cr0_blue | 1.736e-02 | 1.736e-02 | -9.142e-03 | WARN |
+| extreme | 1.718e-02 | 1.718e-02 | -1.017e-02 | WARN |
+| highT | 1.660e-02 | 1.612e-02 | -7.681e-03 | WARN |
+| tiny_r | 7.019e-02 | 2.609e-02 | -2.725e-02 | WARN |
+| transition | 2.440e-02 | 2.440e-02 | -1.705e-02 | WARN |
+| rad_dominant | 6.751e-02 | 6.751e-02 | -2.664e-02 | WARN |
+
+明确精度包络（exploratory tier 边界）：signal 带 rel max **7.019e-02**（median 1.867e-02）、transition 带 rel max **6.751e-02**；集成 ΔNeff rel abs median **9.142e-03** / max **2.725e-02**；fast runtime median 0.76 s/点（reference 中位 383 s/点）。1e-3 science gate 不满足 -> 该档仅用于探索；科学结论必须 escalation 到 production/reference（adapter 已实现 likelihood-aware auto_escalate，无 silent fallback）。
 
 ## 3. Layer B — 240 点 Sobol（production fast-only）
 
@@ -77,7 +97,8 @@ fast vs reference 逐 bin dex（11 个 likelihood bin 全为原生求解节点�
 | analytic limits + energy/scaling consistency | PASS | green | tests/test_physics_limits.py |
 | production runtime >= 100x vs LSODA (matched-accuracy setting) | FAIL | ~4.5x (production z8 ~4.1-5.3 s/point vs LSODA 18.56 s); 100x holds only for plain-grid coarse mode | docs/audit_speed_accuracy.md + docs/reference/pareto_default.json |
 | fallback / escalation traceable; no silent fallback | PASS | FAST/FAST_ESCALATED/REFERENCE/LSODA_FALLBACK statuses + engine_stats; shared_Neff_guard explicit | tests/test_engine.py, tests/test_cobaya_adapter.py, docs/audit_acceptance.md |
-| plain-grid tier accuracy vs reference across parameter space | NOT YET VERIFIED | default-point anchor only: DN rel -1.61e-3 (coarse, below 1e-3 gate); no full-spectrum sweep | docs/reference/pareto_default.json (commit 59563da9-era settings) |
+| plain-grid tier: 9-corner accuracy boundary vs reference (matched z8, plain-grid own nodes) | FAIL | signal rel max 7.019e-02, transition rel max 6.751e-02; DN rel abs median 9.142e-03 / max 2.725e-02; fast runtime median 0.76 s/pt | docs/paramsweep_plain/validation_summary.json (exploratory tier; science gate 1e-3 -> escalation) |
+| plain-grid full parameter-space sweep vs oracle | NOT YET VERIFIED | 9 matched corners only; no 240-point plain-grid oracle sweep | docs/paramsweep_plain/plain_points.jsonl |
 | production full-spectrum oracle coverage over the 240 Sobol points | NOT YET VERIFIED | oracle (360 s/pt) run for 9 singles + 240 posterior-bulk points at 11 bins only | docs/paramsweep_ref/fast_sweep.jsonl is fast-only |
 | converged real-Cobaya 3-chain MCMC (plain / production / reference; KS/Wasserstein/KL/covariance, R-1) | NOT YET VERIFIED | bounded scaffold chains (~30 rows, plumbing only); certified Layer C = IS chain + exact e^dlogL reweighting | docs/mcmc_posterior/posterior_validation.md |
 | per-parameter 1D scans (low/fid/mid/high/boundary/transition for every cosmology+inflation+reheating+stiff param) | NOT YET VERIFIED | 9 physics-corner singles + 240 Sobol cover regimes; no per-parameter 1D grid artifacts committed | docs/paramsweep_z8/reference_points.jsonl |
@@ -89,8 +110,8 @@ fast vs reference 逐 bin dex（11 个 likelihood bin 全为原生求解节点�
 | 条目 | 状态 | 原因与成本 |
 | --- | --- | --- |
 | production 集成 Delta_Neff rel < 1e-4 | FAIL | frozen-z Magnus + z_tail/网格架构残差 ~3e-4..7.6e-4（deep-oracle default -2.94e-4 仍 >1e-4）；非步长或调参可消除，需换高阶/自适应 ODE 内核 |
-| production matched-accuracy runtime >= 100x vs LSODA | FAIL | 诚实口径 ~4.5x（z8 ~4.1-5.3 s/点 vs LSODA 18.56 s）；100x 仅 plain-grid coarse 探索档（0.012-0.24 s/点，DN rel ~ -1.6e-3，低于 1e-3 物理门槛） |
-| plain-grid tier 全参数空间 vs oracle 精度统计 | NOT YET VERIFIED | 仅 default 点 anchor（DN rel -1.61e-3，docs/reference/pareto_default.json，commit 59563da9 时代设置）；plain-grid 全谱参考扫描未跑 |
+| production matched-accuracy runtime >= 100x vs LSODA | FAIL | 诚实口径 ~4.5x（z8 ~4.1-5.3 s/点 vs LSODA 18.56 s）；100x 仅 plain-grid coarse z5 探索档（0.012-0.24 s/点；matched-z8 精度边界见 §5：signal rel max 7.0e-2 / DN rel abs med 9.1e-3） |
+| plain-grid tier 全参数空间 vs oracle 扫描 | NOT YET VERIFIED | 9-corner matched z8 边界已量化（signal rel max 7.0e-2、DN rel abs med 9.1e-3，docs/paramsweep_plain/）；240 点 plain-grid 全谱 oracle 扫描未跑 |
 | 240 Sobol 点全谱 oracle 对照 | NOT YET VERIFIED | reference ~360 s/点 -> 240 点约 24 CPU.h；当前 oracle 覆盖 9 singles 全谱 + 240 点 x 11 bin |
 | 收敛的 real-Cobaya 三链 MCMC（plain/production/reference，KS/Wasserstein/KL/covariance、R-1） | NOT YET VERIFIED | reference 链 ~350-935 s/点；bounded scaffold 链仅验证 adapter plumbing（~30 行，未收敛）；已认证替代 = IS 后验 + e^{Delta logL} 精确重加权（ESS 4167） |
 | 逐参数 1D 扫描网格（每个参数 low/fid/mid/high/boundary/transition） | NOT YET VERIFIED | 9 个物理 corner singles + 240 Sobol 覆盖 regime；逐参数 1D 网格产物未提交 |
@@ -105,6 +126,8 @@ fast vs reference 逐 bin dex（11 个 likelihood bin 全为原生求解节点�
 - docs/mcmc_posterior/is_pointwise.json
 - docs/mcmc_posterior/is_report.json
 - docs/reference/pareto_default.json
+- docs/paramsweep_plain/plain_points.jsonl
+- docs/paramsweep_plain/validation_summary.json
 
 重新生成：
 
