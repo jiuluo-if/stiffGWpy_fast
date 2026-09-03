@@ -16,4 +16,7 @@ Plain-grid engine (`accuracy_mode="fast"`: h=0.02, col_step=8, no transition_ref
 
 Aggregates over 9 points: signal-band rel max **7.019e-02** (FAIL <1e-3), transition-band rel max **6.751e-02** (FAIL <1e-3), integrated Delta_Neff rel abs median **9.142e-03** / p95 **2.701e-02** / max **2.725e-02** (<1e-4: FAIL).
 
-Reference runtime per point (workers=3) median 383 s; fast plain-grid median 0.76 s.
+Reference runtime per point (workers=3) median 383 s；fast plain-grid 的 `0.76 s`
+是本 correctness artifact 生成时的 JIT 前历史测量，不代表当前 runtime。
+当前 cold/warm/batch 性能见 `docs/performance_comparison_20260903.md`；本文件的
+误差 envelope 仍是有效的 plain-grid validation 结果。

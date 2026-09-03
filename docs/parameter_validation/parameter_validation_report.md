@@ -68,12 +68,12 @@ Plain-grid 引擎（`accuracy_mode='fast'`：h=0.02 / col_step=8 / 无 transitio
 | transition | 2.440e-02 | 2.440e-02 | -1.705e-02 | WARN |
 | rad_dominant | 6.751e-02 | 6.751e-02 | -2.664e-02 | WARN |
 
-明确精度包络（exploratory tier 边界）：signal 带 rel max **7.019e-02**（median 1.867e-02）、transition 带 rel max **6.751e-02**；集成 ΔNeff rel abs median **9.142e-03** / max **2.725e-02**；fast runtime median 0.76 s/点（reference 中位 383 s/点）。1e-3 science gate 不满足 -> 该档仅用于探索；科学结论必须 escalation 到 production/reference（adapter 已实现 likelihood-aware auto_escalate，无 silent fallback）。
+明确精度包络（exploratory tier 边界）：signal 带 rel max **7.019e-02**（median 1.867e-02）、transition 带 rel max **6.751e-02**；集成 ΔNeff rel abs median **9.142e-03** / max **2.725e-02**；该验证 artifact 的 fast runtime median **0.76 s/点**（JIT 优化前的历史测量，不能作为当前性能口径；reference 中位 383 s/点）。1e-3 science gate 不满足 -> 该档仅用于探索；科学结论必须 escalation 到 production/reference（adapter 已实现 likelihood-aware auto_escalate，无 silent fallback）。
 
 ## 3. Layer B — 240 点 Sobol（production fast-only）
 
 212/240 `ok`（PASS），28/240 显式 `shared_Neff_guard`（PHYSICAL_INVALID），0 numerical failure。
-fast 遥测（212 ok 点；runtime 口径与 validation_summary.md 一致）：runtime median 5.34 s / p95 8.82 s / max 14.22 s；adaptive 频率网格节点 median 236；WKB handoff defect `handoff_eps` median 6.841e-04；本地估计 ΔNeff 相对误差 median 3.997e-04（DN→0 处饱和为绝对误差 ≤1e-5，物理不可观测）。
+fast 遥测（212 ok 点；JIT 优化前的 validation artifact）：runtime median 5.34 s / p95 8.82 s / max 14.22 s；adaptive 频率网格节点 median 236；WKB handoff defect `handoff_eps` median 6.841e-04；本地估计 ΔNeff 相对误差 median 3.997e-04（DN→0 处饱和为绝对误差 ≤1e-5，物理不可观测）。当前 runtime 见 `docs/performance_comparison_20260903.md`。
 
 ## 4. Layer C — posterior-bulk（fast vs reference，240 点 x 11 bin）+ IS 后验
 
@@ -97,9 +97,9 @@ fast vs reference 逐 bin dex（11 个 likelihood bin 全为原生求解节点�
 | posterior ESS >= 2000 (importance-sampled fast chain) | PASS | ESS 4167.4 (9000 production draws, seed 20260903) | docs/mcmc_posterior/is_report.json |
 | posterior parameter shift < 0.1 sigma (fast vs reference-consistent posterior) | PASS | log10r -0.00110 sigma; n_t +0.00023 sigma (n_t prior-dominated under cr=1) | docs/mcmc_posterior/is_report.json |
 | analytic limits + energy/scaling consistency | PASS | green | tests/test_physics_limits.py |
-| production runtime >= 100x vs LSODA (matched-accuracy setting) | FAIL | ~4.5x (production z8 ~4.1-5.3 s/point vs LSODA 18.56 s); 100x holds only for plain-grid coarse mode | docs/audit_speed_accuracy.md + docs/reference/pareto_default.json |
+| production runtime >= 100x vs LSODA (matched-accuracy setting) | HISTORICAL | 旧 validation artifact 为 ~4.5x；JIT 后当前执行层 speedup 见性能报告，物理精度结论未因此改变 | docs/performance_comparison_20260903.md |
 | fallback / escalation traceable; no silent fallback | PASS | FAST/FAST_ESCALATED/REFERENCE/LSODA_FALLBACK statuses + engine_stats; shared_Neff_guard explicit | tests/test_engine.py, tests/test_cobaya_adapter.py, docs/audit_acceptance.md |
-| plain-grid tier: 9-corner accuracy boundary vs reference (matched z8, plain-grid own nodes) | FAIL | signal rel max 7.019e-02, transition rel max 6.751e-02; DN rel abs median 9.142e-03 / max 2.725e-02; fast runtime median 0.76 s/pt | docs/paramsweep_plain/validation_summary.json (exploratory tier; science gate 1e-3 -> escalation) |
+| plain-grid tier: 9-corner accuracy boundary vs reference (matched z8, plain-grid own nodes) | FAIL | signal rel max 7.019e-02, transition rel max 6.751e-02; DN rel abs median 9.142e-03 / max 2.725e-02; runtime 0.76 s/pt 为 JIT 前历史值 | docs/paramsweep_plain/validation_summary.json (exploratory tier; science gate 1e-3 -> escalation) |
 | plain-grid full parameter-space sweep vs oracle | NOT YET VERIFIED | 9 matched corners only; no 240-point plain-grid oracle sweep | docs/paramsweep_plain/plain_points.jsonl |
 | extended oracle spots (16 axis-edge/interior, matched z8): signal/transition rel < 1e-3 | FAIL | 13 ok-PASS, 2 PHYSICAL_INVALID(guard), 1 gate-FAIL; signal rel max 1.641e-03; DN rel abs median 5.230e-04 | docs/paramsweep_z8b/reference_points.jsonl + validation_summary.json |
 | production full-spectrum oracle coverage over the 240 Sobol points | NOT YET VERIFIED | oracle (360 s/pt) run for 9 singles + 240 posterior-bulk points at 11 bins only | docs/paramsweep_ref/fast_sweep.jsonl is fast-only |
@@ -113,7 +113,7 @@ fast vs reference 逐 bin dex（11 个 likelihood bin 全为原生求解节点�
 | 条目 | 状态 | 原因与成本 |
 | --- | --- | --- |
 | production 集成 Delta_Neff rel < 1e-4 | FAIL | frozen-z Magnus + z_tail/网格架构残差 ~3e-4..7.6e-4（deep-oracle default -2.94e-4 仍 >1e-4）；非步长或调参可消除，需换高阶/自适应 ODE 内核 |
-| production matched-accuracy runtime >= 100x vs LSODA | FAIL | 诚实口径 ~4.5x（z8 ~4.1-5.3 s/点 vs LSODA 18.56 s）；100x 仅 plain-grid coarse z5 探索档（0.012-0.24 s/点；matched-z8 精度边界见 §5：signal rel max 7.0e-2 / DN rel abs med 9.1e-3） |
+| production matched-accuracy runtime >= 100x vs LSODA | HISTORICAL | 旧 z8 artifact 为 ~4.5x（4.1-5.3 s/点 vs LSODA 18.56 s）；JIT 后当前执行层对比见性能报告，matched-reference 精度边界仍为 signal rel max 7.0e-2 / DN rel abs med 9.1e-3 |
 | plain-grid tier 全参数空间 vs oracle 扫描 | NOT YET VERIFIED | 9-corner matched z8 边界已量化（signal rel max 7.0e-2、DN rel abs med 9.1e-3，docs/paramsweep_plain/）；240 点 plain-grid 全谱 oracle 扫描未跑 |
 | 240 Sobol 点全谱 oracle 对照 | NOT YET VERIFIED | reference ~360 s/点 -> 240 点约 24 CPU.h；当前 oracle 覆盖 9 singles 全谱 + 240 点 x 11 bin |
 | 收敛的 real-Cobaya 三链 MCMC（plain/production/reference，KS/Wasserstein/KL/covariance、R-1） | NOT YET VERIFIED | reference 链 ~350-935 s/点；bounded scaffold 链仅验证 adapter plumbing（~30 行，未收敛）；已认证替代 = IS 后验 + e^{Delta logL} 精确重加权（ESS 4167） |

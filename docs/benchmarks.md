@@ -4,13 +4,16 @@ Status: current
 Date: 2026-09-03
 Code version: see manifest `commit`
 
-Runtime (this host, warm, 4 threads): plain-grid ≈0.37 s/point, production
-(matched z8) ≈3.7–4.1 s/point, reference (oracle) ≈360 s/point.  The LSODA
-anchor is ≈18.6 s/point (z5), so production is ≈4.5x faster at matched
-accuracy; plain-grid is ≈50x faster but is **not** accuracy-certified
-(signal rel median 1.9e-2).
+Current benchmark (Windows, `FAST_THREADS=4`): plain-grid default A is
+`6.879 ms/point` warm median (`7.642 ms` p95; cold JIT `0.253 s`), and
+production is `21.772 ms/point` warm median (`22.149 ms` p95; cold JIT
+`0.226 s`). A recent LSODA A-point run is `22.137 s`; the independent reference
+remains a historical `~360–383 s/point` anchor. These are separate cold/warm
+measurements, not a claim that the physical accuracy tiers changed.
 
-Runtime-vs-physical-error Pareto: `docs/archive/reference/pareto_default.json`,
-`deep_oracle_default.json` (superseded / historical).  The pre-fix warm
-`~1000x` plain-grid headline is archived and is not a current claim — it holds
-only for the coarsest pre-fix grid at p95 ~7e-2 spectrum error.
+The detailed before/after comparison, breakdown, thread scaling and numerical AB
+are in `docs/performance_comparison_20260903.md`. The plain-grid oracle envelope
+is unchanged: signal relative median `1.867e-2`, max `7.019e-2`.
+
+Runtime-vs-physical-error Pareto artifacts under `docs/archive/reference/` are
+historical. Their old `~1000x` headline is not a current claim.

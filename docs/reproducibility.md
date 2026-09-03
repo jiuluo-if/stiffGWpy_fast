@@ -22,3 +22,15 @@ python -m build --wheel                                             # wheel buil
 
 The regression suite is 99 passed (6 slow LSODA gates deselected by default;
 opt in with `-m slow`).
+
+For performance reproduction, keep compilation separate from execution:
+
+```bash
+set FAST_THREADS=4
+python scripts/bench_fast.py --reps 15 --cases 0 1 --json docs/benchmark_candidate.json
+python scripts/profile_fast_breakdown.py --help
+```
+
+The canonical before/after numbers and the 1/2/4/8/16-thread results are in
+`docs/performance_comparison_20260903.md`. The repository-wide `ruff check .`
+gate currently reports pre-existing lint debt and is not represented as PASS.
