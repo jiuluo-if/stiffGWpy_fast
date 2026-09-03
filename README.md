@@ -130,6 +130,21 @@ transition-sensitive / cr0-blue / extreme points.
 - integrated `Delta_Neff` rel abs: median 4.34e-4, p95 1.18e-3, max 1.46e-3 (low-T point; a
   DN-of-DN artifact: DN ~ 5.2e-8, both engines agree to 5.5e-10 absolute) — gate <1e-4: **NOT met**.
 
+**Layer A2 — parameter-axis edges and transition interiors (16 matched z8 cases).**
+`docs/paramsweep_z8b/validation_summary.md` (+ `validation_summary.json`): axis-edge spots on
+every sampled parameter (r / n_t / cr / T_re / DN_re / kappa10 at u ~ 0.02 / 0.98 of the box)
+plus transition-sensitive interiors, all matched against the continuous-sigma DOP853 oracle.
+- 14/16 solvable matched points: 13 PASS the 1e-3 science gate, 1 FAIL — `edge_r_hi`
+  (r = 7.94e-2, cr = 1) signal/transition rel max **1.641e-3**; the other 13 stay <= 6.9e-4.
+- 2 points are explicit shared-`Delta_Neff` guard rejections (T_re = 7.94e5 GeV and the blue
+  n_t = 0.48 cr = 0 branch) — physical rejections, never silent.
+- integrated `Delta_Neff` rel abs: median 5.23e-4, max 1.9e-2 (`edge_nt_red`: DN ~ 3.3e-8, a
+  DN-of-DN relative artifact; the spectrum itself agrees to 7.0e-4).
+- The `DN_re` axis is probed on the cr = 0 free-tilt branch: under cr = 1 the single-field
+  consistency relation overwrites the input `DN_re`, so the axis is physically inactive there.
+  With cr = 0, n_t = 0, DN_re 0.6 -> 29.4 moves DN_gw_rel -2.07e-4 -> +1.12e-4 (both engines
+  agree to <= 6.5e-4 in the signal band), confirming real sensitivity along the axis.
+
 **Layer B — parameter-space validation (240 Sobol, production z8).** `docs/paramsweep_ref/fast_sweep.jsonl`:
 212/240 `ok`; the 28 rejections are the explicit shared-background `Delta_Neff` guard in extreme
 (r, DN_re, kappa10) corners (documented, never silent). Runtime median 5.34 s/point; adaptive
@@ -329,11 +344,13 @@ python scripts/cobaya_posterior_fast_vs_reference.py  # bounded real-Cobaya scaf
 python scripts/build_validation_matrix.py           # consolidate Layer A/B/C artifacts -> docs/parameter_validation/ (read-only replay)
 python scripts/validate_plain_grid_vs_reference.py --phase plain --pool 6 --workers 2  # plain-grid tier vs oracle, 9 corners (checkpointed)
 python scripts/validate_plain_grid_vs_reference.py --phase summary                    # -> docs/paramsweep_plain/validation_summary.{json,md}
+python scripts/validate_edges_vs_reference.py --phase reference --pool 6              # Layer A2: 16 axis-edge/interior spots vs oracle (checkpointed)
+python scripts/validate_edges_vs_reference.py --phase summary                        # -> docs/paramsweep_z8b/validation_summary.{json,md}
 python -m pytest                                  # regression tests (slow gates deselected by default)
 python -m pytest -m slow                          # opt in to the 6 long slow gates
 ```
 
-Artifacts: plain-grid matched tier validation in `docs/paramsweep_plain/`; Layer A/B summaries in `docs/paramsweep_z8/`; the 240-point production sweep in
+Artifacts: plain-grid matched tier validation in `docs/paramsweep_plain/`; Layer A/B + A2 (axis-edge/interior) summaries in `docs/paramsweep_z8/` and `docs/paramsweep_z8b/`; the 240-point production sweep in
 `docs/paramsweep_ref/fast_sweep.jsonl`; Layer C posterior artifacts in `docs/mcmc_posterior/`
 (`is_report.json`, `is_pointwise.json`, `is_draws.npz`, `posterior_validation.md`); deep-oracle
 default anchor in `docs/reference/deep_oracle_default.json`.
@@ -365,7 +382,7 @@ stiffgwpy/            pip package (import stiffgwpy)
   cobaya/             Cobaya theory adapter (engine fast|lsoda|reference + telemetry)
 tests/                pytest regression tests (unit + 6 slow gates)
 scripts/              benchmark / validation drivers (incl. Layer A-C certification)
-docs/                 audit reports + validation artifacts (paramsweep_z8/, paramsweep_plain/, mcmc_posterior/, parameter_validation/, reference/)
+docs/                 audit reports + validation artifacts (paramsweep_z8/, paramsweep_z8b/, paramsweep_plain/, mcmc_posterior/, parameter_validation/, reference/)
 base_param.yml        example parameter file
 pyproject.toml        PEP 621 build config
 ```

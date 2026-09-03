@@ -87,20 +87,28 @@ def _param_row(params):
     return out
 
 
-def load_layer_a():
+def _load_matched(path, layer, notes):
     rows = []
-    for r in _jsonl(DOCS / "paramsweep_z8" / "reference_points.jsonl"):
+    for r in _jsonl(path):
         sig_rel = ((r.get("signal") or {}).get("rel") or {})
         tra_rel = ((r.get("transition") or {}).get("rel") or {})
         sig_dex = ((r.get("signal") or {}).get("dex") or {})
         all_dex = ((r.get("all") or {}).get("dex") or {})
-        ok = r.get("status") == "ok"
-        cls = "PASS" if ok and sig_rel.get("max", 1.0) < 1e-3 and tra_rel.get("max", 1.0) < 1e-3 else "FAIL"
+        st = r.get("status")
+        if st == "ok":
+            met = sig_rel.get("max", 1.0) < 1e-3 and tra_rel.get("max", 1.0) < 1e-3
+            cls = "PASS" if met else "FAIL"
+            reason = "" if met else "signal/transition 1e-3 gate not met at this corner"
+        elif st == "fast_rejected" and r.get("reason") == "shared_Neff_guard":
+            cls = "PHYSICAL_INVALID"
+            reason = "shared_Neff_guard (physical self-consistency rejection)"
+        else:
+            cls = "NUMERICAL_FAILURE"
+            reason = "%s: %s" % (st, r.get("error") or r.get("reason") or "unknown")
         row = {
-            "layer": "A_single_point", "tier": "production",
-            "engine": "fast-vs-reference",
-            "label": r.get("label"), "status": r.get("status"),
-            "classification": cls, "reason": "",
+            "layer": layer, "tier": "production", "engine": "fast-vs-reference",
+            "label": r.get("label"), "status": st,
+            "classification": cls, "reason": reason,
             "DN_gw_rel": r.get("DN_gw_rel"),
             "signal_rel_max": sig_rel.get("max"),
             "signal_dex_max": sig_dex.get("max"),
@@ -109,11 +117,27 @@ def load_layer_a():
             "fast_runtime_s": r.get("fast_dt"), "ref_runtime_s": r.get("ref_dt"),
             "n_freq": r.get("n_freq"), "z_tail": r.get("z_tail"),
             "rtol": r.get("rtol"),
-            "notes": "matched grid_independent z8 grid; continuous-sigma DOP853 reference anchor",
+            "notes": notes,
         }
         row.update(_param_row(r.get("params")))
         rows.append(row)
     return rows
+
+
+def load_layer_a():
+    return _load_matched(
+        DOCS / "paramsweep_z8" / "reference_points.jsonl",
+        "A_single_point",
+        "matched grid_independent z8 grid; continuous-sigma DOP853 reference anchor")
+
+
+def load_layer_a2():
+    path = DOCS / "paramsweep_z8b" / "reference_points.jsonl"
+    if not path.exists():
+        return []
+    return _load_matched(
+        path, "A2_param_edges",
+        "matched grid_independent z8 grid; axis-edge / transition-interior spots")
 
 
 def load_layer_b():
@@ -223,7 +247,7 @@ def plain_grid_anchor():
     return rows, (meta or {})
 
 
-def acceptance_rows(a_rows, c_report, plain_anchor, plain_rows=None):
+def acceptance_rows(a_rows, c_report, plain_anchor, plain_rows=None, a2_rows=None):
     """Every gate row is explicit PASS / FAIL / NOT YET VERIFIED with numbers."""
     dn = _stats_abs([r["DN_gw_rel"] for r in a_rows])
     sig_max = _max_key(a_rows, "signal_rel_max")
@@ -271,6 +295,19 @@ def acceptance_rows(a_rows, c_report, plain_anchor, plain_rows=None):
         add("plain-grid tier accuracy vs reference across parameter space",
             "NOT YET VERIFIED", "no matched plain-grid records committed yet",
             "docs/paramsweep_plain/plain_points.jsonl")
+    if a2_rows:
+        ok2 = [r for r in a2_rows if r["classification"] == "PASS"]
+        bad = [r for r in a2_rows if r["classification"] not in ("PASS", "PHYSICAL_INVALID")]
+        guard = sum(1 for r in a2_rows if r["classification"] == "PHYSICAL_INVALID")
+        vals = [r for r in a2_rows if r.get("DN_gw_rel") is not None]
+        dn2 = _stats_abs([r["DN_gw_rel"] for r in vals])
+        sig2 = _max_key(a2_rows, "signal_rel_max")
+        add("extended oracle spots (%d axis-edge/interior, matched z8): signal/transition rel < 1e-3"
+            % len(a2_rows),
+            "PASS" if (len(bad) == 0 and sig2 is not None and sig2 < 1e-3) else "FAIL",
+            "%d ok-PASS, %d PHYSICAL_INVALID(guard), %d gate-FAIL; signal rel max %.3e; DN rel abs median %.3e"
+            % (len(ok2), guard, len(bad), sig2 or float("nan"), dn2.get("median", float("nan"))),
+            "docs/paramsweep_z8b/reference_points.jsonl + validation_summary.json")
     add("production full-spectrum oracle coverage over the 240 Sobol points",
         "NOT YET VERIFIED", "oracle (360 s/pt) run for 9 singles + 240 posterior-bulk points at 11 bins only",
         "docs/paramsweep_ref/fast_sweep.jsonl is fast-only")
@@ -335,7 +372,7 @@ def _fnum(x):
     if x is None:
         return "-"
     return "%.3e" % float(x)
-def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources, p_rows):
+def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources, p_rows, a2_rows):
     L = []
     L.append("# parameter_validation_report — fast vs 连续-σ reference 参数空间验证矩阵")
     L.append("")
@@ -360,6 +397,10 @@ def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload,
             ["C_posterior_bulk", "production", "fast vs reference", str(len(c_rows)),
              "240/240 点 x 11 likelihood bin",
              "likelihood bin 为原生求解节点；IS 后验 + e^ΔlogL 重加权"],
+            ["A2_param_edges", "production", "fast-vs-reference", str(len(a2_rows)),
+             "%d/%d 全谱 oracle（matched grid_independent z8）" % (
+                 sum(1 for r in a2_rows if r["classification"] == "PASS"), len(a2_rows)),
+             "参数轴边界（u~0.02/0.98）+ transition 敏感内部点"],
             ["P_plain9", "plain-grid", "fast-plain-grid-vs-reference", str(len(p_rows)),
              "9/9 全谱 oracle（plain-grid 原生节点，matched z8）",
              "plain-grid(fast) 引擎误差边界量化；1e-3 science gate 不满足 -> escalation 到 production/reference"],
@@ -525,6 +566,7 @@ def main():
     b_rows = load_layer_b()
     c_rows, c_report = load_layer_c()
     p_rows = load_layer_plain()
+    a2_rows = load_layer_a2()
     pga, pga_meta = plain_grid_anchor()
     sources = [
         DOCS / "paramsweep_z8" / "reference_points.jsonl",
@@ -534,18 +576,21 @@ def main():
         DOCS / "reference" / "pareto_default.json",
         DOCS / "paramsweep_plain" / "plain_points.jsonl",
         DOCS / "paramsweep_plain" / "validation_summary.json",
+        DOCS / "paramsweep_z8b" / "reference_points.jsonl",
+        DOCS / "paramsweep_z8b" / "validation_summary.json",
     ]
     all_rows = {
         "A_single_point": a_rows,
+        "A2_param_edges": a2_rows,
         "B_sobol240": b_rows,
         "C_posterior_bulk": c_rows,
         "P_plain9": p_rows,
         "anchor_default": pga,
     }
-    acc = acceptance_rows(a_rows, c_report, pga, p_rows)
+    acc = acceptance_rows(a_rows, c_report, pga, p_rows, a2_rows)
     payload = _write_json(all_rows, acc, pga_meta, sources, OUT / "validation_results.json")
     _write_csv(all_rows, OUT / "validation_results.csv")
-    md = _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources, p_rows)
+    md = _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload, sources, p_rows, a2_rows)
     (OUT / "parameter_validation_report.md").write_text(md, encoding="utf-8")
     print("wrote:", OUT / "validation_results.json")
     print("wrote:", OUT / "validation_results.csv")
