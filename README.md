@@ -85,8 +85,8 @@ scientific error budget — not a "gross error" mode** — but that budget is
   `DN_gw` relative error median is **9.1e-3** (p95 2.7e-2).  The dominant term
   is the fixed-`sigma`-grid bias across the reheating kink, **not** a tuning
   artifact.
-- **Runtime (this host, warm, 4 threads):** ≈6.879 ms/point (default A median,
-  15 repeats), p95 ≈7.642 ms.  Cold JIT `0.253 s` is reported separately.
+- **Runtime (this host, warm, 4 threads):** ≈4.442 ms/point (default A median,
+  15 repeats), p95 ≈5.105 ms.  Cold JIT `0.325 s` is reported separately.
 
 ### fast transition-refine / production
 
@@ -242,7 +242,7 @@ comparison, stage breakdown, AB evidence, and thread scaling.
 
 | | runtime/point | vs LSODA |
 |---|---|---|
-| plain-grid | 6.879 ms warm median; 0.253 s cold | ≈3218x vs recent LSODA A run; NOT accuracy-certified |
+| plain-grid | 4.442 ms warm median; 0.325 s cold | ≈4754x vs current LSODA A run; NOT accuracy-certified |
 | transition-refine (production) | 21.772 ms warm median; 0.226 s cold | ≈1017x vs recent LSODA A run; accuracy limits unchanged |
 | reference (oracle) | ≈360–383 s/point historical | anchor only |
 
