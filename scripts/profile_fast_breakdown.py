@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import statistics
@@ -11,6 +12,7 @@ import time
 from collections import defaultdict
 
 import numpy as np
+from numba import set_parallel_chunksize
 
 ROOT = os.environ.get('STIFFGWPY_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -19,7 +21,11 @@ sys.path.insert(0, ROOT)
 from stiffgwpy import fast_sgwb as FS  # noqa: E402
 from stiffgwpy.stiff_SGWB import LCDM_SG  # noqa: E402
 
-CASE = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+CASES = {
+    'A': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
+    'B': dict(r=1e-3, cr=1, T_re=2e3, kappa10=1e-2),
+}
+CASE = CASES['A']
 
 
 def p95(values):
@@ -33,7 +39,7 @@ def timed_call(totals, name, fn, *args, **kwargs):
     return result
 
 
-def run_once():
+def run_once(case):
     totals = defaultdict(list)
     original = {
         'gen_fast': FS.gen_fast,
@@ -44,11 +50,16 @@ def run_once():
     }
     FS.gen_fast = lambda *a, **k: timed_call(totals, 'expansion_background', original['gen_fast'], *a, **k)
     FS.prep_fast = lambda *a, **k: timed_call(totals, 'kernel_prepare', original['prep_fast'], *a, **k)
-    FS.solve_kernel = lambda *a, **k: timed_call(totals, 'tensor_solve_kernel', original['solve_kernel'], *a, **k)
+    def profiled_solve(*args, **kwargs):
+        j0s = np.asarray(args[5])
+        totals['j0_cv'].append(float(np.std(j0s) / max(np.mean(j0s), 1.0)))
+        totals['j0_span'].append(float(np.max(j0s) - np.min(j0s)))
+        return timed_call(totals, 'tensor_solve_kernel', original['solve_kernel'], *args, **kwargs)
+    FS.solve_kernel = profiled_solve
     FS.int_SGWB_W = lambda *a, **k: timed_call(totals, 'column_integration', original['int_SGWB_W'], *a, **k)
     LCDM_SG.construct_f = lambda *a, **k: timed_call(totals, 'frequency_grid', original['construct_f'], *a, **k)
     try:
-        model = LCDM_SG(**CASE)
+        model = LCDM_SG(**case)
         start = time.perf_counter()
         result = FS.SGWB_iter_fast(model)
         totals['total'].append(time.perf_counter() - start)
@@ -66,23 +77,44 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--reps', type=int, default=5)
     parser.add_argument('--json', default=None)
+    parser.add_argument('--case', choices=sorted(CASES), default='A')
     args = parser.parse_args()
     FS.apply_accuracy_mode('fast')
     # 保留基准命令显式指定的线程数，避免 preset 默认值遮蔽 scaling 点。
     if os.environ.get('FAST_THREADS'):
         FS.set_threads(int(os.environ['FAST_THREADS']))
+    if os.environ.get('FAST_CHUNKSIZE'):
+        set_parallel_chunksize(int(os.environ['FAST_CHUNKSIZE']))
     records = []
     for _ in range(args.reps):
-        _, totals, model = run_once()
+        _, totals, model = run_once(CASES[args.case])
+        def digest(name):
+            arr = np.ascontiguousarray(np.asarray(getattr(model, name), dtype=np.float64))
+            return hashlib.sha256(arr.tobytes()).hexdigest()
         row = {'total_s': totals['total'][0],
-               'iterations': len(totals['tensor_solve_kernel'])}
+               'iterations': len(totals['tensor_solve_kernel']),
+               'n_freq': len(model.f),
+               'DN_eff': float(model.cosmo_param['DN_eff']),
+               'DN_gw_last': float(np.asarray(model.DN_gw)[-1]),
+               'digest_f': digest('f'),
+               'digest_spectrum': digest('log10OmegaGW'),
+               'digest_DN_gw': digest('DN_gw'),
+               'digest_g2': digest('g2'),
+               'digest_w2': digest('w2')}
         for name, values in totals.items():
             if name in ('total', 'outer_iteration'):
+                continue
+            if name == 'j0_cv':
+                row[name] = float(values[-1])
+                continue
+            if name == 'j0_span':
+                row[name] = float(values[-1])
                 continue
             row[name + '_s'] = float(sum(values))
             row[name + '_calls'] = len(values)
         records.append(row)
-    summary = {'threads': FS._THREADS, 'case': CASE, 'reps': args.reps, 'records': records,
+    summary = {'threads': FS._THREADS, 'case': CASES[args.case], 'case_id': args.case,
+               'reps': args.reps, 'records': records,
                'median_s': {}, 'p95_s': {}}
     names = sorted(k for k in records[0] if k.endswith('_s'))
     for name in names:
