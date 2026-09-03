@@ -17,6 +17,7 @@ by `scripts/build_two_mode_manifest.py` (a read-only replay — no physics re-ru
 | `accuracy.md` | layered accuracy, honestly reported limits | current |
 | `parameter_validation.md` | parameter schema, axis + space sweep, classification | current |
 | `cobaya.md` | adapter options, mode mapping, `eval_freqs` | current |
-| `benchmarks.md` | runtime vs LSODA, Pareto; superseded history noted | current |
+| `benchmarks.md` | current cold/warm runtime and method comparison pointer | current |
+| `performance_comparison_20260903.md` | optimization before/after, breakdown, AB and gates | current |
 | `reproducibility.md` | drivers, gates, environment metadata | current |
 | `archive/` | superseded historical audits / benchmarks (LSODA-era, pre-fix) | archived |
