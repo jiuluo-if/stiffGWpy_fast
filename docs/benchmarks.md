@@ -5,7 +5,7 @@ Date: 2026-09-03
 Code version: see manifest `commit`
 
 Current benchmark (Windows, `FAST_THREADS=4`): plain-grid default A is
-`6.879 ms/point` warm median (`7.642 ms` p95; cold JIT `0.253 s`), and
+`4.442 ms/point` warm median (`5.105 ms` p95; cold JIT `0.325 s`), and
 production is `21.772 ms/point` warm median (`22.149 ms` p95; cold JIT
 `0.226 s`). A recent LSODA A-point run is `22.137 s`; the independent reference
 remains a historical `~360–383 s/point` anchor. These are separate cold/warm

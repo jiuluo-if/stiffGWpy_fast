@@ -71,6 +71,12 @@ def p95(values):
 
 
 def run_case(name, kw, reps):
+    # Benchmark the documented fast/plain-grid preset explicitly.  The module
+    # settings are process-global, so reset them before every case and honor
+    # FAST_THREADS after applying the preset's own default thread value.
+    fast_sgwb.apply_accuracy_mode('fast')
+    if os.environ.get('FAST_THREADS'):
+        fast_sgwb.set_threads(int(os.environ['FAST_THREADS']))
     rec = {'case': name, 'kw': {k: repr(v) for k, v in kw.items()}}
     m = LCDM_SG(**kw)
     if m.derived_param['N_inf'] is None:
