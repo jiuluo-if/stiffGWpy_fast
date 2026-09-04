@@ -47,6 +47,9 @@ python -m pip install --index-url https://test.pypi.org/simple/ --no-deps stiffg
 
 上传需要 TestPyPI API token。不要把 token 写入仓库或命令历史。
 
+仓库根目录的 `.pypirc` 属于本地凭据文件，已加入 `.gitignore`，只可用于本地发布，
+不能提交到 GitHub；发布完成后应继续保存在本机安全位置。
+
 ## 正式 PyPI 发布
 
 确认 TestPyPI 安装和导入成功后，再执行：

@@ -139,7 +139,7 @@ production draws (ess 4167.4) with the pointwise fast-vs-reference dex gate at t
 posterior bulk; full two-chain KS/Wasserstein/KL would need a reference-engine MCMC
 chain at ~350-935 s/pt on this host and is not attempted here - the IS e^{Delta logL}
 reweighting is the exact estimator used instead (valid because |Delta logL| is tiny,
-max 7.3e-3). (2) The bounded real-Cobaya chains in `docs/mcmc_posterior/chains/` are
-~30-row scaffold runs (documented as not converged) - the production-grade posterior
-claim is the IS chain above. (3) n_t shift is meaningless for cr=1 (flat direction);
+max 7.3e-3). (2) The former bounded real-Cobaya scaffold chains were unfinished
+adapter-plumbing outputs and are intentionally not retained in the working tree -
+the production-grade posterior claim is the IS chain above. (3) n_t shift is meaningless for cr=1 (flat direction);
 the physically meaningful parameter shift is log10r = -0.0011 sigma.
