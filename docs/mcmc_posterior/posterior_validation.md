@@ -73,6 +73,6 @@ posterior-bulk points (exact importance estimator; valid because |Delta logL| is
   covariance comparisons were not run because a reference-engine MCMC chain costs
   ~350-935 s/point on this host; the IS reweighting is the exact alternative and its
   precondition (small |Delta logL|) is verified.
-- Real bounded Cobaya chains in `chains/` are ~30-row scaffold runs, documented as
-  not converged; they validate the Cobaya adapter plumbing only.
+- Former real bounded Cobaya chains were unfinished adapter-plumbing outputs and
+  are intentionally not retained in the working tree.
 - n_t is unconstrained by the cr=1 mock, so only log10r carries a physical shift claim.

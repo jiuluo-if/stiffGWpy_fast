@@ -19,8 +19,8 @@ for regression and runtime comparison only. Do not turn a `NOT VERIFIED` or
 `FAIL` artifact into a passing claim by changing documentation alone; update
 the executable validation and its provenance together.
 
-Generated build/cache files are ignored. The pre-existing
-`docs/paramsweep_oracle240/` and `scripts/validate_sobol_oracle.py` artifacts
-are intentionally outside the staged changes for this audit. This checkout's
-progress is pushed to the `fast` remote; do not push unrelated changes to
-`origin` without an explicit request.
+Generated build/cache files, local credentials, and unfinished research
+outputs are ignored. Keep PyPI tokens outside version control and inspect
+`git status --short` before every commit. This checkout's progress is pushed to
+the `fast` remote; do not push unrelated changes to `origin` without an
+explicit request.

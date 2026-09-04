@@ -46,6 +46,16 @@ pip install .[cobaya]
 打包和发布到 PyPI 的完整说明见 [`PACKAGING.md`](PACKAGING.md)。发布包会主动排除
 `docs/`、测试文件、验证脚本、CI 配置和仅用于研究的配置文件。
 
+## 本地隐私与仓库卫生
+
+仓库会忽略本地凭据和自动生成文件，包括 `.pypirc`、`.env*`、密钥/证书、缓存、覆盖率
+报告、构建目录、MCMC 链、检查点和临时参数扫描结果。PyPI Token 只能保存在本地，不能
+写入 README、Issue、命令日志或 Git 提交。提交前请运行 `git status --short`；对可能含有
+凭据或私有实验结果的文件，可用 `git check-ignore -v <文件路径>` 确认其已被忽略。
+
+Git 中的 `docs/` 只保留选定的验证说明和较小的复现摘要；可再生成的大型或未完成研究结果
+不提交，也不会进入 PyPI 发布包。
+
 ## 基本用法
 
 ```python

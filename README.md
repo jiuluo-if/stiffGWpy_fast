@@ -156,6 +156,20 @@ Packaging and PyPI publishing instructions are in
 [PACKAGING.md](PACKAGING.md). The release archive intentionally excludes
 `docs/`, tests, validation scripts, CI files, and research-only configuration.
 
+## Local privacy and repository hygiene
+
+The repository ignores local credentials and machine-generated files, including
+`.pypirc`, `.env*`, key/certificate files, caches, coverage reports, build
+directories, MCMC chains, checkpoints, and temporary parameter-sweep outputs.
+Keep the local PyPI token outside version control and never paste it into an
+issue, README, command log, or commit. Before committing, check
+`git status --short` and use `git check-ignore -v <path>` for any local file
+that may contain credentials or private experiment output.
+
+The committed `docs/` tree contains only selected validation documentation and
+small reproducibility summaries. Reproducible but large or unfinished local
+research outputs are intentionally excluded from Git and from PyPI archives.
+
 ## Python usage
 
 ```python
@@ -279,10 +293,10 @@ draws with a fixed seed: ESS **4167** (gate 2000 PASS), `log10 r` posterior shif
 `docs/mcmc_posterior/posterior_validation.md`.
 
 Honest limit: a full two-chain reference-engine MCMC was **not** run because a
-reference solve is ≈360 s/point on this host.  The bounded real-Cobaya chains
-under `docs/mcmc_posterior/chains/` are ~30-row scaffold runs (adapter plumbing
-only, documented as not converged).  Posterior-shift conclusions therefore rest
-on importance reweighting, not on an independent reference chain.
+reference solve is ≈360 s/point on this host.  The former bounded real-Cobaya
+scaffold chains were unfinished adapter-plumbing outputs and have been removed
+from the working tree.  Posterior-shift conclusions therefore rest on
+importance reweighting, not on an independent reference chain.
 
 ## Limitations
 
@@ -332,7 +346,7 @@ stiffgwpy/            pip package
   cobaya/             Cobaya theory adapter + likelihoods
 tests/                pytest suite (99 unit + 6 slow gates)
 scripts/              validation drivers (validate_two_modes, build_two_mode_manifest, ...)
-docs/                 canonical docs + validation artifacts (validation/manifest, paramsweep_*, mcmc_posterior)
+docs/                 selected docs + compact validation artifacts; local chains/outputs are ignored
 Git history           superseded historical audits / benchmarks
 ```
 
