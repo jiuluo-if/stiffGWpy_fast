@@ -31,6 +31,8 @@ jobs:
         run: python -m mypy
       - name: Tests (fast unit tests; slow LSODA gates deselected by default)
         run: python -m pytest
+      - name: Validation manifest schema
+        run: python scripts/validate_manifest.py
       - name: Coverage report (Python 3.11)
         if: matrix.python-version == '3.11'
         run: python -m pytest --cov=stiffgwpy --cov-report=term-missing:skip-covered --cov-report=xml
