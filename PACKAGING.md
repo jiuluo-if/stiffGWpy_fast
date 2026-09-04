@@ -1,4 +1,4 @@
-# stiffGWpy 发布说明
+# stiffGWpy_fast 发布说明
 
 本项目按照 Python Packaging User Guide 的标准流程构建。`docs/`、测试文件、验证脚本、
 CI 配置和历史研究型配置不属于 PyPI 运行时发布内容；运行所需的 Python 模块、Cobaya
@@ -9,7 +9,7 @@ CI 配置和历史研究型配置不属于 PyPI 运行时发布内容；运行�
 发布后，用户可以直接安装：
 
 ```bash
-python -m pip install stiffgwpy
+python -m pip install stiffgwpy_fast
 ```
 
 默认调用 `LCDM_SG.SGWB_iter()` 使用 `fast` 引擎的 plain-grid 档位。需要更高精度时，
@@ -19,7 +19,7 @@ python -m pip install stiffgwpy
 Cobaya 集成是可选依赖：
 
 ```bash
-python -m pip install "stiffgwpy[cobaya]"
+python -m pip install "stiffgwpy_fast[cobaya]"
 ```
 
 ## 发布前检查
@@ -42,7 +42,7 @@ python scripts/verify_distribution.py dist
 
 ```bash
 python -m twine upload --repository testpypi dist/*
-python -m pip install --index-url https://test.pypi.org/simple/ --no-deps stiffgwpy
+python -m pip install --index-url https://test.pypi.org/simple/ --no-deps stiffgwpy_fast
 ```
 
 上传需要 TestPyPI API token。不要把 token 写入仓库或命令历史。
@@ -56,7 +56,7 @@ python -m pip install --index-url https://test.pypi.org/simple/ --no-deps stiffg
 
 ```bash
 python -m twine upload dist/*
-python -m pip install --upgrade stiffgwpy
+python -m pip install --upgrade stiffgwpy_fast
 ```
 
 每次正式发布前必须递增 `pyproject.toml` 的 `project.version`，并同步更新

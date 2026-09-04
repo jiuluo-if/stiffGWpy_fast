@@ -30,7 +30,7 @@ jobs:
       - name: Lint (maintained modules/scripts/tests)
         # 旧求解器模块仍有历史风格债务，暂不纳入本门禁；
         # global_param.py 已纳入维护面检查。
-        run: ruff check stiffgwpy/__init__.py stiffgwpy/cobaya/__init__.py stiffgwpy/cobaya/stiffGW.py stiffgwpy/_metrics.py stiffgwpy/_resources.py stiffgwpy/config.py stiffgwpy/global_param.py stiffgwpy/exact_background.py stiffgwpy/freq_adaptive.py stiffgwpy/reference.py scripts tests
+        run: ruff check stiffgwpy_fast/__init__.py stiffgwpy_fast/cobaya/__init__.py stiffgwpy_fast/cobaya/stiffGW.py stiffgwpy_fast/_metrics.py stiffgwpy_fast/_resources.py stiffgwpy_fast/config.py stiffgwpy_fast/global_param.py stiffgwpy_fast/exact_background.py stiffgwpy_fast/freq_adaptive.py stiffgwpy_fast/reference.py scripts tests
       - name: Type check maintained configuration surface
         run: python -m mypy
       - name: Tests (fast unit tests; slow LSODA gates deselected by default)
@@ -39,7 +39,7 @@ jobs:
         run: python scripts/validate_manifest.py
       - name: Coverage report (Python 3.11)
         if: matrix.python-version == '3.11'
-        run: python -m pytest --cov=stiffgwpy --cov-report=term-missing:skip-covered --cov-report=xml
+        run: python -m pytest --cov=stiffgwpy_fast --cov-report=term-missing:skip-covered --cov-report=xml
       - name: Upload coverage artifact (Python 3.11)
         if: matrix.python-version == '3.11'
         uses: actions/upload-artifact@v7
@@ -51,7 +51,7 @@ jobs:
       - name: Distribution archive boundary
         run: python scripts/verify_distribution.py dist
       - name: Installed wheel smoke test
-        run: python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl
+        run: python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 
   cobaya:
     runs-on: ubuntu-latest

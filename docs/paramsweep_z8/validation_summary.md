@@ -1,6 +1,6 @@
 # Parameter-space validation, matched z8 (fast vs continuous-sigma reference)
 
-Date: 2026-09-03. Engine truth = `stiffgwpy/reference.py` (continuous-sigma + DOP853).
+Date: 2026-09-03. Engine truth = `stiffgwpy_fast/reference.py` (continuous-sigma + DOP853).
 LSODA is not a truth anchor anywhere in this document. Every point is solved by BOTH
 engines on the SAME `grid_independent` frequency grid and the SAME `z_tail=8.0`
 (242-249 nodes), so the residual isolates engine error (no grid/tail mismatch).

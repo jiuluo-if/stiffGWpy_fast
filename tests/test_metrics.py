@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from stiffgwpy._metrics import dex_abs, rel_abs, rel_linear_omega, signal_mask
+from stiffgwpy_fast._metrics import dex_abs, rel_abs, rel_linear_omega, signal_mask
 
 
 def test_dex_abs():

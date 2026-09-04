@@ -4,7 +4,7 @@ Status: current
 Date: 2026-09-03
 Code version: see manifest `commit`
 
-The fast solver (`stiffgwpy.fast_sgwb`) uses a fixed-step Magnus-type
+The fast solver (`stiffgwpy_fast.fast_sgwb`) uses a fixed-step Magnus-type
 integration of the tensor-mode equation on a grid over `N`, then assembles the
 spectrum and the bolometric integral.  Two user-facing profiles differ only in
 how the hard features are treated.

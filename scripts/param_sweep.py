@@ -31,8 +31,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from convergence_study import metrics, run_fast, run_lsoda  # noqa: E402
 from scipy.stats import qmc  # noqa: E402
 
-from stiffgwpy import fast_sgwb as FS  # noqa: E402
-from stiffgwpy.stiff_SGWB import LCDM_SG  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 SEED = 20260830
 N_SOBOL = 400

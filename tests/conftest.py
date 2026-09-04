@@ -6,8 +6,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
 
-from stiffgwpy import LCDM_SG
-from stiffgwpy import fast_sgwb as FS
+from stiffgwpy_fast import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
 
 
 @pytest.fixture

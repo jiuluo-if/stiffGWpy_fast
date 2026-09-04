@@ -4,7 +4,7 @@ Status: current
 Date: 2026-09-03
 Code version: see manifest `commit`
 
-`stiffgwpy.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`.  It exposes the derived
+`stiffgwpy_fast.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`.  It exposes the derived
 params `Delta_Neff_GW`, `Delta_Neff_total`, `log10hc_prim_fyr`, `f_end`,
 `Delta_Neff_GW_error`, and provides `f`, `omGW_stiff`, `hubble`, `kappa_s`,
 `kappa_r` to the likelihoods.

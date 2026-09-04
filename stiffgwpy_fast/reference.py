@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """reference.py -- physics-first high-accuracy reference pipeline.
 
-The original ``stiffgwpy`` solves the tensor-mode equations on a fixed-step
+The original ``stiffgwpy_fast`` solves the tensor-mode equations on a fixed-step
 ``sigma`` grid and treats ``fast`` as an approximation to the LSODA path.  This
 module builds an *independent* high-accuracy reference so that accuracy can be
 measured against a continuum answer rather than against LSODA.
@@ -58,7 +58,7 @@ ln10 = math.log(10.0)
 
 def _fd_splines():
     """Fermi-Dirac rho/p spline on log10(nu), from the shipped ``fd_table.npz``."""
-    with package_path('stiffgwpy', 'fd_table.npz') as path:
+    with package_path('stiffgwpy_fast', 'fd_table.npz') as path:
         with np.load(path) as data:
             nu = data['nu']
             vals = data['vals']

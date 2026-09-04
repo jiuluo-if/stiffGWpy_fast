@@ -7,9 +7,9 @@ import numpy as np
 import pytest
 from scipy.integrate import solve_ivp
 
-from stiffgwpy import global_param as gp
-from stiffgwpy import reference as REF
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import global_param as gp
+from stiffgwpy_fast import reference as REF
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
 def _z_of_N(m, freq, N, DN):
@@ -99,7 +99,7 @@ def test_float_robustness_extreme_params():
     temperature and the deterministic >5 Delta N_eff guard.  The guard rejection
     is a shared fast/LSODA physical rejection, not a numerical failure.
     """
-    from stiffgwpy import fast_sgwb as FS
+    from stiffgwpy_fast import fast_sgwb as FS
 
     saved = FS.get_settings()
     try:
@@ -132,7 +132,7 @@ def test_sigma_exact_reduces_model_bias():
     """With the continuous present-day anchor, fast Delta N_eff is close to the
     continuous-sigma reference (the dominant historical error was the
     grid-quantised present-day anchor, not the sigma kink)."""
-    from stiffgwpy import fast_sgwb as FS
+    from stiffgwpy_fast import fast_sgwb as FS
 
     saved = FS.get_settings()
     try:

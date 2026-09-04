@@ -37,10 +37,10 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy import global_param as gp
-from stiffgwpy._metrics import dex_abs, rel_abs, rel_linear_omega, signal_mask
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast import global_param as gp
+from stiffgwpy_fast._metrics import dex_abs, rel_abs, rel_linear_omega, signal_mask
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 ln10 = math.log(10.0)
 

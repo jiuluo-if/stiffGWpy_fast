@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1 — 2026-09-04
+
+- Renamed the distribution metadata and Python import package to
+  `stiffgwpy_fast`; PyPI normalizes the distribution display name to
+  `stiffgwpy-fast`.
+- Updated all Cobaya qualified names, resource paths, scripts, tests, CI
+  commands, and bilingual installation instructions to use the new name.
+
 ## 0.2.0 — 2026-09-04
 
 - Added immutable per-call fast-solver configuration with `fast` plain-grid as

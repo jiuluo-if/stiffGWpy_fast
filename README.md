@@ -6,6 +6,10 @@ The Chinese overview is maintained in [README_zh.md](README_zh.md); keep the
 two language entry pages synchronized when updating features, parameters, or
 validation conclusions.
 
+The PyPI distribution name is `stiffgwpy_fast`; the Python import name is
+`stiffgwpy_fast`. They are intentionally distinct from the older `stiffgwpy`
+project.
+
 **LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB)**
 cosmology code, with a fast solver exposed as exactly **two user-facing fast
 profiles**, an independent continuous-sigma high-accuracy reference pipeline
@@ -59,7 +63,7 @@ There are exactly **two user-facing fast profiles**.  The extra names
 (`debug`, `deep`, `reference`) are validation/benchmark variants of the same
 internal solver — they are not advertised as additional production tiers and are
 not meant for the MCMC thermal path.  The true precision anchor is the
-independent `stiffgwpy.reference` pipeline.
+independent `stiffgwpy_fast.reference` pipeline.
 
 | Config key | `fast` (plain-grid) | `production` (transition-refine) |
 |---|---|---|
@@ -104,7 +108,7 @@ integration breakpoint, horizon crossing uses `phase_max`-capped phase-aware
 sub-stepping, the frequency grid is curvature-adaptive, the deep-subhorizon tail
 is handed off to an analytic WKB/adiabatic solution at `z_tail`, and every solve
 carries a point-local a-posteriori error estimate
-(`stiffgwpy.fast_sgwb.estimate_local_error`).
+(`stiffgwpy_fast.fast_sgwb.estimate_local_error`).
 
 - **Matched z8 accuracy vs the oracle (9 points):** signal/transition spectrum
   relative error max **7.1e-4** (dex max 3.1e-4), gate <1e-3 **PASS**;
@@ -121,7 +125,7 @@ carries a point-local a-posteriori error estimate
 
 ## Reference / oracle
 
-`stiffgwpy/reference.py` is an independent, higher-order implementation of the
+`stiffgwpy_fast/reference.py` is an independent, higher-order implementation of the
 same physics: continuous `sigma(N)` (kink as an exact breakpoint), adaptive
 `DOP853` per frequency mode, shape-preserving PCHIP + adaptive Gauss-Kronrod
 quadrature with error estimates.  It is **the** accuracy anchor.  LSODA is used
@@ -145,7 +149,7 @@ oracle A/B/C and reports `CONSISTENT` / `ORACLE-SENSITIVE`.
 ## Installation
 
 ```bash
-pip install stiffgwpy          # 从 PyPI 安装最新版本
+pip install stiffgwpy-fast          # 从 PyPI 安装最新版本
 pip install .                 # 安装运行依赖：numpy scipy astropy pyyaml numba
 pip install .[cobaya]         # 安装串行 Cobaya MCMC 接口
 pip install .[cobaya,mpi]     # 安装 Cobaya 和可选 mpi4py
@@ -173,7 +177,7 @@ research outputs are intentionally excluded from Git and from PyPI archives.
 ## Python usage
 
 ```python
-from stiffgwpy import LCDM_SG
+from stiffgwpy_fast import LCDM_SG
 
 m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m.SGWB_iter()  # 默认使用 fast plain-grid
@@ -197,7 +201,7 @@ intentionally want a snapshot of the legacy manual module settings. Lower-level
 calls can pass an immutable `fast_sgwb.FastSolverConfig` per invocation.
 
 ```python
-from stiffgwpy import fast_sgwb
+from stiffgwpy_fast import fast_sgwb
 b = fast_sgwb.estimate_local_error(m)   # point-local 11-category budget
 print(b['DN_gw_error'], b['certification_status'])
 ```
@@ -206,7 +210,7 @@ print(b['DN_gw_error'], b['certification_status'])
 
 ```yaml
 theory:
-  stiffgwpy.cobaya.stiffGW.stiffGW:
+  stiffgwpy_fast.cobaya.stiffGW.stiffGW:
     engine: fast
     fallback: True
     accuracy_mode: fast            # fast（plain-grid）或 production（transition-refine）
@@ -328,7 +332,7 @@ python -m pytest                                                   # tests (slow
 python -m pytest -m cobaya                                         # Cobaya adapter gate
 python scripts/validate_manifest.py                                # committed artifact schema
 python -m build --wheel                                            # wheel build gate
-python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl        # installed-resource smoke
+python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl        # installed-resource smoke
 ```
 
 Every driver records git-commit + environment metadata.  The regression suite is
@@ -337,7 +341,7 @@ Every driver records git-commit + environment metadata.  The regression suite is
 ## Directory structure
 
 ```
-stiffgwpy/            pip package
+stiffgwpy_fast/            pip package
   stiff_SGWB.py       LCDM_SG + engine dispatch (fast|lsoda|reference)
   fast_sgwb.py        fast solver, ACCURACY_MODES, FAST_PROFILES, estimate_local_error
   reference.py        independent continuous-sigma oracle (engine='reference')

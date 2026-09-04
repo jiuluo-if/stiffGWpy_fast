@@ -5,13 +5,13 @@ local gate is:
 
 ```bash
 python scripts/validate_manifest.py
-ruff check stiffgwpy/__init__.py stiffgwpy/cobaya/__init__.py stiffgwpy/cobaya/stiffGW.py stiffgwpy/_metrics.py stiffgwpy/_resources.py stiffgwpy/config.py stiffgwpy/global_param.py stiffgwpy/exact_background.py stiffgwpy/freq_adaptive.py stiffgwpy/reference.py scripts tests
+ruff check stiffgwpy_fast/__init__.py stiffgwpy_fast/cobaya/__init__.py stiffgwpy_fast/cobaya/stiffGW.py stiffgwpy_fast/_metrics.py stiffgwpy_fast/_resources.py stiffgwpy_fast/config.py stiffgwpy_fast/global_param.py stiffgwpy_fast/exact_background.py stiffgwpy_fast/freq_adaptive.py stiffgwpy_fast/reference.py scripts tests
 python -m mypy
 python -m pytest -q
 python -m pytest -q -m slow
 python -m build --sdist --wheel
 python scripts/verify_distribution.py dist
-python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl
+python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 ```
 
 The independent continuous-sigma reference is the precision anchor. LSODA is

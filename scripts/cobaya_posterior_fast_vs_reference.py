@@ -159,7 +159,7 @@ def build_info(truth, samples, sigma_dex=0.05, seed=SEED):
     bins = np.asarray(truth['bins'], dtype=float)
     y = np.asarray(truth['truth_log10Om'], dtype=float)
     info = {
-        'theory': {'stiffgwpy.cobaya.stiffGW.stiffGW': {
+        'theory': {'stiffgwpy_fast.cobaya.stiffGW.stiffGW': {
             'engine': 'fast', 'fallback': True, 'accuracy_mode': 'production',
             'fast_threads': 8, 'likelihood_sigma': 5e-4, 'dlogl_tol': 1e-3}},
         'likelihood': {'cobaya_posterior_fast_vs_reference.SGWB_mock': {
@@ -235,8 +235,8 @@ def phase_chain(args):
 
 def fast_log10_at_bins(kw, bins):
     """Production fast solve; returns log10OmegaGW at bins + full-grid dn."""
-    from stiffgwpy import fast_sgwb as FS
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import fast_sgwb as FS
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
     cfg = FS.apply_accuracy_mode('production')
     m = LCDM_SG(**kw)
     res = FS.SGWB_iter_fast(m, tol=cfg['tol'], transition_refine=True,
@@ -257,8 +257,8 @@ def fast_log10_at_bins(kw, bins):
 
 def ref_log10_at_bins(kw, bins, dn, rtol=1e-9, z_tail=8.0):
     """Continuous-sigma DOP853 reference at the SAME bins and matched DN."""
-    from stiffgwpy import reference as REF
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import reference as REF
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
     m = LCDM_SG(**kw)
     Ogw, Oj, Opgw, used = REF.spectrum_reference(m, np.asarray(bins, dtype=float),
                                                  dn, z_tail=z_tail, rtol=rtol,

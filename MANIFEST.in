@@ -1,14 +1,14 @@
 include CHANGELOG.md CONTRIBUTING.md LICENSE.md MANIFEST.in PACKAGING.md README.md README_zh.md pyproject.toml
-recursive-include stiffgwpy *.py *.dat *.npz *.npy *.yaml *.txt
-exclude stiffgwpy/cobaya/mcmc_compare.yaml
+recursive-include stiffgwpy_fast *.py *.dat *.npz *.npy *.yaml *.txt
+exclude stiffgwpy_fast/cobaya/mcmc_compare.yaml
 prune .github
 prune build
 prune dist
 prune docs
 prune scripts
 prune tests
-prune stiffgwpy.egg-info
-recursive-exclude stiffgwpy.egg-info *
+prune stiffgwpy_fast.egg-info
+recursive-exclude stiffgwpy_fast.egg-info *
 global-exclude *.py[cod]
 global-exclude __pycache__
 global-exclude .coverage coverage.xml

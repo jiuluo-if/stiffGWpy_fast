@@ -11,7 +11,7 @@ import yaml
 
 def test_adapter_exports_canonical_derived_names():
     pytest.importorskip("cobaya")
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     expected = {
         "Delta_Neff_GW", "Delta_Neff_total",
@@ -21,14 +21,14 @@ def test_adapter_exports_canonical_derived_names():
     assert set(adapter.get_can_provide_params()) == expected
     assert set(adapter.DERIVED_PARAMS) == expected
     cfg = yaml.safe_load((Path(__file__).resolve().parents[1] /
-                          "stiffgwpy" / "cobaya" / "stiffGW.yaml").read_text(
+                          "stiffgwpy_fast" / "cobaya" / "stiffGW.yaml").read_text(
                               encoding="utf-8"))
     assert tuple(cfg["params"]) == adapter.DERIVED_PARAMS
 
 
 def test_adapter_exposes_error_telemetry():
     pytest.importorskip("cobaya")
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     class Model:
         fast_evals = 5
@@ -57,7 +57,7 @@ def test_reference_engine_sets_state(monkeypatch):
     pytest.importorskip("cobaya")
     import numpy as np
 
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     freqs = np.array([6.0, 4.0, 2.0, 0.0, -2.0, -4.0])
     logO = np.array([-15.6, -15.6, -11.6, -7.9, -11.7, -13.5])
@@ -68,7 +68,7 @@ def test_reference_engine_sets_state(monkeypatch):
     def fake_run(m, **kw):
         return fake
 
-    monkeypatch.setattr("stiffgwpy.reference.run_reference", fake_run)
+    monkeypatch.setattr("stiffgwpy_fast.reference.run_reference", fake_run)
     adapter = stiffGW()
     adapter.engine = "reference"
     adapter.freq_res = 1.0
@@ -86,15 +86,15 @@ def test_reference_engine_sets_state(monkeypatch):
 
 def test_qualified_module_import_resolves_class():
     pytest.importorskip("cobaya")
-    module = importlib.import_module("stiffgwpy.cobaya.stiffGW")
+    module = importlib.import_module("stiffgwpy_fast.cobaya.stiffGW")
     cls = getattr(module, "stiffGW")
     assert cls.__module__ + "." + cls.__name__ == \
-        "stiffgwpy.cobaya.stiffGW.stiffGW"
+        "stiffgwpy_fast.cobaya.stiffGW.stiffGW"
 
 
 def test_yaml_defaults_use_plain_grid_via_sentinel():
     cfg = yaml.safe_load((Path(__file__).resolve().parents[1] /
-                          "stiffgwpy" / "cobaya" / "stiffGW.yaml").read_text(
+                          "stiffgwpy_fast" / "cobaya" / "stiffGW.yaml").read_text(
                               encoding="utf-8"))
     assert cfg["engine"] == "fast"
     assert cfg["accuracy_mode"] == "fast"
@@ -108,7 +108,7 @@ def test_yaml_defaults_use_plain_grid_via_sentinel():
 
 def test_close_warns_on_high_fallback_fraction(monkeypatch):
     pytest.importorskip("cobaya")
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     class Log:
         def __init__(self):
@@ -137,7 +137,7 @@ def test_close_warns_on_high_fallback_fraction(monkeypatch):
 
 def test_engine_stats_exposes_failure_fraction():
     pytest.importorskip("cobaya")
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     class Model:
         fast_evals = 20
@@ -174,12 +174,12 @@ def test_qualified_name_real_cobaya_smoke_from_other_cwd(tmp_path):
         timeout=180,
     )
     assert proc.returncode == 0, proc.stdout + "\n" + proc.stderr
-    assert "stiffgwpy.cobaya.stiffGW.stiffGW" in proc.stdout
+    assert "stiffgwpy_fast.cobaya.stiffGW.stiffGW" in proc.stdout
     assert "OK" in proc.stdout
 
 def test_engine_stats_includes_eval_status():
     pytest.importorskip("cobaya")
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     class Model:
         fast_evals = 3
@@ -238,8 +238,8 @@ def test_auto_escalate_likelihood_gate_escalates(monkeypatch):
     dlogl_tol and the evaluation must be marked FAST_ESCALATED (never a
     silent fallback)."""
     pytest.importorskip("cobaya")
-    from stiffgwpy import fast_sgwb
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import fast_sgwb
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
     monkeypatch.setattr(fast_sgwb, 'SGWB_iter_fast', _fake_fast_solve)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
@@ -256,8 +256,8 @@ def test_auto_escalate_likelihood_gate_stays_fast(monkeypatch):
     """With a loose likelihood sigma the estimated |Delta logL| stays below
     the budget and the evaluation remains a plain FAST."""
     pytest.importorskip("cobaya")
-    from stiffgwpy import fast_sgwb
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import fast_sgwb
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
     monkeypatch.setattr(fast_sgwb, 'SGWB_iter_fast', _fake_fast_solve)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
@@ -274,8 +274,8 @@ def test_adapter_forwards_likelihood_kwargs(monkeypatch):
     pytest.importorskip("cobaya")
     import numpy as np
 
-    from stiffgwpy import fast_sgwb
-    from stiffgwpy.cobaya.stiffGW import stiffGW
+    from stiffgwpy_fast import fast_sgwb
+    from stiffgwpy_fast.cobaya.stiffGW import stiffGW
 
     captured = {}
 
@@ -289,7 +289,7 @@ def test_adapter_forwards_likelihood_kwargs(monkeypatch):
         self.cosmo_param['DN_eff'] = 0.00227
         return self
 
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
     monkeypatch.setattr(LCDM_SG, 'SGWB_iter', fake_sgwb_iter)
     adapter = stiffGW()
     adapter.engine = 'fast'

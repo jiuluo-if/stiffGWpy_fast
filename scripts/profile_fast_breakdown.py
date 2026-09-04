@@ -18,8 +18,8 @@ ROOT = os.environ.get('STIFFGWPY_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 
-from stiffgwpy import fast_sgwb as FS  # noqa: E402
-from stiffgwpy.stiff_SGWB import LCDM_SG  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 CASES = {
     'A': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),

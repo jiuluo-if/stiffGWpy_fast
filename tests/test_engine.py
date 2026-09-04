@@ -2,8 +2,8 @@
 import numpy as np
 import pytest
 
-from stiffgwpy import LCDM_SG
-from stiffgwpy import fast_sgwb as FS
+from stiffgwpy_fast import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
 
 
 def test_engine_fast_converges(model):
