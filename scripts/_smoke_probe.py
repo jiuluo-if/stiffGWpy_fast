@@ -7,12 +7,11 @@ import yaml
 from cobaya import mpi
 from cobaya.run import run
 
-# The smoke test is intentionally single-process.  GitHub runners may have
-# mpi4py installed without a system libmpi; explicitly disabling MPI keeps
-# Cobaya's serial execution path deterministic and portable.
+# 该冒烟测试刻意使用单进程。GitHub runner 可能安装 mpi4py 但没有系统
+# libmpi；显式关闭 MPI 可保持 Cobaya 串行路径的确定性和可移植性。
 mpi.set_mpi_disabled()
 
-os.chdir(tempfile.gettempdir())  # different cwd (qualified-name test)
+os.chdir(tempfile.gettempdir())  # 切换到其他工作目录，验证限定类名导入
 repo = str(Path(__file__).resolve().parents[1])
 base = os.path.join(repo, "stiffgwpy", "cobaya")
 yaml_text = open(os.path.join(base, "mcmc_compare.yaml"), encoding="utf-8").read()

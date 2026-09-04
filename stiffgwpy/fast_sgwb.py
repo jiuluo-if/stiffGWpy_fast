@@ -61,7 +61,7 @@ __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
            'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES',
            'USER_FAST_PROFILES', 'FAST_PROFILES', 'normalize_accuracy_mode',
            'is_validation_mode', 'MODE_ROLE', 'FastSolverConfig', 'get_config',
-           'resolve_config']
+           'resolve_config', 'max_threads']
 
 # Default OpenMP threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -137,6 +137,11 @@ def set_threads(n):
                          % (_MAX_THREADS, n))
     _THREADS = n
     set_num_threads(_THREADS)
+
+
+def max_threads():
+    """返回当前 Numba 进程可用的最大线程数。"""
+    return _MAX_THREADS
 
 
 def set_col_step(n):
