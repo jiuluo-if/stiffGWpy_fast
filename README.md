@@ -295,12 +295,13 @@ python scripts/validate_two_modes.py --phase param_sweep --n 400  # LHS screen
 python scripts/build_two_mode_manifest.py                          # manifest (read-only replay)
 python -m pytest                                                   # tests (slow deselected)
 python -m pytest -m cobaya                                         # Cobaya adapter gate
+python scripts/validate_manifest.py                                # committed artifact schema
 python -m build --wheel                                            # wheel build gate
 python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl        # installed-resource smoke
 ```
 
 Every driver records git-commit + environment metadata.  The regression suite is
-102 passed (6 slow LSODA gates deselected by default; counts may change as tests evolve).
+103 passed (6 slow LSODA gates deselected by default; counts may change as tests evolve).
 
 ## Directory structure
 

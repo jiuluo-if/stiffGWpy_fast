@@ -17,11 +17,12 @@ python scripts/validate_edges_vs_reference.py --phase reference     # axis-edge 
 python scripts/importance_posterior.py --phase all                 # Layer C posterior
 python -m pytest                                                   # unit/regression tests
 python -m pytest -m cobaya                                          # Cobaya adapter gate
+python scripts/validate_manifest.py                                # committed artifact schema
 python -m build --wheel                                             # wheel build gate
 python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl         # installed-resource smoke
 ```
 
-The current regression suite passes 102 tests (6 slow LSODA gates are
+The current regression suite passes 103 tests (6 slow LSODA gates are
 deselected by default; opt in with `-m slow`). The installed-wheel smoke test
 also checks that core, Cobaya, LIGO, and PTA package resources are available
 outside the source checkout.
