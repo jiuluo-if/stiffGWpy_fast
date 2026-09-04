@@ -19,7 +19,7 @@ python -m pytest                                                   # unit/regres
 python -m pytest -m cobaya                                          # Cobaya adapter gate
 python scripts/validate_manifest.py                                # committed artifact schema
 python -m build --wheel                                             # wheel build gate
-python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl         # installed-resource smoke
+python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl         # installed-resource smoke
 ```
 
 The current regression suite passes 103 tests (6 slow LSODA gates are

@@ -29,8 +29,8 @@ keep the LSODA path for cross-checks and fallback.
 
 Usage
 -----
-    from stiffgwpy import LCDM_SG
-    from stiffgwpy import fast_sgwb
+    from stiffgwpy_fast import LCDM_SG
+    from stiffgwpy_fast import fast_sgwb
 
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     fast_sgwb.SGWB_iter_fast(m)     # fills the fast-path output attributes
@@ -223,13 +223,11 @@ ACCURACY_MODES = {
                  freq_grid='adaptive'),
 }
 
-# Role tagging: exactly two user-facing fast profiles (speed-first plain-grid
-# and precision-first transition-refine) plus backward-compatible aliases.
-# The remaining modes (debug/deep/reference) are validation/benchmark variants
-# of the SAME internal solver: they are usable for certification but are NOT
-# advertised as third/fourth production tiers and are NOT meant for the MCMC
-# thermal path (the true precision anchor is the continuous-sigma
-# ``stiffgwpy.reference`` pipeline, engine='reference').
+# 档位说明：对外只提供两个快速档位（速度优先的 plain-grid 和精度优先的
+# transition-refine），并保留向后兼容的别名。其余档位（debug/deep/reference）
+# 是同一内部求解器的验证或基准变体，可用于认证，但不作为第三、第四个生产档位，
+# 也不用于 MCMC 热路径；真正的精度锚点是连续 sigma 的
+# ``stiffgwpy_fast.reference`` 流程（engine='reference'）。
 USER_FAST_PROFILES = ('fast', 'production')
 
 # Alias -> canonical mode name (accepts the human-facing names used in docs).
@@ -615,14 +613,14 @@ def _build_fd_table():
     user cache so the next import is cheap.
     """
     try:
-        with package_path('stiffgwpy', 'fd_table.npz') as pkg_file:
+        with package_path('stiffgwpy_fast', 'fd_table.npz') as pkg_file:
             with np.load(pkg_file) as data:
                 nu, vals = data['nu'], data['vals']
                 if nu.shape == (3001,) and vals.shape == (3001, 2):
                     return nu, vals
     except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
         pass
-    cache_file = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy', 'fd_table.npz')
+    cache_file = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy_fast', 'fd_table.npz')
     if _os.path.exists(cache_file):
         try:
             with np.load(cache_file) as data:
@@ -634,7 +632,7 @@ def _build_fd_table():
     nu = np.logspace(-1.0, 2.0, 3001)
     vals = np.array([int_FD(u) for u in nu])
     try:
-        cache_dir = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy')
+        cache_dir = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy_fast')
         _os.makedirs(cache_dir, exist_ok=True)
         np.savez(_os.path.join(cache_dir, 'fd_table.npz'), nu=nu, vals=vals)
     except OSError:
@@ -1065,11 +1063,11 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     ``sigma_exact`` is set, ``F``/``Phi``/``S2`` are recomputed from the
     continuous piecewise-exact ``sigma`` (reheating kink as an exact breakpoint)
     instead of the fixed-grid cubic spline, removing the ~1% continuous-sigma-vs-
-    grid model bias (see ``stiffgwpy.exact_background``).
+    grid model bias (see ``stiffgwpy_fast.exact_background``).
 
     ``transition_refine`` (the ``production`` / ``transition-refine`` profile)
     treats the reheating transition as an ODE integration breakpoint: the
-    kink-aware grid from ``stiffgwpy.exact_background.build_kink_refined_grid``
+    kink-aware grid from ``stiffgwpy_fast.exact_background.build_kink_refined_grid``
     keeps the instantaneous-reheating kink inside a refined sub-step so it is
     never crossed by a spline/grid, and (with ``phase_max > 0``) horizon
     crossing uses phase-aware sub-stepping.  This is the default scientific

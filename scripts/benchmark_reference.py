@@ -3,7 +3,7 @@
 
 Unlike ``scripts/bench_fast.py`` (which reports speedup and fast-vs-LSODA), this
 script benchmarks against the *independent high-accuracy reference* in
-``stiffgwpy.reference``.  That reference uses a continuous ``sigma(N)``
+``stiffgwpy_fast.reference``.  That reference uses a continuous ``sigma(N)``
 evaluator (no fixed-step grid through the reheating kink) and a high-order
 adaptive ODE (DOP853), so it exposes the two *shared* errors the old
 fast-vs-LSODA framing hid.
@@ -35,10 +35,10 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy import reference as REF
-from stiffgwpy._metrics import dex_abs, rel_linear_omega, signal_mask
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast import reference as REF
+from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega, signal_mask
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 ln10 = math.log(10.0)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-bench_fast.py -- reproducible performance comparison for stiffgwpy.
+bench_fast.py -- reproducible performance comparison for stiffgwpy_fast.
 
 Runs the original LSODA-based ``SGWB_iter()`` and the accelerated
 ``fast_sgwb.SGWB_iter_fast()`` on the same parameter grid.  Per case it
@@ -23,8 +23,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb  # noqa: E402
-from stiffgwpy.stiff_SGWB import LCDM_SG  # noqa: E402
+from stiffgwpy_fast import fast_sgwb  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 CASES = {
     "A baseline r=1e-2 cr=1 T_re=2e3 k10=1e-2": dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
@@ -127,7 +127,7 @@ def run_case(name, kw, reps):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='reproducible stiffgwpy benchmark')
+    ap = argparse.ArgumentParser(description='reproducible stiffgwpy_fast benchmark')
     ap.add_argument('--reps', type=int, default=3, help='warm fast repeats per case')
     ap.add_argument('--cases', nargs='+', type=int, default=None,
                     help='case indices (default: all 12)')

@@ -23,9 +23,9 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy._metrics import dex_abs, rel_linear_omega, signal_mask
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega, signal_mask
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 GATES = {
     'status_match': True,

@@ -4,10 +4,10 @@
 import numpy as np
 from scipy.interpolate import PchipInterpolator
 
-from stiffgwpy import exact_background as EB
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy import freq_adaptive as FA
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import exact_background as EB
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast import freq_adaptive as FA
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
 def _sharp(x):

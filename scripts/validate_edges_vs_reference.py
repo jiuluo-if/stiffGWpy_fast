@@ -4,7 +4,7 @@
 Extends the Layer-A-style matched certification (fast production, grid-
 independent freq grid, z_tail=8, rtol=1e-9) to parameter-axis edges and
 transition-sensitive interiors.  LSODA is never a truth anchor: the oracle is
-the continuous-sigma DOP853 reference in ``stiffgwpy.reference``.
+the continuous-sigma DOP853 reference in ``stiffgwpy_fast.reference``.
 
 Phases (checkpointed; reruns skip completed labels):
   python scripts/validate_edges_vs_reference.py --phase reference [--pool 6]

@@ -2,7 +2,7 @@
 """validate_fast_vs_reference.py -- physics-first, LSODA-free validation.
 
 Fast (production / matched-grid) vs the independent continuous-sigma DOP853
-reference in ``stiffgwpy.reference``.  LSODA is never used as a truth anchor.
+reference in ``stiffgwpy_fast.reference``.  LSODA is never used as a truth anchor.
 
 Phases (checkpointed to JSONL; reruns skip completed point ids):
 
@@ -39,12 +39,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scipy.stats import qmc  # noqa: E402
 
-from stiffgwpy import fast_sgwb as FS  # noqa: E402
-from stiffgwpy import global_param as gp  # noqa: E402
-from stiffgwpy import reference as REF  # noqa: E402
-from stiffgwpy._metrics import dex_abs, rel_linear_omega  # noqa: E402
-from stiffgwpy.freq_adaptive import grid_independent_freqs  # noqa: E402
-from stiffgwpy.stiff_SGWB import LCDM_SG  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import global_param as gp  # noqa: E402
+from stiffgwpy_fast import reference as REF  # noqa: E402
+from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega  # noqa: E402
+from stiffgwpy_fast.freq_adaptive import grid_independent_freqs  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 SEED = 20260831
 ln10 = math.log(10.0)

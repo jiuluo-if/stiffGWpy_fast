@@ -4,7 +4,7 @@ Status: current
 Date: 2026-09-03
 Code version: see manifest `commit`
 
-`stiffgwpy` models a flat LCDM cosmology with:
+`stiffgwpy_fast` models a flat LCDM cosmology with:
 
 * **radiation + massive neutrinos** (Fermi-Dirac distribution),
 * **relativistic particles** including extra radiation `Delta N_eff`,

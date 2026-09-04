@@ -1,4 +1,4 @@
-# stiffgwpy 优化前后全方法对比报告
+# stiffgwpy_fast 优化前后全方法对比报告
 
 日期：2026-09-03  
 基线：`80af01b`  
@@ -130,7 +130,7 @@ channel reorder、chunk 调度和 deferred assembly/history 均未形成稳定�
 
 ## 5. 精度对比：只与 independent reference 比
 
-精度基准是 `stiffgwpy.reference` 的 continuous-sigma + DOP853 独立实现，
+精度基准是 `stiffgwpy_fast.reference` 的 continuous-sigma + DOP853 独立实现，
 不是 LSODA。已有 matched-reference 结果：
 
 | fast 档位 | 对 independent reference 的结果 | 结论 |
@@ -168,7 +168,7 @@ max `2.725e-2`。本轮没有修改 reference 或 validation artifact，也没�
 
 ## 8. 本轮修改和风险
 
-采用修改只有 `stiffgwpy/fast_sgwb.py` 的一行 JIT 装饰器；本报告和活动文档
+采用修改只有 `stiffgwpy_fast/fast_sgwb.py` 的一行 JIT 装饰器；本报告和活动文档
 同步更新了现行 runtime 口径。风险为低到中：执行顺序只在独立 channel 之间
 并行，channel 内浮点 evaluation order 未改变；Numba cache/cold startup
 会影响首次调用延迟，因此生产部署和 benchmark 必须分开报告 cold 与 warm。

@@ -1,7 +1,7 @@
 # Layer C: posterior validation (fast production vs continuous-sigma reference)
 
 Date 2026-09-03, host-verified numbers. LSODA is never a truth anchor here; the
-reference/oracle is `stiffgwpy/reference.py` (continuous-sigma + DOP853). All numbers
+reference/oracle is `stiffgwpy_fast/reference.py` (continuous-sigma + DOP853). All numbers
 below come from the artifacts in this directory (`mock_truth.json`, `is_draws.npz`,
 `is_posterior.json`, `is_pointwise.json`, `is_report.json`), reproduced by:
 

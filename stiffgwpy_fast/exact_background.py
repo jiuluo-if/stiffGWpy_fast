@@ -9,7 +9,7 @@ uniform grid.  That spline smooths the instantaneous-reheating ``sigma`` kink
 
 This module recomputes ``F`` from the *continuous piecewise-exact* ``sigma``
 evaluator, treating the reheating boundary as an exact breakpoint, so the kink
-bias is removed.  The callers (``stiffgwpy.fast_sgwb``) can then hand the exact
+bias is removed.  The callers (``stiffgwpy_fast.fast_sgwb``) can then hand the exact
 ``Phi``/``Phi_mid``/``S2``/``S2inv`` arrays to the existing numba stepping kernel
 without changing the ODE integration itself.
 """

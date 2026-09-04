@@ -156,7 +156,7 @@ def test_build_info_overrides_engine(tmp_path):
         'theory:\n  stiffGW:\n    engine: lsoda\n'
         'params:\n  r: {value: 0.01}\n', encoding='utf-8')
     info = MC.build_info(str(yaml_path), 'fast', 'production', 8, 500, 42)
-    theory = info['theory']['stiffgwpy.cobaya.stiffGW.stiffGW']
+    theory = info['theory']['stiffgwpy_fast.cobaya.stiffGW.stiffGW']
     assert theory['engine'] == 'fast'
     assert theory['accuracy_mode'] == 'production'
     assert theory['fast_threads'] == 8
@@ -170,8 +170,8 @@ def test_build_info_normalizes_qualified_theory_name(tmp_path):
         'theory:\n  stiffGW:\n    python_path: .\n'
         'params:\n  r: {value: 0.01}\n', encoding='utf-8')
     info = MC.build_info(str(yaml_path), 'fast', 'production', 8, 5, 1)
-    assert list(info['theory']) == ['stiffgwpy.cobaya.stiffGW.stiffGW']
-    assert 'python_path' not in info['theory']['stiffgwpy.cobaya.stiffGW.stiffGW']
+    assert list(info['theory']) == ['stiffgwpy_fast.cobaya.stiffGW.stiffGW']
+    assert 'python_path' not in info['theory']['stiffgwpy_fast.cobaya.stiffGW.stiffGW']
 
 
 def test_build_info_applies_explicit_initial_point_to_both_runs(tmp_path):

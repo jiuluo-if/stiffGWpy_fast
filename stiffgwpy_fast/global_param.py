@@ -55,7 +55,7 @@ Omega_mnuh2 = Omega_nh2/3 * rho_nu0       # the massive neutrino eigenstate
 
 ######      Thermal history from 20 keV ~ 10^6 GeV     ######
 
-with package_path('stiffgwpy', 'th.dat') as _th_path:
+with package_path('stiffgwpy_fast', 'th.dat') as _th_path:
     thdata = np.loadtxt(_th_path)
 T_th = thdata[:, 0]
 T_max = T_th[-1]

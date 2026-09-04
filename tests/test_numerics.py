@@ -8,8 +8,8 @@ import numpy as np
 from scipy.integrate import simpson
 from scipy.interpolate import PchipInterpolator
 
-from stiffgwpy import LCDM_SG
-from stiffgwpy import fast_sgwb as FS
+from stiffgwpy_fast import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
 
 
 def _random_model(rng):

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Cobaya theory adapter for :class:`stiffgwpy.stiff_SGWB.LCDM_SG`.
+"""Cobaya theory adapter for :class:`stiffgwpy_fast.stiff_SGWB.LCDM_SG`.
 
 The theory is registered under the fully-qualified class name
-``stiffgwpy.cobaya.stiffGW.stiffGW`` so it can be used from any working
+``stiffgwpy_fast.cobaya.stiffGW.stiffGW`` so it can be used from any working
 directory after ``pip install .`` (no ``python_path`` needed):
 
 .. code-block:: yaml
 
    theory:
-     stiffgwpy.cobaya.stiffGW.stiffGW:
+     stiffgwpy_fast.cobaya.stiffGW.stiffGW:
        engine: fast
        fallback: True
        accuracy_mode: fast
@@ -95,7 +95,7 @@ class stiffGW(Theory):
         try:
             from ..stiff_SGWB import LCDM_SG
         except ImportError:  # imported as a top-level module by cobaya
-            from stiffgwpy.stiff_SGWB import LCDM_SG
+            from stiffgwpy_fast.stiff_SGWB import LCDM_SG
         self.stiffGW_model = LCDM_SG()
         self.log.info("Initialized!")
 
@@ -213,7 +213,7 @@ class stiffGW(Theory):
             try:
                 from .. import fast_sgwb
             except ImportError:
-                from stiffgwpy import fast_sgwb
+                from stiffgwpy_fast import fast_sgwb
             sgwb_kwargs['threads'] = min(int(self.fast_threads),
                                          fast_sgwb.max_threads())
         if self.engine == 'reference':

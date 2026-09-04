@@ -5,7 +5,7 @@ This is the physics-first certification driver for the two user-facing fast
 profiles (``fast`` = plain-grid / speed-first, ``production`` = transition-refine
 / precision-first).  It never uses LSODA as a precision oracle; the precision
 anchor is the independent continuous-sigma reference pipeline
-(``stiffgwpy.reference``) on matched frequency subsets.
+(``stiffgwpy_fast.reference``) on matched frequency subsets.
 
 Phases (choose one or more):
   --phase convergence    fast-vs-fast convergence of h/freq_res/z_tail/col_step/phase_max
@@ -30,8 +30,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 ln10 = math.log(10.0)
 
@@ -270,7 +270,7 @@ def phase_oracle_independence(outdir):
     necessary.  This is the honest caveat behind "the reference is the truth".
     """
     os.makedirs(outdir, exist_ok=True)
-    from stiffgwpy import reference as REF
+    from stiffgwpy_fast import reference as REF
     m = LCDM_SG(**DEFAULT_POINT)
     # signal-band frequency subset (re-entered modes; the ill-defined
     # sub-horizon-today low-f tail carries no Delta Neff weight).

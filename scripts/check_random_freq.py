@@ -24,8 +24,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 PARAMS = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)   # baseline case A
 TOL = 1e-4                                             # algorithm's own convergence tolerance

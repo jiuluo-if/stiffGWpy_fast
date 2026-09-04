@@ -3,7 +3,7 @@
 
 Measures, on the default point, each engine's wall-clock time and its integrated
 ``Delta N_eff`` relative error against the *independent continuous-sigma
-reference* (``stiffgwpy.reference``) rather than the old LSODA path.  This is the
+reference* (``stiffgwpy_fast.reference``) rather than the old LSODA path.  This is the
 physics-first accuracy-vs-speed trade-off requested by the audit, not a
 fast-vs-LSODA speedup report.
 
@@ -27,8 +27,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 KW = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 
@@ -70,7 +70,7 @@ def meas_lsoda():
 
 
 def meas_reference():
-    from stiffgwpy import reference as REF
+    from stiffgwpy_fast import reference as REF
     m = LCDM_SG(**KW)
     t0 = time.perf_counter()
     ref = REF.run_reference(m, freq_res=1.0, z_tail=5.0, rtol=1e-11,

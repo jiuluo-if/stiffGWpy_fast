@@ -26,9 +26,9 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy._metrics import dex_abs, rel_abs, rel_linear_omega, signal_mask
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast._metrics import dex_abs, rel_abs, rel_linear_omega, signal_mask
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 CASES = [
     dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
@@ -148,7 +148,7 @@ def run_case(idx, kw):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='precision gate for the stiffgwpy fast solver')
+    ap = argparse.ArgumentParser(description='precision gate for the stiffgwpy_fast fast solver')
     ap.add_argument('--cases', nargs='+', type=int, default=None,
                     help='case indices (default: all 12)')
     ap.add_argument('--out', default=None,

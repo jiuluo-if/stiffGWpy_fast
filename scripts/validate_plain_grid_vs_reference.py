@@ -2,7 +2,7 @@
 """validate_plain_grid_vs_reference.py -- plain-grid (fast tier) vs oracle.
 
 Physics-first, LSODA-free.  The continuous-sigma DOP853 reference
-(``stiffgwpy.reference``) is the truth anchor; the plain-grid tier
+(``stiffgwpy_fast.reference``) is the truth anchor; the plain-grid tier
 (``accuracy_mode='fast'``: h=0.02 / col_step=8 / no transition_refine /
 phase_max=0 / construct frequency grid) is validated on the SAME z_tail
 (z_tail=8, matched to the certified Layer A runs) at its OWN frequency nodes:
@@ -35,10 +35,10 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from stiffgwpy import fast_sgwb as FS  # noqa: E402
-from stiffgwpy import global_param as gp  # noqa: E402
-from stiffgwpy import reference as REF  # noqa: E402
-from stiffgwpy.stiff_SGWB import LCDM_SG  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import global_param as gp  # noqa: E402
+from stiffgwpy_fast import reference as REF  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location(
     "validate_fast_vs_reference",

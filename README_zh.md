@@ -2,9 +2,12 @@
 
 [English](README.md) | 中文说明
 
-`stiffGWpy` 是一个计算 LCDM、刚性物质和原初随机引力波背景（SGWB）的宇宙学程序包。
+`stiffGWpy_fast` 是一个计算 LCDM、刚性物质和原初随机引力波背景（SGWB）的宇宙学程序包。
 项目提供快速求解器、独立连续 sigma 高精度参考流程，以及仅用于回归和运行时间对比的
 LSODA 流程。
+
+PyPI 安装名为 `stiffgwpy_fast`，Python 导入名为 `stiffgwpy_fast`，两者都与旧的
+`stiffgwpy` 项目区分开来。
 
 ## 功能概览
 
@@ -26,7 +29,7 @@ LSODA 流程。
 | `fast` | 快速探索、信号形状筛查 | plain-grid，速度优先，精度包络仍需按验证结果解释 |
 | `production` | 正式计算和 MCMC 热路径 | transition-refine，处理 kink、相位和自适应频率网格 |
 
-独立的 `stiffgwpy.reference` 连续 sigma 流程是精度锚点。LSODA 只用于回归、故障回退和
+独立的 `stiffgwpy_fast.reference` 连续 sigma 流程是精度锚点。LSODA 只用于回归、故障回退和
 运行时间比较，不是第三个生产档位。
 
 ## 安装
@@ -34,7 +37,7 @@ LSODA 流程。
 在项目目录执行：
 
 ```bash
-pip install stiffgwpy
+pip install stiffgwpy-fast
 ```
 
 如需 Cobaya 集成：
@@ -59,7 +62,7 @@ Git 中的 `docs/` 只保留选定的验证说明和较小的复现摘要；可�
 ## 基本用法
 
 ```python
-from stiffgwpy import LCDM_SG
+from stiffgwpy_fast import LCDM_SG
 
 model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 model.SGWB_iter()
@@ -78,7 +81,7 @@ python -m pytest -q -m slow
 python -m pytest -m cobaya -q
 python scripts/validate_manifest.py
 python -m build --wheel
-python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl
+python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 ```
 
 当前验证结果和精度边界以 [`docs/validation/validation_manifest.json`](docs/validation/validation_manifest.json)
@@ -95,7 +98,7 @@ python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl
 
 ## 目录
 
-- `stiffgwpy/`：Python 程序包和 Cobaya 适配器；
+- `stiffgwpy_fast/`：Python 程序包和 Cobaya 适配器；
 - `tests/`：单元测试、慢速数值门禁和 Cobaya 测试；
 - `scripts/`：验证、构建 manifest 和 wheel 冒烟脚本；
 - `docs/`：验证产物、复现说明和专题文档。

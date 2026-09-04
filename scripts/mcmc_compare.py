@@ -322,12 +322,12 @@ def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed,
     # can skip ``stiffGW.yaml`` defaults (h/col_step/... become undefined).
     th = theories.pop('stiffGW', None)
     if th is None:
-        th = theories.pop('stiffgwpy.cobaya.stiffGW.stiffGW', {})
+        th = theories.pop('stiffgwpy_fast.cobaya.stiffGW.stiffGW', {})
     info['theory'] = {
-        'stiffgwpy.cobaya.stiffGW.stiffGW': th,
+        'stiffgwpy_fast.cobaya.stiffGW.stiffGW': th,
         **theories,
     }
-    th = info['theory']['stiffgwpy.cobaya.stiffGW.stiffGW']
+    th = info['theory']['stiffgwpy_fast.cobaya.stiffGW.stiffGW']
     # The class is importable from the installed package; a source-relative
     # python_path would mask failures in wheel/qualified-name resolution.
     th.pop('python_path', None)
@@ -485,7 +485,7 @@ def parse_args(argv=None):
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--yaml', default=os.path.join(
-        repo, 'stiffgwpy', 'cobaya', 'mcmc_compare.yaml'))
+        repo, 'stiffgwpy_fast', 'cobaya', 'mcmc_compare.yaml'))
     p.add_argument('--out', default=os.path.join(repo, 'docs', 'mcmc'))
     p.add_argument('--samples', type=int, default=2000)
     p.add_argument('--seed', type=int, default=20260830)

@@ -10,7 +10,7 @@ from pathlib import Path
 
 FORBIDDEN_PARTS = {".github", "build", "dist", "docs", "scripts", "tests"}
 FORBIDDEN_NAMES = {"mcmc_compare.yaml"}
-REQUIRED_WHEEL_PARTS = {"stiffgwpy/__init__.py", "stiffgwpy/fast_sgwb.py"}
+REQUIRED_WHEEL_PARTS = {"stiffgwpy_fast/__init__.py", "stiffgwpy_fast/fast_sgwb.py"}
 
 
 def _is_forbidden(name: str) -> bool:
@@ -36,7 +36,7 @@ def verify(path: Path) -> list[str]:
         errors.extend(
             f"wheel 不应包含构建元数据：{name}"
             for name in names
-            if "stiffgwpy.egg-info" in name.replace("\\", "/").split("/")
+            if "stiffgwpy_fast.egg-info" in name.replace("\\", "/").split("/")
         )
         missing = sorted(REQUIRED_WHEEL_PARTS - normalized)
         errors.extend(f"wheel 缺少必要文件：{name}" for name in missing)

@@ -5,7 +5,7 @@ Date: 2026-09-03
 Code version: see manifest `commit`
 
 The precision anchor is the independent continuous-sigma reference
-(`stiffgwpy.reference`).  Accuracy is layered:
+(`stiffgwpy_fast.reference`).  Accuracy is layered:
 
 1. **Level 1 — spectrum.** signal/transition-region `Omega_GW` relative error
    and dex error.

@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from convergence_study import metrics, run_fast, run_lsoda  # noqa: E402
 
-from stiffgwpy import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 
 try:
     import psutil

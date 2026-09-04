@@ -3,8 +3,8 @@ import numpy as np
 import pytest
 from numba import get_num_threads
 
-from stiffgwpy import LCDM_SG
-from stiffgwpy import fast_sgwb as FS
+from stiffgwpy_fast import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
 
 
 def _make_model(**kw):

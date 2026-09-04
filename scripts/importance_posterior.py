@@ -72,8 +72,8 @@ def fast_point(kw, freq_res=1.0):
     """Production fast solve; returns log10OmegaGW at the 11 bins + DN."""
     from scipy import interpolate
 
-    from stiffgwpy import fast_sgwb as FS
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import fast_sgwb as FS
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
     cfg = FS.apply_accuracy_mode('production')
     FS.set_threads(1)
     m = LCDM_SG(**kw)
@@ -192,8 +192,8 @@ def phase_posterior(args):
 
 
 def ref_at_bins(kw, bins, dn, rtol=1e-9, z_tail=8.0, workers=4):
-    from stiffgwpy import reference as REF
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import reference as REF
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
     m = LCDM_SG(**kw)
     Ogw, Oj, Opgw, used = REF.spectrum_reference(
         m, np.asarray(bins, dtype=float), dn, z_tail=z_tail, rtol=rtol,

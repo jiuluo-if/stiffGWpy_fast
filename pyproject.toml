@@ -3,8 +3,8 @@ requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "stiffgwpy"
-version = "0.2.0"
+name = "stiffgwpy_fast"
+version = "0.2.1"
 description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with plain-grid as the default fast profile and an independent continuous-sigma reference oracle."
 readme = "README.md"
 license = "GPL-3.0-only"
@@ -34,28 +34,29 @@ release = ["twine"]
 [project.urls]
 Homepage = "https://github.com/jiuluo-if/stiffGWpy_fast"
 Source = "https://github.com/jiuluo-if/stiffGWpy_fast"
+PyPI = "https://pypi.org/project/stiffgwpy-fast/"
 
 [tool.setuptools]
 packages = [
-    "stiffgwpy",
-    "stiffgwpy.cobaya",
-    "stiffgwpy.cobaya.likelihoods",
-    "stiffgwpy.cobaya.likelihoods.LIGO_SGWB",
-    "stiffgwpy.cobaya.likelihoods.PTA",
-    "stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2",
-    "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr",
+    "stiffgwpy_fast",
+    "stiffgwpy_fast.cobaya",
+    "stiffgwpy_fast.cobaya.likelihoods",
+    "stiffgwpy_fast.cobaya.likelihoods.LIGO_SGWB",
+    "stiffgwpy_fast.cobaya.likelihoods.PTA",
+    "stiffgwpy_fast.cobaya.likelihoods.PTA.EPTAdr2",
+    "stiffgwpy_fast.cobaya.likelihoods.PTA.NANOGrav15yr",
 ]
 
 [tool.setuptools.package-data]
-stiffgwpy = ["*.dat", "*.npz"]
-"stiffgwpy.cobaya" = ["*.yaml"]
-"stiffgwpy.cobaya.likelihoods.LIGO_SGWB" = ["*.dat", "*.yaml"]
-"stiffgwpy.cobaya.likelihoods.PTA" = ["*.yaml"]
-"stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2" = ["*.dat", "*.txt"]
-"stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr" = ["*.npy"]
+stiffgwpy_fast = ["*.dat", "*.npz"]
+"stiffgwpy_fast.cobaya" = ["*.yaml"]
+"stiffgwpy_fast.cobaya.likelihoods.LIGO_SGWB" = ["*.dat", "*.yaml"]
+"stiffgwpy_fast.cobaya.likelihoods.PTA" = ["*.yaml"]
+"stiffgwpy_fast.cobaya.likelihoods.PTA.EPTAdr2" = ["*.dat", "*.txt"]
+"stiffgwpy_fast.cobaya.likelihoods.PTA.NANOGrav15yr" = ["*.npy"]
 
 [tool.setuptools.exclude-package-data]
-"stiffgwpy.cobaya" = ["mcmc_compare.yaml"]
+"stiffgwpy_fast.cobaya" = ["mcmc_compare.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -69,14 +70,14 @@ markers = [
 [tool.ruff]
 line-length = 120
 target-version = "py39"
-exclude = ["docs", "LICENSE.md", "stiffgwpy/cobaya/likelihoods"]
+exclude = ["docs", "LICENSE.md", "stiffgwpy_fast/cobaya/likelihoods"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "W"]
 
 [tool.mypy]
 python_version = "3.9"
-files = "stiffgwpy/config.py,stiffgwpy/_resources.py"
+files = "stiffgwpy_fast/config.py,stiffgwpy_fast/_resources.py"
 check_untyped_defs = true
 disallow_untyped_defs = true
 ignore_missing_imports = true

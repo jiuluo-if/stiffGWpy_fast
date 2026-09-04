@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 import tempfile
 from pathlib import Path
 
@@ -13,10 +14,12 @@ mpi.set_mpi_disabled()
 
 os.chdir(tempfile.gettempdir())  # 切换到其他工作目录，验证限定类名导入
 repo = str(Path(__file__).resolve().parents[1])
-base = os.path.join(repo, "stiffgwpy", "cobaya")
+if repo not in sys.path:
+    sys.path.insert(0, repo)
+base = os.path.join(repo, "stiffgwpy_fast", "cobaya")
 yaml_text = open(os.path.join(base, "mcmc_compare.yaml"), encoding="utf-8").read()
 run_info = yaml.safe_load(yaml_text)
-run_info["theory"] = {"stiffgwpy.cobaya.stiffGW.stiffGW": {
+run_info["theory"] = {"stiffgwpy_fast.cobaya.stiffGW.stiffGW": {
     "engine": "fast", "fallback": True, "accuracy_mode": "production",
     "fast_threads": 8}}
 for sec in ("theory", "likelihood"):
