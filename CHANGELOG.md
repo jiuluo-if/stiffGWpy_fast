@@ -10,6 +10,8 @@
   coverage reporting, and validation-manifest schema checks.
 - Fixed optional-Cobaya test collection and capped adapter thread requests to
   the runner's available Numba budget.
+- Fixed the installed-wheel smoke probe so optional Cobaya resources are
+  checked only when Cobaya is installed.
 - Kept the independent continuous-sigma reference as the precision anchor;
   existing `NOT VERIFIED` and `FAIL` validation results remain unchanged.
 

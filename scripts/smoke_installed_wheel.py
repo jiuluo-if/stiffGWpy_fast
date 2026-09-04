@@ -8,6 +8,7 @@ import tempfile
 from pathlib import Path
 
 PROBE = r'''
+import importlib.util
 from importlib import resources
 import numpy as np
 from pathlib import Path
@@ -17,6 +18,10 @@ from stiffgwpy import LCDM_SG
 
 required = {
     "stiffgwpy": ("th.dat", "fd_table.npz"),
+}
+if importlib.util.find_spec("cobaya") is not None:
+    # 安装可选 Cobaya 依赖时，同时核验其插件和似然数据资源。
+    required.update({
     "stiffgwpy.cobaya": ("stiffGW.yaml",),
     "stiffgwpy.cobaya.likelihoods.LIGO_SGWB": ("C_O1_O2_O3.dat", "LVK_SGWB_CC.yaml"),
     "stiffgwpy.cobaya.likelihoods.PTA": ("IPTA.yaml", "NANOGrav.yaml"),
@@ -24,7 +29,7 @@ required = {
     "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr": (
         "density_mock.npy", "freqs.npy", "log10rhogrid.npy"
     ),
-}
+    })
 for package, names in required.items():
     root = resources.files(package)
     for name in names:

@@ -48,6 +48,8 @@ Cobaya 却在 fixture 导入 Cobaya 专用脚本；GitHub runner 的 Numba 上�
 而 Cobaya smoke 请求了 8 个线程并反复回退至 LSODA 直至超时。修复为让
 Cobaya 专用 fixture 在缺少可选依赖时整体跳过，并通过公开的
 `max_threads()` 在 adapter 边界裁剪线程请求；本地已覆盖这两条路径。
+此外，wheel 冒烟检查仅在安装了 Cobaya 时核验其可选资源，避免普通矩阵任务
+因缺少可选依赖而失败。
 
 ## P0 — correctness and trust
 
