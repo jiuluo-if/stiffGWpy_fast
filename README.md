@@ -1,5 +1,11 @@
 # stiffGWpy_fast
 
+[中文说明](README_zh.md) | English
+
+The Chinese overview is maintained in [README_zh.md](README_zh.md); keep the
+two language entry pages synchronized when updating features, parameters, or
+validation conclusions.
+
 **LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB)**
 cosmology code, with a fast solver exposed as exactly **two user-facing fast
 profiles**, an independent continuous-sigma high-accuracy reference pipeline
