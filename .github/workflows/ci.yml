@@ -31,6 +31,15 @@ jobs:
         run: python -m mypy
       - name: Tests (fast unit tests; slow LSODA gates deselected by default)
         run: python -m pytest
+      - name: Coverage report (Python 3.11)
+        if: matrix.python-version == '3.11'
+        run: python -m pytest --cov=stiffgwpy --cov-report=term-missing:skip-covered --cov-report=xml
+      - name: Upload coverage artifact (Python 3.11)
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
       - name: Wheel build gate
         run: python -m build --sdist --wheel
       - name: Installed wheel smoke test
