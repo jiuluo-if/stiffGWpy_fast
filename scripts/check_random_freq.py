@@ -36,7 +36,7 @@ def main(seed=20260829, out_png=None):
 
     # ---- old method (original LSODA solver) ----
     m_old = LCDM_SG(**PARAMS)
-    m_old.SGWB_iter()
+    m_old.SGWB_iter(engine='lsoda')
     if not m_old.SGWB_converge:
         raise RuntimeError('old method did not converge')
 

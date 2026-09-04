@@ -2,8 +2,8 @@
 
 ## 0.2.0 — 2026-09-04
 
-- Added immutable per-call fast-solver configuration and an explicit
-  science-safe `production` default for high-level fast calls.
+- Added immutable per-call fast-solver configuration with `fast` plain-grid as
+  the default high-level profile; `production` remains an explicit precision mode.
 - Added package-resource loading and an installed-wheel smoke test covering core,
   Cobaya, LIGO, and PTA data.
 - Added Python-version CI coverage, a scheduled/on-demand slow numerical job,

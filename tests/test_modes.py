@@ -154,7 +154,7 @@ def test_resolve_config_is_immutable_and_does_not_mutate_module_state(fast_setti
     assert FS.get_settings() == before
 
 
-def test_high_level_fast_defaults_to_production(monkeypatch, fast_settings):
+def test_default_engine_uses_plain_grid(monkeypatch, fast_settings):
     captured = {}
 
     def fake_fast(m, **kw):
@@ -164,12 +164,12 @@ def test_high_level_fast_defaults_to_production(monkeypatch, fast_settings):
 
     monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-    assert m.SGWB_iter(engine='fast') is m
+    assert m.SGWB_iter() is m
     cfg = captured['config']
-    assert cfg == FS.resolve_config('production')
-    assert cfg.freq_grid == 'adaptive'
-    assert cfg.z_tail == 8.0
-    assert cfg.phase_max == 0.5
+    assert cfg == FS.resolve_config('fast')
+    assert cfg.freq_grid == 'construct'
+    assert cfg.z_tail == 5.0
+    assert cfg.phase_max == 0.0
 
 
 def test_pool_size_env_override(monkeypatch):

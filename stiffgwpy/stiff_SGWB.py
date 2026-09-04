@@ -175,7 +175,7 @@ class LCDM_SG(LCDM_SN):
         self.Opgw = [single_sol[4] for single_sol in res]  # dOmega_pGW / dlnf
 
 
-    def SGWB_iter(self, engine='lsoda', fallback=False, tol=1e-4,
+    def SGWB_iter(self, engine='fast', fallback=False, tol=1e-4,
                   z_tail=None, rtol=1e-6, atol=None, freq_res=None,
                   h=None, col_step=None, threads=None,
                   accuracy_mode=_DEFAULT_ACCURACY_MODE,
@@ -187,9 +187,10 @@ class LCDM_SG(LCDM_SN):
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
         for which the extra radiation due to the SGWB is mimicked by a constant Delta N_eff.
 
-        ``engine`` selects the solver: 'lsoda' (default; the original adaptive
-        LSODA path) or 'fast' (the experimental approximate fast solver in
-        ``stiffgwpy.fast_sgwb``).  When ``engine='fast'`` and the fast solver
+        ``engine`` selects the solver: 'fast' (default; the plain-grid fast
+        solver) or 'lsoda' (the original adaptive LSODA path) or 'reference'
+        (the independent continuous-sigma precision path).  When
+        ``engine='fast'`` and the fast solver
         fails (returns None or raises), ``fallback=True`` automatically reruns
         the LSODA path.  ``tol`` is the outer Delta N_eff self-consistency
         stopping criterion (default 1e-4); ``z_tail``, ``rtol`` and ``atol``
@@ -198,8 +199,8 @@ class LCDM_SG(LCDM_SN):
         (audit-only; 1.0 = default grid).
 
         Fast-path tuning (ignored by the LSODA path): when ``engine='fast'`` and
-        ``accuracy_mode`` is omitted, the high-level API uses the ``production``
-        preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
+        ``accuracy_mode`` is omitted, the high-level API uses the ``fast``
+        plain-grid preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
         settings. Otherwise ``accuracy_mode`` selects
         a named preset from ``fast_sgwb.ACCURACY_MODES`` ('reference',
         'production' or 'ultra-fast'); explicit ``h``, ``col_step``, ``threads``
@@ -211,11 +212,10 @@ class LCDM_SG(LCDM_SN):
         On success the model object is returned.
 
         """
-        # A fast high-level call must be science-safe by default. The explicit
-        # None branch below remains available to compatibility callers that
-        # intentionally manage the legacy module setters themselves.
+        # 快速高层调用默认使用 plain-grid；显式 None 仍保留给需要手动管理
+        # 旧模块设置的兼容调用方。
         if engine == 'fast' and accuracy_mode is _DEFAULT_ACCURACY_MODE:
-            accuracy_mode = 'production'
+            accuracy_mode = 'fast'
         # None sentinel means "engine default" and is resolved to a concrete
         # value before any engine branch consumes it.  We capture the
         # explicit-override flag first so an explicitly-passed z_tail/freq_res

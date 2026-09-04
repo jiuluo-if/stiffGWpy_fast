@@ -64,7 +64,7 @@ def meas_fast(tr):
 def meas_lsoda():
     m = LCDM_SG(**KW)
     t0 = time.perf_counter()
-    m.SGWB_iter()
+    m.SGWB_iter(engine='lsoda')
     dt = time.perf_counter() - t0
     return dt, float(m.cosmo_param['DN_eff'])
 
