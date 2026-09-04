@@ -28,6 +28,12 @@ default values from silently overriding the preset (the historical bug where a
 `z_tail: 7.0` YAML default masked the preset's `z_tail: 8.0`).  Setting any of
 them to a non-zero value is an explicit override.
 
+The high-level fast solver also defaults to `production` when `accuracy_mode`
+is omitted. `accuracy_mode: null` is reserved for compatibility with callers
+that deliberately manage legacy module settings. The adapter passes resolved
+settings as a per-call immutable configuration, so selecting a mode does not
+mutate process-global solver defaults.
+
 ## `eval_freqs`
 
 Set `eval_freqs: [log10(f1), ...]` or `eval_freqs: /path/to/file` to force-add
@@ -53,3 +59,6 @@ fallback/escalation fraction.
 numerical failure (tagged `LSODA_FALLBACK`); a deterministic `shared_Neff_guard`
 rejection is never retried.  `auto_escalate` with `likelihood_sigma`/`dlogl_tol`
 escalates when the estimated `|Delta logL|` exceeds the budget.
+
+The serial adapter only requires the `cobaya` extra. Install the separate
+`mpi` extra when the execution environment actually needs `mpi4py`.

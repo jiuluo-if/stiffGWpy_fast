@@ -1,18 +1,21 @@
-# This is a file module which contains classes and functions 
+# This is a file module which contains classes and functions
 # which calculate the cosmological model of LCDM + stiff + primordial SGWB
 
-import os, yaml, math
+import math
 import multiprocessing as mp
+import os
 from functools import partial
+
 import numpy as np
 from numpy import concatenate as cat
-from scipy import interpolate, integrate
+from scipy import integrate
 
+from .functions import solve_SGWB
 from .global_param import *
-from .functions import int_FD, solve_SGWB
 from .LCDM_stiff_Neff import LCDM_SN
 
 MAX_ITER = 60            # cap on the outer bisection loop
+_DEFAULT_ACCURACY_MODE = object()
 
 
 def _mpi_world_size():
@@ -78,7 +81,7 @@ class LCDM_SG(LCDM_SN):
     then modify the 'obj_name.cosmo_param' dictionary with desired values.
     
     """
-    def __init__(self, *args, 
+    def __init__(self, *args,
                  **kwargs):
         LCDM_SN.__init__(self, *args, **kwargs)
         # Evaluation telemetry is intentionally persistent across ``reset``
@@ -97,17 +100,17 @@ class LCDM_SG(LCDM_SN):
         self.reference_evals = 0
         self.escalations = 0
         self.escalated_from = None
-        self.reset()    
-      
-        
+        self.reset()
+
+
     def reset(self):
-        #LCDM_SN.derived_param(self)  
+        #LCDM_SN.derived_param(self)
         if hasattr(self, 'DN_eff_orig') and (self.DN_eff_orig is not None):
             self.cosmo_param['DN_eff'] = self.DN_eff_orig
         self.DN_eff_orig = None
-        self.SGWB_converge = False     # Whether the SGWB has been successfully computed     
-        
-        
+        self.SGWB_converge = False     # Whether the SGWB has been successfully computed
+
+
     #@property
 
 
@@ -121,44 +124,44 @@ class LCDM_SG(LCDM_SN):
 
         j = self.find_index_hc(freq+3)           # solver begins at kc/aH <= 10^{-3}
         z0 = (freq-self.f_hor[j]) * ln10         # convert to ln(kc/aH)
-        
+
         result = solve_SGWB(self.Nv, self.sigma, j, z0,
                             z_tail=z_tail, rtol=rtol, atol=atol)
-                
+
         N_this = self.Nv[(self.Nv >= result.sol.t_min) & (self.Nv <= result.sol.t_max)]
         [zf_this, xf_this, yf_this] = result.sol(N_this)
         Th_this = np.divide(yf_this, np.exp(zf_this))
         Oj_this = np.multiply(xf_this, Th_this)/3 * P_t
         Ogw_this = (np.power(xf_this,2) + np.power(yf_this,2))/24 * P_t + Oj_this
         Opgw_this = (-5*np.power(xf_this,2) + 7*np.power(yf_this,2))/72 * P_t
-                
+
         # high-frequency, post-horizon-reentry regime
         if (N_this[-1]<self.Nv[-1]):
             N_hf = self.Nv[self.Nv > N_this[-1]]
             f_hf = self.f_hor[self.Nv > N_this[-1]]
-            
+
             coeff = math.sqrt(0.5*(xf_this[-1]**2+yf_this[-1]**2))
             Th_hf = coeff * np.exp(-zf_this[-1] + N_this[-1] - N_hf)      # the rms T_h, time-averaged
             xf_hf = np.multiply(Th_hf, np.power(10, freq-f_hf))           # the rms x_f, time-averaged
             Oj_hf = -np.power(Th_hf,2)/3 * P_t
             Opgw_hf = np.power(xf_hf,2)/36 * P_t
             Ogw_hf = Opgw_hf * 3 + Oj_hf
-                    
+
             N_this = cat((N_this, N_hf), axis=None)
             Th_this = cat((Th_this, Th_hf), axis=None)
             Oj_this = cat((Oj_this, Oj_hf), axis=None)
             Ogw_this = cat((Ogw_this, Ogw_hf), axis=None)
             Opgw_this = cat((Opgw_this, Opgw_hf), axis=None)
-                    
+
         return [N_this, Th_this, Oj_this, Ogw_this, Opgw_this]
-        
-    
+
+
     def run_SGWB(self, z_tail=5.0, rtol=1e-6, atol=None):
         """
         Solve for selected frequencies and given expansion history
         using multiprocessing parallelism
         """
-        
+
         with mp.Pool(processes=_sgwb_pool_size()) as pool:
             worker = partial(self.run_SGWB_single, z_tail=z_tail, rtol=rtol, atol=atol)
             res_it = pool.imap(worker, self.f, chunksize=3)
@@ -170,11 +173,12 @@ class LCDM_SG(LCDM_SN):
         self.Oj = [single_sol[2] for single_sol in res]    # \dot T_h * T_h / 3H * P_t
         self.Ogw = [single_sol[3] for single_sol in res]   # dOmega_GW / dlnf
         self.Opgw = [single_sol[4] for single_sol in res]  # dOmega_pGW / dlnf
-        
-             
+
+
     def SGWB_iter(self, engine='lsoda', fallback=False, tol=1e-4,
                   z_tail=None, rtol=1e-6, atol=None, freq_res=None,
-                  h=None, col_step=None, threads=None, accuracy_mode=None,
+                  h=None, col_step=None, threads=None,
+                  accuracy_mode=_DEFAULT_ACCURACY_MODE,
                   auto_escalate=False, error_tol=None, sigma_exact=False,
                   escalate_to_reference=False, transition_refine=None,
                   likelihood_sigma=None, dlogl_tol=None, eval_freqs=None):
@@ -193,17 +197,25 @@ class LCDM_SG(LCDM_SN):
         tolerances).  ``freq_res`` scales the frequency-grid density
         (audit-only; 1.0 = default grid).
 
-        Fast-path tuning (ignored by the LSODA path): ``accuracy_mode`` selects
+        Fast-path tuning (ignored by the LSODA path): when ``engine='fast'`` and
+        ``accuracy_mode`` is omitted, the high-level API uses the ``production``
+        preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
+        settings. Otherwise ``accuracy_mode`` selects
         a named preset from ``fast_sgwb.ACCURACY_MODES`` ('reference',
         'production' or 'ultra-fast'); explicit ``h``, ``col_step``, ``threads``
         and non-default ``z_tail``/``freq_res``/``tol`` override the preset.
-        Without a preset, ``h``/``col_step``/``threads`` default to the
-        module-level settings (env FAST_H/FAST_COL_STEP/FAST_THREADS) and
-        ``z_tail``/``freq_res``/``tol`` are applied as passed.  These settings
-        are process-global module state, as documented in ``fast_sgwb``.
+        With ``accuracy_mode=None``, ``h``/``col_step``/``threads`` snapshot
+        the legacy settings (env FAST_H/FAST_COL_STEP/FAST_THREADS) and
+        ``z_tail``/``freq_res``/``tol`` are applied as passed. The preferred
+        named-mode path is per-call and does not mutate that legacy state.
         On success the model object is returned.
 
         """
+        # A fast high-level call must be science-safe by default. The explicit
+        # None branch below remains available to compatibility callers that
+        # intentionally manage the legacy module setters themselves.
+        if engine == 'fast' and accuracy_mode is _DEFAULT_ACCURACY_MODE:
+            accuracy_mode = 'production'
         # None sentinel means "engine default" and is resolved to a concrete
         # value before any engine branch consumes it.  We capture the
         # explicit-override flag first so an explicitly-passed z_tail/freq_res
@@ -233,9 +245,10 @@ class LCDM_SG(LCDM_SN):
             self.fast_failure_reason = None
             fallback_attempted = False
             try:
+                config_overrides = {}
                 if accuracy_mode is not None:
-                    cfg = fast_sgwb.apply_accuracy_mode(accuracy_mode)
                     canonical = fast_sgwb.normalize_accuracy_mode(accuracy_mode)
+                    cfg = fast_sgwb.ACCURACY_MODES[canonical]
                     self.accuracy_mode_used = canonical
                     self.accuracy_profile = (
                         'plain-grid' if canonical == 'fast'
@@ -245,33 +258,25 @@ class LCDM_SG(LCDM_SN):
                     f_freq = cfg['freq_res']
                     tr_mode = cfg.get('transition_refine', False)
                     if h is not None:
-                        cfg['h'] = h
+                        config_overrides['h'] = h
                     if col_step is not None:
-                        cfg['col_step'] = col_step
+                        config_overrides['col_step'] = col_step
                     if threads is not None:
-                        cfg['threads'] = threads
+                        config_overrides['threads'] = threads
                     if z_tail_explicit:
-                        cfg['z_tail'] = z_tail
+                        config_overrides['z_tail'] = z_tail
                     if tol != 1e-4:
                         f_tol = tol
                     if freq_res_explicit:
                         f_freq = freq_res
-                    fast_sgwb.set_h(cfg['h'])
-                    fast_sgwb.set_col_step(cfg['col_step'])
-                    fast_sgwb.set_threads(min(cfg['threads'],
-                                              fast_sgwb._MAX_THREADS))
-                    fast_sgwb.set_z_tail(cfg['z_tail'])
+                    config = fast_sgwb.resolve_config(canonical, **config_overrides)
                 else:
                     self.accuracy_mode_used = 'none'
                     self.accuracy_profile = 'manual'
-                    if h is not None:
-                        fast_sgwb.set_h(h)
-                    if col_step is not None:
-                        fast_sgwb.set_col_step(col_step)
-                    if threads is not None:
-                        fast_sgwb.set_threads(threads)
-                    if z_tail_explicit:
-                        fast_sgwb.set_z_tail(z_tail)
+                    config_overrides = dict(h=h, col_step=col_step,
+                                            threads=threads,
+                                            z_tail=z_tail if z_tail_explicit else None)
+                    config = fast_sgwb.resolve_config(None, **config_overrides)
                     f_tol = tol
                     f_freq = freq_res
                     tr_mode = bool(transition_refine)
@@ -281,6 +286,7 @@ class LCDM_SG(LCDM_SN):
                                                   freq_res=f_freq,
                                                   sigma_exact=sigma_exact,
                                                   transition_refine=tr_mode,
+                                                  config=config,
                                                   eval_freqs=eval_freqs)
             except Exception as exc:
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
@@ -441,14 +447,14 @@ class LCDM_SG(LCDM_SN):
             if not converged:
                 return None
 
-            
-            #print(DN_gw_new, self.DN_gw, self.cosmo_param['DN_eff']) 
-            self.SGWB_converge = True           
-            self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # log10(H/s^-1), H = 2pi * f_hor / a 
+
+            #print(DN_gw_new, self.DN_gw, self.cosmo_param['DN_eff'])
+            self.SGWB_converge = True
+            self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # log10(H/s^-1), H = 2pi * f_hor / a
             self.DN_gw = Neff0 * np.multiply(self.g2, np.exp(2*(self.f_hor-self.f_hor[-1])*ln10+2*(self.Nv-self.Nv[-1]))) / Omega_nu
             # Obtain the entire evolution of the DN_eff due to SGWB. It is actually rho_GW(N) / (rho_{gamma,0}*7/8*(4/11)**(4/3)).
             # Now self.DN_gw[-1] + self.DN_eff_orig = self.cosmo_param['DN_eff'].
-            
+
             self.Ogw_today = np.array([self.Ogw[i][-1] for i in range(len(self.f))])
             self.Opgw_today = np.array([self.Opgw[i][-1] for i in range(len(self.f))])
             self.Oj_today = np.array([self.Oj[i][-1] for i in range(len(self.f))])
@@ -464,24 +470,24 @@ class LCDM_SG(LCDM_SN):
             #add_boundary_knots(Ogw_lin)
             #self.log10OmegaGW_grid[self.f_grid<=self.f[0]] = Ogw_spl(self.f_grid[self.f_grid<=self.f[0]])
             #self.log10OmegaGW_grid[self.f_grid>self.f[0]] = Ogw_lin(self.f_grid[self.f_grid>self.f[0]], nu=0)
-                
-            
+
+
             ###  Extra radiation (e.g., SGWB) parameterized as kappa_rad(T_i) for AlterBBN
-            
+
             self.kappa_r = self.cosmo_param['DN_eff']* 7/8*(4/11)**(4/3) * z_ratio**4
-            # Using the final asymptotic value of Delta N_eff, since for all reasonable T_re (>~ 1 MeV), 
+            # Using the final asymptotic value of Delta N_eff, since for all reasonable T_re (>~ 1 MeV),
             # Delta N_eff,GW has already (or almost) reached its asymptotic value by T_i=27e9 K for AlterBBN.
 
         return self if self.SGWB_converge else None
 
     # End of SGWB_iter
-    
+
 
 
     def Tensor_power(self, freq):
         return self.derived_param['A_t'] * np.power((10**freq)/f_piv, self.derived_param['nt'])
 
-    
+
     def find_index_hc(self, freq):
         """
         Find the index in the number of e-folds array at which 
@@ -490,8 +496,8 @@ class LCDM_SG(LCDM_SN):
         j = 0
         while freq <= self.f_hor[j] and j<len(self.N)-1:
             j = j+1
-        if (j >= 1): j = j-1 
-            
+        if (j >= 1): j = j-1
+
         return j
 
 
@@ -511,35 +517,35 @@ class LCDM_SG(LCDM_SN):
         fmax = self.f_hor[0]; fmin = min(self.f_hor); fcmb = math.log10(f_piv)
         if self.derived_param['nt']>0:            # Only count modes whose superhorizon power is less than unity
             fmax = min(fmax, (-math.log10(self.derived_param['A_t']))/self.derived_param['nt']+math.log10(f_piv))
-            
+
         f = fmax+np.zeros(1)
         f = cat((f, f[-1]-np.linspace(1,24,int(24*r))*1e-3/r), axis=None)
         f = cat((f, f[-1]-np.linspace(1,13,int(13*r))*2e-3/r), axis=None)
         f = cat((f, f[-1]+5e-2-np.logspace(-1.28,-1, num=max(2,int(17*r)))), axis=None)
         f = cat((f, f[-1]+1e-1-np.logspace(-1,0, num=max(2,int(38*r)))[1:]), axis=None)
         f = cat((f, f[-1]-np.linspace(1,10,int(10*r))*.2/r), axis=None)
-        
-        if fmax >= self.f_re: 
+
+        if fmax >= self.f_re:
             f = f[np.logical_or(f>=self.f_re+.2, f>=fmax)]; f = f[f>=fmax-.4]
             f = cat((f, np.arange(f[-1]-.5, self.f_re+1.5, -.5/r)), axis=None)          # before T_re, during reheating
-            f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1/r)), axis=None);          # approaching f_re
+            f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1/r)), axis=None)          # approaching f_re
             f = cat((f, np.arange(f[-1]-.05, self.f_re+.4, -.05/r)), axis=None)
-            f = cat((f, np.arange(f[-1]-.01, self.f_re-.22, -.01/r)), axis=None);        # through f_re
+            f = cat((f, np.arange(f[-1]-.01, self.f_re-.22, -.01/r)), axis=None)        # through f_re
             f = cat((f, np.arange(f[-1]-.022, self.f_re-.5, -.02/r)), axis=None)
-            f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05/r)), axis=None);         # away from f_re
+            f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05/r)), axis=None)         # away from f_re
             f = cat((f, np.arange(f[-1]-.2, self.f_re-3, -.2/r)), axis=None)
 
         if self.rhostiff_re > self.rhorad_re:
-            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1/r)), axis=None)     # after T_re, before T_sr 
-            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2/r)), axis=None)   # through T_sr (the ankle)    
+            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1/r)), axis=None)     # after T_re, before T_sr
+            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2/r)), axis=None)   # through T_sr (the ankle)
 
         f = f[f>=fcmb]
         f = cat((f, np.arange(f[-1]-1, fcmb, -1/r)), axis=None)                         # RD, before z_eq
         f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2/r)), axis=None); f = f[f>=fmin]     # through z_eq to the present
-        
+
         self.f = f
 
-    
+
     def int_SGWB(self):
         """
         Integrate the SGWB spectrum to obtain the bolometric energy fractions at each moment.
@@ -547,7 +553,7 @@ class LCDM_SG(LCDM_SN):
         """
         self.g2 = np.zeros_like(self.Nv)      # total Omega_gw
         self.w2 = np.zeros_like(self.Nv)      # total Omega_pgw
-        
+
         # Patch SGWB solutions into matrices for integration over f
         M_N_hc = -np.ones((len(self.f),len(self.Nv)))
         M_Ogw = np.zeros_like(M_N_hc); M_Opgw = np.zeros_like(M_N_hc); M_Oj = np.zeros_like(M_N_hc)
@@ -557,7 +563,7 @@ class LCDM_SG(LCDM_SN):
             cond = self.N_hc[i]>=self.N_hc[i][0]
             M_N_hc[i, (mask := np.isin(self.Nv, self.N_hc[i][cond]))] = self.N_hc[i][cond]
             M_Ogw[i,mask] = self.Ogw[i][cond]; M_Opgw[i,mask] = self.Opgw[i][cond]; M_Oj[i,mask] = self.Oj[i][cond]
-            
+
         M_N_hc = np.transpose(M_N_hc); M_Ogw = np.transpose(M_Ogw); M_Opgw = np.transpose(M_Opgw); M_Oj = np.transpose(M_Oj)
 
         # Do the integration!
@@ -568,17 +574,17 @@ class LCDM_SG(LCDM_SN):
             Ogw_int = np.flip(M_Ogw[i,ind_int]); Opgw_int = np.flip(M_Opgw[i,ind_int]); Oj_int = np.flip(M_Oj[i,ind_int])
 
             if len(f_int)>=2:
-                # do not consider the negative super-horizon contribution from Omega_j, for the moment...    
+                # do not consider the negative super-horizon contribution from Omega_j, for the moment...
                 self.g2[i] = integrate.simpson(Ogw_int-Oj_int, f_int) * ln10
                 #self.g2[i] = integrate.simpson(Ogw_int, f_int) * ln10
                 self.w2[i] = integrate.simpson(Opgw_int, f_int) * ln10
             else:
                 self.g2[i] = 0; self.w2[i] = 0
-            
+
             #fx = np.arange(f_int.min(), f_int.max(), .01)
             #spline_gw = interpolate.InterpolatedUnivariateSpline(f_int, Ogw_int-Oj_int)
             #spline_pgw = interpolate.InterpolatedUnivariateSpline(f_int, Opgw_int)   # Opgw can be negative
-            #self.g2[i] = integrate.simpson(spline_gw(fx), fx) * math.log(10)         
+            #self.g2[i] = integrate.simpson(spline_gw(fx), fx) * math.log(10)
             #self.w2[i] = integrate.simpson(spline_pgw(fx), fx) * math.log(10)
 
 

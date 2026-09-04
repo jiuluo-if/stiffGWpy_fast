@@ -1,15 +1,18 @@
-# This is a file module which contains classes and functions 
+# This is a file module which contains classes and functions
 # which calculate the cosmological model of LCDM + stiff + constant N_eff
 
-import os, yaml, math
-#import multiprocessing as mp
-import numpy as np
-from numpy import concatenate as cat
+import math
+import os
+
 #from scipy import interpolate
 from pathlib import Path
 
-from .global_param import *
+#import multiprocessing as mp
+import numpy as np
+import yaml
+
 from .functions import int_FD
+from .global_param import *
 
 
 class LCDM_SN:
@@ -32,12 +35,12 @@ class LCDM_SN:
     and can be modified later on.
   
     """
-  
-    def __init__(self, *args, 
+
+    def __init__(self, *args,
                  **kwargs):
         if len(args) > 0:
             if type(args[0]) == str:
-                if os.path.exists(args[0]): 
+                if os.path.exists(args[0]):
                     if Path(args[0]).suffix in ('.yml', '.yaml'):
                         with open(args[0], 'r') as stream:
                             try:
@@ -49,7 +52,7 @@ class LCDM_SN:
         else:
             self.cosmo_param = {'Omega_bh2': 0.0223828, 'Omega_ch2': 0.1201075, 'H0': 67.32117, 'DN_eff': 0.,
                                 'A_s': 2.100549e-9, 'r': 0., 'n_t': 0., 'cr': 0,
-                                'T_re': 1e12, 'DN_re': 0, 'kappa10': 0., 
+                                'T_re': 1e12, 'DN_re': 0, 'kappa10': 0.,
                                }    # default values: Planck 2018 Plik best fit, no consistency relation, no stiff matter
             if len(kwargs) > 0:
                 for key in kwargs:
@@ -57,15 +60,15 @@ class LCDM_SN:
                         self.cosmo_param[key] = kwargs[key]
 
         self.DN_eff_GW = 0          # Relativistic degree of freedom that exists before the end of reheating
-                        
-        
-    @property  
+
+
+    @property
     def derived_param(self):
         derived_dict = {
             'h': self.cosmo_param['H0']/100,
             'H_0': self.cosmo_param['H0']/(10*parsec),     # s^-1
-        
-            'Omega_mh2': self.cosmo_param['Omega_bh2'] + self.cosmo_param['Omega_ch2'],                  # baryons + CDM     
+
+            'Omega_mh2': self.cosmo_param['Omega_bh2'] + self.cosmo_param['Omega_ch2'],                  # baryons + CDM
             'Omega_sh2': Omega_ph2 * self.cosmo_param['kappa10'] * (1e-2*a_10/TCMB_GeV)**4 * a_10**2,    # Omega_stiff*h^2 at the present
 
             'A_t': self.cosmo_param['r'] * self.cosmo_param['A_s'],
@@ -80,10 +83,10 @@ class LCDM_SN:
         else:
             derived_dict['N_re'] = spl_T_N(math.log10(self.cosmo_param['T_re']))
             derived_dict['rho_re'] = spl_rho(derived_dict['N_re'])
-        self.rhorad_re = (derived_dict['rho_re'] + 7/8*(4/11)**(4/3)*self.cosmo_param['DN_eff']) * (TCMB_GeV*math.exp(N_10))**4 
+        self.rhorad_re = (derived_dict['rho_re'] + 7/8*(4/11)**(4/3)*self.cosmo_param['DN_eff']) * (TCMB_GeV*math.exp(N_10))**4
         # rho_rad coefficient at T_re, including extra radiation, in GeV^4
         self.rhostiff_re = self.cosmo_param['kappa10'] * 1e-8 * math.exp(2*(derived_dict['N_re']-N_10))   # rho_stiff coefficient at T_re, in GeV^4
-        #derived_dict['f_re'] = math.exp(derived_dict['N_re']-2*N_10)*1e9/(6*math.sqrt(5)*M_Pl*hbar) * math.sqrt(self.rhorad_re+self.rhostiff_re)  
+        #derived_dict['f_re'] = math.exp(derived_dict['N_re']-2*N_10)*1e9/(6*math.sqrt(5)*M_Pl*hbar) * math.sqrt(self.rhorad_re+self.rhostiff_re)
         # Hz, frequency at the end of reheating
 
         derived_dict['N_inf'] = None
@@ -91,8 +94,8 @@ class LCDM_SN:
             if self.cosmo_param['r'] > 0:
                 derived_dict['V_inf'] = (1.5*derived_dict['A_t'])**.25 * math.pi**.5 * M_Pl
                 # ( GeV)^4, energy scale of single field, slow-roll inflaion
-                
-                Delta_N = (N_10-derived_dict['N_re'])*4/3 + math.log(M_Pl)*4/3 + math.log(45/2*derived_dict['A_t']/(self.rhorad_re+self.rhostiff_re))/3   
+
+                Delta_N = (N_10-derived_dict['N_re'])*4/3 + math.log(M_Pl)*4/3 + math.log(45/2*derived_dict['A_t']/(self.rhorad_re+self.rhostiff_re))/3
                 # Lookback number of e-folds from the end of inflation to the end of reheating, a^{-3} matter-like evolution
 
                 if Delta_N >= 0:
@@ -104,12 +107,12 @@ class LCDM_SN:
                 print('r cannot be set to zero in a single-field, slow-roll inflation. Use positive r!')
         else:
             derived_dict['N_inf'] = derived_dict['N_re'] + self.cosmo_param['DN_re']
-        
-        return derived_dict   
 
-    
+        return derived_dict
 
-    
+
+
+
     def gen_expansion(self):
         """
         Generate the expansion history of an extended Lambda-CDM model 
@@ -123,34 +126,34 @@ class LCDM_SN:
         Run this function only when self.derived_param['N_inf'] is not None.
         
         """
-    
+
         #####    Import cosmology    #####
 
         Omh2 = self.derived_param['Omega_mh2']; Osh2 = self.derived_param['Omega_sh2']
-        
+
         Oerh2 = Omega_ph2 * 7/8 * (4/11)**(4/3) * self.cosmo_param['DN_eff']         # Omega_{extra rad}*h^2
         Otrh2 = Omega_orh2 + Oerh2                                                   # total radiation after e+e- annihilation
         Otreh2 = Omega_ph2 * rho_th[-1] + Oerh2                                 # total radiation before any SM phase transition
-        
+
         OLh2 = self.derived_param['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2
 
-    
+
         #####   Construct output arrays    #####
-    
+
         len_inf = math.floor(self.derived_param['N_inf']*100)+1; Nv = np.arange(0, len_inf)*.01
         if Nv[-1] != self.derived_param['N_inf']:
             Nv = np.append(Nv, self.derived_param['N_inf'])
         # Nv is equivalent to ln(a), its present-day value is set at Nv[-1] = N_inf.
         Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv proportional to f_H = aH/(2*pi)
 
-    
-        #####    Main loop: Calculating expansion history    #####  
+
+        #####    Main loop: Calculating expansion history    #####
 
         index_re = int(np.argmin(np.abs(Nv - (self.derived_param['N_inf'] - self.derived_param['N_re']))))
 
         for i in range(index_re, len(Nv), 1):
             eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 1/a and 1/a^3
-            nu = nu_today / eN          #  (m_nu*c^2)/(kB*T_nu) 
+            nu = nu_today / eN          #  (m_nu*c^2)/(kB*T_nu)
             if (nu > 100):              #  massive neutrinos become highly non-relativistic
                 H2 = Omh2 + Omega_mnuh2 + (Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N    # h^2 * e^{3(N-N_end)} = h^2 * a^3
                 Sv[i] = (Omh2 + Omega_mnuh2 + 4/3*(Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + 2*Osh2*e3N)/H2
@@ -159,9 +162,9 @@ class LCDM_SN:
                 H2 = Omh2 + (Omega_ph2+(2/3+rho_nu/3)*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N
                 Sv[i] = (Omh2 + 4/3*(Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + (rho_nu+p_nu)*Omega_nh2/3*eN + 2*Osh2*e3N)/H2
             elif (nu < 0.1) and (Nv[i] > Nv[-1]-N_fin):     # massive neutrinos become highly relativistic
-                H2 = Omh2 + Otrh2*eN + Osh2*e3N + OLh2/e3N  
+                H2 = Omh2 + Otrh2*eN + Osh2*e3N + OLh2/e3N
                 Sv[i] = (Omh2 + 4/3*Otrh2*eN + 2*Osh2*e3N)/H2
-            elif (Nv[i] <= Nv[-1]-N_fin) and (Nv[i] >= Nv[-1]-N_max):   # Use lookup table for thermal history, 20 keV ~- 10^6 GeV. 
+            elif (Nv[i] <= Nv[-1]-N_fin) and (Nv[i] >= Nv[-1]-N_max):   # Use lookup table for thermal history, 20 keV ~- 10^6 GeV.
                 rho_i = spl_rho(Nv[-1]-Nv[i])
                 rhop_i = spl_rhop(Nv[-1]-Nv[i])
                 H2 = Omh2 + (Omega_ph2*rho_i + Oerh2)*eN + Osh2*e3N + OLh2/e3N
@@ -179,9 +182,9 @@ class LCDM_SN:
         # Convert fv into physical units: here \tilde f_H = ln (f_H/Hz)
         f0 = fv[-1]; Delta_f = math.log(2*math.pi/self.derived_param['H_0'])
         fv = fv - f0 - Delta_f
-     
-        #####    Output the expansion history and frequencies    ######## 
-            
+
+        #####    Output the expansion history and frequencies    ########
+
         self.Nv = Nv
         self.N = Nv - Nv[-1]
         self.sigma = Sv

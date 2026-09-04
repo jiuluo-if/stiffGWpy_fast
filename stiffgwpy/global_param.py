@@ -1,8 +1,11 @@
-import numpy as np
-import os, sys, math
-from scipy import interpolate
-from astropy import constants as const
+import math
+
 import astropy.units as u
+import numpy as np
+from astropy import constants as const
+from scipy import interpolate
+
+from ._resources import package_path
 from .functions import int_FD
 
 #######   Constants. Do not change.   #######
@@ -52,16 +55,22 @@ Omega_mnuh2 = Omega_nh2/3 * rho_nu0       # the massive neutrino eigenstate
 
 ######      Thermal history from 20 keV ~ 10^6 GeV     ######
 
-thdata = np.loadtxt(os.path.dirname(__file__) + '/th.dat')
-T_th = thdata[:,0]; T_max = T_th[-1]
-N_th = thdata[:,2]; N_max = N_th[-1]; N_fin = N_th[0]
-rho_th = thdata[:,5]; rhop_th = thdata[:,6]
+with package_path('stiffgwpy', 'th.dat') as _th_path:
+    thdata = np.loadtxt(_th_path)
+T_th = thdata[:, 0]
+T_max = T_th[-1]
+N_th = thdata[:, 2]
+N_max = N_th[-1]
+N_fin = N_th[0]
+rho_th = thdata[:, 5]
+rhop_th = thdata[:, 6]
 
 spl_rho = interpolate.CubicSpline(N_th, rho_th)
 spl_rhop = interpolate.CubicSpline(N_th, rhop_th)
 
 spl_T_N = interpolate.CubicSpline(np.log10(T_th), N_th)
-N_10 = spl_T_N(-2); a_10 = np.exp(-N_10)
+N_10 = spl_T_N(-2)
+a_10 = np.exp(-N_10)
 
 #####       AlterBBN      #########
 
