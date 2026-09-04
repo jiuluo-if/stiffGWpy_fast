@@ -45,18 +45,23 @@ The module is deterministic; its numba kernels are cache-compiled on first use.
 """
 import math
 import os as _os
+from contextlib import nullcontext
+from threading import RLock
 
 import numpy as np
 from numba import get_num_threads, njit, prange, set_num_threads
 from scipy import interpolate
 
 from . import global_param as gp
+from ._resources import package_path
+from .config import FastSolverConfig
 from .functions import int_FD
 
 __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
            'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES',
            'USER_FAST_PROFILES', 'FAST_PROFILES', 'normalize_accuracy_mode',
-           'is_validation_mode', 'MODE_ROLE']
+           'is_validation_mode', 'MODE_ROLE', 'FastSolverConfig', 'get_config',
+           'resolve_config']
 
 # Default OpenMP threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -64,6 +69,7 @@ __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
 # set_num_threads() when FAST_THREADS is explicitly set.
 _MAX_THREADS = get_num_threads()
 _THREADS = _MAX_THREADS
+_NUMBA_CONFIG_LOCK = RLock()
 _fast_threads_env = _os.environ.get('FAST_THREADS')
 if _fast_threads_env is not None:
     _THREADS = int(_fast_threads_env)
@@ -178,9 +184,9 @@ def set_freq_grid(name):
 
 
 def get_settings():
-    """Snapshot the current fast-solver module settings (threads/col_step/h/z_tail/phase_max)."""
+    """Snapshot legacy module settings, including the selected grid builder."""
     return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL,
-                phase_max=_PHASE_MAX)
+                phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID)
 
 
 # Named accuracy presets (audit phase "three recommended modes").
@@ -333,6 +339,48 @@ def apply_accuracy_mode(name):
     set_freq_grid(cfg.get('freq_grid', 'construct'))
     set_threads(min(cfg['threads'], _MAX_THREADS))
     return cfg
+
+
+def get_config():
+    """Return an immutable snapshot of the legacy module settings."""
+    return FastSolverConfig(h=_FAST_H, col_step=_COL_STEP, z_tail=_Z_TAIL,
+                            phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
+                            threads=_THREADS)
+
+
+def resolve_config(name=None, base=None, **overrides):
+    """Resolve a named preset and explicit overrides without mutating globals.
+
+    ``name=None`` snapshots the compatibility settings. A named preset is
+    resolved from :data:`ACCURACY_MODES`; only keys with non-``None`` values in
+    ``overrides`` replace it. Preset thread counts are clamped to the current
+    Numba process budget, matching the historical preset behavior.
+    """
+    valid_keys = {'h', 'col_step', 'z_tail', 'phase_max', 'freq_grid', 'threads'}
+    unknown = sorted(set(overrides) - valid_keys)
+    if unknown:
+        raise TypeError('unknown FastSolverConfig override(s): %s' % ', '.join(unknown))
+    if base is not None:
+        if not isinstance(base, FastSolverConfig):
+            raise TypeError("base must be a FastSolverConfig")
+        values = dict(h=base.h, col_step=base.col_step, z_tail=base.z_tail,
+                      phase_max=base.phase_max, freq_grid=base.freq_grid,
+                      threads=base.threads)
+    elif name is None:
+        values = dict(h=_FAST_H, col_step=_COL_STEP, z_tail=_Z_TAIL,
+                      phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
+                      threads=_THREADS)
+    else:
+        canonical = normalize_accuracy_mode(name)
+        preset = ACCURACY_MODES[canonical]
+        values = dict(h=preset['h'], col_step=preset['col_step'],
+                      z_tail=preset['z_tail'], phase_max=preset.get('phase_max', 0.0),
+                      freq_grid=preset.get('freq_grid', 'construct'),
+                      threads=min(int(preset['threads']), _MAX_THREADS))
+    for key in values:
+        if key in overrides and overrides[key] is not None:
+            values[key] = overrides[key]
+    return FastSolverConfig(**values)
 
 def estimate_error(name='production'):
     """Return the calibrated error budget for the named accuracy mode.
@@ -561,21 +609,22 @@ def _build_fd_table():
     to the user cache and finally to recomputation, saving the result to the
     user cache so the next import is cheap.
     """
-    table_file = None
-    pkg_file = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'fd_table.npz')
-    if _os.path.exists(pkg_file):
-        table_file = pkg_file
-    else:
-        cache_file = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy', 'fd_table.npz')
-        if _os.path.exists(cache_file):
-            table_file = cache_file
-    if table_file is not None:
+    try:
+        with package_path('stiffgwpy', 'fd_table.npz') as pkg_file:
+            with np.load(pkg_file) as data:
+                nu, vals = data['nu'], data['vals']
+                if nu.shape == (3001,) and vals.shape == (3001, 2):
+                    return nu, vals
+    except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
+        pass
+    cache_file = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy', 'fd_table.npz')
+    if _os.path.exists(cache_file):
         try:
-            data = np.load(table_file)
-            nu, vals = data['nu'], data['vals']
-            if nu.shape == (3001,) and vals.shape == (3001, 2):
-                return nu, vals
-        except (IOError, ValueError, KeyError):
+            with np.load(cache_file) as data:
+                nu, vals = data['nu'], data['vals']
+                if nu.shape == (3001,) and vals.shape == (3001, 2):
+                    return nu, vals
+        except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
             pass
     nu = np.logspace(-1.0, 2.0, 3001)
     vals = np.array([int_FD(u) for u in nu])
@@ -995,8 +1044,8 @@ def pchip_fine(idx_out, y, nv, out):
         c1 = 3.0*(y1 - y0)/(hh*hh) - (2.0*d0 + d1)/hh
         out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
 
-def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, freq_grid=None,
+def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
+                   transition_refine=False, freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
@@ -1062,19 +1111,24 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             except AttributeError:
                 pass
 
-    col_step = _COL_STEP        # snapshot; a mid-run set_col_step() must not
+    if config is None:
+        config = get_config()
+    elif not isinstance(config, FastSolverConfig):
+        raise TypeError('config must be a FastSolverConfig')
+    col_step = config.col_step  # a mid-run compatibility setter must not
     Omega_nu = gp.Omega_nh2/m.derived_param['h']**2    # change array layouts
     # Resolve the frequency-grid builder: per-call argument wins, otherwise the
     # module default set by apply_accuracy_mode()/set_freq_grid().
     if freq_grid is None:
-        freq_grid = _FREQ_GRID
+        freq_grid = config.freq_grid
     if freq_grid not in ('construct', 'grid_independent', 'adaptive'):
         raise ValueError('freq_grid must be construct/grid_independent/adaptive, got %r' % freq_grid)
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
-    h = _FAST_H
-    z_tail = _Z_TAIL
+    h = config.h
+    z_tail = config.z_tail
+    phase_max = config.phase_max
     if not 0.0 < tol < 1.0:
         raise ValueError('outer tol must be in (0, 1), got %r' % tol)
     freqs = None; Nf = 0; nv = 0; Nv = None
@@ -1085,6 +1139,13 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     adaptive_done = freq_grid != 'adaptive'
     freq_grid_error = 0.0
     first = True
+    thread_before = get_num_threads()
+    if config.threads is not None:
+        if config.threads > _MAX_THREADS:
+            raise ValueError('thread count must be in [1, %d], got %d'
+                             % (_MAX_THREADS, config.threads))
+        if config.threads != thread_before:
+            set_num_threads(config.threads)
     try:
         for _iter in range(MAX_ITER):
             if transition_refine:
@@ -1160,7 +1221,7 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             # receives the per-mode adiabaticity error |1.5*sigma-1|*e^{-z}.
             solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
                          1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw, h_arr,
-                         m.sigma, _PHASE_MAX, handoff_eps)
+                         m.sigma, phase_max, handoff_eps)
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
@@ -1219,6 +1280,8 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             m.fast_failure_reason = 'max_iter'
             print('SGWB_iter_fast: did not converge within %d iterations.' % MAX_ITER)
     finally:
+        if config.threads is not None and config.threads != thread_before:
+            set_num_threads(thread_before)
         if not converged:
             m.cosmo_param['DN_eff'] = DN_eff_orig
             m.DN_eff_orig = None
@@ -1270,7 +1333,7 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     # estimate, point count).
     m.handoff_eps = np.asarray(handoff_eps)
     m.z_tail_used = z_tail
-    m.phase_max_used = _PHASE_MAX
+    m.phase_max_used = phase_max
     m.freq_grid_used = freq_grid
     m.freq_grid_error = float(freq_grid_error)
     m.freq_grid_n = int(Nf)
@@ -1279,3 +1342,26 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     m.transition_refine_used = bool(transition_refine)
     m.dn_converged_delta = abs(DN_gw_new - DN_gw_list[-1])
     return m
+
+
+def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
+                   transition_refine=False, freq_grid=None, config=None,
+                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
+    """Run the fast solver with an isolated configuration snapshot.
+
+    Numba's thread-count setter is process-wide. Calls that use the legacy
+    snapshot or a configured thread count therefore hold a short-lived lock
+    for the complete solve, preventing concurrent calls from restoring one
+    another's thread setting. A ``FastSolverConfig(threads=None)`` call does
+    not touch that process-wide state and can proceed without this lock.
+    """
+    if config is not None and not isinstance(config, FastSolverConfig):
+        raise TypeError('config must be a FastSolverConfig')
+    lock = (_NUMBA_CONFIG_LOCK if config is None or config.threads is not None
+            else nullcontext())
+    with lock:
+        return _SGWB_iter_fast_impl(
+            m, tol=tol, freq_res=freq_res, sigma_exact=sigma_exact,
+            transition_refine=transition_refine, freq_grid=freq_grid,
+            config=config, freq_grid_target=freq_grid_target,
+            freq_grid_max_points=freq_grid_max_points, eval_freqs=eval_freqs)

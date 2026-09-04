@@ -85,10 +85,11 @@ def test_engine_fast_forwards_kwargs(monkeypatch, fast_settings):
     assert r is m
     assert captured['tol'] == 1e-6
     assert captured['freq_res'] == FS.ACCURACY_MODES['production']['freq_res']
-    st = FS.get_settings()
-    assert st['h'] == 0.005
-    assert st['col_step'] == FS.ACCURACY_MODES['production']['col_step']
-    assert st['z_tail'] == FS.ACCURACY_MODES['production']['z_tail']
+    cfg = captured['config']
+    assert isinstance(cfg, FS.FastSolverConfig)
+    assert cfg.h == 0.005
+    assert cfg.col_step == FS.ACCURACY_MODES['production']['col_step']
+    assert cfg.z_tail == FS.ACCURACY_MODES['production']['z_tail']
 
 
 def test_engine_fast_applies_preset(monkeypatch, fast_settings):
@@ -105,10 +106,11 @@ def test_engine_fast_applies_preset(monkeypatch, fast_settings):
     cfg = FS.ACCURACY_MODES['reference']
     assert captured['tol'] == cfg['tol']
     assert captured['freq_res'] == cfg['freq_res']
-    st = FS.get_settings()
-    assert st['h'] == cfg['h']
-    assert st['col_step'] == cfg['col_step']
-    assert st['z_tail'] == cfg['z_tail']
+    resolved = captured['config']
+    assert resolved.h == cfg['h']
+    assert resolved.col_step == cfg['col_step']
+    assert resolved.z_tail == cfg['z_tail']
+    assert resolved.freq_grid == cfg.get('freq_grid', 'construct')
 
 
 def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
@@ -125,12 +127,45 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
     FS.set_h(0.01)
     FS.set_z_tail(5.0)
     FS.set_phase_max(0.0)
+    FS.set_freq_grid('construct')
     monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-    m.SGWB_iter(engine='fast', tol=1e-7)
+    m.SGWB_iter(engine='fast', accuracy_mode=None, tol=1e-7)
     assert captured['tol'] == 1e-7
     assert captured['freq_res'] == 1.0
-    assert FS.get_settings() == dict(threads=4, col_step=4, h=0.01, z_tail=5.0, phase_max=0.0)
+    assert FS.get_settings() == dict(threads=4, col_step=4, h=0.01, z_tail=5.0,
+                                     phase_max=0.0, freq_grid='construct')
+
+
+def test_resolve_config_is_immutable_and_does_not_mutate_module_state(fast_settings):
+    before = FS.get_settings()
+    cfg = FS.resolve_config('production', h=0.005, threads=1)
+    assert cfg == FS.FastSolverConfig(h=0.005, col_step=4, z_tail=8.0,
+                                      phase_max=0.5, freq_grid='adaptive',
+                                      threads=1)
+    with pytest.raises((AttributeError, TypeError)):
+        cfg.h = 0.02
+    with pytest.raises(TypeError, match='unknown'):
+        FS.resolve_config('production', typo=1)
+    assert FS.get_settings() == before
+
+
+def test_high_level_fast_defaults_to_production(monkeypatch, fast_settings):
+    captured = {}
+
+    def fake_fast(m, **kw):
+        captured.update(kw)
+        m.SGWB_converge = True
+        return m
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    assert m.SGWB_iter(engine='fast') is m
+    cfg = captured['config']
+    assert cfg == FS.resolve_config('production')
+    assert cfg.freq_grid == 'adaptive'
+    assert cfg.z_tail == 8.0
+    assert cfg.phase_max == 0.5
 
 
 def test_pool_size_env_override(monkeypatch):

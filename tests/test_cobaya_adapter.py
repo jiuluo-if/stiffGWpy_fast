@@ -310,6 +310,7 @@ def test_adapter_forwards_likelihood_kwargs(monkeypatch):
     assert captured.get('error_tol') == 1.0e-3
     assert captured.get('auto_escalate') is True
     assert captured.get('escalate_to_reference') is True
+    assert captured.get('threads') == 4
 
 
 

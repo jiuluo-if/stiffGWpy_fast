@@ -208,14 +208,9 @@ class stiffGW(Theory):
         if getattr(self, 'dlogl_tol', None):
             sgwb_kwargs['dlogl_tol'] = self.dlogl_tol
         if self.engine == 'fast' and self.fast_threads:
-            try:
-                from .. import fast_sgwb
-            except ImportError:
-                from stiffgwpy import fast_sgwb
-            # Clamp to the machine's thread budget so an over-large yaml
-            # default cannot hard-fail on small cores.
-            fast_sgwb.set_threads(min(int(self.fast_threads),
-                                      fast_sgwb._MAX_THREADS))
+            # Pass the requested thread budget as a per-call config value. The
+            # solver restores Numba's process setting after the evaluation.
+            sgwb_kwargs['threads'] = int(self.fast_threads)
         if self.engine == 'reference':
             # Independent continuous-sigma high-accuracy pipeline (slow; for
             # certification/benchmark points, not for MCMC thermal path).

@@ -36,6 +36,7 @@ from scipy import interpolate
 from scipy.integrate import quad, solve_ivp
 
 from . import global_param as gp
+from ._resources import package_path
 
 __all__ = [
     'background_at',
@@ -57,11 +58,10 @@ ln10 = math.log(10.0)
 
 def _fd_splines():
     """Fermi-Dirac rho/p spline on log10(nu), from the shipped ``fd_table.npz``."""
-    here = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(here, 'fd_table.npz')
-    data = np.load(path)
-    nu = data['nu']
-    vals = data['vals']
+    with package_path('stiffgwpy', 'fd_table.npz') as path:
+        with np.load(path) as data:
+            nu = data['nu']
+            vals = data['vals']
     lognu = np.log10(nu)
     rho = interpolate.CubicSpline(lognu, vals[:, 0])
     p = interpolate.CubicSpline(lognu, vals[:, 1])
@@ -571,7 +571,9 @@ def oracle_variants(m, freqs=None, dn_eff=None, z_tail_conservative=8.0,
     B = _run(z_tail_deep, rtol_conservative)
     C = _run(z_tail_deep, rtol_deep)
 
-    dA = float(A['DN_gw']); dB = float(B['DN_gw']); dC = float(C['DN_gw'])
+    dA = float(A['DN_gw'])
+    dB = float(B['DN_gw'])
+    dC = float(C['DN_gw'])
     denom = max(abs(dA), 1e-300)
     delta_AB = abs(dB - dA) / denom
     delta_BC = abs(dC - dB) / max(abs(dB), 1e-300)

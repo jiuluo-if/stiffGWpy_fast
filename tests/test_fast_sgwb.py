@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pytest
+from numba import get_num_threads
 
 from stiffgwpy import LCDM_SG
 from stiffgwpy import fast_sgwb as FS
@@ -68,6 +69,25 @@ def test_nonfinite_dn_gw_aborts_and_restores(monkeypatch, model):
     assert model.cosmo_param['DN_eff'] == orig_dn
     assert model.DN_eff_orig is None
     assert model.SGWB_converge is False
+
+
+def test_per_call_thread_config_is_restored_on_failure(monkeypatch, model):
+    """A per-call thread override must not leak through a failed solve."""
+    before = get_num_threads()
+    target = 1 if before != 1 else min(2, FS._MAX_THREADS)
+    config = FS.FastSolverConfig(threads=target)
+
+    def bad_solve(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus,
+                  fp_minus, fp_freq, assemble, n_coarse, col_step, h, z_tail,
+                  Ogw, Oj, Opgw, h_arr=None, Sv=None, phase_max=0.0,
+                  handoff_eps=None):
+        Ogw[...] = np.nan
+        Oj[...] = 0.0
+        Opgw[...] = 0.0
+
+    monkeypatch.setattr(FS, 'solve_kernel', bad_solve)
+    assert FS.SGWB_iter_fast(model, config=config) is None
+    assert get_num_threads() == before
 
 
 def test_max_iterations_abort_and_restore(monkeypatch, model):

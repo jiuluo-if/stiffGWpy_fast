@@ -1,8 +1,8 @@
-import numpy as np
 import math
+
+import numpy as np
 from scipy import interpolate
-from scipy.integrate import quad
-from scipy.integrate import solve_ivp
+from scipy.integrate import quad, solve_ivp
 
 
 def int_FD(y):
@@ -11,15 +11,15 @@ def int_FD(y):
     x = pc/(kB*T), y = mc^2/(kB*T) = mc^2/(kB*T0)*a
     
     """
-    
+
     I_rho = quad(integrand_rho, 0, 30, args=(y))
     I_p = quad(integrand_p, 0, 30, args=(y))
-    
+
     coeff_massless = 7*math.pi**4/120
-    
+
     rho = I_rho[0]/coeff_massless          # ratio to that of a massless fermion
     p = I_p[0]/coeff_massless
-    
+
     return np.array((rho, p))
 
 
@@ -63,7 +63,7 @@ def solve_SGWB(Nv, Sv, j0, z0, z_tail=5.0, rtol=1e-6, atol=None):
 
 
 def tensor(N, state, spline):
-    """
+    r"""
     Dynamical system for tensor modes:
     
     z = ln(2*pi*f/aH)
@@ -76,22 +76,22 @@ def tensor(N, state, spline):
     y' = -y + 1.5*sigma*y + exp(z)*x 
     
     """
-    
+
     z, x, y = state
     sigma = float(spline(N))
-    
+
     dz = 1.5*sigma - 1
     dx = -3*x + 1.5*sigma*x - math.exp(z)*y
-    dy = -y + 1.5*sigma*y + math.exp(z)*x 
-    
+    dy = -y + 1.5*sigma*y + math.exp(z)*x
+
     return [dz, dx, dy]
 
 
 def jacobian(N, state, spline):
-    
+
     z, x, y = state
     sigma = float(spline(N))
-    
+
     jac = np.array(
         (
             (0, 0, 0),
@@ -100,7 +100,7 @@ def jacobian(N, state, spline):
         ),
         dtype = np.float64,
     )
-    
+
     return jac
 
 
