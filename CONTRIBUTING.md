@@ -10,6 +10,7 @@ python -m mypy
 python -m pytest -q
 python -m pytest -q -m slow
 python -m build --sdist --wheel
+python scripts/verify_distribution.py dist
 python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl
 ```
 

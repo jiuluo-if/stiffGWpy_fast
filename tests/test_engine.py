@@ -238,19 +238,16 @@ def test_engine_fast_close_to_lsoda_on_case_a():
     mo = LCDM_SG(**kw)
     mo.SGWB_iter(engine='lsoda')
     mf = LCDM_SG(**kw)
-    mf.SGWB_iter(engine='fast')
+    mf.SGWB_iter(engine='fast', accuracy_mode='production')
     assert mo.SGWB_converge and mf.SGWB_converge
-    # The omitted high-level mode is the documented production preset. Keep
-    # its fiducial integrated result as a numerical regression anchor; the
-    # independent reference/oracle remains the accuracy authority.
+    # 显式 production 档位仍是精度回归档位；保留其基准积分结果作为数值锚点，
+    # 独立 reference/oracle 仍是最终精度依据。
     assert mf.DN_gw[-1] == pytest.approx(0.002261731150563835, rel=2e-5)
     rel = abs(mo.DN_gw[-1] - mf.DN_gw[-1]) / abs(mo.DN_gw[-1])
-    # LSODA is retained as a regression engine, not as the precision truth.
-    assert rel < 3e-3             # measured ~2.1e-3 for production vs LSODA
-    # Engines use their own frequency grids (construct vs adaptive/grid-
-    # independent); compare per-mode spectra on a COMMON grid by interpolating
-    # the LSODA spectrum onto the fast nodes (same matched-grid discipline as
-    # the fast-vs-reference certification).
+    # LSODA 仅作为回归引擎，不作为精度真值。
+    assert rel < 3e-3             # production 与 LSODA 的实测差异约为 2.1e-3
+    # 两个引擎使用不同频率网格；先把 LSODA 谱插值到 fast 节点，再在公共网格上比较，
+    # 保持与 fast-reference 认证相同的匹配网格纪律。
     o_f = np.argsort(np.asarray(mf.f))
     f_f = np.asarray(mf.f)[o_f]
     lo_f = np.asarray(mf.log10OmegaGW)[o_f]
@@ -258,12 +255,8 @@ def test_engine_fast_close_to_lsoda_on_case_a():
     f_l = np.asarray(mo.f)[o_l]
     lo_l = np.asarray(mo.log10OmegaGW)[o_l]
     d_pt = np.abs(np.interp(f_f, f_l, lo_l) - lo_f)
-    # Per-mode agreement is asserted only on the physically resolved band
-    # logf in [-8, +3] (PTA -> knee -> stiff transition).  Below -8 the two
-    # engines carry different unobservable super-horizon frozen floors and
-    # above +3 the UV roll-off makes log10Omega grid-node-position sensitive;
-    # both regions contribute negligibly to Delta N_eff (DN rel assertion
-    # above covers global agreement).
+    # 单模一致性只在物理上已解析的 logf ∈ [-8, +3] 区间断言；两端分别受不可观测的
+    # 超视界冻结底和 UV 截止网格节点敏感性影响，对 Delta N_eff 贡献可以忽略。
     m_band = (f_f >= -8.0) & (f_f <= 3.0)
     dex = float(d_pt[m_band].max())
     assert dex < 1e-2, 'dex=%.3e at logf=%.2f' % (

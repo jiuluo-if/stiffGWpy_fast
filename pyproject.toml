@@ -1,15 +1,15 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "stiffgwpy"
 version = "0.2.0"
-description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with a two-profile fast solver (plain-grid speed-first, transition-refine precision-first) and an independent continuous-sigma reference oracle."
+description = "LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB), with plain-grid as the default fast profile and an independent continuous-sigma reference oracle."
 readme = "README.md"
 license = "GPL-3.0-only"
 license-files = ["LICENSE.md"]
-authors = [{name = "jiuluo-if"}]
+authors = [{name = "jiuluo-if", email = "2966684515@qq.com"}]
 keywords = ["cosmology", "gravitational-waves", "stiff", "sgwb", "cobaya", "numba"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -29,6 +29,7 @@ dependencies = [
 cobaya = ["cobaya>=3.6,<3.7"]
 mpi = ["mpi4py"]
 dev = ["matplotlib", "pytest", "pytest-cov", "build", "ruff", "mypy>=1.8,<2"]
+release = ["twine"]
 
 [project.urls]
 Homepage = "https://github.com/jiuluo-if/stiffGWpy_fast"
@@ -52,6 +53,9 @@ stiffgwpy = ["*.dat", "*.npz"]
 "stiffgwpy.cobaya.likelihoods.PTA" = ["*.yaml"]
 "stiffgwpy.cobaya.likelihoods.PTA.EPTAdr2" = ["*.dat", "*.txt"]
 "stiffgwpy.cobaya.likelihoods.PTA.NANOGrav15yr" = ["*.npy"]
+
+[tool.setuptools.exclude-package-data]
+"stiffgwpy.cobaya" = ["mcmc_compare.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
