@@ -1,4 +1,4 @@
-# stiffgwpy_fast — documentation index
+# stiffgwpy_fast_fast — documentation index
 
 Status: current for this revision
 Date: 2026-09-03

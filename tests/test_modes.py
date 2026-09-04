@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from stiffgwpy import LCDM_SG
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy.stiff_SGWB import _sgwb_pool_size
+from stiffgwpy_fast import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast.stiff_SGWB import _sgwb_pool_size
 
 
 @pytest.fixture
@@ -182,9 +182,9 @@ def test_pool_size_env_override(monkeypatch):
 
 def test_pool_size_mpi_default(monkeypatch):
     monkeypatch.delenv('SGWB_POOL_SIZE', raising=False)
-    monkeypatch.setattr('stiffgwpy.stiff_SGWB._mpi_world_size', lambda: 4)
+    monkeypatch.setattr('stiffgwpy_fast.stiff_SGWB._mpi_world_size', lambda: 4)
     assert _sgwb_pool_size() == 1
-    monkeypatch.setattr('stiffgwpy.stiff_SGWB._mpi_world_size', lambda: 1)
+    monkeypatch.setattr('stiffgwpy_fast.stiff_SGWB._mpi_world_size', lambda: 1)
     assert _sgwb_pool_size() == 4
 
 
@@ -192,9 +192,9 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     """error-too-large escalates to the continuous-sigma reference engine."""
     import numpy as np
 
-    from stiffgwpy import fast_sgwb as FS
-    from stiffgwpy import reference as REF
-    from stiffgwpy.stiff_SGWB import LCDM_SG
+    from stiffgwpy_fast import fast_sgwb as FS
+    from stiffgwpy_fast import reference as REF
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
     def fake_fast(m, **kw):
         m.SGWB_converge = True

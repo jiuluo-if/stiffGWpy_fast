@@ -6,9 +6,9 @@ import math
 import numpy as np
 import pytest
 
-from stiffgwpy import fast_sgwb as FS
-from stiffgwpy import reference as REF
-from stiffgwpy.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast import reference as REF
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
 def test_background_analytic_limits_md_and_radiation():
