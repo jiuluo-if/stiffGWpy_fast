@@ -13,10 +13,6 @@ python -m build --sdist --wheel
 python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl
 ```
 
-新增或修改代码时，解释性注释必须使用中文；`noqa`、`type: ignore` 等机器
-指令可以保留原格式。CI 会检查当前提交相对基线新增的代码注释，未通过中文
-注释门禁的提交不得合并。
-
 The independent continuous-sigma reference is the precision anchor. LSODA is
 for regression and runtime comparison only. Do not turn a `NOT VERIFIED` or
 `FAIL` artifact into a passing claim by changing documentation alone; update
