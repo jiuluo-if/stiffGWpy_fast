@@ -37,6 +37,10 @@ schema/version, provenance header, oracle semantics, profile configuration,
 status counts, and accuracy sections. It intentionally validates structure and
 does not promote any existing `NOT VERIFIED` or `FAIL` scientific result.
 
+Repository hygiene and release notes are now documented in `CONTRIBUTING.md`
+and `CHANGELOG.md`; generated coverage/build files are ignored, while the two
+pre-existing oracle artifacts remain untouched and unstaged.
+
 ## P0 — correctness and trust
 
 | ID | Files | Problem / risk | Recommendation | Acceptance |

@@ -289,6 +289,9 @@ on importance reweighting, not on an independent reference chain.
 
 ## Reproducibility
 
+The contributor/release gate is summarized in [CONTRIBUTING.md](CONTRIBUTING.md)
+and the staged findings are tracked in [docs/engineering_audit.md](docs/engineering_audit.md).
+
 ```bash
 python scripts/validate_two_modes.py --phase convergence          # fast-vs-fast convergence
 python scripts/validate_two_modes.py --phase param_sweep --n 400  # LHS screen

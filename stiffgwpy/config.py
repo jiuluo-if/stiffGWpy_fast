@@ -23,6 +23,8 @@ class FastSolverConfig:
     threads: Optional[int] = None
 
     def __post_init__(self) -> None:
+        raw_col_step = self.col_step
+        raw_threads = self.threads
         h = float(self.h)
         z_tail = float(self.z_tail)
         phase_max = float(self.phase_max)
@@ -30,6 +32,8 @@ class FastSolverConfig:
         threads = None if self.threads is None else int(self.threads)
         if not isfinite(h) or not 1e-4 <= h <= 0.1:
             raise ValueError("h must be finite and in [1e-4, 0.1], got %r" % self.h)
+        if isinstance(raw_col_step, bool) or float(raw_col_step) != col_step:
+            raise ValueError("col_step must be an integer in [1, 8], got %r" % raw_col_step)
         if not 1 <= col_step <= 8:
             raise ValueError("col_step must be an integer in [1, 8], got %r" % self.col_step)
         if not isfinite(z_tail) or not 2.0 <= z_tail <= 15.0:
@@ -38,6 +42,9 @@ class FastSolverConfig:
             raise ValueError("phase_max must be finite and in [0, 10], got %r" % self.phase_max)
         if self.freq_grid not in ("construct", "grid_independent", "adaptive"):
             raise ValueError("freq_grid must be construct/grid_independent/adaptive, got %r" % self.freq_grid)
+        if (raw_threads is not None and
+                (isinstance(raw_threads, bool) or float(raw_threads) != threads)):
+            raise ValueError("threads must be a positive integer, got %r" % raw_threads)
         if threads is not None and threads < 1:
             raise ValueError("threads must be a positive integer, got %r" % self.threads)
         object.__setattr__(self, "h", h)
