@@ -147,6 +147,10 @@ def test_resolve_config_is_immutable_and_does_not_mutate_module_state(fast_setti
         cfg.h = 0.02
     with pytest.raises(TypeError, match='unknown'):
         FS.resolve_config('production', typo=1)
+    with pytest.raises(ValueError, match='col_step'):
+        FS.FastSolverConfig(col_step=2.5)
+    with pytest.raises(ValueError, match='threads'):
+        FS.FastSolverConfig(threads=1.5)
     assert FS.get_settings() == before
 
 
