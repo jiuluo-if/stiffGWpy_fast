@@ -140,7 +140,8 @@ oracle A/B/C and reports `CONSISTENT` / `ORACLE-SENSITIVE`.
 
 ```bash
 pip install .                 # runtime deps: numpy scipy astropy pyyaml numba
-pip install .[cobaya]         # + Cobaya MCMC interface (cobaya, mpi4py)
+pip install .[cobaya]         # + serial Cobaya MCMC interface
+pip install .[cobaya,mpi]     # + Cobaya plus optional mpi4py runtime
 pip install .[dev]            # + pytest, ruff, build, matplotlib
 ```
 
@@ -150,7 +151,7 @@ pip install .[dev]            # + pytest, ruff, build, matplotlib
 from stiffgwpy import LCDM_SG
 
 m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-m.SGWB_iter(engine='fast', accuracy_mode='production', fallback=True)
+m.SGWB_iter(engine='fast', fallback=True)  # defaults to production
 print(m.DN_gw[-1])
 
 # speed-first pass (plain-grid)
@@ -161,6 +162,10 @@ m2.SGWB_iter(engine='fast', accuracy_mode='fast')
 `accuracy_mode` accepts the two user-facing names (`fast`, `production`) and the
 aliases `plain_grid`/`plain-grid`/`transition_refine`/`transition-refine`.
 Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override the preset.
+For the high-level API, omitting `accuracy_mode` on `engine='fast'` selects the
+science-safe `production` preset. Pass `accuracy_mode=None` only when you
+intentionally want a snapshot of the legacy manual module settings. Lower-level
+calls can pass an immutable `fast_sgwb.FastSolverConfig` per invocation.
 
 ```python
 from stiffgwpy import fast_sgwb
@@ -291,10 +296,11 @@ python scripts/build_two_mode_manifest.py                          # manifest (r
 python -m pytest                                                   # tests (slow deselected)
 python -m pytest -m cobaya                                         # Cobaya adapter gate
 python -m build --wheel                                            # wheel build gate
+python scripts/smoke_installed_wheel.py dist/stiffgwpy-*.whl        # installed-resource smoke
 ```
 
 Every driver records git-commit + environment metadata.  The regression suite is
-99 passed (6 slow LSODA gates deselected by default).
+102 passed (6 slow LSODA gates deselected by default; counts may change as tests evolve).
 
 ## Directory structure
 
