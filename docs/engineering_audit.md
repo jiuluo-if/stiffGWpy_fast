@@ -19,9 +19,18 @@ serialized while that process-wide setting is active; packaged resources use
 `importlib.resources`; and an installed-wheel smoke script checks data outside
 the checkout. The maintained Ruff surface, the narrow mypy gate, the full
 default tests, the Cobaya marker, and the wheel smoke have passed locally.
-The Python-version matrix, slow numerical gates, concurrent-call stress, full
-legacy Ruff cleanup, and universal oracle claims remain unverified until their
-dedicated checks run.
+The Python-version matrix, full legacy Ruff cleanup, concurrent-call stress,
+and universal oracle claims remain unverified until their dedicated checks run.
+
+The next CI stage is now wired locally: the main matrix emits a Python 3.11
+coverage artifact, and `.github/workflows/slow.yml` runs the slow numerical
+marker on demand or weekly. A green local run is recorded below only after the
+workflow-equivalent commands have been executed here.
+
+The workflow-equivalent local evidence is now: `python -m pytest -q -m slow` =
+6 passed; the coverage-enabled default suite = 102 passed and 64% total line
+coverage. Coverage is reported for visibility only; no unsupported percentage
+threshold is presented as a scientific correctness gate.
 
 ## P0 — correctness and trust
 
