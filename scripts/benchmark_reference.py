@@ -95,7 +95,7 @@ def run_fast(kw, z_tail=None):
 def run_lsoda(kw):
     m = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    m.SGWB_iter()  # engine='lsoda', default reference
+    m.SGWB_iter(engine='lsoda')
     dt = time.perf_counter() - t0
     return m, dt
 

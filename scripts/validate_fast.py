@@ -89,7 +89,7 @@ def run_case(idx, kw):
         return rec
     mo = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    mo.SGWB_iter()
+    mo.SGWB_iter(engine='lsoda')
     to = time.perf_counter() - t0
     rec['t_orig'] = to
     mf = LCDM_SG(**kw)

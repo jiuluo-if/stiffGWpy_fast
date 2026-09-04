@@ -107,7 +107,7 @@ def run_point(idx, kw):
         return rec
     mo = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    mo.SGWB_iter()
+    mo.SGWB_iter(engine='lsoda')
     rec['t_orig'] = time.perf_counter() - t0
     mf = LCDM_SG(**kw)
     FS.SGWB_iter_fast(mf)

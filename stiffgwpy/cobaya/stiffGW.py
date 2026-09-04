@@ -11,7 +11,7 @@ directory after ``pip install .`` (no ``python_path`` needed):
      stiffgwpy.cobaya.stiffGW.stiffGW:
        engine: fast
        fallback: True
-       accuracy_mode: production
+       accuracy_mode: fast
        fast_threads: 8
 
 The class exposes these derived parameters (must stay in sync with

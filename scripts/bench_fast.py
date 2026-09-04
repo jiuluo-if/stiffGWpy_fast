@@ -83,7 +83,7 @@ def run_case(name, kw, reps):
         rec['skip'] = 'N_inf None (invalid combo)'
         return rec
     t0 = time.perf_counter()
-    m.SGWB_iter()
+    m.SGWB_iter(engine='lsoda')
     rec['t_orig'] = time.perf_counter() - t0
 
     mf = LCDM_SG(**kw)

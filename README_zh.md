@@ -34,7 +34,7 @@ LSODA 流程。
 在项目目录执行：
 
 ```bash
-pip install .
+pip install stiffgwpy
 ```
 
 如需 Cobaya 集成：
@@ -43,18 +43,22 @@ pip install .
 pip install .[cobaya]
 ```
 
+打包和发布到 PyPI 的完整说明见 [`PACKAGING.md`](PACKAGING.md)。发布包会主动排除
+`docs/`、测试文件、验证脚本、CI 配置和仅用于研究的配置文件。
+
 ## 基本用法
 
 ```python
 from stiffgwpy import LCDM_SG
 
 model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+model.SGWB_iter()
 print(model.derived_param)
 ```
 
-高层接口可通过 `engine="fast"` 使用快速求解；需要精度锚点时使用
-`engine="reference"`。具体参数、异常处理和输出契约请查看英文 README 以及 `docs/` 中的
-专题文档。
+高层接口 `SGWB_iter()` 默认使用 `fast` 引擎的 plain-grid 档位。需要
+transition-refine 时显式传入 `accuracy_mode="production"`；需要精度锚点时使用
+`engine="reference"`；需要原始回归路径时使用 `engine="lsoda"`。
 
 ## 验证
 

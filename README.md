@@ -145,11 +145,16 @@ oracle A/B/C and reports `CONSISTENT` / `ORACLE-SENSITIVE`.
 ## Installation
 
 ```bash
-pip install .                 # runtime deps: numpy scipy astropy pyyaml numba
-pip install .[cobaya]         # + serial Cobaya MCMC interface
-pip install .[cobaya,mpi]     # + Cobaya plus optional mpi4py runtime
-pip install .[dev]            # + pytest, ruff, build, matplotlib
+pip install stiffgwpy          # 从 PyPI 安装最新版本
+pip install .                 # 安装运行依赖：numpy scipy astropy pyyaml numba
+pip install .[cobaya]         # 安装串行 Cobaya MCMC 接口
+pip install .[cobaya,mpi]     # 安装 Cobaya 和可选 mpi4py
+pip install .[dev]            # 安装 pytest、ruff、build、matplotlib
 ```
+
+Packaging and PyPI publishing instructions are in
+[PACKAGING.md](PACKAGING.md). The release archive intentionally excludes
+`docs/`, tests, validation scripts, CI files, and research-only configuration.
 
 ## Python usage
 
@@ -157,19 +162,23 @@ pip install .[dev]            # + pytest, ruff, build, matplotlib
 from stiffgwpy import LCDM_SG
 
 m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-m.SGWB_iter(engine='fast', fallback=True)  # defaults to production
+m.SGWB_iter()  # 默认使用 fast plain-grid
 print(m.DN_gw[-1])
 
-# speed-first pass (plain-grid)
+# 显式选择速度优先的 plain-grid 档位
 m2 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m2.SGWB_iter(engine='fast', accuracy_mode='fast')
+
+# 显式选择原始 LSODA 回归路径
+m3 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+m3.SGWB_iter(engine='lsoda')
 ```
 
 `accuracy_mode` accepts the two user-facing names (`fast`, `production`) and the
 aliases `plain_grid`/`plain-grid`/`transition_refine`/`transition-refine`.
 Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override the preset.
-For the high-level API, omitting `accuracy_mode` on `engine='fast'` selects the
-science-safe `production` preset. Pass `accuracy_mode=None` only when you
+For the high-level API, `SGWB_iter()` defaults to the `fast` engine and its
+plain-grid preset. Pass `accuracy_mode=None` only when you
 intentionally want a snapshot of the legacy manual module settings. Lower-level
 calls can pass an immutable `fast_sgwb.FastSolverConfig` per invocation.
 
@@ -186,7 +195,7 @@ theory:
   stiffgwpy.cobaya.stiffGW.stiffGW:
     engine: fast
     fallback: True
-    accuracy_mode: production      # fast (plain-grid) | production (transition-refine)
+    accuracy_mode: fast            # fast（plain-grid）或 production（transition-refine）
     fast_threads: 8
 ```
 
@@ -198,10 +207,9 @@ is strictly:
 accuracy_mode  ->  preset defaults  ->  explicit user overrides only
 ```
 
-so a default `engine: fast` YAML runs the `production` science settings and you
-can never accidentally run `production` as a coarser scan, or have the YAML
-default values mask the selected preset.  `accuracy_mode: fast` truly maps to
-plain-grid; `accuracy_mode: production` truly maps to transition-refine.
+so a default `engine: fast` YAML runs the `fast` plain-grid settings.  The YAML
+default values cannot silently mask the selected preset. `accuracy_mode: fast`
+maps to plain-grid; `accuracy_mode: production` maps to transition-refine.
 
 **`eval_freqs` (likelihood bins as native nodes).**  Set
 `eval_freqs: [list|path-to-file]` in the theory YAML to force-add
