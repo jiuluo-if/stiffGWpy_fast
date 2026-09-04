@@ -8,6 +8,8 @@
   Cobaya, LIGO, and PTA data.
 - Added Python-version CI coverage, a scheduled/on-demand slow numerical job,
   coverage reporting, and validation-manifest schema checks.
+- Fixed optional-Cobaya test collection and capped adapter thread requests to
+  the runner's available Numba budget.
 - Kept the independent continuous-sigma reference as the precision anchor;
   existing `NOT VERIFIED` and `FAIL` validation results remain unchanged.
 

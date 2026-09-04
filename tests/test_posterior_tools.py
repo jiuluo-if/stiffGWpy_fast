@@ -34,6 +34,8 @@ def ip():
 
 @pytest.fixture(scope="module")
 def cp():
+    # 该脚本的校验对象依赖 Cobaya；未安装可选依赖时应整体跳过相关测试。
+    pytest.importorskip("cobaya")
     return _load_script("cobaya_posterior_fast_vs_reference.py")
 
 

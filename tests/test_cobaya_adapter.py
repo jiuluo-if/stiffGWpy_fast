@@ -275,6 +275,7 @@ def test_adapter_forwards_likelihood_kwargs(monkeypatch):
     pytest.importorskip("cobaya")
     import numpy as np
 
+    from stiffgwpy import fast_sgwb
     from stiffgwpy.cobaya.stiffGW import stiffGW
 
     captured = {}
@@ -299,7 +300,8 @@ def test_adapter_forwards_likelihood_kwargs(monkeypatch):
     adapter.error_tol = 1.0e-3
     adapter.likelihood_sigma = 0.25
     adapter.dlogl_tol = 0.01
-    adapter.fast_threads = 4
+    monkeypatch.setattr(fast_sgwb, 'max_threads', lambda: 4)
+    adapter.fast_threads = 8
     params = {k: 0.0 for k in ("A_s", "r", "n_t", "cr", "DN_re", "kappa10")}
     params.update(Omega_bh2=0.022, Omega_ch2=0.12, H0=67.0, DN_eff=0.0,
                   T_re=2e3)

@@ -41,6 +41,14 @@ Repository hygiene and release notes are now documented in `CONTRIBUTING.md`
 and `CHANGELOG.md`; generated coverage/build files are ignored, while the two
 pre-existing oracle artifacts remain untouched and unstaged.
 
+## CI 回归修复记录
+
+GitHub Actions run `33827434310` 暴露了两个环境差异：普通测试任务未安装
+Cobaya 却在 fixture 导入 Cobaya 专用脚本；GitHub runner 的 Numba 上限为 4，
+而 Cobaya smoke 请求了 8 个线程并反复回退至 LSODA 直至超时。修复为让
+Cobaya 专用 fixture 在缺少可选依赖时整体跳过，并通过公开的
+`max_threads()` 在 adapter 边界裁剪线程请求；本地已覆盖这两条路径。
+
 ## P0 — correctness and trust
 
 | ID | Files | Problem / risk | Recommendation | Acceptance |
