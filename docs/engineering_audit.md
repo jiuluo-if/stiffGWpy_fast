@@ -28,9 +28,14 @@ marker on demand or weekly. A green local run is recorded below only after the
 workflow-equivalent commands have been executed here.
 
 The workflow-equivalent local evidence is now: `python -m pytest -q -m slow` =
-6 passed; the coverage-enabled default suite = 102 passed and 64% total line
+6 passed; the coverage-enabled default suite = 103 passed and 64% total line
 coverage. Coverage is reported for visibility only; no unsupported percentage
 threshold is presented as a scientific correctness gate.
+
+The committed manifest now has an executable structural validator covering its
+schema/version, provenance header, oracle semantics, profile configuration,
+status counts, and accuracy sections. It intentionally validates structure and
+does not promote any existing `NOT VERIFIED` or `FAIL` scientific result.
 
 ## P0 — correctness and trust
 
