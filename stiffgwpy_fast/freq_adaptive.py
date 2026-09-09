@@ -18,7 +18,7 @@ import numpy as np
 from scipy.interpolate import PchipInterpolator
 
 __all__ = ['adapt_refine_grid', 'adaptive_spectrum_reference',
-           'grid_independent_freqs']
+           'grid_independent_freqs', 'goal_oriented_freqs']
 
 
 def _local_curvature(x, y):
@@ -143,3 +143,53 @@ def grid_independent_freqs(m, freq_res=1.0):
     n = max(2, int((fmax - fcmb) * freq_res * 10)) + int((fcmb - fmin) * freq_res * 5)
     logf = np.linspace(fmax, fmin, n + 1)
     return logf, fmin, fmax
+
+
+def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
+                        eval_freqs=None, feature_half_width=1.0,
+                        feature_n=17):
+    """Construct a sparse grid around the reheating spectral feature.
+
+    The broad seed is deliberately small for the MCMC path.  A fixed local
+    reserve around ``m.f_re`` protects the transition knee, and caller-supplied
+    likelihood nodes are mandatory native points.  This builder only chooses
+    coordinates; it never evaluates or interpolates the spectrum.
+    """
+    seed_n = max(2, int(seed_n))
+    max_points = max(seed_n, int(max_points))
+    feature_n = max(3, int(feature_n))
+    base, fmin, fmax = grid_independent_freqs(m, freq_res)
+    if base.size <= seed_n:
+        seed = base
+    else:
+        idx = np.rint(np.linspace(0, base.size - 1, seed_n)).astype(int)
+        seed = base[np.unique(idx)]
+
+    f_re = float(getattr(m, 'f_re', 0.5 * (fmin + fmax)))
+    lo = max(float(fmin), f_re - float(feature_half_width))
+    hi = min(float(fmax), f_re + float(feature_half_width))
+    feature = np.linspace(hi, lo, feature_n)
+
+    if eval_freqs is None:
+        eval = np.empty(0, dtype=float)
+    else:
+        eval = np.asarray(eval_freqs, dtype=float).reshape(-1)
+        eval = eval[np.isfinite(eval)]
+        eval = eval[(eval >= fmin) & (eval <= fmax)]
+
+    mandatory = np.unique(np.concatenate((feature, eval)))
+    if mandatory.size >= max_points:
+        # Preserve every caller node; only reduce the optional feature reserve
+        # if an unusually large likelihood node set consumes the budget.
+        selected = np.unique(np.concatenate((eval, feature)))
+        if selected.size > max_points and eval.size < max_points:
+            selected = np.unique(np.concatenate((eval, feature[:max_points - eval.size])))
+        return np.sort(selected)[::-1]
+
+    optional = seed[(seed < lo) | (seed > hi)]
+    room = max_points - mandatory.size
+    if optional.size > room:
+        idx = np.rint(np.linspace(0, optional.size - 1, room)).astype(int)
+        optional = optional[np.unique(idx)]
+    selected = np.unique(np.concatenate((mandatory, optional)))
+    return np.sort(selected)[::-1]

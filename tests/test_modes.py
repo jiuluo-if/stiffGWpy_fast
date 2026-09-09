@@ -18,6 +18,7 @@ def fast_settings():
     FS.set_z_tail(saved['z_tail'])
     FS.set_phase_max(saved['phase_max'])
     FS.set_freq_grid(freq_grid)
+    FS._KINK_SPLIT = saved['kink_split']
 
 
 def test_accuracy_modes_valid(fast_settings):
@@ -34,7 +35,14 @@ def test_accuracy_modes_valid(fast_settings):
     assert FS.ACCURACY_MODES['production']['z_tail'] > FS.ACCURACY_MODES['ultra-fast']['z_tail']
     # The four canonical tiers requested by the audit; ultra-fast is an alias.
     assert FS.ACCURACY_MODES['fast'] == FS.ACCURACY_MODES['ultra-fast']
-    assert FS.ACCURACY_MODES['debug']['h'] < FS.ACCURACY_MODES['fast']['h']
+    assert FS.ACCURACY_MODES['debug']['h'] <= FS.ACCURACY_MODES['fast']['h']
+
+
+def test_only_fast_is_formal_user_profile(fast_settings):
+    assert FS.USER_FAST_PROFILES == ('fast',)
+    assert tuple(FS.FAST_PROFILES) == ('fast',)
+    assert FS.is_validation_mode('production') is True
+    assert FS.is_validation_mode('fast') is False
 
 
 def test_error_budget_available(fast_settings):
@@ -134,7 +142,8 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
     assert captured['tol'] == 1e-7
     assert captured['freq_res'] == 1.0
     assert FS.get_settings() == dict(threads=4, col_step=4, h=0.01, z_tail=5.0,
-                                     phase_max=0.0, freq_grid='construct')
+                                     phase_max=0.0, freq_grid='construct',
+                                     kink_split=False)
 
 
 def test_resolve_config_is_immutable_and_does_not_mutate_module_state(fast_settings):
@@ -142,7 +151,7 @@ def test_resolve_config_is_immutable_and_does_not_mutate_module_state(fast_setti
     cfg = FS.resolve_config('production', h=0.005, threads=1)
     assert cfg == FS.FastSolverConfig(h=0.005, col_step=4, z_tail=8.0,
                                       phase_max=0.5, freq_grid='adaptive',
-                                      threads=1)
+                                      threads=1, kink_split=False)
     with pytest.raises((AttributeError, TypeError)):
         cfg.h = 0.02
     with pytest.raises(TypeError, match='unknown'):
@@ -167,9 +176,11 @@ def test_default_engine_uses_plain_grid(monkeypatch, fast_settings):
     assert m.SGWB_iter() is m
     cfg = captured['config']
     assert cfg == FS.resolve_config('fast')
-    assert cfg.freq_grid == 'construct'
+    assert cfg.freq_grid == 'goal'
     assert cfg.z_tail == 5.0
-    assert cfg.phase_max == 0.0
+    assert cfg.phase_max == 0.25
+    assert cfg.h == 0.005
+    assert cfg.kink_split is True
 
 
 def test_pool_size_env_override(monkeypatch):

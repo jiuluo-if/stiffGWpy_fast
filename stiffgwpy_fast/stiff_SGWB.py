@@ -187,7 +187,7 @@ class LCDM_SG(LCDM_SN):
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
         for which the extra radiation due to the SGWB is mimicked by a constant Delta N_eff.
 
-        ``engine`` selects the solver: 'fast' (default; the plain-grid fast
+        ``engine`` selects the solver: 'fast' (default; the goal-kink-hybrid fast
         solver) or 'lsoda' (the original adaptive LSODA path) or 'reference'
         (the independent continuous-sigma precision path).  When
         ``engine='fast'`` and the fast solver
@@ -199,8 +199,8 @@ class LCDM_SG(LCDM_SN):
         (audit-only; 1.0 = default grid).
 
         Fast-path tuning (ignored by the LSODA path): when ``engine='fast'`` and
-        ``accuracy_mode`` is omitted, the high-level API uses the ``fast``
-        plain-grid preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
+        ``accuracy_mode`` is omitted, the high-level API uses the combined ``fast``
+        goal-kink-hybrid preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
         settings. Otherwise ``accuracy_mode`` selects
         a named preset from ``fast_sgwb.ACCURACY_MODES`` ('reference',
         'production' or 'ultra-fast'); explicit ``h``, ``col_step``, ``threads``
@@ -212,7 +212,7 @@ class LCDM_SG(LCDM_SN):
         On success the model object is returned.
 
         """
-        # 快速高层调用默认使用 plain-grid；显式 None 仍保留给需要手动管理
+        # 快速高层调用默认使用组合后的 fast preset；显式 None 仍保留给需要手动管理
         # 旧模块设置的兼容调用方。
         if engine == 'fast' and accuracy_mode is _DEFAULT_ACCURACY_MODE:
             accuracy_mode = 'fast'
@@ -251,12 +251,12 @@ class LCDM_SG(LCDM_SN):
                     cfg = fast_sgwb.ACCURACY_MODES[canonical]
                     self.accuracy_mode_used = canonical
                     self.accuracy_profile = (
-                        'plain-grid' if canonical == 'fast'
-                        else 'transition-refine' if canonical == 'production'
+                        'goal-kink-hybrid' if canonical == 'fast'
                         else 'validation')
                     f_tol = cfg['tol']
                     f_freq = cfg['freq_res']
                     tr_mode = cfg.get('transition_refine', False)
+                    kink_mode = cfg.get('kink_split', False)
                     if h is not None:
                         config_overrides['h'] = h
                     if col_step is not None:
@@ -280,12 +280,16 @@ class LCDM_SG(LCDM_SN):
                     f_tol = tol
                     f_freq = freq_res
                     tr_mode = bool(transition_refine)
+                    kink_mode = False
                 if transition_refine is not None:
                     tr_mode = bool(transition_refine)
+                    if tr_mode:
+                        kink_mode = False
                 result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
                                                   freq_res=f_freq,
                                                   sigma_exact=sigma_exact,
                                                   transition_refine=tr_mode,
+                                                  kink_split=kink_mode,
                                                   config=config,
                                                   eval_freqs=eval_freqs)
             except Exception as exc:

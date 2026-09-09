@@ -323,6 +323,31 @@ def test_kink_split_variant_inserts_only_reheating_breakpoint():
     assert m.transition_refine_used is False
 
 
+def test_phase_envelope_caps_each_split_transfer_segment():
+    """Phase B applies the phase cap independently on both sides of ``N_re``."""
+    assert FS._phase_substeps(0.02, 4.0, 0.0) == 1
+    assert FS._phase_substeps(0.02, 4.0, 0.5) >= 2
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.5, freq_grid='construct', threads=1)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg, kink_split=True) is m
+    assert m.phase_max_used == pytest.approx(0.5)
+    assert np.all(np.isfinite(m.log10OmegaGW))
+
+
+def test_goal_frequency_grid_solves_native_eval_nodes():
+    """The fast solver accepts the sparse goal grid without post interpolation."""
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.25, freq_grid='goal', threads=1)
+    ev = np.array([-2.0, -1.0, 0.0, 1.0])
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg, kink_split=True,
+                              eval_freqs=ev) is m
+    assert 64 <= m.f.size <= 120
+    assert np.all(np.min(np.abs(m.f[:, None] - ev[None, :]), axis=0) == 0.0)
+    assert m.freq_grid_used == 'goal'
+
+
 
 
 def test_eval_freqs_are_native_grid_nodes():

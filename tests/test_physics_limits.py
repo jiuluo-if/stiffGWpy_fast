@@ -126,6 +126,9 @@ def test_float_robustness_extreme_params():
         FS.set_col_step(saved['col_step'])
         FS.set_h(saved['h'])
         FS.set_z_tail(saved['z_tail'])
+        FS.set_phase_max(saved['phase_max'])
+        FS.set_freq_grid(saved['freq_grid'])
+        FS._KINK_SPLIT = saved['kink_split']
 
 
 def test_sigma_exact_reduces_model_bias():
@@ -154,6 +157,9 @@ def test_sigma_exact_reduces_model_bias():
         FS.set_col_step(saved['col_step'])
         FS.set_h(saved['h'])
         FS.set_z_tail(saved['z_tail'])
+        FS.set_phase_max(saved['phase_max'])
+        FS.set_freq_grid(saved['freq_grid'])
+        FS._KINK_SPLIT = saved['kink_split']
 
 
 def test_stiff_enhances_high_frequency_spectrum():

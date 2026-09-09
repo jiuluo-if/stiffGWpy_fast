@@ -61,6 +61,19 @@ def test_grid_independent_freqs_invariant_to_sigma_grid():
     assert gf.size > 100
 
 
+def test_goal_oriented_freqs_keeps_transition_and_eval_nodes():
+    """The sparse grid reserves nodes for the reheating feature and likelihood."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    FS.gen_fast(m, 0.02)
+    ev = np.array([-2.0, -1.0, 0.0, 1.0])
+    grid = FA.goal_oriented_freqs(m, 1.0, seed_n=64, max_points=96,
+                                  eval_freqs=ev)
+    assert 64 <= grid.size <= 96
+    assert np.all(np.diff(grid) < 0.0)
+    assert np.all(np.min(np.abs(grid[:, None] - ev[None, :]), axis=0) == 0.0)
+    assert np.min(np.abs(grid - m.f_re)) < 0.1
+
+
 def test_breakpoint_phi_s2_is_accurate_without_dense_subgrid():
     """The Phase-A primitive uses the breakpoint grid without a global subgrid."""
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
