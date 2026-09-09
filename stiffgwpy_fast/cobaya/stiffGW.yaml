@@ -41,8 +41,8 @@ freq_res: 0
 # Layer C 在 11 个 PTA 频率 bin 上测得该插值的 dex 误差不超过 3.10e-4。
 eval_freqs: null
 
-# engine='fast'：命名精度预设。默认 'fast' 使用唯一的 goal-kink-hybrid 设置。
-# 'production' 仅为旧调用保留的 validation 兼容入口；'reference'、'deep'、'debug' 仅用于
+# engine='fast'：唯一正式生产预设，使用 goal-kink-hybrid 设置。
+# 'production' 仅为旧调用保留的弃用兼容别名；'reference'、'deep'、'debug' 仅用于
 # 验证，不用于 MCMC 热路径；空字符串表示不选预设，只使用模块默认值和显式参数。
 accuracy_mode: fast
 

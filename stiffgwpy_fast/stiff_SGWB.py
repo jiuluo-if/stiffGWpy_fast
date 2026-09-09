@@ -4,6 +4,7 @@
 import math
 import multiprocessing as mp
 import os
+import warnings
 from functools import partial
 
 import numpy as np
@@ -201,10 +202,10 @@ class LCDM_SG(LCDM_SN):
         Fast-path tuning (ignored by the LSODA path): when ``engine='fast'`` and
         ``accuracy_mode`` is omitted, the high-level API uses the combined ``fast``
         goal-kink-hybrid preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
-        settings. Otherwise ``accuracy_mode`` selects
-        a named preset from ``fast_sgwb.ACCURACY_MODES`` ('reference',
-        'production' or 'ultra-fast'); explicit ``h``, ``col_step``, ``threads``
-        and non-default ``z_tail``/``freq_res``/``tol`` override the preset.
+        settings. ``accuracy_mode='fast'`` is the only formal user preset;
+        historical ``production``/``ultra-fast`` names are deprecated aliases
+        mapped to it. Explicit ``h``, ``col_step``, ``threads`` and non-default
+        ``z_tail``/``freq_res``/``tol`` override the fast preset.
         With ``accuracy_mode=None``, ``h``/``col_step``/``threads`` snapshot
         the legacy settings (env FAST_H/FAST_COL_STEP/FAST_THREADS) and
         ``z_tail``/``freq_res``/``tol`` are applied as passed. The preferred
@@ -248,6 +249,13 @@ class LCDM_SG(LCDM_SN):
                 config_overrides = {}
                 if accuracy_mode is not None:
                     canonical = fast_sgwb.normalize_accuracy_mode(accuracy_mode)
+                    if canonical in ('production', 'ultra-fast'):
+                        warnings.warn(
+                            "accuracy_mode=%r is deprecated; use the single user-facing fast mode"
+                            % accuracy_mode,
+                            DeprecationWarning, stacklevel=2)
+                        canonical = 'fast'
+                        accuracy_mode = canonical
                     cfg = fast_sgwb.ACCURACY_MODES[canonical]
                     self.accuracy_mode_used = canonical
                     self.accuracy_profile = (
