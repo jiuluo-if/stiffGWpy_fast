@@ -136,7 +136,7 @@ def H2_vec(N, m, DN_eff):
     return out
 
 
-def _sigma_node_limits(Nv, m, DN_eff):
+def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
     """Return continuous sigma at grid nodes with explicit kink limits.
 
     ``sigma_vec`` evaluates the reheating point using the post-transition
@@ -145,7 +145,12 @@ def _sigma_node_limits(Nv, m, DN_eff):
     transition limit.  Keeping both arrays makes the convention explicit.
     """
     Nv = np.asarray(Nv, dtype=float)
-    nodes = sigma_vec(Nv, m, DN_eff)
+    if sigma_nodes is None:
+        nodes = sigma_vec(Nv, m, DN_eff)
+    else:
+        nodes = np.asarray(sigma_nodes, dtype=float)
+        if nodes.shape != Nv.shape:
+            raise ValueError('sigma_nodes must match Nv shape')
     left = nodes.copy()
     right = nodes.copy()
     n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
@@ -337,7 +342,7 @@ def exact_phi_s2_breakpoint(m, Nv, DN_eff):
             S2.astype(np.float64), S2inv.astype(np.float64), h_arr)
 
 
-def exact_phi_s2_split(m, Nv, DN_eff):
+def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     """Build uniform-grid primitives while splitting the one ``N_re`` interval.
 
     The returned grid remains uniform, so the hot kernel keeps its original
@@ -351,7 +356,7 @@ def exact_phi_s2_split(m, Nv, DN_eff):
     if Nv.size < 2:
         return (np.zeros_like(Nv), np.zeros_like(Nv), np.ones_like(Nv),
                 np.ones_like(Nv), -1, 0.0, 0.0)
-    nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff)
+    nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff, sigma_nodes)
     mid = 0.5 * (Nv[:-1] + Nv[1:])
     mid_sigma = sigma_vec(mid, m, DN_eff)
     integral = h_arr * (nodes_left[:-1] + 4.0 * mid_sigma + nodes_right[1:]) / 6.0

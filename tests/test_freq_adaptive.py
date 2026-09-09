@@ -109,3 +109,14 @@ def test_split_primitive_uses_left_limit_at_reheating_kink():
     expected_phi_re = 1.5 * expected_f_re - n_re + Nv[0]
     assert split[5] == pytest.approx((n_re - left) / h)
     assert split[6] == pytest.approx(expected_phi_re, rel=2e-12, abs=2e-12)
+
+
+def test_split_primitive_reuses_cached_node_sigma():
+    """Cached node sigma must preserve the exact split primitive."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    FS.gen_fast(m, 0.02, kink_split=True)
+    dn = m.cosmo_param['DN_eff']
+    direct = EB.exact_phi_s2_split(m, m.Nv, dn)
+    cached = EB.exact_phi_s2_split(m, m.Nv, dn, sigma_nodes=m.sigma)
+    for a, b in zip(direct, cached):
+        assert np.allclose(a, b, rtol=2e-13, atol=2e-13)
