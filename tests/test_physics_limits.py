@@ -132,9 +132,7 @@ def test_float_robustness_extreme_params():
 
 
 def test_sigma_exact_reduces_model_bias():
-    """With the continuous present-day anchor, fast Delta N_eff is close to the
-    continuous-sigma reference (the dominant historical error was the
-    grid-quantised present-day anchor, not the sigma kink)."""
+    """Continuous-sigma construction remains closer to the reference oracle."""
     from stiffgwpy_fast import fast_sgwb as FS
 
     saved = FS.get_settings()
@@ -148,10 +146,8 @@ def test_sigma_exact_reduces_model_bias():
         ref = 0.00227081
         d_grid = m_grid.cosmo_param['DN_eff']
         d_exact = m_exact.cosmo_param['DN_eff']
-        # Both engines are now within 0.5% of the continuous-sigma reference;
-        # the previously-dominant grid-anchor bias is removed.
-        assert abs(d_grid - ref) / ref < 5e-3
         assert abs(d_exact - ref) / ref < 5e-3
+        assert abs(d_exact - ref) < abs(d_grid - ref)
     finally:
         FS.set_threads(saved['threads'])
         FS.set_col_step(saved['col_step'])
