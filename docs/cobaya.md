@@ -12,8 +12,7 @@ params `Delta_Neff_GW`, `Delta_Neff_total`, `log10hc_prim_fyr`, `f_end`,
 ## Mode mapping
 
 ```yaml
-accuracy_mode: fast      # plain-grid, speed-first
-accuracy_mode: production # transition-refine, precision-first (default)
+accuracy_mode: fast      # the single formal production/MCMC path
 ```
 
 The resolution order is strict:
@@ -28,9 +27,11 @@ default values from silently overriding the preset (the historical bug where a
 `z_tail: 7.0` YAML default masked the preset's `z_tail: 8.0`).  Setting any of
 them to a non-zero value is an explicit override.
 
-The high-level fast solver also defaults to `production` when `accuracy_mode`
-is omitted. `accuracy_mode: null` is reserved for compatibility with callers
-that deliberately manage legacy module settings. The adapter passes resolved
+The high-level fast solver defaults to the same `fast` path when `accuracy_mode`
+is omitted. Historical `production` and transition-refine names are deprecated
+compatibility aliases and are mapped to `fast`; direct validation scripts may
+still use internal presets. `accuracy_mode: null` is reserved for compatibility
+with callers that deliberately manage legacy module settings. The adapter passes resolved
 settings as a per-call immutable configuration, so selecting a mode does not
 mutate process-global solver defaults.
 

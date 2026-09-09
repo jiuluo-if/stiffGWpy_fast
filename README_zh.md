@@ -28,7 +28,8 @@ PyPI 安装名为 `stiffgwpy_fast`，Python 导入名为 `stiffgwpy_fast`，两�
 - 精确 `N_re` 断点拆分，transfer step 不跨越 reheating kink；
 - 通常约 70–120 点的 goal-oriented 频率网格，并保留 `eval_freqs` 原生节点。
 
-`production`/`transition_refine` 仅作为旧调用的 validation 兼容入口，不再是第二个用户档位。
+`production`/`transition_refine` 仅作为旧调用的弃用兼容别名，高层接口会将它们映射到
+`fast`；它们不再是第二个用户档位，底层验证脚本仍可保留内部预设。
 独立的 `stiffgwpy_fast.reference` 连续 sigma 流程是精度锚点。LSODA 只用于回归、故障回退和
 运行时间比较。
 

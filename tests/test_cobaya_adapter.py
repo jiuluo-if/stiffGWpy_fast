@@ -247,7 +247,7 @@ def test_auto_escalate_likelihood_gate_escalates(monkeypatch):
                 likelihood_sigma=1.0e-6, dlogl_tol=1.0e-3)
     assert m.last_eval_status == 'FAST_ESCALATED'
     assert m.escalations == 1
-    assert m.escalated_from == 'production'
+    assert m.escalated_from == 'fast'
     assert m.dlogl_estimated is not None
     assert m.dlogl_estimated > 1.0e-3
 

@@ -307,14 +307,15 @@ def test_estimate_local_error_missing_telemetry():
 
 
 def test_wrapper_wires_production_preset_and_local_budget():
-    """The SGWB_iter wrapper must forward the production preset (kink-refined
-    transition + adaptive frequency grid) and attach the local error budget,
+    """The SGWB_iter wrapper must forward the fast preset (kink split
+    transition + goal frequency grid) and attach the local error budget,
     eval status and telemetry."""
     m = _make_model()
-    m.SGWB_iter(engine='fast', accuracy_mode='production', tol=1e-7)
+    m.SGWB_iter(engine='fast', accuracy_mode='fast', tol=1e-7)
     assert m.SGWB_converge
-    assert m.transition_refine_used is True
-    assert m.freq_grid_used == 'adaptive'
+    assert m.transition_refine_used is False
+    assert m.kink_split_used is True
+    assert m.freq_grid_used == 'goal'
     assert m.last_eval_status == 'FAST'
     assert m.eval_status_counts['FAST'] == 1
     assert m.local_error_budget is not None

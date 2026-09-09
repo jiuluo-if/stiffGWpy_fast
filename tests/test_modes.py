@@ -88,16 +88,17 @@ def test_engine_fast_forwards_kwargs(monkeypatch, fast_settings):
 
     monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-    r = m.SGWB_iter(engine='fast', accuracy_mode='production', h=0.005,
-                    tol=1e-6)
+    with pytest.warns(DeprecationWarning, match='single user-facing fast'):
+        r = m.SGWB_iter(engine='fast', accuracy_mode='production', h=0.005,
+                        tol=1e-6)
     assert r is m
     assert captured['tol'] == 1e-6
-    assert captured['freq_res'] == FS.ACCURACY_MODES['production']['freq_res']
+    assert captured['freq_res'] == FS.ACCURACY_MODES['fast']['freq_res']
     cfg = captured['config']
     assert isinstance(cfg, FS.FastSolverConfig)
     assert cfg.h == 0.005
-    assert cfg.col_step == FS.ACCURACY_MODES['production']['col_step']
-    assert cfg.z_tail == FS.ACCURACY_MODES['production']['z_tail']
+    assert cfg.col_step == FS.ACCURACY_MODES['fast']['col_step']
+    assert cfg.z_tail == FS.ACCURACY_MODES['fast']['z_tail']
 
 
 def test_engine_fast_applies_preset(monkeypatch, fast_settings):
@@ -228,10 +229,11 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     # error_tol=1e-6: any a-posteriori estimate above machine level triggers
     # the escalation mechanism (the fake model carries no solve telemetry).
-    m.SGWB_iter(engine='fast', accuracy_mode='production',
-                auto_escalate=True, error_tol=1e-6, escalate_to_reference=True)
+    with pytest.warns(DeprecationWarning):
+        m.SGWB_iter(engine='fast', accuracy_mode='production',
+                    auto_escalate=True, error_tol=1e-6, escalate_to_reference=True)
     assert m.escalations == 1
-    assert m.escalated_from == 'production'
+    assert m.escalated_from == 'fast'
     assert m.reference_evals >= 1
     assert m.cosmo_param['DN_eff'] == pytest.approx(0.00227)
     assert m.last_eval_status == 'FAST_ESCALATED'

@@ -156,8 +156,9 @@ m3.SGWB_iter(engine='lsoda')
 ```
 
 `accuracy_mode='fast'` is the only formal user-facing fast profile.
-`production`/`transition_refine` remain accepted as internal validation
-compatibility names. Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override
+`production`/`transition_refine` are deprecated compatibility aliases and are
+mapped to `fast` by the high-level API; direct validation code may retain its
+internal presets. Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override
 the selected preset. For the high-level API, `SGWB_iter()` defaults to the
 `fast` engine and its goal-kink-hybrid preset. Pass `accuracy_mode=None` only when you
 intentionally want a snapshot of the legacy manual module settings. Lower-level
