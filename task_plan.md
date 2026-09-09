@@ -6,7 +6,7 @@
 
 ## Next Step
 
-继续以 profiler 和独立 reference 优化正式 fast 的 DN/速度：保留已验证的 outer probe 优化，下一步优先研究能减少显式振荡步数或频率通道的算法，再做跨参数验证；任何有证据的重大阶段单独提交并推送。
+继续以 profiler 和独立 reference 优化正式 fast 的 DN/速度：已接受背景节点缓存，outer probe 审计确认不能直接删掉第二次 full solve；下一步优先研究能减少显式振荡步数或频率通道的算法，再做跨参数验证；任何有证据的重大阶段单独提交并推送。
 
 ## Current Phase
 
@@ -32,7 +32,7 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 实现 Phase B split-segment phase cap
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
 - [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
-- [ ] 继续优化 DN/速度并决定后续阶段是否合并；已接受物理尾部匹配修正（gamma=1），四阶 Magnus/曲率子步及 low-T 局部加密已拒绝
+- [ ] 继续优化 DN/速度并决定后续阶段是否合并；已接受物理尾部匹配修正（gamma=1）和背景节点缓存，四阶 Magnus/曲率子步、low-T 局部加密及直接删除第二次 full solve 已拒绝
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification

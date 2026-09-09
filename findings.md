@@ -47,6 +47,8 @@
 - 尾部修正跨参数探针：默认/high-T_re/stiff 的 30 个 native 节点 spectrum dex p95 分别约 `9.59e-4/9.14e-4/1.02e-3`；low-T_re 约 `3.35e-3`，误差集中在 `log10(f/Hz)=-18..-16.5`，这些模式未进入 analytic tail。low-T_re 的 h=.005 -> .0025 将该局部 p95 约 `3.42e-3 -> 1.55e-3`，但局部 phase 二分、起点提前、终点直接取 Phi_grid[k+1] 均未带来稳定收益，均回退。
 - 尾部修正改变了旧 validation 测试中的固定数值口径：production transition-refine 的 continuous-sigma 分支为 `DN_eff=0.00227259`，普通 grid 分支为 `0.00225706`；测试现改为要求 continuous-sigma 分支接近 reference 且优于普通 grid，避免沿用旧 tail match 的过时绝对阈值。
 - 尾部匹配修正 commit `da4fd02` 已按 `2966684515@qq.com` 提交并推送到 `fast/fast_v0.2`；远端 CI run `34318085109` 的 Python 3.9–3.13、ruff、mypy、manifest、wheel、distribution、smoke 与 Cobaya 全部 PASS。
+- 背景节点缓存 A/B：`exact_phi_s2_split` 现在可直接复用 `m.sigma` 的节点值，同时保留原有形状检查和 reheating 左右单侧约定；与原始 `sigma_vec` 路径逐项比较到 `2e-13` 以内。formal kink profile 的 steady warm median 约由 `10.62 ms` 降至 `8.90 ms`，但仍高于 `<=4 ms` 目标。
+- outer self-consistency 审计：default、low-T、high-T、stiff 和 low-r 五个代表点的首轮 probe 到第二轮 full solve 的 `DN_gw` 绝对变化分别约为 `7.7e-14`、`4.3e-9`、`7.7e-12`、`6.2e-13`、`7.8e-16`；说明 DN 本身对外层更新很不敏感。但临时强制“一次 full solve 即结束”时，最终 `g2/w2` 与当前两轮流程仍出现差异，high-T 点 `g2` 总和约差 `3.0%`，因此不能仅凭 DN 收敛就删除第二次 full solve，当前 outer probe 方案保留。
 
 ## Technical Decisions
 

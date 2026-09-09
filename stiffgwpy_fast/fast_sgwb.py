@@ -1337,7 +1337,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             elif kink_split:
                 from .exact_background import exact_phi_s2_split
                 Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_phi_s2_split(
-                    m, Nv, m.cosmo_param['DN_eff'])
+                    m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
                 h_arr = None
             elif sigma_exact:
                 from .exact_background import exact_phi_s2
