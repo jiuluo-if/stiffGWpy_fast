@@ -256,6 +256,17 @@ def test_z_tail_convergence(fast_settings):
     assert rel < 2e-4, rel
 
 
+def test_tail_match_uses_physical_oscillation_amplitude():
+    """The leading tail match uses d(ln|T|)/dN=-1, independent of sigma.
+
+    For a sub-horizon tensor mode the physical solution has T proportional to
+    a^-1 at leading order.  The amplitude quadrature is therefore x + y/omega,
+    not the damping-removal coefficient p/2 used by the older match.
+    """
+    for sigma in (1.0, 4.0 / 3.0, 2.0):
+        assert FS._tail_match_gamma(sigma) == pytest.approx(1.0)
+
+
 @pytest.mark.slow
 def test_freq_grid_convergence(fast_settings):
     """The adaptive frequency grid converges with freq_res: fr1 -> fr2 -> fr4

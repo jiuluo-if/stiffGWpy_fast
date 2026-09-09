@@ -936,6 +936,23 @@ def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
         xh, yh = scaled_step(xh, yh, zs, h_sub)
     return xh, yh
 
+
+@njit(cache=True, inline='always')
+def _tail_match_gamma(sigma):
+    """Return the physical high-frequency amplitude-match coefficient.
+
+    In the sub-horizon limit the tensor amplitude obeys ``T ~ a^-1`` for any
+    slowly varying background.  With ``y = exp(z) T`` and ``x = T'``, the
+    constant-amplitude quadrature is therefore ``x + y/exp(z)``.  Its leading
+    coefficient is one; the older ``(3 - 1.5*sigma)/2`` coefficient belongs to
+    the damping-removed variable and leaves an O(exp(-z)) matching error.
+    ``sigma`` remains an argument to keep the physical dependency explicit at
+    the call site and to make the invariant easy to test.
+    """
+    _ = sigma
+    return 1.0
+
+
 @njit(cache=True)
 def assemble_main(Ogw, Oj, Opgw, m, slot, s2, xh, yh, zz, Pt):
     ss = math.sqrt(s2)
@@ -1023,7 +1040,7 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
             s2k = S2[kend]
             e_z = math.exp(-last_z)
             if Sv is not None:
-                gamma = (3.0 - 1.5*Sv[kend])*0.5
+                gamma = _tail_match_gamma(Sv[kend])
                 amp2 = (lxh*lxh + lyh*lyh*(1.0 + gamma*gamma*e_z*e_z)
                         + 2.0*gamma*lxh*lyh*e_z)
             else:

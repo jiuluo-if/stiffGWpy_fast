@@ -43,6 +43,9 @@
 - 高层 API 合并提交 `c9110c9`：`accuracy_mode='fast'` 成为唯一正式用户档；旧 `production`/`ultra-fast`/transition-refine 别名在高层发出 `DeprecationWarning` 并映射到 fast，底层 validation preset 仍可供内部脚本使用。完整测试 `111 passed, 6 deselected`，CI run `34313611135` 全部 PASS。
 - rejected numerical A/B：从视界前 3 个十进制数量级提前到 4 个只改变 DN 约 `3e-9`；标准四阶 RK4、两节点四阶 Magnus、视界局部 2/4 子步和 sigma 变化触发的局部半步均未缩小 `h=.005` 与 `h=.0025` 的 DN 差异，且部分方案变慢，均已回退。
 - rejected sparse goal refinement：76 点增加到 87 点后，spectrum dex p95 从 `2.719e-3` 改善到 `2.675e-3`，但 integrated DN rel 从 `1.368e-3` 恶化到 `1.755e-3`，已回退。32 个 h/2 探针通道可以估计默认点的 h 偏差约 `7.35e-4`（完整 h/2 对照 `7.44e-4`），但单次探针仍约 `10 ms` 且会造成 endpoint-only 修正，尚未形成可接受的输出一致性方案。
+- 尾部匹配 A/B：当前 `gamma=(3-1.5*sigma)/2` 是阻尼去除变量的系数；由物理张量解 `T~a^-1` 推导，深亚视界振幅匹配的首阶组合应为 `x+y/omega`，即 `gamma=1`。只改这一项，在默认点 16 个代表 native 节点上，z_tail=5 的 spectrum dex p95 由约 `2.63e-3` 降至 `3.20e-4`，max 由约 `2.66e-3` 降至 `4.64e-4`，warm fast 约 `9-10 ms`，无新增计算分支；保留该修改。
+- 尾部修正跨参数探针：默认/high-T_re/stiff 的 30 个 native 节点 spectrum dex p95 分别约 `9.59e-4/9.14e-4/1.02e-3`；low-T_re 约 `3.35e-3`，误差集中在 `log10(f/Hz)=-18..-16.5`，这些模式未进入 analytic tail。low-T_re 的 h=.005 -> .0025 将该局部 p95 约 `3.42e-3 -> 1.55e-3`，但局部 phase 二分、起点提前、终点直接取 Phi_grid[k+1] 均未带来稳定收益，均回退。
+- 尾部修正改变了旧 validation 测试中的固定数值口径：production transition-refine 的 continuous-sigma 分支为 `DN_eff=0.00227259`，普通 grid 分支为 `0.00225706`；测试现改为要求 continuous-sigma 分支接近 reference 且优于普通 grid，避免沿用旧 tail match 的过时绝对阈值。
 
 ## Technical Decisions
 
