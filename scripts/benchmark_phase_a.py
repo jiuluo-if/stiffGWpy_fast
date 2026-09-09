@@ -60,7 +60,7 @@ def main():
         rows[name] = {
             'warm_ms': [x * 1e3 for x in samples],
             'median_ms': statistics.median(samples) * 1e3,
-            'p95_ms': float(np.percentile(samples, 95)),
+            'p95_ms': float(np.percentile(samples, 95) * 1e3),
             'n_nodes': int(len(model.Nv)),
             'n_freq': int(len(model.f)),
             'DN_gw': float(model.DN_gw[-1]),

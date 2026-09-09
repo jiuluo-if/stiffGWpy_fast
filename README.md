@@ -79,9 +79,9 @@ analytic WKB envelope at `z_tail`; the local error budget is exposed through
 `stiffgwpy_fast.fast_sgwb.estimate_local_error`.
 
 Fresh single-point evidence on this branch (default case, full candidate-grid
-reference, `h=.005`, 90 fast frequency points) is spectrum dex median
-`6.96e-4`, p95 `2.60e-3`, max `3.04e-3`, and `DN_gw` relative error
-`1.68e-3`.  Warm runtime was `6.80 ms/point` at 16 threads on the current
+reference, `h=.005`, 76 fast frequency points) is spectrum dex median
+`6.53e-4`, p95 `2.72e-3`, max `3.04e-3`, and `DN_gw` relative error
+`1.37e-3`.  Warm runtime was `6.73 ms/point` at 16 threads on the current
 host; this is an interim optimization snapshot, not a final universal
 certification claim.  See `findings.md` and `progress.md` for the exact
 commands and remaining speed/DN work.
@@ -208,7 +208,7 @@ use native nodes when the bin spacing approaches the spectral features.
 The current single fast path is still under active branch-level optimization.
 At the default anchor, matched against the independent continuous-sigma oracle
 on the full candidate grid, the measured spectrum dex statistics are median
-`6.96e-4`, p95 `2.60e-3`, max `3.04e-3`; `DN_gw` relative error is `1.68e-3`.
+`6.53e-4`, p95 `2.72e-3`, max `3.04e-3`; `DN_gw` relative error is `1.37e-3`.
 These numbers are evidence for the current snapshot, not a universal parameter-
 space certification. `reference` remains the precision oracle.
 
@@ -238,7 +238,7 @@ comparison, stage breakdown, AB evidence, and thread scaling.
 
 | | runtime/point | vs LSODA |
 |---|---|---|
-| fast (goal-kink-hybrid) | 6.799 ms warm median; 3.089 s cold | ≈3496x vs current LSODA A run; interim result |
+| fast (goal-kink-hybrid) | 6.727 ms warm median; 1.919 s cold | ≈3124x vs current LSODA A run; interim result |
 | reference (oracle) | ≈360–383 s/point historical | anchor only |
 
 The speedup entries use the recent A-point LSODA measurement (`22.137 s`) and
@@ -261,7 +261,7 @@ importance reweighting, not on an independent reference chain.
 
 ## Limitations
 
-* The current anchor `DN_gw` error is `1.68e-3`; the branch has not yet met the
+* The current anchor `DN_gw` error is `1.37e-3`; the branch has not yet met the
   final DN gate or the first `<=4 ms/point` speed target.
 * Fast execution is over 100x faster than the recent LSODA A-point runtime,
   but this is an interim optimization result, not an accuracy certification.

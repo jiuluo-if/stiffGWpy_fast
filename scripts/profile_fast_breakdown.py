@@ -46,6 +46,7 @@ def run_once(case, kink_split=False):
         'prep_fast': FS.prep_fast,
         'solve_kernel': FS.solve_kernel,
         'int_SGWB_W': FS.int_SGWB_W,
+        'build_Wmat': FS.build_Wmat,
         'construct_f': LCDM_SG.construct_f,
     }
     FS.gen_fast = lambda *a, **k: timed_call(totals, 'expansion_background', original['gen_fast'], *a, **k)
@@ -64,6 +65,7 @@ def run_once(case, kink_split=False):
         return timed_call(totals, 'tensor_solve_kernel', original['solve_kernel'], *solve_args, **kwargs)
     FS.solve_kernel = profiled_solve
     FS.int_SGWB_W = lambda *a, **k: timed_call(totals, 'column_integration', original['int_SGWB_W'], *a, **k)
+    FS.build_Wmat = lambda *a, **k: timed_call(totals, 'frequency_weights', original['build_Wmat'], *a, **k)
     LCDM_SG.construct_f = lambda *a, **k: timed_call(totals, 'frequency_grid', original['construct_f'], *a, **k)
     try:
         model = LCDM_SG(**case)
@@ -77,6 +79,7 @@ def run_once(case, kink_split=False):
         FS.prep_fast = original['prep_fast']
         FS.solve_kernel = original['solve_kernel']
         FS.int_SGWB_W = original['int_SGWB_W']
+        FS.build_Wmat = original['build_Wmat']
         LCDM_SG.construct_f = original['construct_f']
 
 
