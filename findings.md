@@ -25,6 +25,9 @@
 - `exact_background` 的 reheating primitive 已修正为保留 `N_re` 的左右单侧 sigma 极限：结束于断点的 Simpson panel 用 pre-transition `sigma=1`，开始于断点的 panel 用 post-transition 值。
 - 完整 246 点 reference（固定候选 `DN_eff`，`z_tail=5`, `rtol=1e-11`）显示 Phase A plain -> kink split：`DN_gw` 相对误差 `1.069% -> 0.411%`，spectrum dex median `2.653e-3 -> 1.690e-3`，p95 `1.004e-2 -> 4.745e-3`，max `1.311e-2 -> 5.925e-3`，transition max `3.066% -> 1.317%`。这是有效的完整频率网格结果，但尚未满足最终 spectrum p95 `<3e-3`。
 - Phase A thread=1 median timing（fixed `h=.02,z_tail=5,phase_max=0,col_step=8`）为 plain `7.713 ms`、kink `10.020 ms`；16-thread profiler 的 JIT 后 steady sample 为 plain `3.701 ms`、kink `7.441 ms`，主要额外成本落在 exact background primitive，而非 tensor kernel。
+- Phase B `phase_max=.25` 在 `h=.02` 下对完整 oracle 几乎不改变 spectrum p95（kink `4.7629e-3`），但已修复 split segment 未应用 phase cap 的逻辑缺口。
+- Phase C goal grid 在 seed=64 时为 76 点、seed=80 时为 90 点；`h=.005,z_tail=5,phase_max=.25,kink_split` 的 90 点结果为 spectrum dex median `6.963e-4`、p95 `2.598e-3`、max `3.040e-3`，但 `DN_gw` rel `1.677e-3`。因此谱形目标通过，DN 目标仍需后续 outer/grid 处理。
+- 将正式 `fast` preset 组合为 `h=.005,col_step=8,z_tail=5,phase_max=.25,freq_grid=goal,kink_split=True` 后，fresh `bench_fast.py --reps 3 --cases 0` 在本机 16 threads 为 median `6.799 ms`；高于原先 plain `2.654 ms` 与第一阶段 `<=4 ms` 目标，必须继续 profiler/outer iteration 优化，不能宣称速度达标。
 
 ## Technical Decisions
 

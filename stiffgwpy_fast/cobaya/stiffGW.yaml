@@ -8,7 +8,7 @@
 path: null
 
 # 求解器引擎：
-#   fast  - plain-grid 快速求解器（默认）
+#   fast  - goal-kink-hybrid 快速求解器（默认）
 #   lsoda - 原始自适应 LSODA 路径
 #   reference - 独立连续 sigma 精度路径
 engine: fast
@@ -21,7 +21,7 @@ fallback: True
 fast_threads: 8
 
 # engine='fast' 时的固定步长或膨胀网格间距。
-# 0 表示使用预选 accuracy_mode（fast: 0.02）；非零值是覆盖预设的显式参数
+# 0 表示使用预选 accuracy_mode（fast: 0.005）；非零值是覆盖预设的显式参数
 # （详见 calculate()）。
 h: 0
 
@@ -41,9 +41,8 @@ freq_res: 0
 # Layer C 在 11 个 PTA 频率 bin 上测得该插值的 dex 误差不超过 3.10e-4。
 eval_freqs: null
 
-# engine='fast'：命名精度预设。默认 'fast' 使用 plain-grid 速度优先设置。
-# 对外档位为 'fast'（默认 plain-grid）
-# 和 'production'（transition-refine，精度优先）；'reference'、'deep'、'debug' 仅用于
+# engine='fast'：命名精度预设。默认 'fast' 使用唯一的 goal-kink-hybrid 设置。
+# 'production' 仅为旧调用保留的 validation 兼容入口；'reference'、'deep'、'debug' 仅用于
 # 验证，不用于 MCMC 热路径；空字符串表示不选预设，只使用模块默认值和显式参数。
 accuracy_mode: fast
 

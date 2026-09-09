@@ -28,9 +28,9 @@ FREQ_SUBSET = np.array([
 ])
 
 
-def solve(kink_split):
-    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
-                              phase_max=0.0, freq_grid='construct', threads=1)
+def solve(kink_split, h=0.02, z_tail=5.0, phase_max=0.0, freq_grid='construct'):
+    cfg = FS.FastSolverConfig(h=h, col_step=8, z_tail=z_tail,
+                              phase_max=phase_max, freq_grid=freq_grid, threads=1)
     model = LCDM_SG(**CASE)
     start = time.perf_counter()
     FS.SGWB_iter_fast(model, tol=1e-6, config=cfg, kink_split=kink_split)
@@ -43,15 +43,20 @@ def main():
     parser.add_argument('--json', default=None)
     parser.add_argument('--subset-reference', action='store_true',
                         help='use the historical sparse reference grid (diagnostic only)')
+    parser.add_argument('--z-tail', type=float, default=5.0)
+    parser.add_argument('--phase-max', type=float, default=0.0)
+    parser.add_argument('--freq-grid', choices=('construct', 'goal'), default='construct')
+    parser.add_argument('--h', type=float, default=0.02)
     args = parser.parse_args()
 
     # Warm the two paths before collecting timing samples.
-    solve(False)
-    solve(True)
+    solve(False, args.h, args.z_tail, args.phase_max, args.freq_grid)
+    solve(True, args.h, args.z_tail, args.phase_max, args.freq_grid)
     rows = {}
     for name, flag in (('plain', False), ('kink_split', True)):
-        samples = [solve(flag)[1] for _ in range(args.reps)]
-        model, _ = solve(flag)
+        samples = [solve(flag, args.h, args.z_tail, args.phase_max, args.freq_grid)[1]
+                   for _ in range(args.reps)]
+        model, _ = solve(flag, args.h, args.z_tail, args.phase_max, args.freq_grid)
         rows[name] = {
             'warm_ms': [x * 1e3 for x in samples],
             'median_ms': statistics.median(samples) * 1e3,
@@ -69,14 +74,16 @@ def main():
         # converged DN_eff so only the transfer path is compared here.  The full
         # candidate frequency grid is the default; a sparse subset is retained
         # only as an explicitly labelled diagnostic because it changes DN_gw.
-        candidate = solve(name == 'kink_split')[0]
+        candidate = solve(name == 'kink_split', args.h, args.z_tail, args.phase_max,
+                          args.freq_grid)[0]
         reference_freqs = (FREQ_SUBSET if args.subset_reference
                            else np.asarray(candidate.f, dtype=float))
         model = LCDM_SG(**CASE)
         ref = REF.run_reference(model, dn_eff=rows[name]['DN_eff'], freq_res=1.0,
-                                z_tail=5.0, rtol=1e-11,
+                                z_tail=args.z_tail, rtol=1e-11,
                                 freq_subset=reference_freqs, self_consistent=False)
-        candidate = solve(name == 'kink_split')[0]
+        candidate = solve(name == 'kink_split', args.h, args.z_tail, args.phase_max,
+                          args.freq_grid)[0]
         lo_ref = np.asarray(ref['log10OmegaGW'])
         if args.subset_reference:
             lo_test = np.interp(reference_freqs, np.asarray(candidate.f)[::-1],
@@ -99,9 +106,9 @@ def main():
             'spectrum_rel_all_max': float(np.max(all_rel)),
             'transition_rel_max': float(np.max(all_rel[transition])) if transition.any() else None,
         }
-    result = {'case': CASE, 'config': {'h': 0.02, 'z_tail': 5.0,
-                                        'phase_max': 0.0, 'col_step': 8,
-                                        'freq_grid': 'construct', 'threads': 1},
+    result = {'case': CASE, 'config': {'h': args.h, 'z_tail': args.z_tail,
+                                        'phase_max': args.phase_max, 'col_step': 8,
+                                        'freq_grid': args.freq_grid, 'threads': 1},
               'rows': rows, 'reference': reference_dn,
               'reference_grid': ('subset' if args.subset_reference else 'candidate_full')}
     print(json.dumps(result, ensure_ascii=False, indent=2))

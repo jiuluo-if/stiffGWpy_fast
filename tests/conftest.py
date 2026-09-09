@@ -28,3 +28,4 @@ def fast_settings():
     FS.set_z_tail(saved['z_tail'])
     FS.set_phase_max(saved['phase_max'])
     FS.set_freq_grid(freq_grid)
+    FS._KINK_SPLIT = saved['kink_split']

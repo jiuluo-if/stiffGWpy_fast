@@ -6,11 +6,11 @@
 
 ## Next Step
 
-基于已完成的代码路径审计和 fresh baseline，确认 Phase A 设计取舍并等待用户批准后进入实现。
+继续以 profiler 和独立 reference 优化正式 fast 的 DN/速度：优先 outer self-consistency 与 exact primitive 缓存，再做跨参数验证；任何有证据的重大阶段单独提交并推送。
 
 ## Current Phase
 
-Phase 1: Requirements & Discovery
+Phase 3: Implementation and evidence-driven optimization
 
 ## Phases
 
@@ -22,27 +22,30 @@ Phase 1: Requirements & Discovery
 - **Status:** complete
 
 ### Phase 2: Design & Planning
-- [ ] 比较 2–3 个 kink split / hybrid solver 方案
-- [ ] 形成经用户确认的设计与验收边界
-- [ ] 编写并自审实现计划
-- **Status:** in_progress
+- [x] 比较 uniform-grid split、variable-grid refine 与 exact primitive 方案
+- [x] 形成 reference-only oracle、分阶段 benchmark、兼容 guard 边界
+- [x] 编写并自审实现计划
+- **Status:** complete
 
 ### Phase 3: Implementation
-- [ ] 以 TDD 实现 Phase A exact kink split
-- [ ] 单独验证并决定接受或回退 Phase A
-- [ ] 依次推进 Phase B–E，仅合并有证据收益的阶段
-- **Status:** pending
+- [x] 以 TDD 实现 Phase A exact kink split 和 one-sided primitive
+- [x] 实现 Phase B split-segment phase cap
+- [x] 实现 Phase C goal frequency grid 和 native eval nodes
+- [x] 合并为唯一正式 fast preset；production 保留 validation 兼容入口
+- [ ] 继续优化 DN/速度并决定后续阶段是否合并
+- **Status:** in_progress
 
 ### Phase 4: Testing & Verification
-- [ ] 运行单元、API、reference、参数空间和 likelihood bins 验证
-- [ ] 运行 cold/warm、p95、线程 scaling 和 profiler before/after
-- [ ] 审计 guards、NaN/fallback、Cobaya derived quantities 与兼容别名
+- [x] 运行单元、API、完整频率 reference 和 native likelihood-node 验证
+- [x] 运行 cold/warm、p95、线程和 profiler 对照
+- [ ] 完成参数空间、likelihood bins、guards、NaN/fallback、Cobaya derived 全矩阵
 - **Status:** pending
 
 ### Phase 5: Delivery
-- [ ] 更新 README、Cobaya YAML、schema、tests、manifest、benchmark docs、CHANGELOG
-- [ ] 生成完整优化报告
-- [ ] fresh verification 后按阶段提交并推送远端同名分支
+- [x] 更新 README、README_zh、Cobaya YAML 和 tests
+- [ ] 更新 manifest、benchmark docs、CHANGELOG 并生成完整优化报告
+- [x] Phase A commit `07895e6` 已 fresh verification 后推送 `fast/fast_v0.2`
+- [ ] Phase B/C 和正式 preset 变更 fresh verification 后提交并推送
 - **Status:** pending
 
 ## Decisions Made

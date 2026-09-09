@@ -120,6 +120,7 @@ if _fast_phase_env is not None:
 # Default frequency-grid builder for SGWB_iter_fast (overridable per call via
 # the freq_grid argument; apply_accuracy_mode sets it from the preset).
 _FREQ_GRID = 'construct'
+_KINK_SPLIT = False
 
 MAX_ITER = 60            # cap on the outer bisection loop
 ln10 = math.log(10.0)
@@ -181,17 +182,18 @@ def set_phase_max(pm):
 
 
 def set_freq_grid(name):
-    """Set the default frequency-grid builder ('construct'/'grid_independent'/'adaptive')."""
+    """Set the default frequency-grid builder."""
     global _FREQ_GRID
-    if name not in ('construct', 'grid_independent', 'adaptive'):
-        raise ValueError('freq_grid must be construct/grid_independent/adaptive, got %r' % name)
+    if name not in ('construct', 'grid_independent', 'adaptive', 'goal'):
+        raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % name)
     _FREQ_GRID = name
 
 
 def get_settings():
     """Snapshot legacy module settings, including the selected grid builder."""
     return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL,
-                phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID)
+                phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
+                kink_split=_KINK_SPLIT)
 
 
 # Named accuracy presets (audit phase "three recommended modes").
@@ -204,11 +206,13 @@ def get_settings():
 ACCURACY_MODES = {
     'debug': dict(h=0.005, col_step=1, z_tail=10.0, freq_res=2.0,
                   tol=1e-8, threads=8, transition_refine=True, phase_max=0.25),
-    'fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
-                 tol=1e-6, threads=16, transition_refine=False, phase_max=0.0),
+    'fast': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
+                 tol=1e-6, threads=16, transition_refine=False,
+                 kink_split=True, phase_max=0.25, freq_grid='goal'),
     # Backward-compatible alias of 'fast' (identical settings).
-    'ultra-fast': dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
-                       tol=1e-6, threads=16, transition_refine=False, phase_max=0.0),
+    'ultra-fast': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
+                       tol=1e-6, threads=16, transition_refine=False,
+                       kink_split=True, phase_max=0.25, freq_grid='goal'),
     'reference': dict(h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0,
                       tol=1e-8, threads=8, transition_refine=True, phase_max=0.1),
     'production': dict(h=0.01, col_step=4, z_tail=8.0, freq_res=1.0,
@@ -223,12 +227,12 @@ ACCURACY_MODES = {
                  freq_grid='adaptive'),
 }
 
-# 档位说明：对外只提供两个快速档位（速度优先的 plain-grid 和精度优先的
-# transition-refine），并保留向后兼容的别名。其余档位（debug/deep/reference）
+# 档位说明：对外只提供一个组合后的 fast 档位；production/transition-refine
+# 仅保留为向后兼容的验证入口。其余档位（debug/deep/reference）
 # 是同一内部求解器的验证或基准变体，可用于认证，但不作为第三、第四个生产档位，
 # 也不用于 MCMC 热路径；真正的精度锚点是连续 sigma 的
 # ``stiffgwpy_fast.reference`` 流程（engine='reference'）。
-USER_FAST_PROFILES = ('fast', 'production')
+USER_FAST_PROFILES = ('fast',)
 
 # Alias -> canonical mode name (accepts the human-facing names used in docs).
 FAST_PROFILE_ALIASES = {
@@ -245,28 +249,25 @@ FAST_PROFILE_ALIASES = {
 MODE_ROLE = {
     'fast': 'fast',
     'ultra-fast': 'fast',       # alias of 'fast'
-    'production': 'fast',
+    'production': 'validation',
     'debug': 'validation',
     'deep': 'validation',
     'reference': 'validation',
 }
 
-# The two user-facing fast profiles, described as delivered (plain-grid vs
-# transition-refine).  ``profile`` is the human-facing name in docs.
+# The single user-facing fast profile. Historical production remains available
+# in ACCURACY_MODES for validation compatibility but is not listed here.
 FAST_PROFILES = {
-    'fast': dict(ACCURACY_MODES['fast'], profile='plain-grid',
+    'fast': dict(ACCURACY_MODES['fast'], profile='goal-kink-hybrid',
                  role='user_fast'),
-    'production': dict(ACCURACY_MODES['production'], profile='transition-refine',
-                       role='user_fast'),
 }
 
 
 def normalize_accuracy_mode(name):
     """Resolve an accuracy-mode name/alias to a canonical :data:`ACCURACY_MODES` key.
 
-    Accepts the user-facing names ``plain_grid`` / ``plain-grid`` (alias of
-    ``fast``) and ``transition_refine`` / ``transition-refine`` (alias of
-    ``production``), plus the historical keys.  ``None`` is returned unchanged.
+    Accepts ``fast`` as the single formal user profile plus historical aliases
+    and validation keys retained for compatibility. ``None`` is returned unchanged.
     """
     if name is None:
         return None
@@ -341,6 +342,8 @@ def apply_accuracy_mode(name):
     set_phase_max(cfg.get('phase_max', 0.0))
     set_freq_grid(cfg.get('freq_grid', 'construct'))
     set_threads(min(cfg['threads'], _MAX_THREADS))
+    global _KINK_SPLIT
+    _KINK_SPLIT = bool(cfg.get('kink_split', False))
     return cfg
 
 
@@ -348,7 +351,7 @@ def get_config():
     """Return an immutable snapshot of the legacy module settings."""
     return FastSolverConfig(h=_FAST_H, col_step=_COL_STEP, z_tail=_Z_TAIL,
                             phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
-                            threads=_THREADS)
+                            threads=_THREADS, kink_split=_KINK_SPLIT)
 
 
 def resolve_config(name=None, base=None, **overrides):
@@ -359,7 +362,8 @@ def resolve_config(name=None, base=None, **overrides):
     ``overrides`` replace it. Preset thread counts are clamped to the current
     Numba process budget, matching the historical preset behavior.
     """
-    valid_keys = {'h', 'col_step', 'z_tail', 'phase_max', 'freq_grid', 'threads'}
+    valid_keys = {'h', 'col_step', 'z_tail', 'phase_max', 'freq_grid',
+                  'threads', 'kink_split'}
     unknown = sorted(set(overrides) - valid_keys)
     if unknown:
         raise TypeError('unknown FastSolverConfig override(s): %s' % ', '.join(unknown))
@@ -368,18 +372,19 @@ def resolve_config(name=None, base=None, **overrides):
             raise TypeError("base must be a FastSolverConfig")
         values = dict(h=base.h, col_step=base.col_step, z_tail=base.z_tail,
                       phase_max=base.phase_max, freq_grid=base.freq_grid,
-                      threads=base.threads)
+                      threads=base.threads, kink_split=base.kink_split)
     elif name is None:
         values = dict(h=_FAST_H, col_step=_COL_STEP, z_tail=_Z_TAIL,
                       phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
-                      threads=_THREADS)
+                      threads=_THREADS, kink_split=_KINK_SPLIT)
     else:
         canonical = normalize_accuracy_mode(name)
         preset = ACCURACY_MODES[canonical]
         values = dict(h=preset['h'], col_step=preset['col_step'],
                       z_tail=preset['z_tail'], phase_max=preset.get('phase_max', 0.0),
                       freq_grid=preset.get('freq_grid', 'construct'),
-                      threads=min(int(preset['threads']), _MAX_THREADS))
+                      threads=min(int(preset['threads']), _MAX_THREADS),
+                      kink_split=bool(preset.get('kink_split', False)))
     for key in values:
         if key in overrides and overrides[key] is not None:
             values[key] = overrides[key]
@@ -907,6 +912,30 @@ def scaled_step(xh, yh, z_mid, h):
         si = h*(1.0 + x*x/6.0)
     return (c-si)*xh - w*si*yh, w*si*xh + (c+si)*yh
 
+
+@njit(cache=True, inline='always')
+def _phase_substeps(h_step, z_mid, phase_max):
+    """Return the minimum sub-step count for a bounded phase increment."""
+    if phase_max <= 0.0 or z_mid <= 0.0:
+        return 1
+    n_sub = int(math.ceil(h_step * math.exp(z_mid) / phase_max))
+    return n_sub if n_sub > 1 else 1
+
+
+@njit(cache=True, inline='always')
+def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
+    """Advance one segment, optionally using a constant-z phase envelope."""
+    z_mid = 0.5 * (z_start + z_end)
+    n_sub = _phase_substeps(h_step, z_mid, phase_max)
+    if n_sub == 1:
+        return scaled_step(xh, yh, z_mid, h_step)
+    h_sub = h_step / n_sub
+    dz_half = z_mid - z_start
+    for s in range(n_sub):
+        zs = z_start + dz_half * (2.0 * s + 1.0) / n_sub
+        xh, yh = scaled_step(xh, yh, zs, h_sub)
+    return xh, yh
+
 @njit(cache=True)
 def assemble_main(Ogw, Oj, Opgw, m, slot, s2, xh, yh, zz, Pt):
     ss = math.sqrt(s2)
@@ -962,23 +991,15 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                     z_end = z0 + Phi_grid[k + 1] - Phi0
                     h_left = h_step * kink_fraction
                     h_right = h_step - h_left
-                    xh, yh = scaled_step(xh, yh,
-                                         0.5 * (z_node + z_break), h_left)
-                    xh, yh = scaled_step(xh, yh,
-                                         0.5 * (z_break + z_end), h_right)
-                elif phase_max > 0.0 and z_mid_step > 0.0:
-                    n_sub = int(math.ceil(h_step*math.exp(z_mid_step)/phase_max))
-                    if n_sub > 1:
-                        z_node = z0 + Phi_grid[k] - Phi0
-                        dPhi = z_mid_step - z_node
-                        h_sub = h_step/n_sub
-                        for _s in range(n_sub):
-                            zs = z_node + dPhi*(2.0*_s + 1.0)/n_sub
-                            xh, yh = scaled_step(xh, yh, zs, h_sub)
-                    else:
-                        xh, yh = scaled_step(xh, yh, z_mid_step, h_step)
+                    xh, yh = _phase_segment(xh, yh, z_node, z_break,
+                                             h_left, phase_max)
+                    xh, yh = _phase_segment(xh, yh, z_break, z_end,
+                                             h_right, phase_max)
                 else:
-                    xh, yh = scaled_step(xh, yh, z_mid_step, h_step)
+                    z_node = z0 + Phi_grid[k] - Phi0
+                    z_end = 2.0 * z_mid_step - z_node
+                    xh, yh = _phase_segment(xh, yh, z_node, z_end,
+                                             h_step, phase_max)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k % col_step == 0:
@@ -1128,7 +1149,7 @@ def pchip_fine(idx_out, y, nv, out):
         out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
 
 def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, kink_split=False,
+                   transition_refine=False, kink_split=None,
                    freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
     """Accelerated (approximate) self-consistent SGWB iteration.
@@ -1146,17 +1167,18 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     instead of the fixed-grid cubic spline, removing the ~1% continuous-sigma-vs-
     grid model bias (see ``stiffgwpy_fast.exact_background``).
 
-    ``transition_refine`` (the ``production`` / ``transition-refine`` profile)
+    ``transition_refine`` (the historical ``production`` / ``transition-refine`` profile)
     treats the reheating transition as an ODE integration breakpoint: the
     kink-aware grid from ``stiffgwpy_fast.exact_background.build_kink_refined_grid``
     keeps the instantaneous-reheating kink inside a refined sub-step so it is
     never crossed by a spline/grid, and (with ``phase_max > 0``) horizon
-    crossing uses phase-aware sub-stepping.  This is the default scientific
-    path.  When ``False`` (the ``fast`` / ``plain-grid`` profile) the plain
-    fixed-step grid is used — faster but with a larger sigma-kink bias that is
-    only certified for the coarse exploratory envelope.
+    crossing uses phase-aware sub-stepping.  The formal ``fast`` profile instead
+    uses the exact uniform-grid kink split; this refined path remains validation
+    compatibility.
 
-    ``freq_grid`` selects the frequency sampling: ``'construct'`` (the model's
+    ``freq_grid`` selects the frequency sampling: ``'goal'`` (the formal fast
+    sparse grid with transition reserve and native ``eval_freqs``),
+    ``'construct'`` (the model's
     empirical grid), ``'grid_independent'`` (built from continuous background
     quantities, invariant to the sigma-grid resolution) or ``'adaptive'``
     (seeded from the grid-independent grid and refined where the PCHIP
@@ -1168,8 +1190,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     ``eval_freqs`` optionally force-adds log10(f/Hz) values to the solve grid
     as native nodes (so point evaluations at steep spectral features, e.g.
     likelihood bins, do not inherit interpolation error).  Values outside the
-    solved frequency range are ignored; ``'construct'`` grids are left
-    untouched.
+    solved frequency range are ignored; the goal grid includes them directly.
     """
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.
@@ -1199,14 +1220,16 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         config = get_config()
     elif not isinstance(config, FastSolverConfig):
         raise TypeError('config must be a FastSolverConfig')
+    if kink_split is None:
+        kink_split = bool(config.kink_split)
     col_step = config.col_step  # a mid-run compatibility setter must not
     Omega_nu = gp.Omega_nh2/m.derived_param['h']**2    # change array layouts
     # Resolve the frequency-grid builder: per-call argument wins, otherwise the
     # module default set by apply_accuracy_mode()/set_freq_grid().
     if freq_grid is None:
         freq_grid = config.freq_grid
-    if freq_grid not in ('construct', 'grid_independent', 'adaptive'):
-        raise ValueError('freq_grid must be construct/grid_independent/adaptive, got %r' % freq_grid)
+    if freq_grid not in ('construct', 'grid_independent', 'adaptive', 'goal'):
+        raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % freq_grid)
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
@@ -1251,9 +1274,13 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 if adaptive_grid is None:
                     adaptive_grid = grid_independent_freqs(m, freq_res)[0]
                 m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
+            elif freq_grid == 'goal':
+                from .freq_adaptive import goal_oriented_freqs
+                m.f = goal_oriented_freqs(m, freq_res, seed_n=80,
+                                          max_points=120, eval_freqs=eval_freqs)
             else:
                 m.construct_f(freq_res)
-            if eval_freqs is not None and freq_grid != 'construct':
+            if eval_freqs is not None and freq_grid in ('grid_independent', 'adaptive'):
                 ef = np.asarray(eval_freqs, dtype=float)
                 fmin_g, fmax_g = float(np.min(m.f)), float(np.max(m.f))
                 ef = ef[(ef >= fmin_g) & (ef <= fmax_g)]
@@ -1454,7 +1481,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
 
 
 def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, kink_split=False,
+                   transition_refine=False, kink_split=None,
                    freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
     """Run the fast solver with an isolated configuration snapshot.

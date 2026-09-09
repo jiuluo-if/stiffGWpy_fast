@@ -11,8 +11,8 @@ The PyPI distribution name is `stiffgwpy_fast`; the Python import name is
 project.
 
 **LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB)**
-cosmology code, with a fast solver exposed as exactly **two user-facing fast
-profiles**, an independent continuous-sigma high-accuracy reference pipeline
+cosmology code, with one **user-facing fast profile**, an independent
+continuous-sigma high-accuracy reference pipeline
 (the precision oracle), and the original LSODA path kept only for regression and
 runtime benchmarking.
 
@@ -52,76 +52,39 @@ Parameters (all enter the background / tensor-source physics):
 | `DN_re` | e-folds of matter-like reheating |
 | `kappa10` | `rho_stiff / rho_photon` at 10 MeV |
 
-The instantaneous-reheating transition is a kink in `sigma(N)`.  The fast
-production profile treats that kink as an ODE integration breakpoint so it is
-never smeared by a grid spline; the plain-grid profile does not, which is the
-main source of its bias (see below).
+The instantaneous-reheating transition is a kink in `sigma(N)`.  The formal
+`fast` profile now combines an exact `N_re` transfer split, phase-capped
+sub-stepping, and a goal-oriented sparse frequency grid.  Historical
+`production`/`transition_refine` names remain only as validation compatibility
+entries; they are not separate user-facing production tiers.  The precision
+anchor remains the independent `stiffgwpy_fast.reference` pipeline.
 
-## Two fast modes
+## Fast profile
 
-There are exactly **two user-facing fast profiles**.  The extra names
-(`debug`, `deep`, `reference`) are validation/benchmark variants of the same
-internal solver — they are not advertised as additional production tiers and are
-not meant for the MCMC thermal path.  The true precision anchor is the
-independent `stiffgwpy_fast.reference` pipeline.
+The current branch's single `fast` preset is:
 
-| Config key | `fast` (plain-grid) | `production` (transition-refine) |
-|---|---|---|
-| `h` | 0.02 | 0.01 |
-| `col_step` | 8 | 4 |
-| `z_tail` | 5.0 | 8.0 |
-| `freq_res` | 1.0 | 1.0 |
-| `transition_refine` | off | on |
-| `phase_max` | 0.0 | 0.5 |
-| `freq_grid` | construct | adaptive |
-| outer tol | 1e-6 | 1e-7 |
+| Config key | `fast` |
+|---|---|
+| `h` | 0.005 |
+| `col_step` | 8 |
+| `z_tail` | 5.0 |
+| `phase_max` | 0.25 |
+| `freq_grid` | goal (typically 70–120 points) |
+| `kink_split` | on |
+| outer tol | 1e-6 |
 
-### fast plain-grid
+The goal grid reserves nodes around the reheating feature and preserves
+`eval_freqs` as native solve nodes.  The deep-subhorizon part is handed to the
+analytic WKB envelope at `z_tail`; the local error budget is exposed through
+`stiffgwpy_fast.fast_sgwb.estimate_local_error`.
 
-> *Maximum practical speed under a documented accuracy envelope.*
-
-Uses a plain fixed/construct frequency grid and the fixed-step Magnus scheme
-with no transition refinement, no phase-aware horizon-crossing sub-stepping and
-no adaptive frequency grid.  It is a **fast approximate solver with a clear
-scientific error budget — not a "gross error" mode** — but that budget is
-`NOT VERIFIED` against the continuous-sigma oracle.
-
-- **Where it is acceptable:** exploratory coverage of the signal shape, runtime
-  screening, degenerate-probe scans, and the cheap outer tier of a
-  parameter-space screen where the final accuracy gate is provided by
-  `production` + the oracle.
-- **Where it is NOT acceptable:** scientific results or MCMC.  Measured at 9
-  matched z8 points against the continuous-sigma reference, the plain-grid
-  spectrum relative error median is **1.9e-2** (p95 6.9e-2) and the integrated
-  `DN_gw` relative error median is **9.1e-3** (p95 2.7e-2).  The dominant term
-  is the fixed-`sigma`-grid bias across the reheating kink, **not** a tuning
-  artifact.
-- **Runtime (this host, warm, 4 threads):** ≈4.442 ms/point (default A median,
-  15 repeats), p95 ≈5.105 ms.  Cold JIT `0.325 s` is reported separately.
-
-### fast transition-refine / production
-
-> *Default scientific-production solver for Cobaya / MCMC.*
-
-The production profile is transition-aware: the reheating kink is an exact
-integration breakpoint, horizon crossing uses `phase_max`-capped phase-aware
-sub-stepping, the frequency grid is curvature-adaptive, the deep-subhorizon tail
-is handed off to an analytic WKB/adiabatic solution at `z_tail`, and every solve
-carries a point-local a-posteriori error estimate
-(`stiffgwpy_fast.fast_sgwb.estimate_local_error`).
-
-- **Matched z8 accuracy vs the oracle (9 points):** signal/transition spectrum
-  relative error max **7.1e-4** (dex max 3.1e-4), gate <1e-3 **PASS**;
-  integrated `DN_gw` relative error median **4.3e-4** (p95 1.2e-3) — the <1e-4
-  gate is **NOT met**.
-- **Axis-edge suite (16 z8 points):** 14 solvable (13 PASS, 1 outlier
-  `edge_r_hi` at 1.6e-3 signal-rel) and 2 explicit shared-`Delta_Neff` guard
-  rejections (physical, never silent).
-- **Parameter space (240 Sobol, production):** 212 ok / 28 explicit guard
-  rejections; the artifact runtime median ≈5.3 s/point is a pre-JIT historical
-  measurement; current point benchmarks are in `docs/benchmarks.md`.
-- **Runtime (this host, warm, 4 threads):** ≈21.772 ms/point (default A median;
-  p95 ≈22.149 ms).  Cold JIT `0.226 s` is reported separately.
+Fresh single-point evidence on this branch (default case, full candidate-grid
+reference, `h=.005`, 90 fast frequency points) is spectrum dex median
+`6.96e-4`, p95 `2.60e-3`, max `3.04e-3`, and `DN_gw` relative error
+`1.68e-3`.  Warm runtime was `6.80 ms/point` at 16 threads on the current
+host; this is an interim optimization snapshot, not a final universal
+certification claim.  See `findings.md` and `progress.md` for the exact
+commands and remaining speed/DN work.
 
 ## Reference / oracle
 
@@ -180,10 +143,10 @@ research outputs are intentionally excluded from Git and from PyPI archives.
 from stiffgwpy_fast import LCDM_SG
 
 m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-m.SGWB_iter()  # 默认使用 fast plain-grid
+m.SGWB_iter()  # 默认使用唯一 fast goal-kink-hybrid preset
 print(m.DN_gw[-1])
 
-# 显式选择速度优先的 plain-grid 档位
+# 显式选择唯一正式 fast 档位
 m2 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m2.SGWB_iter(engine='fast', accuracy_mode='fast')
 
@@ -192,11 +155,11 @@ m3 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m3.SGWB_iter(engine='lsoda')
 ```
 
-`accuracy_mode` accepts the two user-facing names (`fast`, `production`) and the
-aliases `plain_grid`/`plain-grid`/`transition_refine`/`transition-refine`.
-Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override the preset.
-For the high-level API, `SGWB_iter()` defaults to the `fast` engine and its
-plain-grid preset. Pass `accuracy_mode=None` only when you
+`accuracy_mode='fast'` is the only formal user-facing fast profile.
+`production`/`transition_refine` remain accepted as internal validation
+compatibility names. Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override
+the selected preset. For the high-level API, `SGWB_iter()` defaults to the
+`fast` engine and its goal-kink-hybrid preset. Pass `accuracy_mode=None` only when you
 intentionally want a snapshot of the legacy manual module settings. Lower-level
 calls can pass an immutable `fast_sgwb.FastSolverConfig` per invocation.
 
@@ -213,7 +176,7 @@ theory:
   stiffgwpy_fast.cobaya.stiffGW.stiffGW:
     engine: fast
     fallback: True
-    accuracy_mode: fast            # fast（plain-grid）或 production（transition-refine）
+    accuracy_mode: fast            # 唯一正式 fast 档位
     fast_threads: 8
 ```
 
@@ -225,9 +188,10 @@ is strictly:
 accuracy_mode  ->  preset defaults  ->  explicit user overrides only
 ```
 
-so a default `engine: fast` YAML runs the `fast` plain-grid settings.  The YAML
+so a default `engine: fast` YAML runs the combined `fast` settings.  The YAML
 default values cannot silently mask the selected preset. `accuracy_mode: fast`
-maps to plain-grid; `accuracy_mode: production` maps to transition-refine.
+maps to the goal-kink-hybrid path; `accuracy_mode: production` is retained only
+for validation compatibility.
 
 **`eval_freqs` (likelihood bins as native nodes).**  Set
 `eval_freqs: [list|path-to-file]` in the theory YAML to force-add
@@ -241,18 +205,12 @@ use native nodes when the bin spacing approaches the spectral features.
 
 ## Accuracy
 
-Two-layer accuracy guarantees, all vs the continuous-sigma oracle:
-
-| | plain-grid | transition-refine |
-|---|---|---|
-| spectrum rel (signal, matched z8) | median 1.9e-2 / max 7.0e-2 | max 7.1e-4 |
-| spectrum dex (signal, matched z8) | max 8.2e-3 | max 3.1e-4 |
-| integrated `DN_gw` rel (median) | 9.1e-3 | 4.3e-4 |
-| gate `<1e-3` spectrum | **NOT met** | **PASS** |
-| gate `<1e-4` integrated `DN_gw` | **NOT met** | **NOT met** |
-
-Integrated `DN_gw <1e-4` is an honest limit: the residual is at the level of the
-oracle's own frozen-tail `z_tail` sensitivity (~3e-4), not a tuning artifact.
+The current single fast path is still under active branch-level optimization.
+At the default anchor, matched against the independent continuous-sigma oracle
+on the full candidate grid, the measured spectrum dex statistics are median
+`6.96e-4`, p95 `2.60e-3`, max `3.04e-3`; `DN_gw` relative error is `1.68e-3`.
+These numbers are evidence for the current snapshot, not a universal parameter-
+space certification. `reference` remains the precision oracle.
 
 ## Full parameter validation
 
@@ -280,8 +238,7 @@ comparison, stage breakdown, AB evidence, and thread scaling.
 
 | | runtime/point | vs LSODA |
 |---|---|---|
-| plain-grid | 4.442 ms warm median; 0.325 s cold | ≈4754x vs current LSODA A run; NOT accuracy-certified |
-| transition-refine (production) | 21.772 ms warm median; 0.226 s cold | ≈1017x vs recent LSODA A run; accuracy limits unchanged |
+| fast (goal-kink-hybrid) | 6.799 ms warm median; 3.089 s cold | ≈3496x vs current LSODA A run; interim result |
 | reference (oracle) | ≈360–383 s/point historical | anchor only |
 
 The speedup entries use the recent A-point LSODA measurement (`22.137 s`) and
@@ -304,15 +261,10 @@ importance reweighting, not on an independent reference chain.
 
 ## Limitations
 
-* Integrated `DN_gw` relative <1e-4 is NOT met (median 4.3e-4); the residual is
-  the reference's own frozen-tail `z_tail` sensitivity, not a knob that can be
-  tuned away.
-* Fast execution is now over 100x faster than the recent LSODA A-point runtime,
-  but this is an execution optimization, not an accuracy certification; the
-  plain-grid oracle envelope remains signal median 1.867e-2 / max 7.019e-2.
-* The axis-edge suite has a single 1.6e-3 spectrum outlier (`edge_r_hi`,
-  r=7.9e-2) — production is not uniformly <1e-3 everywhere in the box; use the
-  local error budget / escalation there.
+* The current anchor `DN_gw` error is `1.68e-3`; the branch has not yet met the
+  final DN gate or the first `<=4 ms/point` speed target.
+* Fast execution is over 100x faster than the recent LSODA A-point runtime,
+  but this is an interim optimization result, not an accuracy certification.
 * MCMC validation rests on importance reweighting, not an independent
   reference chain (reference is ~360 s/point).
 * The oracle uses a frozen tail; a deep/no-tail certification (z_tail ≥ 14) is

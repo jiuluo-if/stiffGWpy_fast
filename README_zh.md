@@ -22,15 +22,15 @@ PyPI 安装名为 `stiffgwpy_fast`，Python 导入名为 `stiffgwpy_fast`，两�
 
 ## 快速求解档位
 
-项目对外提供两个快速档位：
+项目对外只提供一个正式快速档位 `fast`，组合了：
 
-| 档位 | 用途 | 特点 |
-|---|---|---|
-| `fast` | 快速探索、信号形状筛查 | plain-grid，速度优先，精度包络仍需按验证结果解释 |
-| `production` | 正式计算和 MCMC 热路径 | transition-refine，处理 kink、相位和自适应频率网格 |
+- `h=0.005`、`col_step=8`、`z_tail=5`、`phase_max=0.25`；
+- 精确 `N_re` 断点拆分，transfer step 不跨越 reheating kink；
+- 通常约 70–120 点的 goal-oriented 频率网格，并保留 `eval_freqs` 原生节点。
 
+`production`/`transition_refine` 仅作为旧调用的 validation 兼容入口，不再是第二个用户档位。
 独立的 `stiffgwpy_fast.reference` 连续 sigma 流程是精度锚点。LSODA 只用于回归、故障回退和
-运行时间比较，不是第三个生产档位。
+运行时间比较。
 
 ## 安装
 
@@ -69,8 +69,8 @@ model.SGWB_iter()
 print(model.derived_param)
 ```
 
-高层接口 `SGWB_iter()` 默认使用 `fast` 引擎的 plain-grid 档位。需要
-transition-refine 时显式传入 `accuracy_mode="production"`；需要精度锚点时使用
+高层接口 `SGWB_iter()` 默认使用唯一的 `fast` goal-kink-hybrid 档位。旧的
+`accuracy_mode="production"` 仅用于兼容性验证；需要精度锚点时使用
 `engine="reference"`；需要原始回归路径时使用 `engine="lsoda"`。
 
 ## 验证
