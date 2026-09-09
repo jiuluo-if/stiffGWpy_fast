@@ -57,6 +57,8 @@
 - 连续背景 primitive 的进一步优化：正式 fast 新增 `fast_phi_s2_split`。它复用已生成的节点 sigma，在平滑区间用节点线性值构造 midpoint/quarter-point；只有包含 `N_re` 的区间继续调用连续-sigma 探针并按左右单侧 Simpson 分裂。默认点与原 `exact_phi_s2_split` 的 DN 相对差为 `3.22e-12`、频谱最大差为 `2.80e-6 dex`，完整回归为 `116 passed, 6 deselected`。
 - 该 primitive 优化后的独立深尾 reference（76 点、reference `z_tail=8`、`rtol=1e-11`）为 spectrum dex median `1.3968e-4`、p95 `4.1466e-4`、max `1.4152e-3`，DN rel `7.1404e-4`；因此此前 reference `z_tail=5` 的约 `4.04e-3` DN 差异主要混入了 oracle 自身浅尾部误差，不能据此继续加深 fast 的 tail。
 - 速度复测：新 primitive 在 20 threads 的代表性 warm median 约 `4.49 ms/point`，偶发样本低于 4 ms，但稳定中位数仍未达到 `<=4 ms/point`；继续优化方向应放在 tensor kernel/outer probe，而不是再次增加背景 spline 精度。
+- outer full-solve A/B：正式 `goal + kink` 路径首轮改为完整组装；当更新后的节点 `sigma` 与 `f_hor` 最大绝对变化都不超过 `1e-4` 时，复用首轮完整结果并跳过第二次 kernel。默认点调用从 `[probe, full]` 变为 `[full]`，low-T/low-r 也能在首轮收敛；high-T/stiff 背景变化超过门限，仍执行两次完整求解。stiff 单线程逐数组比较的频谱最大差约 `2.71e-10 dex`、最终 `DN_gw` 最大差约 `1.18e-14`。完整回归 `117 passed, 6 deselected`，但正式 warm profiler 中位数约 `5.37 ms`，仍未达到 `<=4 ms/point`。
+- outer full-solve 实现同时在每次完整组装前清零 `Ogw/Oj/Opgw`，避免 outer 更新后 horizon 起点移动造成旧列残留；compatibility/validation 的非 goal 路径继续保留旧 probe/full 语义。ruff、mypy、manifest 和中文注释门禁均通过。
 
 ## Technical Decisions
 

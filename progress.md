@@ -32,6 +32,8 @@
 - 新增 `fast_phi_s2_split`：平滑背景区复用节点 sigma，只有 reheating kink 区间保留连续-sigma 单侧探针；默认点与原 primitive 的 DN 差 `3.22e-12`、频谱最大差 `2.80e-6 dex`。
 - 新 primitive 的默认点深尾 reference（76 点、z_tail=8、rtol=1e-11）为 spectrum p50 `1.3968e-4`、p95 `4.1466e-4`、max `1.4152e-3`，DN rel `7.1404e-4`；完整回归 `116 passed, 6 deselected`。
 - 20-thread warm 速度中位数约 `4.49 ms/point`，接近但尚未满足 `<=4 ms/point`，下一步继续分析 kernel/outer probe。
+- 本轮新增正式 goal+kink 路径的 outer full-solve 稳定性门控：首轮完整组装；更新后 `sigma`、`f_hor` 均在 `1e-4` 内则复用首轮结果，否则保留第二次完整 kernel。默认点由两次 kernel 降为一次，high-T/stiff 自动回退；完整回归 `117 passed, 6 deselected`，16-thread profiler warm median 约 `5.37 ms`，仍未满足 `<=4 ms/point`。
+- 本轮静态验证：ruff、mypy、manifest、中文注释门禁全部通过。临时 A/B 脚本和未验证 tail 扫描脚本均已删除，未纳入分支。
 
 ### Test Results
 
