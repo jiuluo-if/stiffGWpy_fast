@@ -305,6 +305,24 @@ def test_wrapper_wires_production_preset_and_local_budget():
     assert m.quadrature_error >= 0.0
 
 
+def test_kink_split_variant_inserts_only_reheating_breakpoint():
+    """Phase A uses one exact N_re breakpoint without global refinement."""
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='construct', threads=1)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg, kink_split=True) is m
+
+    plain = _make_model()
+    FS.gen_fast(plain, cfg.h)
+    assert m.Nv.size == plain.Nv.size
+    assert m.kink_split_index >= 0
+    assert 0.0 < m.kink_split_fraction < 1.0
+    assert m.sigma[m.kink_split_index] == pytest.approx(1.0)
+    assert m.sigma[m.kink_split_index + 1] > 1.0
+    assert m.kink_split_used is True
+    assert m.transition_refine_used is False
+
+
 
 
 def test_eval_freqs_are_native_grid_nodes():
