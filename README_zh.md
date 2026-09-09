@@ -87,6 +87,11 @@ python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 当前验证结果和精度边界以 [`docs/validation/validation_manifest.json`](docs/validation/validation_manifest.json)
 为准；可复现命令见 [`docs/reproducibility.md`](docs/reproducibility.md)。
 
+当前分支默认点的独立 reference 快照（76 个 fast 频率点，`h=.005`）为：谱 dex
+median `6.53e-4`、p95 `2.72e-3`、max `3.04e-3`，`DN_gw` 相对误差
+`1.37e-3`；16 threads warm median 为 `6.73 ms/point`。这些是阶段性证据，尚未
+替代参数空间认证。
+
 ## 重要限制
 
 - 快速求解器的速度优势不等于普适精度认证；请根据验证产物和局部误差预算解释结果。

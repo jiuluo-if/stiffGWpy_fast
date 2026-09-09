@@ -1276,7 +1276,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
             elif freq_grid == 'goal':
                 from .freq_adaptive import goal_oriented_freqs
-                m.f = goal_oriented_freqs(m, freq_res, seed_n=80,
+                m.f = goal_oriented_freqs(m, freq_res, seed_n=64,
                                           max_points=120, eval_freqs=eval_freqs)
             else:
                 m.construct_f(freq_res)
