@@ -107,6 +107,31 @@ def test_kink_path_uses_frequency_only_preparation(monkeypatch):
     assert len(calls) == 2
 
 
+def test_kink_path_reuses_stable_exact_primitive(monkeypatch):
+    """Small background updates may reuse the exact primitive safely."""
+    from stiffgwpy_fast import exact_background as EB
+
+    calls = []
+    original = EB.exact_phi_s2_split
+
+    def wrapped(*args, **kwargs):
+        calls.append(1)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(EB, 'exact_phi_s2_split', wrapped)
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='construct', threads=1)
+    assert FS.SGWB_iter_fast(m=_make_model(), tol=1e-6,
+                             config=cfg, kink_split=True) is not None
+    assert len(calls) == 1
+
+    calls.clear()
+    high = _make_model(T_re=2e4)
+    assert FS.SGWB_iter_fast(high, tol=1e-6, config=cfg,
+                             kink_split=True) is high
+    assert len(calls) == 2
+
+
 def test_per_call_thread_config_is_restored_on_failure(monkeypatch, model):
     """A per-call thread override must not leak through a failed solve."""
     before = get_num_threads()

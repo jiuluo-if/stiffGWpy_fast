@@ -27,6 +27,7 @@
 - exact split 的节点 sigma 缓存已通过逐项等价测试并接入 formal kink 路径；profile steady warm median 约 `10.62 -> 8.90 ms`。外层审计显示第二轮 DN 更新很小，但一次 full solve 会让最终 `g2/w2` 在 high-T 点偏离约 `3%`，所以只保留首轮 probe 优化，不跳过第二次 full solve。
 - 批量合并 midpoint/quarter sigma 的尝试数值等价但变慢（约 `8.4 -> 10.6 ms`），已回退；线程扫描也未找到稳定的 `<=4 ms` 配置，8/16 线程稳定 profiler 均约 `8.4 ms`。
 - formal kink 路径已跳过不会被使用的 uniform-grid primitive preparation，只保留 frequency-only preparation；新增回归测试通过，10 次 profiler 与 full-prep 对照的 steady median 约 `9.68 -> 8.98 ms`，输出 digest 完全一致。
+- 在节点 sigma/f_hor/Nv 变化均小于 `1e-4` 时复用上一轮 exact primitive，default 的 spectrum 最大变化约 `2.98e-4 dex`、DN 变化约 `1.1e-12`，高温点自动回退；formal default warm median 约 `5.96 ms`。独立 reference 显示当前 DN rel 仍为约 `4.04e-3`，需要继续解决积分量误差。
 
 ### Test Results
 

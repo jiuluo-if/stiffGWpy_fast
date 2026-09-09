@@ -124,6 +124,8 @@ _KINK_SPLIT = False
 
 MAX_ITER = 60            # cap on the outer bisection loop
 ln10 = math.log(10.0)
+# 小幅外层更新时，节点背景变化低于此阈值可复用 exact primitive。
+_EXACT_PRIMITIVE_REUSE_TOL = 1.0e-4
 
 
 def set_threads(n):
@@ -1275,6 +1277,10 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     kink_index = -1
     kink_fraction = 0.0
     phi_re = 0.0
+    exact_primitive = None
+    exact_Nv = None
+    exact_sigma = None
+    exact_f_hor = None
     first = True
     thread_before = get_num_threads()
     if config.threads is not None:
@@ -1342,9 +1348,28 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # The exact split path replaces the uniform-grid primitives
                 # below, so only prepare frequency starts and tail factors.
                 Sv, f_hor, j0s, z0s, fp_minus = prep_frequency_only(m, Nv, freqs)
-                from .exact_background import exact_phi_s2_split
-                Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_phi_s2_split(
-                    m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
+                reuse_exact = (exact_primitive is not None
+                               and exact_Nv is not None
+                               and exact_sigma is not None
+                               and exact_f_hor is not None
+                               and exact_Nv.shape == Nv.shape
+                               and exact_sigma.shape == m.sigma.shape
+                               and exact_f_hor.shape == m.f_hor.shape
+                               and np.max(np.abs(Nv - exact_Nv)) <= 1.0e-12
+                               and np.max(np.abs(m.sigma - exact_sigma))
+                               <= _EXACT_PRIMITIVE_REUSE_TOL
+                               and np.max(np.abs(m.f_hor - exact_f_hor))
+                               <= _EXACT_PRIMITIVE_REUSE_TOL)
+                if reuse_exact:
+                    Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
+                else:
+                    from .exact_background import exact_phi_s2_split
+                    exact_primitive = exact_phi_s2_split(
+                        m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
+                    exact_Nv = Nv.copy()
+                    exact_sigma = m.sigma.copy()
+                    exact_f_hor = m.f_hor.copy()
+                    Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 h_arr = None
             elif transition_refine:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
