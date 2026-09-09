@@ -40,6 +40,9 @@
 - 当前 seed64 formal warm benchmark（16 threads，3 repeats，default A）为 median `6.727 ms`、cold `1.919 s`、fallback `0`；仍高于 `<=4 ms/point` 目标。
 - 尾部隔离（reference 固定 `z_tail=5`）显示 fast `z_tail=3/4/5` 的 spectrum p95 分别约 `2.10e-2/5.07e-3/2.72e-3`，DN rel 约 `1.48e-2/3.31e-3/1.37e-3`；不能以浅尾部换速。
 - 四阶两点 Magnus A/B：`h=.01` 下 DN rel 可到 `1.90e-4`，但 spectrum p95 `3.998e-3`；`h=.005` 热路径约增至 32.3 ms（thread=1）而精度无实质收益，已回退。基于 `Phi` 曲率的局部子步也未改善 h=.01 谱 p95，已回退。
+- 高层 API 合并提交 `c9110c9`：`accuracy_mode='fast'` 成为唯一正式用户档；旧 `production`/`ultra-fast`/transition-refine 别名在高层发出 `DeprecationWarning` 并映射到 fast，底层 validation preset 仍可供内部脚本使用。完整测试 `111 passed, 6 deselected`，CI run `34313611135` 全部 PASS。
+- rejected numerical A/B：从视界前 3 个十进制数量级提前到 4 个只改变 DN 约 `3e-9`；标准四阶 RK4、两节点四阶 Magnus、视界局部 2/4 子步和 sigma 变化触发的局部半步均未缩小 `h=.005` 与 `h=.0025` 的 DN 差异，且部分方案变慢，均已回退。
+- rejected sparse goal refinement：76 点增加到 87 点后，spectrum dex p95 从 `2.719e-3` 改善到 `2.675e-3`，但 integrated DN rel 从 `1.368e-3` 恶化到 `1.755e-3`，已回退。32 个 h/2 探针通道可以估计默认点的 h 偏差约 `7.35e-4`（完整 h/2 对照 `7.44e-4`），但单次探针仍约 `10 ms` 且会造成 endpoint-only 修正，尚未形成可接受的输出一致性方案。
 
 ## Technical Decisions
 

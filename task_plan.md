@@ -31,7 +31,7 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 以 TDD 实现 Phase A exact kink split 和 one-sided primitive
 - [x] 实现 Phase B split-segment phase cap
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
-- [x] 合并为唯一正式 fast preset；production 保留 validation 兼容入口
+- [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
 - [ ] 继续优化 DN/速度并决定后续阶段是否合并；四阶 Magnus/曲率子步已拒绝
 - **Status:** in_progress
 
@@ -44,6 +44,7 @@ Phase 3: Implementation and evidence-driven optimization
 ### Phase 5: Delivery
 - [x] 更新 README、README_zh、Cobaya YAML 和 tests
 - [ ] 更新 manifest、benchmark docs、CHANGELOG 并生成完整优化报告
+- [x] 记录 goal refinement、局部传播和 Richardson 探针的独立 A/B 与回退结论
 - [x] Phase A commit `07895e6` 已 fresh verification 后推送 `fast/fast_v0.2`
 - [x] Phase B/C 和正式 preset 变更 commit `78cc5b9` 已 fresh verification 后推送；CI 修复 commit `4436b9d` 已通过远端全矩阵
 - **Status:** pending
