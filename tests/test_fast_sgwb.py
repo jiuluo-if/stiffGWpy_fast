@@ -71,6 +71,25 @@ def test_nonfinite_dn_gw_aborts_and_restores(monkeypatch, model):
     assert model.SGWB_converge is False
 
 
+def test_outer_probe_skips_column_assembly_until_final_solve(monkeypatch):
+    """The first outer probe only needs the final column for DN_gw."""
+    calls = []
+    original = FS.solve_kernel
+
+    def wrapped(*args, **kwargs):
+        calls.append(args[11])
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(FS, 'solve_kernel', wrapped)
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='construct', threads=1)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg, kink_split=True) is m
+    assert len(calls) >= 2
+    assert calls[0] == 0
+    assert calls[-1] == 1
+
+
 def test_per_call_thread_config_is_restored_on_failure(monkeypatch, model):
     """A per-call thread override must not leak through a failed solve."""
     before = get_num_threads()
