@@ -1363,8 +1363,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 if reuse_exact:
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 else:
-                    from .exact_background import exact_phi_s2_split
-                    exact_primitive = exact_phi_s2_split(
+                    from .exact_background import fast_phi_s2_split
+                    exact_primitive = fast_phi_s2_split(
                         m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
                     exact_Nv = Nv.copy()
                     exact_sigma = m.sigma.copy()
