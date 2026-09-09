@@ -50,6 +50,7 @@
 - 背景节点缓存 A/B：`exact_phi_s2_split` 现在可直接复用 `m.sigma` 的节点值，同时保留原有形状检查和 reheating 左右单侧约定；与原始 `sigma_vec` 路径逐项比较到 `2e-13` 以内。formal kink profile 的 steady warm median 约由 `10.62 ms` 降至 `8.90 ms`，但仍高于 `<=4 ms` 目标。
 - outer self-consistency 审计：default、low-T、high-T、stiff 和 low-r 五个代表点的首轮 probe 到第二轮 full solve 的 `DN_gw` 绝对变化分别约为 `7.7e-14`、`4.3e-9`、`7.7e-12`、`6.2e-13`、`7.8e-16`；说明 DN 本身对外层更新很不敏感。但临时强制“一次 full solve 即结束”时，最终 `g2/w2` 与当前两轮流程仍出现差异，high-T 点 `g2` 总和约差 `3.0%`，因此不能仅凭 DN 收敛就删除第二次 full solve，当前 outer probe 方案保留。
 - rejected background batching：将 exact split 的 midpoint 与 quarter-point sigma 合并为一次更大的向量调用，数值结果保持等价，但 formal kink profile 的稳定 warm median 约由 `8.4 ms` 上升至 `10.6 ms`；已回退，不纳入主线。线程扫描 `1/2/4/8/16/32` 的 warm median 约为 `13.4/9.96/9.90/7.08/8.76/9.91 ms`，稳定 profiler 的 8/16 线程均约 `8.4 ms`，暂不改变默认线程数。
+- formal kink preparation 优化：正式 kink 路径不再先计算随后被 exact primitive 覆盖的 uniform-grid `Phi/S2` spline，只保留频率起点、`f_hor` 和 tail 所需准备；新增测试确认两轮 outer solve 均使用 frequency-only preparation。与临时恢复 full preparation 的同环境 10 次 profiler 对照，steady warm median 约 `9.68 -> 8.98 ms`，所有 spectrum/DN/g2/w2 digest 保持一致；保留该修改。
 
 ## Technical Decisions
 
