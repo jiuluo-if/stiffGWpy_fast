@@ -120,3 +120,20 @@ def test_split_primitive_reuses_cached_node_sigma():
     cached = EB.exact_phi_s2_split(m, m.Nv, dn, sigma_nodes=m.sigma)
     for a, b in zip(direct, cached):
         assert np.allclose(a, b, rtol=2e-13, atol=2e-13)
+
+
+def test_fast_split_uses_node_background_without_losing_kink_accuracy():
+    """The formal fast primitive keeps the breakpoint while avoiding full spline probes."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    FS.gen_fast(m, 0.005, kink_split=True)
+    exact = EB.exact_phi_s2_split(m, m.Nv, m.cosmo_param['DN_eff'],
+                                  sigma_nodes=m.sigma)
+    fast = EB.fast_phi_s2_split(m, m.Nv, m.cosmo_param['DN_eff'],
+                                sigma_nodes=m.sigma)
+    assert np.max(np.abs(exact[0] - fast[0])) < 1.5e-3
+    assert np.max(np.abs(exact[1] - fast[1])) < 1.5e-3
+    s2_rel = np.abs(exact[2] - fast[2]) / np.maximum(np.abs(exact[2]), 1e-300)
+    s2inv_rel = np.abs(exact[3] - fast[3]) / np.maximum(np.abs(exact[3]), 1e-300)
+    assert np.max(s2_rel) < 3e-3
+    assert np.max(s2inv_rel) < 3e-3
+    assert fast[4:] == pytest.approx(exact[4:], rel=1e-12, abs=1e-12)

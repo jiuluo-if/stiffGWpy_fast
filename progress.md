@@ -29,6 +29,9 @@
 - formal kink 路径已跳过不会被使用的 uniform-grid primitive preparation，只保留 frequency-only preparation；新增回归测试通过，10 次 profiler 与 full-prep 对照的 steady median 约 `9.68 -> 8.98 ms`，输出 digest 完全一致。
 - 在节点 sigma/f_hor/Nv 变化均小于 `1e-4` 时复用上一轮 exact primitive，default 的 spectrum 最大变化约 `2.98e-4 dex`、DN 变化约 `1.1e-12`，高温点自动回退；formal default warm median 约 `5.96 ms`。独立 reference 显示当前 DN rel 仍为约 `4.04e-3`，需要继续解决积分量误差。
 - z_tail 从 5 加深到 6 的对照没有改善 DN（约 `4.04e-3`），只带来很小的频谱变化，已回退为 z_tail=5。
+- 新增 `fast_phi_s2_split`：平滑背景区复用节点 sigma，只有 reheating kink 区间保留连续-sigma 单侧探针；默认点与原 primitive 的 DN 差 `3.22e-12`、频谱最大差 `2.80e-6 dex`。
+- 新 primitive 的默认点深尾 reference（76 点、z_tail=8、rtol=1e-11）为 spectrum p50 `1.3968e-4`、p95 `4.1466e-4`、max `1.4152e-3`，DN rel `7.1404e-4`；完整回归 `116 passed, 6 deselected`。
+- 20-thread warm 速度中位数约 `4.49 ms/point`，接近但尚未满足 `<=4 ms/point`，下一步继续分析 kernel/outer probe。
 
 ### Test Results
 

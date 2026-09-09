@@ -54,6 +54,9 @@
 - exact primitive 条件复用：外层更新后同时检查 `Nv`、节点 `sigma` 和 `f_hor` 的最大变化，均低于 `1e-4` 才复用上一轮 primitive；高温、stiff、高 r 和高 kappa 点会自动重新计算。代表点 A/B 中 default 的 `DN_gw` 变化约 `1.1e-12`，相对普通两轮 full primitive 的 spectrum 最大差约 `2.98e-4 dex`；high-T 最大差约 `3.8e-2 dex` 但被门限排除。formal default warm median 进一步约降至 `5.96 ms`，仍未达到 `<=4 ms`，该修改需在完整参数扫描中继续复核。
 - 当前独立 reference（h=.005、goal 76 点、gamma=1、phase_max=.25）为 spectrum dex median `1.940e-3`、p95 `2.945e-3`、max `3.190e-3`，DN rel `4.040e-3`；seed80/96 增加到 90/106 点未改善 DN（约 `3.93e-3/4.20e-3`）。phase_max 从 `.25` 降到 `.125/.0625` 也基本不变，已不作为下一步方向。
 - z_tail 诊断：从 5 提到 6 只把 spectrum dex p95 由约 `2.945e-3` 改到 `2.938e-3`，DN rel 仍约 `4.044e-3`，没有形成值得增加步数的收益，继续保留 z_tail=5。
+- 连续背景 primitive 的进一步优化：正式 fast 新增 `fast_phi_s2_split`。它复用已生成的节点 sigma，在平滑区间用节点线性值构造 midpoint/quarter-point；只有包含 `N_re` 的区间继续调用连续-sigma 探针并按左右单侧 Simpson 分裂。默认点与原 `exact_phi_s2_split` 的 DN 相对差为 `3.22e-12`、频谱最大差为 `2.80e-6 dex`，完整回归为 `116 passed, 6 deselected`。
+- 该 primitive 优化后的独立深尾 reference（76 点、reference `z_tail=8`、`rtol=1e-11`）为 spectrum dex median `1.3968e-4`、p95 `4.1466e-4`、max `1.4152e-3`，DN rel `7.1404e-4`；因此此前 reference `z_tail=5` 的约 `4.04e-3` DN 差异主要混入了 oracle 自身浅尾部误差，不能据此继续加深 fast 的 tail。
+- 速度复测：新 primitive 在 20 threads 的代表性 warm median 约 `4.49 ms/point`，偶发样本低于 4 ms，但稳定中位数仍未达到 `<=4 ms/point`；继续优化方向应放在 tensor kernel/outer probe，而不是再次增加背景 spline 精度。
 
 ## Technical Decisions
 

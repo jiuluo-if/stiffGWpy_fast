@@ -22,7 +22,8 @@ from . import global_param as gp
 
 __all__ = ['sigma_vec', 'H2_vec', 'exact_phi_s2', 'build_transition_grid',
            'build_kink_refined_grid', 'exact_phi_s2_grid',
-           'exact_phi_s2_breakpoint', 'exact_phi_s2_split']
+           'exact_phi_s2_breakpoint', 'exact_phi_s2_split',
+           'fast_phi_s2_split']
 
 ln10 = math.log(10.0)
 
@@ -397,6 +398,71 @@ def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     N0 = Nv[0]
     Phi_grid = 1.5 * F_nodes - Nv + N0
     Phi_mid = 1.5 * F_mid - mid + N0
+    Psi = 3.0 * F_nodes - 4.0 * Nv
+    S2 = np.exp(Psi)
+    S2inv = np.exp(-0.5 * Psi)
+    return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
+            S2.astype(np.float64), S2inv.astype(np.float64),
+            kink_index, float(kink_fraction), float(phi_re))
+
+
+def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
+    """Build a kink-exact primitive with a cheap smooth-background estimate.
+
+    The formal fast path already has continuous background values at every
+    expansion node.  Away from the reheating breakpoint, the midpoint and
+    quarter-point values are obtained by linear interpolation of those node
+    values instead of evaluating the full continuous-sigma spline twice.  The
+    interval containing ``N_re`` is still integrated on both sides with exact
+    one-sided probes, so no transition step is allowed to cross the kink.
+    """
+    Nv = np.asarray(Nv, dtype=float)
+    h_arr = np.diff(Nv).astype(np.float64)
+    if Nv.size < 2:
+        return (np.zeros_like(Nv), np.zeros_like(Nv), np.ones_like(Nv),
+                np.ones_like(Nv), -1, 0.0, 0.0)
+    nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff, sigma_nodes)
+    mid_sigma = 0.5 * (nodes_left[:-1] + nodes_right[1:])
+    quarter_sigma = 0.75 * nodes_left[:-1] + 0.25 * nodes_right[1:]
+    integral = h_arr * (nodes_left[:-1] + 4.0 * mid_sigma + nodes_right[1:]) / 6.0
+
+    n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
+    kink_index = int(np.searchsorted(Nv, n_re, side='right') - 1)
+    kink_fraction = 0.0
+    left_integral = None
+    if 0 <= kink_index < Nv.size - 1:
+        left = float(Nv[kink_index])
+        right = float(Nv[kink_index + 1])
+        kink_fraction = (n_re - left) / (right - left)
+        if 0.0 < kink_fraction < 1.0:
+            probes = np.array([
+                left + 0.5 * (n_re - left),
+                n_re,
+                n_re + 0.5 * (right - n_re),
+            ], dtype=float)
+            sig_left, sig_re, sig_right = sigma_vec(probes, m, DN_eff)
+            left_h = n_re - left
+            right_h = right - n_re
+            left_integral = left_h * (nodes_left[kink_index] +
+                                      4.0 * sig_left + 1.0) / 6.0
+            right_integral = right_h * (sig_re +
+                                         4.0 * sig_right +
+                                         nodes_right[kink_index + 1]) / 6.0
+            integral[kink_index] = left_integral + right_integral
+        else:
+            kink_index = -1
+            kink_fraction = 0.0
+
+    F_nodes = np.concatenate(([0.0], np.cumsum(integral)))
+    if kink_index >= 0 and left_integral is not None:
+        phi_re = 1.5 * (F_nodes[kink_index] + left_integral) - n_re + Nv[0]
+    else:
+        phi_re = 0.0
+    F_mid = F_nodes[:-1] + h_arr * (
+        nodes_left[:-1] + 4.0 * quarter_sigma + mid_sigma) / 12.0
+    N0 = Nv[0]
+    Phi_grid = 1.5 * F_nodes - Nv + N0
+    Phi_mid = 1.5 * F_mid - 0.5 * (Nv[:-1] + Nv[1:]) + N0
     Psi = 3.0 * F_nodes - 4.0 * Nv
     S2 = np.exp(Psi)
     S2inv = np.exp(-0.5 * Psi)

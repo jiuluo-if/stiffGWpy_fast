@@ -112,13 +112,13 @@ def test_kink_path_reuses_stable_exact_primitive(monkeypatch):
     from stiffgwpy_fast import exact_background as EB
 
     calls = []
-    original = EB.exact_phi_s2_split
+    original = EB.fast_phi_s2_split
 
     def wrapped(*args, **kwargs):
         calls.append(1)
         return original(*args, **kwargs)
 
-    monkeypatch.setattr(EB, 'exact_phi_s2_split', wrapped)
+    monkeypatch.setattr(EB, 'fast_phi_s2_split', wrapped)
     cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
                               phase_max=0.0, freq_grid='construct', threads=1)
     assert FS.SGWB_iter_fast(m=_make_model(), tol=1e-6,
