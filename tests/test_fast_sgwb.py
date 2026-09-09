@@ -90,6 +90,26 @@ def test_outer_probe_skips_column_assembly_until_final_solve(monkeypatch):
     assert calls[-1] == 1
 
 
+def test_goal_path_reuses_stable_first_full_solve(monkeypatch):
+    """Formal goal fast path may skip a redundant second kernel solve."""
+    calls = []
+    original = FS.solve_kernel
+
+    def wrapped(*args, **kwargs):
+        calls.append(args[11])
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(FS, 'solve_kernel', wrapped)
+    monkeypatch.setattr(FS, '_OUTER_FULL_REUSE_ENABLED', True)
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='goal', threads=1,
+                              kink_split=True)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg) is m
+    assert calls == [1]
+    assert m.outer_full_reuse_used is True
+
+
 def test_kink_path_uses_frequency_only_preparation(monkeypatch):
     """The formal kink path must skip unused uniform primitive preparation."""
     calls = []

@@ -126,6 +126,12 @@ MAX_ITER = 60            # cap on the outer bisection loop
 ln10 = math.log(10.0)
 # 小幅外层更新时，节点背景变化低于此阈值可复用 exact primitive。
 _EXACT_PRIMITIVE_REUSE_TOL = 1.0e-4
+# goal 频率网格的正式路径可在更新后背景仍处于局部包络内时复用首轮完整外层求解。
+# 该开关保持为内部实现，使验证/旧兼容路径继续保留两次求解语义，正式 fast
+# 路径则可以独立进行 A/B 验证。
+_OUTER_FULL_REUSE_ENABLED = True
+_OUTER_FULL_REUSE_SIGMA_TOL = 1.0e-4
+_OUTER_FULL_REUSE_FHOR_TOL = 1.0e-4
 
 
 def set_threads(n):
@@ -1281,6 +1287,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     exact_Nv = None
     exact_sigma = None
     exact_f_hor = None
+    outer_sigma_prev = None
+    outer_f_hor_prev = None
     first = True
     thread_before = get_num_threads()
     if config.threads is not None:
@@ -1299,6 +1307,22 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 kink_index, kink_fraction = _correct_kink_background(m)
             else:
                 gen_fast(m, h, kink_split=kink_split)
+            outer_background_stable = False
+            outer_full_reuse = bool(_OUTER_FULL_REUSE_ENABLED and kink_split
+                                    and not transition_refine
+                                    and freq_grid == 'goal')
+            if outer_full_reuse:
+                if (outer_sigma_prev is not None
+                        and outer_f_hor_prev is not None
+                        and outer_sigma_prev.shape == m.sigma.shape
+                        and outer_f_hor_prev.shape == m.f_hor.shape):
+                    outer_background_stable = (
+                        float(np.max(np.abs(m.sigma - outer_sigma_prev)))
+                        <= _OUTER_FULL_REUSE_SIGMA_TOL
+                        and float(np.max(np.abs(m.f_hor - outer_f_hor_prev)))
+                        <= _OUTER_FULL_REUSE_FHOR_TOL)
+                outer_sigma_prev = m.sigma.copy()
+                outer_f_hor_prev = m.f_hor.copy()
             if freq_grid == 'grid_independent':
                 from .freq_adaptive import grid_independent_freqs
                 m.f = grid_independent_freqs(m, freq_res)[0]
@@ -1407,14 +1431,23 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             # (horizon-crossing adaptive step control); Sv supplies sigma at the
             # handoff node for the damping-corrected WKB amplitude, handoff_eps
             # receives the per-mode adiabaticity error |1.5*sigma-1|*e^{-z}.
-            assemble = 0 if _iter == 0 else 1
+            # 首轮完整求解才能启用下面的稳定背景快捷路径；所有兼容路径继续保留
+            # 历史上的首轮仅探测行为。
+            assemble = 1 if outer_full_reuse else (0 if _iter == 0 else 1)
             solve_args = (Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t,
                           ev_minus, fp_minus, fp_freq, assemble, n_coarse, col_step,
                           h, z_tail, Ogw, Oj, Opgw, h_arr, m.sigma,
                           phase_max, handoff_eps)
             if kink_split:
                 solve_args += (kink_index, kink_fraction, phi_re)
-            solve_kernel(*solve_args)
+            if not (outer_background_stable and _iter > 0):
+                if assemble:
+                    # 外层背景更新后 horizon 起点可能发生微小移动；清空起点之前的列，
+                    # 避免上一次探测结果泄漏到新的完整积分中。
+                    Ogw.fill(0.0)
+                    Oj.fill(0.0)
+                    Opgw.fill(0.0)
+                solve_kernel(*solve_args)
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
@@ -1542,6 +1575,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     m.kink_split_used = bool(kink_split)
     m.kink_split_index = int(kink_index)
     m.kink_split_fraction = float(kink_fraction)
+    m.outer_full_reuse_used = bool(outer_full_reuse and outer_background_stable)
     m.dn_converged_delta = abs(DN_gw_new - DN_gw_list[-1])
     return m
 
