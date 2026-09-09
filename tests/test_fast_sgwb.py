@@ -90,6 +90,23 @@ def test_outer_probe_skips_column_assembly_until_final_solve(monkeypatch):
     assert calls[-1] == 1
 
 
+def test_kink_path_uses_frequency_only_preparation(monkeypatch):
+    """The formal kink path must skip unused uniform primitive preparation."""
+    calls = []
+    original = FS.prep_frequency_kernel
+
+    def wrapped(*args, **kwargs):
+        calls.append(1)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(FS, 'prep_frequency_kernel', wrapped)
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='construct', threads=1)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg, kink_split=True) is m
+    assert len(calls) == 2
+
+
 def test_per_call_thread_config_is_restored_on_failure(monkeypatch, model):
     """A per-call thread override must not leak through a failed solve."""
     before = get_num_threads()

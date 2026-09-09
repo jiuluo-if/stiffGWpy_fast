@@ -885,6 +885,16 @@ def prep_frequency_kernel(f_hor, freqs, ln10v, j0s, z0s, fp_minus):
         j0s[mm] = j0
         z0s[mm] = (freqs[mm] - f_hor[j0])*ln10v
 
+
+def prep_frequency_only(m, Nv, freqs):
+    """Prepare only frequency starts for the exact-background kink path."""
+    fp_minus = np.empty(len(Nv))
+    j0s = np.empty(len(freqs), dtype=np.int64)
+    z0s = np.empty(len(freqs))
+    prep_frequency_kernel(m.f_hor, freqs, ln10, j0s, z0s, fp_minus)
+    return m.sigma, m.f_hor, j0s, z0s, fp_minus
+
+
 def prep_fast(m, Nv, freqs, h, variable_grid=False):
     Sv = m.sigma; f_hor = m.f_hor
     nv = len(Nv)
@@ -1328,18 +1338,23 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 W_last = Wmat[Nf-1].copy()
                 Ogw = Oj = Opgw = None
             first = False
-            Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                m, Nv, freqs, h, variable_grid=transition_refine)
-            if transition_refine:
-                from .exact_background import exact_phi_s2_grid
-                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
-                    m, Nv, m.cosmo_param['DN_eff'])
-            elif kink_split:
+            if kink_split:
+                # The exact split path replaces the uniform-grid primitives
+                # below, so only prepare frequency starts and tail factors.
+                Sv, f_hor, j0s, z0s, fp_minus = prep_frequency_only(m, Nv, freqs)
                 from .exact_background import exact_phi_s2_split
                 Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_phi_s2_split(
                     m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
                 h_arr = None
+            elif transition_refine:
+                Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
+                    m, Nv, freqs, h, variable_grid=True)
+                from .exact_background import exact_phi_s2_grid
+                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
+                    m, Nv, m.cosmo_param['DN_eff'])
             elif sigma_exact:
+                Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
+                    m, Nv, freqs, h, variable_grid=False)
                 from .exact_background import exact_phi_s2
                 Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(
                     m, Nv, m.cosmo_param['DN_eff'], h)
@@ -1348,6 +1363,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 kink_fraction = 0.0
                 phi_re = 0.0
             else:
+                Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
+                    m, Nv, freqs, h, variable_grid=False)
                 h_arr = np.diff(Nv)
                 kink_index = -1
                 kink_fraction = 0.0
