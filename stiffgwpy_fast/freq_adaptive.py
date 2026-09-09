@@ -179,8 +179,8 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
 
     mandatory = np.unique(np.concatenate((feature, eval)))
     if mandatory.size >= max_points:
-        # Preserve every caller node; only reduce the optional feature reserve
-        # if an unusually large likelihood node set consumes the budget.
+        # Preserve every caller node；保留调用方节点，仅在 unusually large likelihood node set
+        # consumes the budget 时减少可选 feature reserve。
         selected = np.unique(np.concatenate((eval, feature)))
         if selected.size > max_points and eval.size < max_points:
             selected = np.unique(np.concatenate((eval, feature[:max_points - eval.size])))

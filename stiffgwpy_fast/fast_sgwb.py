@@ -255,8 +255,8 @@ MODE_ROLE = {
     'reference': 'validation',
 }
 
-# The single user-facing fast profile. Historical production remains available
-# in ACCURACY_MODES for validation compatibility but is not listed here.
+# The single user-facing fast profile；唯一用户可见档位。Historical production remains available
+# in ACCURACY_MODES for validation compatibility；仅作验证兼容，不列入用户档位。
 FAST_PROFILES = {
     'fast': dict(ACCURACY_MODES['fast'], profile='goal-kink-hybrid',
                  role='user_fast'),
