@@ -6,7 +6,7 @@
 
 ## Next Step
 
-继续以 profiler 和独立 reference 优化正式 fast 的 DN/速度：优先 outer self-consistency 与 exact primitive 缓存，再做跨参数验证；任何有证据的重大阶段单独提交并推送。
+继续以 profiler 和独立 reference 优化正式 fast 的 DN/速度：保留已验证的 outer probe 优化，下一步优先研究能减少显式振荡步数或频率通道的算法，再做跨参数验证；任何有证据的重大阶段单独提交并推送。
 
 ## Current Phase
 

@@ -1348,8 +1348,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             # (horizon-crossing adaptive step control); Sv supplies sigma at the
             # handoff node for the damping-corrected WKB amplitude, handoff_eps
             # receives the per-mode adiabaticity error |1.5*sigma-1|*e^{-z}.
+            assemble = 0 if _iter == 0 else 1
             solve_args = (Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t,
-                          ev_minus, fp_minus, fp_freq, 1, n_coarse, col_step,
+                          ev_minus, fp_minus, fp_freq, assemble, n_coarse, col_step,
                           h, z_tail, Ogw, Oj, Opgw, h_arr, m.sigma,
                           phase_max, handoff_eps)
             if kink_split:
@@ -1399,6 +1400,12 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                             continue
                 adaptive_done = True
             if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < tol:
+                if assemble == 0:
+                    # 首轮探测只填充计算 DN_gw 所需的末列；即使探测已收敛，
+                    # 仍需再做一次完整求解，补齐 m.g2/m.w2 所需的中间列。
+                    m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
+                    DN_gw_list.append(DN_gw_new)
+                    continue
                 converged = True
                 break
             if DN_gw_new > DN_gw_list[-1] > DN_gw_min and DN_gw_max >= DN_gw_list[-1]:

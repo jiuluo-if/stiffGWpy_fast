@@ -31,6 +31,10 @@
 
 ## Latest evidence (2026-09-09)
 
+- 外层首轮只需计算最终频率列来得到 `DN_gw`，不需要写入所有中间 e-fold 列；已改为首轮 `assemble=0`、后续完整轮 `assemble=1`。新增回归测试确认首轮/最终轮调用顺序，最终数组摘要保持一致。
+- 该热路径改动的 like-for-like plain benchmark（16 threads，A，3 repeats）warm median 从旧记录 `6.727 ms` 降至 `5.051 ms`；仍未达到 `<=4 ms/point`，不能视为速度目标完成。正式 kink 路径仍需继续优化。
+- 本轮新增代码经完整回归 `111 passed, 6 deselected`、ruff、mypy、中文注释门禁和 manifest 校验通过；一次未形成稳定收益的 sigma 节点复用实验已回退。
+
 - CI run `34303864035` 的五个 test matrix job 均在“中文注释门禁”失败；根因是 `78cc5b9` 新增 5 行英文 `#` 注释。仅补充中文语义后提交 `4436b9d` 并推送 `fast_v0.2`，CI run `34304423555` 的 Python 3.9–3.13、ruff、mypy、pytest、manifest、wheel、distribution、smoke 和 Cobaya 全部 PASS。
 - 正式 fast 的 seed64 A/B（`h=.005,z_tail=5,phase_max=.25,kink_split,goal`，76 点，full candidate-grid reference）为 spectrum dex median `6.528e-4`、p95 `2.719e-3`、max `3.040e-3`，DN rel `1.368e-3`；seed80 的 90 点结果为 p95 `2.598e-3`、DN rel `1.677e-3`。seed64 保留为较低节点且 DN 更好的当前基线，但最终 DN gate 仍未满足。
 - 当前 seed64 formal warm benchmark（16 threads，3 repeats，default A）为 median `6.727 ms`、cold `1.919 s`、fallback `0`；仍高于 `<=4 ms/point` 目标。
