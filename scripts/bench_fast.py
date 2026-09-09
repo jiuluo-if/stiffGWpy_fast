@@ -70,7 +70,7 @@ def p95(values):
     return sorted(values)[int(0.95 * (len(values) - 1))]
 
 
-def run_case(name, kw, reps):
+def run_case(name, kw, reps, kink_split=False):
     # Benchmark the documented fast/plain-grid preset explicitly.  The module
     # settings are process-global, so reset them before every case and honor
     # FAST_THREADS after applying the preset's own default thread value.
@@ -88,7 +88,7 @@ def run_case(name, kw, reps):
 
     mf = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    fast_sgwb.SGWB_iter_fast(mf)
+    fast_sgwb.SGWB_iter_fast(mf, kink_split=kink_split)
     rec['t_fast_cold_s'] = time.perf_counter() - t0
 
     warm = []
@@ -96,7 +96,7 @@ def run_case(name, kw, reps):
     for _ in range(reps):
         mf = LCDM_SG(**kw)
         t0 = time.perf_counter()
-        fast_sgwb.SGWB_iter_fast(mf)
+        fast_sgwb.SGWB_iter_fast(mf, kink_split=kink_split)
         warm.append(time.perf_counter() - t0)
         last = mf
     rec['t_fast_warm_ms'] = [t * 1e3 for t in warm]
@@ -132,6 +132,8 @@ def main(argv=None):
     ap.add_argument('--cases', nargs='+', type=int, default=None,
                     help='case indices (default: all 12)')
     ap.add_argument('--json', default=None, help='JSONL output path (optional)')
+    ap.add_argument('--kink-split', action='store_true',
+                    help='Phase-A A/B variant: insert only the exact reheating breakpoint')
     args = ap.parse_args(argv)
     names = list(CASES)
     which = args.cases if args.cases is not None else list(range(len(names)))
@@ -141,7 +143,7 @@ def main(argv=None):
            'spd min', 'spd med', 'p95 (ms)', 'fallback'))
     print('-' * 130)
     for i in which:
-        rec = run_case(names[i], CASES[names[i]], args.reps)
+        rec = run_case(names[i], CASES[names[i]], args.reps, args.kink_split)
         rows.append(rec)
         if rec.get('skip'):
             print('%-34s %s' % (names[i], 'invalid combo'))

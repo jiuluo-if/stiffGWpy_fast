@@ -2,6 +2,7 @@
 """Tests for the curvature-adaptive frequency refinement."""
 
 import numpy as np
+import pytest
 from scipy.interpolate import PchipInterpolator
 
 from stiffgwpy_fast import exact_background as EB
@@ -58,3 +59,40 @@ def test_grid_independent_freqs_invariant_to_sigma_grid():
     # The independent grid is down to the CMB pivot and covers the UV cutoff.
     assert gf[0] > gf[-1]
     assert gf.size > 100
+
+
+def test_breakpoint_phi_s2_is_accurate_without_dense_subgrid():
+    """The Phase-A primitive uses the breakpoint grid without a global subgrid."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    EB.build_transition_grid(m, 0.02)
+    fast = EB.exact_phi_s2_breakpoint(m, m.Nv, m.cosmo_param['DN_eff'])
+    dense = EB.exact_phi_s2_grid(m, m.Nv, m.cosmo_param['DN_eff'])
+    assert np.max(np.abs(fast[0] - dense[0])) < 1.5e-3
+    assert np.max(np.abs(fast[1] - dense[1])) < 5e-3
+    assert np.allclose(fast[2], dense[2], rtol=2e-3, atol=1e-8)
+    assert np.allclose(fast[3], dense[3], rtol=2e-3, atol=1e-6)
+
+
+def test_split_primitive_uses_left_limit_at_reheating_kink():
+    """The pre-reheating Simpson panel must use sigma=1 at its right limit."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    h = 0.02
+    n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
+    Nv = np.arange(0.0, float(m.derived_param['N_inf']) + 1e-12, h)
+    split = EB.exact_phi_s2_split(m, Nv, m.cosmo_param['DN_eff'])
+    idx = int(np.searchsorted(Nv, n_re, side='right') - 1)
+    left = float(Nv[idx])
+    left_h = n_re - left
+    sig_left = float(EB.sigma_vec(np.array([left]), m, m.cosmo_param['DN_eff'])[0])
+    sig_mid = float(EB.sigma_vec(np.array([(left + n_re) / 2.0]), m,
+                                 m.cosmo_param['DN_eff'])[0])
+    integrals = []
+    sig_nodes = EB.sigma_vec(Nv, m, m.cosmo_param['DN_eff'])
+    sig_mid_all = EB.sigma_vec((Nv[:-1] + Nv[1:]) / 2.0, m,
+                               m.cosmo_param['DN_eff'])
+    integrals.extend(h * (sig_nodes[:-1] + 4.0 * sig_mid_all + sig_nodes[1:]) / 6.0)
+    expected_f_re = (np.sum(integrals[:idx])
+                     + left_h * (sig_left + 4.0 * sig_mid + 1.0) / 6.0)
+    expected_phi_re = 1.5 * expected_f_re - n_re + Nv[0]
+    assert split[5] == pytest.approx((n_re - left) / h)
+    assert split[6] == pytest.approx(expected_phi_re, rel=2e-12, abs=2e-12)

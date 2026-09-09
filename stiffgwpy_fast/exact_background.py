@@ -21,7 +21,8 @@ import numpy as np
 from . import global_param as gp
 
 __all__ = ['sigma_vec', 'H2_vec', 'exact_phi_s2', 'build_transition_grid',
-           'build_kink_refined_grid', 'exact_phi_s2_grid']
+           'build_kink_refined_grid', 'exact_phi_s2_grid',
+           'exact_phi_s2_breakpoint', 'exact_phi_s2_split']
 
 ln10 = math.log(10.0)
 
@@ -135,6 +136,26 @@ def H2_vec(N, m, DN_eff):
     return out
 
 
+def _sigma_node_limits(Nv, m, DN_eff):
+    """Return continuous sigma at grid nodes with explicit kink limits.
+
+    ``sigma_vec`` evaluates the reheating point using the post-transition
+    branch.  Simpson panels ending at that point must instead use the
+    pre-transition limit, while panels starting there must use the post-
+    transition limit.  Keeping both arrays makes the convention explicit.
+    """
+    Nv = np.asarray(Nv, dtype=float)
+    nodes = sigma_vec(Nv, m, DN_eff)
+    left = nodes.copy()
+    right = nodes.copy()
+    n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
+    at_re = np.isclose(Nv, n_re, rtol=0.0, atol=1e-12)
+    if np.any(at_re):
+        left[at_re] = 1.0
+        right[at_re] = sigma_vec(np.array([n_re]), m, DN_eff)[0]
+    return left, right
+
+
 def exact_phi_s2(m, Nv, DN_eff, h):
     """Exact ``Phi``/``Phi_mid``/``S2``/``S2inv`` from the continuous sigma.
 
@@ -155,10 +176,11 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     N_re_abs = d['N_inf'] - d['N_re']
     if (N_re_abs > sub[0]) and (N_re_abs < sub[-1]):
         sub = np.unique(np.concatenate((sub, [N_re_abs])))
-    sig = sigma_vec(sub, m, DN_eff)
+    sig_left, sig_right = _sigma_node_limits(sub, m, DN_eff)
     # Cumulative integral F on the sub-grid (shape-preserving trapezoid; the kink
     # is a breakpoint, so sigma is smooth within each sub-interval).
-    F = np.concatenate(([0.0], np.cumsum(0.5 * (sig[1:] + sig[:-1]) * np.diff(sub))))
+    F = np.concatenate(([0.0], np.cumsum(0.5 * (sig_right[1:] + sig_left[:-1])
+                                             * np.diff(sub))))
     # Interpolate F onto grid nodes and midpoints.
     F_grid = np.interp(Nv, sub, F)
     F_mid = np.interp(Nv + half, sub, F)
@@ -184,7 +206,10 @@ def build_transition_grid(m, h):
     N_re_abs = N_inf - d['N_re']
     len_inf = math.floor(N_inf / h) + 1
     Nv = np.arange(0, len_inf) * h
-    present = Nv[-1]
+    # Keep the continuous present-day anchor used by ``gen_fast``.  Rounding
+    # the final node down to the nearest h-grid point would add a separate
+    # grid-anchor bias to this Phase-A experiment.
+    present = N_inf
     Nv = np.unique(np.sort(np.concatenate((Nv, [N_re_abs, present]))))
     dn = m.cosmo_param['DN_eff']
     sigma = sigma_vec(Nv, m, dn)
@@ -265,8 +290,9 @@ def exact_phi_s2_grid(m, Nv, DN_eff):
     if (N_re_abs > sub[0]) and (N_re_abs < sub[-1]):
         sub = np.concatenate((sub, [N_re_abs]))
     sub = np.unique(np.sort(sub))
-    sig = sigma_vec(sub, m, DN_eff)
-    F = np.concatenate(([0.0], np.cumsum(0.5 * (sig[1:] + sig[:-1]) * np.diff(sub))))
+    sig_left, sig_right = _sigma_node_limits(sub, m, DN_eff)
+    F = np.concatenate(([0.0], np.cumsum(0.5 * (sig_right[1:] + sig_left[:-1])
+                                             * np.diff(sub))))
     mid = 0.5 * (Nv[:-1] + Nv[1:])
     F_nodes = np.interp(Nv, sub, F)
     F_mid = np.interp(mid, sub, F)
@@ -279,3 +305,96 @@ def exact_phi_s2_grid(m, Nv, DN_eff):
     h_arr = np.diff(Nv).astype(np.float64)
     return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
             S2.astype(np.float64), S2inv.astype(np.float64), h_arr)
+
+
+def exact_phi_s2_breakpoint(m, Nv, DN_eff):
+    """Build primitives with composite Simpson quadrature on a split grid.
+
+    Unlike :func:`exact_phi_s2_grid`, this evaluates only the interval
+    midpoints in addition to the already-computed node values.  Because the
+    caller has inserted ``N_re`` as a node, every Simpson interval stays on
+    one side of the reheating kink.  The midpoint primitive uses half of the
+    symmetric full-interval Simpson integral and avoids changing the transfer
+    kernel's stepping logic.
+    """
+    Nv = np.asarray(Nv, dtype=float)
+    h_arr = np.diff(Nv).astype(np.float64)
+    nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff)
+    mid = 0.5 * (Nv[:-1] + Nv[1:])
+    mid_sigma = sigma_vec(mid, m, DN_eff)
+    integral = h_arr * (nodes_left[:-1] + 4.0 * mid_sigma + nodes_right[1:]) / 6.0
+    quarter_sigma = sigma_vec(Nv[:-1] + 0.25 * h_arr, m, DN_eff)
+    F_nodes = np.concatenate(([0.0], np.cumsum(integral)))
+    half_integral = h_arr * (nodes_left[:-1] + 4.0 * quarter_sigma + mid_sigma) / 12.0
+    F_mid = F_nodes[:-1] + half_integral
+    N0 = Nv[0]
+    Phi_grid = 1.5 * F_nodes - Nv + N0
+    Phi_mid = 1.5 * F_mid - mid + N0
+    Psi = 3.0 * F_nodes - 4.0 * Nv
+    S2 = np.exp(Psi)
+    S2inv = np.exp(-0.5 * Psi)
+    return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
+            S2.astype(np.float64), S2inv.astype(np.float64), h_arr)
+
+
+def exact_phi_s2_split(m, Nv, DN_eff):
+    """Build uniform-grid primitives while splitting the one ``N_re`` interval.
+
+    The returned grid remains uniform, so the hot kernel keeps its original
+    array layout.  Composite Simpson quadrature is applied independently to
+    both sides when the reheating boundary lies inside an interval; the
+    resulting ``kink_index``, ``kink_fraction`` and ``Phi_re`` tell the ODE
+    kernel to perform two transfer steps for that interval.
+    """
+    Nv = np.asarray(Nv, dtype=float)
+    h_arr = np.diff(Nv).astype(np.float64)
+    if Nv.size < 2:
+        return (np.zeros_like(Nv), np.zeros_like(Nv), np.ones_like(Nv),
+                np.ones_like(Nv), -1, 0.0, 0.0)
+    nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff)
+    mid = 0.5 * (Nv[:-1] + Nv[1:])
+    mid_sigma = sigma_vec(mid, m, DN_eff)
+    integral = h_arr * (nodes_left[:-1] + 4.0 * mid_sigma + nodes_right[1:]) / 6.0
+    quarter_sigma = sigma_vec(Nv[:-1] + 0.25 * h_arr, m, DN_eff)
+
+    n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
+    kink_index = int(np.searchsorted(Nv, n_re, side='right') - 1)
+    kink_fraction = 0.0
+    left_integral = None
+    if 0 <= kink_index < Nv.size - 1:
+        left = float(Nv[kink_index])
+        right = float(Nv[kink_index + 1])
+        kink_fraction = (n_re - left) / (right - left)
+        if 0.0 < kink_fraction < 1.0:
+            probes = np.array([
+                left + 0.5 * (n_re - left),
+                n_re,
+                n_re + 0.5 * (right - n_re),
+            ], dtype=float)
+            sig_left, sig_re, sig_right = sigma_vec(probes, m, DN_eff)
+            left_h = n_re - left
+            right_h = right - n_re
+            left_integral = left_h * (nodes_left[kink_index] +
+                                      4.0 * sig_left + 1.0) / 6.0
+            right_integral = right_h * (sig_re +
+                                         4.0 * sig_right + nodes_right[kink_index + 1]) / 6.0
+            integral[kink_index] = left_integral + right_integral
+        else:
+            kink_index = -1
+            kink_fraction = 0.0
+    F_nodes = np.concatenate(([0.0], np.cumsum(integral)))
+    if kink_index >= 0 and left_integral is not None:
+        phi_re = 1.5 * (F_nodes[kink_index] + left_integral) - n_re + Nv[0]
+    else:
+        phi_re = 0.0
+    half_integral = h_arr * (nodes_left[:-1] + 4.0 * quarter_sigma + mid_sigma) / 12.0
+    F_mid = F_nodes[:-1] + half_integral
+    N0 = Nv[0]
+    Phi_grid = 1.5 * F_nodes - Nv + N0
+    Phi_mid = 1.5 * F_mid - mid + N0
+    Psi = 3.0 * F_nodes - 4.0 * Nv
+    S2 = np.exp(Psi)
+    S2inv = np.exp(-0.5 * Psi)
+    return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
+            S2.astype(np.float64), S2inv.astype(np.float64),
+            kink_index, float(kink_fraction), float(phi_re))

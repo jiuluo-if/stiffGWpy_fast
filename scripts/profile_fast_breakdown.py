@@ -39,7 +39,7 @@ def timed_call(totals, name, fn, *args, **kwargs):
     return result
 
 
-def run_once(case):
+def run_once(case, kink_split=False):
     totals = defaultdict(list)
     original = {
         'gen_fast': FS.gen_fast,
@@ -68,7 +68,7 @@ def run_once(case):
     try:
         model = LCDM_SG(**case)
         start = time.perf_counter()
-        result = FS.SGWB_iter_fast(model)
+        result = FS.SGWB_iter_fast(model, kink_split=kink_split)
         totals['total'].append(time.perf_counter() - start)
         totals['outer_iteration'].append(len(getattr(model, 'DN_gw', [])))
         return result, totals, model
@@ -85,6 +85,8 @@ def main():
     parser.add_argument('--reps', type=int, default=5)
     parser.add_argument('--json', default=None)
     parser.add_argument('--case', choices=sorted(CASES), default='A')
+    parser.add_argument('--kink-split', action='store_true',
+                        help='profile the Phase-A exact-breakpoint variant')
     args = parser.parse_args()
     FS.apply_accuracy_mode('fast')
     # 保留基准命令显式指定的线程数，避免 preset 默认值遮蔽 scaling 点。
@@ -94,7 +96,7 @@ def main():
         set_parallel_chunksize(int(os.environ['FAST_CHUNKSIZE']))
     records = []
     for _ in range(args.reps):
-        _, totals, model = run_once(CASES[args.case])
+        _, totals, model = run_once(CASES[args.case], args.kink_split)
         def digest(name):
             arr = np.ascontiguousarray(np.asarray(getattr(model, name), dtype=np.float64))
             return hashlib.sha256(arr.tobytes()).hexdigest()
@@ -121,6 +123,7 @@ def main():
             row[name + '_calls'] = len(values)
         records.append(row)
     summary = {'threads': FS._THREADS, 'case': CASES[args.case], 'case_id': args.case,
+               'kink_split': args.kink_split,
                'reps': args.reps, 'records': records,
                'median_s': {}, 'p95_s': {}}
     names = sorted(k for k in records[0] if k.endswith('_s'))

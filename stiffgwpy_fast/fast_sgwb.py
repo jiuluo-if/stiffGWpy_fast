@@ -717,7 +717,14 @@ def gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
     for i in range(n):
         f_hor[i] = (f_hor[i] - f0)/ln10v
 
-def gen_fast(m, h=0.01):
+def gen_fast(m, h=0.01, kink_split=False):
+    """Generate the expansion grid, optionally inserting only ``N_re``.
+
+    ``kink_split`` is an internal Phase-A validation switch.  The expansion
+    kernel already supports arbitrary node coordinates, so inserting the one
+    reheating node here keeps the hot background construction on the same
+    Numba path as the plain grid instead of calling the slower Python helper.
+    """
     d = m.derived_param
     p = m.cosmo_param
     Omh2 = d['Omega_mh2']; Osh2 = d['Omega_sh2']
@@ -732,8 +739,10 @@ def gen_fast(m, h=0.01):
     # systematic bias (grid-anchor error, not a numerical-order issue).
     len_inf = math.floor(d['N_inf']/h)+1
     Nv = np.arange(0, len_inf)*h
-    if Nv[-1] != d['N_inf']:
-        Nv = np.append(Nv, d['N_inf'])
+    nodes = [d['N_inf']]
+    if kink_split:
+        nodes.append(d['N_inf'] - d['N_re'])
+    Nv = np.unique(np.sort(np.concatenate((Nv, np.asarray(nodes, dtype=float)))))
     index_re = int(np.argmin(np.abs(Nv - (d['N_inf'] - d['N_re']))))
     Sv = np.empty(len(Nv)); f_hor = np.empty(len(Nv))
     Delta_f = math.log(2*math.pi/d['H_0'])
@@ -744,6 +753,33 @@ def gen_fast(m, h=0.01):
     m.Nv = Nv; m.N = Nv - Nv[-1]; m.sigma = Sv; m.f_hor = f_hor
     m.f_re = f_hor[index_re]
     return len_inf, index_re
+
+
+def _correct_kink_background(m):
+    """Correct the nearest-grid-node convention for the internal kink split."""
+    from .exact_background import H2_vec
+
+    d = m.derived_param
+    n_re = float(d['N_inf'] - d['N_re'])
+    index = int(np.searchsorted(m.Nv, n_re, side='right') - 1)
+    if not 0 <= index < len(m.Nv) - 1:
+        return -1, 0.0
+    left = float(m.Nv[index]); right = float(m.Nv[index + 1])
+    fraction = (n_re - left) / (right - left)
+    if not 0.0 < fraction < 1.0:
+        return -1, 0.0
+    # gen_kernel starts the post-reheating branch at the nearest node.  For a
+    # split interval that node is still on the matter-like side, so restore its
+    # pre-transition sigma and anchor the pre-transition f_hor at exact N_re.
+    m.sigma[index] = 1.0
+    H2_re, H2_last = H2_vec(np.array([n_re, m.Nv[-1]]), m,
+                            m.cosmo_param['DN_eff'])
+    raw_re = -0.5 * n_re + 0.5 * math.log(float(H2_re))
+    raw_last = -0.5 * float(m.Nv[-1]) + 0.5 * math.log(float(H2_last))
+    f_re = (raw_re - raw_last - math.log(2.0 * math.pi / d['H_0'])) / ln10
+    m.f_hor[:index + 1] = f_re - 0.5 * (m.Nv[:index + 1] - n_re) / ln10
+    m.f_re = f_re
+    return index, fraction
 
 # ================= prep in numba (spline + primitive + phi/psi/s2 + j0s/z0s) =================
 @njit(cache=True)
@@ -817,13 +853,43 @@ def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v,
         j0s[mm] = j0
         z0s[mm] = (freqs[mm] - f_hor[j0])*ln10v
 
-def prep_fast(m, Nv, freqs, h):
+
+@njit(cache=True)
+def prep_frequency_kernel(f_hor, freqs, ln10v, j0s, z0s, fp_minus):
+    """Prepare frequency starts for a non-uniform e-fold grid.
+
+    The spline/primitive preparation in :func:`prep_kernel` assumes a uniform
+    spacing.  Phase A inserts only the reheating breakpoint, so it uses this
+    small independent preparation path and fills the background primitives
+    with ``exact_phi_s2_grid`` instead of applying a uniform-grid spline.
+    """
+    for j in range(len(f_hor)):
+        fp_minus[j] = math.exp(-f_hor[j]*ln10v)
+    for mm in range(len(freqs)):
+        freq3 = freqs[mm] + 3.0
+        lo = 0; hi = len(f_hor)
+        while lo < hi:
+            mid = (lo + hi)//2
+            if f_hor[mid] >= freq3:
+                lo = mid + 1
+            else:
+                hi = mid
+        j0 = lo - 1
+        if j0 < 0: j0 = 0
+        if j0 > len(f_hor)-1: j0 = len(f_hor)-1
+        j0s[mm] = j0
+        z0s[mm] = (freqs[mm] - f_hor[j0])*ln10v
+
+def prep_fast(m, Nv, freqs, h, variable_grid=False):
     Sv = m.sigma; f_hor = m.f_hor
     nv = len(Nv)
     Phi_grid = np.empty(nv); Phi_mid = np.empty(nv); Psi = np.empty(nv)
     S2 = np.empty(nv); S2inv = np.empty(nv); fp_minus = np.empty(nv)
     j0s = np.empty(len(freqs), dtype=np.int64); z0s = np.empty(len(freqs))
-    prep_kernel(Nv, Sv, f_hor, freqs, h, ln10, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus)
+    if variable_grid:
+        prep_frequency_kernel(f_hor, freqs, ln10, j0s, z0s, fp_minus)
+    else:
+        prep_kernel(Nv, Sv, f_hor, freqs, h, ln10, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus)
     return Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus
 
 # ================= stepping / assembly / kernel (from proto11) =================
@@ -865,7 +931,8 @@ def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, f
 def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                  j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
                  assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw,
-                 h_arr=None, Sv=None, phase_max=0.0, handoff_eps=None):
+                 h_arr=None, Sv=None, phase_max=0.0, handoff_eps=None,
+                 kink_index=-1, kink_fraction=0.0, phi_re=0.0):
     nv = len(Nv)
     for m in prange(len(j0s)):
         j0 = j0s[m]; z0 = z0s[m]
@@ -886,7 +953,20 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
             while k < nv-1 and (z0 + Phi_grid[k] - Phi0) < z_tail:
                 h_step = h_arr[k] if h_arr is not None else h
                 z_mid_step = z0 + Phi_mid[k] - Phi0
-                if phase_max > 0.0 and z_mid_step > 0.0:
+                if k == kink_index and 0.0 < kink_fraction < 1.0:
+                    # Split the unique interval containing N_re.  Phi_re is
+                    # computed from the two background regimes, so neither
+                    # transfer sub-step samples across the sigma kink.
+                    z_node = z0 + Phi_grid[k] - Phi0
+                    z_break = z0 + phi_re - Phi0
+                    z_end = z0 + Phi_grid[k + 1] - Phi0
+                    h_left = h_step * kink_fraction
+                    h_right = h_step - h_left
+                    xh, yh = scaled_step(xh, yh,
+                                         0.5 * (z_node + z_break), h_left)
+                    xh, yh = scaled_step(xh, yh,
+                                         0.5 * (z_break + z_end), h_right)
+                elif phase_max > 0.0 and z_mid_step > 0.0:
                     n_sub = int(math.ceil(h_step*math.exp(z_mid_step)/phase_max))
                     if n_sub > 1:
                         z_node = z0 + Phi_grid[k] - Phi0
@@ -1048,7 +1128,8 @@ def pchip_fine(idx_out, y, nv, out):
         out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
 
 def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, freq_grid=None, config=None,
+                   transition_refine=False, kink_split=False,
+                   freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
@@ -1141,6 +1222,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     adaptive_grid = None
     adaptive_done = freq_grid != 'adaptive'
     freq_grid_error = 0.0
+    kink_index = -1
+    kink_fraction = 0.0
+    phi_re = 0.0
     first = True
     thread_before = get_num_threads()
     if config.threads is not None:
@@ -1154,8 +1238,11 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             if transition_refine:
                 from .exact_background import build_kink_refined_grid
                 build_kink_refined_grid(m, h)
-            else:
+            elif kink_split:
                 gen_fast(m, h)
+                kink_index, kink_fraction = _correct_kink_background(m)
+            else:
+                gen_fast(m, h, kink_split=kink_split)
             if freq_grid == 'grid_independent':
                 from .freq_adaptive import grid_independent_freqs
                 m.f = grid_independent_freqs(m, freq_res)[0]
@@ -1197,18 +1284,30 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 W_last = Wmat[Nf-1].copy()
                 Ogw = Oj = Opgw = None
             first = False
-            Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(m, Nv, freqs, h)
+            Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
+                m, Nv, freqs, h, variable_grid=transition_refine)
             if transition_refine:
                 from .exact_background import exact_phi_s2_grid
                 Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
                     m, Nv, m.cosmo_param['DN_eff'])
+            elif kink_split:
+                from .exact_background import exact_phi_s2_split
+                Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_phi_s2_split(
+                    m, Nv, m.cosmo_param['DN_eff'])
+                h_arr = None
             elif sigma_exact:
                 from .exact_background import exact_phi_s2
                 Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(
                     m, Nv, m.cosmo_param['DN_eff'], h)
                 h_arr = np.diff(Nv)
+                kink_index = -1
+                kink_fraction = 0.0
+                phi_re = 0.0
             else:
                 h_arr = np.diff(Nv)
+                kink_index = -1
+                kink_fraction = 0.0
+                phi_re = 0.0
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
                 # j0 = horizon-crossing + 3 decades, so the early columns
@@ -1222,9 +1321,13 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             # (horizon-crossing adaptive step control); Sv supplies sigma at the
             # handoff node for the damping-corrected WKB amplitude, handoff_eps
             # receives the per-mode adiabaticity error |1.5*sigma-1|*e^{-z}.
-            solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                         1, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw, h_arr,
-                         m.sigma, phase_max, handoff_eps)
+            solve_args = (Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t,
+                          ev_minus, fp_minus, fp_freq, 1, n_coarse, col_step,
+                          h, z_tail, Ogw, Oj, Opgw, h_arr, m.sigma,
+                          phase_max, handoff_eps)
+            if kink_split:
+                solve_args += (kink_index, kink_fraction, phi_re)
+            solve_kernel(*solve_args)
             g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
@@ -1343,12 +1446,16 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     m.freq_res_used = float(freq_res)
     m.sigma_exact_used = bool(sigma_exact)
     m.transition_refine_used = bool(transition_refine)
+    m.kink_split_used = bool(kink_split)
+    m.kink_split_index = int(kink_index)
+    m.kink_split_fraction = float(kink_fraction)
     m.dn_converged_delta = abs(DN_gw_new - DN_gw_list[-1])
     return m
 
 
 def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, freq_grid=None, config=None,
+                   transition_refine=False, kink_split=False,
+                   freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
     """Run the fast solver with an isolated configuration snapshot.
 
@@ -1365,6 +1472,7 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     with lock:
         return _SGWB_iter_fast_impl(
             m, tol=tol, freq_res=freq_res, sigma_exact=sigma_exact,
-            transition_refine=transition_refine, freq_grid=freq_grid,
+            transition_refine=transition_refine, kink_split=kink_split,
+            freq_grid=freq_grid,
             config=config, freq_grid_target=freq_grid_target,
             freq_grid_max_points=freq_grid_max_points, eval_freqs=eval_freqs)
