@@ -1345,8 +1345,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 Ogw = Oj = Opgw = None
             first = False
             if kink_split:
-                # The exact split path replaces the uniform-grid primitives
-                # below, so only prepare frequency starts and tail factors.
+                # exact split 路径会覆盖均匀网格 primitive，因此这里只准备
+                # 频率起点和尾部匹配所需的因子。
                 Sv, f_hor, j0s, z0s, fp_minus = prep_frequency_only(m, Nv, freqs)
                 reuse_exact = (exact_primitive is not None
                                and exact_Nv is not None
