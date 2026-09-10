@@ -78,13 +78,15 @@ The goal grid reserves nodes around the reheating feature and preserves
 analytic WKB envelope at `z_tail`; the local error budget is exposed through
 `stiffgwpy_fast.fast_sgwb.estimate_local_error`.
 
-Fresh single-point evidence on this branch (default case, full candidate-grid
-reference, `h=.005`, 76 fast frequency points) is spectrum dex median
-`6.53e-4`, p95 `2.72e-3`, max `3.04e-3`, and `DN_gw` relative error
-`1.37e-3`.  Warm runtime was `6.73 ms/point` at 16 threads on the current
-host; this is an interim optimization snapshot, not a final universal
-certification claim.  See `findings.md` and `progress.md` for the exact
-commands and remaining speed/DN work.
+Fresh HEAD evidence uses the formal `fast` path (`h=.005`, `col_step=8`,
+`z_tail=5`, `phase_max=.25`, exact kink split, goal grid). On the six-point
+25-repeat matrix at fixed 20-thread `workqueue`, the default warm median/p95
+was `5.36/5.73 ms/point`; this does not yet meet the `<4 ms` target. On the
+same native 76-node grid, the independent reference comparison gives
+Simpson/PCHIP `DN_gw` relative errors `7.14e-4/2.94e-4`; PCHIP therefore
+remains opt-in. `eval_freqs` is now separated from integration support nodes,
+and its six-point DN invariant measured zero change. See `findings.md` and
+`progress.md` for exact artifacts and rejected candidates.
 
 ## Reference / oracle
 
@@ -202,16 +204,18 @@ frequency bins reach the fast solver as native nodes
 steep spectral features (Layer C measured the per-bin dex interpolation error at
 ≤3.1e-4 across 11 PTA-like bins).  By default (`eval_freqs: null`) the solver
 uses its own grid and the likelihood interpolates over the returned spectrum;
-use native nodes when the bin spacing approaches the spectral features.
+use native nodes when the bin spacing approaches the spectral features. Native
+evaluation nodes are excluded from the bolometric integration support grid, so
+changing `eval_freqs` does not change self-consistent `DN_gw`.
 
 ## Accuracy
 
 The current single fast path is still under active branch-level optimization.
-At the default anchor, matched against the independent continuous-sigma oracle
-on the full candidate grid, the measured spectrum dex statistics are median
-`6.53e-4`, p95 `2.72e-3`, max `3.04e-3`; `DN_gw` relative error is `1.37e-3`.
-These numbers are evidence for the current snapshot, not a universal parameter-
-space certification. `reference` remains the precision oracle.
+On the exact native 76-node default grid, the independent continuous-sigma
+oracle gives Simpson/PCHIP `DN_gw` relative errors `7.14e-4/2.94e-4`.
+The 76/80/90/110-node sweep is non-monotonic, so these numbers are not a
+universal parameter-space certification. `reference` remains the precision
+oracle.
 
 ## Full parameter validation
 
@@ -239,7 +243,7 @@ comparison, stage breakdown, AB evidence, and thread scaling.
 
 | | runtime/point | vs LSODA |
 |---|---|---|
-| fast (goal-kink-hybrid) | 6.727 ms warm median; 1.919 s cold | ≈3124x vs current LSODA A run; interim result |
+| fast (goal-kink-hybrid) | 5.36 ms warm median; 5.73 ms p95; 0.254 s cold | interim result; `<4 ms` not yet met |
 | reference (oracle) | ≈360–383 s/point historical | anchor only |
 
 The speedup entries use the recent A-point LSODA measurement (`22.137 s`) and
@@ -262,8 +266,9 @@ importance reweighting, not on an independent reference chain.
 
 ## Limitations
 
-* The current anchor `DN_gw` error is `1.37e-3`; the branch has not yet met the
-  final DN gate or the first `<=4 ms/point` speed target.
+* The current same-grid default `DN_gw` error is `7.14e-4` with Simpson and
+  `2.94e-4` with opt-in PCHIP; the branch has not yet met the final DN gate or
+  the first `<=4 ms/point` speed target.
 * Fast execution is over 100x faster than the recent LSODA A-point runtime,
   but this is an interim optimization result, not an accuracy certification.
 * MCMC validation rests on importance reweighting, not an independent

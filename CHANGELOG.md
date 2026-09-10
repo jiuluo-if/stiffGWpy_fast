@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — 2026-09-10
+
+- Separated native `eval_freqs` output nodes from bolometric integration support
+  nodes, preserving the self-consistent `DN_gw` invariant across six probe
+  regimes.
+- Added Simpson/PCHIP embedded quadrature telemetry and current-HEAD evidence
+  for frequency quadrature, node-count convergence, runtime, and fast-only
+  stability. PCHIP and DN-driven refinement remain opt-in/rejected where the
+  oracle evidence is not sufficient.
+
 ## 0.2.1 — 2026-09-04
 
 - Renamed the distribution metadata and Python import package to
