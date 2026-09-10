@@ -25,6 +25,13 @@ The additional `cr0`, tilt, and Sobol oracle sample has no numerical failure;
 PCHIP DN relative error is `2.76e-4–2.98e-4`, so the parameter-space gate is
 also `NOT VERIFIED`.
 
+The oracle-choice check is material: on the same default native grid, the
+independent reference gives `DN=0.0022718753` at `z_tail=5` versus
+`0.0022643136` at `z_tail=8` (relative delta `3.34e-3`). The formal fast
+PCHIP residual must therefore be interpreted as a combined tail/transfer and
+frequency-integration residual; it is not valid to attribute all of it to the
+frequency quadrature alone.
+
 ## Accepted changes
 
 - exact reheating kink split and the gamma-corrected deep-tail matching remain

@@ -98,6 +98,7 @@
 - 新增参数空间 same-grid independent oracle：`cr0_blue`、`positive_tilt`、`sobol_000`、`sobol_002`、`sobol_006` 均无 numerical failure；Simpson DN rel 为 `8.83e-4/7.14e-4/1.05e-3/9.78e-4/8.56e-4`，PCHIP 为 `2.76e-4/2.94e-4/2.96e-4/2.93e-4/2.98e-4`。PCHIP 改善一致但仍未满足 `<2e-4`，parameter-space release gate 保持 `NOT VERIFIED`。
 - phase-cap A/B（`phase_max=0.35/0.5`，六工况各 25 次）没有稳定 >5% runtime 收益：相对 formal `.25` 的中位数多数持平或变慢；spectrum max 变化约 `5.2e-6..1.3e-5`、DN 变化约 `0.4e-6..6.8e-6`，数值扰动虽小但不能抵消速度失败，两个候选均拒绝升级。
 - `solve_kernel` 的 Numba `literally(assemble)` 专门化实验被拒绝：focused regression `42 passed, 1 deselected`，但 50-repeat profiler 中 warm tensor kernel 约从 `1 ms` 退化到 `150 ms`，说明该 dispatch 方案不适合当前 parallel kernel；源码已完全回退。
+- default same-grid oracle tail A/B：reference `z_tail=5` 给 `DN=0.0022718753`，`z_tail=8` 给 `0.0022643136`，相对差 `3.34e-3`；因此当前 fast PCHIP 的约 `2.94e-4` residual 是 tail/transfer 与 sparse quadrature 的合成，不能只归因于积分器。
 
 ## Technical Decisions
 

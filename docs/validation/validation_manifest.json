@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "commit": "5ccd02e3c3a1c4426f44e957bbe90426388bb544",
+  "commit": "bec5a428dca28dd841f2b8d18d35df8b174de196",
   "date": "2026-09-10",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "audit_report": "docs/fast_v02_audit_report.md",
@@ -1331,6 +1331,14 @@
         },
         "failure_count": 0,
         "release_gate": "NOT VERIFIED"
+      },
+      "oracle_tail_sensitivity": {
+        "same_native_grid_default": {
+          "reference_z_tail_8_dn": 0.0022643136483710326,
+          "reference_z_tail_5_dn": 0.002263480087373502,
+          "relative_delta": 0.00036812965294371475
+        },
+        "interpretation": "z_tail=5 and z_tail=8 reference variants are not interchangeable precision anchors; the fast residual must be reported with this oracle-choice caveat."
       },
       "candidate_grid_seed78": {
         "fast_ab": {

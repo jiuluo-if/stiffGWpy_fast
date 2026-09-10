@@ -84,6 +84,7 @@
 | `benchmark_same_grid_reference.py` on cr0/tilt/Sobol extras | parameter-space independent oracle | 5 additional points；no numerical failure；PCHIP still `2.76e-4..2.98e-4`；manifest gate `NOT VERIFIED` | PASS / NOT VERIFIED |
 | `benchmark_phase_candidate.py --phase-max 0.25 0.35 0.5` | phase-cap speed/accuracy A/B | 25 repeats x 6 cases；no stable >5% gain；larger caps rejected；spectrum/DN perturbation recorded | PASS / REJECTED |
 | `solve_kernel` Numba literal-specialization probe | kernel branch-elimination candidate | 42 focused tests pass but warm kernel regresses to ~150 ms；source reverted，candidate rejected | PASS / REJECTED |
+| default same-grid reference `z_tail=5` vs `8` | oracle-independence tail A/B | DN `0.0022718753` vs `0.0022643136`，relative delta `3.34e-3`；记录为 tail/transfer caveat | PASS / DIAGNOSTIC |
 
 ### Errors
 

@@ -186,6 +186,22 @@ def _current_fast_audit():
                 'failure_count': 0,
                 'release_gate': 'NOT VERIFIED',
             },
+            'oracle_tail_sensitivity': {
+                'same_native_grid_default': {
+                    'reference_z_tail_8_dn': same_grid[0][
+                        'reference_pchip_dn_same_grid'],
+                    'reference_z_tail_5_dn': candidate_default[
+                        'reference_pchip_dn_same_grid'],
+                    'relative_delta': abs(
+                        candidate_default['reference_pchip_dn_same_grid']
+                        - same_grid[0]['reference_pchip_dn_same_grid'])
+                    / abs(same_grid[0]['reference_pchip_dn_same_grid']),
+                },
+                'interpretation': ('z_tail=5 and z_tail=8 reference variants '
+                                   'are not interchangeable precision anchors; '
+                                   'the fast residual must be reported with '
+                                   'this oracle-choice caveat.'),
+            },
             'candidate_grid_seed78': {
                 'fast_ab': candidate_grid,
                 'independent_reference_default': candidate_default,
