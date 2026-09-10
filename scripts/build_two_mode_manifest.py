@@ -73,6 +73,8 @@ def _current_fast_audit():
     candidate_grid = _load_json(D('benchmark_candidate_grid_head.json'))
     candidate_default = _load_json(
         D('frequency_same_grid_reference_default_seed78.json'))
+    tail_default = _load_json(
+        D('frequency_same_grid_reference_default_ztail5.json'))
     phase_candidate = _load_json(D('benchmark_phase_candidate_head.json'))
     reuse_cases = ('default', 'lowT', 'highT', 'stiff')
     reuse_rows = []
@@ -190,10 +192,10 @@ def _current_fast_audit():
                 'same_native_grid_default': {
                     'reference_z_tail_8_dn': same_grid[0][
                         'reference_pchip_dn_same_grid'],
-                    'reference_z_tail_5_dn': candidate_default[
+                    'reference_z_tail_5_dn': tail_default[
                         'reference_pchip_dn_same_grid'],
                     'relative_delta': abs(
-                        candidate_default['reference_pchip_dn_same_grid']
+                        tail_default['reference_pchip_dn_same_grid']
                         - same_grid[0]['reference_pchip_dn_same_grid'])
                     / abs(same_grid[0]['reference_pchip_dn_same_grid']),
                 },
