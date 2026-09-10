@@ -81,6 +81,9 @@
 - DN-driven midpoint 原型从 76 nodes 依据局部 PCHIP-vs-trapezoid 差选择 4/10/20 个 interval。default 的 PCHIP DN 为 `0.0022636474 → 0.0022612282 → 0.0022625409 → 0.0022625338`（76/80/86/96 nodes），相对 fresh dense-reference `0.00226283297` 的误差先恶化后改善，未满足单调收敛，因此该 estimator 被拒绝进入生产。
 - 新增证据脚本：`scripts/compare_frequency_quadrature.py`、`scripts/benchmark_goal_seeds.py`、`scripts/benchmark_dn_refinement.py`、`scripts/benchmark_head_matrix.py`；所有输出 JSON 均记录 commit、线程层、affinity 与代表点状态。
 - default 同一 native 76-node grid 的独立 reference 对照（reference z_tail=8、DOP853 rtol=1e-9、4 workers）给出 reference PCHIP DN `0.0022643136483710326`；fast Simpson/PCHIP 分别为 `0.0022626969518100616`、`0.002263647415085622`，相对误差 `7.14e-4`、`2.94e-4`。因此 PCHIP 在该网格上更接近 reference，但仍未达到 `2e-4` 门槛；且此前 low-T 参数点差异达 `1.275e-2`，不能全局切换。fast 与 reference integrand 的相对误差 p95/max 为 `7.84e-4/3.57e-3`，当前主误差仍不只是频率积分器。
+- `eval_freqs` invariant 已实现并在六个代表点验证：default/lowT/highT/stiff/low_r/high-kappa 从 76/77 个 support nodes 增加 4 个 native eval nodes 后，`DN_gw` 的绝对/相对变化均为 0，且无 failure；评估节点仍保留在 `m.f` 和频谱输出中，bolometric DN 使用独立 support grid。
+- exact 76/80/90/110-node sweep（default，20 threads、workqueue）仍显示 blind seed 增加不具单调收敛性：相对 dense reference 的 DN 误差为 `6.01e-5/5.55e-4/1.40e-4/2.29e-4`，对应 76/80/90/110；因此当前目标网格尚不能宣称通过 `<2e-4` 的单调收敛门槛。
+- fast solver 现在记录 `estimated_DN_quadrature_error` 与相对估计，采用同一 support grid 上 Simpson-PCHIP embedded pair；该估计只作为 telemetry，不改变默认 Simpson 或频率节点。它为后续 estimator coverage 提供了可观测字段。
 
 ## Technical Decisions
 

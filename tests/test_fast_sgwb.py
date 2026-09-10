@@ -69,6 +69,8 @@ def test_pchip_frequency_quadrature_is_opt_in():
                 FS.integrate_frequency_pchip(m.f, m.Ogw_today - m.Oj_today) /
                 omega_nu)
     assert m.DN_gw[-1] == pytest.approx(expected, rel=1e-12)
+    assert m.estimated_DN_quadrature_error > 0.0
+    assert m.estimated_DN_quadrature_error_rel > 0.0
 
 
 def test_r_le_zero_returns_none(model):
@@ -485,3 +487,17 @@ def test_eval_freqs_are_native_grid_nodes():
     assert fs1.size == fs0.size + len(ev), (fs1.size, fs0.size)
     dmin = np.min(np.abs(fs1 - np.asarray(ev)[:, None]), axis=1)
     assert np.allclose(dmin, 0.0), dmin
+
+
+def test_eval_freqs_do_not_change_self_consistent_dn():
+    """Likelihood-only native nodes must not perturb the bolometric DN integral."""
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.25, freq_grid='goal', threads=1)
+    base = _make_model()
+    assert FS.SGWB_iter_fast(base, tol=1e-7, config=cfg, kink_split=True) is base
+    with_eval = _make_model()
+    assert FS.SGWB_iter_fast(
+        with_eval, tol=1e-7, config=cfg, kink_split=True,
+        eval_freqs=np.array([-1.73, -0.42, 0.37, 1.21])) is with_eval
+    assert with_eval.f.size > base.f.size
+    assert with_eval.DN_gw[-1] == pytest.approx(base.DN_gw[-1], rel=1e-12, abs=1e-15)
