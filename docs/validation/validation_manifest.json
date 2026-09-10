@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "commit": "225139acdef34a08bfcbf09f5d969940ff5a5786",
+  "commit": "402b41190e1d02e422bcd6fb35929611c0c26adf",
   "date": "2026-09-10",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
@@ -1110,6 +1110,225 @@
         ],
         "simpson_coverage_all": false,
         "pchip_coverage_all": true,
+        "release_gate": "NOT VERIFIED"
+      },
+      "parameter_space_oracle": {
+        "definition": "same-grid independent continuous-sigma DOP853 reference on additional named/tilt/Sobol points",
+        "cases": [
+          {
+            "point": "cr0_blue",
+            "kw": {
+              "r": 0.01,
+              "cr": 0,
+              "n_t": 0.2,
+              "DN_re": 5.0,
+              "T_re": 1000.0,
+              "kappa10": 0.001
+            },
+            "n_freq": 74,
+            "seed_n": 64,
+            "dn_eff": 0.05694040544255328,
+            "used_tail_fraction": 0.8378378378378378,
+            "fast_runtime_s": 0.24466660000052798,
+            "reference_runtime_s": 154.56614350000018,
+            "fast_simpson_dn": 0.056940405442785454,
+            "fast_pchip_dn": 0.056974972663539195,
+            "reference_pchip_dn_same_grid": 0.05699072846328021,
+            "reference_quadrature_error": 7.8408300274713e-21,
+            "reference_interpolation_error": 1.6455633544392952e-09,
+            "dn_relative_error": {
+              "simpson": 0.0008830036367613783,
+              "pchip": 0.00027646250830373845
+            },
+            "spectrum_relative_error": {
+              "simpson_max": 0.003045527525222268,
+              "simpson_p95": 0.0017193223980487434
+            }
+          },
+          {
+            "point": "positive_tilt",
+            "kw": {
+              "r": 0.01,
+              "cr": 1,
+              "n_t": 0.2,
+              "T_re": 2000.0,
+              "kappa10": 0.01
+            },
+            "n_freq": 76,
+            "seed_n": 64,
+            "dn_eff": 0.0022626969518100204,
+            "used_tail_fraction": 0.881578947368421,
+            "fast_runtime_s": 0.21481369999946764,
+            "reference_runtime_s": 166.13042769999993,
+            "fast_simpson_dn": 0.0022626969518100616,
+            "fast_pchip_dn": 0.002263647415085622,
+            "reference_pchip_dn_same_grid": 0.0022643136483710326,
+            "reference_quadrature_error": 3.1152608370675335e-22,
+            "reference_interpolation_error": 7.97058807807353e-11,
+            "dn_relative_error": {
+              "simpson": 0.0007139896728238829,
+              "pchip": 0.00029423189048483165
+            },
+            "spectrum_relative_error": {
+              "simpson_max": 0.003571661760305857,
+              "simpson_p95": 0.0007842716874306186
+            }
+          },
+          {
+            "point": "sobol_000",
+            "kw": {
+              "r": 3.4845505440304265e-06,
+              "n_t": -0.12252988945692778,
+              "cr": 1.0,
+              "T_re": 34989.571710260374,
+              "DN_re": 18.787082182243466,
+              "kappa10": 5.28549585835966e-06
+            },
+            "n_freq": 76,
+            "seed_n": 64,
+            "dn_eff": 1.3367419642719864e-07,
+            "used_tail_fraction": 0.881578947368421,
+            "fast_runtime_s": 0.23177059999943594,
+            "reference_runtime_s": 162.99721390000013,
+            "fast_simpson_dn": 1.3367419642719864e-07,
+            "fast_pchip_dn": 1.3377473627465301e-07,
+            "reference_pchip_dn_same_grid": 1.3381440218848242e-07,
+            "reference_quadrature_error": 1.8410292534926905e-26,
+            "reference_interpolation_error": 2.837645557928753e-15,
+            "dn_relative_error": {
+              "simpson": 0.0010477628640174032,
+              "pchip": 0.0002964248480035322
+            },
+            "spectrum_relative_error": {
+              "simpson_max": 0.004455539772270833,
+              "simpson_p95": 0.0018382455338818626
+            }
+          },
+          {
+            "point": "sobol_002",
+            "kw": {
+              "r": 0.008513729433124471,
+              "n_t": -0.3924837075173855,
+              "cr": 1.0,
+              "T_re": 118660.64687585819,
+              "DN_re": 11.174977160990238,
+              "kappa10": 0.0017982905763510582
+            },
+            "n_freq": 76,
+            "seed_n": 64,
+            "dn_eff": 1.2205139219664978,
+            "used_tail_fraction": 0.8947368421052632,
+            "fast_runtime_s": 0.22463019999941025,
+            "reference_runtime_s": 152.04633300000023,
+            "fast_simpson_dn": 1.220513921966513,
+            "fast_pchip_dn": 1.2213508155213288,
+            "reference_pchip_dn_same_grid": 1.2217092165809904,
+            "reference_quadrature_error": 1.6808373166134684e-19,
+            "reference_interpolation_error": 3.647554596732154e-08,
+            "dn_relative_error": {
+              "simpson": 0.000978378977791788,
+              "pchip": 0.0002933603633314346
+            },
+            "spectrum_relative_error": {
+              "simpson_max": 0.003622618286070514,
+              "simpson_p95": 0.0015547833424605
+            }
+          },
+          {
+            "point": "sobol_006",
+            "kw": {
+              "r": 0.002986405620277968,
+              "n_t": -0.16131426580250263,
+              "cr": 0.0,
+              "T_re": 2832.147926998191,
+              "DN_re": 3.932188209146261,
+              "kappa10": 0.01617670894806547
+            },
+            "n_freq": 75,
+            "seed_n": 64,
+            "dn_eff": 5.5691169420976625e-06,
+            "used_tail_fraction": 0.8533333333333334,
+            "fast_runtime_s": 0.20985840000048483,
+            "reference_runtime_s": 127.3158112000001,
+            "fast_simpson_dn": 5.569116942097664e-06,
+            "fast_pchip_dn": 5.5722271145815666e-06,
+            "reference_pchip_dn_same_grid": 5.573887107794463e-06,
+            "reference_quadrature_error": 7.66859848662733e-25,
+            "reference_interpolation_error": 7.0437166750861e-14,
+            "dn_relative_error": {
+              "simpson": 0.0008558059401899265,
+              "pchip": 0.0002978160807338312
+            },
+            "spectrum_relative_error": {
+              "simpson_max": 0.004921420027235612,
+              "simpson_p95": 0.0031779600827391186
+            }
+          }
+        ],
+        "estimator_coverage": [
+          {
+            "case": "cr0_blue",
+            "predicted_rel": 0.00019201385743237328,
+            "actual_simpson_rel": 0.0008830036367613783,
+            "actual_pchip_rel": 0.00027646250830373845,
+            "covers_simpson": false,
+            "covers_pchip": false
+          },
+          {
+            "case": "positive_tilt",
+            "predicted_rel": null,
+            "actual_simpson_rel": 0.0007139896728238829,
+            "actual_pchip_rel": 0.00029423189048483165,
+            "covers_simpson": false,
+            "covers_pchip": false
+          },
+          {
+            "case": "sobol_000",
+            "predicted_rel": 0.00031679396355678113,
+            "actual_simpson_rel": 0.0010477628640174032,
+            "actual_pchip_rel": 0.0002964248480035322,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "sobol_002",
+            "predicted_rel": 0.00037875284653498636,
+            "actual_simpson_rel": 0.000978378977791788,
+            "actual_pchip_rel": 0.0002933603633314346,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "sobol_006",
+            "predicted_rel": 0.0002413849575151645,
+            "actual_simpson_rel": 0.0008558059401899265,
+            "actual_pchip_rel": 0.0002978160807338312,
+            "covers_simpson": false,
+            "covers_pchip": false
+          }
+        ],
+        "spectrum_rel_p95": {
+          "median": 0.0017193223980487434,
+          "p95": 0.002910017172967667,
+          "max": 0.0031779600827391186,
+          "mean": 0.0018149166089121687,
+          "n": 5
+        },
+        "dn_rel_simpson": {
+          "median": 0.0008830036367613783,
+          "p95": 0.0010338860867722803,
+          "max": 0.0010477628640174032,
+          "mean": 0.0008957882183168757,
+          "n": 5
+        },
+        "dn_rel_pchip": {
+          "median": 0.00029423189048483165,
+          "p95": 0.0002975378341877714,
+          "max": 0.0002978160807338312,
+          "mean": 0.00029165913817147366,
+          "n": 5
+        },
+        "failure_count": 0,
         "release_gate": "NOT VERIFIED"
       },
       "candidate_grid_seed78": {

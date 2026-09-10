@@ -112,6 +112,25 @@ def _current_fast_audit():
             'covers_pchip': (predicted is not None and
                              predicted >= actual_pchip),
         })
+    extra_oracle_names = ('cr0_blue', 'positive_tilt', 'sobol_000',
+                          'sobol_002', 'sobol_006')
+    extra_oracle = [
+        _load_json(D('frequency_same_grid_reference_%s.json' % name))
+        for name in extra_oracle_names]
+    extra_estimator_rows = []
+    for name, ref in zip(extra_oracle_names, extra_oracle):
+        predicted = (stability_by_label.get(name) or {}).get(
+            'estimated_DN_quadrature_error_rel')
+        extra_estimator_rows.append({
+            'case': name,
+            'predicted_rel': predicted,
+            'actual_simpson_rel': ref['dn_relative_error']['simpson'],
+            'actual_pchip_rel': ref['dn_relative_error']['pchip'],
+            'covers_simpson': (predicted is not None and
+                               predicted >= ref['dn_relative_error']['simpson']),
+            'covers_pchip': (predicted is not None and
+                             predicted >= ref['dn_relative_error']['pchip']),
+        })
     return {
         'profile': 'fast',
         'config': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
@@ -149,6 +168,21 @@ def _current_fast_audit():
                 'rows': estimator_rows,
                 'simpson_coverage_all': all(x['covers_simpson'] for x in estimator_rows),
                 'pchip_coverage_all': all(x['covers_pchip'] for x in estimator_rows),
+                'release_gate': 'NOT VERIFIED',
+            },
+            'parameter_space_oracle': {
+                'definition': ('same-grid independent continuous-sigma DOP853 '
+                               'reference on additional named/tilt/Sobol points'),
+                'cases': extra_oracle,
+                'estimator_coverage': extra_estimator_rows,
+                'spectrum_rel_p95': _agg([
+                    x['spectrum_relative_error']['simpson_p95']
+                    for x in extra_oracle]),
+                'dn_rel_simpson': _agg([
+                    x['dn_relative_error']['simpson'] for x in extra_oracle]),
+                'dn_rel_pchip': _agg([
+                    x['dn_relative_error']['pchip'] for x in extra_oracle]),
+                'failure_count': 0,
                 'release_gate': 'NOT VERIFIED',
             },
             'candidate_grid_seed78': {

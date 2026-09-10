@@ -95,6 +95,7 @@
 - `seed_n=78` 候选（实际 89 nodes）六工况 fast A/B 无 numerical failure，但独立 default same-grid oracle 显示 Simpson/PCHIP DN 相对误差为 `1.142e-3/2.952e-4`；因此“仅把 grid 加到约 89 nodes 并启用 PCHIP”仍未达到 `<2e-4`，候选拒绝升级。此前 76-node dense-reference 上的偶然 `9.3e-6` 不足以证明参数空间收益。
 - 当前 HEAD outer-reuse safety replay（default/lowT/highT/stiff）无 numerical failure，DN rel 对 always-full 均不超过 `5.3e-10`；spectrum max rel 最大为 default `9.03e-4`、lowT `1.54e-5`，其余无 reuse 生效。按 DN `2e-4`、spectrum max `1e-3` 的保守门槛，false-safe `0/4`，暂保留当前 reuse；但 default 的 `9.03e-4` 已接近 spectrum budget，不能宣称 reuse 对所有 spectrum observable 完全无影响。
 - stability screen 已从当前 HEAD `6a32838` 重跑并回写 SHA：24 点（8 named + 16 Sobol）`failure_count=0`、`guard_count=3`；3 个均为显式 `shared_Neff_guard`，没有 silent fallback。低振幅 Sobol 点的相对 estimator 仍可达 `3.08e-2`，所以 estimator 不能单独放行科学结果。
+- 新增参数空间 same-grid independent oracle：`cr0_blue`、`positive_tilt`、`sobol_000`、`sobol_002`、`sobol_006` 均无 numerical failure；Simpson DN rel 为 `8.83e-4/7.14e-4/1.05e-3/9.78e-4/8.56e-4`，PCHIP 为 `2.76e-4/2.94e-4/2.96e-4/2.93e-4/2.98e-4`。PCHIP 改善一致但仍未满足 `<2e-4`，parameter-space release gate 保持 `NOT VERIFIED`。
 
 ## Technical Decisions
 
