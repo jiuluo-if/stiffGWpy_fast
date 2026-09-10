@@ -74,6 +74,7 @@
 | `python scripts/benchmark_node_counts.py` | exact 76/80/90/110-node sweep | DN 相对 dense reference `6.01e-5/5.55e-4/1.40e-4/2.29e-4`；收敛非单调；无 numerical failure | PASS / REJECTED FOR PROMOTION |
 | focused tests for embedded telemetry and eval invariant | production behavior guard | `2 passed` | PASS |
 | final-H HEAD artifact regeneration | release evidence freshness | quadrature/seed/refinement/eval/node artifacts regenerated from `9bb2697`; same-grid reference regenerated with same source HEAD | PASS / DELIVERY PENDING |
+| `python scripts/benchmark_fast_stability.py` | fast-only named + Sobol stability screen | 24 points；0 numerical failure；3 explicit `shared_Neff_guard`；embedded estimator telemetry recorded | PASS / DIAGNOSTIC |
 
 ### Errors
 

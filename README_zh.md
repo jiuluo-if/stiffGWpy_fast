@@ -88,10 +88,13 @@ python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 当前验证结果和精度边界以 [`docs/validation/validation_manifest.json`](docs/validation/validation_manifest.json)
 为准；可复现命令见 [`docs/reproducibility.md`](docs/reproducibility.md)。
 
-当前分支默认点的独立 reference 快照（76 个 fast 频率点，`h=.005`）为：谱 dex
-median `6.53e-4`、p95 `2.72e-3`、max `3.04e-3`，`DN_gw` 相对误差
-`1.37e-3`；16 threads warm median 为 `6.73 ms/point`。这些是阶段性证据，尚未
-替代参数空间认证。
+当前 fresh HEAD 使用正式 fast 路径（`h=.005`、`col_step=8`、`z_tail=5`、
+`phase_max=.25`、exact kink split、goal grid）。固定 20 threads/workqueue 的六点
+25 次矩阵中，default warm median/p95 为 `5.36/5.73 ms/point`，尚未达到 `<4 ms`。
+同一 76-node 网格的独立 reference 对照中，Simpson/PCHIP 的 `DN_gw` 相对误差为
+`7.14e-4/2.94e-4`，所以 PCHIP 仍只作为 opt-in。`eval_freqs` 已与积分 support
+nodes 解耦，六点 DN invariant 实测变化为 0。详细证据见 `findings.md`、
+`progress.md` 和对应 JSON artifact。
 
 ## 重要限制
 

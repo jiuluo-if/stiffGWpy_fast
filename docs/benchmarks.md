@@ -1,15 +1,20 @@
 # Benchmarks
 
 Status: current
-Date: 2026-09-03
+Date: 2026-09-10
 Code version: see manifest `commit`
 
-Current benchmark (Windows, `FAST_THREADS=4`): plain-grid default A is
-`4.442 ms/point` warm median (`5.105 ms` p95; cold JIT `0.325 s`), and
-production is `21.772 ms/point` warm median (`22.149 ms` p95; cold JIT
-`0.226 s`). A recent LSODA A-point run is `22.137 s`; the independent reference
-remains a historical `~360–383 s/point` anchor. These are separate cold/warm
-measurements, not a claim that the physical accuracy tiers changed.
+Current formal fast benchmark (Windows, fixed CPU 0-19, Numba
+`workqueue`, 20 threads, 25 repeats) reports default `5.36 ms/point` warm
+median (`5.73 ms` p95; cold JIT `0.254 s`). The six-point medians are
+`4.89/7.28/7.54/4.59/7.28 ms` for low-T/high-T/stiff/low-r/high-kappa.
+These are separate cold/warm measurements and do not yet satisfy the `<4 ms`
+acceptance target.
+
+The current default same-grid independent reference comparison reports
+Simpson/PCHIP `DN_gw` relative errors `7.14e-4/2.94e-4`; PCHIP is therefore
+kept opt-in. The 76/80/90/110 sweep is non-monotonic, so no grid promotion is
+claimed. See the HEAD-stamped JSON artifacts and `findings.md` for details.
 
 The detailed before/after comparison, breakdown, thread scaling and numerical AB
 are in `docs/performance_comparison_20260903.md`. The plain-grid oracle envelope
