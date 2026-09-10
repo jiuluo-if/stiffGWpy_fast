@@ -70,6 +70,9 @@ def _current_fast_audit():
     same_grid_names = ('default', 'lowT', 'highT', 'stiff', 'low_r', 'high_kappa')
     same_grid = [_load_json(D('frequency_same_grid_reference_%s.json' % name))
                  for name in same_grid_names]
+    candidate_grid = _load_json(D('benchmark_candidate_grid_head.json'))
+    candidate_default = _load_json(
+        D('frequency_same_grid_reference_default_seed78.json'))
     stability_by_label = {
         row.get('label'): row for row in stability.get('rows', [])}
     estimator_rows = []
@@ -126,6 +129,13 @@ def _current_fast_audit():
                 'simpson_coverage_all': all(x['covers_simpson'] for x in estimator_rows),
                 'pchip_coverage_all': all(x['covers_pchip'] for x in estimator_rows),
                 'release_gate': 'NOT VERIFIED',
+            },
+            'candidate_grid_seed78': {
+                'fast_ab': candidate_grid,
+                'independent_reference_default': candidate_default,
+                'decision': 'REJECTED_FOR_PROMOTION',
+                'reason': ('89-node seed78 plus PCHIP remains above the DN '
+                           '<2e-4 target on the independent default oracle.'),
             },
             'node_count_sweep': nodes,
             'stability': {

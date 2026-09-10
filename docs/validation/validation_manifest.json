@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "commit": "8883183358604787d421eacf2bfe5c328c021f0c",
+  "commit": "37c2482a4c1920f8c9686e52822c2a326ca7c520",
   "date": "2026-09-10",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
@@ -1111,6 +1111,200 @@
         "simpson_coverage_all": false,
         "pchip_coverage_all": true,
         "release_gate": "NOT VERIFIED"
+      },
+      "candidate_grid_seed78": {
+        "fast_ab": {
+          "commit": "37c2482a4c1920f8c9686e52822c2a326ca7c520",
+          "seed_n": 78,
+          "threads": 20,
+          "affinity": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+          ],
+          "threading_layer": "workqueue",
+          "rows": [
+            {
+              "case": "default",
+              "seed_n": 78,
+              "quadrature": "simpson",
+              "runtime_s": 0.23155420000057347,
+              "n_freq": 89,
+              "DN_gw": 0.0022608949386201337,
+              "estimated_DN_quadrature_error_rel": 0.00024870719635002584,
+              "reuse": true,
+              "failure": null
+            },
+            {
+              "case": "default",
+              "seed_n": 78,
+              "quadrature": "pchip",
+              "runtime_s": 0.0059288000002197805,
+              "n_freq": 89,
+              "DN_gw": 0.002262811968172095,
+              "estimated_DN_quadrature_error_rel": 0.0008479074012749233,
+              "reuse": true,
+              "failure": null
+            },
+            {
+              "case": "lowT",
+              "seed_n": 78,
+              "quadrature": "simpson",
+              "runtime_s": 0.004400099999656959,
+              "n_freq": 89,
+              "DN_gw": 5.28481537516987e-08,
+              "estimated_DN_quadrature_error_rel": 0.0013835110304681842,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "lowT",
+              "seed_n": 78,
+              "quadrature": "pchip",
+              "runtime_s": 0.004421799999363429,
+              "n_freq": 89,
+              "DN_gw": 5.306512336828616e-08,
+              "estimated_DN_quadrature_error_rel": 0.004105528787379562,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "highT",
+              "seed_n": 78,
+              "quadrature": "simpson",
+              "runtime_s": 0.007217800000034913,
+              "n_freq": 89,
+              "DN_gw": 0.056379187288949174,
+              "estimated_DN_quadrature_error_rel": 0.00022435669831872304,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "highT",
+              "seed_n": 78,
+              "quadrature": "pchip",
+              "runtime_s": 0.00901620000058756,
+              "n_freq": 89,
+              "DN_gw": 0.05640372821190127,
+              "estimated_DN_quadrature_error_rel": 0.00043528337550519146,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "stiff",
+              "seed_n": 78,
+              "quadrature": "simpson",
+              "runtime_s": 0.008359600000403589,
+              "n_freq": 89,
+              "DN_gw": 0.014967656954219515,
+              "estimated_DN_quadrature_error_rel": 0.00043314973574162927,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "stiff",
+              "seed_n": 78,
+              "quadrature": "pchip",
+              "runtime_s": 0.00937080000039714,
+              "n_freq": 89,
+              "DN_gw": 0.014994552660482127,
+              "estimated_DN_quadrature_error_rel": 0.0017969216114443146,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "low_r",
+              "seed_n": 78,
+              "quadrature": "simpson",
+              "runtime_s": 0.005041899999923771,
+              "n_freq": 88,
+              "DN_gw": 0.00023555706852904632,
+              "estimated_DN_quadrature_error_rel": 0.00033769046508756034,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "low_r",
+              "seed_n": 78,
+              "quadrature": "pchip",
+              "runtime_s": 0.004477699999370088,
+              "n_freq": 88,
+              "DN_gw": 0.00023585237777139112,
+              "estimated_DN_quadrature_error_rel": 0.0012536632595611691,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "high_kappa",
+              "seed_n": 78,
+              "quadrature": "simpson",
+              "runtime_s": 0.006827200000770972,
+              "n_freq": 90,
+              "DN_gw": 0.22548997790668,
+              "estimated_DN_quadrature_error_rel": 0.0002469840807941572,
+              "reuse": false,
+              "failure": null
+            },
+            {
+              "case": "high_kappa",
+              "seed_n": 78,
+              "quadrature": "pchip",
+              "runtime_s": 0.008249800000157848,
+              "n_freq": 90,
+              "DN_gw": 0.22567017034627868,
+              "estimated_DN_quadrature_error_rel": 0.0007991150705054033,
+              "reuse": false,
+              "failure": null
+            }
+          ]
+        },
+        "independent_reference_default": {
+          "point": "default",
+          "kw": {
+            "r": 0.01,
+            "cr": 1,
+            "T_re": 2000.0,
+            "kappa10": 0.01
+          },
+          "n_freq": 89,
+          "seed_n": 78,
+          "dn_eff": 0.0022608949386201337,
+          "used_tail_fraction": 0.8764044943820225,
+          "fast_runtime_s": 0.24429510000027221,
+          "reference_runtime_s": 115.75154719999955,
+          "fast_simpson_dn": 0.0022608949386201966,
+          "fast_pchip_dn": 0.002262811968172149,
+          "reference_pchip_dn_same_grid": 0.002263480087373502,
+          "reference_quadrature_error": 3.114114017176755e-22,
+          "reference_interpolation_error": 3.932470664924879e-11,
+          "dn_relative_error": {
+            "simpson": 0.0011421124346206479,
+            "pchip": 0.000295173438935866
+          },
+          "spectrum_relative_error": {
+            "simpson_max": 0.001946647330479341,
+            "simpson_p95": 0.0010011790671152379
+          }
+        },
+        "decision": "REJECTED_FOR_PROMOTION",
+        "reason": "89-node seed78 plus PCHIP remains above the DN <2e-4 target on the independent default oracle."
       },
       "node_count_sweep": {
         "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",

@@ -92,6 +92,7 @@
 - 优化后的六点 25-repeat matrix：default warm median/p95 `4.259/5.286 ms`，low-T `3.947/4.180 ms`，high-T `6.513/7.138 ms`，stiff `6.753/7.590 ms`，low-r `4.045/4.341 ms`，high-kappa `6.497/6.904 ms`。default 仍未稳定低于 4 ms，但已达到“有证据的 >5% 局部优化”验收。
 - 采用廉价 Richardson estimator 后的 fresh 50-repeat fixed profiler：default warm total median `4.544 ms`，相对之前 `4.976 ms` 为 `8.7%` 改善；频谱、DN 与 digest 不变。24 点 stability artifact 已同步更新，仍为 `0` numerical failure、`3` 个明确 physical guard。
 - estimator coverage fresh replay：六个 named same-grid independent references 中，廉价 Simpson-trapezoid Richardson 估计对 production Simpson DN 误差 `0/6` 覆盖；对 opt-in PCHIP DN 误差为 `6/6` 覆盖。因默认路径是 Simpson，coverage release gate 保持 `NOT VERIFIED`，该 telemetry 不能作为当前发布放行依据。
+- `seed_n=78` 候选（实际 89 nodes）六工况 fast A/B 无 numerical failure，但独立 default same-grid oracle 显示 Simpson/PCHIP DN 相对误差为 `1.142e-3/2.952e-4`；因此“仅把 grid 加到约 89 nodes 并启用 PCHIP”仍未达到 `<2e-4`，候选拒绝升级。此前 76-node dense-reference 上的偶然 `9.3e-6` 不足以证明参数空间收益。
 
 ## Technical Decisions
 

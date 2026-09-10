@@ -1,0 +1,162 @@
+{
+  "commit": "37c2482a4c1920f8c9686e52822c2a326ca7c520",
+  "seed_n": 78,
+  "threads": 20,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "threading_layer": "workqueue",
+  "rows": [
+    {
+      "case": "default",
+      "seed_n": 78,
+      "quadrature": "simpson",
+      "runtime_s": 0.23155420000057347,
+      "n_freq": 89,
+      "DN_gw": 0.0022608949386201337,
+      "estimated_DN_quadrature_error_rel": 0.00024870719635002584,
+      "reuse": true,
+      "failure": null
+    },
+    {
+      "case": "default",
+      "seed_n": 78,
+      "quadrature": "pchip",
+      "runtime_s": 0.0059288000002197805,
+      "n_freq": 89,
+      "DN_gw": 0.002262811968172095,
+      "estimated_DN_quadrature_error_rel": 0.0008479074012749233,
+      "reuse": true,
+      "failure": null
+    },
+    {
+      "case": "lowT",
+      "seed_n": 78,
+      "quadrature": "simpson",
+      "runtime_s": 0.004400099999656959,
+      "n_freq": 89,
+      "DN_gw": 5.28481537516987e-08,
+      "estimated_DN_quadrature_error_rel": 0.0013835110304681842,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "lowT",
+      "seed_n": 78,
+      "quadrature": "pchip",
+      "runtime_s": 0.004421799999363429,
+      "n_freq": 89,
+      "DN_gw": 5.306512336828616e-08,
+      "estimated_DN_quadrature_error_rel": 0.004105528787379562,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "highT",
+      "seed_n": 78,
+      "quadrature": "simpson",
+      "runtime_s": 0.007217800000034913,
+      "n_freq": 89,
+      "DN_gw": 0.056379187288949174,
+      "estimated_DN_quadrature_error_rel": 0.00022435669831872304,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "highT",
+      "seed_n": 78,
+      "quadrature": "pchip",
+      "runtime_s": 0.00901620000058756,
+      "n_freq": 89,
+      "DN_gw": 0.05640372821190127,
+      "estimated_DN_quadrature_error_rel": 0.00043528337550519146,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "stiff",
+      "seed_n": 78,
+      "quadrature": "simpson",
+      "runtime_s": 0.008359600000403589,
+      "n_freq": 89,
+      "DN_gw": 0.014967656954219515,
+      "estimated_DN_quadrature_error_rel": 0.00043314973574162927,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "stiff",
+      "seed_n": 78,
+      "quadrature": "pchip",
+      "runtime_s": 0.00937080000039714,
+      "n_freq": 89,
+      "DN_gw": 0.014994552660482127,
+      "estimated_DN_quadrature_error_rel": 0.0017969216114443146,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "low_r",
+      "seed_n": 78,
+      "quadrature": "simpson",
+      "runtime_s": 0.005041899999923771,
+      "n_freq": 88,
+      "DN_gw": 0.00023555706852904632,
+      "estimated_DN_quadrature_error_rel": 0.00033769046508756034,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "low_r",
+      "seed_n": 78,
+      "quadrature": "pchip",
+      "runtime_s": 0.004477699999370088,
+      "n_freq": 88,
+      "DN_gw": 0.00023585237777139112,
+      "estimated_DN_quadrature_error_rel": 0.0012536632595611691,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "high_kappa",
+      "seed_n": 78,
+      "quadrature": "simpson",
+      "runtime_s": 0.006827200000770972,
+      "n_freq": 90,
+      "DN_gw": 0.22548997790668,
+      "estimated_DN_quadrature_error_rel": 0.0002469840807941572,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "high_kappa",
+      "seed_n": 78,
+      "quadrature": "pchip",
+      "runtime_s": 0.008249800000157848,
+      "n_freq": 90,
+      "DN_gw": 0.22567017034627868,
+      "estimated_DN_quadrature_error_rel": 0.0007991150705054033,
+      "reuse": false,
+      "failure": null
+    }
+  ]
+}
