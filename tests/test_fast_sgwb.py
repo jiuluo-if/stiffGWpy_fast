@@ -501,3 +501,5 @@ def test_eval_freqs_do_not_change_self_consistent_dn():
         eval_freqs=np.array([-1.73, -0.42, 0.37, 1.21])) is with_eval
     assert with_eval.f.size > base.f.size
     assert with_eval.DN_gw[-1] == pytest.approx(base.DN_gw[-1], rel=1e-12, abs=1e-15)
+    assert base.estimated_DN_quadrature_error > 0.0
+    assert base.estimated_DN_quadrature_error_rel > 0.0
