@@ -87,6 +87,7 @@
 - final HEAD `260b818` 的 25-repeat standardized matrix（20 threads/workqueue/CPU 0-19）在 telemetry 与 support/eval 分离后，default warm median/p95 为 `4.610/5.058 ms`，仍未达到 `<4 ms`；low-T/high-T/stiff/low-r/high-kappa warm median 为 `4.755/6.819/7.019/4.311/6.762 ms`。去除重复 support 权重构造的 A/B 未获得 >5% 稳定收益，已拒绝。
 - 在 release code HEAD `9bb2697` 重新生成的 25-repeat 矩阵受机器瞬时波动影响，default warm median/p95 为 `5.361/5.734 ms`，其余五点为 `4.887/7.279/7.538/4.590/7.276 ms`；与前次同口径结果方向一致：没有稳定达到 `<4 ms`，因此不接受速度候选。该结果不改变 DN、failure 或 quadrature 结论。
 - current code HEAD `1261bb1` 的 fast-only stability screen 覆盖 8 个命名点和 16 个 Sobol 点（24 点，20 threads/workqueue）。`failure_count=0`；3 个 Sobol 点触发既有 `shared_Neff_guard`，分类为 physical guard 而非 numerical failure。所有非 guard 点均产出有限 DN 与 embedded telemetry，但低振幅尾部的相对 estimator 可达 `0.20`，说明后续 coverage 必须同时报告绝对误差/信号掩码，不能只用相对 estimator 放行。
+- fresh same-grid independent reference：low-T 的 Simpson/PCHIP DN 相对误差为 `1.241e-2/1.826e-4`，high-T 为 `1.033e-3/2.932e-4`；两点都显示 PCHIP 显著优于 Simpson，但 high-T 仍高于 `<2e-4`。这证明 estimator 需要参数空间 coverage，不能只依赖 default 或单一候选方法。
 
 ## Technical Decisions
 
