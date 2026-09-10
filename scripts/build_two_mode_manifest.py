@@ -233,6 +233,7 @@ def build():
         'commit': _commit(),
         'date': time.strftime('%Y-%m-%d'),
         'generated_by': 'scripts/build_two_mode_manifest.py (read-only replay)',
+        'audit_report': 'docs/fast_v02_audit_report.md',
         'oracle_semantics': ("the precision anchor is the independent "
                              "continuous-sigma DOP853 reference pipeline; LSODA "
                              "is only a regression/runtime anchor, never a "
