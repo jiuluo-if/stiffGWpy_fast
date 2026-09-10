@@ -19,7 +19,6 @@ sys.path.insert(0, ROOT)
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
-
 CASES = {
     'default': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
     'lowT': dict(r=1e-2, cr=1, T_re=1e1, kappa10=1e-2),
