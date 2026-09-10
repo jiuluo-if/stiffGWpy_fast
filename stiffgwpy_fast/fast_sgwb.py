@@ -1605,12 +1605,6 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     _support_Om = _Om[integration_indices]
     _support_rev = _support_Om[::-1]
     _I_simp = float(np.dot(W_support_last, _support_rev))*ln10
-    _I_pchip = float(integrate_frequency_pchip(
-        integration_freqs, _support_Om)*ln10)
-    m.estimated_DN_quadrature_error = (
-        gp.Neff0 * abs(_I_pchip - _I_simp) / Omega_nu)
-    m.estimated_DN_quadrature_error_rel = (
-        abs(_I_pchip - _I_simp) / max(abs(_I_simp), 1e-300))
     _hf = np.diff(np.flip(integration_freqs))
     _wt = np.empty(integration_freqs.size)
     if integration_freqs.size == 2:
@@ -1619,6 +1613,18 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         _wt[0] = 0.5*_hf[0]; _wt[-1] = 0.5*_hf[-1]
         _wt[1:-1] = 0.5*(_hf[:-1] + _hf[1:])
     _I_trap = float(np.dot(_wt, _support_rev))*ln10
+    if frequency_quadrature == 'pchip':
+        # g2c[-1] was already evaluated with PCHIP above; reuse it instead of
+        # constructing a second interpolant for the telemetry path.
+        _I_candidate = float(g2c[-1])
+        _I_estimate = abs(_I_candidate - _I_simp)
+    else:
+        # Richardson's Simpson/trapezoid embedded pair is the cheap default
+        # estimator; the opt-in PCHIP path retains the direct pair above.
+        _I_estimate = abs(_I_simp - _I_trap) / 15.0
+    m.estimated_DN_quadrature_error = gp.Neff0 * _I_estimate / Omega_nu
+    m.estimated_DN_quadrature_error_rel = (
+        _I_estimate / max(abs(_I_simp), 1e-300))
     m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
     # Local floating-point/cancellation: Ogw = Oj + remainder near the peak;
     # eps64 * max|Oj|/|Ogw-Oj| bounds the relative subtraction error.
