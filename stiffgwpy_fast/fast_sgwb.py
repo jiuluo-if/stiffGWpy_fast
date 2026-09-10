@@ -1122,6 +1122,28 @@ def build_Wmat(Nf, Xf, h, Wmat):
         for p in range(Nf):
             Wmat[jh, p] = W[p]
 
+
+def integrate_frequency_pchip(freqs, integrand):
+    """Integrate a spectrum on native log-frequency nodes with PCHIP.
+
+    The solver stores frequencies in descending order, while SciPy's
+    piecewise-polynomial representation requires ascending coordinates.  This
+    helper is an isolated candidate for the DN_gw error budget; it does not
+    change the formal Simpson path until a separate candidate passes validation.
+    """
+    x = np.asarray(freqs, dtype=np.float64)
+    y = np.asarray(integrand, dtype=np.float64)
+    if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
+        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+    if not np.isfinite(x).all() or not np.isfinite(y).all():
+        raise ValueError('freqs and integrand must be finite')
+    order = np.argsort(x)
+    xa = x[order]
+    ya = y[order]
+    if np.any(np.diff(xa) <= 0.0):
+        raise ValueError('freqs must contain unique nodes')
+    return float(interpolate.PchipInterpolator(xa, ya).integrate(xa[0], xa[-1]))
+
 @njit(parallel=True, cache=True)
 def int_SGWB_W(Nf, n_coarse, j_hi, Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10v):
     for c in prange(n_coarse):
@@ -1186,7 +1208,8 @@ def pchip_fine(idx_out, y, nv, out):
 def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                    transition_refine=False, kink_split=None,
                    freq_grid=None, config=None,
-                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
+                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None,
+                   frequency_quadrature='simpson'):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
     Solves the same physics as ``LCDM_SG.SGWB_iter()`` with a fixed-step
@@ -1265,6 +1288,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         freq_grid = config.freq_grid
     if freq_grid not in ('construct', 'grid_independent', 'adaptive', 'goal'):
         raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % freq_grid)
+    if frequency_quadrature not in ('simpson', 'pchip'):
+        raise ValueError("frequency_quadrature must be 'simpson' or 'pchip'")
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
@@ -1448,7 +1473,11 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                     Oj.fill(0.0)
                     Opgw.fill(0.0)
                 solve_kernel(*solve_args)
-            g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
+            if frequency_quadrature == 'pchip':
+                g2_last = (integrate_frequency_pchip(
+                    freqs, Ogw[:, -1] - Oj[:, -1]) * ln10)
+            else:
+                g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
                 m.fast_failure_reason = 'nonfinite'
@@ -1529,6 +1558,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     j_hi = np.searchsorted(j0s, idx_out, side='right') - 1
     g2c = np.zeros(n_coarse); w2c = np.zeros(n_coarse)
     int_SGWB_W(Nf, n_coarse, j_hi.astype(np.int64), Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10)
+    if frequency_quadrature == 'pchip':
+        g2c[-1] = (integrate_frequency_pchip(
+            freqs, Ogw[:, -1] - Oj[:, -1]) * ln10)
     g2_fine = np.empty(nv); w2_fine = np.empty(nv)
     pchip_fine(idx_out.astype(np.float64), g2c, nv, g2_fine)
     pchip_fine(idx_out.astype(np.float64), w2c, nv, w2_fine)
@@ -1571,6 +1603,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     m.freq_grid_n = int(Nf)
     m.freq_res_used = float(freq_res)
     m.sigma_exact_used = bool(sigma_exact)
+    m.frequency_quadrature_used = frequency_quadrature
     m.transition_refine_used = bool(transition_refine)
     m.kink_split_used = bool(kink_split)
     m.kink_split_index = int(kink_index)
@@ -1583,7 +1616,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
 def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                    transition_refine=False, kink_split=None,
                    freq_grid=None, config=None,
-                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None):
+                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None,
+                   frequency_quadrature='simpson'):
     """Run the fast solver with an isolated configuration snapshot.
 
     Numba's thread-count setter is process-wide. Calls that use the legacy
@@ -1602,4 +1636,5 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             transition_refine=transition_refine, kink_split=kink_split,
             freq_grid=freq_grid,
             config=config, freq_grid_target=freq_grid_target,
-            freq_grid_max_points=freq_grid_max_points, eval_freqs=eval_freqs)
+            freq_grid_max_points=freq_grid_max_points, eval_freqs=eval_freqs,
+            frequency_quadrature=frequency_quadrature)

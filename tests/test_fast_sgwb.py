@@ -48,6 +48,29 @@ def test_set_z_tail_validates():
     FS.set_z_tail(5.0)
 
 
+def test_pchip_frequency_integral_handles_descending_native_grid():
+    """PCHIP candidate must integrate a linear log-frequency spectrum exactly."""
+    freqs = np.array([1.0, 0.5, 0.0])
+    integrand = 2.0 * freqs + 1.0
+    assert FS.integrate_frequency_pchip(freqs, integrand) == pytest.approx(2.0)
+
+
+def test_pchip_frequency_quadrature_is_opt_in():
+    """PCHIP DN quadrature is explicit and leaves the default path unchanged."""
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='goal', threads=1,
+                              kink_split=True)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg,
+                             frequency_quadrature='pchip') is m
+    assert m.frequency_quadrature_used == 'pchip'
+    omega_nu = FS.gp.Omega_nh2 / m.derived_param['h']**2
+    expected = (FS.gp.Neff0 * FS.ln10 *
+                FS.integrate_frequency_pchip(m.f, m.Ogw_today - m.Oj_today) /
+                omega_nu)
+    assert m.DN_gw[-1] == pytest.approx(expected, rel=1e-12)
+
+
 def test_r_le_zero_returns_none(model):
     m = _make_model(r=0.0)
     assert FS.SGWB_iter_fast(m) is None
