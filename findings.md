@@ -74,6 +74,14 @@
 - PCHIP-vs-Simpson same-spectrum relative deltas across probes：default `4.20e-4`、low-T `1.275e-2`、high-T `7.40e-4`、stiff `1.282e-3`。因此 PCHIP 是直接针对 DN 的候选，但不能未经 parameter-space reference 验证就替换默认积分；low-T 的差异已经明显超过目标。
 - PCHIP candidate 的 focused test 与全量回归已通过：`119 passed, 6 deselected`（另有既有 2 个 deprecation warnings）；默认 Simpson digest/behavior 保持兼容。
 
+## Continued fresh audit on c35db7d (2026-09-10)
+
+- 六点 standardized matrix（default/lowT/highT/stiff/low_r/high_kappa，20 threads、CPU 0-19、workqueue、25 次，其中首轮 cold）无 numerical failure；default warm median/p95 为 `4.510/5.056 ms`，lowT `3.928/4.267 ms`，highT `6.710/7.603 ms`，stiff `7.021/7.399 ms`，low_r `4.034/4.615 ms`，high_kappa `6.740/7.229 ms`。正式 default 仍未稳定低于 4 ms。
+- 同一 native spectrum 的六种积分比较（Simpson、PCHIP、natural cubic、log-log PCHIP、Gauss-Legendre over PCHIP、Chebyshev）显示 Chebyshev 在 high-T/high-kappa 与 low-T 出现 `4%–8%` 级异常偏差，不可接受；natural cubic 与 log-log PCHIP 的偏差也随参数点改变方向，固定替换不可靠。
+- DN-driven midpoint 原型从 76 nodes 依据局部 PCHIP-vs-trapezoid 差选择 4/10/20 个 interval。default 的 PCHIP DN 为 `0.0022636474 → 0.0022612282 → 0.0022625409 → 0.0022625338`（76/80/86/96 nodes），相对 fresh dense-reference `0.00226283297` 的误差先恶化后改善，未满足单调收敛，因此该 estimator 被拒绝进入生产。
+- 新增证据脚本：`scripts/compare_frequency_quadrature.py`、`scripts/benchmark_goal_seeds.py`、`scripts/benchmark_dn_refinement.py`、`scripts/benchmark_head_matrix.py`；所有输出 JSON 均记录 commit、线程层、affinity 与代表点状态。
+- default 同一 native 76-node grid 的独立 reference 对照（reference z_tail=8、DOP853 rtol=1e-9、4 workers）给出 reference PCHIP DN `0.0022643136483710326`；fast Simpson/PCHIP 分别为 `0.0022626969518100616`、`0.002263647415085622`，相对误差 `7.14e-4`、`2.94e-4`。因此 PCHIP 在该网格上更接近 reference，但仍未达到 `2e-4` 门槛；且此前 low-T 参数点差异达 `1.275e-2`，不能全局切换。fast 与 reference integrand 的相对误差 p95/max 为 `7.84e-4/3.57e-3`，当前主误差仍不只是频率积分器。
+
 ## Technical Decisions
 
 | Decision | Rationale |

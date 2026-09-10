@@ -39,6 +39,7 @@
 - 2026-09-10 已 fetch 并确认远端 HEAD `767056d`；新增固定 affinity/threading-layer profiler，完成 1/2/4/8/16/20/32 threads 的 fresh warm/cold 分层测量。20 threads reuse A/B 显示 reuse `5.006 ms`/1 kernel，禁用后 `5.705 ms`/2 kernels。
 - 2026-09-10 完成 default fresh full reference：reference `DN_gw=0.002262832966946746`，formal fast `0.002263022064729132`，scalar relative error `8.36e-5`。
 - 按 TDD 新增 opt-in `frequency_quadrature='pchip'` 候选及 `integrate_frequency_pchip` helper；同一 spectrum 的 default/lowT/highT/stiff quadrature deltas 为 `4.20e-4/1.275e-2/7.40e-4/1.282e-3`，暂不切换默认。
+- 继续 fresh 审计：完成六点 25-repeat standardized matrix；完成六种频率积分表示比较；完成 DN-driven midpoint refinement 原型。原型在 default 的 76→80→86→96 nodes 上 PCHIP DN 误差非单调，拒绝升级。
 
 ### Test Results
 
@@ -65,6 +66,10 @@
 | same profiler at 20 threads with `--disable-outer-reuse` | reuse A/B | enabled `5.006 ms`, 1 kernel; disabled `5.705 ms`, 2 kernels | PASS |
 | `python scripts/benchmark_reference.py --point default --freq-full --z-tail 8 --no-ode-error --no-tail-error` | fresh full independent reference | reference runtime `652.44 s`, `DN_gw=0.002262832966946746`, `n_freq=242` | PASS |
 | `python -m pytest -q` after opt-in quadrature candidate | regression safety | `119 passed, 6 deselected`, 2 pre-existing deprecation warnings | PASS |
+| `python scripts/benchmark_head_matrix.py` | 六点 25-repeat runtime/状态基线 | workqueue、20 threads、CPU 0-19；0 failure；default warm median/p95 `4.510/5.056 ms` | PASS |
+| `python scripts/compare_frequency_quadrature.py` | 同一 76-node spectrum 的积分表示 A/B | Chebyshev 及固定 PCHIP/cubic 在参数空间出现明显非一致偏差 | DIAGNOSTIC |
+| `python scripts/benchmark_dn_refinement.py` | DN-driven midpoint estimator | 76→80→86→96 的 PCHIP DN 相对 dense reference 非单调 | REJECTED |
+| `python scripts/benchmark_same_grid_reference.py --point default` | exact native-grid independent reference | 76 nodes；reference PCHIP DN `0.0022643136483710326`；Simpson/PCHIP 相对误差 `7.14e-4/2.94e-4`；reference runtime `98.90 s` | PASS / DIAGNOSTIC |
 
 ### Errors
 
@@ -75,3 +80,4 @@
 | PowerShell 内联 Python 装饰器/多行函数探测命令发生 `SyntaxError` | 不再用复杂 `python -c`；改用已有脚本或通过 `apply_patch` 创建可复现诊断脚本 |
 | 固定 profiler 首次用 `from scripts import profile_fast_breakdown` 导入失败 | `scripts` 无包初始化文件；改为把脚本目录加入 `sys.path` 后直接导入 |
 | 全仓 `ruff check stiffgwpy_fast scripts tests` 暴露 200+ 个既有 lint 错误 | 未对无关旧文件做大范围格式化；改为对本轮新增/修改 profiling scripts 做 scoped ruff，结果通过，并保留全仓门禁未通过事实 |
+| quadrature 比较脚本先导入 SciPy/NumPy 后才设置 `NUMBA_THREADING_LAYER`，实际 layer 为 `tbb` | 该次输出作废；已将环境设置移到数值库导入前，重新运行时强制验证 `workqueue` |

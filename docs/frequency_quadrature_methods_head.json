@@ -1,0 +1,173 @@
+{
+  "commit": "c35db7d754d06c969dcd18e8cfbff3badd77d488",
+  "threads": 20,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "threading_layer": "workqueue",
+  "rows": [
+    {
+      "case": "default",
+      "runtime_s": 0.21123819999991156,
+      "n_freq": 76,
+      "DN_gw_solver": 0.002262696951810021,
+      "DN_by_method": {
+        "simpson": 0.0022626969518100616,
+        "pchip": 0.0022636474150856214,
+        "natural_cubic": 0.0022620759777915046,
+        "loglog_pchip": 0.0022607657706572577,
+        "gauss_legendre_pchip": 0.0022636474150856214,
+        "chebyshev": 0.002277283301255544
+      },
+      "relative_to_simpson": {
+        "simpson": 0.0,
+        "pchip": 0.0004200576991980774,
+        "natural_cubic": 0.0002744397644855844,
+        "loglog_pchip": 0.0008534864340799094,
+        "gauss_legendre_pchip": 0.0004200576991980774,
+        "chebyshev": 0.006446444113434677
+      },
+      "reuse": true,
+      "failure": null
+    },
+    {
+      "case": "lowT",
+      "runtime_s": 0.004122299999949064,
+      "n_freq": 76,
+      "DN_gw_solver": 5.2446047710354755e-08,
+      "DN_by_method": {
+        "simpson": 5.244604771035473e-08,
+        "pchip": 5.311460283393785e-08,
+        "natural_cubic": 5.279154959654396e-08,
+        "loglog_pchip": 5.258945450533878e-08,
+        "gauss_legendre_pchip": 5.311460283393781e-08,
+        "chebyshev": 5.0339751611751344e-08
+      },
+      "relative_to_simpson": {
+        "simpson": 0.0,
+        "pchip": 0.012747483419062813,
+        "natural_cubic": 0.006587758301585412,
+        "loglog_pchip": 0.002734368007596053,
+        "gauss_legendre_pchip": 0.012747483419062056,
+        "chebyshev": 0.04016119785109233
+      },
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "highT",
+      "runtime_s": 0.00633370000002742,
+      "n_freq": 76,
+      "DN_gw_solver": 0.05639133958822191,
+      "DN_by_method": {
+        "simpson": 0.056391339588222913,
+        "pchip": 0.05643308427141728,
+        "natural_cubic": 0.05637919555940643,
+        "loglog_pchip": 0.05634809540353207,
+        "gauss_legendre_pchip": 0.05643308427141728,
+        "chebyshev": 0.052077963840055905
+      },
+      "relative_to_simpson": {
+        "simpson": 0.0,
+        "pchip": 0.0007402676279583127,
+        "natural_cubic": 0.00021535272801036286,
+        "loglog_pchip": 0.0007668586170610345,
+        "gauss_legendre_pchip": 0.0007402676279583127,
+        "chebyshev": 0.07649003871275012
+      },
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "stiff",
+      "runtime_s": 0.006574900000032358,
+      "n_freq": 76,
+      "DN_gw_solver": 0.01496514967785102,
+      "DN_by_method": {
+        "simpson": 0.014965149677853841,
+        "pchip": 0.014984335009440217,
+        "natural_cubic": 0.014976511393490323,
+        "loglog_pchip": 0.014967965631472261,
+        "gauss_legendre_pchip": 0.014984335009440223,
+        "chebyshev": 0.0147698581972674
+      },
+      "relative_to_simpson": {
+        "simpson": 0.0,
+        "pchip": 0.0012820006481303351,
+        "natural_cubic": 0.0007592116270842015,
+        "loglog_pchip": 0.00018816742091041618,
+        "gauss_legendre_pchip": 0.001282000648130683,
+        "chebyshev": 0.013049751241408732
+      },
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "low_r",
+      "runtime_s": 0.004233799999951771,
+      "n_freq": 76,
+      "DN_gw_solver": 0.00023573443614172436,
+      "DN_by_method": {
+        "simpson": 0.0002357344361417243,
+        "pchip": 0.0002360275180208821,
+        "natural_cubic": 0.00023572347539237894,
+        "loglog_pchip": 0.00023559143132797114,
+        "gauss_legendre_pchip": 0.00023602751802088214,
+        "chebyshev": 0.00023397588677778384
+      },
+      "relative_to_simpson": {
+        "simpson": 0.0,
+        "pchip": 0.0012432713860337688,
+        "natural_cubic": 4.649617393520674e-05,
+        "loglog_pchip": 0.000606635229429029,
+        "gauss_legendre_pchip": 0.0012432713860338837,
+        "chebyshev": 0.0074598747332919185
+      },
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "high_kappa",
+      "runtime_s": 0.006869899999969675,
+      "n_freq": 77,
+      "DN_gw_solver": 0.22550806255693837,
+      "DN_by_method": {
+        "simpson": 0.2255080625569459,
+        "pchip": 0.22570645394976802,
+        "natural_cubic": 0.2255668647312127,
+        "loglog_pchip": 0.22543002449553576,
+        "gauss_legendre_pchip": 0.22570645394976802,
+        "chebyshev": 0.2079510213041566
+      },
+      "relative_to_simpson": {
+        "simpson": 0.0,
+        "pchip": 0.0008797529922994653,
+        "natural_cubic": 0.0002607541992072723,
+        "loglog_pchip": 0.00034605441830011334,
+        "gauss_legendre_pchip": 0.0008797529922994653,
+        "chebyshev": 0.07785549240996975
+      },
+      "reuse": false,
+      "failure": null
+    }
+  ]
+}

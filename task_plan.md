@@ -6,7 +6,7 @@
 
 ## Next Step
 
-在远端 `fast_v0.2` 当前 HEAD 上建立固定线程/CPU/warmup 的 fresh 分层 profiler 基线，解释 outer full-solve reuse 后 runtime 变化，再按证据选择 DN_gw 误差分解或 runtime 优化方向。
+在 `c35db7d` 上完成 DN-driven refinement 的 dense-reference 对照；当前局部 PCHIP-vs-trapezoid midpoint 排序已被 fresh default 结果判为不单调，不能升级为生产路径。
 
 ## Current Phase
 
@@ -33,12 +33,14 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
 - [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
 - [ ] 继续优化 DN/速度；本轮必须先重建远端 HEAD fresh profiling 与 DN_gw 误差分解，不得在 profiler 证据前 micro-optimize；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
+- [ ] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵与 PCHIP/插值法探针；DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；下一步必须做 dense reference 同网格对照及更可靠的 embedded estimator，不得在证据前切生产默认
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification
 - [x] 运行单元、API、完整频率 reference 和 native likelihood-node 验证
 - [x] 运行 cold/warm、p95、线程和 profiler 对照
 - [ ] 完成参数空间、likelihood bins、guards、NaN/fallback、Cobaya derived 全矩阵，并形成 accuracy-runtime Pareto 数据
+- [ ] 完成 76/80/90/110 节点的 DN convergence、spectrum convergence、runtime 与 estimator coverage；验证 eval_freqs 不改变 DN 的科研生产 invariant
 - **Status:** pending
 
 ### Phase 5: Delivery
