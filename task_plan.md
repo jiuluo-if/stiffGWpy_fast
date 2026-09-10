@@ -6,7 +6,7 @@
 
 ## Next Step
 
-在 `c35db7d` 上完成 DN-driven refinement 的 dense-reference 对照；当前局部 PCHIP-vs-trapezoid midpoint 排序已被 fresh default 结果判为不单调，不能升级为生产路径。
+在 `9bb2697` 上完成 estimator telemetry 与 eval/support 解耦；当前 76/80/90/110 sweep 仍非单调，下一步是参数空间 oracle/estimator coverage 和最终 release manifest，而不是切换 PCHIP 或继续盲目加节点。
 
 ## Current Phase
 
