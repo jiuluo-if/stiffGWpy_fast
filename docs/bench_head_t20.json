@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "python": "3.11.9",
+    "platform": "win32",
+    "cpu_count": 32,
+    "threads": 20,
+    "col_step": 8,
+    "numpy": "2.4.4",
+    "numba": "0.67.0",
+    "scipy": "1.17.1",
+    "commit": "767056d2ea2e4d25f06670f1fecc7c226d85cc9a"
+  },
+  "reps": 7,
+  "results": [
+    {
+      "case": "A baseline r=1e-2 cr=1 T_re=2e3 k10=1e-2",
+      "kw": {
+        "r": "0.01",
+        "cr": "1",
+        "T_re": "2000.0",
+        "kappa10": "0.01"
+      },
+      "t_orig": 17.91190099999949,
+      "t_fast_cold_s": 0.20211460000064108,
+      "t_fast_warm_ms": [
+        5.121999998664251,
+        4.899999999906868,
+        4.424899998412002,
+        4.89969999762252,
+        4.083400002855342,
+        4.057800000737188,
+        4.655299999285489
+      ],
+      "t_fast_min_ms": 4.057800000737188,
+      "t_fast_med_ms": 4.655299999285489,
+      "t_fast_p95_ms": 4.899999999906868,
+      "speedup_min": 4414.190200785007,
+      "speedup_med": 3847.636243152679,
+      "speedup_p95": 3655.490000069374,
+      "fast_evals": 1,
+      "fast_failures": 0,
+      "fast_guard_rejections": 0,
+      "lsoda_fallbacks": 0,
+      "fallback_fraction": 0.0,
+      "DN_gw_last_rel": 0.0016875659202064714,
+      "conv_orig": true,
+      "conv_fast": true
+    }
+  ]
+}

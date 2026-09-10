@@ -1,0 +1,67 @@
+{
+  "commit": "767056d2ea2e4d25f06670f1fecc7c226d85cc9a",
+  "threads": 20,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "rows": [
+    {
+      "label": "baseline",
+      "primitive": "fast",
+      "reuse": true,
+      "n_freq": 76,
+      "DN_gw_solver": 0.002262696951810021,
+      "DN_gw_pchip_same_spectrum": 0.002263647415085622,
+      "same_spectrum_quadrature_delta_rel": 0.0004200576992162932,
+      "reference_integral_abs_error": 3.1143442279820903e-22,
+      "reference_interpolation_error": 7.939072845354538e-11,
+      "outer_full_reuse_used": true,
+      "fast_failure_reason": null
+    },
+    {
+      "label": "exact_background_primitive",
+      "primitive": "exact",
+      "reuse": true,
+      "n_freq": 76,
+      "DN_gw_solver": 0.0022626969518173136,
+      "DN_gw_pchip_same_spectrum": 0.0022636474150931085,
+      "same_spectrum_quadrature_delta_rel": 0.0004200576993006138,
+      "reference_integral_abs_error": 3.1143442279923904e-22,
+      "reference_interpolation_error": 7.939072847433277e-11,
+      "outer_full_reuse_used": true,
+      "fast_failure_reason": null
+    },
+    {
+      "label": "outer_reuse_disabled",
+      "primitive": "fast",
+      "reuse": false,
+      "n_freq": 76,
+      "DN_gw_solver": 0.002262696952987618,
+      "DN_gw_pchip_same_spectrum": 0.002263647416407595,
+      "same_spectrum_quadrature_delta_rel": 0.00042005776280483757,
+      "reference_integral_abs_error": 3.114344229800873e-22,
+      "reference_interpolation_error": 7.939074460130651e-11,
+      "outer_full_reuse_used": false,
+      "fast_failure_reason": null
+    }
+  ]
+}

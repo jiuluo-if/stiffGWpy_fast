@@ -15,6 +15,8 @@
 - `README.md` 当前仍明确写着“两种 user-facing fast profiles”：`fast` plain-grid 与 `production` transition-refine；用户 API、Cobaya YAML、benchmark 脚本和 tests 仍暴露 `production`/`transition_refine`。
 - 当前关键代码入口：`fast_sgwb.py` 的 `normalize_accuracy_mode`/`apply_accuracy_mode`/`resolve_config`/`_SGWB_iter_fast_impl`/`SGWB_iter_fast`；`stiff_SGWB.py` 的 `SGWB_iter`；`reference.py` 的 `run_reference`。
 - 当前仓库 HEAD 为 `b83aa89`，最近提交为“统一项目名称为 stiffgwpy_fast”；工作树在审计开始时无未提交代码改动，之后仅生成了计划文件。
+- 本轮 2026-09-10 已 `git fetch --prune fast fast_v0.2`；远端 `fast/fast_v0.2`、本地 `codex/fast_v0.2` 与 HEAD 均为 `767056d2ea2e4d25f06670f1fecc7c226d85cc9a`。
+- 本轮环境为 Python 3.11.9、NumPy 2.4.4、Numba 0.67.0、SciPy 1.17.1、32 CPUs；首次查询 Numba threading layer 时尚未初始化，正式 benchmark 必须在 warmup 后记录实际 layer。
 - 当前仓库已有 `exact_background.py`，名称与注释表明它支持 continuous-sigma expansion integrals，但是否已接入轻量 breakpoint 仍需沿调用链核实。
 - 当前测试已有 `test_modes.py`、`test_engine.py`、`test_fast_sgwb.py`、`test_reference.py`、`test_freq_adaptive.py`、`test_cobaya_adapter.py`，可作为兼容性与 oracle 骨架。
 - 文档基线记录 plain-grid warm median `4.442 ms`、transition-refine `21.772 ms`；这些是历史快照，必须重新运行后才能作为本轮证据。
@@ -60,12 +62,26 @@
 - outer full-solve A/B：正式 `goal + kink` 路径首轮改为完整组装；当更新后的节点 `sigma` 与 `f_hor` 最大绝对变化都不超过 `1e-4` 时，复用首轮完整结果并跳过第二次 kernel。默认点调用从 `[probe, full]` 变为 `[full]`，low-T/low-r 也能在首轮收敛；high-T/stiff 背景变化超过门限，仍执行两次完整求解。stiff 单线程逐数组比较的频谱最大差约 `2.71e-10 dex`、最终 `DN_gw` 最大差约 `1.18e-14`。完整回归 `117 passed, 6 deselected`，但正式 warm profiler 中位数约 `5.37 ms`，仍未达到 `<=4 ms/point`。
 - outer full-solve 实现同时在每次完整组装前清零 `Ogw/Oj/Opgw`，避免 outer 更新后 horizon 起点移动造成旧列残留；compatibility/validation 的非 goal 路径继续保留旧 probe/full 语义。ruff、mypy、manifest 和中文注释门禁均通过。
 
+## Fresh HEAD profiling (2026-09-10)
+
+- 在远端 HEAD `767056d` 上使用 Numba `workqueue`、固定 CPU affinity（20 threads 使用 CPU 0-19；32 threads 使用 CPU 0-31）、76 goal nodes、case A、kink split、7 次运行（首轮 cold JIT，后 6 次 warm）重新测量。所有 warm digest 一致，fallback 为 0。
+- formal warm runtime（ms/point，median；min/p95 见 `docs/profile_head_t*.json`）：1/2/4/8/16/20/32 threads = `9.78/7.28/6.66/5.04/5.88/5.47/4.81`；对应 cold 首轮约 `6.56/0.37/0.23/0.24/0.26/0.24/0.21 s`。当前最好是 32 threads 的 `4.81 ms`，仍未达 `<=4 ms`。
+- 20-thread formal profiler warm 分层中位数约：background/gen_fast `0.863 ms`，goal construction `0.436 ms`（2 calls），frequency preparation `0.092 ms`（2 calls），`fast_phi_s2_split` `0.566 ms`，frequency weights `0.012 ms`，solve_kernel `1.035 ms`，bolometric column integration `0.265 ms`；阶段计时之和小于 total `5.006 ms`，剩余约 `1.7 ms` 属于 outer/control、array allocation/zeroing、最终 output/history assembly 与 Python dispatch 的组合，不能只优化 kernel 推断总收益。
+- reuse A/B（同样 20 threads、同一 case）：启用 outer full-solve reuse 为约 `5.006 ms`、`solve_kernel` 1 call；禁用为约 `5.705 ms`、`solve_kernel` 2 calls。两者输出 digest 有差异但均收敛，说明当前 HEAD 的 reuse 是实测加速而非 runtime 回退来源；旧 `4.49 -> 5.37 ms` 差异不能归因于 reuse，仍需用同一 benchmark 口径比较线程层、affinity 和写入/缓存差异。
+- 已新增可复现 profiling 入口 `scripts/run_fixed_profile.py`，并扩展 `scripts/profile_fast_breakdown.py` 记录 goal construction、frequency preparation 与 `fast_phi_s2_split`；该工具不改变 solver 行为。
+- fresh full reference（default，reference z_tail=8，242 reference nodes，DOP853 rtol=1e-11）给出 `DN_gw=0.002262832966946746`；同一 HEAD formal fast 的 full-grid scalar `DN_gw=0.002263022064729132`，相对误差 `8.36e-5`。该 comparison 的 reference 自有 quadrature/interpolation estimates 为 `3.11e-22/3.63e-11`。
+- PCHIP candidate 已按 TDD 以显式 `frequency_quadrature='pchip'` 接入，但默认仍为 Simpson。default same-spectrum DN 从 `0.00226269695` 变为 `0.00226364742`，相对 fresh full reference 约 `3.60e-4`；primitive/outer reuse A/B 仍远小于该量级。
+- PCHIP-vs-Simpson same-spectrum relative deltas across probes：default `4.20e-4`、low-T `1.275e-2`、high-T `7.40e-4`、stiff `1.282e-3`。因此 PCHIP 是直接针对 DN 的候选，但不能未经 parameter-space reference 验证就替换默认积分；low-T 的差异已经明显超过目标。
+- PCHIP candidate 的 focused test 与全量回归已通过：`119 passed, 6 deselected`（另有既有 2 个 deprecation warnings）；默认 Simpson digest/behavior 保持兼容。
+
 ## Technical Decisions
 
 | Decision | Rationale |
 |----------|-----------|
 | 先定位真实数据流再设计 split | 目标要求精确计算 `N_re` 且不得让 transfer step 跨 kink；不能凭文件名猜测已有实现 |
 | 设计阶段必须区分“接口合并”和“数值算法变更” | 这样可以保持物理契约，且每一项算法收益可独立归因 |
+| 本轮先在远端 `fast_v0.2` 当前 HEAD 做固定环境 fresh profiling | 用户明确要求不得用旧 profiler 推断当前热点；未有证据前不做 micro-optimize |
+| DN_gw 误差先做组件隔离 A/B，再决定 frequency quadrature 或 primitive 改动 | spectrum 已达到较高精度，节点加密曾使 DN 变差，必须先量化误差贡献 |
 
 ## Issues Encountered
 

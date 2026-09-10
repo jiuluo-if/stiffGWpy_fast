@@ -6,7 +6,7 @@
 
 ## Next Step
 
-继续以 profiler 和独立 reference 优化正式 fast 的 DN/速度：已接受背景节点缓存、smooth-node primitive 和受背景变化门控的 outer full-solve 复用；当前正式 warm 中位数约 `5.37 ms`，仍需达到 `<=4 ms` 并完成跨参数 reference/guard 矩阵；下一步优先研究显式振荡步数或频率通道的算法，任何有证据的重大阶段单独提交并推送。
+在远端 `fast_v0.2` 当前 HEAD 上建立固定线程/CPU/warmup 的 fresh 分层 profiler 基线，解释 outer full-solve reuse 后 runtime 变化，再按证据选择 DN_gw 误差分解或 runtime 优化方向。
 
 ## Current Phase
 
@@ -32,18 +32,18 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 实现 Phase B split-segment phase cap
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
 - [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
-- [ ] 继续优化 DN/速度并决定后续阶段是否合并；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
+- [ ] 继续优化 DN/速度；本轮必须先重建远端 HEAD fresh profiling 与 DN_gw 误差分解，不得在 profiler 证据前 micro-optimize；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification
 - [x] 运行单元、API、完整频率 reference 和 native likelihood-node 验证
 - [x] 运行 cold/warm、p95、线程和 profiler 对照
-- [ ] 完成参数空间、likelihood bins、guards、NaN/fallback、Cobaya derived 全矩阵
+- [ ] 完成参数空间、likelihood bins、guards、NaN/fallback、Cobaya derived 全矩阵，并形成 accuracy-runtime Pareto 数据
 - **Status:** pending
 
 ### Phase 5: Delivery
 - [x] 更新 README、README_zh、Cobaya YAML 和 tests
-- [ ] 更新 manifest、benchmark docs、CHANGELOG 并生成完整优化报告
+- [ ] 更新与 release HEAD 完全一致的 manifest、benchmark docs、README 表格、README_zh、CHANGELOG 并生成完整优化报告
 - [x] 记录 goal refinement、局部传播和 Richardson 探针的独立 A/B 与回退结论
 - [x] Phase A commit `07895e6` 已 fresh verification 后推送 `fast/fast_v0.2`
 - [x] Phase B/C 和正式 preset 变更 commit `78cc5b9` 已 fresh verification 后推送；CI 修复 commit `4436b9d` 已通过远端全矩阵

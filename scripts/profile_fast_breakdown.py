@@ -18,7 +18,9 @@ ROOT = os.environ.get('STIFFGWPY_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 
+from stiffgwpy_fast import exact_background as EB  # noqa: E402
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import freq_adaptive as FA  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 CASES = {
@@ -48,6 +50,9 @@ def run_once(case, kink_split=False):
         'int_SGWB_W': FS.int_SGWB_W,
         'build_Wmat': FS.build_Wmat,
         'construct_f': LCDM_SG.construct_f,
+        'prep_frequency_only': FS.prep_frequency_only,
+        'fast_phi_s2_split': EB.fast_phi_s2_split,
+        'goal_oriented_freqs': FA.goal_oriented_freqs,
     }
     FS.gen_fast = lambda *a, **k: timed_call(totals, 'expansion_background', original['gen_fast'], *a, **k)
     FS.prep_fast = lambda *a, **k: timed_call(totals, 'kernel_prepare', original['prep_fast'], *a, **k)
@@ -67,6 +72,12 @@ def run_once(case, kink_split=False):
     FS.int_SGWB_W = lambda *a, **k: timed_call(totals, 'column_integration', original['int_SGWB_W'], *a, **k)
     FS.build_Wmat = lambda *a, **k: timed_call(totals, 'frequency_weights', original['build_Wmat'], *a, **k)
     LCDM_SG.construct_f = lambda *a, **k: timed_call(totals, 'frequency_grid', original['construct_f'], *a, **k)
+    FS.prep_frequency_only = lambda *a, **k: timed_call(
+        totals, 'frequency_preparation', original['prep_frequency_only'], *a, **k)
+    EB.fast_phi_s2_split = lambda *a, **k: timed_call(
+        totals, 'fast_phi_s2_split', original['fast_phi_s2_split'], *a, **k)
+    FA.goal_oriented_freqs = lambda *a, **k: timed_call(
+        totals, 'goal_frequency_construction', original['goal_oriented_freqs'], *a, **k)
     try:
         model = LCDM_SG(**case)
         start = time.perf_counter()
@@ -81,6 +92,9 @@ def run_once(case, kink_split=False):
         FS.int_SGWB_W = original['int_SGWB_W']
         FS.build_Wmat = original['build_Wmat']
         LCDM_SG.construct_f = original['construct_f']
+        FS.prep_frequency_only = original['prep_frequency_only']
+        EB.fast_phi_s2_split = original['fast_phi_s2_split']
+        FA.goal_oriented_freqs = original['goal_oriented_freqs']
 
 
 def main():
@@ -90,8 +104,12 @@ def main():
     parser.add_argument('--case', choices=sorted(CASES), default='A')
     parser.add_argument('--kink-split', action='store_true',
                         help='profile the Phase-A exact-breakpoint variant')
+    parser.add_argument('--disable-outer-reuse', action='store_true',
+                        help='仅用于 A/B：禁用 formal outer full-solve reuse')
     args = parser.parse_args()
     FS.apply_accuracy_mode('fast')
+    if args.disable_outer_reuse:
+        FS._OUTER_FULL_REUSE_ENABLED = False
     # 保留基准命令显式指定的线程数，避免 preset 默认值遮蔽 scaling 点。
     if os.environ.get('FAST_THREADS'):
         FS.set_threads(int(os.environ['FAST_THREADS']))
