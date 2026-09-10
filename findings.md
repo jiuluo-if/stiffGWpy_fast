@@ -96,6 +96,7 @@
 - 当前 HEAD outer-reuse safety replay（default/lowT/highT/stiff）无 numerical failure，DN rel 对 always-full 均不超过 `5.3e-10`；spectrum max rel 最大为 default `9.03e-4`、lowT `1.54e-5`，其余无 reuse 生效。按 DN `2e-4`、spectrum max `1e-3` 的保守门槛，false-safe `0/4`，暂保留当前 reuse；但 default 的 `9.03e-4` 已接近 spectrum budget，不能宣称 reuse 对所有 spectrum observable 完全无影响。
 - stability screen 已从当前 HEAD `6a32838` 重跑并回写 SHA：24 点（8 named + 16 Sobol）`failure_count=0`、`guard_count=3`；3 个均为显式 `shared_Neff_guard`，没有 silent fallback。低振幅 Sobol 点的相对 estimator 仍可达 `3.08e-2`，所以 estimator 不能单独放行科学结果。
 - 新增参数空间 same-grid independent oracle：`cr0_blue`、`positive_tilt`、`sobol_000`、`sobol_002`、`sobol_006` 均无 numerical failure；Simpson DN rel 为 `8.83e-4/7.14e-4/1.05e-3/9.78e-4/8.56e-4`，PCHIP 为 `2.76e-4/2.94e-4/2.96e-4/2.93e-4/2.98e-4`。PCHIP 改善一致但仍未满足 `<2e-4`，parameter-space release gate 保持 `NOT VERIFIED`。
+- phase-cap A/B（`phase_max=0.35/0.5`，六工况各 25 次）没有稳定 >5% runtime 收益：相对 formal `.25` 的中位数多数持平或变慢；spectrum max 变化约 `5.2e-6..1.3e-5`、DN 变化约 `0.4e-6..6.8e-6`，数值扰动虽小但不能抵消速度失败，两个候选均拒绝升级。
 
 ## Technical Decisions
 

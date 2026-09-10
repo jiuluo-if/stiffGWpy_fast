@@ -82,6 +82,7 @@
 | current-HEAD `error_budget_probe.py` default/lowT/highT/stiff | outer reuse safety | false-safe `0/4` under DN `2e-4` and spectrum-max `1e-3`; default spectrum max delta `9.03e-4`，保留但标注接近预算 | PASS / ACCEPTED WITH LIMIT |
 | current-HEAD `benchmark_fast_stability.py` | refresh formal-fast SHA-bound stability artifact | 24 points；0 numerical failure；3 explicit `shared_Neff_guard`；artifact commit=`6a32838` | PASS / DIAGNOSTIC |
 | `benchmark_same_grid_reference.py` on cr0/tilt/Sobol extras | parameter-space independent oracle | 5 additional points；no numerical failure；PCHIP still `2.76e-4..2.98e-4`；manifest gate `NOT VERIFIED` | PASS / NOT VERIFIED |
+| `benchmark_phase_candidate.py --phase-max 0.25 0.35 0.5` | phase-cap speed/accuracy A/B | 25 repeats x 6 cases；no stable >5% gain；larger caps rejected；spectrum/DN perturbation recorded | PASS / REJECTED |
 
 ### Errors
 

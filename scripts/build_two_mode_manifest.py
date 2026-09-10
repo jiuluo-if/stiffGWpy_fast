@@ -73,6 +73,7 @@ def _current_fast_audit():
     candidate_grid = _load_json(D('benchmark_candidate_grid_head.json'))
     candidate_default = _load_json(
         D('frequency_same_grid_reference_default_seed78.json'))
+    phase_candidate = _load_json(D('benchmark_phase_candidate_head.json'))
     reuse_cases = ('default', 'lowT', 'highT', 'stiff')
     reuse_rows = []
     for name in reuse_cases:
@@ -200,6 +201,13 @@ def _current_fast_audit():
                 'false_safe_count': len(reuse_false_safe),
                 'decision': ('ACCEPTED_FOR_CURRENT_PROFILE'
                              if not reuse_false_safe else 'NOT_VERIFIED'),
+            },
+            'phase_cap_candidate': {
+                'artifact': phase_candidate,
+                'candidates': [0.35, 0.5],
+                'decision': 'REJECTED_FOR_PROMOTION',
+                'reason': ('Neither larger phase cap achieved a stable >5% '
+                           'runtime improvement across the six-point matrix.'),
             },
             'node_count_sweep': nodes,
             'stability': {
