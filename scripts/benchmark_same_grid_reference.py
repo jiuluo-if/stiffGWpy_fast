@@ -45,6 +45,8 @@ def main(argv=None):
     ap.add_argument('--workers', type=int, default=4)
     ap.add_argument('--rtol', type=float, default=1e-9)
     ap.add_argument('--z-tail', type=float, default=8.0)
+    ap.add_argument('--seed-n', type=int, default=64,
+                    help='goal-grid seed override for candidate A/B runs')
     ap.add_argument('--out', default='docs/frequency_same_grid_reference.json')
     args = ap.parse_args(argv)
 
@@ -52,23 +54,35 @@ def main(argv=None):
     FS.set_z_tail(5.0)
     kw = CASES[args.point]
 
-    fast = LCDM_SG(**kw)
-    t0 = time.perf_counter()
-    FS.SGWB_iter_fast(fast, kink_split=True, freq_grid='goal', frequency_quadrature='simpson')
-    fast_time = time.perf_counter() - t0
-    freqs = np.asarray(fast.f, dtype=float)
-    dn_eff = float(fast.cosmo_param['DN_eff'])
-    fast_omega = np.asarray(fast.Ogw_today, dtype=float)
-    fast_j = np.asarray(fast.Oj_today, dtype=float)
-    fast_integrand = fast_omega - fast_j
+    from stiffgwpy_fast import freq_adaptive as FA
+    original_goal = FA.goal_oriented_freqs
 
-    ref_model = LCDM_SG(**kw)
-    t0 = time.perf_counter()
-    ref_omega, ref_j, _, used_tail = REF.spectrum_reference(
-        ref_model, freqs, dn_eff, z_tail=args.z_tail, rtol=args.rtol,
-        workers=args.workers)
-    ref_time = time.perf_counter() - t0
-    ref_integrand = ref_omega - ref_j
+    def candidate_goal(*call_args, **kwargs):
+        kwargs['seed_n'] = args.seed_n
+        return original_goal(*call_args, **kwargs)
+
+    FA.goal_oriented_freqs = candidate_goal
+
+    try:
+        fast = LCDM_SG(**kw)
+        t0 = time.perf_counter()
+        FS.SGWB_iter_fast(fast, kink_split=True, freq_grid='goal', frequency_quadrature='simpson')
+        fast_time = time.perf_counter() - t0
+        freqs = np.asarray(fast.f, dtype=float)
+        dn_eff = float(fast.cosmo_param['DN_eff'])
+        fast_omega = np.asarray(fast.Ogw_today, dtype=float)
+        fast_j = np.asarray(fast.Oj_today, dtype=float)
+        fast_integrand = fast_omega - fast_j
+
+        ref_model = LCDM_SG(**kw)
+        t0 = time.perf_counter()
+        ref_omega, ref_j, _, used_tail = REF.spectrum_reference(
+            ref_model, freqs, dn_eff, z_tail=args.z_tail, rtol=args.rtol,
+            workers=args.workers)
+        ref_time = time.perf_counter() - t0
+        ref_integrand = ref_omega - ref_j
+    finally:
+        FA.goal_oriented_freqs = original_goal
 
     order = np.argsort(freqs)
     omega_nu = gp.Omega_nh2 / fast.derived_param['h']**2
@@ -84,6 +98,7 @@ def main(argv=None):
         'point': args.point,
         'kw': kw,
         'n_freq': int(freqs.size),
+        'seed_n': args.seed_n,
         'dn_eff': dn_eff,
         'used_tail_fraction': float(np.mean(used_tail)),
         'fast_runtime_s': fast_time,
