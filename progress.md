@@ -79,6 +79,7 @@
 | final default telemetry 50-repeat profiler | remove default PCHIP construction | warm median `4.976 -> 4.544 ms` (`8.7%`), digest unchanged | PASS / ACCEPTED |
 | `python scripts/build_two_mode_manifest.py; python scripts/validate_manifest.py` | estimator coverage replay | Simpson coverage `0/6`、PCHIP coverage `6/6`；release gate `NOT VERIFIED`；manifest validation OK | PASS / NOT VERIFIED |
 | `python scripts/benchmark_candidate_grid.py --seed 78` + default independent oracle | 89-node/PCHIP candidate A/B | 六工况无 numerical failure；default same-grid DN rel `1.142e-3` Simpson / `2.952e-4` PCHIP；candidate rejected | PASS / REJECTED |
+| current-HEAD `error_budget_probe.py` default/lowT/highT/stiff | outer reuse safety | false-safe `0/4` under DN `2e-4` and spectrum-max `1e-3`; default spectrum max delta `9.03e-4`，保留但标注接近预算 | PASS / ACCEPTED WITH LIMIT |
 
 ### Errors
 

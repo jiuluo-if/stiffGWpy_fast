@@ -93,6 +93,7 @@
 - 采用廉价 Richardson estimator 后的 fresh 50-repeat fixed profiler：default warm total median `4.544 ms`，相对之前 `4.976 ms` 为 `8.7%` 改善；频谱、DN 与 digest 不变。24 点 stability artifact 已同步更新，仍为 `0` numerical failure、`3` 个明确 physical guard。
 - estimator coverage fresh replay：六个 named same-grid independent references 中，廉价 Simpson-trapezoid Richardson 估计对 production Simpson DN 误差 `0/6` 覆盖；对 opt-in PCHIP DN 误差为 `6/6` 覆盖。因默认路径是 Simpson，coverage release gate 保持 `NOT VERIFIED`，该 telemetry 不能作为当前发布放行依据。
 - `seed_n=78` 候选（实际 89 nodes）六工况 fast A/B 无 numerical failure，但独立 default same-grid oracle 显示 Simpson/PCHIP DN 相对误差为 `1.142e-3/2.952e-4`；因此“仅把 grid 加到约 89 nodes 并启用 PCHIP”仍未达到 `<2e-4`，候选拒绝升级。此前 76-node dense-reference 上的偶然 `9.3e-6` 不足以证明参数空间收益。
+- 当前 HEAD outer-reuse safety replay（default/lowT/highT/stiff）无 numerical failure，DN rel 对 always-full 均不超过 `5.3e-10`；spectrum max rel 最大为 default `9.03e-4`、lowT `1.54e-5`，其余无 reuse 生效。按 DN `2e-4`、spectrum max `1e-3` 的保守门槛，false-safe `0/4`，暂保留当前 reuse；但 default 的 `9.03e-4` 已接近 spectrum budget，不能宣称 reuse 对所有 spectrum observable 完全无影响。
 
 ## Technical Decisions
 

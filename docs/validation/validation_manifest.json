@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "commit": "37c2482a4c1920f8c9686e52822c2a326ca7c520",
+  "commit": "ac1015ea4b528b6b0e140c9d17b30362756ed30b",
   "date": "2026-09-10",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
@@ -1305,6 +1305,41 @@
         },
         "decision": "REJECTED_FOR_PROMOTION",
         "reason": "89-node seed78 plus PCHIP remains above the DN <2e-4 target on the independent default oracle."
+      },
+      "outer_reuse_safety": {
+        "definition": "reuse=true versus always-full solve; false-safe means DN rel >2e-4, spectrum max rel >1e-3, or any failure",
+        "rows": [
+          {
+            "case": "default",
+            "DN_rel_vs_reuse_baseline": 5.204399770665766e-10,
+            "spectrum_max_rel_vs_reuse_baseline": 0.0009033219548280199,
+            "baseline_failure": null,
+            "disabled_failure": null
+          },
+          {
+            "case": "lowT",
+            "DN_rel_vs_reuse_baseline": 5.290622575299658e-10,
+            "spectrum_max_rel_vs_reuse_baseline": 1.5367076573385376e-05,
+            "baseline_failure": null,
+            "disabled_failure": null
+          },
+          {
+            "case": "highT",
+            "DN_rel_vs_reuse_baseline": 0.0,
+            "spectrum_max_rel_vs_reuse_baseline": 0.0,
+            "baseline_failure": null,
+            "disabled_failure": null
+          },
+          {
+            "case": "stiff",
+            "DN_rel_vs_reuse_baseline": 0.0,
+            "spectrum_max_rel_vs_reuse_baseline": 0.0,
+            "baseline_failure": null,
+            "disabled_failure": null
+          }
+        ],
+        "false_safe_count": 0,
+        "decision": "ACCEPTED_FOR_CURRENT_PROFILE"
       },
       "node_count_sweep": {
         "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",

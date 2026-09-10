@@ -73,6 +73,27 @@ def _current_fast_audit():
     candidate_grid = _load_json(D('benchmark_candidate_grid_head.json'))
     candidate_default = _load_json(
         D('frequency_same_grid_reference_default_seed78.json'))
+    reuse_cases = ('default', 'lowT', 'highT', 'stiff')
+    reuse_rows = []
+    for name in reuse_cases:
+        probe = _load_json(D('error_budget_probe_%s_current.json' % name))
+        by_label = {row['label']: row for row in probe['rows']}
+        disabled = by_label['outer_reuse_disabled']
+        reuse_rows.append({
+            'case': name,
+            'DN_rel_vs_reuse_baseline': disabled['DN_rel_vs_baseline'],
+            'spectrum_max_rel_vs_reuse_baseline': (
+                disabled['spectrum_max_rel_vs_baseline']),
+            'baseline_failure': by_label['baseline']['fast_failure_reason'],
+            'disabled_failure': disabled['fast_failure_reason'],
+        })
+    reuse_false_safe = [
+        row for row in reuse_rows
+        if row['DN_rel_vs_reuse_baseline'] > 2e-4
+        or row['spectrum_max_rel_vs_reuse_baseline'] > 1e-3
+        or row['baseline_failure'] is not None
+        or row['disabled_failure'] is not None
+    ]
     stability_by_label = {
         row.get('label'): row for row in stability.get('rows', [])}
     estimator_rows = []
@@ -136,6 +157,15 @@ def _current_fast_audit():
                 'decision': 'REJECTED_FOR_PROMOTION',
                 'reason': ('89-node seed78 plus PCHIP remains above the DN '
                            '<2e-4 target on the independent default oracle.'),
+            },
+            'outer_reuse_safety': {
+                'definition': ('reuse=true versus always-full solve; false-safe '
+                               'means DN rel >2e-4, spectrum max rel >1e-3, '
+                               'or any failure'),
+                'rows': reuse_rows,
+                'false_safe_count': len(reuse_false_safe),
+                'decision': ('ACCEPTED_FOR_CURRENT_PROFILE'
+                             if not reuse_false_safe else 'NOT_VERIFIED'),
             },
             'node_count_sweep': nodes,
             'stability': {

@@ -8,6 +8,8 @@ import os
 import sys
 import time
 
+import numpy as np
+
 
 def main() -> None:
     ap = argparse.ArgumentParser()
@@ -39,8 +41,10 @@ def main() -> None:
     FS.set_threads(args.threads)
     original_primitive = EB.fast_phi_s2_split
     original_reuse = FS._OUTER_FULL_REUSE_ENABLED
+    baseline_spectrum = None
 
     def solve(label, primitive='fast', reuse=True, frequency_quadrature='simpson'):
+        nonlocal baseline_spectrum
         EB.fast_phi_s2_split = (original_primitive if primitive == 'fast'
                                 else EB.exact_phi_s2_split)
         FS._OUTER_FULL_REUSE_ENABLED = reuse
@@ -54,6 +58,14 @@ def main() -> None:
             model.f, model.Ogw_today, model.Oj_today)
         omega_nu = gp.Omega_nh2 / model.derived_param['h']**2
         g2_pchip_dn = float(gp.Neff0 * g2_pchip / omega_nu)
+        spectrum = np.asarray(model.Ogw_today - model.Oj_today, dtype=float)
+        if label == 'baseline':
+            baseline_spectrum = spectrum.copy()
+        spectrum_rel = None
+        if baseline_spectrum is not None:
+            spectrum_rel = float(np.max(
+                np.abs(spectrum - baseline_spectrum)
+                / np.maximum(np.abs(baseline_spectrum), 1e-300)))
         return {
             'label': label,
             'primitive': primitive,
@@ -64,6 +76,8 @@ def main() -> None:
             'DN_gw_solver': g2_simpson,
             'DN_gw_pchip_same_spectrum': g2_pchip_dn,
             'same_spectrum_quadrature_delta_rel': abs(g2_pchip_dn - g2_simpson) / abs(g2_simpson),
+            'DN_rel_vs_baseline': None,
+            'spectrum_max_rel_vs_baseline': spectrum_rel,
             'reference_integral_abs_error': qerr,
             'reference_interpolation_error': ierr,
             'outer_full_reuse_used': bool(getattr(model, 'outer_full_reuse_used', False)),
@@ -77,6 +91,10 @@ def main() -> None:
             solve('exact_background_primitive', 'exact', True),
             solve('outer_reuse_disabled', 'fast', False),
         ]
+        baseline_dn = rows[0]['DN_gw_solver']
+        for row in rows:
+            row['DN_rel_vs_baseline'] = abs(
+                row['DN_gw_solver'] - baseline_dn) / abs(baseline_dn)
     finally:
         EB.fast_phi_s2_split = original_primitive
         FS._OUTER_FULL_REUSE_ENABLED = original_reuse
