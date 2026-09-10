@@ -90,6 +90,7 @@
 - fresh same-grid independent reference：low-T 的 Simpson/PCHIP DN 相对误差为 `1.241e-2/1.826e-4`，high-T 为 `1.033e-3/2.932e-4`；两点都显示 PCHIP 显著优于 Simpson，但 high-T 仍高于 `<2e-4`。这证明 estimator 需要参数空间 coverage，不能只依赖 default 或单一候选方法。
 - 默认 telemetry 优化通过 profiler acceptance：固定 CPU 0-19、workqueue、20 threads、50 warm repeats，total median `4.976 -> 4.544 ms`，约 `8.7%` 改善；所有 spectrum/DN digest 不变。它只取消默认路径的重复 PCHIP object，改用 Simpson-trapezoid Richardson pair；PCHIP opt-in 仍计算直接 Simpson-PCHIP estimate。
 - 优化后的六点 25-repeat matrix：default warm median/p95 `4.259/5.286 ms`，low-T `3.947/4.180 ms`，high-T `6.513/7.138 ms`，stiff `6.753/7.590 ms`，low-r `4.045/4.341 ms`，high-kappa `6.497/6.904 ms`。default 仍未稳定低于 4 ms，但已达到“有证据的 >5% 局部优化”验收。
+- 采用廉价 Richardson estimator 后的 fresh 50-repeat fixed profiler：default warm total median `4.544 ms`，相对之前 `4.976 ms` 为 `8.7%` 改善；频谱、DN 与 digest 不变。24 点 stability artifact 已同步更新，仍为 `0` numerical failure、`3` 个明确 physical guard。
 
 ## Technical Decisions
 
