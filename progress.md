@@ -86,6 +86,37 @@
 | `solve_kernel` Numba literal-specialization probe | kernel branch-elimination candidate | 42 focused tests pass but warm kernel regresses to ~150 ms；source reverted，candidate rejected | PASS / REJECTED |
 | default same-grid reference `z_tail=5` vs `8` | oracle-independence tail A/B | DN `0.0022718753` vs `0.0022643136`，relative delta `3.34e-3`；记录为 tail/transfer caveat | PASS / DIAGNOSTIC |
 
+| Q1 helper TDD red-green | 新增统一频率积分 API 的测试首次 `2 failed`（API 不存在），实现后 `2 passed` | PASS |
+| Q1 solver candidate 入口 | `gauss3` opt-in 与既有 `pchip` 测试 `2 passed` | PASS |
+| Q1 相关回归 | `python -m pytest -q tests/test_fast_sgwb.py tests/test_modes.py tests/test_validation_manifest.py` 得 `46 passed, 1 deselected` | PASS |
+| 统一 Q1 比较脚本 | HEAD `bd648fc`、20 threads/workqueue、76/77 native nodes；6 工况均无 failure；尚未与 dense reference 比较 | PASS / DIAGNOSTIC |
+| Q2 local estimator TDD | 初次实现暴露 Chebyshev spline 未初始化及全局权重分摊广播错误；均已通过回归测试修复 | PASS |
+| default dense-reference 八方法比较 | 独立 reference `103.6 s`；PCHIP/Gauss 全局 DN rel `2.942e-4`，natural cubic `9.882e-4`，log-PCHIP `1.567e-3`；局部绝对和 estimator 约 `15.3%`，严重过保守，暂不用于 adaptive production | PASS / REJECTED FOR PRODUCTION |
+| panel estimator 修正后 default dense-reference | 独立 reference `99.9 s`；PCHIP/Gauss 实际 DN rel `2.942e-4`，local-sum `3.118e-3`，local-max `5.615e-4`；两者均保守但 sum 过宽，max 作为后续 coverage 候选 | PASS / DIAGNOSTIC |
+| Q2 coverage replay | 9 个点（default/lowT/highT/stiff/cr0/tilt/3 Sobol）；local-sum 与 local-max 均 `9/9` coverage、`0` false-safe；local-max 中位预测/实际 `2.01x`，p99 actual/predicted `0.524`，low-T 最大过保守 | PASS / NOT PRODUCTION-READY |
+| low-T dense-reference 八方法 | Simpson DN rel `1.241e-2`；PCHIP/Gauss/Chebyshev `1.826e-4`；natural cubic `5.901e-3`；log-PCHIP `9.706e-3`；证实过保守 estimator 主要反映 Simpson 基线误差 | PASS / DIAGNOSTIC |
+| high-T dense-reference 八方法 | Simpson `1.033e-3`；PCHIP/Gauss/Chebyshev `2.932e-4`；natural cubic `1.248e-3`；log-PCHIP `1.799e-3`；local-max `5.615e-4` | PASS / DIAGNOSTIC |
+| stiff dense-reference 八方法 | Simpson `1.576e-3`；PCHIP/Gauss/Chebyshev `2.965e-4`；natural cubic `8.184e-4`；log-PCHIP `1.389e-3`；local-max `5.962e-4` | PASS / DIAGNOSTIC |
+| cr0 blue dense-reference 八方法 | Simpson `8.830e-4`；PCHIP/Gauss/Chebyshev `2.765e-4`；natural cubic `5.353e-4`；log-PCHIP `1.380e-3`；local-max `7.727e-4` | PASS / DIAGNOSTIC |
+| Sobol-000 dense-reference 八方法 | Simpson `1.048e-3`；PCHIP/Gauss/Chebyshev `2.964e-4`；natural cubic `7.130e-4`；log-PCHIP `1.313e-3`；local-max `7.724e-4` | PASS / DIAGNOSTIC |
+| Sobol-002 dense-reference 八方法 | Simpson `9.784e-4`；PCHIP/Gauss/Chebyshev `2.934e-4`；natural cubic `8.234e-4`；log-PCHIP `1.411e-3`；local-max `7.715e-4` | PASS / DIAGNOSTIC |
+| Sobol-006 dense-reference 八方法 | Simpson `8.558e-4`；PCHIP/Gauss/Chebyshev `2.978e-4`；natural cubic `5.918e-4`；log-PCHIP `1.118e-3`；local-max `5.753e-4` | PASS / DIAGNOSTIC |
+| positive-tilt 配置修正与 dense-reference | 原 `cr=1` 实际覆盖 `n_t`，已改为 `cr=0,n_t=.2,DN_re=5`；修正后 PCHIP/Gauss/Chebyshev `2.927e-4`，natural cubic `7.054e-4`，log-PCHIP `1.548e-3`；local coverage `50%` | PASS / REJECTED ESTIMATOR |
+| final Q2 regression | coverage replay refreshed；full pytest `126 passed, 6 deselected, 2 warnings in 100.14s`；compileall/diff check pass | PASS |
+| final Q2 regression refresh | positive-tilt 修正后 full pytest `127 passed, 6 deselected, 2 warnings in 98.64s`；compileall、scoped ruff 与 diff check pass | PASS |
+| 76/80/90/110 node same-spectrum sweep | PCHIP DN `2.263647e-3/2.263064e-3/2.263324e-3/2.262561e-3`；local-max `5.615e-4/7.715e-4/7.711e-4/5.616e-4`；节点增加与 estimator 均非单调，不放行 blind refinement | PASS / REJECTED FOR PROMOTION |
+| default local-reference estimator 对齐 | local Pearson `r=0.592`、coverage `66.7%`、false-safe `33.3%`；predicted/actual local sum `1.353e-3/1.315e-4`；证明当前 panel estimator 不合格，global total coverage 不足以放行 | PASS / REJECTED |
+| Q1 warm integration overhead/shape screen | 50 warm repeats x 6 工况：Simpson `43.9 us`、PCHIP `120.9 us`、natural cubic `105.5 us`、Gauss5 `577.6 us`、log-PCHIP `630.4 us`、Chebyshev `4727.2 us`；PCHIP/Gauss/Chebyshev shape-preserving，natural cubic 多工况 overshoot | PASS / DIAGNOSTIC |
+| Sobol-002/006 dense-reference 八方法 | Sobol-002 PCHIP/Gauss/Chebyshev `2.934e-4`；Sobol-006 `2.978e-4`；均未达到 `<2e-4` | PASS / DIAGNOSTIC |
+| full regression after Q2 changes | `126 passed, 6 deselected, 2 warnings in 104.43s` | PASS |
+| final static verification | `compileall`、scoped ruff (`E501,F401,F821,F841`) 与 `git diff --check` 全部通过 | PASS |
+| quadrature-only dense local reference | 固定同一 native spectrum、PCHIP dense Simpson 作为 quadrature-only 真值；9 点上 PCHIP-Simpson interval-max coverage `9/9`，sum coverage `8/9`；max 中位 prediction/actual `1.263x`，仍仅作诊断 | PASS / DIAGNOSTIC |
+| Gauss-Simpson quadrature-only replay | `gauss2/3/5` interval-max coverage 均 `9/9`，sum coverage 均 `7/9`；与 PCHIP 相同的 panel 参考下没有校准或速度优势，不晋升 production | PASS / REJECTED FOR PROMOTION |
+| Q2 independent-local actual 对齐修正 | 将 actual 改为 formal Simpson panel 对 independent reference 的误差；default coverage `36%`、positive-tilt `28.4%`，虽 Pearson `0.965/0.980`，99% 所需 safety factor `707/1331`，确认当前 interval 分配不合格 | PASS / REJECTED |
+| Q2 panel-envelope allocation | 将完整 panel 误差及相邻一个 panel 的最大值传播到 interval；default coverage `92%`、positive-tilt `86.5%`，99% safety factor `2.62/6.63`，仍未达到 95/99% gate，不进入 production | PASS / REJECTED |
+| panel-envelope regression | 新 allocation、independent-reference benchmark 与 coverage replay 完成；full pytest `131 passed, 6 deselected, 2 warnings in 104.80s`；compileall、scoped ruff、diff check pass | PASS |
+| Q2 ensemble independent replay | PCHIP/Gauss/log-PCHIP/natural-cubic/Chebyshev 的 panel-envelope ensemble：default `100%`、lowT/highT `97.3%`、stiff `94.7%`、cr0-blue `89.0%`、positive-tilt `94.6%`、Sobol-000 `92%`、Sobol-002 `100%`、Sobol-006 `94.6%`；仍未满足全参数 95/99% gate | PASS / REJECTED |
+
 ### Errors
 
 | Error | Resolution |

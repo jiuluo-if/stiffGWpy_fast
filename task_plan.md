@@ -6,7 +6,7 @@
 
 ## Next Step
 
-在 `9bb2697` 上完成 estimator telemetry 与 eval/support 解耦；当前 76/80/90/110 sweep 仍非单调，下一步是参数空间 oracle/estimator coverage 和最终 release manifest，而不是切换 PCHIP 或继续盲目加节点。
+已在 `bd648fc` 上完成 Q1 八方法 helper/solver 入口、9 点 dense-reference、node sensitivity、warm overhead/shape screen，并修正 positive-tilt benchmark 契约；新增 full-panel/邻近 panel envelope 诊断后，independent local-reference coverage 仅 default 92%、positive-tilt 86.5%，仍必须重设计 local estimator，不得进入 adaptive/production。
 
 ## Current Phase
 
@@ -66,3 +66,6 @@ Phase 3: Implementation and evidence-driven optimization
 |-------|------------|
 | 首次 `create_goal` 失败：当前线程已有未完成 goal | 继续使用用户更新后的 active goal，不重复创建 |
 | 初次计划补丁匹配失败 | 读取 init-session 实际模板后按当前内容重新生成计划文件 |
+| 本轮对修改文件执行全量 ruff 暴露 84 个既有 E701/E702/F841 | 未扩大范围格式化；compileall 与 diff check 通过，保留该既有门禁问题并单独报告 |
+| Q2 dense-reference 首次运行暴露局部 estimator 的 Chebyshev spline 未初始化 | 补充局部 Chebyshev 回归测试并初始化 PCHIP spline 后重跑通过 |
+| 全局 Simpson 权重分摊造成局部 estimator 假保守 | 改为非重叠 local composite-Simpson panel；default 仍约 15.3% 过保守，保留为诊断候选，不进入 production |

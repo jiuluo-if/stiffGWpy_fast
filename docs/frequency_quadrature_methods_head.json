@@ -1,5 +1,5 @@
 {
-  "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",
+  "commit": "bd648fc805c95c641f76d4d8ebfda9f5a2beb56c",
   "threads": 20,
   "affinity": [
     0,
@@ -27,144 +27,576 @@
   "rows": [
     {
       "case": "default",
-      "runtime_s": 0.22430579999991096,
+      "runtime_s": 0.23785039999893343,
       "n_freq": 76,
       "DN_gw_solver": 0.0022626969518100204,
       "DN_by_method": {
         "simpson": 0.0022626969518100616,
         "pchip": 0.0022636474150856214,
+        "log_pchip": 0.0022607657706572564,
+        "gauss2": 0.0022636474150856214,
+        "gauss3": 0.0022636474150856214,
+        "gauss5": 0.0022636474150856214,
         "natural_cubic": 0.0022620759777915046,
-        "loglog_pchip": 0.0022607657706572577,
-        "gauss_legendre_pchip": 0.0022636474150856214,
-        "chebyshev": 0.002277283301255544
+        "chebyshev": 0.0022636474150856214
       },
       "relative_to_simpson": {
         "simpson": 0.0,
         "pchip": 0.0004200576991980774,
+        "log_pchip": 0.0008534864340804844,
+        "gauss2": 0.0004200576991980774,
+        "gauss3": 0.0004200576991980774,
+        "gauss5": 0.0004200576991980774,
         "natural_cubic": 0.0002744397644855844,
-        "loglog_pchip": 0.0008534864340799094,
-        "gauss_legendre_pchip": 0.0004200576991980774,
-        "chebyshev": 0.006446444113434677
+        "chebyshev": 0.0004200576991980774
+      },
+      "runtime_by_method": {
+        "simpson": {
+          "median_s": 4.850000004807953e-05,
+          "p95_s": 6.564999976035322e-05
+        },
+        "pchip": {
+          "median_s": 0.00012335000064922497,
+          "p95_s": 0.00014166999890221632
+        },
+        "log_pchip": {
+          "median_s": 0.0006415500001821783,
+          "p95_s": 0.0006606449995160801
+        },
+        "gauss2": {
+          "median_s": 0.000562349999199796,
+          "p95_s": 0.0006028400005561707
+        },
+        "gauss3": {
+          "median_s": 0.0005634500002997811,
+          "p95_s": 0.0005849850002960011
+        },
+        "gauss5": {
+          "median_s": 0.000577950000661076,
+          "p95_s": 0.0006129249995865393
+        },
+        "natural_cubic": {
+          "median_s": 0.00010695000037230784,
+          "p95_s": 0.00011596000022109365
+        },
+        "chebyshev": {
+          "median_s": 0.0047591000002285,
+          "p95_s": 0.004896720000033383
+        }
+      },
+      "interpolation_diagnostics": {
+        "pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "log_pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss2": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss3": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss5": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "natural_cubic": {
+          "shape_preserving": false,
+          "overshoot_rel": 0.0008032085653813578
+        },
+        "chebyshev": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "simpson": {
+          "shape_preserving": null,
+          "overshoot_rel": 0.0
+        }
       },
       "reuse": true,
       "failure": null
     },
     {
       "case": "lowT",
-      "runtime_s": 0.004694199999903503,
+      "runtime_s": 0.004163500001595821,
       "n_freq": 76,
       "DN_gw_solver": 5.2446047710354755e-08,
       "DN_by_method": {
         "simpson": 5.244604771035473e-08,
         "pchip": 5.311460283393785e-08,
+        "log_pchip": 5.2589454505338766e-08,
+        "gauss2": 5.311460283393779e-08,
+        "gauss3": 5.311460283393781e-08,
+        "gauss5": 5.31146028339378e-08,
         "natural_cubic": 5.279154959654396e-08,
-        "loglog_pchip": 5.258945450533878e-08,
-        "gauss_legendre_pchip": 5.311460283393781e-08,
-        "chebyshev": 5.0339751611751344e-08
+        "chebyshev": 5.311460283393779e-08
       },
       "relative_to_simpson": {
         "simpson": 0.0,
         "pchip": 0.012747483419062813,
+        "log_pchip": 0.002734368007595801,
+        "gauss2": 0.012747483419061676,
+        "gauss3": 0.012747483419062056,
+        "gauss5": 0.012747483419061803,
         "natural_cubic": 0.006587758301585412,
-        "loglog_pchip": 0.002734368007596053,
-        "gauss_legendre_pchip": 0.012747483419062056,
-        "chebyshev": 0.04016119785109233
+        "chebyshev": 0.012747483419061676
+      },
+      "runtime_by_method": {
+        "simpson": {
+          "median_s": 4.670000089390669e-05,
+          "p95_s": 5.23300000168092e-05
+        },
+        "pchip": {
+          "median_s": 0.00012079999942216091,
+          "p95_s": 0.0001326100000369479
+        },
+        "log_pchip": {
+          "median_s": 0.0006267500002650195,
+          "p95_s": 0.0006569650002347771
+        },
+        "gauss2": {
+          "median_s": 0.0005510000000867876,
+          "p95_s": 0.0005738350001593062
+        },
+        "gauss3": {
+          "median_s": 0.0005629499992210185,
+          "p95_s": 0.0005866950000381621
+        },
+        "gauss5": {
+          "median_s": 0.0005772500007878989,
+          "p95_s": 0.0005944749990703712
+        },
+        "natural_cubic": {
+          "median_s": 0.00010565000047790818,
+          "p95_s": 0.0001209600010952272
+        },
+        "chebyshev": {
+          "median_s": 0.004715350000878971,
+          "p95_s": 0.004865899999913381
+        }
+      },
+      "interpolation_diagnostics": {
+        "pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "log_pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss2": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss3": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss5": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "natural_cubic": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0016540486227270396
+        },
+        "chebyshev": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "simpson": {
+          "shape_preserving": null,
+          "overshoot_rel": 0.0
+        }
       },
       "reuse": false,
       "failure": null
     },
     {
       "case": "highT",
-      "runtime_s": 0.007045100000141247,
+      "runtime_s": 0.00655920000099286,
       "n_freq": 76,
       "DN_gw_solver": 0.056391339588221887,
       "DN_by_method": {
         "simpson": 0.056391339588222913,
         "pchip": 0.05643308427141728,
+        "log_pchip": 0.056348095403532084,
+        "gauss2": 0.05643308427141728,
+        "gauss3": 0.05643308427141728,
+        "gauss5": 0.05643308427141728,
         "natural_cubic": 0.05637919555940643,
-        "loglog_pchip": 0.05634809540353207,
-        "gauss_legendre_pchip": 0.05643308427141728,
-        "chebyshev": 0.052077963840055905
+        "chebyshev": 0.056433084271417265
       },
       "relative_to_simpson": {
         "simpson": 0.0,
         "pchip": 0.0007402676279583127,
+        "log_pchip": 0.0007668586170607884,
+        "gauss2": 0.0007402676279583127,
+        "gauss3": 0.0007402676279583127,
+        "gauss5": 0.0007402676279583127,
         "natural_cubic": 0.00021535272801036286,
-        "loglog_pchip": 0.0007668586170610345,
-        "gauss_legendre_pchip": 0.0007402676279583127,
-        "chebyshev": 0.07649003871275012
+        "chebyshev": 0.0007402676279580667
+      },
+      "runtime_by_method": {
+        "simpson": {
+          "median_s": 4.670000089390669e-05,
+          "p95_s": 5.081000026621041e-05
+        },
+        "pchip": {
+          "median_s": 0.00011924999944312731,
+          "p95_s": 0.00013637499932883654
+        },
+        "log_pchip": {
+          "median_s": 0.0006244500009415788,
+          "p95_s": 0.0006474750007328112
+        },
+        "gauss2": {
+          "median_s": 0.0005490499997904408,
+          "p95_s": 0.0005744850006522029
+        },
+        "gauss3": {
+          "median_s": 0.0005594000003839028,
+          "p95_s": 0.0005770999989181292
+        },
+        "gauss5": {
+          "median_s": 0.000577799999518902,
+          "p95_s": 0.0005954200007181499
+        },
+        "natural_cubic": {
+          "median_s": 0.00010565000047790818,
+          "p95_s": 0.00011587500002860906
+        },
+        "chebyshev": {
+          "median_s": 0.004707049999524315,
+          "p95_s": 0.004850470000474161
+        }
+      },
+      "interpolation_diagnostics": {
+        "pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "log_pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 1.0348671473476806e-26
+        },
+        "gauss2": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss3": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss5": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "natural_cubic": {
+          "shape_preserving": false,
+          "overshoot_rel": 7.896690300739569e-09
+        },
+        "chebyshev": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "simpson": {
+          "shape_preserving": null,
+          "overshoot_rel": 0.0
+        }
       },
       "reuse": false,
       "failure": null
     },
     {
       "case": "stiff",
-      "runtime_s": 0.0077315999997153995,
+      "runtime_s": 0.006664999998974963,
       "n_freq": 76,
       "DN_gw_solver": 0.01496514967785102,
       "DN_by_method": {
         "simpson": 0.014965149677853841,
         "pchip": 0.014984335009440217,
+        "log_pchip": 0.014967965631472265,
+        "gauss2": 0.014984335009440217,
+        "gauss3": 0.014984335009440223,
+        "gauss5": 0.014984335009440217,
         "natural_cubic": 0.014976511393490323,
-        "loglog_pchip": 0.014967965631472261,
-        "gauss_legendre_pchip": 0.014984335009440223,
-        "chebyshev": 0.0147698581972674
+        "chebyshev": 0.014984335009440217
       },
       "relative_to_simpson": {
         "simpson": 0.0,
         "pchip": 0.0012820006481303351,
+        "log_pchip": 0.000188167420910648,
+        "gauss2": 0.0012820006481303351,
+        "gauss3": 0.001282000648130683,
+        "gauss5": 0.0012820006481303351,
         "natural_cubic": 0.0007592116270842015,
-        "loglog_pchip": 0.00018816742091041618,
-        "gauss_legendre_pchip": 0.001282000648130683,
-        "chebyshev": 0.013049751241408732
+        "chebyshev": 0.0012820006481303351
+      },
+      "runtime_by_method": {
+        "simpson": {
+          "median_s": 4.689999968832126e-05,
+          "p95_s": 5.9164998947380786e-05
+        },
+        "pchip": {
+          "median_s": 0.00011939999967580661,
+          "p95_s": 0.00014753499972357527
+        },
+        "log_pchip": {
+          "median_s": 0.0006301499997789506,
+          "p95_s": 0.0006760200006283412
+        },
+        "gauss2": {
+          "median_s": 0.000548299999536539,
+          "p95_s": 0.0005737400002544746
+        },
+        "gauss3": {
+          "median_s": 0.000559850000172446,
+          "p95_s": 0.0005705699994905444
+        },
+        "gauss5": {
+          "median_s": 0.0005753000004915521,
+          "p95_s": 0.0006120850001025246
+        },
+        "natural_cubic": {
+          "median_s": 0.00010525000016059494,
+          "p95_s": 0.00012015499942208406
+        },
+        "chebyshev": {
+          "median_s": 0.004712099999778729,
+          "p95_s": 0.004821325000648358
+        }
+      },
+      "interpolation_diagnostics": {
+        "pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "log_pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss2": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss3": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss5": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "natural_cubic": {
+          "shape_preserving": false,
+          "overshoot_rel": 3.121834588930506e-07
+        },
+        "chebyshev": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "simpson": {
+          "shape_preserving": null,
+          "overshoot_rel": 0.0
+        }
       },
       "reuse": false,
       "failure": null
     },
     {
       "case": "low_r",
-      "runtime_s": 0.004773399999976391,
+      "runtime_s": 0.004737199998999131,
       "n_freq": 76,
       "DN_gw_solver": 0.00023573443614172436,
       "DN_by_method": {
         "simpson": 0.0002357344361417243,
         "pchip": 0.0002360275180208821,
+        "log_pchip": 0.00023559143132797098,
+        "gauss2": 0.00023602751802088214,
+        "gauss3": 0.0002360275180208821,
+        "gauss5": 0.0002360275180208821,
         "natural_cubic": 0.00023572347539237894,
-        "loglog_pchip": 0.00023559143132797114,
-        "gauss_legendre_pchip": 0.00023602751802088214,
-        "chebyshev": 0.00023397588677778384
+        "chebyshev": 0.00023602751802088206
       },
       "relative_to_simpson": {
         "simpson": 0.0,
         "pchip": 0.0012432713860337688,
+        "log_pchip": 0.0006066352294297188,
+        "gauss2": 0.0012432713860338837,
+        "gauss3": 0.0012432713860337688,
+        "gauss5": 0.0012432713860337688,
         "natural_cubic": 4.649617393520674e-05,
-        "loglog_pchip": 0.000606635229429029,
-        "gauss_legendre_pchip": 0.0012432713860338837,
-        "chebyshev": 0.0074598747332919185
+        "chebyshev": 0.0012432713860335387
+      },
+      "runtime_by_method": {
+        "simpson": {
+          "median_s": 4.710000030172523e-05,
+          "p95_s": 5.137499992997618e-05
+        },
+        "pchip": {
+          "median_s": 0.0001206499991894816,
+          "p95_s": 0.00013619500041386342
+        },
+        "log_pchip": {
+          "median_s": 0.0006240500006242655,
+          "p95_s": 0.0006628650005950476
+        },
+        "gauss2": {
+          "median_s": 0.0005478499997479958,
+          "p95_s": 0.0005971799998405913
+        },
+        "gauss3": {
+          "median_s": 0.0005569000004470581,
+          "p95_s": 0.0005747000002884306
+        },
+        "gauss5": {
+          "median_s": 0.0005760999993071891,
+          "p95_s": 0.0006083549993491033
+        },
+        "natural_cubic": {
+          "median_s": 0.00010559999918768881,
+          "p95_s": 0.00014571499941666837
+        },
+        "chebyshev": {
+          "median_s": 0.004704399999354791,
+          "p95_s": 0.004839125000125932
+        }
+      },
+      "interpolation_diagnostics": {
+        "pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 3.552604128864619e-29
+        },
+        "log_pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 7.105208257729239e-28
+        },
+        "gauss2": {
+          "shape_preserving": true,
+          "overshoot_rel": 3.552604128864619e-29
+        },
+        "gauss3": {
+          "shape_preserving": true,
+          "overshoot_rel": 3.552604128864619e-29
+        },
+        "gauss5": {
+          "shape_preserving": true,
+          "overshoot_rel": 3.552604128864619e-29
+        },
+        "natural_cubic": {
+          "shape_preserving": false,
+          "overshoot_rel": 1.6098847385902414e-07
+        },
+        "chebyshev": {
+          "shape_preserving": true,
+          "overshoot_rel": 3.552604128864619e-29
+        },
+        "simpson": {
+          "shape_preserving": null,
+          "overshoot_rel": 0.0
+        }
       },
       "reuse": false,
       "failure": null
     },
     {
       "case": "high_kappa",
-      "runtime_s": 0.007314799999676325,
+      "runtime_s": 0.0068293999993329635,
       "n_freq": 77,
       "DN_gw_solver": 0.22550806255693834,
       "DN_by_method": {
         "simpson": 0.2255080625569459,
         "pchip": 0.22570645394976802,
+        "log_pchip": 0.2254300244955358,
+        "gauss2": 0.22570645394976802,
+        "gauss3": 0.22570645394976802,
+        "gauss5": 0.225706453949768,
         "natural_cubic": 0.2255668647312127,
-        "loglog_pchip": 0.22543002449553576,
-        "gauss_legendre_pchip": 0.22570645394976802,
-        "chebyshev": 0.2079510213041566
+        "chebyshev": 0.225706453949768
       },
       "relative_to_simpson": {
         "simpson": 0.0,
         "pchip": 0.0008797529922994653,
+        "log_pchip": 0.0003460544182998672,
+        "gauss2": 0.0008797529922994653,
+        "gauss3": 0.0008797529922994653,
+        "gauss5": 0.0008797529922993421,
         "natural_cubic": 0.0002607541992072723,
-        "loglog_pchip": 0.00034605441830011334,
-        "gauss_legendre_pchip": 0.0008797529922994653,
-        "chebyshev": 0.07785549240996975
+        "chebyshev": 0.0008797529922993421
+      },
+      "runtime_by_method": {
+        "simpson": {
+          "median_s": 2.750000021478627e-05,
+          "p95_s": 3.188500077158096e-05
+        },
+        "pchip": {
+          "median_s": 0.00012214999969728524,
+          "p95_s": 0.00013120999974489678
+        },
+        "log_pchip": {
+          "median_s": 0.0006353999997372739,
+          "p95_s": 0.0006672349997643324
+        },
+        "gauss2": {
+          "median_s": 0.0005556499991143937,
+          "p95_s": 0.0005837449996761279
+        },
+        "gauss3": {
+          "median_s": 0.000563749999855645,
+          "p95_s": 0.0005803350003589003
+        },
+        "gauss5": {
+          "median_s": 0.0005813000007037772,
+          "p95_s": 0.0006177600002047256
+        },
+        "natural_cubic": {
+          "median_s": 0.00010394999935670057,
+          "p95_s": 0.00012517000086518235
+        },
+        "chebyshev": {
+          "median_s": 0.004764999999679276,
+          "p95_s": 0.005522860000564833
+        }
+      },
+      "interpolation_diagnostics": {
+        "pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "log_pchip": {
+          "shape_preserving": true,
+          "overshoot_rel": 2.282432410368137e-28
+        },
+        "gauss2": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss3": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "gauss5": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "natural_cubic": {
+          "shape_preserving": false,
+          "overshoot_rel": 0.0010477439166665724
+        },
+        "chebyshev": {
+          "shape_preserving": true,
+          "overshoot_rel": 0.0
+        },
+        "simpson": {
+          "shape_preserving": null,
+          "overshoot_rel": 0.0
+        }
       },
       "reuse": false,
       "failure": null

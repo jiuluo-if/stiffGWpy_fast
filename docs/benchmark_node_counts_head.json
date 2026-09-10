@@ -1,5 +1,5 @@
 {
-  "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",
+  "commit": "bd648fc805c95c641f76d4d8ebfda9f5a2beb56c",
   "threads": 20,
   "affinity": [
     0,
@@ -30,8 +30,42 @@
       "target_n_freq": 76,
       "seed_n": 64,
       "n_freq": 76,
-      "runtime_s": 0.22244199999977354,
+      "runtime_s": 0.22837569999865082,
       "DN_gw": 0.0022626969518100204,
+      "DN_by_method_same_spectrum": {
+        "simpson": 0.0022626969518100616,
+        "pchip": 0.0022636474150856214,
+        "log_pchip": 0.0022607657706572564,
+        "gauss5": 0.0022636474150856214,
+        "natural_cubic": 0.0022620759777915046,
+        "chebyshev": 0.0022636474150856214
+      },
+      "estimator_by_method_same_spectrum": {
+        "simpson": {
+          "sum_rel": 0.0,
+          "max_rel": 0.0
+        },
+        "pchip": {
+          "sum_rel": 0.0031181627786371715,
+          "max_rel": 0.0005615018949436681
+        },
+        "log_pchip": {
+          "sum_rel": 0.003290459781758671,
+          "max_rel": 0.0004523960857378336
+        },
+        "gauss5": {
+          "sum_rel": 0.003118162778637111,
+          "max_rel": 0.0005615018949436681
+        },
+        "natural_cubic": {
+          "sum_rel": 0.0018118044630264123,
+          "max_rel": 0.0003257278479815792
+        },
+        "chebyshev": {
+          "sum_rel": 0.003118162778637155,
+          "max_rel": 0.0005615018949436681
+        }
+      },
       "DN_rel_to_dense_reference": 6.010834149598733e-05,
       "reuse": true,
       "failure": null,
@@ -44,8 +78,42 @@
       "target_n_freq": 80,
       "seed_n": 68,
       "n_freq": 80,
-      "runtime_s": 0.006198000000040338,
+      "runtime_s": 0.005189900000914349,
       "DN_gw": 0.0022615764775845235,
+      "DN_by_method_same_spectrum": {
+        "simpson": 0.0022615764775845643,
+        "pchip": 0.00226306434117032,
+        "log_pchip": 0.0022607744372088604,
+        "gauss5": 0.00226306434117032,
+        "natural_cubic": 0.0022621109288507683,
+        "chebyshev": 0.00226306434117032
+      },
+      "estimator_by_method_same_spectrum": {
+        "simpson": {
+          "sum_rel": 0.0,
+          "max_rel": 0.0
+        },
+        "pchip": {
+          "sum_rel": 0.003796707353149831,
+          "max_rel": 0.0007714520161181134
+        },
+        "log_pchip": {
+          "sum_rel": 0.0030884373728160388,
+          "max_rel": 0.0005699672870503657
+        },
+        "gauss5": {
+          "sum_rel": 0.003796707353149777,
+          "max_rel": 0.0007714520161181019
+        },
+        "natural_cubic": {
+          "sum_rel": 0.0025391178281234344,
+          "max_rel": 0.000555845353282653
+        },
+        "chebyshev": {
+          "sum_rel": 0.0037967073531496166,
+          "max_rel": 0.0007714520161180901
+        }
+      },
       "DN_rel_to_dense_reference": 0.0005552726960301601,
       "reuse": true,
       "failure": null,
@@ -58,8 +126,42 @@
       "target_n_freq": 90,
       "seed_n": 79,
       "n_freq": 90,
-      "runtime_s": 0.006677299999864772,
+      "runtime_s": 0.004932499999995343,
       "DN_gw": 0.0022625154291945385,
+      "DN_by_method_same_spectrum": {
+        "simpson": 0.002262515429194592,
+        "pchip": 0.0022633242091378136,
+        "log_pchip": 0.002260751348693548,
+        "gauss5": 0.0022633242091378136,
+        "natural_cubic": 0.0022621573319452147,
+        "chebyshev": 0.0022633242091378136
+      },
+      "estimator_by_method_same_spectrum": {
+        "simpson": {
+          "sum_rel": 0.0,
+          "max_rel": 0.0
+        },
+        "pchip": {
+          "sum_rel": 0.003465240750167773,
+          "max_rel": 0.0007711318609035915
+        },
+        "log_pchip": {
+          "sum_rel": 0.002704031344337129,
+          "max_rel": 0.0005697307486847336
+        },
+        "gauss5": {
+          "sum_rel": 0.0034652407501677444,
+          "max_rel": 0.0007711318609035799
+        },
+        "natural_cubic": {
+          "sum_rel": 0.002184063176509163,
+          "max_rel": 0.0005556144320777966
+        },
+        "chebyshev": {
+          "sum_rel": 0.003465240750167595,
+          "max_rel": 0.000771131860903568
+        }
+      },
       "DN_rel_to_dense_reference": 0.00014032752609040994,
       "reuse": true,
       "failure": null,
@@ -72,8 +174,42 @@
       "target_n_freq": 110,
       "seed_n": 101,
       "n_freq": 110,
-      "runtime_s": 0.005494900000030611,
+      "runtime_s": 0.005250600001090788,
       "DN_gw": 0.0022623149885474484,
+      "DN_by_method_same_spectrum": {
+        "simpson": 0.0022623149885475052,
+        "pchip": 0.0022625614814249517,
+        "log_pchip": 0.0022607679636847664,
+        "gauss5": 0.0022625614814249513,
+        "natural_cubic": 0.002262248153897276,
+        "chebyshev": 0.0022625614814249513
+      },
+      "estimator_by_method_same_spectrum": {
+        "simpson": {
+          "sum_rel": 0.0,
+          "max_rel": 0.0
+        },
+        "pchip": {
+          "sum_rel": 0.00280206069579522,
+          "max_rel": 0.0005615966974343955
+        },
+        "log_pchip": {
+          "sum_rel": 0.002922376023405179,
+          "max_rel": 0.0004524724670931051
+        },
+        "gauss5": {
+          "sum_rel": 0.002802060695795158,
+          "max_rel": 0.0005615966974343955
+        },
+        "natural_cubic": {
+          "sum_rel": 0.0014375182587024692,
+          "max_rel": 0.0003257827713618874
+        },
+        "chebyshev": {
+          "sum_rel": 0.002802060695795221,
+          "max_rel": 0.0005615966974343955
+        }
+      },
       "DN_rel_to_dense_reference": 0.00022890704124594794,
       "reuse": true,
       "failure": null,

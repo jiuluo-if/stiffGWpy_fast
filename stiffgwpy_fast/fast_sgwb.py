@@ -50,7 +50,7 @@ from threading import RLock
 
 import numpy as np
 from numba import get_num_threads, njit, prange, set_num_threads
-from scipy import interpolate
+from scipy import integrate, interpolate
 
 from . import global_param as gp
 from ._resources import package_path
@@ -61,7 +61,9 @@ __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
            'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES',
            'USER_FAST_PROFILES', 'FAST_PROFILES', 'normalize_accuracy_mode',
            'is_validation_mode', 'MODE_ROLE', 'FastSolverConfig', 'get_config',
-           'resolve_config', 'max_threads']
+           'resolve_config', 'max_threads', 'integrate_frequency_pchip',
+           'integrate_frequency_quadrature',
+           'estimate_frequency_quadrature_local']
 
 # Default OpenMP threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -1144,6 +1146,195 @@ def integrate_frequency_pchip(freqs, integrand):
         raise ValueError('freqs must contain unique nodes')
     return float(interpolate.PchipInterpolator(xa, ya).integrate(xa[0], xa[-1]))
 
+
+def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
+    """Integrate a native spectrum using one of the Q1 audit methods.
+
+    ``log_pchip`` interpolates the logarithm of a positive integrand and
+    integrates the exponentiated interpolant.  The Gauss and Chebyshev
+    variants operate panel-by-panel on the shape-preserving PCHIP.
+    """
+    x = np.asarray(freqs, dtype=np.float64)
+    y = np.asarray(integrand, dtype=np.float64)
+    if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
+        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+    if not np.isfinite(x).all() or not np.isfinite(y).all():
+        raise ValueError('freqs and integrand must be finite')
+    order = np.argsort(x)
+    xa = x[order]
+    ya = y[order]
+    if np.any(np.diff(xa) <= 0.0):
+        raise ValueError('freqs must contain unique nodes')
+    if method == 'simpson':
+        return float(integrate.simpson(ya, x=xa))
+    if method in ('pchip', 'log_pchip'):
+        if method == 'log_pchip':
+            if np.any(ya <= 0.0):
+                raise ValueError('log_pchip requires a positive integrand')
+            spline = interpolate.PchipInterpolator(xa, np.log(ya))
+            nodes, weights = np.polynomial.legendre.leggauss(8)
+            total = 0.0
+            for left, right in zip(xa[:-1], xa[1:]):
+                mid = 0.5 * (left + right)
+                half = 0.5 * (right - left)
+                total += half * np.dot(weights, np.exp(spline(mid + half * nodes)))
+            return float(total)
+        return float(interpolate.PchipInterpolator(xa, ya).integrate(xa[0], xa[-1]))
+    if method.startswith('gauss'):
+        try:
+            order_g = int(method[5:])
+        except ValueError as exc:
+            raise ValueError('unknown frequency quadrature method') from exc
+        if order_g not in (2, 3, 5):
+            raise ValueError('unknown frequency quadrature method')
+        spline = interpolate.PchipInterpolator(xa, ya)
+        nodes, weights = np.polynomial.legendre.leggauss(order_g)
+        total = 0.0
+        for left, right in zip(xa[:-1], xa[1:]):
+            mid = 0.5 * (left + right)
+            half = 0.5 * (right - left)
+            total += half * np.dot(weights, spline(mid + half * nodes))
+        return float(total)
+    if method == 'natural_cubic':
+        return float(interpolate.CubicSpline(xa, ya).integrate(xa[0], xa[-1]))
+    if method == 'chebyshev':
+        nodes = np.cos(np.pi * np.arange(8) / 7.0)
+        total = 0.0
+        spline = interpolate.PchipInterpolator(xa, ya)
+        for left, right in zip(xa[:-1], xa[1:]):
+            mid = 0.5 * (left + right)
+            half = 0.5 * (right - left)
+            values = spline(mid + half * nodes)
+            coeff = np.polynomial.chebyshev.chebfit(nodes, values, 7)
+            anti = np.polynomial.chebyshev.chebint(coeff)
+            total += half * (
+                np.polynomial.chebyshev.chebval(1.0, anti) -
+                np.polynomial.chebyshev.chebval(-1.0, anti))
+        return float(total)
+    raise ValueError('unknown frequency quadrature method')
+
+
+def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
+                                        allocation='weighted'):
+    """Return ``(error, candidate, Simpson)`` contributions per interval.
+
+    The Simpson baseline is assembled from non-overlapping local panels so
+    large positive and negative global weights cannot create a false-safe
+    local budget.  Candidate contributions are integrated on each native
+    interval, so their sum is the selected global candidate integral.
+    ``allocation='weighted'`` distributes a panel error by candidate
+    contribution.  ``allocation='full_panel'`` charges the full panel error
+    to each interval, which is the conservative form intended for interval
+    selection in adaptive diagnostics. ``allocation='panel_envelope'`` also
+    applies a one-panel neighborhood maximum to cover boundary leakage.
+    """
+    if allocation not in ('weighted', 'full_panel', 'panel_envelope'):
+        raise ValueError('unknown local quadrature allocation')
+    x = np.asarray(freqs, dtype=np.float64)
+    y = np.asarray(integrand, dtype=np.float64)
+    if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
+        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+    if not np.isfinite(x).all() or not np.isfinite(y).all():
+        raise ValueError('freqs and integrand must be finite')
+    order = np.argsort(x)
+    xa = x[order]
+    ya = y[order]
+    if np.any(np.diff(xa) <= 0.0):
+        raise ValueError('freqs must contain unique nodes')
+    candidate = np.empty(xa.size - 1, dtype=np.float64)
+    if method == 'simpson':
+        candidate[:] = 0.0
+        candidate[:] = np.diff(xa) * 0.5 * (ya[:-1] + ya[1:])
+    else:
+        spline = None
+        log_spline = None
+        if (method in ('pchip', 'log_pchip', 'natural_cubic', 'chebyshev')
+                or method.startswith('gauss')):
+            if method == 'log_pchip':
+                if np.any(ya <= 0.0):
+                    raise ValueError('log_pchip requires a positive integrand')
+                log_spline = interpolate.PchipInterpolator(xa, np.log(ya))
+            elif method == 'natural_cubic':
+                spline = interpolate.CubicSpline(xa, ya)
+            else:
+                spline = interpolate.PchipInterpolator(xa, ya)
+        if method.startswith('gauss'):
+            try:
+                order_g = int(method[5:])
+            except ValueError as exc:
+                raise ValueError('unknown frequency quadrature method') from exc
+            if order_g not in (2, 3, 5):
+                raise ValueError('unknown frequency quadrature method')
+            nodes, weights = np.polynomial.legendre.leggauss(order_g)
+            for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
+                mid = 0.5 * (left + right)
+                half = 0.5 * (right - left)
+                candidate[i] = half * np.dot(weights, spline(mid + half * nodes))
+        elif method == 'log_pchip':
+            nodes, weights = np.polynomial.legendre.leggauss(8)
+            for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
+                mid = 0.5 * (left + right)
+                half = 0.5 * (right - left)
+                candidate[i] = half * np.dot(
+                    weights, np.exp(log_spline(mid + half * nodes)))
+        elif method == 'chebyshev':
+            nodes = np.cos(np.pi * np.arange(8) / 7.0)
+            for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
+                mid = 0.5 * (left + right)
+                half = 0.5 * (right - left)
+                coeff = np.polynomial.chebyshev.chebfit(
+                    nodes, spline(mid + half * nodes), 7)
+                anti = np.polynomial.chebyshev.chebint(coeff)
+                candidate[i] = half * (
+                    np.polynomial.chebyshev.chebval(1.0, anti) -
+                    np.polynomial.chebyshev.chebval(-1.0, anti))
+        elif method in ('pchip', 'natural_cubic'):
+            for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
+                candidate[i] = float(spline.integrate(left, right))
+        else:
+            raise ValueError('unknown frequency quadrature method')
+    baseline_interval = np.zeros_like(candidate)
+    panel_start = 0
+    while panel_start + 2 < xa.size:
+        panel_end = panel_start + 2
+        panel = float(integrate.simpson(
+            ya[panel_start:panel_end + 1],
+            x=xa[panel_start:panel_end + 1]))
+        baseline_interval[panel_start:panel_end] = 0.5 * panel
+        panel_start += 2
+    if panel_start < candidate.size:
+        baseline_interval[panel_start] = 0.5 * (
+            xa[-1] - xa[-2]) * (ya[-2] + ya[-1])
+    if method == 'simpson':
+        candidate = baseline_interval.copy()
+    local_error = np.zeros_like(candidate)
+    panel_start = 0
+    while panel_start + 1 < candidate.size:
+        panel_end = panel_start + 2
+        panel_candidate = float(np.sum(candidate[panel_start:panel_end]))
+        panel_baseline = float(np.sum(baseline_interval[panel_start:panel_end]))
+        panel_error = abs(panel_candidate - panel_baseline)
+        if allocation in ('full_panel', 'panel_envelope'):
+            local_error[panel_start:panel_end] = panel_error
+        else:
+            share = np.abs(candidate[panel_start:panel_end])
+            share_sum = float(np.sum(share))
+            if share_sum > 0.0:
+                local_error[panel_start:panel_end] = panel_error * share / share_sum
+            else:
+                local_error[panel_start:panel_end] = 0.5 * panel_error
+        panel_start += 2
+    if panel_start < candidate.size:
+        local_error[panel_start] = abs(
+            candidate[panel_start] - baseline_interval[panel_start])
+    if allocation == 'panel_envelope':
+        panel_error = local_error.copy()
+        for i in range(local_error.size):
+            left = max(0, i - 2)
+            right = min(local_error.size, i + 3)
+            local_error[i] = np.max(panel_error[left:right])
+    return local_error, candidate, baseline_interval
+
 @njit(parallel=True, cache=True)
 def int_SGWB_W(Nf, n_coarse, j_hi, Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10v):
     for c in prange(n_coarse):
@@ -1288,8 +1479,11 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         freq_grid = config.freq_grid
     if freq_grid not in ('construct', 'grid_independent', 'adaptive', 'goal'):
         raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % freq_grid)
-    if frequency_quadrature not in ('simpson', 'pchip'):
-        raise ValueError("frequency_quadrature must be 'simpson' or 'pchip'")
+    valid_quadratures = ('simpson', 'pchip', 'log_pchip', 'gauss2',
+                         'gauss3', 'gauss5', 'natural_cubic', 'chebyshev')
+    if frequency_quadrature not in valid_quadratures:
+        raise ValueError('unknown frequency quadrature method: %r' %
+                         (frequency_quadrature,))
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
     converged = False
@@ -1492,15 +1686,15 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                     Oj.fill(0.0)
                     Opgw.fill(0.0)
                 solve_kernel(*solve_args)
-            if frequency_quadrature == 'pchip':
-                g2_last = (integrate_frequency_pchip(
-                    integration_freqs,
-                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1])
-                    ) * ln10)
-            else:
+            if frequency_quadrature == 'simpson':
                 g2_last = np.dot(
                     W_support_last,
                     (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
+            else:
+                g2_last = (integrate_frequency_quadrature(
+                    integration_freqs,
+                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1]),
+                    frequency_quadrature) * ln10)
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
                 m.fast_failure_reason = 'nonfinite'
@@ -1581,15 +1775,15 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     j_hi = np.searchsorted(j0s, idx_out, side='right') - 1
     g2c = np.zeros(n_coarse); w2c = np.zeros(n_coarse)
     int_SGWB_W(Nf, n_coarse, j_hi.astype(np.int64), Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10)
-    if frequency_quadrature == 'pchip':
-        g2c[-1] = (integrate_frequency_pchip(
-            integration_freqs,
-            (Ogw[integration_indices, -1] - Oj[integration_indices, -1])
-            ) * ln10)
-    else:
+    if frequency_quadrature == 'simpson':
         g2c[-1] = np.dot(
             W_support_last,
             (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
+    else:
+        g2c[-1] = (integrate_frequency_quadrature(
+            integration_freqs,
+            (Ogw[integration_indices, -1] - Oj[integration_indices, -1]),
+            frequency_quadrature) * ln10)
     g2_fine = np.empty(nv); w2_fine = np.empty(nv)
     pchip_fine(idx_out.astype(np.float64), g2c, nv, g2_fine)
     pchip_fine(idx_out.astype(np.float64), w2c, nv, w2_fine)
@@ -1613,19 +1807,34 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         _wt[0] = 0.5*_hf[0]; _wt[-1] = 0.5*_hf[-1]
         _wt[1:-1] = 0.5*(_hf[:-1] + _hf[1:])
     _I_trap = float(np.dot(_wt, _support_rev))*ln10
-    if frequency_quadrature == 'pchip':
-        # g2c[-1] was already evaluated with PCHIP above; reuse it instead of
-        # constructing a second interpolant for the telemetry path.
-        _I_candidate = float(g2c[-1])
-        _I_estimate = abs(_I_candidate - _I_simp)
+    if frequency_quadrature != 'simpson':
+        # The interval sum is deliberately conservative: cancellation between
+        # local candidate and Simpson differences is not allowed to hide a
+        # potentially large local quadrature contribution.
+        _local_err, _local_candidate, _local_baseline = (
+            estimate_frequency_quadrature_local(
+                integration_freqs, _support_Om, frequency_quadrature))
+        m.quadrature_error_local_by_interval = _local_err * ln10
+        m.quadrature_error_estimator_method = frequency_quadrature
+        _I_estimate = float(np.sum(_local_err)) * ln10
+        m.quadrature_error_estimator_max_rel = (
+            float(np.max(_local_err)) * ln10 /
+            max(abs(_I_simp), 1e-300))
     else:
+        m.quadrature_error_local_by_interval = np.zeros(
+            integration_freqs.size - 1, dtype=np.float64)
+        m.quadrature_error_estimator_method = 'simpson_trapezoid'
+        m.quadrature_error_estimator_max_rel = 0.0
         # Richardson's Simpson/trapezoid embedded pair is the cheap default
-        # estimator; the opt-in PCHIP path retains the direct pair above.
+        # estimator; it remains unchanged for the formal fast path.
         _I_estimate = abs(_I_simp - _I_trap) / 15.0
     m.estimated_DN_quadrature_error = gp.Neff0 * _I_estimate / Omega_nu
     m.estimated_DN_quadrature_error_rel = (
         _I_estimate / max(abs(_I_simp), 1e-300))
-    m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
+    if frequency_quadrature != 'simpson':
+        m.quadrature_error_local = m.estimated_DN_quadrature_error_rel
+    else:
+        m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
     # Local floating-point/cancellation: Ogw = Oj + remainder near the peak;
     # eps64 * max|Oj|/|Ogw-Oj| bounds the relative subtraction error.
     _num = float(np.max(np.abs(m.Oj_today)/np.maximum(np.abs(_Om), 1e-300)))

@@ -10,7 +10,7 @@ import time
 
 os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
 import numpy as np
-from scipy import integrate, interpolate
+from scipy import interpolate
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -29,66 +29,58 @@ CASES = {
 }
 
 
-def _ascending(freqs, values):
-    order = np.argsort(np.asarray(freqs))
-    return np.asarray(freqs, dtype=float)[order], np.asarray(values, dtype=float)[order]
-
-
-def _pchip(x, y):
-    return interpolate.PchipInterpolator(x, y)
-
-
-def _gauss_integral(x, y):
-    spl = _pchip(x, y)
-    nodes, weights = np.polynomial.legendre.leggauss(8)
-    total = 0.0
-    for left, right in zip(x[:-1], x[1:]):
-        mid = 0.5 * (left + right)
-        half = 0.5 * (right - left)
-        total += half * np.dot(weights, spl(mid + half * nodes))
-    return float(total)
-
-
-def _loglog_pchip_integral(x, y):
-    positive = np.maximum(y, np.finfo(float).tiny)
-    spl = _pchip(x, np.log10(positive))
-    nodes, weights = np.polynomial.legendre.leggauss(8)
-    total = 0.0
-    for left, right in zip(x[:-1], x[1:]):
-        mid = 0.5 * (left + right)
-        half = 0.5 * (right - left)
-        total += half * np.dot(weights, np.power(10.0, spl(mid + half * nodes)))
-    return float(total)
-
-
-def _chebyshev_integral(x, y):
-    lo, hi = float(x[0]), float(x[-1])
-    scaled = 2.0 * (x - lo) / (hi - lo) - 1.0
-    degree = min(20, x.size - 1)
-    coeff = np.polynomial.chebyshev.chebfit(scaled, y, degree)
-    anti = np.polynomial.chebyshev.chebint(coeff)
-    return float((hi - lo) * 0.5 *
-                 (np.polynomial.chebyshev.chebval(1.0, anti) -
-                  np.polynomial.chebyshev.chebval(-1.0, anti)))
-
-
 def integrals(freqs, omega):
-    x, y = _ascending(freqs, omega)
-    methods = {
-        'simpson': float(integrate.simpson(y, x=x)),
-        'pchip': float(_pchip(x, y).integrate(x[0], x[-1])),
-        'natural_cubic': float(interpolate.CubicSpline(x, y).integrate(x[0], x[-1])),
-        'loglog_pchip': _loglog_pchip_integral(x, y),
-        'gauss_legendre_pchip': _gauss_integral(x, y),
-        'chebyshev': _chebyshev_integral(x, y),
+    methods = ('simpson', 'pchip', 'log_pchip', 'gauss2', 'gauss3',
+               'gauss5', 'natural_cubic', 'chebyshev')
+    return {
+        method: FS.integrate_frequency_quadrature(freqs, omega, method)
+        for method in methods
     }
-    return methods
+
+
+def interpolation_diagnostics(freqs, omega):
+    x, y = np.asarray(freqs)[np.argsort(freqs)], np.asarray(omega)[np.argsort(freqs)]
+    dense = np.linspace(x[0], x[-1], max(256, 4 * x.size))
+    diagnostics = {}
+    for method in ('pchip', 'log_pchip', 'gauss2', 'gauss3', 'gauss5',
+                   'natural_cubic', 'chebyshev'):
+        if method == 'natural_cubic':
+            spline = interpolate.CubicSpline(x, y)
+            values = spline(dense)
+        elif method == 'log_pchip':
+            if np.any(y <= 0.0):
+                diagnostics[method] = {'monotone': None, 'overshoot_rel': None}
+                continue
+            spline = interpolate.PchipInterpolator(x, np.log(y))
+            values = np.exp(spline(dense))
+        else:
+            spline = interpolate.PchipInterpolator(x, y)
+            values = spline(dense)
+        interval_points = np.linspace(0.0, 1.0, 9)
+        shape_preserving = True
+        for left, right, y0, y1 in zip(x[:-1], x[1:], y[:-1], y[1:]):
+            segment = spline(left + (right - left) * interval_points)
+            tolerance = 1e-12 * max(1.0, abs(y0), abs(y1))
+            if y1 >= y0:
+                shape_preserving &= bool(np.all(np.diff(segment) >= -tolerance))
+            else:
+                shape_preserving &= bool(np.all(np.diff(segment) <= tolerance))
+        scale = max(float(np.max(np.abs(y))), np.finfo(float).tiny)
+        overshoot = max(0.0, float(np.max(values) - np.max(y)),
+                        float(np.min(y) - np.min(values))) / scale
+        diagnostics[method] = {
+            'shape_preserving': bool(shape_preserving),
+            'overshoot_rel': overshoot,
+        }
+    diagnostics['simpson'] = {'shape_preserving': None, 'overshoot_rel': 0.0}
+    return diagnostics
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--threads', type=int, default=20)
     ap.add_argument('--affinity-count', type=int, default=20)
+    ap.add_argument('--reps', type=int, default=50)
     ap.add_argument('--out', default='docs/frequency_quadrature_methods_head.json')
     args = ap.parse_args()
     os.environ['FAST_THREADS'] = str(args.threads)
@@ -108,6 +100,17 @@ def main():
         runtime_s = time.perf_counter() - start
         omega = model.Ogw_today - model.Oj_today
         values = integrals(model.f, omega)
+        runtime_by_method = {}
+        for method in values:
+            samples = []
+            for _ in range(args.reps):
+                start_method = time.perf_counter()
+                FS.integrate_frequency_quadrature(model.f, omega, method)
+                samples.append(time.perf_counter() - start_method)
+            runtime_by_method[method] = {
+                'median_s': float(np.median(samples)),
+                'p95_s': float(np.percentile(samples, 95)),
+            }
         omega_nu = gp.Omega_nh2 / model.derived_param['h']**2
         dn = {key: float(gp.Neff0 * FS.ln10 * value / omega_nu)
               for key, value in values.items()}
@@ -120,6 +123,8 @@ def main():
             'DN_by_method': dn,
             'relative_to_simpson': {key: abs(value - simpson) / abs(simpson)
                                     for key, value in dn.items()},
+            'runtime_by_method': runtime_by_method,
+            'interpolation_diagnostics': interpolation_diagnostics(model.f, omega),
             'reuse': bool(getattr(model, 'outer_full_reuse_used', False)),
             'failure': getattr(model, 'fast_failure_reason', None),
         })

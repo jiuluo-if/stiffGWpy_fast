@@ -49,12 +49,34 @@ def main():
             FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal')
             elapsed = time.perf_counter() - start
             dn = float(model.DN_gw[-1])
+            omega_nu = FS.gp.Omega_nh2 / model.derived_param['h']**2
+            integrand = model.Ogw_today - model.Oj_today
+            methods = ('simpson', 'pchip', 'log_pchip', 'gauss5',
+                       'natural_cubic', 'chebyshev')
+            dn_by_method = {
+                method: float(FS.gp.Neff0 * FS.ln10 *
+                              FS.integrate_frequency_quadrature(
+                                  model.f, integrand, method) / omega_nu)
+                for method in methods
+            }
+            estimator_by_method = {}
+            for method in methods:
+                errors, _, _ = FS.estimate_frequency_quadrature_local(
+                    model.f, integrand, method)
+                scale = max(abs(FS.integrate_frequency_quadrature(
+                    model.f, integrand, 'simpson')), 1e-300)
+                estimator_by_method[method] = {
+                    'sum_rel': float(np.sum(errors) / scale),
+                    'max_rel': float(np.max(errors) / scale),
+                }
             rows.append({
                 'target_n_freq': target,
                 'seed_n': seed,
                 'n_freq': int(model.f.size),
                 'runtime_s': elapsed,
                 'DN_gw': dn,
+                'DN_by_method_same_spectrum': dn_by_method,
+                'estimator_by_method_same_spectrum': estimator_by_method,
                 'DN_rel_to_dense_reference': abs(dn - REFERENCE_DN) / REFERENCE_DN,
                 'reuse': bool(getattr(model, 'outer_full_reuse_used', False)),
                 'failure': getattr(model, 'fast_failure_reason', None),

@@ -55,6 +55,135 @@ def test_pchip_frequency_integral_handles_descending_native_grid():
     assert FS.integrate_frequency_pchip(freqs, integrand) == pytest.approx(2.0)
 
 
+def test_frequency_quadrature_methods_cover_q1_candidates():
+    """Q1 methods integrate a quadratic spectrum on descending nodes."""
+    freqs = np.array([1.0, 0.75, 0.5, 0.25, 0.0])
+    integrand = freqs**2 + 2.0 * freqs + 1.0
+    expected = 7.0 / 3.0
+    methods = (
+        'simpson', 'pchip', 'log_pchip', 'gauss2', 'gauss3', 'gauss5',
+        'natural_cubic', 'chebyshev',
+    )
+    values = {
+        method: FS.integrate_frequency_quadrature(freqs, integrand, method)
+        for method in methods
+    }
+    assert values['simpson'] == pytest.approx(expected)
+    assert values['pchip'] == pytest.approx(expected)
+    assert values['gauss5'] == pytest.approx(expected, rel=1e-12)
+    assert values['natural_cubic'] == pytest.approx(expected, rel=1e-12)
+    assert values['chebyshev'] == pytest.approx(expected, rel=1e-12)
+    assert all(np.isfinite(value) for value in values.values())
+
+
+def test_frequency_quadrature_rejects_unknown_method():
+    with pytest.raises(ValueError, match='unknown frequency quadrature'):
+        FS.integrate_frequency_quadrature(
+            np.array([0.0, 1.0]), np.array([1.0, 2.0]), 'unknown')
+
+
+def test_local_frequency_quadrature_estimator_returns_interval_budget():
+    freqs = np.array([0.0, 0.2, 0.55, 1.0, 1.6, 2.0])
+    integrand = np.exp(-freqs) * (1.0 + 0.2 * np.sin(3.0 * freqs))
+    errors, candidate, baseline = FS.estimate_frequency_quadrature_local(
+        freqs, integrand, 'pchip')
+    assert errors.shape == (freqs.size - 1,)
+    assert candidate.shape == errors.shape
+    assert baseline.shape == errors.shape
+    assert np.all(errors >= 0.0)
+    assert np.sum(candidate) == pytest.approx(
+        FS.integrate_frequency_quadrature(freqs, integrand, 'pchip'))
+    assert np.all(np.isfinite(baseline))
+    assert np.any(errors > 0.0)
+
+
+def test_local_frequency_quadrature_supports_chebyshev_candidate():
+    freqs = np.linspace(0.0, 1.0, 7)
+    integrand = 1.0 + freqs**2
+    errors, candidate, baseline = FS.estimate_frequency_quadrature_local(
+        freqs, integrand, 'chebyshev')
+    assert np.all(np.isfinite(errors))
+    assert np.sum(candidate) == pytest.approx(
+        FS.integrate_frequency_quadrature(freqs, integrand, 'chebyshev'))
+    assert np.sum(baseline) == pytest.approx(
+        FS.integrate_frequency_quadrature(freqs, integrand, 'simpson'))
+
+
+def test_local_frequency_quadrature_full_panel_allocation_is_conservative():
+    freqs = np.array([0.0, 0.2, 0.55, 1.0, 1.6, 2.0])
+    integrand = np.exp(-freqs) * (1.0 + 0.2 * np.sin(3.0 * freqs))
+    errors, candidate, baseline = FS.estimate_frequency_quadrature_local(
+        freqs, integrand, 'pchip', allocation='full_panel')
+    for start in range(0, errors.size - 1, 2):
+        expected = abs(np.sum(candidate[start:start + 2]) -
+                       np.sum(baseline[start:start + 2]))
+        assert errors[start] == pytest.approx(expected)
+        assert errors[start + 1] == pytest.approx(expected)
+
+
+def test_local_frequency_quadrature_panel_envelope_dominates_full_panel():
+    freqs = np.linspace(0.0, 1.0, 9)
+    integrand = 1.0 + freqs**4
+    full, _, _ = FS.estimate_frequency_quadrature_local(
+        freqs, integrand, 'pchip', allocation='full_panel')
+    envelope, _, _ = FS.estimate_frequency_quadrature_local(
+        freqs, integrand, 'pchip', allocation='panel_envelope')
+    assert np.all(envelope >= full)
+
+
+def test_estimator_coverage_summary_reports_quantile_calibration():
+    from scripts.benchmark_quadrature_estimator_coverage import (
+        summarize_estimator_coverage)
+
+    rows = [
+        {'predicted_rel': 2.0, 'actual_rel': 1.0},
+        {'predicted_rel': 1.0, 'actual_rel': 2.0},
+        {'predicted_rel': 4.0, 'actual_rel': 1.0},
+    ]
+    summary = summarize_estimator_coverage(rows, 'test')
+    assert summary['n'] == 3
+    assert summary['false_safe'] == 1
+    assert summary['coverage'] == pytest.approx(2.0 / 3.0)
+    assert summary['actual_over_prediction_p95'] > 1.0
+
+
+def test_fixed_spectrum_dense_reference_is_interval_local():
+    from scripts.benchmark_quadrature_estimator_coverage import (
+        fixed_spectrum_dense_reference)
+
+    freqs = np.array([0.0, 0.25, 0.8, 1.5])
+    integrand = 1.0 + 2.0 * freqs
+    local = fixed_spectrum_dense_reference(freqs, integrand, subdivisions=32)
+    expected = ((freqs[1:] - freqs[:-1]) +
+                (freqs[1:]**2 - freqs[:-1]**2))
+    assert local.shape == (freqs.size - 1,)
+    assert np.allclose(local, expected, rtol=1e-10, atol=1e-12)
+
+
+def test_quadrature_coverage_includes_gauss_estimators():
+    from scripts.benchmark_quadrature_estimator_coverage import (
+        ESTIMATOR_METHODS)
+
+    assert ESTIMATOR_METHODS == ('pchip', 'gauss2', 'gauss3', 'gauss5')
+
+
+def test_ensemble_local_error_is_pointwise_maximum():
+    from scripts.benchmark_same_grid_reference import ensemble_local_error
+
+    values = [np.array([1.0, 4.0, 2.0]), np.array([3.0, 1.0, 5.0])]
+    assert np.array_equal(ensemble_local_error(values),
+                          np.array([3.0, 4.0, 5.0]))
+
+
+def test_positive_tilt_benchmark_disables_consistency_relation():
+    from scripts.benchmark_same_grid_reference import CASES
+
+    positive = CASES['positive_tilt']
+    assert positive['cr'] == 0
+    assert positive['n_t'] > 0.0
+    assert 'DN_re' in positive
+
+
 def test_pchip_frequency_quadrature_is_opt_in():
     """PCHIP DN quadrature is explicit and leaves the default path unchanged."""
     cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
@@ -71,6 +200,23 @@ def test_pchip_frequency_quadrature_is_opt_in():
     assert m.DN_gw[-1] == pytest.approx(expected, rel=1e-12)
     assert m.estimated_DN_quadrature_error > 0.0
     assert m.estimated_DN_quadrature_error_rel > 0.0
+    assert m.quadrature_error_estimator_method == 'pchip'
+    assert m.quadrature_error_local_by_interval.shape == (m.f.size - 1,)
+    assert np.all(m.quadrature_error_local_by_interval >= 0.0)
+    assert m.quadrature_error_local == pytest.approx(
+        m.estimated_DN_quadrature_error_rel)
+    assert m.quadrature_error_estimator_max_rel > 0.0
+
+
+def test_gauss_frequency_quadrature_is_available_in_solver():
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='goal', threads=1,
+                              kink_split=True)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg,
+                             frequency_quadrature='gauss3') is m
+    assert m.frequency_quadrature_used == 'gauss3'
+    assert np.isfinite(m.DN_gw[-1])
 
 
 def test_r_le_zero_returns_none(model):
