@@ -1301,6 +1301,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     freqs = None; Nf = 0; nv = 0; Nv = None
     idx_out = None; n_coarse = 0
     ev_minus = P_t = fp_freq = Wmat = W_last = None
+    integration_freqs = integration_indices = W_support_last = None
     Ogw = Oj = Opgw = None
     adaptive_grid = None
     adaptive_done = freq_grid != 'adaptive'
@@ -1348,21 +1349,27 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                         <= _OUTER_FULL_REUSE_FHOR_TOL)
                 outer_sigma_prev = m.sigma.copy()
                 outer_f_hor_prev = m.f_hor.copy()
+            support_grid = None
             if freq_grid == 'grid_independent':
                 from .freq_adaptive import grid_independent_freqs
                 m.f = grid_independent_freqs(m, freq_res)[0]
+                support_grid = np.asarray(m.f, dtype=float)
             elif freq_grid == 'adaptive':
                 from .freq_adaptive import grid_independent_freqs
                 if adaptive_grid is None:
                     adaptive_grid = grid_independent_freqs(m, freq_res)[0]
                 m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
+                support_grid = np.asarray(m.f, dtype=float)
             elif freq_grid == 'goal':
                 from .freq_adaptive import goal_oriented_freqs
-                m.f = goal_oriented_freqs(m, freq_res, seed_n=64,
-                                          max_points=120, eval_freqs=eval_freqs)
+                support_grid = goal_oriented_freqs(
+                    m, freq_res, seed_n=64, max_points=120, eval_freqs=None)
+                m.f = support_grid
             else:
                 m.construct_f(freq_res)
-            if eval_freqs is not None and freq_grid in ('grid_independent', 'adaptive'):
+            if support_grid is None:
+                support_grid = np.asarray(m.f, dtype=float)
+            if eval_freqs is not None and freq_grid in ('goal', 'grid_independent', 'adaptive'):
                 ef = np.asarray(eval_freqs, dtype=float)
                 fmin_g, fmax_g = float(np.min(m.f)), float(np.max(m.f))
                 ef = ef[(ef >= fmin_g) & (ef <= fmax_g)]
@@ -1381,6 +1388,13 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 Nf = len(freqs_new); nv = nv_new
                 freqs = freqs_new
                 Nv = m.Nv.astype(np.float64)
+                integration_freqs = np.asarray(support_grid, dtype=np.float64)
+                integration_indices = np.searchsorted(
+                    -freqs, -integration_freqs).astype(np.int64)
+                if (integration_indices.size != integration_freqs.size
+                        or not np.allclose(freqs[integration_indices], integration_freqs,
+                                           rtol=0.0, atol=1e-12)):
+                    raise RuntimeError('integration support grid is not native')
                 ev_minus = np.exp(-Nv)
                 idx_out = np.unique(np.append(np.arange(0, nv, col_step), nv-1))
                 n_coarse = len(idx_out)
@@ -1391,6 +1405,11 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 build_Wmat(Nf, Xf, hf, Wmat)
                 Wmat = np.ascontiguousarray(Wmat)
                 W_last = Wmat[Nf-1].copy()
+                Ns = integration_freqs.size
+                Xs = np.flip(integration_freqs)
+                Ws = np.zeros((Ns, Ns))
+                build_Wmat(Ns, Xs, np.diff(Xs), Ws)
+                W_support_last = Ws[Ns-1].copy()
                 Ogw = Oj = Opgw = None
             first = False
             if kink_split:
@@ -1475,9 +1494,13 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 solve_kernel(*solve_args)
             if frequency_quadrature == 'pchip':
                 g2_last = (integrate_frequency_pchip(
-                    freqs, Ogw[:, -1] - Oj[:, -1]) * ln10)
+                    integration_freqs,
+                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1])
+                    ) * ln10)
             else:
-                g2_last = np.dot(W_last, (Ogw[:, -1] - Oj[:, -1])[::-1]) * ln10
+                g2_last = np.dot(
+                    W_support_last,
+                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
                 m.fast_failure_reason = 'nonfinite'
@@ -1560,7 +1583,13 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     int_SGWB_W(Nf, n_coarse, j_hi.astype(np.int64), Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10)
     if frequency_quadrature == 'pchip':
         g2c[-1] = (integrate_frequency_pchip(
-            freqs, Ogw[:, -1] - Oj[:, -1]) * ln10)
+            integration_freqs,
+            (Ogw[integration_indices, -1] - Oj[integration_indices, -1])
+            ) * ln10)
+    else:
+        g2c[-1] = np.dot(
+            W_support_last,
+            (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
     g2_fine = np.empty(nv); w2_fine = np.empty(nv)
     pchip_fine(idx_out.astype(np.float64), g2c, nv, g2_fine)
     pchip_fine(idx_out.astype(np.float64), w2c, nv, w2_fine)
@@ -1573,16 +1602,23 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     # Simpson-vs-trapezoid difference on the final frequency grid,
     # |I_simp - I_trap|/15 (standard result for a smooth integrand).
     _Om = m.Ogw_today - m.Oj_today
-    _rev = _Om[::-1]
-    _hf = np.diff(np.flip(freqs))
-    _wt = np.empty(Nf)
-    if Nf == 2:
+    _support_Om = _Om[integration_indices]
+    _support_rev = _support_Om[::-1]
+    _I_simp = float(np.dot(W_support_last, _support_rev))*ln10
+    _I_pchip = float(integrate_frequency_pchip(
+        integration_freqs, _support_Om)*ln10)
+    m.estimated_DN_quadrature_error = (
+        gp.Neff0 * abs(_I_pchip - _I_simp) / Omega_nu)
+    m.estimated_DN_quadrature_error_rel = (
+        abs(_I_pchip - _I_simp) / max(abs(_I_simp), 1e-300))
+    _hf = np.diff(np.flip(integration_freqs))
+    _wt = np.empty(integration_freqs.size)
+    if integration_freqs.size == 2:
         _wt[0] = 0.5*_hf[0]; _wt[1] = 0.5*_hf[0]
     else:
         _wt[0] = 0.5*_hf[0]; _wt[-1] = 0.5*_hf[-1]
         _wt[1:-1] = 0.5*(_hf[:-1] + _hf[1:])
-    _I_simp = float(np.dot(W_last, _rev))*ln10
-    _I_trap = float(np.dot(_wt, _rev))*ln10
+    _I_trap = float(np.dot(_wt, _support_rev))*ln10
     m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
     # Local floating-point/cancellation: Ogw = Oj + remainder near the peak;
     # eps64 * max|Oj|/|Ogw-Oj| bounds the relative subtraction error.
