@@ -73,6 +73,7 @@
 | `python scripts/benchmark_eval_invariant.py` | 六点 eval-only native-node invariant | 4 个 eval nodes 加入后六点 `DN_gw` delta 全为 0；无 numerical failure | PASS |
 | `python scripts/benchmark_node_counts.py` | exact 76/80/90/110-node sweep | DN 相对 dense reference `6.01e-5/5.55e-4/1.40e-4/2.29e-4`；收敛非单调；无 numerical failure | PASS / REJECTED FOR PROMOTION |
 | focused tests for embedded telemetry and eval invariant | production behavior guard | `2 passed` | PASS |
+| final-H HEAD artifact regeneration | release evidence freshness | quadrature/seed/refinement/eval/node artifacts regenerated from `9bb2697`; same-grid reference regenerated with same source HEAD | PASS / DELIVERY PENDING |
 
 ### Errors
 

@@ -85,6 +85,7 @@
 - exact 76/80/90/110-node sweep（default，20 threads、workqueue）仍显示 blind seed 增加不具单调收敛性：相对 dense reference 的 DN 误差为 `6.01e-5/5.55e-4/1.40e-4/2.29e-4`，对应 76/80/90/110；因此当前目标网格尚不能宣称通过 `<2e-4` 的单调收敛门槛。
 - fast solver 现在记录 `estimated_DN_quadrature_error` 与相对估计，采用同一 support grid 上 Simpson-PCHIP embedded pair；该估计只作为 telemetry，不改变默认 Simpson 或频率节点。它为后续 estimator coverage 提供了可观测字段。
 - final HEAD `260b818` 的 25-repeat standardized matrix（20 threads/workqueue/CPU 0-19）在 telemetry 与 support/eval 分离后，default warm median/p95 为 `4.610/5.058 ms`，仍未达到 `<4 ms`；low-T/high-T/stiff/low-r/high-kappa warm median 为 `4.755/6.819/7.019/4.311/6.762 ms`。去除重复 support 权重构造的 A/B 未获得 >5% 稳定收益，已拒绝。
+- 在 release code HEAD `9bb2697` 重新生成的 25-repeat 矩阵受机器瞬时波动影响，default warm median/p95 为 `5.361/5.734 ms`，其余五点为 `4.887/7.279/7.538/4.590/7.276 ms`；与前次同口径结果方向一致：没有稳定达到 `<4 ms`，因此不接受速度候选。该结果不改变 DN、failure 或 quadrature 结论。
 
 ## Technical Decisions
 
