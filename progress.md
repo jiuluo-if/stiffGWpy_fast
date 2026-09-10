@@ -77,6 +77,7 @@
 | `python scripts/benchmark_fast_stability.py` | fast-only named + Sobol stability screen | 24 points；0 numerical failure；3 explicit `shared_Neff_guard`；embedded estimator telemetry recorded | PASS / DIAGNOSTIC |
 | `python scripts/benchmark_same_grid_reference.py --point lowT/highT` | fresh same-grid oracle for parameter dependence | low-T PCHIP `1.826e-4`；high-T PCHIP `2.932e-4`；PCHIP not globally promoted | PASS / DIAGNOSTIC |
 | final default telemetry 50-repeat profiler | remove default PCHIP construction | warm median `4.976 -> 4.544 ms` (`8.7%`), digest unchanged | PASS / ACCEPTED |
+| `python scripts/build_two_mode_manifest.py; python scripts/validate_manifest.py` | estimator coverage replay | Simpson coverage `0/6`、PCHIP coverage `6/6`；release gate `NOT VERIFIED`；manifest validation OK | PASS / NOT VERIFIED |
 
 ### Errors
 

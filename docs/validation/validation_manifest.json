@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "commit": "eb1addf8b3f0014aa3dd846e34be79dd9846b266",
+  "commit": "8883183358604787d421eacf2bfe5c328c021f0c",
   "date": "2026-09-10",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
@@ -1055,6 +1055,62 @@
         "max": 0.0026370293860353174,
         "mean": 0.0017498736689658377,
         "n": 6
+      },
+      "estimator_coverage": {
+        "definition": "predicted relative DN error from the fast telemetry compared with same-grid independent reference error",
+        "rows": [
+          {
+            "case": "default",
+            "predicted_rel": 0.0003413361348076406,
+            "actual_simpson_rel": 0.0007139896728238829,
+            "actual_pchip_rel": 0.00029423189048483165,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "lowT",
+            "predicted_rel": 0.0021794878264128877,
+            "actual_simpson_rel": 0.012406735284155588,
+            "actual_pchip_rel": 0.0001825934825874975,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "highT",
+            "predicted_rel": 0.00045783817198152864,
+            "actual_simpson_rel": 0.0010326568852573072,
+            "actual_pchip_rel": 0.00029315369976181576,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "stiff",
+            "predicted_rel": 0.0003799431737964199,
+            "actual_simpson_rel": 0.0015764501687395656,
+            "actual_pchip_rel": 0.00029647053074729985,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "low_r",
+            "predicted_rel": 0.00045940534291067633,
+            "actual_simpson_rel": 0.0015355722612751296,
+            "actual_pchip_rel": 0.0002942100082952213,
+            "covers_simpson": false,
+            "covers_pchip": true
+          },
+          {
+            "case": "high_kappa",
+            "predicted_rel": 0.0003402458947672785,
+            "actual_simpson_rel": 0.0011720273455624668,
+            "actual_pchip_rel": 0.0002933054478274401,
+            "covers_simpson": false,
+            "covers_pchip": true
+          }
+        ],
+        "simpson_coverage_all": false,
+        "pchip_coverage_all": true,
+        "release_gate": "NOT VERIFIED"
       },
       "node_count_sweep": {
         "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",

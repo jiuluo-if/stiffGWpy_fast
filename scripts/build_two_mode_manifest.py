@@ -70,6 +70,24 @@ def _current_fast_audit():
     same_grid_names = ('default', 'lowT', 'highT', 'stiff', 'low_r', 'high_kappa')
     same_grid = [_load_json(D('frequency_same_grid_reference_%s.json' % name))
                  for name in same_grid_names]
+    stability_by_label = {
+        row.get('label'): row for row in stability.get('rows', [])}
+    estimator_rows = []
+    for name, ref in zip(same_grid_names, same_grid):
+        predicted = (stability_by_label.get(name) or {}).get(
+            'estimated_DN_quadrature_error_rel')
+        actual_simpson = ref['dn_relative_error']['simpson']
+        actual_pchip = ref['dn_relative_error']['pchip']
+        estimator_rows.append({
+            'case': name,
+            'predicted_rel': predicted,
+            'actual_simpson_rel': actual_simpson,
+            'actual_pchip_rel': actual_pchip,
+            'covers_simpson': (predicted is not None and
+                               predicted >= actual_simpson),
+            'covers_pchip': (predicted is not None and
+                             predicted >= actual_pchip),
+        })
     return {
         'profile': 'fast',
         'config': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
@@ -100,6 +118,15 @@ def _current_fast_audit():
                 [x['dn_relative_error']['pchip'] for x in same_grid]),
             'same_grid_spectrum_rel_p95': _agg(
                 [x['spectrum_relative_error']['simpson_p95'] for x in same_grid]),
+            'estimator_coverage': {
+                'definition': ('predicted relative DN error from the fast '
+                               'telemetry compared with same-grid independent '
+                               'reference error'),
+                'rows': estimator_rows,
+                'simpson_coverage_all': all(x['covers_simpson'] for x in estimator_rows),
+                'pchip_coverage_all': all(x['covers_pchip'] for x in estimator_rows),
+                'release_gate': 'NOT VERIFIED',
+            },
             'node_count_sweep': nodes,
             'stability': {
                 'n_points': stability.get('n_points'),
