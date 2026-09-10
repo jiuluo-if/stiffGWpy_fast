@@ -9,6 +9,9 @@
   for frequency quadrature, node-count convergence, runtime, and fast-only
   stability. PCHIP and DN-driven refinement remain opt-in/rejected where the
   oracle evidence is not sufficient.
+- Refreshed the release evidence for outer-reuse safety and recorded the
+  rejected 89-node/PCHIP candidate; the manifest remains explicitly
+  `PARTIALLY VERIFIED` because the DN and stable-runtime gates are not met.
 
 ## 0.2.1 — 2026-09-04
 
