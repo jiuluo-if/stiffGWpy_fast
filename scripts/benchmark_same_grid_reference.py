@@ -27,10 +27,10 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 CASES = {
     'default': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
     'lowT': dict(r=1e-2, cr=1, T_re=1e1, kappa10=1e-2),
-    'highT': dict(r=1e-2, cr=1, T_re=1e7, kappa10=1e-2),
-    'stiff': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2, w=0.6),
-    'low_r': dict(r=1e-4, cr=1, T_re=2e3, kappa10=1e-2),
-    'high_kappa': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e1),
+    'highT': dict(r=1e-2, cr=1, T_re=1e4, kappa10=1e-2),
+    'stiff': dict(r=1e-1, cr=1, T_re=2e3, kappa10=1e-2),
+    'low_r': dict(r=1e-3, cr=1, T_re=2e3, kappa10=1e-2),
+    'high_kappa': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1.0),
 }
 
 

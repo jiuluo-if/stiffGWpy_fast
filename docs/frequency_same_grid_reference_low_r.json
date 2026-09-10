@@ -1,0 +1,27 @@
+{
+  "point": "low_r",
+  "kw": {
+    "r": 0.001,
+    "cr": 1,
+    "T_re": 2000.0,
+    "kappa10": 0.01
+  },
+  "n_freq": 76,
+  "dn_eff": 0.00023573443614172436,
+  "used_tail_fraction": 0.881578947368421,
+  "fast_runtime_s": 0.21690459999990708,
+  "reference_runtime_s": 101.46599329999981,
+  "fast_simpson_dn": 0.00023573443614172436,
+  "fast_pchip_dn": 0.0002360275180208821,
+  "reference_pchip_dn_same_grid": 0.00023609698011536033,
+  "reference_quadrature_error": 3.248241145533977e-23,
+  "reference_interpolation_error": 1.5763667872839906e-11,
+  "dn_relative_error": {
+    "simpson": 0.0015355722612751296,
+    "pchip": 0.0002942100082952213
+  },
+  "spectrum_relative_error": {
+    "simpson_max": 0.005405416662387529,
+    "simpson_p95": 0.0025245240861988443
+  }
+}

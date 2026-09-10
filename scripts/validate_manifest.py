@@ -61,6 +61,16 @@ def validate_manifest(manifest):
         if not isinstance(profile.get("accuracy"), dict):
             raise ValueError("%s accuracy section is required" % key)
 
+    current = manifest.get("fast_current_audit")
+    if not isinstance(current, dict) or current.get("profile") != "fast":
+        raise ValueError("fast_current_audit is required for the active fast profile")
+    if current.get("status") not in STATUSES:
+        raise ValueError("fast_current_audit has an invalid status")
+    if not isinstance(current.get("source_commits"), list) or not current["source_commits"]:
+        raise ValueError("fast_current_audit source_commits is required")
+    if not isinstance(current.get("accuracy"), dict):
+        raise ValueError("fast_current_audit accuracy section is required")
+
     return True
 
 

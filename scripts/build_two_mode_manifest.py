@@ -61,6 +61,63 @@ def _agg(values):
                 max=float(np.max(a)), mean=float(np.mean(a)), n=int(a.size))
 
 
+def _current_fast_audit():
+    """Summarize the current formal-fast evidence without rerunning physics."""
+    matrix = _load_json(D('benchmark_head_matrix.json'))
+    stability = _load_json(D('benchmark_fast_stability_head.json'))
+    nodes = _load_json(D('benchmark_node_counts_head.json'))
+    invariant = _load_json(D('benchmark_eval_invariant_head.json'))
+    same_grid_names = ('default', 'lowT', 'highT', 'stiff', 'low_r', 'high_kappa')
+    same_grid = [_load_json(D('frequency_same_grid_reference_%s.json' % name))
+                 for name in same_grid_names]
+    return {
+        'profile': 'fast',
+        'config': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
+                       transition_refine=False, phase_max=0.25,
+                       freq_grid='goal', outer_tol=1e-4,
+                       kink_split=True),
+        'definition': ('current formal fast path; this section is the active '
+                       'HEAD audit, while the legacy profiles below are retained '
+                       'for historical compatibility'),
+        'source_commits': sorted({x.get('commit') for x in
+                                  [matrix, stability, nodes, invariant, *same_grid]
+                                  if x.get('commit')}),
+        'runtime': {
+            'threads': matrix.get('threads'),
+            'affinity': matrix.get('affinity'),
+            'threading_layer': matrix.get('threading_layer'),
+            'repeats': matrix.get('repeats'),
+            'cases': {r['case']: {
+                'cold_ms': r.get('cold_ms'),
+                'warm_median_ms': r.get('warm_median_ms'),
+                'warm_p95_ms': r.get('warm_p95_ms'),
+            } for r in matrix.get('rows', [])},
+        },
+        'accuracy': {
+            'same_grid_dn_rel_simpson': _agg(
+                [x['dn_relative_error']['simpson'] for x in same_grid]),
+            'same_grid_dn_rel_pchip': _agg(
+                [x['dn_relative_error']['pchip'] for x in same_grid]),
+            'same_grid_spectrum_rel_p95': _agg(
+                [x['spectrum_relative_error']['simpson_p95'] for x in same_grid]),
+            'node_count_sweep': nodes,
+            'stability': {
+                'n_points': stability.get('n_points'),
+                'failure_count': stability.get('failure_count'),
+                'guard_count': stability.get('guard_count'),
+            },
+            'eval_freqs_invariant': invariant,
+        },
+        'status': 'PARTIALLY VERIFIED',
+        'honest_limits': [
+            'DN <2e-4 is not established across the audited regimes.',
+            'warm median <4 ms is not established.',
+            'node-count convergence is non-monotonic.',
+            'PCHIP remains opt-in; no global quadrature promotion.',
+        ],
+    }
+
+
 def build():
     manifest = {
         'schema_version': 1,
@@ -204,6 +261,7 @@ def build():
 
     manifest['fast_plain_grid'] = pg
     manifest['fast_transition_refine'] = pr
+    manifest['fast_current_audit'] = _current_fast_audit()
     # posterior validation (Layer C) summary
     try:
         irep = _load_json(D('mcmc_posterior', 'is_report.json'))
