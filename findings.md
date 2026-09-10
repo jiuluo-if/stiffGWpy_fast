@@ -84,6 +84,7 @@
 - `eval_freqs` invariant 已实现并在六个代表点验证：default/lowT/highT/stiff/low_r/high-kappa 从 76/77 个 support nodes 增加 4 个 native eval nodes 后，`DN_gw` 的绝对/相对变化均为 0，且无 failure；评估节点仍保留在 `m.f` 和频谱输出中，bolometric DN 使用独立 support grid。
 - exact 76/80/90/110-node sweep（default，20 threads、workqueue）仍显示 blind seed 增加不具单调收敛性：相对 dense reference 的 DN 误差为 `6.01e-5/5.55e-4/1.40e-4/2.29e-4`，对应 76/80/90/110；因此当前目标网格尚不能宣称通过 `<2e-4` 的单调收敛门槛。
 - fast solver 现在记录 `estimated_DN_quadrature_error` 与相对估计，采用同一 support grid 上 Simpson-PCHIP embedded pair；该估计只作为 telemetry，不改变默认 Simpson 或频率节点。它为后续 estimator coverage 提供了可观测字段。
+- final HEAD `260b818` 的 25-repeat standardized matrix（20 threads/workqueue/CPU 0-19）在 telemetry 与 support/eval 分离后，default warm median/p95 为 `4.610/5.058 ms`，仍未达到 `<4 ms`；low-T/high-T/stiff/low-r/high-kappa warm median 为 `4.755/6.819/7.019/4.311/6.762 ms`。去除重复 support 权重构造的 A/B 未获得 >5% 稳定收益，已拒绝。
 
 ## Technical Decisions
 
