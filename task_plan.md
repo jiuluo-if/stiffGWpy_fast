@@ -6,7 +6,7 @@
 
 ## Next Step
 
-已在 `e122fc7` 完成 Phase 1 CI/package audit；当前为 oracle tail convergence 诊断准备阶段。新增 `z_tail=5/6/7/8/10` 汇总器与可复现实验脚本，但本轮完整 native-grid 扫描因 reference 计算过慢停止，尚无新的数值结论；不得把旧 tail 片段当作本轮证据。
+已在 `e122fc7` 完成 Phase 1 CI/package audit；`33d090f` 已补充信号区间子集诊断。default 子集 observed tail systematics `2.52e-3`，low-T `6.35e-3`，stiff `2.40e-3`，均非单调；这些是子集 oracle-floor 证据，不是完整频率积分认证。完整 native-grid 扫描仍待后续专门运行。
 
 ## Current Phase
 

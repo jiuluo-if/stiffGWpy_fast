@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "generated_commit": "33d090f4eb955a71ab8bf8abcb9436ea7df5541f",
+  "z_tails": [
+    5.0,
+    6.0,
+    7.0,
+    8.0,
+    10.0
+  ],
+  "points": [
+    {
+      "rows": [
+        {
+          "z_tail": 5.0,
+          "DN_gw": 1.1964759837680456e-09,
+          "DN_eff": 5.2446047710354755e-08,
+          "runtime_s": 0.5785750999993979,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 1.6461212329863935e-28,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 6.0,
+          "DN_gw": 1.205747421835393e-09,
+          "DN_eff": 5.2446047710354755e-08,
+          "runtime_s": 1.4681178000000727,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 1.6588769516719576e-28,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 7.0,
+          "DN_gw": 1.203976744725879e-09,
+          "DN_eff": 5.2446047710354755e-08,
+          "runtime_s": 4.555019600000378,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 1.65644083993526e-28,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 8.0,
+          "DN_gw": 1.2037861797438685e-09,
+          "DN_eff": 5.2446047710354755e-08,
+          "runtime_s": 7.452521600000182,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 1.656178659108058e-28,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 10.0,
+          "DN_gw": 1.2041166377588855e-09,
+          "DN_eff": 5.2446047710354755e-08,
+          "runtime_s": 62.97543130000031,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 1.6566333058895316e-28,
+          "interpolation_error": null,
+          "n_freq": 4
+        }
+      ],
+      "z_tail": [
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        10.0
+      ],
+      "DN_gw": [
+        1.1964759837680456e-09,
+        1.205747421835393e-09,
+        1.203976744725879e-09,
+        1.2037861797438685e-09,
+        1.2041166377588855e-09
+      ],
+      "central_z_tail": 10.0,
+      "central_DN_gw": 1.2041166377588855e-09,
+      "systematic_uncertainty_abs": 7.640653990839972e-12,
+      "systematic_uncertainty_rel": 0.006345443415731583,
+      "successive_relative_change": [
+        0.007748954590922087,
+        0.0014685307034027135,
+        0.0001582796203044421,
+        0.00027451554152864145
+      ],
+      "relative_to_central": [
+        0.006345443415731583,
+        0.0013543406223027348,
+        0.00011617897188669581,
+        0.0002744402034275803,
+        0.0
+      ],
+      "empirical_exponential_decay_rate": 0.9979333012660822,
+      "empirical_fit_log_residual": 0.8061918047914958,
+      "convergence_monotone_to_central": false,
+      "point": "lowT",
+      "parameters": {
+        "r": 0.01,
+        "cr": 1,
+        "T_re": 10.0,
+        "kappa10": 0.01
+      },
+      "fast_DN_eff": 5.2446047710354755e-08,
+      "fast_DN_gw": 5.2446047710354755e-08,
+      "fast_runtime_s": 0.21445700000003853,
+      "rtol": 1e-10,
+      "n_freq": 4,
+      "frequency_grid": "representative subset of native grid",
+      "frequency_subset_requested": 4,
+      "frequency_band_requested": [
+        -4.0,
+        2.0
+      ],
+      "oracle_semantics": "fixed DN_eff; only reference z_tail varies",
+      "acceptance_note": "The observed deepest-tail difference is the reported systematic bound; fitted decay is descriptive and not used to shrink it."
+    },
+    {
+      "rows": [
+        {
+          "z_tail": 5.0,
+          "DN_gw": 0.02249064370692964,
+          "DN_eff": 0.01496514967785102,
+          "runtime_s": 0.7060578999999052,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 3.09428075880928e-21,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 6.0,
+          "DN_gw": 0.022446604111308374,
+          "DN_eff": 0.01496514967785102,
+          "runtime_s": 1.3671573999999964,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 3.088221756002054e-21,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 7.0,
+          "DN_gw": 0.022452660744839606,
+          "DN_eff": 0.01496514967785102,
+          "runtime_s": 3.1363487999997233,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 3.0890550324899595e-21,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 8.0,
+          "DN_gw": 0.022444341504870013,
+          "DN_eff": 0.01496514967785102,
+          "runtime_s": 7.902780200000052,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 3.087910464797667e-21,
+          "interpolation_error": null,
+          "n_freq": 4
+        },
+        {
+          "z_tail": 10.0,
+          "DN_gw": 0.02243687698086014,
+          "DN_eff": 0.01496514967785102,
+          "runtime_s": 56.88223529999959,
+          "used_tail_fraction": 1.0,
+          "quadrature_error": 3.0868834896110777e-21,
+          "interpolation_error": null,
+          "n_freq": 4
+        }
+      ],
+      "z_tail": [
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        10.0
+      ],
+      "DN_gw": [
+        0.02249064370692964,
+        0.022446604111308374,
+        0.022452660744839606,
+        0.022444341504870013,
+        0.02243687698086014
+      ],
+      "central_z_tail": 10.0,
+      "central_DN_gw": 0.02243687698086014,
+      "systematic_uncertainty_abs": 5.376672606949989e-05,
+      "systematic_uncertainty_rel": 0.0023963551663346815,
+      "successive_relative_change": [
+        0.0019581296202606084,
+        0.0002698240455971907,
+        0.000370523567969758,
+        0.00033257932776743375
+      ],
+      "relative_to_central": [
+        0.0023963551663346815,
+        0.000433533172042209,
+        0.0007034741953137807,
+        0.00033268997357520033,
+        0.0
+      ],
+      "empirical_exponential_decay_rate": 0.4056783478015293,
+      "empirical_fit_log_residual": 0.5925295133118382,
+      "convergence_monotone_to_central": false,
+      "point": "stiff",
+      "parameters": {
+        "r": 0.1,
+        "cr": 1,
+        "T_re": 2000.0,
+        "kappa10": 0.01
+      },
+      "fast_DN_eff": 0.01496514967785102,
+      "fast_DN_gw": 0.01496514967785102,
+      "fast_runtime_s": 0.008603400000538386,
+      "rtol": 1e-10,
+      "n_freq": 4,
+      "frequency_grid": "representative subset of native grid",
+      "frequency_subset_requested": 4,
+      "frequency_band_requested": [
+        -4.0,
+        2.0
+      ],
+      "oracle_semantics": "fixed DN_eff; only reference z_tail varies",
+      "acceptance_note": "The observed deepest-tail difference is the reported systematic bound; fitted decay is descriptive and not used to shrink it."
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "generated_commit": "33d090f4eb955a71ab8bf8abcb9436ea7df5541f",
+  "z_tails": [
+    5.0,
+    6.0,
+    7.0,
+    8.0,
+    10.0
+  ],
+  "points": [
+    {
+      "rows": [
+        {
+          "z_tail": 5.0,
+          "DN_gw": 0.0023298691605795,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 1.9252191999994466,
+          "used_tail_fraction": 0.9166666666666666,
+          "quadrature_error": 3.2054526353565463e-22,
+          "interpolation_error": 2.4868676026348765e-08,
+          "n_freq": 12
+        },
+        {
+          "z_tail": 6.0,
+          "DN_gw": 0.0023244199966129726,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 5.034899299999779,
+          "used_tail_fraction": 0.8333333333333334,
+          "quadrature_error": 3.1979556319657426e-22,
+          "interpolation_error": 2.4789963826002612e-08,
+          "n_freq": 12
+        },
+        {
+          "z_tail": 7.0,
+          "DN_gw": 0.0023254953120331904,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 10.767797800000153,
+          "used_tail_fraction": 0.8333333333333334,
+          "quadrature_error": 3.199435059525838e-22,
+          "interpolation_error": 2.4808384474326386e-08,
+          "n_freq": 12
+        },
+        {
+          "z_tail": 8.0,
+          "DN_gw": 0.002324667791255004,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 26.838630000000194,
+          "used_tail_fraction": 0.8333333333333334,
+          "quadrature_error": 3.198296549817169e-22,
+          "interpolation_error": 2.4798162133426595e-08,
+          "n_freq": 12
+        },
+        {
+          "z_tail": 10.0,
+          "DN_gw": 0.0023240127085582853,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 204.01734300000044,
+          "used_tail_fraction": 0.8333333333333334,
+          "quadrature_error": 3.197395281800877e-22,
+          "interpolation_error": 2.4791014815886617e-08,
+          "n_freq": 12
+        }
+      ],
+      "z_tail": [
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        10.0
+      ],
+      "DN_gw": [
+        0.0023298691605795,
+        0.0023244199966129726,
+        0.0023254953120331904,
+        0.002324667791255004,
+        0.0023240127085582853
+      ],
+      "central_z_tail": 10.0,
+      "central_DN_gw": 0.0023240127085582853,
+      "systematic_uncertainty_abs": 5.8564520212145595e-06,
+      "systematic_uncertainty_rel": 0.0025199741807124813,
+      "successive_relative_change": [
+        0.002338828316510224,
+        0.00046261666212850464,
+        0.00035584710659460083,
+        0.00028179626318356143
+      ],
+      "relative_to_central": [
+        0.0025199741807124813,
+        0.00017525207723153238,
+        0.000637949813891037,
+        0.0002818756947010105,
+        0.0
+      ],
+      "empirical_exponential_decay_rate": 0.5479803524137339,
+      "empirical_fit_log_residual": 0.4337470437931181,
+      "convergence_monotone_to_central": false,
+      "point": "default",
+      "parameters": {
+        "r": 0.01,
+        "cr": 1,
+        "T_re": 2000.0,
+        "kappa10": 0.01
+      },
+      "fast_DN_eff": 0.0022626969518100204,
+      "fast_DN_gw": 0.0022626969518100204,
+      "fast_runtime_s": 0.24014190000070812,
+      "rtol": 1e-10,
+      "n_freq": 12,
+      "frequency_grid": "evenly sampled representative subset of native grid",
+      "frequency_subset_requested": 12,
+      "oracle_semantics": "fixed DN_eff; only reference z_tail varies",
+      "acceptance_note": "The observed deepest-tail difference is the reported systematic bound; fitted decay is descriptive and not used to shrink it."
+    }
+  ]
+}

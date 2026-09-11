@@ -120,6 +120,8 @@
 
 | Oracle tail convergence scaffolding | 新增 `reference.summarize_tail_convergence`，显式报告 deepest-tail central value、observed systematic bound、相邻变化和仅描述性的指数衰减率；`run_reference` 新增可选 `workers` 传递；新增 `scripts/benchmark_oracle_tail_convergence.py` 固定 fast `DN_eff` 扫描 `z_tail=5/6/7/8/10`。完整 native-grid default 扫描因 reference 计算过慢停止，未生成不完整 artifact，尚无新的 tail 数值结论 | IMPLEMENTED / NUMERICAL SWEEP PENDING |
 | Oracle scaffolding verification | focused reference tests `6 passed, 1 deselected`；full pytest `133 passed, 6 deselected, 2 warnings`；Cobaya `1 passed, 138 deselected`；maintained Ruff、mypy、manifest、compileall/diff check、官方 PyPI isolated build、distribution boundary、installed-wheel smoke 全部通过 | PASS |
+| Oracle tail representative-subset sweep | 固定 fast `DN_eff`、reference `z_tail=5/6/7/8/10`；default 12 点子集 observed systematic rel `2.520e-3` 且非单调；`[-4,2]` 信号区间 4 点子集：low-T `6.345e-3`、stiff `2.396e-3`，均非单调；只作为 oracle-floor/tail-sensitive 诊断，不能替代完整 native-grid 认证 | PASS / ORACLE-SENSITIVE / FULL GRID PENDING |
+| Tail diagnostic scope simplification | 后续研究测试先采用明确标注的代表频率子集和 focused regression，完整 pytest/Cobaya/CI 仅在代码提交或正式门禁时运行；不得把子集结果写成全频率精度结论 | ACCEPTED PROCESS CHANGE |
 
 ### Errors
 
