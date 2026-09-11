@@ -7,6 +7,15 @@ import platform
 import sys
 
 
+def nested_thread_budget(workers: int = 1, threads: int = 2) -> int:
+    """Return safe inner threads for a possibly parallel outer sweep."""
+    workers = int(workers)
+    threads = int(threads)
+    if workers < 1 or threads < 1:
+        raise ValueError('workers and threads must be positive integers')
+    return 1 if workers > 1 else threads
+
+
 def apply_environment(numba_threads: int = 2, fast_threads: int | None = None) -> None:
     """在导入数值库前设置保守的线程环境。"""
     fast_value = numba_threads if fast_threads is None else fast_threads
