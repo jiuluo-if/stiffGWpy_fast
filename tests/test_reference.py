@@ -127,6 +127,20 @@ def test_prufer_phase_averaged_power_uses_half_amplitude_square():
     assert _phase_averaged_power(4.0) == pytest.approx(8.0)
 
 
+def test_prufer_phase_averaged_today_observable_matches_tail_formula():
+    from scripts.benchmark_prufer_oracle import _phase_averaged_today
+
+    result = _phase_averaged_today(
+        coefficient_squared=6.5, z_handoff=5.0, event_N=1.0,
+        n_inf=4.0, today_f_hor=-2.0, freq=-1.0, tensor_power=1.0)
+    expected_x_squared = 6.5 * math.exp(-16.0) * 100.0
+
+    assert result['Opgw_today'] == pytest.approx(expected_x_squared / 36.0)
+    assert result['Oj_today'] == pytest.approx(-6.5 * math.exp(-16.0) / 3.0)
+    assert result['Ogw_today'] == pytest.approx(
+        3.0 * result['Opgw_today'] + result['Oj_today'])
+
+
 def test_oracle_checkpoint_key_and_schema_are_reproducible(tmp_path):
     from scripts.benchmark_oracle_tail_convergence import (
         _cache_key,
