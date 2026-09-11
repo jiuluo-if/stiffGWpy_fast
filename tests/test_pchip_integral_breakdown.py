@@ -76,3 +76,78 @@ def test_local_estimator_rejects_mismatched_candidate_intervals():
     with pytest.raises(ValueError, match='interval count'):
         FS.estimate_frequency_quadrature_local(
             freqs, np.ones(3), 'pchip', candidate_intervals=np.zeros(5))
+
+
+def test_vectorized_pchip_integrals_match_scipy_breakdown():
+    """向量化封闭式积分核必须与 scipy 参考实现一致。"""
+    for seed, n in ((20260921, 5), (20260922, 17), (20260923, 76), (20260924, 2)):
+        freqs, values = _random_case(seed, n)
+        values = values * np.exp(values)
+        total, local = FS.pchip_integral_breakdown(freqs, values)
+        fast = FS._pchip_integrals_vectorized(freqs, values)
+        scale = float(np.max(np.abs(local)))
+        assert fast.shape == local.shape
+        assert np.allclose(fast, local, rtol=1e-9, atol=1e-12 * scale)
+        assert float(np.sum(fast)) == pytest.approx(total, rel=1e-12)
+
+
+def test_vectorized_pchip_integrals_handle_flat_and_sign_changing_data():
+    """零斜率与符号翻转（Fritsch-Carlson 置零分支）也必须与 scipy 一致。"""
+    cases = (
+        np.array([1.0, 1.0, 1.0, 1.0]),
+        np.array([0.0, 1.0, 2.0, 3.0]),
+        np.array([1.0, -1.0, 1.0, -1.0]),
+        np.array([2.0, 2.0, 0.0, -2.0]),
+        np.array([3.0, 5.0]),
+    )
+    for values in cases:
+        freqs = np.arange(values.size, dtype=float)
+        total, local = FS.pchip_integral_breakdown(freqs, values)
+        fast = FS._pchip_integrals_vectorized(freqs, values)
+        assert np.allclose(fast, local, rtol=1e-12, atol=1e-14)
+        assert float(np.sum(fast)) == pytest.approx(total, rel=1e-12)
+
+
+def test_vectorized_pchip_integrals_reject_non_unique_nodes():
+    with pytest.raises(ValueError, match='unique'):
+        FS._pchip_integrals_vectorized(np.array([0.0, 1.0, 1.0]), np.ones(3))
+
+
+def _panel_loop_reference(candidate, baseline, allocation):
+    """旧逐面板 Python 循环的独立参考副本。"""
+    local_error = np.zeros_like(candidate)
+    start = 0
+    while start + 1 < candidate.size:
+        end = start + 2
+        panel_error = abs(float(np.sum(candidate[start:end]))
+                          - float(np.sum(baseline[start:end])))
+        if allocation in ('full_panel', 'panel_envelope'):
+            local_error[start:end] = panel_error
+        else:
+            share = np.abs(candidate[start:end])
+            share_sum = float(np.sum(share))
+            if share_sum > 0.0:
+                local_error[start:end] = panel_error * share / share_sum
+            else:
+                local_error[start:end] = 0.5 * panel_error
+        start += 2
+    if start < candidate.size:
+        local_error[start] = abs(candidate[start] - baseline[start])
+    if allocation == 'panel_envelope':
+        panel_error = local_error.copy()
+        for i in range(local_error.size):
+            local_error[i] = np.max(
+                panel_error[max(0, i - 2):min(local_error.size, i + 3)])
+    return local_error
+
+
+def test_vectorized_allocation_matches_panel_loop():
+    """向量化分摊必须与逐面板循环逐位一致（三种 allocation）。"""
+    for seed, n in ((20260931, 7), (20260932, 26), (20260933, 76)):
+        freqs, values = _random_case(seed, n)
+        values = values * np.exp(values) * 1e-3
+        for allocation in ('weighted', 'full_panel', 'panel_envelope'):
+            errors, candidate, baseline = FS.estimate_frequency_quadrature_local(
+                freqs, values, 'pchip', allocation=allocation)
+            expected = _panel_loop_reference(candidate, baseline, allocation)
+            assert np.array_equal(errors, expected), (seed, n, allocation)

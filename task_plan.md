@@ -70,11 +70,30 @@ NUMBA=2、BLAS=1）：PCHIP 专属开销 `2.0-2.3 ms -> 0.6-1.0 ms`，比值
 vs WKB 不变。ACCEPTED：opt-in PCHIP 路径加速（同等观测值、约 60% 更少
 PCHIP 专属开销）。**REJECTED：本阶段不切换默认 `frequency_quadrature`**，
 因为 `<1.10` 未稳健满足（default 同会话 `1.165`，另两次会话 `1.093/1.123`；
-16 线程生产刻度探针 `1.101-1.154`）。下一实验：用 NumPy 向量化 PCHIP 斜率 +
-分段解析积分核替代热路径中的 scipy 拟合，并向量化 estimator 的分摊循环；
-acceptance：与 scipy PCHIP `<1e-12` rel、2 线程与 16 线程比值均 `<1.10`、
-DN 不变、no new failure、determinism pass。详见
+16 线程生产刻度探针 `1.101-1.154`）。详见
 `docs/fast_quadrature_reuse_assessment.md`。
+
+向量化 PCHIP 积分核也已完成（2026-09-11）（实验前已写定 acceptance：
+与 scipy PCHIP `<1e-12` rel、2 线程与 16 线程比值均 `<1.10`、DN 不变、
+no new failure、determinism pass）。实现：`_pchip_integrals_vectorized` 复刻
+scipy 的 Fritsch-Carlson 斜率与形状保持 guard，并用 Hermite 分段积分闭式
+`h/2*(y_i+y_{i+1}) + h^2*(m_i-m_{i+1})/12`；`pchip_integral_breakdown` 保持
+scipy 参考实现；estimator 的逐面板分摊改为等价向量化（三种 allocation 逐位
+一致）。配对 A/B（`--repeats 50`，2 线程与 16 线程各一次前后配对）：
+2 线程比值 `1.1622/1.1261/1.0495/1.0901 -> 1.0105/1.0551/1.0397/1.0411`，
+16 线程 `1.1987/1.1137/1.1270/1.1203 -> 1.0428/1.0342/1.0180/1.0413`；
+同会话第二次配对复现同一模式（before `1.050-1.184`、after `1.002-1.056`）。
+PCHIP 专属开销降到 `0.06-0.42 ms`（2 线程）/`0.15-0.33 ms`（16 线程）；
+实测 `DN_gw` 相对 scipy PCHIP 路径变化 `3.83e-16/4.98e-16/0/0`（1-2 ulp）。
+ACCEPTED：预算达标且默认 Simpson 路径逐位不变。
+
+下一实验（acceptance criteria 已写定，见
+`docs/fast_quadrature_reuse_assessment.md` 的 “Next experiment (pre-registered)”）：
+把 `SGWB_iter_fast` 的默认 `frequency_quadrature` 切到 `pchip`，要求四点
+`DN_gw` vs Oracle C WKB `< 2e-4`、Sobol/edge 屏幕在预算内、spectrum max 不退化、
+no new failure、determinism pass、2/16 线程比值 `< 1.10`，并同步刷新
+`validation_manifest.json`、README、`ERROR_BUDGET` 与 estimator coverage
+artifact，重新满足 “validation artifact == release HEAD”。
 
 ## Current Phase
 

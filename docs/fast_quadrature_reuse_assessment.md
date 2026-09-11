@@ -125,3 +125,101 @@ Acceptance criteria (fixed before running):
 - `docs/fast_quadrature_ab.json` (original 25-repeat measurement, previous session)
 - `scripts/benchmark_fast_quadrature_ab.py`
 - `tests/test_pchip_integral_breakdown.py`
+
+## Follow-up: vectorized PCHIP kernel and estimator allocation (2026-09-11)
+
+### Motivation
+
+After the single-fit sharing the remaining PCHIP-specific cost was the SciPy
+`PchipInterpolator` construction itself (`0.15 ms` x 2 per solve) plus the
+estimator's per-panel Python allocation loop.  Both are implementation costs,
+so the pre-registered follow-up replaced them while keeping the SciPy path as
+the reference.
+
+### Method
+
+- `_pchip_integrals_vectorized` reproduces the SciPy Fritsch-Carlson slopes
+  (`_pchip_slopes` / `_pchip_edge_slope`, same recurrence and shape guards) and
+  uses the closed form of the cubic Hermite segment integral,
+  `h/2*(y_i + y_{i+1}) + h^2*(m_i - m_{i+1})/12`.  It returns the per-interval
+  integrals; the full-range integral is their sum.  `pchip_integral_breakdown`
+  stays the SciPy reference used by the audit helper and by the tests.
+- The estimator's allocation is vectorized over the non-overlapping Simpson
+  panels; the flat/zero-share fallback is preserved.
+- The hot path in `_SGWB_iter_fast_impl` now uses the vectorized kernel through
+  the same single-fit-per-iteration sharing introduced above.
+
+### Results (paired A/B, 50 repeats, artifacts below)
+
+| point | 2T ratio before | 2T ratio after | 16T ratio before | 16T ratio after |
+|---|---:|---:|---:|---:|
+| default | 1.1622 | **1.0105** | 1.1987 | **1.0428** |
+| lowT | 1.1261 | **1.0551** | 1.1137 | **1.0342** |
+| highT | 1.0495 | **1.0397** | 1.1270 | **1.0180** |
+| stiff | 1.0901 | **1.0411** | 1.1203 | **1.0413** |
+
+| point | 2T PCHIP extra before | after | 16T PCHIP extra before | after |
+|---|---:|---:|---:|---:|
+| default | 1.00 ms | 0.06 ms | 0.89 ms | 0.20 ms |
+| lowT | 0.83 ms | 0.36 ms | 0.59 ms | 0.17 ms |
+| highT | 0.51 ms | 0.40 ms | 0.95 ms | 0.15 ms |
+| stiff | 0.89 ms | 0.42 ms | 0.92 ms | 0.33 ms |
+
+A second paired repetition of the same protocol in the same session reproduced
+the pattern (`before 1.050..1.184`, `after 1.002..1.056`).  Absolute wall times
+drift by up to ~60% between runs on this machine, so the run-internal ratio is
+the reported metric.
+
+Micro-cost (median of 2000 calls, 76-point native grid): SciPy
+`pchip_integral_breakdown` `0.143 ms` versus vectorized
+`_pchip_integrals_vectorized` `0.024 ms`; estimator with reused intervals
+`0.290 ms -> 0.061 ms`.
+
+Correctness: the vectorized allocation is **bit-identical** to the previous
+per-panel loop for all three allocation modes; the vectorized PCHIP kernel
+agrees with the SciPy reference per interval to `<= 1e-9` relative (absolute
+`>= 1e-12 * max|interval|`) and its sum to `<= 5e-14` relative over 200
+randomized grids plus flat/sign-changing/two-point degenerate cases.  The
+end-to-end guard `test_pchip_frequency_quadrature_is_opt_in`, which pins
+`m.DN_gw[-1]` to the SciPy `integrate_frequency_pchip`, still passes at
+`rel = 1e-12`.  Measured `DN_gw` change versus the SciPy PCHIP path is
+`3.83e-16 / 4.98e-16 / 0 / 0` relative (default/lowT/highT/stiff), i.e. 1-2 ulp.
+
+### Decision
+
+**ACCEPTED.**  The pre-registered `< 1.10` budget is met at both the 2-thread
+and the 16-thread scale with margin, `DN_gw` is unchanged to 1-2 ulp, and the
+default Simpson path is bit-unchanged.  The PCHIP path now costs `~1-4%` more
+warm runtime than Simpson while reducing the true DN error from
+`4.31e-4..1.24e-2` to `1.07e-5..1.66e-4`.
+
+Because the change is a strict dominance for the PCHIP path and a no-op for the
+default, the default `frequency_quadrature` is **not** switched in this commit:
+that is a separate phase (below) that must re-validate the manifest, README,
+coverage artifacts and the parameter-space gates.
+
+### Next experiment (pre-registered)
+
+Hypothesis: with the runtime budget now met, making `pchip` the default
+`frequency_quadrature` of `SGWB_iter_fast` satisfies the release accuracy target
+without regressing the runtime or the guard behaviour.
+
+Acceptance criteria (fixed before running):
+
+- `SGWB_iter_fast` default is `pchip`; `simpson` stays available explicitly;
+- parameter-space `DN_gw` versus the Oracle C WKB anchor `< 2e-04` at all four
+  named points and within budget on the Sobol/edge screen;
+- `spectrum max` not degraded versus the current Simpson default; no new
+  failure; `no silent failure` guards unchanged; determinism replay identical;
+- warm runtime ratio versus the current Simpson default `< 1.10` at 2 and 16
+  threads;
+- `docs/validation/validation_manifest.json`, README, `ERROR_BUDGET` and the
+  estimator-coverage artifacts refreshed to describe PCHIP as the default, and
+  `validation artifact == release HEAD` re-established.
+
+### Artifacts (follow-up)
+
+- `docs/fast_quadrature_pchip_kernel_t2_before.json`
+- `docs/fast_quadrature_pchip_kernel_t2_after.json`
+- `docs/fast_quadrature_pchip_kernel_t16_before.json`
+- `docs/fast_quadrature_pchip_kernel_t16_after.json`

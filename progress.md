@@ -83,6 +83,23 @@
   16 线程生产刻度探针 `1.101-1.154`）。下一实验：NumPy 向量化 PCHIP 斜率 +
   分段解析积分核 + estimator 分摊循环向量化，再评估默认切换。
 
+- 向量化 PCHIP 积分核与 estimator 分摊（2026-09-11）：新增
+  `_pchip_integrals_vectorized`（`_pchip_slopes` / `_pchip_edge_slope` 复刻
+  scipy 的 Fritsch-Carlson 斜率与形状保持 guard，分段用 Hermite 闭式积分
+  `h/2*(y_i+y_{i+1}) + h^2*(m_i-m_{i+1})/12`），`pchip_integral_breakdown`
+  保持 scipy 参考实现；局部 estimator 的逐面板分摊改为等价向量化（三种
+  allocation 逐位一致，含零候选和退化为半误差均分）。微基准（76 点 native
+  网格、median of 2000）：scipy breakdown `0.143 ms` -> 向量化 `0.024 ms`；
+  estimator（复用候选）`0.290 ms -> 0.061 ms`。配对 A/B（`--repeats 50`、
+  NUMBA=2 与 16、前后各一次）：2 线程比值
+  `1.1622/1.1261/1.0495/1.0901 -> 1.0105/1.0551/1.0397/1.0411`，16 线程
+  `1.1987/1.1137/1.1270/1.1203 -> 1.0428/1.0342/1.0180/1.0413`；PCHIP 专属
+  开销 `0.06-0.42 ms`（2 线程）/`0.15-0.33 ms`（16 线程）；同会话第二次配对
+  复现同一模式。实测 `DN_gw` 相对 scipy PCHIP 路径变化 `3.83e-16/4.98e-16/0/0`
+  （1-2 ulp），默认 Simpson 路径逐位不变。决策：ACCEPTED（预算 `<1.10` 在两个
+  线程刻度均满足）。下一步（已写定 acceptance）：默认切换 PCHIP + manifest/
+  README/ERROR_BUDGET/coverage 同步刷新。
+
 ### Artifacts
 
 - `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`
@@ -102,6 +119,10 @@
 - `docs/fast_quadrature_reuse_ab_before.json`
 - `docs/fast_quadrature_reuse_assessment.md`
 - `tests/test_pchip_integral_breakdown.py`
+- `docs/fast_quadrature_pchip_kernel_t2_before.json`
+- `docs/fast_quadrature_pchip_kernel_t2_after.json`
+- `docs/fast_quadrature_pchip_kernel_t16_before.json`
+- `docs/fast_quadrature_pchip_kernel_t16_after.json`
 
 ## Session: 2026-09-09
 

@@ -264,6 +264,44 @@ fast tail assembly 内升格 Oracle C 修正。
 `<1e-12` rel、2 线程与 16 线程 PCHIP/Simpson 比值均 `<1.10`、DN 不变、
 no new failure、determinism pass，再评估默认切换。
 
+## Vectorized PCHIP kernel and estimator allocation (2026-09-11)
+
+- 实现：`_pchip_integrals_vectorized` 用 NumPy 复刻 scipy 的 Fritsch-Carlson
+  斜率（内部节点加权调和平均 + 端点 `_edge_case` 形状保持 guard），分段用
+  Hermite 三次的闭式积分 `h/2*(y_i+y_{i+1}) + h^2*(m_i-m_{i+1})/12`；
+  `pchip_integral_breakdown` 保持 scipy 参考实现，热路径改用向量化核；
+  `estimate_frequency_quadrature_local` 的逐面板分摊向量化，零候选和面板
+  保持“半误差均分”的旧语义。
+- 正确性：向量化分摊与旧逐面板循环**逐位一致**（三种 allocation，测试断言）；
+  向量化 PCHIP 核与 scipy 参考逐区间 `<=1e-9` rel（绝对 `1e-12*max|区间|`）、
+  总和 `<=5e-14` rel（200 组随机网格 + 平坦/符号翻转/两点退化样本）；
+  端到端 `test_pchip_frequency_quadrature_is_opt_in`（把 `m.DN_gw[-1]` 钉在
+  scipy `integrate_frequency_pchip`，rel `1e-12`）仍通过。
+- 成本：微基准（76 点网格、median of 2000）scipy breakdown `0.143 ms` ->
+  向量化 `0.024 ms`；estimator（复用候选）`0.290 ms -> 0.061 ms`。
+- 配对 A/B（`--repeats 50`，同会话前后配对，2 线程与 16 线程各一次）：
+  2 线程 PCHIP/Simpson 比值 `1.1622/1.1261/1.0495/1.0901 ->
+  1.0105/1.0551/1.0397/1.0411`；16 线程 `1.1987/1.1137/1.1270/1.1203 ->
+  1.0428/1.0342/1.0180/1.0413`（default/lowT/highT/stiff）。PCHIP 专属开销
+  `0.06-0.42 ms`（2T）/`0.15-0.33 ms`（16T）。同会话第二次配对复现
+  （before `1.050-1.184`、after `1.002-1.056`）。
+- 数值不变性：实测 `DN_gw` 相对 scipy PCHIP 路径变化
+  `3.83e-16/4.98e-16/0/0`（1-2 ulp）；默认 Simpson 路径逐位不变。
+- 决策：ACCEPTED。预登记 `<1.10` 在 2 线程与 16 线程两个刻度均满足；默认
+  `frequency_quadrature` 仍不切换（切换需同步刷新 manifest/README/
+  ERROR_BUDGET/coverage 并重跑参数空间门禁，作为独立 Phase）。
+
+### Confidence tables (vectorized PCHIP kernel)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | 向量化 PCHIP 核与 scipy `PchipInterpolator` 参考在随机与退化样本上一致（逐区间 `<=1e-9` rel、总和 `<=5e-14` rel，测试断言）。 |
+| VERIFIED | 向量化分摊与旧逐面板循环逐位一致（三种 allocation 的 `np.array_equal` 断言）。 |
+| VERIFIED | 默认 Simpson 路径逐位不变；PCHIP DN 仅变化 1-2 ulp（`3.83e-16/4.98e-16/0/0` rel）。 |
+| EMPIRICALLY VALIDATED | 2 线程与 16 线程的 PCHIP/Simpson 比值在两次同会话配对中均 `<1.10`（1.00-1.056）。 |
+| HEURISTIC | 该比值在其他机器/负载下同样 `<1.10`（本机 wall time 跨运行可漂移 ~60%，故只报 run-internal 比值）。 |
+| UNVERIFIED | PCHIP 作为默认后在 Sobol/edge 参数空间的 runtime 与精度（下一 Phase 的 acceptance 已写定）。 |
+
 ### Confidence tables (quadrature A/B)
 
 | Classification | Statement |
