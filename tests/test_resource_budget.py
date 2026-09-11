@@ -5,6 +5,13 @@ import os
 from scripts._resource_budget import apply_environment, telemetry
 
 
+def test_nested_budget_reduces_inner_threads():
+    from scripts._resource_budget import nested_thread_budget
+
+    assert nested_thread_budget(workers=1, threads=4) == 4
+    assert nested_thread_budget(workers=2, threads=4) == 1
+
+
 def test_default_environment_caps_blas_and_numba(monkeypatch):
     names = (
         'NUMBA_NUM_THREADS', 'NUMBA_THREADING_LAYER', 'FAST_THREADS',

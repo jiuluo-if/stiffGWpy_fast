@@ -13,9 +13,9 @@ import sys
 import time
 
 try:
-    from scripts._resource_budget import apply_environment, telemetry
+    from scripts._resource_budget import apply_environment, nested_thread_budget, telemetry
 except ImportError:
-    from _resource_budget import apply_environment, telemetry
+    from _resource_budget import apply_environment, nested_thread_budget, telemetry
 
 apply_environment()
 
@@ -101,12 +101,18 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--point', default='default', choices=sorted(CASES))
     ap.add_argument('--workers', type=int, default=1)
+    ap.add_argument('--threads', type=int, default=2,
+                    help='inner Numba threads; forced to 1 when workers > 1')
     ap.add_argument('--rtol', type=float, default=1e-9)
     ap.add_argument('--z-tail', type=float, default=8.0)
     ap.add_argument('--seed-n', type=int, default=64,
                     help='goal-grid seed override for candidate A/B runs')
     ap.add_argument('--out', default='docs/frequency_same_grid_reference.json')
     args = ap.parse_args(argv)
+    inner_threads = nested_thread_budget(args.workers, args.threads)
+    os.environ['NUMBA_NUM_THREADS'] = str(inner_threads)
+    os.environ['FAST_THREADS'] = str(inner_threads)
+    FS.set_threads(inner_threads)
 
     FS.apply_accuracy_mode('fast')
     FS.set_z_tail(5.0)

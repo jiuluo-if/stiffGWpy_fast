@@ -30,7 +30,14 @@ import subprocess
 import sys
 import time
 
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, nested_thread_budget
+except ImportError:
+    from _resource_budget import apply_environment, nested_thread_budget
+
+apply_environment()
+
+import numpy as np  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -105,7 +112,7 @@ def plain_point(kw, label, z_tail=Z_TAIL, rtol=RTOL, freq_res=FREQ_RES):
     try:
         Ogw, Oj, Opgw, used = REF.spectrum_reference(
             m, G, dn_total, z_tail=z_tail, rtol=rtol,
-            workers=int(os.environ.get('PLAIN_REF_WORKERS', '3')))
+            workers=int(os.environ.get('PLAIN_REF_WORKERS', '1')))
     except Exception as exc:
         rec['status'] = 'ref_exception'
         rec['error'] = '%s: %s' % (type(exc).__name__, exc)
@@ -262,11 +269,19 @@ def main():
     ap.add_argument('--out', default=os.path.join('docs', 'paramsweep_plain'))
     ap.add_argument('--pool', type=int, default=1)
     ap.add_argument('--workers', type=int, default=1)
+    ap.add_argument('--threads', type=int, default=2,
+                    help='inner Numba threads; forced to 1 when pool > 1')
     args = ap.parse_args()
     if not os.path.isabs(args.out):
         args.out = os.path.join(ROOT, args.out)
+    inner_threads = nested_thread_budget(args.pool, args.threads)
+    os.environ['NUMBA_NUM_THREADS'] = str(inner_threads)
+    os.environ['FAST_THREADS'] = str(inner_threads)
+    if args.pool > 1:
+        args.workers = 1
+    os.environ['PLAIN_REF_WORKERS'] = str(args.workers)
+    FS.set_threads(inner_threads)
     if args.phase == 'plain':
-        os.environ['PLAIN_REF_WORKERS'] = str(args.workers)
         run_plain(args)
     else:
         return run_summary(args)

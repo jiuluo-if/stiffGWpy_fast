@@ -24,7 +24,14 @@ import os
 import sys
 import time
 
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, nested_thread_budget, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, nested_thread_budget, telemetry
+
+apply_environment()
+
+import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -237,6 +244,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description='phase-3 parameter-space sweep')
     ap.add_argument('--out', default='docs/paramsweep')
     ap.add_argument('--workers', type=int, default=1)
+    ap.add_argument('--threads', type=int, default=2,
+                    help='inner Numba threads; forced to 1 when workers > 1')
     ap.add_argument('--limit', type=int, default=None,
                     help='max number of points to evaluate (smoke tests)')
     ap.add_argument('--offset', type=int, default=0)
@@ -244,6 +253,10 @@ def main(argv=None):
     ap.add_argument('--retry-failed', action='store_true',
                     help='re-evaluate points whose previous status was not ok')
     args = ap.parse_args(argv)
+    inner_threads = nested_thread_budget(args.workers, args.threads)
+    os.environ['NUMBA_NUM_THREADS'] = str(inner_threads)
+    os.environ['FAST_THREADS'] = str(inner_threads)
+    FS.set_threads(inner_threads)
     os.makedirs(args.out, exist_ok=True)
     points = build_points()
     with open(os.path.join(args.out, 'points.json'), 'w', encoding='utf-8') as fh:
@@ -302,6 +315,9 @@ def main(argv=None):
                           (i + 1, n, el, eta, rec['id'], rec['status']),
                           flush=True)
     print('wrote %s (%d points)' % (out_path, n))
+    print(json.dumps({'resources': telemetry(
+        workers=args.workers, threads=inner_threads,
+        concurrent_processes=args.workers)}, ensure_ascii=False))
     return 0
 
 
