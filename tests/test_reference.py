@@ -110,6 +110,23 @@ def test_phase_window_observable_uses_later_handoff():
     assert result['phase_averaged'] is True
 
 
+def test_prufer_derivatives_preserve_subhorizon_amplitude_equations():
+    from scripts.benchmark_prufer_oracle import _prufer_derivatives
+
+    z_prime, log_amplitude_prime, phase_prime = _prufer_derivatives(
+        z=5.0, sigma=2.0, phase=0.0)
+
+    assert z_prime == pytest.approx(2.0)
+    assert log_amplitude_prime == pytest.approx(2.0)
+    assert phase_prime == pytest.approx(-math.exp(5.0))
+
+
+def test_prufer_phase_averaged_power_uses_half_amplitude_square():
+    from scripts.benchmark_prufer_oracle import _phase_averaged_power
+
+    assert _phase_averaged_power(4.0) == pytest.approx(8.0)
+
+
 def test_oracle_checkpoint_key_and_schema_are_reproducible(tmp_path):
     from scripts.benchmark_oracle_tail_convergence import (
         _cache_key,
