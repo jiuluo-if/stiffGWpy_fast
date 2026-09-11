@@ -75,6 +75,27 @@ def test_summarize_tail_convergence_reports_observed_bound():
     assert summary['convergence_monotone_to_central']
 
 
+def test_oracle_checkpoint_key_and_schema_are_reproducible(tmp_path):
+    from scripts.benchmark_oracle_tail_convergence import (
+        _cache_key,
+        _load_checkpoint,
+        _new_checkpoint,
+        _save_checkpoint,
+    )
+
+    parameters = {'r': 1e-2, 'cr': 1, 'T_re': 2e3, 'kappa10': 1e-2}
+    frequencies = [-2.0, 0.0, 1.0]
+    first = _cache_key('default', parameters, frequencies, 0.002, 5.0, 1e-10)
+    second = _cache_key('default', parameters, frequencies, 0.002, 6.0, 1e-10)
+    assert first != second
+    path = str(tmp_path / 'oracle.checkpoint.json')
+    checkpoint = _new_checkpoint()
+    checkpoint['records']['default'] = {'5.0': {'cache_key': first}}
+    _save_checkpoint(path, checkpoint)
+    restored = _load_checkpoint(path)
+    assert restored['records']['default']['5.0']['cache_key'] == first
+
+
 @pytest.mark.slow
 def test_reference_mode_vs_fast_mid_frequency():
     """Reference ODE agrees with the fast solver in the resolved mid-frequency region."""
