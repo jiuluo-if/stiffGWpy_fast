@@ -1,0 +1,60 @@
+{
+  "schema_version": 2,
+  "generated_commit": "095b1a7928044877cf23ebbf5dfbc14b24c0e535",
+  "reference_version": "d8a2a984f1cac6daf34947f63de11d7abc9825d4adc6ebe96efeea0343c0e098",
+  "resources": {
+    "logical_cpu_count": 32,
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": 1,
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0"
+  },
+  "z_tails": [5.0, 6.0, 7.0, 8.0, 10.0],
+  "frequency_subset": 8,
+  "rtol": 1e-10,
+  "oracle_semantics": "fixed DN_eff; only reference z_tail varies",
+  "points": [
+    {
+      "point": "lowT",
+      "parameters": {"r": 0.01, "cr": 1, "T_re": 10.0, "kappa10": 0.01},
+      "DN_gw": [1.1128416978423931e-7, 1.112606554134164e-7, 1.113698405381769e-7, 1.1132053745800181e-7, 1.1131617303941539e-7],
+      "central_DN_gw": 1.1131617303941539e-7,
+      "systematic_uncertainty_rel": 0.00049873818406722,
+      "successive_relative_change": [0.0002113002313671354, 0.0009813453314183548, 0.0004426968732004741, 3.920587059752803e-5],
+      "convergence_monotone_to_central": false,
+      "runtime_total_s": 93.14974630000324,
+      "cache_hits": 0,
+      "cache_keys": ["a398cda1c5b8aa39dfb0f1b98283ebe38937b884757dfc830181384448cb8d0d", "f48df202efba977752f9e7b154844945d652767f75464e2be26585af0bdd8462", "22d75909d2bb123e6fcf6bb5be1247794a73b0bbe322ab5bfcdab33e1be4be8c", "438b153c645c828024de5048f23b73ca533029a0a69ada81359f6af928a0a797", "5ac6d5f2db29f9ab6b0e53567afb45e88b6779ced1e52f989fb811b820b87226"]
+    },
+    {
+      "point": "highT",
+      "parameters": {"r": 0.01, "cr": 1, "T_re": 10000.0, "kappa10": 0.01},
+      "DN_gw": [0.12491427720953308, 0.12435870436602171, 0.12450009547939177, 0.12443452545432836, 0.12439763194569492],
+      "central_DN_gw": 0.12439763194569492,
+      "systematic_uncertainty_rel": 0.004153176035245545,
+      "successive_relative_change": [0.004447632856086066, 0.0011369619367688271, 0.0005266664640772445, 0.0002964893264046581],
+      "convergence_monotone_to_central": false,
+      "runtime_total_s": 93.10343179999654,
+      "cache_hits": 0,
+      "cache_keys": ["9c03115529f1457cd87335c383b1bdd1137f42d706ab344405725e4ff6d3cd40", "31119ae1bcfaf0db4f64c9d7310ade72875a76887fa561116fb82f94c8445446", "80738c6cda96e48af138fb9ae36527007f62fd65b46c0a0eb1d3d8d65cc1a7ed", "2927c4f18addfb6a1a137a96a904aca84b153dc087e599e0977cdf378f09fa14", "534bfbb1f9fd36b91528e5877bcdd8628d7b77bb751ff0b126909cd5135252de"]
+    },
+    {
+      "point": "stiff",
+      "parameters": {"r": 0.1, "cr": 1, "T_re": 2000.0, "kappa10": 0.01},
+      "DN_gw": [0.023651952531150724, 0.0236260603790678, 0.02362525402547466, 0.023617706572592545, 0.02360992936525608],
+      "central_DN_gw": 0.02360992936525608,
+      "systematic_uncertainty_rel": 0.0017798937576020198,
+      "successive_relative_change": [0.0010947152058090985, 3.412983714603221e-5, 0.0003194654700421672, 0.0003292956203245239],
+      "convergence_monotone_to_central": true,
+      "runtime_total_s": 81.70227830000294,
+      "cache_hits": 0,
+      "cache_keys": ["fb7a8d859f1bbb55c283a7238ac5dd9c03c97d8fa219204862abbee471a70501", "c0fd694d4add61b24f819d28d0bed786dc28d8146540a30f58fb1e0e00587830", "772d11b6c78b8766170397319057e3e98da8de8d53eccf2d1a52d0413d31be60", "79053fa51eed05b2e3ddda149c87d526289bae23e55c50111a9cd14992ef016f", "73c93c673618d1e0392c541a6374c33b392c6e38e61b5ded08a84086703ef77e"]
+    }
+  ],
+  "acceptance_note": "The observed deepest-tail difference is the systematic bound; fitted decay is descriptive and is not used to shrink it."
+}

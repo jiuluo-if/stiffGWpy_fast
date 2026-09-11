@@ -126,6 +126,7 @@
 | Resource-capped canonical verification | 在 `NUMBA_NUM_THREADS=2`、`FAST_THREADS=2`、BLAS=1 下：compatibility `3 passed`；canonical `136 passed, 6 deselected, 2 warnings`；Cobaya `1 passed, 141 deselected`；Ruff/mypy/manifest/compileall/diff/build/distribution/wheel smoke 全部通过 | PASS |
 | Oracle checkpoint/resume hardening | tail sweep 绑定当前 commit、reference module SHA、参数、频率、`DN_eff`、`z_tail`、`rtol` 的 immutable cache key；每个 z_tail 原子写 checkpoint，schema/commit/version 不匹配时拒绝恢复；新增纯逻辑 checkpoint 测试 | PASS / STAGE B READY |
 | Oracle Stage B default full native grid | 当前 HEAD `886c64f`、76 native frequencies、`z_tail=5/6/7/8/10`、workers=1、Numba=2；runtime `8.34/16.52/40.02/101.82/708.23 s`；central `DN_gw=0.0022636593`；observed systematic rel `3.6295e-3`，tail sequence 非单调；resume 命中 `5/5`，结果保存于 `docs/oracle_tail_convergence_default_full.json` | PASS / ORACLE-SENSITIVE / STAGE C PENDING |
+| Oracle Stage C low-T/high-T/stiff minimal grid | 当前 HEAD `095b1a7`、每点 8 个 native representative frequencies、`z_tail=5/6/7/8/10`、workers=1、Numba=2、BLAS=1；low-T/high-T/stiff observed systematic rel `4.9874e-4/4.1532e-3/1.7799e-3`，分别 `non-monotone/non-monotone/monotone`；结果保存于 `docs/oracle_tail_convergence_stageC_min8.json`，无 tail correction promotion | PASS / ORACLE-SENSITIVE / STAGE D PENDING |
 
 ### Errors
 
