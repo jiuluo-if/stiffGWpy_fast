@@ -22,6 +22,6 @@
 
 ## 资源审计
 
-默认 correctness/reference 路径使用 Numba/fast 线程 2、BLAS 类线程 1、reference workers 1；benchmark 脚本的显式 `--threads` 或 `--workers` 才能提高预算。benchmark artifact 记录 logical CPU、affinity、线程层、BLAS caps、workers、版本、commit 和并发进程数。
+默认 correctness/reference 路径使用 Numba/fast 线程 2、BLAS 类线程 1、reference workers 1；benchmark 脚本的显式 `--threads` 或 `--workers` 才能提高预算。Cobaya 真实集成 smoke 是有固定 180 秒上限的独立例外，CI 显式使用 `SGWB_POOL_SIZE=2`，不改变库默认值。benchmark artifact 记录 logical CPU、affinity、线程层、BLAS caps、workers、版本、commit 和并发进程数。
 
 本文件是执行结构审计，不把 benchmark 数值结果当作 correctness 证据；数值认证仍必须读取带 commit/schema 的独立 artifact。
