@@ -158,6 +158,41 @@
 （tail / deep-subhorizon stepping / frequency quadrature 三源），再决定是否在
 fast tail assembly 内升格 Oracle C 修正。
 
+## Fast DN_gw residual decomposition (2026-09-11)
+
+- 新增 `scripts/benchmark_fast_residual_decomposition.py`；artifacts
+  `docs/fast_residual_decomposition.json` 与
+  `docs/fast_residual_decomposition_assessment.md`。自检：脚本用 `build_Wmat`
+  权重复现的 `dn.fast.simpson` 与 fast 自报 `DN_gw` 逐位一致（default
+  `2.2626969518e-03`），PCHIP 值也与既有 `0.002263647415085622` 一致。
+- 关键结果（同一积分器下的 per-node 物理差 vs Simpson-vs-PCHIP 积分器差）：
+  default `9.49e-06` vs `4.20e-04`；lowT `1.41e-04` vs `1.26e-02`；
+  highT `9.32e-06` vs `7.40e-04`；stiff `1.10e-05` vs `1.28e-03`。
+- 结论 1（EMPIRICALLY VALIDATED）：fast 的传播/tail kernel 精度约 1e-5；真实
+  DN 误差由默认 Simpson 频率积分器主导，而非 tail 或 deep-subhorizon stepping。
+- 结论 2（EMPIRICALLY VALIDATED）：default/highT/stiff 的残差 100% 落在 tail
+  节点但仅 1e-5 量级，即 `_tail_match_gamma` 尾与 WKB 锚点之间的 O(eps^2) 残差。
+- 结论 3（EMPIRICALLY VALIDATED）：lowT 残差的 |abs| 只有 11.0% 在 tail 节点，
+  且最低频 `f=-18.4594` 单点占 52.7%；其 `DN_gw=5.2e-08`，属低振幅抵消/求积
+  效应而非物理 tail。
+- 推论（EMPIRICALLY VALIDATED，四个命名点）：默认换 PCHIP 后真实 DN 误差预期
+  default `1.07e-05`、highT `9.88e-06`、stiff `1.15e-05`、lowT `1.66e-04`，
+  全部进入 `2e-4` gate。这也解释了历史上的“节点加密非单调”与“PCHIP opt-in”
+  现象：两者都在削减同一个 quadrature 项。
+- 决策：ACCEPTED as diagnosis finding，不改正式 kernel。下一实验先写 acceptance
+  criteria 再动手：默认 PCHIP 化（必要时 Numba），要求 DN rel `<2e-4`、
+  spectrum max 不退化、warm median 增幅 `<10%`、no new failure、determinism pass。
+
+### Confidence tables (residual decomposition)
+
+| Classification | Statement |
+|---|---|
+| EMPIRICALLY VALIDATED | fast 传播 kernel 的 per-node DN 精度为 `9.3e-6..1.4e-4`（同积分器 vs WKB 锚点），比 Simpson-vs-PCHIP 差小 1-2 个数量级。 |
+| EMPIRICALLY VALIDATED | default/highT/stiff 残差 100% 在 tail 节点但仅 1e-5 级；lowT 残差 89% 在非 tail，最低频单点占 52.7%。 |
+| EMPIRICALLY VALIDATED | 四个命名点上默认改用 PCHIP 后真实 DN 误差 `1.07e-5..1.66e-4`，进入 `2e-4` gate。 |
+| HEURISTIC | PCHIP 化的 runtime 成本（scipy `PchipInterpolator` + `integrate`）尚未测量；Numba 化可行性未验证。 |
+| UNVERIFIED | PCHIP 默认在其他 Sobol/edge 参数点是否同样接近 WKB 锚点（目前仅 4 个命名点）。 |
+
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。

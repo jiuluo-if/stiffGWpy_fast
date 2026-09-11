@@ -34,6 +34,17 @@ frequency quadrature 三源），acceptance criteria：`spectrum max < 1e-3`、
 `DN rel < 5e-4`、no new failure、determinism pass；若残差 tail-dominated，
 则在 fast tail assembly 内升格 Oracle C 的 `1 + sin(2θ_f)/ω_f` 修正。
 
+频率残差分解已完成（2026-09-11）：
+`scripts/benchmark_fast_residual_decomposition.py` 用 `build_Wmat` 权重复现
+fast 的 Simpson DN（逐位一致），并在同一积分器下比较 fast 与 Oracle C WKB
+锚点的 per-node 值：default `9.49e-06`、highT `9.32e-06`、stiff `1.10e-05`、
+lowT `1.41e-04`；而 Simpson-vs-PCHIP 积分器差为
+`4.20e-04/7.40e-04/1.28e-03/1.26e-02`。结论：真实 DN 误差由默认 Simpson 频率
+积分器主导，fast 传播 kernel 已 ~1e-5。下一实验（先写 acceptance criteria）：
+默认 `frequency_quadrature` 换 PCHIP（必要时 Numba 化），要求 DN rel `<2e-4`、
+spectrum max 不退化、warm median 增幅 `<10%`、no new failure、
+determinism pass。
+
 ## Current Phase
 
 Phase 3: Implementation and evidence-driven optimization

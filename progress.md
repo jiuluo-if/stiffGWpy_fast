@@ -45,6 +45,17 @@
   正式 kernel；artifacts 为 `docs/fast_true_error.json` 与
   `docs/fast_true_error_assessment.md`。
 
+- Fast 真实 DN 误差的按频率分解（2026-09-11）：新增
+  `scripts/benchmark_fast_residual_decomposition.py`，用 `build_Wmat` 权重
+  复现 fast 的 Simpson DN（与自报值逐位一致），并在同一积分器下比较 fast 与
+  Oracle C WKB 锚点的 per-node 值：default `9.49e-06`、highT `9.32e-06`、
+  stiff `1.10e-05`、lowT `1.41e-04`；而 Simpson-vs-PCHIP 积分器差为
+  `4.20e-04/7.40e-04/1.28e-03/1.26e-02`（1-2 个数量级更大）。结论：真实 DN
+  误差由默认 Simpson 频率积分器主导，fast 传播/tail kernel 已 ~1e-5；lowT
+  残差 89% 在非 tail 且最低频单点占 52.7%。决策：ACCEPTED as diagnosis
+  finding，不改正式 kernel；下一实验为默认 PCHIP 化（含 runtime 与参数空间
+  验收）。
+
 ### Artifacts
 
 - `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`
@@ -54,6 +65,9 @@
 - `docs/fast_true_error.json`
 - `docs/fast_true_error_assessment.md`
 - `scripts/benchmark_fast_true_error.py`
+- `docs/fast_residual_decomposition.json`
+- `docs/fast_residual_decomposition_assessment.md`
+- `scripts/benchmark_fast_residual_decomposition.py`
 
 ## Session: 2026-09-09
 
