@@ -99,6 +99,17 @@ def test_tail_diagnostic_cache_key_binds_tail_and_frequency():
                               5.0, 1e-10)
 
 
+def test_phase_window_observable_uses_later_handoff():
+    from scripts.benchmark_phase_averaged_oracle import _phase_window_observable
+
+    result = _phase_window_observable(
+        z_handoff=5.0, event_N=1.0, x_handoff=2.0, y_handoff=3.0,
+        n_inf=4.0, today_f_hor=-2.0, freq=-1.0, tensor_power=1.0)
+
+    assert result['observable'] == pytest.approx(100.0 * 6.5 * math.exp(-16.0) / 36.0)
+    assert result['phase_averaged'] is True
+
+
 def test_oracle_checkpoint_key_and_schema_are_reproducible(tmp_path):
     from scripts.benchmark_oracle_tail_convergence import (
         _cache_key,
