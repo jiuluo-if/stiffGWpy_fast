@@ -620,8 +620,7 @@ def summarize_tail_convergence(records):
     rel_to_central = np.abs(dn - central) / denom
     adjacent_rel = np.abs(np.diff(dn)) / np.maximum(np.abs(dn[:-1]), 1e-300)
 
-    # Fit log(|successive change|) against the midpoint z.  This is a
-    # descriptive exponential decay rate, not an extrapolated truth value.
+    # 将相邻变化的对数拟合到 z 中点；这里只作描述性衰减率，不能替代外推真值。
     changes = np.abs(np.diff(dn))
     keep = changes > np.finfo(float).eps * max(np.max(np.abs(dn)), 1.0)
     if np.count_nonzero(keep) >= 2:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Measure independent-reference sensitivity to the frozen-tail hand-off.
 
 The fast spectrum and its ``DN_eff`` are held fixed.  Only the continuous-
