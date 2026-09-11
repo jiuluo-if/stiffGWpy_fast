@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "generated_commit": "a05163629a26560c92db8b8594b985fdf98381f5",
+  "point": "default",
+  "frequencies": [
+    -18.459378758443304,
+    -14.4620120931128,
+    -10.04386998932646,
+    -5.6257278855401145,
+    -1.5231673605956528,
+    0.2767656568807144,
+    2.4741993047348485,
+    6.892341408521191
+  ],
+  "z_tails": [
+    5.0,
+    7.0
+  ],
+  "DN_eff": 0.0022626969518100204,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "rows": [
+    {
+      "frequency": -18.459378758443304,
+      "z_tail": 5.0,
+      "used_tail": false
+    },
+    {
+      "frequency": -18.459378758443304,
+      "z_tail": 7.0,
+      "used_tail": false
+    },
+    {
+      "frequency": -14.4620120931128,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.6179082295496042e-08,
+      "phase_delta": 1.3064984933919277e-06,
+      "phase_averaged_power_relative_error": 5.2358165568927455e-08,
+      "cartesian_nfev": 9380,
+      "prufer_nfev": 8525,
+      "cartesian_runtime_s": 0.07593249999990803,
+      "prufer_runtime_s": 0.059256399999867426
+    },
+    {
+      "frequency": -14.4620120931128,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 9.17219584107043e-08,
+      "phase_delta": 2.418976746909607e-05,
+      "phase_averaged_power_relative_error": 1.834439253779373e-07,
+      "cartesian_nfev": 81425,
+      "prufer_nfev": 49793,
+      "cartesian_runtime_s": 1.0977221000011923,
+      "prufer_runtime_s": 0.6108045999990281
+    },
+    {
+      "frequency": -10.04386998932646,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.3028138958514005e-09,
+      "phase_delta": 1.451500004634454e-07,
+      "phase_averaged_power_relative_error": 2.6056279860001915e-09,
+      "cartesian_nfev": 9224,
+      "prufer_nfev": 8933,
+      "cartesian_runtime_s": 0.13954709999961779,
+      "prufer_runtime_s": 0.12088049999874784
+    },
+    {
+      "frequency": -10.04386998932646,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.3476387857853627e-09,
+      "phase_delta": 1.3654263497642205e-07,
+      "phase_averaged_power_relative_error": 4.6952778059634e-09,
+      "cartesian_nfev": 52589,
+      "prufer_nfev": 40565,
+      "cartesian_runtime_s": 0.4521764000000985,
+      "prufer_runtime_s": 0.3452229000013176
+    },
+    {
+      "frequency": -5.6257278855401145,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.7919972854233965e-10,
+      "phase_delta": -6.496314597370656e-10,
+      "phase_averaged_power_relative_error": 5.583996498648409e-10,
+      "cartesian_nfev": 5120,
+      "prufer_nfev": 2969,
+      "cartesian_runtime_s": 0.09822400000120979,
+      "prufer_runtime_s": 0.04403480000109994
+    },
+    {
+      "frequency": -5.6257278855401145,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.3247833729560312e-09,
+      "phase_delta": -1.0813710815682498e-08,
+      "phase_averaged_power_relative_error": 2.6495668678145246e-09,
+      "cartesian_nfev": 36512,
+      "prufer_nfev": 18077,
+      "cartesian_runtime_s": 0.5322613999996975,
+      "prufer_runtime_s": 0.23775229999955627
+    },
+    {
+      "frequency": -1.5231673605956528,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.768597577260732e-10,
+      "phase_delta": -5.784919210327644e-10,
+      "phase_averaged_power_relative_error": 5.537197285606807e-10,
+      "cartesian_nfev": 5807,
+      "prufer_nfev": 3941,
+      "cartesian_runtime_s": 0.09448239999983343,
+      "prufer_runtime_s": 0.045649699999557924
+    },
+    {
+      "frequency": -1.5231673605956528,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.196988698561879e-09,
+      "phase_delta": -4.881005821744111e-09,
+      "phase_averaged_power_relative_error": 2.3939774626942487e-09,
+      "cartesian_nfev": 27572,
+      "prufer_nfev": 14405,
+      "cartesian_runtime_s": 0.3861469000003126,
+      "prufer_runtime_s": 0.18016770000031102
+    },
+    {
+      "frequency": 0.2767656568807144,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 3.284139194088964e-10,
+      "phase_delta": -4.987690260804811e-10,
+      "phase_averaged_power_relative_error": 6.56827941817936e-10,
+      "cartesian_nfev": 6035,
+      "prufer_nfev": 4505,
+      "cartesian_runtime_s": 0.09650049999982002,
+      "prufer_runtime_s": 0.04918379999980971
+    },
+    {
+      "frequency": 0.2767656568807144,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.0890369303774863e-09,
+      "phase_delta": -4.774822315312122e-09,
+      "phase_averaged_power_relative_error": 2.17807412999741e-09,
+      "cartesian_nfev": 27836,
+      "prufer_nfev": 15425,
+      "cartesian_runtime_s": 0.39023810000071535,
+      "prufer_runtime_s": 0.19160510000074282
+    },
+    {
+      "frequency": 2.4741993047348485,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 9.950017899396002e-10,
+      "phase_delta": -4.547107579355725e-09,
+      "phase_averaged_power_relative_error": 1.9900036653948162e-09,
+      "cartesian_nfev": 14786,
+      "prufer_nfev": 9857,
+      "cartesian_runtime_s": 0.11033759999918402,
+      "prufer_runtime_s": 0.05043110000042361
+    },
+    {
+      "frequency": 2.4741993047348485,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.3061262539009997e-09,
+      "phase_delta": -6.655436735059084e-08,
+      "phase_averaged_power_relative_error": 4.612252724490824e-09,
+      "cartesian_nfev": 41243,
+      "prufer_nfev": 21809,
+      "cartesian_runtime_s": 0.42171719999896595,
+      "prufer_runtime_s": 0.1827173000001494
+    },
+    {
+      "frequency": 6.892341408521191,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.0072859314712402e-09,
+      "phase_delta": -3.980265006475747e-09,
+      "phase_averaged_power_relative_error": 2.0145721244907316e-09,
+      "cartesian_nfev": 14030,
+      "prufer_nfev": 9413,
+      "cartesian_runtime_s": 0.11585919999924954,
+      "prufer_runtime_s": 0.047749499999554246
+    },
+    {
+      "frequency": 6.892341408521191,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 4.7682533789249896e-09,
+      "phase_delta": -2.301313273278538e-08,
+      "phase_averaged_power_relative_error": 9.536506883824769e-09,
+      "cartesian_nfev": 100625,
+      "prufer_nfev": 46601,
+      "cartesian_runtime_s": 0.5836271999996825,
+      "prufer_runtime_s": 0.23610779999944498
+    }
+  ],
+  "semantics": "standalone Prüfer amplitude-phase versus Cartesian DOP853"
+}
