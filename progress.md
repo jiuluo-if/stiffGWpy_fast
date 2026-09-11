@@ -128,6 +128,7 @@
 | Oracle Stage B default full native grid | 当前 HEAD `886c64f`、76 native frequencies、`z_tail=5/6/7/8/10`、workers=1、Numba=2；runtime `8.34/16.52/40.02/101.82/708.23 s`；central `DN_gw=0.0022636593`；observed systematic rel `3.6295e-3`，tail sequence 非单调；resume 命中 `5/5`，结果保存于 `docs/oracle_tail_convergence_default_full.json` | PASS / ORACLE-SENSITIVE / STAGE C PENDING |
 | Oracle Stage C low-T/high-T/stiff minimal grid | 当前 HEAD `095b1a7`、每点 8 个 native representative frequencies、`z_tail=5/6/7/8/10`、workers=1、Numba=2、BLAS=1；low-T/high-T/stiff observed systematic rel `4.9874e-4/4.1532e-3/1.7799e-3`，分别 `non-monotone/non-monotone/monotone`；结果保存于 `docs/oracle_tail_convergence_stageC_min8.json`，无 tail correction promotion | PASS / ORACLE-SENSITIVE / STAGE D PENDING |
 | Nested-parallel resource audit | 为 `param_sweep`、`validate_plain_grid_vs_reference`、`validate_edges_vs_reference`、`benchmark_same_grid_reference` 增加 `--threads`；外层 workers/pool 大于 1 时内层自动降为 1，并新增 `nested_thread_budget` 单元测试；默认仍为 workers/pool=1、Numba=2 | PASS / RESOURCE-CAPPED |
+| Per-frequency tail/adiabaticity diagnostic | HEAD `f939c07`；default/lowT/highT/stiff 各 8 个 native frequencies、`z_tail=5/6/7/8/10`，共 160 条模式记录；相对 z_tail=10 的单模式最大差异 `0.590%–0.672%`，z_tail=5 最大 `|omega'/omega^2|≈1.35e-2`，z_tail=10 降至约 `9.1e-5`；phase、amplitude、omega、二阶 adiabaticity 与 DN weight 已记录，resume 命中 160/160 | PASS / ORACLE-DIAGNOSTIC / NO PRODUCTION CHANGE |
 
 ### Errors
 
