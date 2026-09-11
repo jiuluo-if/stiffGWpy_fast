@@ -260,8 +260,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--phase', choices=['plain', 'summary'], default='plain')
     ap.add_argument('--out', default=os.path.join('docs', 'paramsweep_plain'))
-    ap.add_argument('--pool', type=int, default=3)
-    ap.add_argument('--workers', type=int, default=3)
+    ap.add_argument('--pool', type=int, default=1)
+    ap.add_argument('--workers', type=int, default=1)
     args = ap.parse_args()
     if not os.path.isabs(args.out):
         args.out = os.path.join(ROOT, args.out)

@@ -262,7 +262,7 @@ def ref_log10_at_bins(kw, bins, dn, rtol=1e-9, z_tail=8.0):
     m = LCDM_SG(**kw)
     Ogw, Oj, Opgw, used = REF.spectrum_reference(m, np.asarray(bins, dtype=float),
                                                  dn, z_tail=z_tail, rtol=rtol,
-                                                 workers=8)
+                                                 workers=1)
     return np.log10(np.maximum(np.asarray(Ogw) - np.asarray(Oj), 1e-300))
 
 

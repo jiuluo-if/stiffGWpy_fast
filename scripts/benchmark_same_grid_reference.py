@@ -13,6 +13,12 @@ import sys
 import time
 
 os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
+os.environ.setdefault('NUMBA_NUM_THREADS', '2')
+os.environ.setdefault('FAST_THREADS', '2')
+os.environ.setdefault('OMP_NUM_THREADS', '1')
+os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
+os.environ.setdefault('MKL_NUM_THREADS', '1')
+os.environ.setdefault('NUMEXPR_NUM_THREADS', '1')
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
@@ -95,7 +101,7 @@ def ensemble_local_error(error_vectors):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--point', default='default', choices=sorted(CASES))
-    ap.add_argument('--workers', type=int, default=4)
+    ap.add_argument('--workers', type=int, default=1)
     ap.add_argument('--rtol', type=float, default=1e-9)
     ap.add_argument('--z-tail', type=float, default=8.0)
     ap.add_argument('--seed-n', type=int, default=64,

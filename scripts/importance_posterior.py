@@ -191,7 +191,7 @@ def phase_posterior(args):
     print(json.dumps(rec, ensure_ascii=False, indent=1), flush=True)
 
 
-def ref_at_bins(kw, bins, dn, rtol=1e-9, z_tail=8.0, workers=4):
+def ref_at_bins(kw, bins, dn, rtol=1e-9, z_tail=8.0, workers=1):
     from stiffgwpy_fast import reference as REF
     from stiffgwpy_fast.stiff_SGWB import LCDM_SG
     m = LCDM_SG(**kw)
@@ -345,7 +345,7 @@ def parse_args(argv=None):
     ap.add_argument('--out', default=os.path.join(REPO, 'docs', 'mcmc_posterior'))
     ap.add_argument('--n', type=int, default=12000)
     ap.add_argument('--k', type=int, default=120)
-    ap.add_argument('--workers', type=int, default=12)
+    ap.add_argument('--workers', type=int, default=1)
     ap.add_argument('--sigma-dex', type=float, default=0.05)
     ap.add_argument('--mu-r', type=float, default=-2.0)
     ap.add_argument('--sig-r', type=float, default=0.06)

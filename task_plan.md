@@ -6,7 +6,7 @@
 
 ## Next Step
 
-已在 `e122fc7` 完成 Phase 1 CI/package audit；`33d090f` 已补充信号区间子集诊断。default 子集 observed tail systematics `2.52e-3`，low-T `6.35e-3`，stiff `2.40e-3`，均非单调；这些是子集 oracle-floor 证据，不是完整频率积分认证。完整 native-grid 扫描仍待后续专门运行。
+已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、oracle workers=1。default 子集 tail systematic `2.52e-3`、low-T `6.35e-3`、stiff `2.40e-3` 仍表明 oracle-sensitive；完整 native-grid 扫描和正式 tail correction 仍待后续专门运行。
 
 ## Current Phase
 

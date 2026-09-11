@@ -214,7 +214,7 @@ def reference_point(kw, z_tail=7.0, rtol=1e-9, freq_res=1.0,
     try:
         Ogw, Oj, Opgw, used = REF.spectrum_reference(m, G, dn_total,
                                                      z_tail=z_tail, rtol=rtol,
-                                                     workers=8)
+                                                     workers=1)
     except Exception as exc:
         rec['status'] = 'ref_exception'
         rec['error'] = '%s: %s' % (type(exc).__name__, exc)
@@ -398,4 +398,3 @@ def main(argv=None):
 
 if __name__ == '__main__':
     main()
-

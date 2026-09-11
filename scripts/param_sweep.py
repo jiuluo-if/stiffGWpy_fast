@@ -236,7 +236,7 @@ def _worker(task):
 def main(argv=None):
     ap = argparse.ArgumentParser(description='phase-3 parameter-space sweep')
     ap.add_argument('--out', default='docs/paramsweep')
-    ap.add_argument('--workers', type=int, default=4)
+    ap.add_argument('--workers', type=int, default=1)
     ap.add_argument('--limit', type=int, default=None,
                     help='max number of points to evaluate (smoke tests)')
     ap.add_argument('--offset', type=int, default=0)

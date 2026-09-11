@@ -122,6 +122,8 @@
 | Oracle scaffolding verification | focused reference tests `6 passed, 1 deselected`；full pytest `133 passed, 6 deselected, 2 warnings`；Cobaya `1 passed, 138 deselected`；maintained Ruff、mypy、manifest、compileall/diff check、官方 PyPI isolated build、distribution boundary、installed-wheel smoke 全部通过 | PASS |
 | Oracle tail representative-subset sweep | 固定 fast `DN_eff`、reference `z_tail=5/6/7/8/10`；default 12 点子集 observed systematic rel `2.520e-3` 且非单调；`[-4,2]` 信号区间 4 点子集：low-T `6.345e-3`、stiff `2.396e-3`，均非单调；只作为 oracle-floor/tail-sensitive 诊断，不能替代完整 native-grid 认证 | PASS / ORACLE-SENSITIVE / FULL GRID PENDING |
 | Tail diagnostic scope simplification | 后续研究测试先采用明确标注的代表频率子集和 focused regression，完整 pytest/Cobaya/CI 仅在代码提交或正式门禁时运行；不得把子集结果写成全频率精度结论 | ACCEPTED PROCESS CHANGE |
+| Phase A/B/C test and resource audit | 新增 `docs/test_coverage_matrix.md` 与 3-case compatibility smoke；CI 改为 compatibility 3.9–3.13、canonical 3.11、static、package、Cobaya 五职责 job；slow workflow 与本地 oracle 默认 Numba=2、BLAS=1、reference workers=1；高并行仅显式指定 | IMPLEMENTED / LOCAL VERIFIED |
+| Resource-capped canonical verification | 在 `NUMBA_NUM_THREADS=2`、`FAST_THREADS=2`、BLAS=1 下：compatibility `3 passed`；canonical `136 passed, 6 deselected, 2 warnings`；Cobaya `1 passed, 141 deselected`；Ruff/mypy/manifest/compileall/diff/build/distribution/wheel smoke 全部通过 | PASS |
 
 ### Errors
 

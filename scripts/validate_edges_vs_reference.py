@@ -213,7 +213,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--phase', choices=['reference', 'summary'], default='reference')
     ap.add_argument('--out', default=os.path.join('docs', 'paramsweep_z8b'))
-    ap.add_argument('--pool', type=int, default=6)
+    ap.add_argument('--pool', type=int, default=1)
     args = ap.parse_args()
     if not os.path.isabs(args.out):
         args.out = os.path.join(ROOT, args.out)
