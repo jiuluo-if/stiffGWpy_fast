@@ -38,6 +38,13 @@ One low-frequency native mode per point did not reach the requested tail and is
 reported as unsupported, not extrapolated.  The Prüfer solver used about 65%
 of the Cartesian function evaluations in the default artifact.
 
+The fixed-frequency full-output replay also compared today `Ogw`, `Oj`,
+`Opgw`, and integrated `DN_gw` on eight native frequencies. Across the four
+points and both handoff depths, the largest `DN_gw` relative difference was
+`2.26e-9`; the largest spectrum-component difference was `1.67e-7`. Repeating
+the default-point run produced bitwise-identical numerical fields for the
+recorded rows and spectrum summary; timing fields were excluded.
+
 ## Decision
 
 **Accepted as a standalone prototype; rejected for formal-kernel promotion.**
@@ -45,12 +52,13 @@ of the Cartesian function evaluations in the default artifact.
 The prototype satisfies the standalone screening signal (>30% local speedup
 with sub-`1e-6` amplitude/power differences) across the four representative
 points.  It has not yet compared the complete today-spectrum and `DN_gw`
-observable through the formal outer loop, nor the reheating-neighborhood edge
-suite.  Those are mandatory before any production integration.
+observable through the formal outer self-consistency loop, nor the complete
+reheating-neighborhood edge suite. Those are mandatory before any production
+integration.
 
 ## Next experiment
 
-Run the Prüfer state through the full independent spectrum observable on the
+Run the Prüfer state through the formal outer self-consistency loop on the
 reheating-edge and fixed Sobol points, then compare `DN_gw`, guard behavior,
-determinism, and cold/warm channel cost.  Keep it reference-only until that
+determinism, and cold/warm channel cost. Keep it reference-only until that
 comparison is complete.

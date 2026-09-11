@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scripts.benchmark_same_grid_reference import CASES  # noqa: E402
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import global_param as gp  # noqa: E402
 from stiffgwpy_fast import reference as REF  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
@@ -34,6 +35,20 @@ def _prufer_derivatives(z, sigma, phase):
 
 def _phase_averaged_power(amplitude):
     return 0.5 * amplitude * amplitude
+
+
+def _phase_averaged_today(coefficient_squared, z_handoff, event_N, n_inf,
+                          today_f_hor, freq, tensor_power):
+    transfer_squared = coefficient_squared \
+        * math.exp(-2.0 * z_handoff + 2.0 * event_N - 2.0 * n_inf)
+    x_squared = transfer_squared * 10.0 ** (2.0 * (freq - today_f_hor))
+    oj = -transfer_squared * tensor_power / 3.0
+    opgw = x_squared * tensor_power / 36.0
+    return {
+        'Ogw_today': float(3.0 * opgw + oj),
+        'Oj_today': float(oj),
+        'Opgw_today': float(opgw),
+    }
 
 
 def _prufer_rhs(N, state, bg):
@@ -51,12 +66,31 @@ def solve_prufer(model, freq, dn_eff, z_tail, rtol=1e-10):
         _prufer_rhs, (n_start, bg.N_inf), (z0, z0, 0.0),
         method='DOP853', rtol=rtol, atol=[1e-12, 1e-12, 1e-12],
         events=[REF._make_tail_event(z_tail)], args=(bg,))
+    tensor_power = model.derived_param['A_t'] \
+        * (10.0 ** freq / gp.f_piv) ** model.derived_param['nt']
     if not result.t_events[0].size:
-        return {'used_tail': False, 'nfev': int(result.nfev)}
+        zf, log_amplitude, phase = result.y[:, -1]
+        amplitude = math.exp(float(log_amplitude))
+        x = amplitude * math.sin(float(phase))
+        y = amplitude * math.cos(float(phase))
+        th = y / math.exp(float(zf))
+        return {
+            'Ogw_today': float((x * x + y * y) / 24.0 * tensor_power
+                               + x * th / 3.0 * tensor_power),
+            'Oj_today': float(x * th / 3.0 * tensor_power),
+            'Opgw_today': float((-5.0 * x * x + 7.0 * y * y)
+                                / 72.0 * tensor_power),
+            'used_tail': False,
+            'nfev': int(result.nfev),
+        }
     event_N = float(result.t_events[0][0])
     zf, log_amplitude, phase = result.y_events[0][0]
     amplitude = math.exp(float(log_amplitude))
-    return {
+    f_today = REF.f_hor_abs(bg, freq, bg.N_inf)
+    today = _phase_averaged_today(
+        _phase_averaged_power(amplitude), float(zf), event_N, bg.N_inf,
+        f_today, freq, tensor_power)
+    return dict(today, **{
         'used_tail': True,
         'event_N': event_N,
         'z_handoff': float(zf),
@@ -64,6 +98,52 @@ def solve_prufer(model, freq, dn_eff, z_tail, rtol=1e-10):
         'phase_handoff': float(phase),
         'phase_averaged_power': _phase_averaged_power(amplitude),
         'nfev': int(result.nfev),
+    })
+
+
+def spectrum_prufer(model, freqs, dn_eff, z_tail, rtol=1e-10):
+    freqs = np.asarray(freqs, dtype=float)
+    rows = [solve_prufer(model, float(freq), dn_eff, z_tail, rtol=rtol)
+            for freq in freqs]
+    ogw = np.asarray([row['Ogw_today'] for row in rows])
+    oj = np.asarray([row['Oj_today'] for row in rows])
+    opgw = np.asarray([row['Opgw_today'] for row in rows])
+    g2, quadrature_error, interpolation_error = REF.integrate_spectrum(
+        freqs, ogw, oj)
+    omega_nu = gp.Omega_nh2 / model.derived_param['h'] ** 2
+    return {
+        'Ogw': ogw,
+        'Oj': oj,
+        'Opgw': opgw,
+        'DN_gw': float(gp.Neff0 * g2 / omega_nu),
+        'quadrature_error': float(quadrature_error),
+        'interpolation_error': interpolation_error,
+        'used_tail_fraction': float(np.mean([row['used_tail'] for row in rows])),
+        'rows': rows,
+    }
+
+
+def compare_spectrum(model, freqs, dn_eff, z_tail, rtol=1e-10):
+    prufer = spectrum_prufer(model, freqs, dn_eff, z_tail, rtol=rtol)
+    ogw, oj, opgw, used_tail = REF.spectrum_reference(
+        model, freqs, dn_eff, z_tail=z_tail, rtol=rtol, workers=1)
+    omega_nu = gp.Omega_nh2 / model.derived_param['h'] ** 2
+    g2, _, _ = REF.integrate_spectrum(freqs, ogw, oj)
+    cartesian_dn = float(gp.Neff0 * g2 / omega_nu)
+    return {
+        'z_tail': float(z_tail),
+        'prufer_DN_gw': prufer['DN_gw'],
+        'cartesian_DN_gw': cartesian_dn,
+        'DN_relative_error': abs(prufer['DN_gw'] - cartesian_dn)
+        / max(abs(cartesian_dn), 1e-300),
+        'Ogw_max_relative_error': float(np.max(
+            np.abs(prufer['Ogw'] - ogw) / np.maximum(np.abs(ogw), 1e-300))),
+        'Oj_max_relative_error': float(np.max(
+            np.abs(prufer['Oj'] - oj) / np.maximum(np.abs(oj), 1e-300))),
+        'Opgw_max_relative_error': float(np.max(
+            np.abs(prufer['Opgw'] - opgw) / np.maximum(np.abs(opgw), 1e-300))),
+        'used_tail_fraction_prufer': prufer['used_tail_fraction'],
+        'used_tail_fraction_cartesian': float(np.mean(used_tail)),
     }
 
 
@@ -86,11 +166,20 @@ def compare_mode(model, freq, dn_eff, z_tail, rtol=1e-10):
     reference_power = cartesian['amplitude_handoff'] ** 2
     power_rel = abs(prufer['phase_averaged_power'] - reference_power) \
         / max(reference_power, 1e-300)
+    opgw_rel = abs(prufer['Opgw_today'] - cartesian['Opgw_today']) \
+        / max(abs(cartesian['Opgw_today']), 1e-300)
+    oj_rel = abs(prufer['Oj_today'] - cartesian['Oj_today']) \
+        / max(abs(cartesian['Oj_today']), 1e-300)
+    ogw_rel = abs(prufer['Ogw_today'] - cartesian['Ogw_today']) \
+        / max(abs(cartesian['Ogw_today']), 1e-300)
     return {
         'frequency': float(freq), 'z_tail': float(z_tail), 'used_tail': True,
         'amplitude_relative_error': float(amplitude_rel),
         'phase_delta': float(phase_delta),
         'phase_averaged_power_relative_error': float(power_rel),
+        'Opgw_relative_error': float(opgw_rel),
+        'Oj_relative_error': float(oj_rel),
+        'Ogw_relative_error': float(ogw_rel),
         'cartesian_nfev': int(cartesian['n_steps']),
         'prufer_nfev': int(prufer['nfev']),
         'cartesian_runtime_s': cartesian_s,
@@ -118,6 +207,8 @@ def main(argv=None):
     dn_eff = float(model.cosmo_param['DN_eff'])
     rows = [compare_mode(model, float(freq), dn_eff, z_tail)
             for freq in freqs for z_tail in args.z_tail]
+    spectrum = [compare_spectrum(model, freqs, dn_eff, z_tail)
+                for z_tail in args.z_tail]
     payload = {
         'schema_version': 1,
         'generated_commit': os.popen('git rev-parse HEAD').read().strip(),
@@ -127,6 +218,7 @@ def main(argv=None):
         'DN_eff': dn_eff,
         'resources': telemetry(workers=1, threads=2),
         'rows': rows,
+        'spectrum': spectrum,
         'semantics': 'standalone Prüfer amplitude-phase versus Cartesian DOP853',
     }
     with open(args.out, 'w', encoding='utf-8') as handle:
