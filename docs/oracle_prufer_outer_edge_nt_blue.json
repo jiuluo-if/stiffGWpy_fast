@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "generated_commit": "fd2f150e003ceb0d6ef577fc671fed718d7359bd",
+  "point": "edge_nt_blue",
+  "frequencies": [
+    -18.459378758443304,
+    -15.554749283219362,
+    -12.219804330184465,
+    -8.992438246602305,
+    -5.765072163020146,
+    -2.537706079437986,
+    -0.5357343431195212,
+    0.15176565688048
+  ],
+  "z_tails": [
+    5.0,
+    7.0
+  ],
+  "DN_eff": 0.0,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "rows": [
+    {
+      "frequency": -18.459378758443304,
+      "z_tail": 5.0,
+      "used_tail": false
+    },
+    {
+      "frequency": -18.459378758443304,
+      "z_tail": 7.0,
+      "used_tail": false
+    },
+    {
+      "frequency": -15.554749283219362,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 3.990778724302686e-08,
+      "phase_delta": 1.7923549258114235e-06,
+      "phase_averaged_power_relative_error": 7.981557632389894e-08,
+      "Opgw_relative_error": 1.2497939119792467e-07,
+      "Oj_relative_error": 1.2497939108515777e-07,
+      "Ogw_relative_error": 1.24979391095815e-07,
+      "cartesian_nfev": 13316,
+      "prufer_nfev": 10085,
+      "cartesian_runtime_s": 0.17269730000043637,
+      "prufer_runtime_s": 0.11956269999791402
+    },
+    {
+      "frequency": -15.554749283219362,
+      "z_tail": 7.0,
+      "used_tail": false
+    },
+    {
+      "frequency": -12.219804330184465,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 7.985851005822399e-10,
+      "phase_delta": -5.90180349036018e-10,
+      "phase_averaged_power_relative_error": 1.597170088704292e-09,
+      "Opgw_relative_error": 5.186401699167833e-08,
+      "Oj_relative_error": 5.1864017267643945e-08,
+      "Ogw_relative_error": 5.186401705896506e-08,
+      "cartesian_nfev": 9299,
+      "prufer_nfev": 10121,
+      "cartesian_runtime_s": 0.08347130000038305,
+      "prufer_runtime_s": 0.07264519999807817
+    },
+    {
+      "frequency": -12.219804330184465,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 6.512235506693211e-10,
+      "phase_delta": 1.304683472369561e-07,
+      "phase_averaged_power_relative_error": 1.3024471931009203e-09,
+      "Opgw_relative_error": 4.941285166425481e-08,
+      "Oj_relative_error": 4.941285177901039e-08,
+      "Ogw_relative_error": 4.941285153086334e-08,
+      "cartesian_nfev": 52919,
+      "prufer_nfev": 47837,
+      "cartesian_runtime_s": 0.34705079999912414,
+      "prufer_runtime_s": 0.28724119999969844
+    },
+    {
+      "frequency": -8.992438246602305,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.5521938422527187e-08,
+      "phase_delta": -3.736148457278432e-08,
+      "phase_averaged_power_relative_error": 3.104387735450877e-08,
+      "Opgw_relative_error": 1.0634327965773725e-07,
+      "Oj_relative_error": 1.0634327973243183e-07,
+      "Ogw_relative_error": 1.0634327965773726e-07,
+      "cartesian_nfev": 8936,
+      "prufer_nfev": 9353,
+      "cartesian_runtime_s": 0.13553599999795551,
+      "prufer_runtime_s": 0.1256108999987191
+    },
+    {
+      "frequency": -8.992438246602305,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.6862237188501047e-08,
+      "phase_delta": 9.547062127523986e-07,
+      "phase_averaged_power_relative_error": 3.372447461218672e-08,
+      "Opgw_relative_error": 1.0772862181223931e-07,
+      "Oj_relative_error": 1.0772862150190278e-07,
+      "Ogw_relative_error": 1.0772862181223932e-07,
+      "cartesian_nfev": 53756,
+      "prufer_nfev": 45185,
+      "cartesian_runtime_s": 0.7324513000021398,
+      "prufer_runtime_s": 0.5882590000001073
+    },
+    {
+      "frequency": -5.765072163020146,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 3.185596634974788e-10,
+      "phase_delta": -4.774527440076781e-10,
+      "phase_averaged_power_relative_error": 6.371195203033464e-10,
+      "Opgw_relative_error": 6.183896761675588e-10,
+      "Oj_relative_error": 6.183897387244331e-10,
+      "Ogw_relative_error": 6.183896761675588e-10,
+      "cartesian_nfev": 5219,
+      "prufer_nfev": 3029,
+      "cartesian_runtime_s": 0.09389490000103251,
+      "prufer_runtime_s": 0.04319529999702354
+    },
+    {
+      "frequency": -5.765072163020146,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.5324409250086188e-09,
+      "phase_delta": -4.288462918111691e-09,
+      "phase_averaged_power_relative_error": 3.0648818766003476e-09,
+      "Opgw_relative_error": 3.034882513747549e-09,
+      "Oj_relative_error": 3.0348823942545913e-09,
+      "Ogw_relative_error": 3.0348826413331665e-09,
+      "cartesian_nfev": 39089,
+      "prufer_nfev": 19469,
+      "cartesian_runtime_s": 0.5437889999993786,
+      "prufer_runtime_s": 0.2552714000012202
+    },
+    {
+      "frequency": -2.537706079437986,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.673825471699971e-10,
+      "phase_delta": -5.535092384434392e-10,
+      "phase_averaged_power_relative_error": 5.347653094547092e-10,
+      "Opgw_relative_error": 5.355470789081642e-10,
+      "Oj_relative_error": 5.355468091539082e-10,
+      "Ogw_relative_error": 5.355470789081642e-10,
+      "cartesian_nfev": 4637,
+      "prufer_nfev": 2837,
+      "cartesian_runtime_s": 0.08622289999766508,
+      "prufer_runtime_s": 0.03732519999903161
+    },
+    {
+      "frequency": -2.537706079437986,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.1648731569331188e-09,
+      "phase_delta": -4.870660319511444e-09,
+      "phase_averaged_power_relative_error": 2.329746510920623e-09,
+      "Opgw_relative_error": 2.3305565787854953e-09,
+      "Oj_relative_error": 2.3305565988618868e-09,
+      "Ogw_relative_error": 2.33055650881532e-09,
+      "cartesian_nfev": 26402,
+      "prufer_nfev": 13277,
+      "cartesian_runtime_s": 0.37549220000073547,
+      "prufer_runtime_s": 0.17115869999906863
+    },
+    {
+      "frequency": -0.5357343431195212,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 2.4862483715050364e-10,
+      "phase_delta": -5.717701867524738e-10,
+      "phase_averaged_power_relative_error": 4.972498205812673e-10,
+      "Opgw_relative_error": 4.972640541436146e-10,
+      "Oj_relative_error": 4.972640540005436e-10,
+      "Ogw_relative_error": 4.972639410519746e-10,
+      "cartesian_nfev": 4424,
+      "prufer_nfev": 2657,
+      "cartesian_runtime_s": 0.08483139999952982,
+      "prufer_runtime_s": 0.03509670000130427
+    },
+    {
+      "frequency": -0.5357343431195212,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.1402013645915744e-09,
+      "phase_delta": -4.886008042603862e-09,
+      "phase_averaged_power_relative_error": 2.280402747149578e-09,
+      "Opgw_relative_error": 2.280402796660374e-09,
+      "Oj_relative_error": 2.2804027076305593e-09,
+      "Ogw_relative_error": 2.280402834512407e-09,
+      "cartesian_nfev": 26201,
+      "prufer_nfev": 13049,
+      "cartesian_runtime_s": 0.3769343999992998,
+      "prufer_runtime_s": 0.16819570000006934
+    },
+    {
+      "frequency": 0.15176565688048,
+      "z_tail": 5.0,
+      "used_tail": true,
+      "amplitude_relative_error": 4.577015934153844e-10,
+      "phase_delta": -5.440448092031147e-10,
+      "phase_averaged_power_relative_error": 9.154031227786555e-10,
+      "Opgw_relative_error": 9.154030322432992e-10,
+      "Oj_relative_error": 9.154034470755908e-10,
+      "Ogw_relative_error": 9.154030757226313e-10,
+      "cartesian_nfev": 4328,
+      "prufer_nfev": 2465,
+      "cartesian_runtime_s": 0.08419280000089202,
+      "prufer_runtime_s": 0.03254029999880004
+    },
+    {
+      "frequency": 0.15176565688048,
+      "z_tail": 7.0,
+      "used_tail": true,
+      "amplitude_relative_error": 1.3916793860218585e-09,
+      "phase_delta": -4.810519982356709e-09,
+      "phase_averaged_power_relative_error": 2.78335878800393e-09,
+      "Opgw_relative_error": 2.783372763903046e-09,
+      "Oj_relative_error": 2.7833728720008654e-09,
+      "Ogw_relative_error": 2.7833727639030463e-09,
+      "cartesian_nfev": 26105,
+      "prufer_nfev": 12941,
+      "cartesian_runtime_s": 0.3760407000008854,
+      "prufer_runtime_s": 0.16838199999983772
+    }
+  ],
+  "spectrum": [
+    {
+      "z_tail": 5.0,
+      "prufer_DN_gw": 166085.7914179969,
+      "cartesian_DN_gw": 166085.79128166664,
+      "DN_relative_error": 8.208423914482906e-10,
+      "Ogw_max_relative_error": 1.24979391095815e-07,
+      "Oj_max_relative_error": 1.2497939108515777e-07,
+      "Opgw_max_relative_error": 1.2497939119792467e-07,
+      "used_tail_fraction_prufer": 0.875,
+      "used_tail_fraction_cartesian": 0.875
+    },
+    {
+      "z_tail": 7.0,
+      "prufer_DN_gw": 165262.3004493061,
+      "cartesian_DN_gw": 165262.30000813378,
+      "DN_relative_error": 2.6695278094620745e-09,
+      "Ogw_max_relative_error": 9.967903488250885e-07,
+      "Oj_max_relative_error": 0.0017873956744480755,
+      "Opgw_max_relative_error": 4.859657520671682e-05,
+      "used_tail_fraction_prufer": 0.75,
+      "used_tail_fraction_cartesian": 0.75
+    }
+  ],
+  "outer": [
+    {
+      "status": "physical_guard",
+      "cartesian_status": "physical_guard",
+      "z_tail": 5.0,
+      "prufer_n_iter": 1,
+      "prufer_history": [
+        0.0,
+        166085.7914179969
+      ],
+      "guard_trial_DN_eff": 166085.7914179969,
+      "cartesian_message": "reference: did not converge in 60 iterations"
+    },
+    {
+      "status": "physical_guard",
+      "cartesian_status": "physical_guard",
+      "z_tail": 7.0,
+      "prufer_n_iter": 1,
+      "prufer_history": [
+        0.0,
+        165262.3004493061
+      ],
+      "guard_trial_DN_eff": 165262.3004493061,
+      "cartesian_message": "reference: did not converge in 60 iterations"
+    }
+  ],
+  "semantics": "standalone Prüfer amplitude-phase versus Cartesian DOP853"
+}
