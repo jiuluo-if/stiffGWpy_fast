@@ -49,11 +49,32 @@ determinism pass。
 显示 PCHIP 把四个命名点的真实 DN 误差降到 `1.07e-05..1.66e-04`（全部进入
 `2e-4` gate），但 scipy PCHIP 路径的 warm runtime 比值 `1.204..1.307` 超出
 `<10%` 预算；成本来自 `PchipInterpolator.integrate`（`0.141 ms/次`）与局部
-estimator（`1.39 ms/次`）。下一实验：预计算 PCHIP 积分权重（全局向量 + 逐区间
-矩阵）并向量化 estimator，然后把默认 `frequency_quadrature` 切到 PCHIP；
-acceptance：warm runtime 增幅 `<10%`、新路径 DN 与现 scipy PCHIP 一致
-（`<1e-12` rel）、DN vs WKB `<2e-4`、spectrum 不退化、no new failure、
-determinism pass。
+estimator（`1.39 ms/次`）。原假设“PCHIP 积分是节点值的线性泛函、可预计算固定
+权重向量”已被否证：Fritsch–Carlson 斜率是节点值的非线性函数，用单位矩阵探针
+得到的“权重”与逐列积分一致，但 `weights @ y` 与 `PchipInterpolator(x, y)
+.integrate()` 相差约一个数量级。因此改为**单次拟合共享**：
+`pchip_integral_breakdown` 构造一次 `PchipInterpolator` 并取其原函数在节点上的
+差值，同时返回全程积分与逐区间积分，供 DN 全局积分、`g2c[-1]` 与局部
+estimator 复用同一次拟合。
+
+单次拟合共享已完成（2026-09-11）（实验前已写定 acceptance criteria：
+四点 DN 与现 scipy PCHIP `rel < 1e-12`、DN vs WKB `< 2e-4`、PCHIP/Simpson
+warm median 比值 `< 1.10`、spectrum 不退化、no new failure、determinism
+pass，否则拒绝切换默认）。实现：`pchip_integral_breakdown` 一次构造
+`PchipInterpolator` + `antiderivative()`，同时返回全程与逐区间积分；
+`estimate_frequency_quadrature_local(..., candidate_intervals=...)` 复用它；
+非重叠三点 Simpson 基线改为等价向量化（实测逐位一致）。同会话配对 A/B
+（`docs/fast_quadrature_reuse_ab.json` 与 `..._before.json`，各 50 repeats、
+NUMBA=2、BLAS=1）：PCHIP 专属开销 `2.0-2.3 ms -> 0.6-1.0 ms`，比值
+`1.23-1.37 -> 1.07-1.17`；四点 DN 与现 scipy PCHIP 逐位一致（rel `0.0`）、
+vs WKB 不变。ACCEPTED：opt-in PCHIP 路径加速（同等观测值、约 60% 更少
+PCHIP 专属开销）。**REJECTED：本阶段不切换默认 `frequency_quadrature`**，
+因为 `<1.10` 未稳健满足（default 同会话 `1.165`，另两次会话 `1.093/1.123`；
+16 线程生产刻度探针 `1.101-1.154`）。下一实验：用 NumPy 向量化 PCHIP 斜率 +
+分段解析积分核替代热路径中的 scipy 拟合，并向量化 estimator 的分摊循环；
+acceptance：与 scipy PCHIP `<1e-12` rel、2 线程与 16 线程比值均 `<1.10`、
+DN 不变、no new failure、determinism pass。详见
+`docs/fast_quadrature_reuse_assessment.md`。
 
 ## Current Phase
 

@@ -66,6 +66,23 @@
   决策：ACCEPTED as measurement；下一实验为预计算 PCHIP 积分权重（全局向量 +
   逐区间矩阵）并向量化 estimator，使默认切换落在预算内。
 
+- PCHIP 单次拟合共享（2026-09-11）：先前“PCHIP 积分可预计算为固定权重向量”
+  的假设被**否证**（Fritsch-Carlson 斜率是节点值的非线性函数：单位矩阵探针
+  给出的 `weights @ y` 与 `PchipInterpolator(x, y).integrate()` 相差约 20 倍）。
+  改为 `pchip_integral_breakdown` 一次构造 `PchipInterpolator` +
+  `antiderivative()`，同时返回全程与逐区间积分，并让
+  `estimate_frequency_quadrature_local(..., candidate_intervals=...)` 复用；
+  非重叠三点 Simpson 基线改为等价向量化（实测逐位一致，`0.674 -> 0.027 ms`）。
+  同会话配对 A/B（`--repeats 50`，前后各一次、NUMBA=2、BLAS=1）：PCHIP 专属
+  开销 `2.20/1.92/2.01/2.29 ms -> 0.98/0.59/0.72/0.84 ms`，比值
+  `1.366/1.307/1.228/1.240 -> 1.165/1.095/1.073/1.089`
+  （default/lowT/highT/stiff）；四点 `DN_gw` 与改前逐位一致（rel `0.0`），
+  vs Oracle C WKB 不变。决策：ACCEPTED（opt-in PCHIP 路径严格 Pareto 改善，
+  同等观测值、约 60% 更少 PCHIP 专属开销）；**REJECTED：本阶段不切换默认
+  `frequency_quadrature`**（预登记 `<10%` 未稳健满足：同会话 default `1.165`，
+  16 线程生产刻度探针 `1.101-1.154`）。下一实验：NumPy 向量化 PCHIP 斜率 +
+  分段解析积分核 + estimator 分摊循环向量化，再评估默认切换。
+
 ### Artifacts
 
 - `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`
@@ -81,6 +98,10 @@
 - `docs/fast_quadrature_ab.json`
 - `docs/fast_quadrature_ab_assessment.md`
 - `scripts/benchmark_fast_quadrature_ab.py`
+- `docs/fast_quadrature_reuse_ab.json`
+- `docs/fast_quadrature_reuse_ab_before.json`
+- `docs/fast_quadrature_reuse_assessment.md`
+- `tests/test_pchip_integral_breakdown.py`
 
 ## Session: 2026-09-09
 

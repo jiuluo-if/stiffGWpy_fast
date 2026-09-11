@@ -207,11 +207,62 @@ fast tail assembly 内升格 Oracle C 修正。
   拒绝（第十二原则要求 accuracy win 的 runtime 增加 <10%）。
 - 成本定位（微基准）：`PchipInterpolator(...).integrate()` `0.141 ms/次`
   （每次求解约 3 次：两个外层 `g2_last` 加 `g2c[-1]`），
-  `estimate_frequency_quadrature_local(..., 'pchip')` `1.39 ms/次`，合计与
-  观测 `+2.1 ms` 吻合。成本完全来自 scipy 实现：PCHIP 积分对节点值是线性
-  泛函，可预计算全局权重向量与逐区间权重矩阵，之后只是点积/矩阵乘。
-- 决策：ACCEPTED as measurement，不改任何默认。下一实验：预计算 PCHIP 积分
-  权重并向量化局部 estimator，使 PCHIP 默认化落在 runtime 预算内。
+   `estimate_frequency_quadrature_local(..., 'pchip')` `1.39 ms/次`，合计与
+   观测 `+2.1 ms` 吻合。成本完全来自 scipy 实现。
+- 更正（2026-09-11，见下节）：本节最初推测“PCHIP 积分对节点值是线性泛函，
+   可预计算固定全局权重向量与逐区间权重矩阵”。该推测已被否证：
+   Fritsch-Carlson 斜率是节点值的非线性函数。
+- 决策：ACCEPTED as measurement，不改任何默认。下一实验：消除 PCHIP 路径中
+   重复的 scipy 拟合工作，使 PCHIP 默认化落在 runtime 预算内。
+
+## Fast PCHIP quadrature: single-fit sharing (2026-09-11)
+
+- 否证：用 `PchipInterpolator(x, np.eye(n), axis=0)` 构造的“权重”与逐列区间
+  积分一致，但 `weights @ y` 与 `PchipInterpolator(x, y).integrate()` 相差约
+  20 倍量级 —— 不存在固定权重向量，因为 PCHIP 的 Fritsch-Carlson 斜率是节点值
+  的非线性函数。原“预计算权重”路线作废。
+- 替代实现：`pchip_integral_breakdown(freqs, integrand)` 一次构造
+  `PchipInterpolator` 与其 `antiderivative()`，同时返回全程积分与逐区间积分；
+  `estimate_frequency_quadrature_local(..., candidate_intervals=...)` 接受这些
+  逐区间积分而不重建 spline；`_SGWB_iter_fast_impl` 每个外层迭代只做一次
+  分解，收敛判定 `g2_last`、循环后 `g2c[-1]` 与局部 estimator 共享同一次拟合。
+- 同时把局部 estimator 的非重叠三点 Simpson 基线从“逐面板 `scipy.simpson`”
+  改为等价向量化公式：实测与逐面板结果**逐位一致**（max abs diff `0.0`），
+  成本 `0.674 ms -> 0.027 ms`（76 点网格，median of 300）。
+- 同会话配对 A/B（`scripts/benchmark_fast_quadrature_ab.py --repeats 50`，
+  前后各一次、NUMBA=2、BLAS=1，`docs/fast_quadrature_reuse_ab{,_before}.json`）：
+  PCHIP 专属开销 default `2.20 -> 0.98 ms`、lowT `1.92 -> 0.59 ms`、
+  highT `2.01 -> 0.72 ms`、stiff `2.29 -> 0.84 ms`（约 55-70% 更少），
+  PCHIP/Simpson warm median 比值 `1.366/1.307/1.228/1.240 ->
+  1.165/1.095/1.073/1.089`。
+- 数值不变性：四点 Simpson 与 PCHIP 的 `DN_gw` 与改前**逐位一致**（rel `0.0`），
+  vs Oracle C WKB 锚点不变（PCHIP `1.07e-05/1.66e-04/9.88e-06/1.15e-05`）。
+- 生产刻度探针（`NUMBA_NUM_THREADS=16`）：并行部分缩小后串行开销占比更高，
+  比值 `1.154/1.134/1.137/1.101`（default/lowT/highT/stiff）。
+- 决策：ACCEPTED（opt-in PCHIP 路径严格 Pareto 改善：同等观测值、约 60% 更少
+  PCHIP 专属开销，符合第十二原则 Speed win）；**REJECTED：本阶段不切换默认
+  `frequency_quadrature`**，因为预登记的 `<10%` 未稳健满足（同会话 default
+  `1.165`；此前会话 `1.093`/`1.123`）。详见
+  `docs/fast_quadrature_reuse_assessment.md`。
+- 剩余 PCHIP 专属成本：scipy `PchipInterpolator` 构造本身（`0.15 ms` x 2 次/求解）
+  加 estimator 分摊循环（约 `0.26 ms`），均为实现成本而非数学成本。
+
+### Confidence tables (PCHIP single-fit sharing)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | 不存在能复现 PCHIP 全区间积分的固定节点权重向量（单位矩阵探针 + 直接反例）。 |
+| VERIFIED | `pchip_integral_breakdown` 的全程积分与逐区间积分和 scipy 同拟合结果一致（`tests/test_pchip_integral_breakdown.py`，rel `1e-12`）。 |
+| VERIFIED | 向量化三点 Simpson 基线与逐面板 `scipy.simpson` 逐位一致（实测 max abs diff `0.0`）。 |
+| EMPIRICALLY VALIDATED | 四点 `DN_gw` 与改前 scipy PCHIP 路径逐位一致（rel `0.0`），vs WKB 不变。 |
+| EMPIRICALLY VALIDATED | PCHIP 专属开销下降 55-70%（同会话配对、50 repeats）；比值 `1.07-1.17`（2 线程）、`1.10-1.15`（16 线程）。 |
+| HEURISTIC | 用 NumPy 向量化 PCHIP 斜率 + 分段解析积分替代 scipy 可再省约 `0.3 ms/求解`；未实测。 |
+| UNVERIFIED | `pchip` 作为默认后在 Sobol/edge 参数空间与 16+ 线程生产刻度的 runtime 与精度表现。 |
+
+下一实验（acceptance criteria 先写）：NumPy 向量化 PCHIP 斜率 + 分段解析积分核
+替代热路径 scipy 拟合，并向量化 estimator 分摊循环；要求与 scipy PCHIP
+`<1e-12` rel、2 线程与 16 线程 PCHIP/Simpson 比值均 `<1.10`、DN 不变、
+no new failure、determinism pass，再评估默认切换。
 
 ### Confidence tables (quadrature A/B)
 
