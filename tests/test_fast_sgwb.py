@@ -132,8 +132,7 @@ def test_local_frequency_quadrature_panel_envelope_dominates_full_panel():
 
 
 def test_estimator_coverage_summary_reports_quantile_calibration():
-    from scripts.benchmark_quadrature_estimator_coverage import (
-        summarize_estimator_coverage)
+    from scripts.benchmark_quadrature_estimator_coverage import summarize_estimator_coverage
 
     rows = [
         {'predicted_rel': 2.0, 'actual_rel': 1.0},
@@ -148,8 +147,7 @@ def test_estimator_coverage_summary_reports_quantile_calibration():
 
 
 def test_fixed_spectrum_dense_reference_is_interval_local():
-    from scripts.benchmark_quadrature_estimator_coverage import (
-        fixed_spectrum_dense_reference)
+    from scripts.benchmark_quadrature_estimator_coverage import fixed_spectrum_dense_reference
 
     freqs = np.array([0.0, 0.25, 0.8, 1.5])
     integrand = 1.0 + 2.0 * freqs
@@ -161,8 +159,7 @@ def test_fixed_spectrum_dense_reference_is_interval_local():
 
 
 def test_quadrature_coverage_includes_gauss_estimators():
-    from scripts.benchmark_quadrature_estimator_coverage import (
-        ESTIMATOR_METHODS)
+    from scripts.benchmark_quadrature_estimator_coverage import ESTIMATOR_METHODS
 
     assert ESTIMATOR_METHODS == ('pchip', 'gauss2', 'gauss3', 'gauss5')
 

@@ -116,6 +116,7 @@
 | Q2 panel-envelope allocation | 将完整 panel 误差及相邻一个 panel 的最大值传播到 interval；default coverage `92%`、positive-tilt `86.5%`，99% safety factor `2.62/6.63`，仍未达到 95/99% gate，不进入 production | PASS / REJECTED |
 | panel-envelope regression | 新 allocation、independent-reference benchmark 与 coverage replay 完成；full pytest `131 passed, 6 deselected, 2 warnings in 104.80s`；compileall、scoped ruff、diff check pass | PASS |
 | Q2 ensemble independent replay | PCHIP/Gauss/log-PCHIP/natural-cubic/Chebyshev 的 panel-envelope ensemble：default `100%`、lowT/highT `97.3%`、stiff `94.7%`、cr0-blue `89.0%`、positive-tilt `94.6%`、Sobol-000 `92%`、Sobol-002 `100%`、Sobol-006 `94.6%`；仍未满足全参数 95/99% gate | PASS / REJECTED |
+| Phase 1 CI/package audit | 修复仓库级 Ruff `I001`；本机镜像 403 与旧 setuptools 环境问题已区分，使用官方 PyPI 完成 isolated sdist/wheel、distribution boundary、installed-wheel smoke；full pytest `132 passed, 6 deselected, 2 warnings`、Cobaya `1 passed, 137 deselected`、Ruff/mypy/manifest/comment gate 全部通过 | PASS |
 
 ### Errors
 
