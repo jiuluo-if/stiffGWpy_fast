@@ -75,6 +75,30 @@ def test_summarize_tail_convergence_reports_observed_bound():
     assert summary['convergence_monotone_to_central']
 
 
+def test_reference_mode_reports_tail_phase_and_adiabaticity():
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    sol = REF.solve_reference_mode(m, -8.0, m.cosmo_param['DN_eff'],
+                                   z_tail=5.0, rtol=1e-8)
+    for name in ('phase_handoff', 'amplitude_handoff', 'omega_handoff',
+                 'omega_prime_over_omega2', 'omega_second_over_omega3',
+                 'event_N'):
+        assert name in sol
+        assert math.isfinite(sol[name])
+    assert sol['omega_handoff'] == pytest.approx(math.exp(5.0), rel=1e-8)
+    assert sol['amplitude_handoff'] > 0.0
+
+
+def test_tail_diagnostic_cache_key_binds_tail_and_frequency():
+    from scripts.benchmark_tail_diagnostics import _cache_key
+
+    base = _cache_key('default', {'r': 1e-2}, [-2.0, 0.0], 0.002, 5.0,
+                      1e-10)
+    assert base != _cache_key('default', {'r': 1e-2}, [-2.0, 0.0], 0.002,
+                              6.0, 1e-10)
+    assert base != _cache_key('default', {'r': 1e-2}, [-2.0, 1.0], 0.002,
+                              5.0, 1e-10)
+
+
 def test_oracle_checkpoint_key_and_schema_are_reproducible(tmp_path):
     from scripts.benchmark_oracle_tail_convergence import (
         _cache_key,
