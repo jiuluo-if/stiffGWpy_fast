@@ -131,7 +131,8 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
         m.SGWB_converge = True
         return m
 
-    FS.set_threads(4)
+    target_threads = min(4, FS._MAX_THREADS)
+    FS.set_threads(target_threads)
     FS.set_col_step(4)
     FS.set_h(0.01)
     FS.set_z_tail(5.0)
@@ -142,7 +143,7 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
     m.SGWB_iter(engine='fast', accuracy_mode=None, tol=1e-7)
     assert captured['tol'] == 1e-7
     assert captured['freq_res'] == 1.0
-    assert FS.get_settings() == dict(threads=4, col_step=4, h=0.01, z_tail=5.0,
+    assert FS.get_settings() == dict(threads=target_threads, col_step=4, h=0.01, z_tail=5.0,
                                      phase_max=0.0, freq_grid='construct',
                                      kink_split=False)
 

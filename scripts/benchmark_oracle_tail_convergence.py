@@ -12,6 +12,12 @@ import sys
 import time
 
 os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
+os.environ.setdefault('NUMBA_NUM_THREADS', '2')
+os.environ.setdefault('FAST_THREADS', '2')
+os.environ.setdefault('OMP_NUM_THREADS', '1')
+os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
+os.environ.setdefault('MKL_NUM_THREADS', '1')
+os.environ.setdefault('NUMEXPR_NUM_THREADS', '1')
 
 import numpy as np
 
@@ -25,7 +31,7 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 Z_TAILS = (5.0, 6.0, 7.0, 8.0, 10.0)
 
 
-def run_point(point, rtol=1e-10, workers=4, freq_count=None,
+def run_point(point, rtol=1e-10, workers=1, freq_count=None,
               freq_min=None, freq_max=None):
     """Run one fixed-background tail sweep and return an auditable record."""
     kw = CASES[point]
@@ -98,8 +104,8 @@ def main(argv=None):
     parser.add_argument('--points', nargs='+', default=['default'],
                         choices=sorted(CASES))
     parser.add_argument('--rtol', type=float, default=1e-10)
-    parser.add_argument('--workers', type=int, default=4,
-                        help='reserved for compatibility; reference uses its default')
+    parser.add_argument('--workers', type=int, default=1,
+                        help='reference workers; keep at 1 unless explicitly raised')
     parser.add_argument('--freq-count', type=int, default=None,
                         help='optional representative subset size for a quick diagnostic')
     parser.add_argument('--freq-min', type=float, default=None)
