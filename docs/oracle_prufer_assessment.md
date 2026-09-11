@@ -47,7 +47,8 @@ recorded rows and spectrum summary; timing fields were excluded.
 
 The same eight-frequency subset was then run through the reference outer
 self-consistency algorithm, including its `DN_eff` guard and convergence test.
-All four points converged in two iterations at both handoff depths. The largest
+All four points converged in one or two iterations at both handoff depths, with
+the Prüfer and Cartesian iteration counts identical. The largest
 outer-loop `DN_gw` relative difference was `3.44e-9`, and no point crossed the
 `DN_eff` guard.
 
