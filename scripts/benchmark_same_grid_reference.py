@@ -12,23 +12,22 @@ import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-os.environ.setdefault('NUMBA_NUM_THREADS', '2')
-os.environ.setdefault('FAST_THREADS', '2')
-os.environ.setdefault('OMP_NUM_THREADS', '1')
-os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
-os.environ.setdefault('MKL_NUM_THREADS', '1')
-os.environ.setdefault('NUMEXPR_NUM_THREADS', '1')
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
 
-import numpy as np
-from scipy.interpolate import PchipInterpolator
+apply_environment()
+
+import numpy as np  # noqa: E402
+from scipy.interpolate import PchipInterpolator  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy_fast import fast_sgwb as FS
-from stiffgwpy_fast import global_param as gp
-from stiffgwpy_fast import reference as REF
-from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import global_param as gp  # noqa: E402
+from stiffgwpy_fast import reference as REF  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 CASES = {
     'default': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
@@ -219,6 +218,7 @@ def main(argv=None):
 
     records = {
         'point': args.point,
+        'resources': telemetry(workers=args.workers, threads=2),
         'kw': kw,
         'n_freq': int(freqs.size),
         'seed_n': args.seed_n,

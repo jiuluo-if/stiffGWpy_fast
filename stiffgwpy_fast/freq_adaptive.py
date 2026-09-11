@@ -78,7 +78,7 @@ def adapt_refine_grid(logf_init, evaluate, target_dex=1e-3, min_dlogf=0.02,
 
 
 def adaptive_spectrum_reference(m, dn_eff, fmin, fmax, target_dex=1e-3,
-                                z_tail=5.0, rtol=1e-11, workers=8,
+                                z_tail=5.0, rtol=1e-11, workers=1,
                                 init_n=48, **kw):
     """Curvature-adaptive Omega_GW spectrum using the high-accuracy reference."""
     from . import reference as REF

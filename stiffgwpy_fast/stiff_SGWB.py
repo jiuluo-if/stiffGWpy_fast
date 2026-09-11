@@ -31,7 +31,7 @@ def _mpi_world_size():
 def _sgwb_pool_size():
     """Number of frequency-parallel worker processes for ``run_SGWB``.
 
-    ``SGWB_POOL_SIZE`` (default 4) overrides the process count.  Under MPI
+    ``SGWB_POOL_SIZE`` (default 1) overrides the process count.  Under MPI
     (world size > 1) the default is 1 unless the variable is set explicitly:
     the reference path already parallelizes across ranks, and nested
     ``mp.Pool`` workers inside MPI ranks deadlock/oversubscribe.  This is a
@@ -43,7 +43,7 @@ def _sgwb_pool_size():
         if n < 1:
             raise ValueError('SGWB_POOL_SIZE must be >= 1, got %r' % env)
         return n
-    return 1 if _mpi_world_size() > 1 else 4
+    return 1
 
 
 def _mark_eval_status(m, label):

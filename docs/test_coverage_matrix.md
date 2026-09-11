@@ -10,6 +10,8 @@
 | D | sdist/wheel、归档边界和安装后 smoke | Python 3.11 一次 | `python -m build --sdist --wheel` |
 | Static | 中文注释、Ruff、mypy、compileall、diff | Python 3.11 一次 | `.github/workflows/ci.yml` 的 `static` job |
 
+重复执行与成本边界的逐文件审计见 `docs/test_duplication_audit.md`。
+
 ## 正交覆盖
 
 | 风险 | canonical test | interaction case |

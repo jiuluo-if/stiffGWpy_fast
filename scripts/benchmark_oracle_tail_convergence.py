@@ -11,22 +11,21 @@ import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-os.environ.setdefault('NUMBA_NUM_THREADS', '2')
-os.environ.setdefault('FAST_THREADS', '2')
-os.environ.setdefault('OMP_NUM_THREADS', '1')
-os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
-os.environ.setdefault('MKL_NUM_THREADS', '1')
-os.environ.setdefault('NUMEXPR_NUM_THREADS', '1')
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
 
-import numpy as np
+apply_environment()
+
+import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scripts.benchmark_same_grid_reference import CASES
-from stiffgwpy_fast import fast_sgwb as FS
-from stiffgwpy_fast import reference as REF
-from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+from scripts.benchmark_same_grid_reference import CASES  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import reference as REF  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 Z_TAILS = (5.0, 6.0, 7.0, 8.0, 10.0)
 
@@ -120,6 +119,7 @@ def main(argv=None):
     payload = {
         'schema_version': 1,
         'generated_commit': os.popen('git rev-parse HEAD').read().strip(),
+        'resources': telemetry(workers=args.workers, threads=2),
         'z_tails': list(Z_TAILS),
         'points': records,
     }
