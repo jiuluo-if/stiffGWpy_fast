@@ -6,7 +6,7 @@
 
 ## Next Step
 
-已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry。default 子集 tail systematic `2.52e-3`、low-T `6.35e-3`、stiff `2.40e-3` 仍表明 oracle-sensitive；完整 native-grid 扫描和正式 tail correction 仍待后续专门运行。
+已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`，可继续以低压力分段推进 Stage B。default 子集 tail systematic `2.52e-3`、low-T `6.35e-3`、stiff `2.40e-3` 仍表明 oracle-sensitive；完整 native-grid 扫描和正式 tail correction 仍待后续专门运行。
 
 ## Current Phase
 

@@ -124,6 +124,7 @@
 | Tail diagnostic scope simplification | 后续研究测试先采用明确标注的代表频率子集和 focused regression，完整 pytest/Cobaya/CI 仅在代码提交或正式门禁时运行；不得把子集结果写成全频率精度结论 | ACCEPTED PROCESS CHANGE |
 | Phase A/B/C test and resource audit | 新增 `docs/test_coverage_matrix.md` 与 3-case compatibility smoke；CI 改为 compatibility 3.9–3.13、canonical 3.11、static、package、Cobaya 五职责 job；slow workflow 与本地 oracle 默认 Numba=2、BLAS=1、reference workers=1；高并行仅显式指定 | IMPLEMENTED / LOCAL VERIFIED |
 | Resource-capped canonical verification | 在 `NUMBA_NUM_THREADS=2`、`FAST_THREADS=2`、BLAS=1 下：compatibility `3 passed`；canonical `136 passed, 6 deselected, 2 warnings`；Cobaya `1 passed, 141 deselected`；Ruff/mypy/manifest/compileall/diff/build/distribution/wheel smoke 全部通过 | PASS |
+| Oracle checkpoint/resume hardening | tail sweep 绑定当前 commit、reference module SHA、参数、频率、`DN_eff`、`z_tail`、`rtol` 的 immutable cache key；每个 z_tail 原子写 checkpoint，schema/commit/version 不匹配时拒绝恢复；新增纯逻辑 checkpoint 测试 | PASS / STAGE B READY |
 
 ### Errors
 
