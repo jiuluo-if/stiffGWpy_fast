@@ -413,13 +413,14 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     return float(g2), float(ln10v * abs(abserr)), (None if interp_err is None else float(interp_err))
 
 
-def _spectrum_at_dn(m, freqs, DN_eff, z_tail, rtol):
-    return spectrum_reference(m, freqs, DN_eff, z_tail=z_tail, rtol=rtol)
+def _spectrum_at_dn(m, freqs, DN_eff, z_tail, rtol, workers=None):
+    return spectrum_reference(m, freqs, DN_eff, z_tail=z_tail, rtol=rtol,
+                              workers=workers)
 
 
 def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
                   z_start=-12.0, tol=1e-7, max_iter=60, freq_subset=None,
-                  self_consistent=True):
+                  self_consistent=True, workers=None):
     """High-accuracy SGWB solve, returning derived results.
 
     When ``dn_eff`` is given (recommended for benchmarking) a *single* pass at
@@ -445,7 +446,7 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
         freqs = np.asarray(freqs, dtype=float)
 
     def solve(freqs_in, dn):
-        return _spectrum_at_dn(m, freqs_in, dn, z_tail, rtol)
+        return _spectrum_at_dn(m, freqs_in, dn, z_tail, rtol, workers=workers)
 
     if self_consistent and dn_eff is None:
         DN_gw_list = [0.0]
@@ -594,3 +595,57 @@ def oracle_variants(m, freqs=None, dn_eff=None, z_tail_conservative=8.0,
     return dict(oracle_A=_mini(A), oracle_B=_mini(B), oracle_C=_mini(C),
                 delta_AB=delta_AB, delta_BC=delta_BC,
                 used_tail_fraction_B=used_tail_B, status=status)
+
+
+def summarize_tail_convergence(records):
+    """Summarize a frozen-tail sweep without hiding non-monotone behavior.
+
+    ``records`` contains mappings with ``z_tail`` and ``DN_gw``.  The deepest
+    requested tail is the reported central value; the largest change from it
+    is the directly observed systematic bound.  The fitted exponential decay
+    rate is diagnostic only and must not replace the observed bound.
+    """
+    rows = sorted((dict(row) for row in records), key=lambda row: float(row['z_tail']))
+    if len(rows) < 3:
+        raise ValueError('tail convergence requires at least three records')
+    z = np.asarray([float(row['z_tail']) for row in rows], dtype=float)
+    dn = np.asarray([float(row['DN_gw']) for row in rows], dtype=float)
+    if not np.all(np.isfinite(z)) or not np.all(np.isfinite(dn)):
+        raise ValueError('tail convergence records must be finite')
+    if np.any(np.diff(z) <= 0):
+        raise ValueError('z_tail values must be strictly increasing')
+
+    central = float(dn[-1])
+    denom = max(abs(central), 1e-300)
+    rel_to_central = np.abs(dn - central) / denom
+    adjacent_rel = np.abs(np.diff(dn)) / np.maximum(np.abs(dn[:-1]), 1e-300)
+
+    # Fit log(|successive change|) against the midpoint z.  This is a
+    # descriptive exponential decay rate, not an extrapolated truth value.
+    changes = np.abs(np.diff(dn))
+    keep = changes > np.finfo(float).eps * max(np.max(np.abs(dn)), 1.0)
+    if np.count_nonzero(keep) >= 2:
+        mid = 0.5 * (z[:-1] + z[1:])[keep]
+        slope, intercept = np.polyfit(mid, np.log(changes[keep]), 1)
+        decay_rate = float(-slope) if slope < 0.0 else None
+        fit_residual = float(np.sqrt(np.mean(
+            (np.log(changes[keep]) - (slope * mid + intercept)) ** 2)))
+    else:
+        decay_rate = None
+        fit_residual = None
+
+    return {
+        'rows': rows,
+        'z_tail': z.tolist(),
+        'DN_gw': dn.tolist(),
+        'central_z_tail': float(z[-1]),
+        'central_DN_gw': central,
+        'systematic_uncertainty_abs': float(np.max(np.abs(dn - central))),
+        'systematic_uncertainty_rel': float(np.max(rel_to_central)),
+        'successive_relative_change': adjacent_rel.tolist(),
+        'relative_to_central': rel_to_central.tolist(),
+        'empirical_exponential_decay_rate': decay_rate,
+        'empirical_fit_log_residual': fit_residual,
+        'convergence_monotone_to_central': bool(
+            np.all(np.diff(rel_to_central[::-1]) >= -1e-15)),
+    }
