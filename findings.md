@@ -328,6 +328,37 @@ no new failure、determinism pass，再评估默认切换。
 向量化 PCHIP 核与单次拟合共享取代，见 `docs/fast_quadrature_reuse_assessment.md`
 和 `docs/fast_quadrature_default_switch_assessment.md`。
 
+## Fast Python preparation-layer de-duplication (2026-09-12)
+
+20 线程阶段分解显示 warm runtime 并非由 kernel 主导：default 点
+`tensor_solve_kernel` 约 `0.81 ms`，而 `expansion_background` `1.04 ms`、
+`fast_phi_s2_split` `0.63 ms`、`goal_frequency_construction` `0.48 ms`，
+其中包含纯冗余工作。本轮只消除冗余，不触碰任何数值路径：
+
+- `gen_fast` 的目标频率网格原先对同一数组做全量重排
+  （`np.unique(np.sort(...))`，nv=13764 时约 `158 us`），改为 `concatenate` +
+  稳定排序 + `not_equal` 归并去重（约 `25 us`），并缓存 `n_re_abs`；
+- `grid_independent_freqs.f_hor_cont` 中与 `N` 无关的
+  `H2_vec(N_inf)`/`H2_vec(N_re_abs)`/`raw_last`/`raw_re`/`Delta_f`/`ln10`
+  提到闭包外只算一次；
+- 新分配的 `Ogw`/`Oj`/`Opgw` 缓冲区跳过紧随其后的 `fill(0.0)`
+  （`_fresh_buffers` 标记）；
+- `_sigma_node_limits` 与 `fast_phi_s2_split` 中重复的 `m.derived_param`
+  属性求值绑定为单次 `d`（该 property 每次访问都重算，约 `11 us/次`）。
+
+验证工具 `scripts/benchmark_fast_runtime_ab.py` 输出六点 warm
+median/p95/min 与 `f`/`log10OmegaGW`/`DN_gw`/`g2`/`w2` 的 SHA256 digest。
+
+### Confidence tables (preparation-layer de-duplication)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | 六个 probe regime 的五个输出字段 SHA256 digest 在改动前后逐位一致（20 线程 648 项、2 线程 288 项比较，另含 A/B 交叉比较），`converged`/`n_freq`/`fast_failure_reason` 不变。 |
+| EMPIRICALLY VALIDATED | A,B,B,A 对称序配对（固定 affinity）显示 default warm median 改善：20 线程 `5.4%`（ratio `0.9456`，单轮 `0.802-1.029`）、2 线程 `8.2%`（ratio `0.9177`，单轮 `0.904-0.932`）。 |
+| EMPIRICALLY VALIDATED | 六点中位 ratio 在 20 线程为 `0.816-0.987`、2 线程为 `0.872-1.011`；无任何点退化超过 `2%` 噪声门限。 |
+| HEURISTIC | 对称序（A,B,B,A）抵消移动 CPU 频率漂移；单轮 ratio 极值仍受热降频影响，应以中位为准。 |
+| UNVERIFIED | `fast_phi_s2_split` 内剩余约 `0.4 ms` 的组成，以及为 `derived_param` 加显式缓存的安全性。 |
+
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。

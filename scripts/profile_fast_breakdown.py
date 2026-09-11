@@ -26,6 +26,13 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 CASES = {
     'A': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
     'B': dict(r=1e-3, cr=1, T_re=2e3, kappa10=1e-2),
+    # 六个正式 benchmark 代表点，参数与 benchmark_head_matrix.py 保持一致
+    'default': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
+    'lowT': dict(r=1e-2, cr=1, T_re=1e1, kappa10=1e-2),
+    'highT': dict(r=1e-2, cr=1, T_re=1e4, kappa10=1e-2),
+    'stiff': dict(r=1e-1, cr=1, T_re=2e3, kappa10=1e-2),
+    'low_r': dict(r=1e-3, cr=1, T_re=2e3, kappa10=1e-2),
+    'high_kappa': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1.0),
 }
 CASE = CASES['A']
 
@@ -60,6 +67,9 @@ def run_once(case, kink_split=False):
         j0s = np.asarray(args[5])
         totals['j0_cv'].append(float(np.std(j0s) / max(np.mean(j0s), 1.0)))
         totals['j0_span'].append(float(np.max(j0s) - np.min(j0s)))
+        # 每通道相积分步数下界 nv-j0：用于解释不同 regime 的 kernel 成本
+        nv_kernel = int(len(args[0]))
+        totals['steps_per_channel'].append(float(np.mean(nv_kernel - j0s)))
         solve_args = args
         if os.environ.get('PROFILE_ASSEMBLE') == '0':
             # 仅用于估算 assembly 的理论上限；该模式的完整输出不作为
@@ -137,7 +147,7 @@ def main():
             if name == 'j0_cv':
                 row[name] = float(values[-1])
                 continue
-            if name == 'j0_span':
+            if name in ('j0_span', 'steps_per_channel'):
                 row[name] = float(values[-1])
                 continue
             row[name + '_s'] = float(sum(values))

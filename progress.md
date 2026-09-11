@@ -1,5 +1,52 @@
 # Progress Log: stiffgwpy_fast 单一 fast 生产求解器
 
+## Session: 2026-09-12
+
+### Actions Taken
+
+- 从最新 HEAD `bc00a35` 重新判断：把 `scripts/profile_fast_breakdown.py` 扩展到
+  六个正式代表点后，20 线程阶段分解显示 warm runtime 由 Python/背景准备层
+  主导（default 点 `tensor_solve_kernel` 约 `0.81 ms`，而
+  `expansion_background` `1.04 ms`、`fast_phi_s2_split` `0.63 ms`、
+  `goal_frequency_construction` `0.48 ms`），其中含纯冗余计算。临时分段插桩
+  定位到 `goal_oriented_freqs` 内重复的 `H2_vec`/pchip 拟合/
+  `_correct_kink_background`，以及每次访问都重算的 `derived_param` property
+  （约 `11 us/次`，单次求解 29 次访问）；插桩已 `git checkout` 完全回退。
+- 接受四项等价冗余消除：(a) `gen_fast` 目标频率网格由
+  `np.unique(np.sort(...))`（nv=13764 时约 `158 us`）改为 `concatenate` +
+  稳定排序 + `not_equal` 归并去重（约 `25 us`），并缓存 `n_re_abs`；
+  (b) `grid_independent_freqs.f_hor_cont` 中与 `N` 无关的
+  `H2_vec(N_inf)`/`H2_vec(N_re_abs)`/`raw_last`/`raw_re`/`Delta_f`/`ln10`
+  提到闭包外只算一次；(c) `Ogw`/`Oj`/`Opgw` 在 `np.zeros` 之后立即
+  `fill(0.0)` 的冗余写入跳过（`_fresh_buffers` 标记）；
+  (d) `_sigma_node_limits`/`fast_phi_s2_split` 内重复的 `m.derived_param`
+  求值绑定为单次 `d`。
+- 新增 `scripts/benchmark_fast_runtime_ab.py`：六点 warm median/p95/min 与
+  `f`/`log10OmegaGW`/`DN_gw`/`g2`/`w2` 的 SHA256 digest，支持
+  `--repeats`/`--threads`/`--affinity`/`--json`。
+
+### Test Results
+
+- 等价性：20 线程 4 轮、2 线程 3 轮 A/B 配对，六点 × 五字段 digest 全部逐位
+  一致，`converged`/`n_freq`/`fast_failure_reason` 不变（648 + 288 项比较，
+  另含 A/B 交叉比较，0 mismatch）。
+- 速度：A,B,B,A 对称序配对（20 线程 affinity=20、15 repeats；2 线程
+  affinity=20、25 repeats）default ratio `0.9456`/`0.9177`，即改善 `5.4%`/
+  `8.2%`；六点中位 ratio `0.816-1.011`，无点退化超 `2%` 噪声门限。
+- full pytest `159 passed, 6 deselected`；`pytest -m cobaya` `1 passed,
+  164 deselected`；Ruff、mypy（2 source files）、compileall、中文注释门禁、
+  `validate_manifest.py`、`git diff --check`、wheel/sdist 构建 +
+  `verify_distribution` + installed-wheel smoke 全部通过。
+
+### Artifacts
+
+- `docs/fast_pyoverhead_ab_symmetric.json`（对称序配对汇总与 digest 校验计数）
+- `docs/fast_pyoverhead_before_t20.json`、`docs/fast_pyoverhead_after_t20.json`
+- `docs/fast_pyoverhead_before_t2.json`
+- `scripts/benchmark_fast_runtime_ab.py`；`scripts/profile_fast_breakdown.py`
+  扩展为六点 CASE 并新增 `steps_per_channel`
+- `findings.md` 的「Fast Python preparation-layer de-duplication (2026-09-12)」
+
 ## Session: 2026-09-11
 
 ### Actions Taken

@@ -758,11 +758,19 @@ def gen_fast(m, h=0.01, kink_split=False):
     # systematic bias (grid-anchor error, not a numerical-order issue).
     len_inf = math.floor(d['N_inf']/h)+1
     Nv = np.arange(0, len_inf)*h
+    n_re_abs = d['N_inf'] - d['N_re']
     nodes = [d['N_inf']]
     if kink_split:
-        nodes.append(d['N_inf'] - d['N_re'])
-    Nv = np.unique(np.sort(np.concatenate((Nv, np.asarray(nodes, dtype=float)))))
-    index_re = int(np.argmin(np.abs(Nv - (d['N_inf'] - d['N_re']))))
+        nodes.append(n_re_abs)
+    # 等距网格本身已严格递增，只需把尚未落格的额外节点并入一次 O(n) 归并；
+    # 原先对全部 nv 个节点做 np.unique(np.sort(...)) 是 O(n log n) 的冗余工作。
+    merged = np.concatenate((Nv, np.asarray(nodes, dtype=float)))
+    merged.sort(kind='stable')
+    keep = np.empty(merged.size, dtype=bool)
+    keep[0] = True
+    np.not_equal(merged[1:], merged[:-1], out=keep[1:])
+    Nv = merged[keep]
+    index_re = int(np.argmin(np.abs(Nv - n_re_abs)))
     Sv = np.empty(len(Nv)); f_hor = np.empty(len(Nv))
     Delta_f = math.log(2*math.pi/d['H_0'])
     gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
@@ -1784,6 +1792,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 kink_index = -1
                 kink_fraction = 0.0
                 phi_re = 0.0
+            _fresh_buffers = False
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
                 # j0 = horizon-crossing + 3 decades, so the early columns
@@ -1793,6 +1802,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # heap contents and could occasionally leak NaN into g2/w2.
                 Ogw = np.zeros((Nf, n_coarse)); Oj = np.zeros((Nf, n_coarse)); Opgw = np.zeros((Nf, n_coarse))
                 handoff_eps = np.full(Nf, -1.0)
+                _fresh_buffers = True
             # phase_max caps the per-(sub-)step phase increment dTheta = e^z dh
             # (horizon-crossing adaptive step control); Sv supplies sigma at the
             # handoff node for the damping-corrected WKB amplitude, handoff_eps
@@ -1807,7 +1817,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             if kink_split:
                 solve_args += (kink_index, kink_fraction, phi_re)
             if not (outer_background_stable and _iter > 0):
-                if assemble:
+                # 刚由 np.zeros 分配的全零缓冲无需再次清零。
+                if assemble and not _fresh_buffers:
                     # 外层背景更新后 horizon 起点可能发生微小移动；清空起点之前的列，
                     # 避免上一次探测结果泄漏到新的完整积分中。
                     Ogw.fill(0.0)

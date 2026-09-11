@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased — 2026-09-12
+
+- Removed redundant work in the fast Python preparation layer with no change to
+  any numerical output: the goal-grid builder no longer sorts and
+  de-duplicates the native frequency grid twice, the `N`-independent
+  `H2_vec`/`raw_last`/`raw_re`/`Delta_f` terms in `grid_independent_freqs` are
+  hoisted out of the per-`N` closure, freshly allocated `Ogw`/`Oj`/`Opgw`
+  buffers skip an immediate `fill(0.0)`, and repeated `derived_param` property
+  evaluations are bound once.  All six probe regimes keep bit-identical
+  `f`/`log10OmegaGW`/`DN_gw`/`g2`/`w2` SHA256 digests (648 checked comparisons)
+  and unchanged `converged`/`n_freq`/`fast_failure_reason`.
+- Paired A,B,B,A warm-runtime A/B at a fixed affinity
+  (`docs/fast_pyoverhead_ab_symmetric.json`): the default point improves `5.4%`
+  at 20 threads and `8.2%` at 2 threads, and no probe regime regresses by more
+  than the `2%` noise margin in the symmetric-order median.
+
 ## Unreleased — 2026-09-11
 
 - Switched the single formal fast mode's default `frequency_quadrature` to

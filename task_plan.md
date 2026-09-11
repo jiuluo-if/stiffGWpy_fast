@@ -118,6 +118,55 @@ README/README_zh/CHANGELOG/`docs/fast_v02_audit_report.md` 与 manifest 同步
 runtime 分解（`7.8/7.8/7.3 -> <=4 ms`）、nested native-frequency 真实嵌套
 求积（区分 same-grid 残差来源）、analytic stiff/RD branch。
 
+## Pre-registered experiment: fast Python 层准备冗余消除（2026-09-12，改动前登记）
+
+**Hypothesis**：20 线程下 fast 的 runtime 由 Python/背景准备层主导
+（`tensor_solve_kernel` 仅约 15%），其中存在纯冗余计算与冗余内存写入；消除它们可在
+**不改变任何数值输出**的前提下降低 warm runtime。
+
+**改动前证据**（六点、25 repeats、`docs/fast_pyoverhead_before_t20.json` 与
+`docs/fast_pyoverhead_before_t2.json`）：20 线程 warm median default `5.290 ms`、
+highT `6.228`、stiff `6.965`、high_kappa `7.067`、lowT `4.298`、low_r `4.076`；
+2 线程 default `6.885 ms`、highT `9.987`、high_kappa `9.764`、lowT `6.360`、
+low_r `5.820`、stiff `11.308`。default 20 线程阶段分解：
+`expansion_background` 1.035、`tensor_solve_kernel` 0.813、`fast_phi_s2_split` 0.627、
+`goal_frequency_construction` 0.482、`column_integration` 0.170、`pchip_fine` 0.170、
+`frequency_preparation` 0.109、`correct_kink_background` 0.214 ms。
+
+**候选改动**（全部为等价冗余消除）：(a) `Ogw/Oj/Opgw` 在 `np.zeros` 之后立即
+`fill(0.0)` 的重复写入；(b) `grid_independent_freqs.f_hor_cont` 每次重复求值的
+`N`-无关 `H2_vec`；(c) `gen_fast` 的 `np.unique(np.sort(...))` 整网格重排；
+(d) `_sigma_node_limits`/`fast_phi_s2_split` 内重复的 `m.derived_param` 属性求值。
+
+**Acceptance（全部满足才接受）**：
+
+1. 六点 `f`/`log10OmegaGW`/`DN_gw`/`g2`/`w2` 的 SHA256 digest 与改动前**逐位一致**；
+2. 2 线程与 20 线程 warm median，default 改善 ≥ 5%，六点均不退化超过 2%；
+3. `converged`/`fast_failure_reason`/guard 计数不变，无新失败；
+4. 同参数重复调用 digest 稳定（determinism pass）；
+5. full pytest、Cobaya、Ruff、mypy、compileall、中文注释门禁、manifest、
+   `git diff --check`、wheel + installed-wheel smoke 全部通过。
+
+未满足则 REJECT，并把负面结论写入 `docs/`。
+
+**结果（2026-09-12，改动后）**：ACCEPT。
+
+1. PASS：六点 `f`/`log10OmegaGW`/`DN_gw`/`g2`/`w2` SHA256 digest 逐位一致
+   （20 线程 3 cycle x 4 次运行共 360 项 + A/B 交叉、2 线程 3 cycle x 4 次
+   运行共 288 项 + A/B 交叉，0 mismatch）；
+2. PASS：A,B,B,A 对称序配对 default ratio `0.9456`（改善 `5.44%`，20 线程）、
+   `0.9177`（`8.23%`，2 线程）；六点中位 ratio `0.816-1.011`，无点退化超 `2%`；
+3. PASS：`converged`/`n_freq`/`fast_failure_reason` 全部不变，无新 guard；
+4. PASS：同一字段在所有 12 次（20 线程）与 6 次（2 线程）运行中 digest 相同；
+5. PASS：full pytest `159 passed, 6 deselected`、`pytest -m cobaya` `1 passed`、
+   Ruff、mypy、compileall、中文注释门禁、manifest、`git diff --check`、
+   wheel + installed-wheel smoke 全部通过。
+
+证据：`docs/fast_pyoverhead_ab_symmetric.json`、
+`docs/fast_pyoverhead_before_t20.json`、`docs/fast_pyoverhead_after_t20.json`、
+`docs/fast_pyoverhead_before_t2.json`，以及 `findings.md` 的
+「Fast Python preparation-layer de-duplication (2026-09-12)」。
+
 ## Current Phase
 
 Phase 3: Implementation and evidence-driven optimization
@@ -145,6 +194,7 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] 继续优化 DN/速度；本轮必须先重建远端 HEAD fresh profiling 与 DN_gw 误差分解，不得在 profiler 证据前 micro-optimize；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
 - [x] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；有限 phase-window Oracle B 原型已完成但不晋升；Prüfer standalone 已完成固定 8 频率完整 `Ogw/Oj/Opgw/DN_gw` 与 outer self-consistency 复核，并完成 10 个参数轴 edge + 5 个固定 Sobol 点的 guard/outer 复核（26 个 accepted comparison、4 个 physical guard、accepted 最大 outer DN 差 `6.44e-9`）
 - [x] Prüfer full native-grid certification：`scripts/benchmark_prufer_fullgrid.py` 在完整 76 频率网格完成 19 点（4 named + 10 edge + 5 Sobol）x `z_tail=5/7` 的频谱与 outer 自洽重放；full-grid `DN_gw` 相对差 median `6.44e-10`、max `2.44e-9`；26 accepted outer 迭代一致、4 个显式 physical guard 双实现一致；default 重放 bitwise 一致；PASS / VERIFIED，Prüfer 保持 reference-only oracle，不切换正式 kernel
+- [x] Python 准备层冗余消除（2026-09-12）：`gen_fast` 目标网格去重降到单次归并、`grid_independent_freqs` 的 `N`-无关量提到闭包外、新分配缓冲跳过冗余 zero-fill、重复 `derived_param` 求值单次绑定；六点 × 五字段 digest 逐位一致（648 项比较 + A/B 交叉 0 mismatch），A,B,B,A 对称序配对 default 改善 20 线程 `5.4%` / 2 线程 `8.2%`，六点无超 `2%` 退化；新增 `scripts/benchmark_fast_runtime_ab.py` 计时工具，ACCEPT
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification

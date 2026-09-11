@@ -154,7 +154,8 @@ def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
             raise ValueError('sigma_nodes must match Nv shape')
     left = nodes.copy()
     right = nodes.copy()
-    n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
+    d = m.derived_param
+    n_re = float(d['N_inf'] - d['N_re'])
     at_re = np.isclose(Nv, n_re, rtol=0.0, atol=1e-12)
     if np.any(at_re):
         left[at_re] = 1.0
@@ -426,7 +427,8 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     quarter_sigma = 0.75 * nodes_left[:-1] + 0.25 * nodes_right[1:]
     integral = h_arr * (nodes_left[:-1] + 4.0 * mid_sigma + nodes_right[1:]) / 6.0
 
-    n_re = float(m.derived_param['N_inf'] - m.derived_param['N_re'])
+    d = m.derived_param
+    n_re = float(d['N_inf'] - d['N_re'])
     kink_index = int(np.searchsorted(Nv, n_re, side='right') - 1)
     kink_fraction = 0.0
     left_integral = None

@@ -21,7 +21,7 @@ exact kink split, `freq_grid=goal`, and (as of this HEAD) the default
 | Fast vs Oracle C WKB, default PCHIP, four named points (median / max) | `1.1e-5 / 1.66e-4` | `<2e-4` | pass |
 | Same-grid DN rel vs independent reference, PCHIP (default), six named points (median / max) | `2.93e-4 / 2.96e-4` | `<2e-4` | not met |
 | Same-grid DN rel, legacy Simpson option, six named points (median / max) | `1.35e-3 / 1.24e-2` | `<2e-4` | not met |
-| Formal default warm median / p95 | `4.93 / 5.47 ms` | stable `<4 ms` | not met |
+| Formal default warm median / p95 | `4.77 / 5.58 ms` | stable `<4 ms` | not met |
 | Formal six-point stability | `0` numerical failures, `3` explicit guards / 24 points | no silent fallback | pass |
 | `eval_freqs` invariant | DN delta `0` on six probes | unchanged DN | pass |
 
@@ -53,6 +53,13 @@ holds the shared tail convention fixed, is reported alongside it.
 - the cheap Simpson/trapezoid telemetry optimization was accepted after a
   fixed 50-repeat profiler showed `4.976 -> 4.544 ms` (`8.7%`) with unchanged
   output digests;
+- the fast Python preparation layer was de-duplicated (goal-grid
+  sort/unique collapse, per-`N` invariant hoisting, redundant `Ogw`/`Oj`/`Opgw`
+  zero-fills, single `derived_param` binding): all six probe regimes keep
+  bit-identical output digests (648 checked comparisons) and the paired
+  A,B,B,A warm runtime improves `5.4%` (default, 20 threads) and `8.2%`
+  (default, 2 threads), with no regime regressing beyond the `2%` noise margin
+  (`docs/fast_pyoverhead_ab_symmetric.json`);
 - outer reuse is retained for the current profile: four-case A/B has
   `false_safe_count=0` under DN `2e-4` and spectrum-max `1e-3`, although the
   default spectrum max delta is near the latter budget at `9.03e-4`.
@@ -82,11 +89,15 @@ fast-scale DN term is the same-grid reference residual (`2.93e-4`), which mixes
 the frozen-tail/transfer systematic with the sparse-spectrum representation.
 The fast-vs-reference spectrum p95/max (`~7.8e-4/~3.6e-3` at default) shows
 that solver transfer error also contributes. The fresh 20-thread 25-repeat
-matrix gives a default warm median of `4.93 ms`; high-T / stiff / high-kappa
-remain the slowest regimes (`7.79 / 7.79 / 7.27 ms` warm median) and are the
-next runtime target. The profiler's largest single components remain expansion
-background (`0.80 ms`), tensor kernel (`0.98 ms`), and phase propagation
-(`0.42 ms`), with no accepted further micro-optimization.
+matrix gives a default warm median of `4.77 ms`; high-T / stiff / high-kappa
+remain the slowest regimes (`6.91 / 6.81 / 6.97 ms` warm median) and are the
+next runtime target. The 20-thread stage breakdown at the default point is led
+by the expansion background (`1.04 ms`), the tensor solve kernel (`0.81 ms`),
+and the split phase/S2 propagation (`0.63 ms`). The accepted change on this
+HEAD is confined to the Python preparation layer (goal-grid de-duplication,
+hoisting the per-`N` invariants, skipping redundant zero-fills, and binding
+repeated `derived_param` evaluations), so it removes overhead without touching
+the kernel.
 
 ## Reproducible evidence
 
@@ -101,6 +112,7 @@ background (`0.80 ms`), tensor kernel (`0.98 ms`), and phase propagation
 - `benchmark_phase_candidate_head.json`
 - `error_budget_probe_*_current.json`
 - `quadrature_estimator_coverage_head.json`
+- `fast_pyoverhead_ab_symmetric.json`
 
 The branch must remain `PARTIALLY VERIFIED` until the parameter-space same-grid
 DN gate and the stable `<4 ms` runtime gate are both met.

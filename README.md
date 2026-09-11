@@ -81,8 +81,8 @@ analytic WKB envelope at `z_tail`; the local error budget is exposed through
 
 Fresh HEAD evidence uses the formal `fast` path (`h=.005`, `col_step=8`,
 `z_tail=5`, `phase_max=.25`, exact kink split, goal grid). On the six-point
-25-repeat matrix at fixed 20-thread `workqueue`, the default warm median/p95
-was `4.93/5.47 ms/point`; this does not yet meet the `<4 ms` target. On the
+A,B,B,A paired matrix at fixed 20-thread `workqueue`, the default warm
+median/p95 is `4.77/5.58 ms/point`; this does not yet meet the `<4 ms` target. On the
 same native 76-node grid, the independent reference comparison gives a
 `DN_gw` relative error of `2.94e-4`, which is a combined tail/transfer and
 frequency-quadrature residual; against the independent Oracle C WKB anchor the
@@ -250,7 +250,7 @@ comparison, stage breakdown, AB evidence, and thread scaling.
 
 | | runtime/point | vs LSODA |
 |---|---|---|
-| fast (goal-kink-hybrid) | 4.93 ms warm median; 5.47 ms p95; 0.222 s cold | interim result; `<4 ms` not yet met |
+| fast (goal-kink-hybrid) | 4.77 ms warm median; 5.58 ms p95; 0.222 s cold | interim result; `<4 ms` not yet met |
 | reference (oracle) | ≈360–383 s/point historical | anchor only |
 
 The speedup entries use the recent A-point LSODA measurement (`22.137 s`) and
