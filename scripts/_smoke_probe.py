@@ -35,7 +35,7 @@ for sec in ("theory", "likelihood"):
                     v = cfg[key]
                     if isinstance(v, str) and not os.path.isabs(v):
                         cfg[key] = os.path.join(base, v)
-run_info["sampler"]["mcmc"]["max_samples"] = 5
+run_info["sampler"]["mcmc"]["max_samples"] = 1
 run_info["sampler"]["mcmc"]["seed"] = 20260830
 run_info["output"] = os.path.join(tempfile.mkdtemp(), "out")
 print("CWD:", os.getcwd())
