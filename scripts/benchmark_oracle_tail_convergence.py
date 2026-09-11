@@ -25,7 +25,8 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 Z_TAILS = (5.0, 6.0, 7.0, 8.0, 10.0)
 
 
-def run_point(point, rtol=1e-10, workers=4):
+def run_point(point, rtol=1e-10, workers=4, freq_count=None,
+              freq_min=None, freq_max=None):
     """Run one fixed-background tail sweep and return an auditable record."""
     kw = CASES[point]
     FS.apply_accuracy_mode('fast')
@@ -36,6 +37,16 @@ def run_point(point, rtol=1e-10, workers=4):
                       frequency_quadrature='simpson')
     fast_runtime = time.perf_counter() - t0
     freqs = np.asarray(fast.f, dtype=float)
+    if freq_min is not None or freq_max is not None:
+        lo = -np.inf if freq_min is None else float(freq_min)
+        hi = np.inf if freq_max is None else float(freq_max)
+        freqs = freqs[(freqs >= lo) & (freqs <= hi)]
+    if freq_count is not None:
+        if freq_count < 3 or freq_count > freqs.size:
+            raise ValueError('freq_count must be between 3 and the native grid size')
+        order = np.argsort(freqs)
+        picks = np.linspace(0, freqs.size - 1, freq_count, dtype=int)
+        freqs = freqs[order[picks]]
     dn_eff = float(fast.cosmo_param['DN_eff'])
 
     rows = []
@@ -54,7 +65,9 @@ def run_point(point, rtol=1e-10, workers=4):
             'runtime_s': runtime,
             'used_tail_fraction': float(np.mean(result['used_tail'])),
             'quadrature_error': float(result['quadrature_error']),
-            'interpolation_error': float(result['interpolation_error']),
+            'interpolation_error': (
+                None if result['interpolation_error'] is None
+                else float(result['interpolation_error'])),
             'n_freq': int(result['n_freq']),
         })
 
@@ -67,7 +80,11 @@ def run_point(point, rtol=1e-10, workers=4):
         'fast_runtime_s': fast_runtime,
         'rtol': rtol,
         'n_freq': int(freqs.size),
-        'frequency_grid': 'same native fast goal grid',
+        'frequency_grid': ('same native fast goal grid' if freq_count is None
+                           and freq_min is None and freq_max is None
+                           else 'representative subset of native grid'),
+        'frequency_subset_requested': freq_count,
+        'frequency_band_requested': [freq_min, freq_max],
         'oracle_semantics': 'fixed DN_eff; only reference z_tail varies',
         'acceptance_note': (
             'The observed deepest-tail difference is the reported systematic '
@@ -83,10 +100,16 @@ def main(argv=None):
     parser.add_argument('--rtol', type=float, default=1e-10)
     parser.add_argument('--workers', type=int, default=4,
                         help='reserved for compatibility; reference uses its default')
+    parser.add_argument('--freq-count', type=int, default=None,
+                        help='optional representative subset size for a quick diagnostic')
+    parser.add_argument('--freq-min', type=float, default=None)
+    parser.add_argument('--freq-max', type=float, default=None)
     parser.add_argument('--out', default='docs/oracle_tail_convergence_head.json')
     args = parser.parse_args(argv)
 
-    records = [run_point(point, rtol=args.rtol, workers=args.workers)
+    records = [run_point(point, rtol=args.rtol, workers=args.workers,
+                         freq_count=args.freq_count, freq_min=args.freq_min,
+                         freq_max=args.freq_max)
                for point in args.points]
     payload = {
         'schema_version': 1,
