@@ -1,5 +1,26 @@
 {
   "point": "high_kappa",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
   "kw": {
     "r": 0.01,
     "cr": 1,
@@ -7,21 +28,75 @@
     "kappa10": 1.0
   },
   "n_freq": 77,
-  "dn_eff": 0.22550806255693834,
+  "quadrature": "pchip",
+  "seed_n": 64,
+  "dn_eff": 0.22570645394976807,
   "used_tail_fraction": 0.8831168831168831,
-  "fast_runtime_s": 0.207233499999802,
-  "reference_runtime_s": 96.35060909999993,
-  "fast_simpson_dn": 0.22550806255694592,
-  "fast_pchip_dn": 0.22570645394976802,
-  "reference_pchip_dn_same_grid": 0.22577267430511228,
-  "reference_quadrature_error": 3.106198520018236e-20,
-  "reference_interpolation_error": 5.217039311238393e-09,
+  "fast_runtime_s": 0.23873249999996915,
+  "reference_runtime_s": 94.64354569999978,
+  "fast_simpson_dn": 0.22550806255695185,
+  "fast_pchip_dn": 0.2257064539497741,
+  "fast_dn_by_method": {
+    "simpson": 0.22550806255695185,
+    "pchip": 0.2257064539497741,
+    "log_pchip": 0.22543002449554142,
+    "gauss2": 0.2257064539497741,
+    "gauss3": 0.22570645394977412,
+    "gauss5": 0.2257064539497741,
+    "natural_cubic": 0.2255668647312188,
+    "chebyshev": 0.2257064539497741
+  },
+  "estimator_local_sum_rel_by_method": {
+    "simpson": 0.0,
+    "pchip": 0.003468458137537461,
+    "log_pchip": 0.0032881288212605665,
+    "gauss2": 0.0034684581375375137,
+    "gauss3": 0.0034684581375374994,
+    "gauss5": 0.0034684581375374396,
+    "natural_cubic": 0.0018283145447178838,
+    "chebyshev": 0.0034684581375374122
+  },
+  "estimator_local_max_rel_by_method": {
+    "simpson": 0.0,
+    "pchip": 0.0005617808099659509,
+    "log_pchip": 0.000452631036389309,
+    "gauss2": 0.0005617808099659509,
+    "gauss3": 0.0005617808099659509,
+    "gauss5": 0.0005617808099659472,
+    "natural_cubic": 0.000325923698974555,
+    "chebyshev": 0.0005617808099659509
+  },
+  "local_estimator": {
+    "method": "ensemble_minus_local_simpson_panel",
+    "actual_sum_rel": 0.001513378412964288,
+    "predicted_sum_rel": 0.006216575271183462,
+    "actual_max_rel": 0.00018647876821942626,
+    "predicted_max_rel": 0.00039069134974408946,
+    "pearson_r": 0.8041385134914681,
+    "coverage": 1.0,
+    "false_safe_rate": 0.0,
+    "actual_over_predicted_p95": 0.5033115200643651,
+    "actual_over_predicted_p99": 0.5362951795454822,
+    "actual_over_predicted_max": 0.5362951795454822,
+    "required_safety_factor_95": 0.5033115200643651,
+    "required_safety_factor_99": 0.5362951795454822,
+    "mixed_pchip_reference_actual_sum_rel": 0.0001313789869244731
+  },
+  "reference_pchip_dn_same_grid": 0.22577267430543996,
+  "reference_quadrature_error": 3.106198520022746e-20,
+  "reference_interpolation_error": 5.217039316804248e-09,
   "dn_relative_error": {
-    "simpson": 0.0011720273455624668,
-    "pchip": 0.0002933054478274401
+    "simpson": 0.0011720273469858393,
+    "pchip": 0.00029330544925147315,
+    "log_pchip": 0.0015176761800455027,
+    "gauss2": 0.00029330544925147315,
+    "gauss3": 0.0002933054492513502,
+    "gauss5": 0.00029330544925147315,
+    "natural_cubic": 0.0009115787588302715,
+    "chebyshev": 0.00029330544925147315
   },
   "spectrum_relative_error": {
-    "simpson_max": 0.0016370325743441318,
-    "simpson_p95": 0.0009168377266132876
+    "simpson_max": 0.0016353811208440175,
+    "simpson_p95": 0.0009167534991755411
   }
 }

@@ -47,6 +47,7 @@ def pchip_dn(model):
 
 
 def main(threads=2):
+    quadrature = os.environ.get('FAST_QUADRATURE', 'pchip')
     process = psutil.Process()
     limit_affinity(process, threads)
     os.environ['FAST_THREADS'] = str(threads)
@@ -59,7 +60,8 @@ def main(threads=2):
         for _ in range(25):
             model = LCDM_SG(**kw)
             start = time.perf_counter()
-            FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal')
+            FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
+                              frequency_quadrature=quadrature)
             timings.append((time.perf_counter() - start) * 1000.0)
             last = model
         warm = timings[1:]
@@ -71,9 +73,10 @@ def main(threads=2):
             'warm_median_ms': statistics.median(warm),
             'warm_p95_ms': ordered[int(0.95 * (len(ordered) - 1))],
             'n_freq': int(len(last.f)),
-            'DN_gw_simpson': float(last.DN_gw[-1]),
-            'DN_gw_pchip_same_spectrum': pchip_dn(last),
-            'pchip_delta_rel': abs(pchip_dn(last) - last.DN_gw[-1]) / abs(last.DN_gw[-1]),
+            'quadrature': getattr(last, 'frequency_quadrature_used', None),
+            'DN_gw_default': float(last.DN_gw[-1]),
+            'DN_gw_scipy_pchip_same_spectrum': pchip_dn(last),
+            'scipy_pchip_delta_rel': abs(pchip_dn(last) - last.DN_gw[-1]) / abs(last.DN_gw[-1]),
             'reuse': bool(getattr(last, 'outer_full_reuse_used', False)),
             'failure': getattr(last, 'fast_failure_reason', None),
         })

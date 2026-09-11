@@ -126,7 +126,7 @@ def main(argv=None):
         anchor_rows = anchor['rows']
         model = LCDM_SG(**CASES[point])
         FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                          frequency_quadrature='simpson')
+                          frequency_quadrature='pchip')
         fast_freqs = np.asarray(model.f, dtype=np.float64)
         fast_ig = (np.asarray(model.Ogw_today, dtype=np.float64)
                    - np.asarray(model.Oj_today, dtype=np.float64))

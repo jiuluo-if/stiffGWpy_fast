@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_commit": "b632bbae90f0ac967862502cd1c1653ce7c3a30a",
+  "generated_commit": "f87e969c96bff54bcdca8146f49d8b7a86ea501f",
   "resources": {
     "logical_cpu_count": 32,
     "affinity": [],
@@ -33,60 +33,60 @@
           "pchip": 0.0022636474150856214
         },
         "frozen": {
-          "simpson": 0.002270840368238554,
-          "pchip": 0.002271875267120777
+          "simpson": 0.0022708403682382286,
+          "pchip": 0.0022718752671204235
         },
         "wkb": {
-          "simpson": 0.0022627184234699023,
-          "pchip": 0.002263671695850535
+          "simpson": 0.0022627184234699244,
+          "pchip": 0.0022636716958505643
         },
         "deep": {
-          "simpson": 0.002262708505278084,
-          "pchip": 0.0022636593443721483
+          "simpson": 0.0022627084381915247,
+          "pchip": 0.0022636592186847902
         }
       },
-      "fast_vs_wkb_simpson_rel": 9.489320287506036e-06,
-      "fast_vs_wkb_pchip_rel": 1.07262749090078e-05,
+      "fast_vs_wkb_simpson_rel": 9.489320297280787e-06,
+      "fast_vs_wkb_pchip_rel": 1.07262749220353e-05,
       "fast_simpson_vs_pchip_rel": 0.00041988132481483945,
-      "fast_vs_deep_simpson_rel": 5.106034646359683e-06,
-      "frozen_vs_wkb_simpson_rel": 0.0035894633129810744,
-      "contribution_total": -4.9440323869566107e-08,
-      "contribution_tail_signed": -4.944578344652101e-08,
-      "contribution_nontail_signed": 5.459576954901033e-12,
-      "contribution_tail_abs_share": 0.9999282311993566,
+      "fast_vs_deep_simpson_rel": 5.076386011246407e-06,
+      "frozen_vs_wkb_simpson_rel": 0.0035894633128275167,
+      "contribution_total": -4.9440323921130945e-08,
+      "contribution_tail_signed": -4.9445783474687804e-08,
+      "contribution_nontail_signed": 5.45955355685639e-12,
+      "contribution_tail_abs_share": 0.9999282312861609,
       "top_contributors": {
         "top": [
           {
             "frequency": -0.22323434311928558,
-            "contribution": -1.3373751846351145e-08,
-            "share": 0.17013589269931512
+            "contribution": -1.3373751839155122e-08,
+            "share": 0.17013589265695797
           },
           {
             "frequency": -0.09823434311928558,
-            "contribution": -1.1366173021099769e-08,
-            "share": 0.14459622219230062
+            "contribution": -1.1366173027941891e-08,
+            "share": 0.14459622232114774
           },
           {
             "frequency": 0.5267656568807144,
-            "contribution": 1.0247552339653523e-08,
-            "share": 0.13036554628203248
+            "contribution": 1.0247552336881283e-08,
+            "share": 0.13036554628445504
           },
           {
             "frequency": 0.2767656568807144,
-            "contribution": -7.563244949014228e-09,
-            "share": 0.09621678687384969
+            "contribution": -7.563244953261063e-09,
+            "share": 0.09621678695569355
           },
           {
             "frequency": -0.7232343431192856,
-            "contribution": -5.799680269051523e-09,
-            "share": 0.07378137349055885
+            "contribution": -5.799680267517944e-09,
+            "share": 0.07378137349238016
           }
         ],
         "n_for_50pct": 4,
         "n_for_90pct": 12,
         "n_freq": 76
       },
-      "tail_correction_pearson": 0.34584386749925916
+      "tail_correction_pearson": 0.34584386466780415
     },
     {
       "point": "lowT",
@@ -98,60 +98,60 @@
           "pchip": 5.311460283393785e-08
         },
         "frozen": {
-          "simpson": 5.235712305105795e-08,
-          "pchip": 5.303432977618918e-08
+          "simpson": 5.235712305126942e-08,
+          "pchip": 5.303432977503491e-08
         },
         "wkb": {
-          "simpson": 5.243866259905972e-08,
-          "pchip": 5.310580895721936e-08
+          "simpson": 5.2438662599284964e-08,
+          "pchip": 5.310580895597229e-08
         },
         "deep": {
-          "simpson": 5.243827536549024e-08,
-          "pchip": 5.3105479624708155e-08
+          "simpson": 5.2438276304814684e-08,
+          "pchip": 5.3105481547068997e-08
         }
       },
-      "fast_vs_wkb_simpson_rel": 0.00014083332657587708,
-      "fast_vs_wkb_pchip_rel": 0.00016559161589231494,
+      "fast_vs_wkb_simpson_rel": 0.00014083332227988056,
+      "fast_vs_wkb_pchip_rel": 0.00016559163937895896,
       "fast_simpson_vs_pchip_rel": 0.012587030457016628,
-      "fast_vs_deep_simpson_rel": 0.00014821892616270784,
-      "frozen_vs_wkb_simpson_rel": 0.001554950945740435,
-      "contribution_total": 1.7004847177987786e-11,
-      "contribution_tail_signed": -2.2450080246712745e-14,
-      "contribution_nontail_signed": 1.7027297258234503e-11,
-      "contribution_tail_abs_share": 0.10970377465459694,
+      "fast_vs_deep_simpson_rel": 0.0001482010105533847,
+      "frozen_vs_wkb_simpson_rel": 0.0015549509459963657,
+      "contribution_total": 1.7004846659361268e-11,
+      "contribution_tail_signed": -2.2450582493331842e-14,
+      "contribution_nontail_signed": 1.70272972418546e-11,
+      "contribution_tail_abs_share": 0.10970372848904264,
       "top_contributors": {
         "top": [
           {
             "frequency": -18.459378758443304,
-            "contribution": 1.064866029860326e-11,
-            "share": 0.5265343109923611
+            "contribution": 1.064866028731196e-11,
+            "share": 0.5265343387581132
           },
           {
             "frequency": -18.14120688835599,
-            "contribution": 6.407260518527987e-12,
-            "share": 0.31681379702892754
+            "contribution": 6.4072605125371256e-12,
+            "share": 0.3168138137751893
           },
           {
             "frequency": -17.39880585815225,
-            "contribution": 4.0693786353951264e-13,
-            "share": 0.02012147458808365
+            "contribution": 4.0693785772463287e-13,
+            "share": 0.020121475382962946
           },
           {
             "frequency": -17.716977728239566,
-            "contribution": -3.7876742758693627e-13,
-            "share": 0.01872855748220229
+            "contribution": -3.787674007089214e-13,
+            "share": 0.01872855716066273
           },
           {
             "frequency": -4.647815975605057,
-            "contribution": -3.0956458947140376e-13,
-            "share": 0.015306749699428225
+            "contribution": -3.095645901014189e-13,
+            "share": 0.015306750553981858
           }
         ],
         "n_for_50pct": 1,
         "n_for_90pct": 6,
         "n_freq": 76
       },
-      "tail_correction_pearson": 0.24013838253142944
+      "tail_correction_pearson": 0.2401388184657219
     },
     {
       "point": "highT",
@@ -159,64 +159,64 @@
       "used_tail_count": 70,
       "dn": {
         "fast": {
-          "simpson": 0.056391339588222913,
-          "pchip": 0.05643308427141728
+          "simpson": 0.05639133958822421,
+          "pchip": 0.05643308427141855
         },
         "frozen": {
-          "simpson": 0.05659187241803977,
-          "pchip": 0.056637033806063865
+          "simpson": 0.056591872417782706,
+          "pchip": 0.05663703380568944
         },
         "wkb": {
-          "simpson": 0.05639186539281393,
-          "pchip": 0.056433641888641195
+          "simpson": 0.05639186539257823,
+          "pchip": 0.05643364188828656
         },
         "deep": {
-          "simpson": 0.05639255952851445,
-          "pchip": 0.056434345815179386
+          "simpson": 0.05639256113426166,
+          "pchip": 0.056434348230751115
         }
       },
-      "fast_vs_wkb_simpson_rel": 9.324121260228683e-06,
-      "fast_vs_wkb_pchip_rel": 9.880936357366266e-06,
-      "fast_simpson_vs_pchip_rel": 0.0007397200371610503,
-      "fast_vs_deep_simpson_rel": 2.1633000908904887e-05,
-      "frozen_vs_wkb_simpson_rel": 0.0035467353993814043,
-      "contribution_total": -1.2107098130608911e-06,
-      "contribution_tail_signed": -1.2107150309104228e-06,
-      "contribution_nontail_signed": 5.217849532099452e-12,
-      "contribution_tail_abs_share": 0.9999971794964391,
+      "fast_vs_wkb_simpson_rel": 9.324117057693741e-06,
+      "fast_vs_wkb_pchip_rel": 9.880930050856688e-06,
+      "fast_simpson_vs_pchip_rel": 0.0007397200371605418,
+      "fast_vs_deep_simpson_rel": 2.166147472073059e-05,
+      "frozen_vs_wkb_simpson_rel": 0.0035467353990172408,
+      "contribution_total": -1.2107092673917785e-06,
+      "contribution_tail_signed": -1.2107144852453995e-06,
+      "contribution_nontail_signed": 5.2178536211521086e-12,
+      "contribution_tail_abs_share": 0.9999971794926106,
       "top_contributors": {
         "top": [
           {
             "frequency": 1.1751350634053601,
-            "contribution": -3.504458089852997e-07,
-            "share": 0.18340648927761602
+            "contribution": -3.504458093929959e-07,
+            "share": 0.18340654198035977
           },
           {
             "frequency": 1.3001350634053601,
-            "contribution": -2.925710409321885e-07,
-            "share": 0.15311761791941209
+            "contribution": -2.925710411284866e-07,
+            "share": 0.15311766184310321
           },
           {
             "frequency": 1.9251350634053601,
-            "contribution": 2.5791252313380495e-07,
-            "share": 0.13497901585887512
+            "contribution": 2.579125230262185e-07,
+            "share": 0.13497905443241423
           },
           {
             "frequency": 1.6751350634053601,
-            "contribution": -2.0167168645606973e-07,
-            "share": 0.10554526563379572
+            "contribution": -2.0167168690151554e-07,
+            "share": 0.10554529607307679
           },
           {
             "frequency": 0.6751350634053601,
-            "contribution": -1.5039945882999818e-07,
-            "share": 0.07871184652809017
+            "contribution": -1.5039945895551573e-07,
+            "share": 0.0787118691204401
           }
         ],
         "n_for_50pct": 4,
         "n_for_90pct": 10,
         "n_freq": 76
       },
-      "tail_correction_pearson": 0.33976948651153877
+      "tail_correction_pearson": 0.339771602975666
     },
     {
       "point": "stiff",
@@ -224,64 +224,64 @@
       "used_tail_count": 70,
       "dn": {
         "fast": {
-          "simpson": 0.014965149677853841,
-          "pchip": 0.014984335009440217
+          "simpson": 0.014965149677859613,
+          "pchip": 0.014984335009446082
         },
         "frozen": {
-          "simpson": 0.015019160246747177,
-          "pchip": 0.015039023721281358
+          "simpson": 0.015019160246746696,
+          "pchip": 0.015039023721306154
         },
         "wkb": {
-          "simpson": 0.014965314379149663,
-          "pchip": 0.01498450708151387
+          "simpson": 0.014965314379197252,
+          "pchip": 0.014984507081582263
         },
         "deep": {
-          "simpson": 0.014965195068321687,
-          "pchip": 0.014984385820903579
+          "simpson": 0.014965195010533906,
+          "pchip": 0.014984385258401955
         }
       },
-      "fast_vs_wkb_simpson_rel": 1.1005535309812445e-05,
-      "fast_vs_wkb_pchip_rel": 1.1483332265534209e-05,
-      "fast_simpson_vs_pchip_rel": 0.0012803592267717741,
-      "fast_vs_deep_simpson_rel": 3.0330689068156198e-06,
-      "frozen_vs_wkb_simpson_rel": 0.003598044533734196,
-      "contribution_total": -3.7923874855245216e-07,
-      "contribution_tail_signed": -3.7943287340525423e-07,
-      "contribution_nontail_signed": 1.9412485280207517e-10,
-      "contribution_tail_abs_share": 0.9996289643896225,
+      "fast_vs_wkb_simpson_rel": 1.1005538104055139e-05,
+      "fast_vs_wkb_pchip_rel": 1.1483336438332283e-05,
+      "fast_simpson_vs_pchip_rel": 0.0012803592267775245,
+      "fast_vs_deep_simpson_rel": 3.0292070541892794e-06,
+      "frozen_vs_wkb_simpson_rel": 0.0035980445305107147,
+      "contribution_total": -3.7923884483715786e-07,
+      "contribution_tail_signed": -3.7943296972454015e-07,
+      "contribution_nontail_signed": 1.9412488738231317e-10,
+      "contribution_tail_abs_share": 0.9996289644217676,
       "top_contributors": {
         "top": [
           {
             "frequency": 0.02676565688203536,
-            "contribution": -1.0883840220573075e-07,
-            "share": 0.2046115257646482
+            "contribution": -1.0883840213966885e-07,
+            "share": 0.20461148860986067
           },
           {
             "frequency": 0.15176565688203536,
-            "contribution": -7.36305394848661e-08,
-            "share": 0.13842225465966426
+            "contribution": -7.363063468804964e-08,
+            "share": 0.13842240858587196
           },
           {
             "frequency": -1.0604786446032772,
-            "contribution": -6.376583469858548e-08,
-            "share": 0.11987703296738525
+            "contribution": -6.376583488600056e-08,
+            "share": 0.11987701162437203
           },
           {
             "frequency": -0.47323434311796464,
-            "contribution": -6.113368816451929e-08,
-            "share": 0.11492871043180271
+            "contribution": -6.113368816687865e-08,
+            "share": 0.11492868963644015
           },
           {
             "frequency": -0.34823434311796464,
-            "contribution": -5.311893948458554e-08,
-            "share": 0.09986132683569277
+            "contribution": -5.31189395197399e-08,
+            "share": 0.09986130882887848
           }
         ],
         "n_for_50pct": 4,
         "n_for_90pct": 10,
         "n_freq": 76
       },
-      "tail_correction_pearson": 0.2719570697314444
+      "tail_correction_pearson": 0.27195607072142625
     }
   ],
   "semantics": "fast DN_gw error decomposition: fast-vs-WKB, Simpson-vs-PCHIP quadrature, tail/non-tail per-node contribution on the shared native grid"

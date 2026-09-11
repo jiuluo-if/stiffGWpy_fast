@@ -181,14 +181,13 @@ def test_positive_tilt_benchmark_disables_consistency_relation():
     assert 'DN_re' in positive
 
 
-def test_pchip_frequency_quadrature_is_opt_in():
-    """PCHIP DN quadrature is explicit and leaves the default path unchanged."""
+def test_pchip_frequency_quadrature_is_default():
+    """PCHIP is the shipped default frequency integral and DN estimator."""
     cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
                               phase_max=0.0, freq_grid='goal', threads=1,
                               kink_split=True)
     m = _make_model()
-    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg,
-                             frequency_quadrature='pchip') is m
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg) is m
     assert m.frequency_quadrature_used == 'pchip'
     omega_nu = FS.gp.Omega_nh2 / m.derived_param['h']**2
     expected = (FS.gp.Neff0 * FS.ln10 *
@@ -203,6 +202,25 @@ def test_pchip_frequency_quadrature_is_opt_in():
     assert m.quadrature_error_local == pytest.approx(
         m.estimated_DN_quadrature_error_rel)
     assert m.quadrature_error_estimator_max_rel > 0.0
+
+
+def test_simpson_frequency_quadrature_remains_explicit():
+    """The pre-switch Simpson integral stays available on request."""
+    cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
+                              phase_max=0.0, freq_grid='goal', threads=1,
+                              kink_split=True)
+    m = _make_model()
+    assert FS.SGWB_iter_fast(m, tol=1e-6, config=cfg,
+                             frequency_quadrature='simpson') is m
+    assert m.frequency_quadrature_used == 'simpson'
+    assert np.isfinite(m.DN_gw[-1])
+    assert m.quadrature_error_estimator_method == 'simpson_trapezoid'
+    assert m.estimated_DN_quadrature_error > 0.0
+    default = _make_model()
+    assert FS.SGWB_iter_fast(default, tol=1e-6, config=cfg) is default
+    assert default.frequency_quadrature_used == 'pchip'
+    assert (abs(float(m.DN_gw[-1]) - float(default.DN_gw[-1]))
+            > 1e-9 * abs(float(default.DN_gw[-1])))
 
 
 def test_gauss_frequency_quadrature_is_available_in_solver():

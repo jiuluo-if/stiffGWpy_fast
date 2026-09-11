@@ -180,7 +180,7 @@ per-panel loop for all three allocation modes; the vectorized PCHIP kernel
 agrees with the SciPy reference per interval to `<= 1e-9` relative (absolute
 `>= 1e-12 * max|interval|`) and its sum to `<= 5e-14` relative over 200
 randomized grids plus flat/sign-changing/two-point degenerate cases.  The
-end-to-end guard `test_pchip_frequency_quadrature_is_opt_in`, which pins
+end-to-end guard `test_pchip_frequency_quadrature_is_default`, which pins
 `m.DN_gw[-1]` to the SciPy `integrate_frequency_pchip`, still passes at
 `rel = 1e-12`.  Measured `DN_gw` change versus the SciPy PCHIP path is
 `3.83e-16 / 4.98e-16 / 0 / 0` relative (default/lowT/highT/stiff), i.e. 1-2 ulp.
@@ -199,6 +199,9 @@ that is a separate phase (below) that must re-validate the manifest, README,
 coverage artifacts and the parameter-space gates.
 
 ### Next experiment (pre-registered)
+
+*(Executed in the same work line; results are recorded in
+`docs/fast_quadrature_default_switch_assessment.md`.)*
 
 Hypothesis: with the runtime budget now met, making `pchip` the default
 `frequency_quadrature` of `SGWB_iter_fast` satisfies the release accuracy target

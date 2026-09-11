@@ -95,6 +95,29 @@ no new failure、determinism pass、2/16 线程比值 `< 1.10`，并同步刷新
 `validation_manifest.json`、README、`ERROR_BUDGET` 与 estimator coverage
 artifact，重新满足 “validation artifact == release HEAD”。
 
+**本轮执行（2026-09-11，默认切换已落地）**：`_SGWB_iter_fast_impl` 与
+`SGWB_iter_fast` 的默认 `frequency_quadrature` 改为 `pchip`（`simpson` 仍可
+显式选择）；PCHIP 热路径遇到非有限 integrand 时改为把 NaN 传给统一的
+`math.isfinite(DN_gw_new)` guard，保持既有 `fast_failure_reason='nonfinite'`
+的 abort/restore 语义，`_pchip_integrals_vectorized` 继续 fail-loud。
+四点 `DN_gw` vs Oracle C WKB 为 `1.07e-5/1.66e-4/9.88e-6/1.15e-5`（全
+`< 2e-4`）；同会话 50-repeat 配对的 PCHIP/Simpson warm 比值 2 线程
+`1.0105/1.0551/1.0397/1.0411`、16 线程 `1.0428/1.0342/1.0180/1.0413`（全
+`< 1.10`）；canonical full pytest `159 passed, 6 deselected`。评测与刷新
+清单见 `docs/fast_quadrature_default_switch_assessment.md`。
+
+追加（同一轮，证据与文档刷新后定稿）：默认切换的权威 50-repeat 配对为
+`docs/fast_quadrature_default_ab_t{2,16}.json`，2 线程比值
+`1.019/1.035/1.034/1.024`、16 线程 `1.069/1.028/0.987/1.017`
+（default/lowT/highT/stiff）；20 线程 25-repeat 矩阵 default warm median/p95
+`4.932/5.467 ms`、highT/stiff/high-kappa `7.79/7.79/7.27 ms`；stability
+`guard_count=3`、`failure_count=0`；LHS 400 点 `254 success/146 guard/0
+numerical failure`。`ERROR_BUDGET` 频率积分项 `1.0e-3 -> 2.0e-4`，
+README/README_zh/CHANGELOG/`docs/fast_v02_audit_report.md` 与 manifest 同步
+刷新；结论 ACCEPT。下一方向（按预期科学价值排序）：high-T/stiff/high-kappa
+runtime 分解（`7.8/7.8/7.3 -> <=4 ms`）、nested native-frequency 真实嵌套
+求积（区分 same-grid 残差来源）、analytic stiff/RD branch。
+
 ## Current Phase
 
 Phase 3: Implementation and evidence-driven optimization

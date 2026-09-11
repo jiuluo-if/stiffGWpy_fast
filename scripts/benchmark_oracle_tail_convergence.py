@@ -96,7 +96,7 @@ def run_point(point, rtol=1e-10, workers=1, freq_count=None,
     fast = LCDM_SG(**kw)
     t0 = time.perf_counter()
     FS.SGWB_iter_fast(fast, kink_split=True, freq_grid='goal',
-                      frequency_quadrature='simpson')
+                      frequency_quadrature='pchip')
     fast_runtime = time.perf_counter() - t0
     freqs = np.asarray(fast.f, dtype=float)
     if freq_min is not None or freq_max is not None:

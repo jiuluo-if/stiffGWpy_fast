@@ -312,6 +312,22 @@ no new failure、determinism pass，再评估默认切换。
 | HEURISTIC | 预计算权重点积可把该开销降到 <2%（按微基准外推），尚未实现验证。 |
 | UNVERIFIED | PCHIP 在更广 Sobol/edge 参数空间的精度是否同样 <2e-4。 |
 
+### Confidence tables (PCHIP 默认切换，2026-09-11)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | `SGWB_iter_fast` 默认 `frequency_quadrature='pchip'`；`simpson` 仍可显式选择，默认 DN 与 scipy `integrate_frequency_pchip` 相对差 `1.8e-14`。 |
+| VERIFIED | PCHIP 热路径的非有限 integrand 走统一 `nonfinite` guard（abort/restore），与 Simpson 语义一致；`_pchip_integrals_vectorized` 仍 fail-loud。 |
+| EMPIRICALLY VALIDATED | 四个命名点 vs Oracle C WKB 残差 `1.07e-5/1.66e-4/9.88e-6/1.15e-5`（default/lowT/highT/stiff），全部 `<2e-4`。 |
+| EMPIRICALLY VALIDATED | 默认切换的配对 warm runtime 比值在 2/16 线程均 `<1.10`（2T `1.019/1.035/1.034/1.024`、16T `1.069/1.028/0.987/1.017`）。 |
+| EMPIRICALLY VALIDATED | 20 线程 25-repeat 矩阵 default warm median/p95 `4.932/5.467 ms`、cold `0.222 s`；highT/stiff/high-kappa `7.79/7.79/7.27 ms` 仍是超 `<4 ms` 的热点。 |
+| HEURISTIC | 同网格 reference 残差 `2.93e-4`（Sobol/edge `2.76e-4..2.98e-4`）被解释为“尾部/传递 + 积分”合并残差；尚未用 nested 真实频率求积分离这两项。 |
+| UNVERIFIED | 更广 Sobol/edge 参数空间相对 Oracle C WKB 的积分残差是否同样 `<2e-4`（目前只有 4 个命名点）。 |
+
+上一张表的 legacy 行（scipy PCHIP 路径 `1.204..1.307`、预计算权重点积假设）已被后续
+向量化 PCHIP 核与单次拟合共享取代，见 `docs/fast_quadrature_reuse_assessment.md`
+和 `docs/fast_quadrature_default_switch_assessment.md`。
+
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。

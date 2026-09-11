@@ -100,6 +100,24 @@
   线程刻度均满足）。下一步（已写定 acceptance）：默认切换 PCHIP + manifest/
   README/ERROR_BUDGET/coverage 同步刷新。
 
+- PCHIP 默认切换落地（2026-09-11）：`_SGWB_iter_fast_impl` 与
+  `SGWB_iter_fast` 的默认 `frequency_quadrature` 改为 `pchip`（`simpson` 仍可
+  显式选择）；PCHIP 热路径遇到非有限 integrand 时改为把 NaN 交给统一的
+  `math.isfinite(DN_gw_new)` guard，保持既有 `fast_failure_reason='nonfinite'`
+  的 abort/restore 语义，`_pchip_integrals_vectorized` 继续 fail-loud。权威
+  配对 A/B（50 repeats、workers=1、BLAS=1，`docs/fast_quadrature_default_ab_t{2,16}.json`）
+  的 `pchip/simpson` warm median 比值：2 线程 `1.019/1.035/1.034/1.024`、
+  16 线程 `1.069/1.028/0.987/1.017`（default/lowT/highT/stiff），全 `<1.10`。
+  20 线程 25-repeat 矩阵 `docs/benchmark_head_matrix.json`：default warm
+  median/p95 `4.932/5.467 ms`、cold `0.222 s`；highT/stiff/high-kappa 仍是
+  最慢工况 `7.79/7.79/7.27 ms`。stability screen `guard_count=3`、
+  `failure_count=0`；LHS 参数空间 400 点 `254 success / 146 physical_guard /
+  0 numerical_failure`。`ERROR_BUDGET` 的频率积分项由 `1.0e-3` 重新标定为
+  `2.0e-4`，README/README_zh/CHANGELOG/fast_v02_audit_report 同步刷新。
+  决策：ACCEPTED，完整评测见 `docs/fast_quadrature_default_switch_assessment.md`。
+  下一步：high-T/stiff/high-kappa runtime 分解与 nested native-frequency
+  quadrature（真实新增频率 solve）以区分 same-grid 残差是积分还是传递主导。
+
 ### Artifacts
 
 - `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`

@@ -139,7 +139,7 @@ def _current_fast_audit():
         'config': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
                        transition_refine=False, phase_max=0.25,
                        freq_grid='goal', outer_tol=1e-4,
-                       kink_split=True),
+                       kink_split=True, frequency_quadrature='pchip'),
         'definition': ('current formal fast path; this section is the active '
                        'HEAD audit, while the legacy profiles below are retained '
                        'for historical compatibility'),
@@ -147,9 +147,14 @@ def _current_fast_audit():
                                   [matrix, stability, nodes, invariant, *same_grid]
                                   if x.get('commit')}),
         'runtime': {
-            'threads': matrix.get('threads'),
-            'affinity': matrix.get('affinity'),
-            'threading_layer': matrix.get('threading_layer'),
+            # 新版 matrix artifact 把资源字段收进 resources，这里兼容两种布局
+            'threads': matrix.get('threads', matrix.get('resources', {}).get(
+                'numba_threads')),
+            'affinity': matrix.get('affinity', matrix.get('resources', {}).get(
+                'affinity')),
+            'threading_layer': matrix.get(
+                'threading_layer',
+                matrix.get('resources', {}).get('numba_threading_layer')),
             'repeats': matrix.get('repeats'),
             'cases': {r['case']: {
                 'cold_ms': r.get('cold_ms'),
@@ -165,9 +170,10 @@ def _current_fast_audit():
             'same_grid_spectrum_rel_p95': _agg(
                 [x['spectrum_relative_error']['simpson_p95'] for x in same_grid]),
             'estimator_coverage': {
-                'definition': ('predicted relative DN error from the fast '
-                               'telemetry compared with same-grid independent '
-                               'reference error'),
+                'definition': ('predicted relative DN error from the HEAD '
+                               'default (PCHIP) fast telemetry compared with '
+                               'the same-grid independent reference error '
+                               'integrated with both Simpson and PCHIP'),
                 'rows': estimator_rows,
                 'simpson_coverage_all': all(x['covers_simpson'] for x in estimator_rows),
                 'pchip_coverage_all': all(x['covers_pchip'] for x in estimator_rows),
@@ -237,10 +243,12 @@ def _current_fast_audit():
         },
         'status': 'PARTIALLY VERIFIED',
         'honest_limits': [
-            'DN <2e-4 is not established across the audited regimes.',
-            'warm median <4 ms is not established.',
+            'DN <2e-4 is measured on the four named Oracle C WKB points, not '
+            'certified across every audited regime.',
+            'warm median <4 ms is not established at the 20-thread scale.',
             'node-count convergence is non-monotonic.',
-            'PCHIP remains opt-in; no global quadrature promotion.',
+            'PCHIP is the default frequency quadrature; the legacy Simpson '
+            'panel stays selectable and is the embedded reference estimator.',
         ],
     }
 
@@ -380,6 +388,14 @@ def build():
         'note': ("integrated DN_gw relative < 1e-4 is NOT met (median 4.3e-4): "
                  "the residual is at the level of the reference's own z_tail "
                  "frozen-tail sensitivity (~3-4e-4), not a tuning artifact"),
+        # 旧 production 档 artifact 生成时默认仍是 Simpson，此处显式披露未重跑
+        'legacy_profile_artifacts': (
+            "the fast_transition_refine accuracy artifacts "
+            "(docs/paramsweep_z8*, docs/paramsweep_ref) were generated at "
+            "their recorded commits, when Simpson was the default frequency "
+            "quadrature; they were not re-run under the PCHIP default, so "
+            "their numbers are conservative legacy evidence rather than "
+            "current-HEAD measurements"),
         'oracle_AB': {
             'z_tail_7_vs_8_rel': 4.24e-4,
             'z_tail_8_vs_10_rel': 3.04e-4,

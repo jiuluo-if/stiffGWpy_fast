@@ -43,6 +43,8 @@ def main(argv=None):
                         default=['default', 'lowT', 'highT', 'stiff'])
     parser.add_argument('--anchor-dir', default='docs')
     parser.add_argument('--out', default='docs/fast_true_error.json')
+    parser.add_argument('--quadrature', default='pchip',
+                        help='fast frequency integral under audit')
     args = parser.parse_args(argv)
 
     FS.apply_accuracy_mode('fast')
@@ -55,7 +57,7 @@ def main(argv=None):
         summary = anchor['summary']
         model = LCDM_SG(**CASES[point])
         FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                          frequency_quadrature='simpson')
+                          frequency_quadrature=args.quadrature)
         fast_dn = float(np.asarray(model.DN_gw, dtype=float).reshape(-1)[-1])
         fast_dn_eff = float(model.cosmo_param['DN_eff'])
         rows.append({
@@ -66,6 +68,7 @@ def main(argv=None):
             'DN_frozen_z5': summary['DN_frozen'],
             'DN_wkb_z5': summary['DN_wkb_corrected'],
             'DN_deep_z10': summary['DN_deep'],
+            'anchor_n_freq': summary['n_freq'],
             'fast_vs_frozen_z5_rel': _rel(fast_dn, summary['DN_frozen']),
             'fast_vs_wkb_z5_rel': _rel(fast_dn, summary['DN_wkb_corrected']),
             'fast_vs_deep_z10_rel': _rel(fast_dn, summary['DN_deep']),

@@ -49,7 +49,7 @@ def main() -> None:
     original_reuse = FS._OUTER_FULL_REUSE_ENABLED
     baseline_spectrum = None
 
-    def solve(label, primitive='fast', reuse=True, frequency_quadrature='simpson'):
+    def solve(label, primitive='fast', reuse=True, frequency_quadrature='pchip'):
         nonlocal baseline_spectrum
         EB.fast_phi_s2_split = (original_primitive if primitive == 'fast'
                                 else EB.exact_phi_s2_split)
@@ -93,7 +93,7 @@ def main() -> None:
     try:
         rows = [
             solve('baseline', 'fast', True),
-            solve('pchip_quadrature', 'fast', True, 'pchip'),
+            solve('simpson_quadrature', 'fast', True, 'simpson'),
             solve('exact_background_primitive', 'exact', True),
             solve('outer_reuse_disabled', 'fast', False),
         ]

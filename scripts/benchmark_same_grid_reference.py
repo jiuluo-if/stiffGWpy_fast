@@ -108,6 +108,8 @@ def main(argv=None):
     ap.add_argument('--seed-n', type=int, default=64,
                     help='goal-grid seed override for candidate A/B runs')
     ap.add_argument('--out', default='docs/frequency_same_grid_reference.json')
+    ap.add_argument('--quadrature', default='pchip',
+                    help='fast frequency integral used for the self-consistent DN_eff')
     args = ap.parse_args(argv)
     inner_threads = nested_thread_budget(args.workers, args.threads)
     os.environ['NUMBA_NUM_THREADS'] = str(inner_threads)
@@ -130,7 +132,8 @@ def main(argv=None):
     try:
         fast = LCDM_SG(**kw)
         t0 = time.perf_counter()
-        FS.SGWB_iter_fast(fast, kink_split=True, freq_grid='goal', frequency_quadrature='simpson')
+        FS.SGWB_iter_fast(fast, kink_split=True, freq_grid='goal',
+                          frequency_quadrature=args.quadrature)
         fast_time = time.perf_counter() - t0
         freqs = np.asarray(fast.f, dtype=float)
         dn_eff = float(fast.cosmo_param['DN_eff'])
@@ -227,6 +230,7 @@ def main(argv=None):
         'resources': telemetry(workers=args.workers, threads=2),
         'kw': kw,
         'n_freq': int(freqs.size),
+        'quadrature': args.quadrature,
         'seed_n': args.seed_n,
         'dn_eff': dn_eff,
         'used_tail_fraction': float(np.mean(used_tail)),

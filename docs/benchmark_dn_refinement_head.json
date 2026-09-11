@@ -1,43 +1,44 @@
 {
-  "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",
-  "threads": 20,
-  "affinity": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19
-  ],
+  "commit": "f87e969c96bff54bcdca8146f49d8b7a86ea501f",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [
+      0,
+      1
+    ],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
   "threading_layer": "workqueue",
   "rows": [
     {
       "add_count": 0,
       "n_freq": 76,
-      "runtime_s": 0.22130949999973382,
-      "DN_gw_simpson": 0.0022626969518100204,
+      "runtime_s": 0.5653227000002516,
+      "DN_gw_simpson": 0.0022636474150855806,
       "DN_gw_pchip": 0.0022636474150856214,
       "selected_nodes": []
     },
     {
       "add_count": 4,
       "n_freq": 80,
-      "runtime_s": 0.006293299999924784,
-      "DN_gw_simpson": 0.0022626969518100204,
+      "runtime_s": 0.01943230000051699,
+      "DN_gw_simpson": 0.0022636474150855806,
       "DN_gw_pchip": 0.002261228203159137,
       "selected_nodes": [
         -1.0279100624365287,
@@ -49,8 +50,8 @@
     {
       "add_count": 10,
       "n_freq": 86,
-      "runtime_s": 0.005020099999910599,
-      "DN_gw_simpson": 0.0022626969518100204,
+      "runtime_s": 0.020582000000104017,
+      "DN_gw_simpson": 0.0022636474150855806,
       "DN_gw_pchip": 0.002262540871918257,
       "selected_nodes": [
         -1.0279100624365287,
@@ -68,8 +69,8 @@
     {
       "add_count": 20,
       "n_freq": 96,
-      "runtime_s": 0.005071999999927357,
-      "DN_gw_simpson": 0.0022626969518100204,
+      "runtime_s": 0.019156800000018848,
+      "DN_gw_simpson": 0.0022636474150855806,
       "DN_gw_pchip": 0.0022625338267534384,
       "selected_nodes": [
         -1.0279100624365287,

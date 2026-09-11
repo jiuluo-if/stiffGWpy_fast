@@ -1,37 +1,37 @@
 {
-  "commit": "bd648fc805c95c641f76d4d8ebfda9f5a2beb56c",
-  "threads": 20,
-  "affinity": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19
-  ],
-  "threading_layer": "workqueue",
+  "commit": "f87e969c96bff54bcdca8146f49d8b7a86ea501f",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [
+      0,
+      1
+    ],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
   "reference_DN_gw": 0.002262832966946746,
   "rows": [
     {
       "target_n_freq": 76,
       "seed_n": 64,
       "n_freq": 76,
-      "runtime_s": 0.22837569999865082,
-      "DN_gw": 0.0022626969518100204,
+      "runtime_s": 0.3778076999997211,
+      "DN_gw": 0.0022636474150855806,
       "DN_by_method_same_spectrum": {
         "simpson": 0.0022626969518100616,
         "pchip": 0.0022636474150856214,
@@ -66,7 +66,7 @@
           "max_rel": 0.0005615018949436681
         }
       },
-      "DN_rel_to_dense_reference": 6.010834149598733e-05,
+      "DN_rel_to_dense_reference": 0.00035992410873065796,
       "reuse": true,
       "failure": null,
       "omega_max": 1.2693567209183398e-08,
@@ -78,8 +78,8 @@
       "target_n_freq": 80,
       "seed_n": 68,
       "n_freq": 80,
-      "runtime_s": 0.005189900000914349,
-      "DN_gw": 0.0022615764775845235,
+      "runtime_s": 0.017025400000420632,
+      "DN_gw": 0.002263064341170274,
       "DN_by_method_same_spectrum": {
         "simpson": 0.0022615764775845643,
         "pchip": 0.00226306434117032,
@@ -114,7 +114,7 @@
           "max_rel": 0.0007714520161180901
         }
       },
-      "DN_rel_to_dense_reference": 0.0005552726960301601,
+      "DN_rel_to_dense_reference": 0.00010224980230868337,
       "reuse": true,
       "failure": null,
       "omega_max": 1.2693567209183398e-08,
@@ -126,8 +126,8 @@
       "target_n_freq": 90,
       "seed_n": 79,
       "n_freq": 90,
-      "runtime_s": 0.004932499999995343,
-      "DN_gw": 0.0022625154291945385,
+      "runtime_s": 0.029266699999425327,
+      "DN_gw": 0.0022633242091377468,
       "DN_by_method_same_spectrum": {
         "simpson": 0.002262515429194592,
         "pchip": 0.0022633242091378136,
@@ -162,7 +162,7 @@
           "max_rel": 0.000771131860903568
         }
       },
-      "DN_rel_to_dense_reference": 0.00014032752609040994,
+      "DN_rel_to_dense_reference": 0.00021709167144742038,
       "reuse": true,
       "failure": null,
       "omega_max": 1.2693567209183398e-08,
@@ -174,8 +174,8 @@
       "target_n_freq": 110,
       "seed_n": 101,
       "n_freq": 110,
-      "runtime_s": 0.005250600001090788,
-      "DN_gw": 0.0022623149885474484,
+      "runtime_s": 0.019068599999627622,
+      "DN_gw": 0.002262561481424899,
       "DN_by_method_same_spectrum": {
         "simpson": 0.0022623149885475052,
         "pchip": 0.0022625614814249517,
@@ -210,7 +210,7 @@
           "max_rel": 0.0005615966974343955
         }
       },
-      "DN_rel_to_dense_reference": 0.00022890704124594794,
+      "DN_rel_to_dense_reference": 0.0001199759442313034,
       "reuse": true,
       "failure": null,
       "omega_max": 1.2693567209183398e-08,

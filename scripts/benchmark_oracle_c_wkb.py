@@ -89,19 +89,23 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--points', nargs='+', choices=sorted(CASES),
                         default=['default'])
-    parser.add_argument('--freq-count', type=int, default=8)
+    parser.add_argument('--freq-count', type=int, default=None,
+                        help='native frequencies to sample; default: all')
     parser.add_argument('--rtol', type=float, default=1e-10)
     parser.add_argument('--out-dir', default='docs')
+    parser.add_argument('--quadrature', default='pchip',
+                        help='fast frequency integral under audit')
     args = parser.parse_args(argv)
 
     FS.apply_accuracy_mode('fast')
     for point in args.points:
         model = LCDM_SG(**CASES[point])
         FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                          frequency_quadrature='simpson')
+                          frequency_quadrature=args.quadrature)
         freqs = np.sort(np.asarray(model.f, dtype=float))
-        picks = np.linspace(0, freqs.size - 1, args.freq_count, dtype=int)
-        freqs = freqs[picks]
+        if args.freq_count is not None:
+            picks = np.linspace(0, freqs.size - 1, args.freq_count, dtype=int)
+            freqs = freqs[picks]
         dn_eff = float(model.cosmo_param['DN_eff'])
         bg = REF._Background(model, dn_eff)
         omega_nu = gp.Omega_nh2 / model.derived_param['h'] ** 2

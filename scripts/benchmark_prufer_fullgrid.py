@@ -117,7 +117,7 @@ def main(argv=None):
     for point in args.points:
         model = LCDM_SG(**CASES[point])
         FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                          frequency_quadrature='simpson')
+                          frequency_quadrature='pchip')
         freqs = np.sort(np.asarray(model.f, dtype=float))
         dn_eff = float(model.cosmo_param['DN_eff'])
         spectra = [fullgrid_spectrum_compare(

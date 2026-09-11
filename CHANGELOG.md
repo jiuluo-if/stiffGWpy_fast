@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased — 2026-09-11
+
+- Switched the single formal fast mode's default `frequency_quadrature` to
+  shape-preserving PCHIP.  Against the Oracle C WKB anchor the four named
+  points move from `4.31e-4 / 1.24e-2 / 7.50e-4 / 1.29e-3` (Simpson) to
+  `1.07e-5 / 1.66e-4 / 9.88e-6 / 1.15e-5` (PCHIP); `simpson` stays selectable
+  and remains the embedded reference estimator.  The PCHIP hot path degrades a
+  non-finite integrand to the established `nonfinite` abort/restore guard.
+- Regenerated the HEAD validation evidence (runtime matrix, stability screen,
+  same-grid reference, Oracle C anchors, error-budget probes, estimator
+  coverage) for the new default and refreshed the validation manifest.
+- Re-calibrated the `fast`/`ultra-fast` frequency-quadrature error budget from
+  `1.0e-3` to `2.0e-4` (the measured PCHIP residual against the Oracle C WKB
+  anchor is `1.07e-5`–`1.66e-4`), and refreshed `README.md`, `README_zh.md` and
+  `docs/fast_v02_audit_report.md`.  The same-grid reference residual is
+  `2.93e-4`; it is reported as a combined tail/transfer and quadrature term, so
+  the branch stays `PARTIALLY VERIFIED`.
+
 ## Unreleased — 2026-09-10
 
 - Separated native `eval_freqs` output nodes from bolometric integration support
