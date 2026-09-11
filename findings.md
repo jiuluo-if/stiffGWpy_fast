@@ -193,6 +193,36 @@ fast tail assembly 内升格 Oracle C 修正。
 | HEURISTIC | PCHIP 化的 runtime 成本（scipy `PchipInterpolator` + `integrate`）尚未测量；Numba 化可行性未验证。 |
 | UNVERIFIED | PCHIP 默认在其他 Sobol/edge 参数点是否同样接近 WKB 锚点（目前仅 4 个命名点）。 |
 
+## Fast frequency-quadrature A/B: Simpson vs PCHIP (2026-09-11)
+
+- 新增 `scripts/benchmark_fast_quadrature_ab.py`；artifacts
+  `docs/fast_quadrature_ab.json` 与 `docs/fast_quadrature_ab_assessment.md`。
+  交替测量（每个 repeat 内两种积分器互换顺序），warmup=3、repeats=25、
+  Numba=2、BLAS=1、升序网格。
+- 精度（vs Oracle C WKB 锚点）：PCHIP 把 default `4.31e-04 -> 1.07e-05`、
+  highT `7.50e-04 -> 9.88e-06`、stiff `1.29e-03 -> 1.15e-05`、
+  lowT `1.24e-02 -> 1.66e-04`（1-2 个数量级），四点全部进入 `2e-04` gate。
+- 速度：scipy PCHIP 路径 warm median 比值 `1.307/1.300/1.204/1.278`
+  （default/lowT/highT/stiff），超过预先登记的 `<10%` 预算 → 直接切换默认被
+  拒绝（第十二原则要求 accuracy win 的 runtime 增加 <10%）。
+- 成本定位（微基准）：`PchipInterpolator(...).integrate()` `0.141 ms/次`
+  （每次求解约 3 次：两个外层 `g2_last` 加 `g2c[-1]`），
+  `estimate_frequency_quadrature_local(..., 'pchip')` `1.39 ms/次`，合计与
+  观测 `+2.1 ms` 吻合。成本完全来自 scipy 实现：PCHIP 积分对节点值是线性
+  泛函，可预计算全局权重向量与逐区间权重矩阵，之后只是点积/矩阵乘。
+- 决策：ACCEPTED as measurement，不改任何默认。下一实验：预计算 PCHIP 积分
+  权重并向量化局部 estimator，使 PCHIP 默认化落在 runtime 预算内。
+
+### Confidence tables (quadrature A/B)
+
+| Classification | Statement |
+|---|---|
+| EMPIRICALLY VALIDATED | PCHIP 默认化把四个命名点的真实 DN 误差降到 `1.07e-5..1.66e-4`，全部 <2e-4 gate。 |
+| EMPIRICALLY VALIDATED | scipy PCHIP 路径的 warm runtime 比值 `1.204..1.307`，不满足 `<10%` 预算。 |
+| EMPIRICALLY VALIDATED | 成本来自 scipy 构造/积分（`0.141 ms/次`）与局部 estimator（`1.39 ms/次`），与 `+2.1 ms` 观测一致。 |
+| HEURISTIC | 预计算权重点积可把该开销降到 <2%（按微基准外推），尚未实现验证。 |
+| UNVERIFIED | PCHIP 在更广 Sobol/edge 参数空间的精度是否同样 <2e-4。 |
+
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。

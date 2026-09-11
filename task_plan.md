@@ -45,6 +45,16 @@ lowT `1.41e-04`；而 Simpson-vs-PCHIP 积分器差为
 spectrum max 不退化、warm median 增幅 `<10%`、no new failure、
 determinism pass。
 
+频率积分器 A/B 已完成（2026-09-11）：`scripts/benchmark_fast_quadrature_ab.py`
+显示 PCHIP 把四个命名点的真实 DN 误差降到 `1.07e-05..1.66e-04`（全部进入
+`2e-4` gate），但 scipy PCHIP 路径的 warm runtime 比值 `1.204..1.307` 超出
+`<10%` 预算；成本来自 `PchipInterpolator.integrate`（`0.141 ms/次`）与局部
+estimator（`1.39 ms/次`）。下一实验：预计算 PCHIP 积分权重（全局向量 + 逐区间
+矩阵）并向量化 estimator，然后把默认 `frequency_quadrature` 切到 PCHIP；
+acceptance：warm runtime 增幅 `<10%`、新路径 DN 与现 scipy PCHIP 一致
+（`<1e-12` rel）、DN vs WKB `<2e-4`、spectrum 不退化、no new failure、
+determinism pass。
+
 ## Current Phase
 
 Phase 3: Implementation and evidence-driven optimization

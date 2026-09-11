@@ -56,6 +56,16 @@
   finding，不改正式 kernel；下一实验为默认 PCHIP 化（含 runtime 与参数空间
   验收）。
 
+- 频率积分器 A/B（Simpson vs PCHIP，2026-09-11）：新增
+  `scripts/benchmark_fast_quadrature_ab.py`（交替测量、warmup=3、repeats=25、
+  Numba=2）。PCHIP 把真实 DN 误差降到 default `1.07e-05`、highT `9.88e-06`、
+  stiff `1.15e-05`、lowT `1.66e-04`（vs Oracle C WKB 锚点，1-2 个数量级），
+  四点全部 <2e-4 gate；但 scipy PCHIP 路径 warm runtime 比值
+  `1.204..1.307`，超过 `<10%` 预算，故未切换默认。微基准定位成本为
+  `PchipInterpolator.integrate` `0.141 ms/次` 与局部 estimator `1.39 ms/次`。
+  决策：ACCEPTED as measurement；下一实验为预计算 PCHIP 积分权重（全局向量 +
+  逐区间矩阵）并向量化 estimator，使默认切换落在预算内。
+
 ### Artifacts
 
 - `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`
@@ -68,6 +78,9 @@
 - `docs/fast_residual_decomposition.json`
 - `docs/fast_residual_decomposition_assessment.md`
 - `scripts/benchmark_fast_residual_decomposition.py`
+- `docs/fast_quadrature_ab.json`
+- `docs/fast_quadrature_ab_assessment.md`
+- `scripts/benchmark_fast_quadrature_ab.py`
 
 ## Session: 2026-09-09
 
