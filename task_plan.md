@@ -6,7 +6,7 @@
 
 ## Next Step
 
-已在 `bd648fc` 上完成 Q1 八方法 helper/solver 入口、9 点 dense-reference、node sensitivity、warm overhead/shape screen，并修正 positive-tilt benchmark 契约；新增 full-panel/邻近 panel envelope 诊断后，independent local-reference coverage 仅 default 92%、positive-tilt 86.5%，仍必须重设计 local estimator，不得进入 adaptive/production。
+已在 `e122fc7` 完成 Phase 1 CI/package audit；当前为 oracle tail convergence 诊断准备阶段。新增 `z_tail=5/6/7/8/10` 汇总器与可复现实验脚本，但本轮完整 native-grid 扫描因 reference 计算过慢停止，尚无新的数值结论；不得把旧 tail 片段当作本轮证据。
 
 ## Current Phase
 

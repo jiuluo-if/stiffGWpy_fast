@@ -58,6 +58,23 @@ def test_integrate_spectrum_exponential():
     assert qerr >= 0.0
 
 
+def test_summarize_tail_convergence_reports_observed_bound():
+    rows = [
+        {'z_tail': 5.0, 'DN_gw': 1.0300},
+        {'z_tail': 6.0, 'DN_gw': 1.0120},
+        {'z_tail': 7.0, 'DN_gw': 1.0040},
+        {'z_tail': 8.0, 'DN_gw': 1.0015},
+        {'z_tail': 10.0, 'DN_gw': 1.0005},
+    ]
+    summary = REF.summarize_tail_convergence(rows)
+    assert summary['central_z_tail'] == 10.0
+    assert summary['central_DN_gw'] == pytest.approx(1.0005)
+    assert summary['systematic_uncertainty_abs'] == pytest.approx(0.0295)
+    assert summary['systematic_uncertainty_rel'] == pytest.approx(0.0295 / 1.0005)
+    assert summary['empirical_exponential_decay_rate'] is not None
+    assert summary['convergence_monotone_to_central']
+
+
 @pytest.mark.slow
 def test_reference_mode_vs_fast_mid_frequency():
     """Reference ODE agrees with the fast solver in the resolved mid-frequency region."""
