@@ -6,7 +6,7 @@
 
 ## Next Step
 
-已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry，主要参数/参考扫描入口已增加 `--threads` 与外层并行时的内层单线程保护。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`；default 完整 76 点 Stage B 已完成，Stage C 已以 low-T/high-T/stiff 各 8 点最小网格完成并记录到 `docs/oracle_tail_convergence_stageC_min8.json`。default full-grid tail systematic `3.6295e-3` 且非单调；Stage C 三点仍为 oracle-sensitive，正式 tail correction 仍未放行。
+已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry，主要参数/参考扫描入口已增加 `--threads` 与外层并行时的内层单线程保护。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`；default 完整 76 点 Stage B 已完成，Stage C 已以 low-T/high-T/stiff 各 8 点最小网格完成并记录到 `docs/oracle_tail_convergence_stageC_min8.json`。default full-grid tail systematic `3.6295e-3` 且非单调；Stage C 三点仍为 oracle-sensitive，正式 tail correction 仍未放行。新增有限 phase-window Oracle B 原型后，四点最大 z=5→7 observable 变化为 `3.927e-3–6.897e-3`，证明 handoff 仍敏感但未形成独立 truth anchor，候选不晋升。
 
 ## Current Phase
 
@@ -33,7 +33,7 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
 - [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
 - [ ] 继续优化 DN/速度；本轮必须先重建远端 HEAD fresh profiling 与 DN_gw 误差分解，不得在 profiler 证据前 micro-optimize；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
-- [ ] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；下一步是参数空间 oracle/estimator coverage，不得切换 PCHIP 默认
+- [ ] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；有限 phase-window Oracle B 原型已完成但不晋升，下一步是独立 adiabatic invariant/WKB transfer，不得切换 PCHIP 默认
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification
