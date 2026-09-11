@@ -308,9 +308,13 @@ ERROR_BUDGET = {
     # at the mode's h, taken from the measured h-convergence curve (default point):
     # h=0.02 -> +3.9%, h=0.01 -> +1.3%, h=0.005 -> +0.55%,
     # h=0.0025 -> +0.46%, h=0.00125 -> +0.22%, h~0 -> +0.10%.
-    'fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=1.0e-3,
+    # 频率积分项按默认 PCHIP 积分核重新标定：相对 Oracle C WKB 锚点实测
+    # 实测为 1.07e-5（default）、1.66e-4（lowT）、9.88e-6（highT）、1.15e-5（stiff）；
+    # 同网格 reference 残差 2.94e-4 是尾部/传递与积分合并残差，不能全部
+    # 归给积分项，故这里取 2.0e-4 作为上限。
+    'fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=2.0e-4,
                  tail=3.8e-3, spectrum_dex=0.20),
-    'ultra-fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=1.0e-3,
+    'ultra-fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=2.0e-4,
                        tail=3.8e-3, spectrum_dex=0.20),
     'production': dict(model_bias=1.3e-2, ode=1.0e-5, quadrature=1.0e-4,
                        tail=2.0e-5, spectrum_dex=0.07),
@@ -1514,8 +1518,17 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                    transition_refine=False, kink_split=None,
                    freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None,
-                   frequency_quadrature='simpson'):
+                   frequency_quadrature='pchip'):
     """Accelerated (approximate) self-consistent SGWB iteration.
+
+    ``frequency_quadrature`` selects the bolometric frequency integral.  The
+    default is shape-preserving ``'pchip'``: the residual decomposition
+    (`docs/fast_residual_decomposition_assessment.md`) showed the composite
+    Simpson rule was the dominant DN_gw error term, and PCHIP reduces the
+    Oracle-C-WKB-anchored error from ``4.31e-4..1.24e-2`` to
+    ``1.07e-5..1.66e-4`` (all four named points inside the ``2e-4`` gate) at
+    ``< 1.10x`` warm runtime (`docs/fast_quadrature_reuse_assessment.md`).
+    ``'simpson'`` and the other audit methods stay available explicitly.
 
     Solves the same physics as ``LCDM_SG.SGWB_iter()`` with a fixed-step
     approximate solver.  On success fills the fast-path output attributes and
@@ -1809,11 +1822,18 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # 单次 PCHIP 拟合同时给出全程积分与逐区间积分；收敛判定、
                 # 循环后的 g2c[-1] 与局部求积 estimator 复用同一次拟合。
                 # 热路径使用向量化封闭式积分核，参考实现仍是 scipy 拟合。
-                _pchip_local = _pchip_integrals_vectorized(
-                    integration_freqs,
-                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1]))
-                pchip_breakdown = (float(np.sum(_pchip_local)), _pchip_local)
-                g2_last = pchip_breakdown[0] * ln10
+                _pchip_integrand = (
+                    Ogw[integration_indices, -1] - Oj[integration_indices, -1])
+                if np.isfinite(_pchip_integrand).all():
+                    _pchip_local = _pchip_integrals_vectorized(
+                        integration_freqs, _pchip_integrand)
+                    pchip_breakdown = (float(np.sum(_pchip_local)), _pchip_local)
+                    g2_last = pchip_breakdown[0] * ln10
+                else:
+                    # 非有限输入会让向量化核 fail-loud；这里改为让 NaN 传播到
+                    # 下方统一的 isfinite(DN_gw_new) guard，与 Simpson 路径保持
+                    # 相同的非有限失败语义。
+                    g2_last = float('nan')
             else:
                 g2_last = (integrate_frequency_quadrature(
                     integration_freqs,
@@ -1996,8 +2016,12 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                    transition_refine=False, kink_split=None,
                    freq_grid=None, config=None,
                    freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None,
-                   frequency_quadrature='simpson'):
+                   frequency_quadrature='pchip'):
     """Run the fast solver with an isolated configuration snapshot.
+
+    ``frequency_quadrature`` defaults to ``'pchip'`` (shape-preserving
+    frequency integral, see `_SGWB_iter_fast_impl`); pass ``'simpson'`` to
+    reproduce the pre-switch numbers.
 
     Numba's thread-count setter is process-wide. Calls that use the legacy
     snapshot or a configured thread count therefore hold a short-lived lock

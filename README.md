@@ -71,6 +71,7 @@ The current branch's single `fast` preset is:
 | `phase_max` | 0.25 |
 | `freq_grid` | goal (typically 70–120 points) |
 | `kink_split` | on |
+| `frequency_quadrature` | pchip (default; `simpson` stays explicitly selectable) |
 | outer tol | 1e-6 |
 
 The goal grid reserves nodes around the reheating feature and preserves
@@ -81,12 +82,16 @@ analytic WKB envelope at `z_tail`; the local error budget is exposed through
 Fresh HEAD evidence uses the formal `fast` path (`h=.005`, `col_step=8`,
 `z_tail=5`, `phase_max=.25`, exact kink split, goal grid). On the six-point
 25-repeat matrix at fixed 20-thread `workqueue`, the default warm median/p95
-was `5.36/5.73 ms/point`; this does not yet meet the `<4 ms` target. On the
-same native 76-node grid, the independent reference comparison gives
-Simpson/PCHIP `DN_gw` relative errors `7.14e-4/2.94e-4`; PCHIP therefore
-remains opt-in. `eval_freqs` is now separated from integration support nodes,
-and its six-point DN invariant measured zero change. See `findings.md` and
-`progress.md` for exact artifacts and rejected candidates.
+was `4.93/5.47 ms/point`; this does not yet meet the `<4 ms` target. On the
+same native 76-node grid, the independent reference comparison gives a
+`DN_gw` relative error of `2.94e-4`, which is a combined tail/transfer and
+frequency-quadrature residual; against the independent Oracle C WKB anchor the
+PCHIP quadrature residual alone is `1.07e-5`–`1.66e-4` at the four named
+points. PCHIP is therefore the single formal `fast` default, and `simpson`
+stays explicitly selectable for audits. `eval_freqs` is separated from
+integration support nodes, and its six-point DN invariant measured zero change.
+See `findings.md` and `progress.md` for exact artifacts and rejected
+candidates.
 
 ## Reference / oracle
 
@@ -212,7 +217,9 @@ changing `eval_freqs` does not change self-consistent `DN_gw`.
 
 The current single fast path is still under active branch-level optimization.
 On the exact native 76-node default grid, the independent continuous-sigma
-oracle gives Simpson/PCHIP `DN_gw` relative errors `7.14e-4/2.94e-4`.
+oracle gives a `DN_gw` relative error of `2.94e-4` for the default PCHIP
+quadrature (the legacy Simpson option is `7.14e-4`), while the independent
+Oracle C WKB anchor bounds the quadrature-only residual at `1.07e-5`–`1.66e-4`.
 The 76/80/90/110-node sweep is non-monotonic, so these numbers are not a
 universal parameter-space certification. `reference` remains the precision
 oracle.
@@ -224,7 +231,7 @@ Parameter schema (11 physical params, ranges in `scripts/validate_two_modes.py`)
 * **Single-parameter axis edges:** `docs/paramsweep_z8b/` (16 points on
   r/n_t/cr/T_re/DN_re/kappa10 axis edges + transition interiors).
 * **Param space (LHS, plain-grid screen):** 400 points,
-  **255 success / 145 shared-`Delta_Neff` guard / 0 numerical failure**
+  **254 success / 146 shared-`Delta_Neff` guard / 0 numerical failure**
   (`docs/validation/param_sweep_plain.json`).  The 36% guard fraction is a
   physical rejection (total `N_eff > 5`), reported explicitly, never hidden.
 * **Param space (Sobol, production):** 240 points, **212 ok / 28 guard**
@@ -243,7 +250,7 @@ comparison, stage breakdown, AB evidence, and thread scaling.
 
 | | runtime/point | vs LSODA |
 |---|---|---|
-| fast (goal-kink-hybrid) | 5.36 ms warm median; 5.73 ms p95; 0.254 s cold | interim result; `<4 ms` not yet met |
+| fast (goal-kink-hybrid) | 4.93 ms warm median; 5.47 ms p95; 0.222 s cold | interim result; `<4 ms` not yet met |
 | reference (oracle) | ≈360–383 s/point historical | anchor only |
 
 The speedup entries use the recent A-point LSODA measurement (`22.137 s`) and
@@ -266,9 +273,10 @@ importance reweighting, not on an independent reference chain.
 
 ## Limitations
 
-* The current same-grid default `DN_gw` error is `7.14e-4` with Simpson and
-  `2.94e-4` with opt-in PCHIP; the branch has not yet met the final DN gate or
-  the first `<=4 ms/point` speed target.
+* The current same-grid default `DN_gw` error is `2.94e-4` with PCHIP (the
+  legacy Simpson option is `7.14e-4`); that residual is a combined tail and
+  frequency-quadrature term, so the branch has not yet met the final `<2e-4`
+  DN gate or the first `<=4 ms/point` speed target.
 * Fast execution is over 100x faster than the recent LSODA A-point runtime,
   but this is an interim optimization result, not an accuracy certification.
 * MCMC validation rests on importance reweighting, not an independent

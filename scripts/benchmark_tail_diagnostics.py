@@ -86,7 +86,7 @@ def _frequencies(point, freq_count):
     FS.set_z_tail(5.0)
     model = LCDM_SG(**CASES[point])
     FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                      frequency_quadrature='simpson')
+                      frequency_quadrature='pchip')
     frequencies = np.sort(np.asarray(model.f, dtype=float))
     if freq_count is None:
         return model, frequencies

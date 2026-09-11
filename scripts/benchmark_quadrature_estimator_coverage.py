@@ -139,7 +139,7 @@ def main():
         model = LCDM_SG(**kw)
         result = FS.SGWB_iter_fast(
             model, kink_split=True, freq_grid='goal',
-            frequency_quadrature='simpson')
+            frequency_quadrature='pchip')
         if result is None:
             rows.append({'case': name, 'failure': model.fast_failure_reason})
             continue

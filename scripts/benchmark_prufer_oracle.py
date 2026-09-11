@@ -323,7 +323,7 @@ def main(argv=None):
     FS.apply_accuracy_mode('fast')
     model = LCDM_SG(**CASES[args.point])
     FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                      frequency_quadrature='simpson')
+                      frequency_quadrature='pchip')
     native = np.sort(np.asarray(model.f, dtype=float))
     picks = np.linspace(0, native.size - 1, args.freq_count, dtype=int)
     freqs = native[picks]
