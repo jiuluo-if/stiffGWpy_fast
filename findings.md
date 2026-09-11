@@ -103,6 +103,7 @@
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。
+- Prüfer amplitude-phase standalone prototype 在 default/low-T/high-T/stiff 四点各 14 个可比较模式上相对 Cartesian DOP853 的最大 amplitude/power 误差为 `1.19e-7/2.38e-7`，最大 phase 差 `2.51e-5 rad`，runtime ratio `0.529–0.545`。接受为独立状态变量的研究原型，不接入正式 fast；仍需 full `DN_gw`、reheating edge、guard 和 determinism 复核。
 
 | Decision | Rationale |
 |----------|-----------|
