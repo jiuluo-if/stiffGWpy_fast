@@ -141,6 +141,14 @@ def test_prufer_phase_averaged_today_observable_matches_tail_formula():
         3.0 * result['Opgw_today'] + result['Oj_today'])
 
 
+def test_prufer_outer_convergence_metric_matches_reference_definition():
+    from scripts.benchmark_prufer_oracle import _outer_convergence_metric
+    from stiffgwpy_fast import global_param as gp
+
+    assert _outer_convergence_metric(2.0, 0.0024, 0.0020) == pytest.approx(
+        (gp.Neff0 + 2.0024) / (gp.Neff0 + 2.0020) - 1.0)
+
+
 def test_oracle_checkpoint_key_and_schema_are_reproducible(tmp_path):
     from scripts.benchmark_oracle_tail_convergence import (
         _cache_key,

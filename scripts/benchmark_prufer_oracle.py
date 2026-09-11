@@ -51,6 +51,11 @@ def _phase_averaged_today(coefficient_squared, z_handoff, event_N, n_inf,
     }
 
 
+def _outer_convergence_metric(dn_eff_orig, dn_gw_new, dn_gw_previous):
+    return ((gp.Neff0 + dn_eff_orig + dn_gw_new)
+            / (gp.Neff0 + dn_eff_orig + dn_gw_previous) - 1.0)
+
+
 def _prufer_rhs(N, state, bg):
     z, log_amplitude, phase = state
     _, sigma = REF._H2_and_sigma(bg, N)
@@ -147,6 +152,73 @@ def compare_spectrum(model, freqs, dn_eff, z_tail, rtol=1e-10):
     }
 
 
+def prufer_self_consistent(model, freqs, z_tail, rtol=1e-10, tol=1e-7,
+                           max_iter=60):
+    dn_eff_orig = float(model.cosmo_param['DN_eff'])
+    omega_nu = gp.Omega_nh2 / model.derived_param['h'] ** 2
+    history = [0.0]
+    dn_gw_min = 0.0
+    dn_gw_max = 10.0
+    trial = 0.0
+    converged = False
+    for iteration in range(max_iter):
+        spectrum = spectrum_prufer(
+            model, freqs, dn_eff_orig + trial, z_tail, rtol=rtol)
+        g2 = REF.integrate_spectrum(
+            freqs, spectrum['Ogw'], spectrum['Oj'])[0]
+        dn_new = float(gp.Neff0 * g2 / omega_nu)
+        if not math.isfinite(dn_new):
+            raise RuntimeError('Prüfer outer solve produced non-finite DN_gw')
+        if dn_eff_orig + dn_new > 5.0:
+            raise RuntimeError('Prüfer outer solve crossed the DN_eff guard')
+        if abs(_outer_convergence_metric(dn_eff_orig, dn_new, history[-1])) < tol:
+            trial = dn_new
+            history.append(dn_new)
+            converged = True
+            break
+        if dn_new > history[-1] > dn_gw_min and dn_gw_max >= history[-1]:
+            dn_gw_min = history[-1]
+        elif dn_new < history[-1] < dn_gw_max and dn_gw_min <= history[-1]:
+            dn_gw_max = history[-1]
+        if 0.0 < dn_gw_min <= dn_gw_max < 10.0:
+            trial = (dn_gw_min + dn_gw_max) / 2.0
+        else:
+            trial = dn_new
+        history.append(dn_new)
+    if not converged:
+        raise RuntimeError('Prüfer outer solve did not converge')
+    final = spectrum_prufer(
+        model, freqs, dn_eff_orig + trial, z_tail, rtol=rtol)
+    return {
+        'DN_eff': float(dn_eff_orig + trial),
+        'DN_gw': float(trial),
+        'n_iter': len(history) - 1,
+        'history': [float(value) for value in history],
+        'spectrum': final,
+    }
+
+
+def compare_outer(model, freqs, z_tail, rtol=1e-10, tol=1e-7):
+    prufer = prufer_self_consistent(model, freqs, z_tail, rtol=rtol, tol=tol)
+    cartesian = REF.run_reference(
+        model, dn_eff=None, z_tail=z_tail, rtol=rtol,
+        freq_subset=freqs, self_consistent=True, workers=1, tol=tol)
+    return {
+        'z_tail': float(z_tail),
+        'prufer_DN_eff': prufer['DN_eff'],
+        'cartesian_DN_eff': float(cartesian['DN_eff']),
+        'DN_eff_relative_error': abs(prufer['DN_eff'] - cartesian['DN_eff'])
+        / max(abs(cartesian['DN_eff']), 1e-300),
+        'prufer_DN_gw': prufer['DN_gw'],
+        'cartesian_DN_gw': float(cartesian['DN_gw']),
+        'DN_gw_relative_error': abs(prufer['DN_gw'] - cartesian['DN_gw'])
+        / max(abs(cartesian['DN_gw']), 1e-300),
+        'prufer_n_iter': prufer['n_iter'],
+        'cartesian_n_iter': int(cartesian['n_iter']),
+        'prufer_history': prufer['history'],
+    }
+
+
 def compare_mode(model, freq, dn_eff, z_tail, rtol=1e-10):
     start = time.perf_counter()
     cartesian = REF.solve_reference_mode(model, freq, dn_eff,
@@ -209,6 +281,8 @@ def main(argv=None):
             for freq in freqs for z_tail in args.z_tail]
     spectrum = [compare_spectrum(model, freqs, dn_eff, z_tail)
                 for z_tail in args.z_tail]
+    outer = [compare_outer(model, freqs, z_tail)
+             for z_tail in args.z_tail]
     payload = {
         'schema_version': 1,
         'generated_commit': os.popen('git rev-parse HEAD').read().strip(),
@@ -219,6 +293,7 @@ def main(argv=None):
         'resources': telemetry(workers=1, threads=2),
         'rows': rows,
         'spectrum': spectrum,
+        'outer': outer,
         'semantics': 'standalone Prüfer amplitude-phase versus Cartesian DOP853',
     }
     with open(args.out, 'w', encoding='utf-8') as handle:
