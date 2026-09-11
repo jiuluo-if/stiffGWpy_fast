@@ -1176,6 +1176,65 @@ def pchip_integral_breakdown(freqs, integrand):
     return float(spline.integrate(xa[0], xa[-1])), local
 
 
+def _pchip_slopes(x, y):
+    """Vectorized Fritsch-Carlson node slopes (same recurrence as SciPy)."""
+    n = x.size
+    hk = x[1:] - x[:-1]
+    mk = (y[1:] - y[:-1]) / hk
+    if n == 2:
+        return np.full(2, mk[0], dtype=np.float64)
+    dk = np.zeros(n, dtype=np.float64)
+    smk = np.sign(mk)
+    condition = (smk[1:] != smk[:-1]) | (mk[1:] == 0.0) | (mk[:-1] == 0.0)
+    w1 = 2.0 * hk[1:] + hk[:-1]
+    w2 = hk[1:] + 2.0 * hk[:-1]
+    # 零斜率会产生 inf/nan，但这些位置随后由 condition 覆盖，因此只在这里
+    # 抑制 numpy 的除零/无效值告警，不改变任何已选中的数值。
+    with np.errstate(divide='ignore', invalid='ignore'):
+        whmean = (w1 / mk[:-1] + w2 / mk[1:]) / (w1 + w2)
+        harmonic = 1.0 / whmean
+    dk[1:-1] = np.where(condition, 0.0, harmonic)
+    dk[0] = _pchip_edge_slope(hk[0], hk[1], mk[0], mk[1])
+    dk[-1] = _pchip_edge_slope(hk[-1], hk[-2], mk[-1], mk[-2])
+    return dk
+
+
+def _pchip_edge_slope(h0, h1, m0, m1):
+    """One-sided three-point estimate with the SciPy shape-preserving guards."""
+    d = ((2.0 * h0 + h1) * m0 - h0 * m1) / (h0 + h1)
+    if np.sign(d) != np.sign(m0):
+        return 0.0
+    if np.sign(m0) != np.sign(m1) and abs(d) > 3.0 * abs(m0):
+        return 3.0 * m0
+    return d
+
+
+def _pchip_integrals_vectorized(freqs, integrand):
+    """NumPy per-interval PCHIP integrals (hot-path twin of the SciPy fit).
+
+    On each segment the shape-preserving cubic Hermite polynomial integrates to
+    ``h/2*(y_i + y_{i+1}) + h^2*(m_i - m_{i+1})/12``.  Building the slopes with
+    the SciPy recurrence and this closed form avoids the ``PchipInterpolator``
+    object entirely, which is the dominant remaining cost of the PCHIP path.
+    ``pchip_integral_breakdown`` stays the SciPy reference; the two agree to
+    ``< 1e-13`` relative, which is asserted by the test suite.
+    """
+    x = np.asarray(freqs, dtype=np.float64)
+    y = np.asarray(integrand, dtype=np.float64)
+    if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
+        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+    if not np.isfinite(x).all() or not np.isfinite(y).all():
+        raise ValueError('freqs and integrand must be finite')
+    order = np.argsort(x)
+    xa = x[order]
+    ya = y[order]
+    if np.any(np.diff(xa) <= 0.0):
+        raise ValueError('freqs must contain unique nodes')
+    hk = xa[1:] - xa[:-1]
+    dk = _pchip_slopes(xa, ya)
+    return hk * 0.5 * (ya[:-1] + ya[1:]) + hk * hk * (dk[:-1] - dk[1:]) / 12.0
+
+
 def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
     """Integrate a native spectrum using one of the Q1 audit methods.
 
@@ -1359,25 +1418,29 @@ def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
     if method == 'simpson':
         candidate = baseline_interval.copy()
     local_error = np.zeros_like(candidate)
-    panel_start = 0
-    while panel_start + 1 < candidate.size:
-        panel_end = panel_start + 2
-        panel_candidate = float(np.sum(candidate[panel_start:panel_end]))
-        panel_baseline = float(np.sum(baseline_interval[panel_start:panel_end]))
-        panel_error = abs(panel_candidate - panel_baseline)
+    # 与逐面板 Python 循环逐位等价的向量化分摊；零候选和的面板退化为
+    # 半误差均分，与原逻辑一致。
+    if panel_starts.size:
+        panel_error = np.abs(
+            (candidate[panel_starts] + candidate[panel_starts + 1])
+            - (baseline_interval[panel_starts]
+               + baseline_interval[panel_starts + 1]))
         if allocation in ('full_panel', 'panel_envelope'):
-            local_error[panel_start:panel_end] = panel_error
+            local_error[panel_starts] = panel_error
+            local_error[panel_starts + 1] = panel_error
         else:
-            share = np.abs(candidate[panel_start:panel_end])
-            share_sum = float(np.sum(share))
-            if share_sum > 0.0:
-                local_error[panel_start:panel_end] = panel_error * share / share_sum
-            else:
-                local_error[panel_start:panel_end] = 0.5 * panel_error
-        panel_start += 2
-    if panel_start < candidate.size:
-        local_error[panel_start] = abs(
-            candidate[panel_start] - baseline_interval[panel_start])
+            share0 = np.abs(candidate[panel_starts])
+            share1 = np.abs(candidate[panel_starts + 1])
+            share_sum = share0 + share1
+            positive = share_sum > 0.0
+            safe_sum = np.where(positive, share_sum, 1.0)
+            local_error[panel_starts] = np.where(
+                positive, panel_error * share0 / safe_sum, 0.5 * panel_error)
+            local_error[panel_starts + 1] = np.where(
+                positive, panel_error * share1 / safe_sum, 0.5 * panel_error)
+    if tail_start < candidate.size:
+        local_error[tail_start] = abs(
+            candidate[tail_start] - baseline_interval[tail_start])
     if allocation == 'panel_envelope':
         panel_error = local_error.copy()
         for i in range(local_error.size):
@@ -1745,9 +1808,11 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             elif frequency_quadrature == 'pchip':
                 # 单次 PCHIP 拟合同时给出全程积分与逐区间积分；收敛判定、
                 # 循环后的 g2c[-1] 与局部求积 estimator 复用同一次拟合。
-                pchip_breakdown = pchip_integral_breakdown(
+                # 热路径使用向量化封闭式积分核，参考实现仍是 scipy 拟合。
+                _pchip_local = _pchip_integrals_vectorized(
                     integration_freqs,
                     (Ogw[integration_indices, -1] - Oj[integration_indices, -1]))
+                pchip_breakdown = (float(np.sum(_pchip_local)), _pchip_local)
                 g2_last = pchip_breakdown[0] * ln10
             else:
                 g2_last = (integrate_frequency_quadrature(
