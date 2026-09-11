@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "generated_commit": "e9fde99b008c013e75a57ae5e17ce0b7e48298ee",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "rows": [
+    {
+      "point": "default",
+      "fast_DN_gw": 0.0022626969518100204,
+      "fast_DN_eff": 0.0022626969518100204,
+      "reference_DN_eff": 0.0022626969518100204,
+      "DN_frozen_z5": 0.0022718752671207773,
+      "DN_wkb_z5": 0.0022636716958505353,
+      "DN_deep_z10": 0.0022636593443721483,
+      "fast_vs_frozen_z5_rel": 0.004039973251871774,
+      "fast_vs_wkb_z5_rel": 0.00043060309597972,
+      "fast_vs_deep_z10_rel": 0.0004251490245299631,
+      "frozen_to_wkb_rel": 0.003629487258785313
+    },
+    {
+      "point": "lowT",
+      "fast_DN_gw": 5.2446047710354755e-08,
+      "fast_DN_eff": 5.2446047710354755e-08,
+      "reference_DN_eff": 5.2446047710354755e-08,
+      "DN_frozen_z5": 5.303432977618915e-08,
+      "DN_wkb_z5": 5.3105808957219305e-08,
+      "DN_deep_z10": 5.3105479624708115e-08,
+      "fast_vs_frozen_z5_rel": 0.011092476671563696,
+      "fast_vs_wkb_z5_rel": 0.01242352314783562,
+      "fast_vs_deep_z10_rel": 0.012417398713155578,
+      "frozen_to_wkb_rel": 0.0013397835594702498
+    },
+    {
+      "point": "highT",
+      "fast_DN_gw": 0.056391339588221887,
+      "fast_DN_eff": 0.056391339588221887,
+      "reference_DN_eff": 0.056391339588221887,
+      "DN_frozen_z5": 0.05663703380606386,
+      "DN_wkb_z5": 0.0564336418886412,
+      "DN_deep_z10": 0.05643434581517939,
+      "fast_vs_frozen_z5_rel": 0.004338048823024097,
+      "fast_vs_wkb_z5_rel": 0.0007495936644101276,
+      "fast_vs_deep_z10_rel": 0.0007620576855511096,
+      "frozen_to_wkb_rel": 0.0035915715502091794
+    },
+    {
+      "point": "stiff",
+      "fast_DN_gw": 0.01496514967785102,
+      "fast_DN_eff": 0.01496514967785102,
+      "reference_DN_eff": 0.01496514967785102,
+      "DN_frozen_z5": 0.015039023721281358,
+      "DN_wkb_z5": 0.01498450708151387,
+      "DN_deep_z10": 0.01498438582090358,
+      "fast_vs_frozen_z5_rel": 0.004912156852695158,
+      "fast_vs_wkb_z5_rel": 0.0012918278564351265,
+      "fast_vs_deep_z10_rel": 0.0012837458460075886,
+      "frozen_to_wkb_rel": 0.003646322313828578
+    }
+  ],
+  "semantics": "fast self-consistent DN_gw versus the frozen and Oracle C WKB-corrected reference DN_gw on the same native grid and DN_eff"
+}

@@ -120,6 +120,44 @@
   ODE 求解即可把 tail systematic 压两个数量级。artifacts 见
   `docs/oracle_c_wkb_*.json` 与 `docs/oracle_c_wkb_assessment.md`。
 
+## Fast true DN_gw error calibration (2026-09-11)
+
+- 动机：`fast` 与 frozen-amplitude reference 共享同一个 `z_tail` frozen 尾约定，
+  因此 fast-vs-reference 比较会**抵消**共享 tail defect。Oracle C 给出解析 WKB
+  修正后，fast 的**真实**误差可定义为同一 native 网格、同一 `DN_eff` 下 fast
+  self-consistent `DN_gw` 与 WKB-corrected reference `DN_gw` 之差。新增
+  `scripts/benchmark_fast_true_error.py`（reference-only 诊断，不改正式 kernel）；
+  artifacts 为 `docs/fast_true_error.json` 与 `docs/fast_true_error_assessment.md`；
+  资源 workers=1、Numba=2、BLAS=1。
+- 结果（`fast DN_gw` / vs frozen(z5) / vs WKB(z5) / vs deep(z10)）：
+  default `2.2626969518e-03` / `4.04e-3` / `4.31e-4` / `4.25e-4`；
+  lowT `5.2446047710e-08` / `1.11e-2` / `1.24e-2` / `1.24e-2`；
+  highT `5.6391339588e-02` / `4.34e-3` / `7.50e-4` / `7.62e-4`；
+  stiff `1.4965149678e-02` / `4.91e-3` / `1.29e-3` / `1.28e-3`。
+- default/highT/stiff：此前对外报告的同约定 PCHIP 数（manifest
+  `same_grid_dn_rel_pchip` median `2.94e-4`）掩盖了共享 tail defect；真实误差
+  `4.3e-4..1.3e-3`，比同约定数大 1.5-4 倍，仍未进入 `2e-4` release gate。
+- default/highT/stiff 的 fast 值同时贴近 WKB(z5) 与 deep(z10)，而 frozen(z5)
+  偏离 `~3.6e-3`。这与 `fast_sgwb.py` 的 `_tail_match_gamma`（`T ~ a^-1`
+  振幅匹配）一致：fast 尾已比纯 frozen 更接近真值。
+- lowT 是例外：fast 相对 frozen 与 WKB 两个 reference 都偏 `1.1e-2..1.2e-2`，
+  远大于 `1.3e-3` 的 frozen->WKB tail 修正。其 `DN_gw=5.2e-8`，属非 tail 的
+  独立误差源（quadrature / grid / 低振幅抵消），位置尚未定位。
+
+### Confidence tables (fast true-error)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | Oracle C WKB 修正把 frozen-vs-deep tail systematic 从 `1.34e-3..3.65e-3` 压到 `5.46e-6..1.25e-5`（216-665 倍），四点全 76 频率，且有独立 deep z=10 与 Prüfer 状态变量锚点。 |
+| EMPIRICALLY VALIDATED | fast 真实 DN 误差（vs WKB 锚点）default/highT/stiff = `4.31e-4/7.50e-4/1.29e-3`；大于同约定 PCHIP `2.94e-4`，未进 `2e-4` gate。 |
+| EMPIRICALLY VALIDATED | default/highT/stiff 的剩余误差由残余 fast-vs-WKB（非共享 tail）主导；fast 贴近 WKB/deep 而非 frozen。 |
+| HEURISTIC | `_tail_match_gamma` 的 `T~a^-1` 匹配是 fast 尾比 frozen 更接近真值的原因（未独立证明）。 |
+| UNVERIFIED | lowT 的 `1.24e-2` 非 tail 误差源（quadrature/grid/低振幅抵消）尚未定位。 |
+
+决策：ACCEPTED as calibration finding。下一实验按频率分解 fast-vs-WKB 残差
+（tail / deep-subhorizon stepping / frequency quadrature 三源），再决定是否在
+fast tail assembly 内升格 Oracle C 修正。
+
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。

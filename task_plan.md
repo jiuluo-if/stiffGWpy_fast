@@ -24,6 +24,16 @@ PASS / VERIFIED。下一轮建议：**nested native-frequency quadrature**
 （第九原则，验证 E_nested 覆盖，服务 release gate DN<2e-4）或把 Oracle C
 修正晋升为 reference tail 的独立第二锚点（需更严格验证）。
 
+Fast 真实误差标定也已完成（2026-09-11）：`scripts/benchmark_fast_true_error.py`
+以 Oracle C 的 WKB 锚点测得 fast 真实 `DN_gw` 误差为 default `4.31e-4`、
+highT `7.50e-4`、stiff `1.29e-3`、lowT `1.24e-2`（同约定 PCHIP `2.94e-4`
+低估了真实误差）；default/highT/stiff 的剩余误差由残余 fast-vs-WKB 主导，
+lowT 是非 tail 独立源。ACCEPTED as calibration finding。下一实验建议：
+**按频率分解 fast-vs-WKB 残差**（区分 tail / deep-subhorizon stepping /
+frequency quadrature 三源），acceptance criteria：`spectrum max < 1e-3`、
+`DN rel < 5e-4`、no new failure、determinism pass；若残差 tail-dominated，
+则在 fast tail assembly 内升格 Oracle C 的 `1 + sin(2θ_f)/ω_f` 修正。
+
 ## Current Phase
 
 Phase 3: Implementation and evidence-driven optimization

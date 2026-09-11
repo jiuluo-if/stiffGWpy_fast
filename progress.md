@@ -35,12 +35,25 @@
   测得（8 频 0.53-0.55x，edge 含 outer 后最高 0.93x），不代表 Numba
   kernel 收益；其价值转为独立状态变量 oracle 交叉校验。
 
+- Fast 真实 DN 误差标定（2026-09-11）：新增
+  `scripts/benchmark_fast_true_error.py`，以 Oracle C 的 WKB 锚点测量 fast
+  真实误差（fast 与 frozen reference 共享 `z_tail` 尾约定，fast-vs-reference
+  会抵消共享 defect）。结果（vs WKB(z5)）：default `4.31e-4`、highT `7.50e-4`、
+  stiff `1.29e-3`、lowT `1.24e-2`；default/highT/stiff 比此前对外报告的同约定
+  PCHIP `2.94e-4` 大 1.5-4 倍，仍未进入 `2e-4` gate；lowT 为独立非 tail 误差
+  源（`DN_gw=5.2e-8`），待定位。决策：ACCEPTED as calibration finding，不改
+  正式 kernel；artifacts 为 `docs/fast_true_error.json` 与
+  `docs/fast_true_error_assessment.md`。
+
 ### Artifacts
 
 - `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`
 - `docs/oracle_prufer_fullgrid_edge_{r,tre,dnre,kap,nt}_*.json`
 - `docs/oracle_prufer_fullgrid_sobol_{000,002,006,010,015}.json`
 - `scripts/benchmark_prufer_fullgrid.py`
+- `docs/fast_true_error.json`
+- `docs/fast_true_error_assessment.md`
+- `scripts/benchmark_fast_true_error.py`
 
 ## Session: 2026-09-09
 
