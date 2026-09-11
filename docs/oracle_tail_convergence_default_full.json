@@ -1,0 +1,162 @@
+{
+  "schema_version": 2,
+  "generated_commit": "886c64f49641513f9cbb97efc48b127320118edb",
+  "reference_version": "d8a2a984f1cac6daf34947f63de11d7abc9825d4adc6ebe96efeea0343c0e098",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "z_tails": [
+    5.0,
+    6.0,
+    7.0,
+    8.0,
+    10.0
+  ],
+  "checkpoint": null,
+  "points": [
+    {
+      "rows": [
+        {
+          "z_tail": 5.0,
+          "DN_gw": 0.00227187526780686,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 8.337005200000931,
+          "used_tail_fraction": 0.9210526315789473,
+          "quadrature_error": 3.12566417359743e-22,
+          "interpolation_error": 8.313100009361562e-11,
+          "n_freq": 76,
+          "cache_key": "32438a9ebb1dcaa1cecfdc61ca8f6e36fc924dea30d4d687de69ac1a3ffbd23d",
+          "cache_hit": true
+        },
+        {
+          "z_tail": 6.0,
+          "DN_gw": 0.0022632016288023915,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 16.52233309999974,
+          "used_tail_fraction": 0.9078947368421053,
+          "quadrature_error": 3.1137309116463214e-22,
+          "interpolation_error": 7.89576319428196e-11,
+          "n_freq": 76,
+          "cache_key": "78d057730084ed0f99ae9a5b933105a52f6d6b928f5fea19fc9849b3816f5d96",
+          "cache_hit": true
+        },
+        {
+          "z_tail": 7.0,
+          "DN_gw": 0.002265359309739286,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 40.01959069999975,
+          "used_tail_fraction": 0.8947368421052632,
+          "quadrature_error": 3.1166994663456357e-22,
+          "interpolation_error": 8.012932447810185e-11,
+          "n_freq": 76,
+          "cache_key": "1d1292021e47f16d1e6ab26899ac3590409e6776ef9f16e33501651f43d00d5d",
+          "cache_hit": true
+        },
+        {
+          "z_tail": 8.0,
+          "DN_gw": 0.002264313763527738,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 101.81932380000035,
+          "used_tail_fraction": 0.881578947368421,
+          "quadrature_error": 3.1152609955010505e-22,
+          "interpolation_error": 7.970585106457134e-11,
+          "n_freq": 76,
+          "cache_key": "4167fd59cf4da1ebeda814656b744d7a02b0db7f224d17aa9afaa1b78c18a25f",
+          "cache_hit": true
+        },
+        {
+          "z_tail": 10.0,
+          "DN_gw": 0.0022636593238480403,
+          "DN_eff": 0.0022626969518100204,
+          "runtime_s": 708.2272551999995,
+          "used_tail_fraction": 0.8552631578947368,
+          "quadrature_error": 3.1143606121527224e-22,
+          "interpolation_error": 7.940963720782913e-11,
+          "n_freq": 76,
+          "cache_key": "37054b912fea908ee7e18e85d21309448f65fdf1c22e97e8038dc301c9b90529",
+          "cache_hit": true
+        }
+      ],
+      "z_tail": [
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        10.0
+      ],
+      "DN_gw": [
+        0.00227187526780686,
+        0.0022632016288023915,
+        0.002265359309739286,
+        0.002264313763527738,
+        0.0022636593238480403
+      ],
+      "central_z_tail": 10.0,
+      "central_DN_gw": 0.0022636593238480403,
+      "systematic_uncertainty_abs": 8.215943958819749e-06,
+      "systematic_uncertainty_rel": 0.00362949666156182,
+      "successive_relative_change": [
+        0.0038178323992415207,
+        0.0009533754789829935,
+        0.00046153659026761985,
+        0.00028902340755024395
+      ],
+      "relative_to_central": [
+        0.00362949666156182,
+        0.00020219254762715035,
+        0.0007509901659389023,
+        0.0002891069662307705,
+        0.0
+      ],
+      "empirical_exponential_decay_rate": 0.7131764327678185,
+      "empirical_fit_log_residual": 0.32137150876325077,
+      "convergence_monotone_to_central": false,
+      "point": "default",
+      "parameters": {
+        "r": 0.01,
+        "cr": 1,
+        "T_re": 2000.0,
+        "kappa10": 0.01
+      },
+      "fast_DN_eff": 0.0022626969518100204,
+      "fast_DN_gw": 0.0022626969518100204,
+      "fast_runtime_s": 0.23346440000022994,
+      "rtol": 1e-10,
+      "n_freq": 76,
+      "frequency_grid": "same native fast goal grid",
+      "frequency_subset_requested": null,
+      "frequency_band_requested": [
+        null,
+        null
+      ],
+      "oracle_semantics": "fixed DN_eff; only reference z_tail varies",
+      "acceptance_note": "The observed deepest-tail difference is the reported systematic bound; fitted decay is descriptive and not used to shrink it.",
+      "cache_hits": 5,
+      "cache_keys": [
+        "32438a9ebb1dcaa1cecfdc61ca8f6e36fc924dea30d4d687de69ac1a3ffbd23d",
+        "78d057730084ed0f99ae9a5b933105a52f6d6b928f5fea19fc9849b3816f5d96",
+        "1d1292021e47f16d1e6ab26899ac3590409e6776ef9f16e33501651f43d00d5d",
+        "4167fd59cf4da1ebeda814656b744d7a02b0db7f224d17aa9afaa1b78c18a25f",
+        "37054b912fea908ee7e18e85d21309448f65fdf1c22e97e8038dc301c9b90529"
+      ]
+    }
+  ]
+}
