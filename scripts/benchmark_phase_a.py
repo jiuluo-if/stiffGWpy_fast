@@ -9,7 +9,13 @@ import statistics
 import sys
 import time
 
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -106,7 +112,8 @@ def main():
             'spectrum_rel_all_max': float(np.max(all_rel)),
             'transition_rel_max': float(np.max(all_rel[transition])) if transition.any() else None,
         }
-    result = {'case': CASE, 'config': {'h': args.h, 'z_tail': args.z_tail,
+    result = {'case': CASE, 'resources': telemetry(threads=1),
+              'config': {'h': args.h, 'z_tail': args.z_tail,
                                         'phase_max': args.phase_max, 'col_step': 8,
                                         'freq_grid': args.freq_grid, 'threads': 1},
               'rows': rows, 'reference': reference_dn,

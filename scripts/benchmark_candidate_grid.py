@@ -8,8 +8,13 @@ import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import psutil
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
+import psutil  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -31,12 +36,12 @@ CASES = {
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--seed', type=int, default=78)
-    ap.add_argument('--threads', type=int, default=20)
+    ap.add_argument('--threads', type=int, default=2)
     ap.add_argument('--out', default='docs/benchmark_candidate_grid_head.json')
     args = ap.parse_args()
 
     process = psutil.Process()
-    process.cpu_affinity(process.cpu_affinity()[:args.threads])
+    limit_affinity(process, args.threads)
     os.environ['FAST_THREADS'] = str(args.threads)
     FS.apply_accuracy_mode('fast')
     FS.set_threads(args.threads)
@@ -77,8 +82,7 @@ def main():
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
         'seed_n': args.seed,
-        'threads': args.threads,
-        'affinity': process.cpu_affinity(),
+        'resources': telemetry(process, threads=args.threads),
         'threading_layer': __import__('numba').threading_layer(),
         'rows': rows,
     }

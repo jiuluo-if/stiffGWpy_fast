@@ -346,7 +346,7 @@ def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None):
     Opgw = np.empty(n)
     used_tail = np.zeros(n, dtype=bool)
     if workers is None:
-        workers = int(os.environ.get('SGWB_POOL_SIZE', 4))
+        workers = int(os.environ.get('SGWB_POOL_SIZE', 1))
     workers = max(1, min(workers, os.cpu_count() or 1))
     if _sync_size() > 1:
         workers = 1

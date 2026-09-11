@@ -8,9 +8,14 @@ import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import numpy as np
-from scipy import interpolate
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
+from scipy import interpolate  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -78,8 +83,8 @@ def interpolation_diagnostics(freqs, omega):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--threads', type=int, default=20)
-    ap.add_argument('--affinity-count', type=int, default=20)
+    ap.add_argument('--threads', type=int, default=2)
+    ap.add_argument('--affinity-count', type=int, default=2)
     ap.add_argument('--reps', type=int, default=50)
     ap.add_argument('--out', default='docs/frequency_quadrature_methods_head.json')
     args = ap.parse_args()
@@ -89,7 +94,7 @@ def main():
     available = process.cpu_affinity()
     if len(available) < args.affinity_count:
         raise SystemExit('当前进程可用 CPU 少于 affinity-count')
-    process.cpu_affinity(available[:args.affinity_count])
+    limit_affinity(process, args.affinity_count)
     FS.apply_accuracy_mode('fast')
     FS.set_threads(args.threads)
     rows = []
@@ -130,8 +135,7 @@ def main():
         })
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
-        'threads': args.threads,
-        'affinity': process.cpu_affinity(),
+        'resources': telemetry(process, threads=args.threads),
         'threading_layer': __import__('numba').threading_layer(),
         'rows': rows,
     }

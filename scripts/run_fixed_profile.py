@@ -6,11 +6,17 @@ import argparse
 import os
 import sys
 
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--threads', type=int, required=True)
-    parser.add_argument('--affinity-count', type=int, default=20)
+    parser.add_argument('--affinity-count', type=int, default=2)
     parser.add_argument('--reps', type=int, default=7)
     parser.add_argument('--case', choices=('A', 'B'), default='A')
     parser.add_argument('--kink-split', action='store_true')
@@ -26,14 +32,8 @@ def main() -> None:
         raise SystemExit('固定 affinity 需要 psutil') from exc
 
     process = psutil.Process()
-    available = process.cpu_affinity()
-    if len(available) < args.affinity_count:
-        raise SystemExit('当前进程可用 CPU 少于 affinity-count')
-    selected = available[:args.affinity_count]
-    process.cpu_affinity(selected)
+    selected = limit_affinity(process, args.affinity_count)
 
-    # 必须在导入 Numba 前固定线程数，避免 threading layer 被隐式选择。
-    os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
     os.environ['FAST_THREADS'] = str(args.threads)
     from numba import threading_layer
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -50,6 +50,8 @@ def main() -> None:
     profile.main()
     print('PROFILE_META affinity=%s threading_layer=%s threads=%s' %
           (selected, threading_layer(), args.threads))
+    print('PROFILE_RESOURCES %s' % telemetry(
+        process, threads=args.threads).get('blas_threads'))
 
 
 if __name__ == '__main__':

@@ -19,7 +19,13 @@ import subprocess
 import sys
 import time
 
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -46,7 +52,8 @@ def env_meta():
     meta = {
         'python': sys.version.split()[0],
         'platform': sys.platform,
-        'cpu_count': os.cpu_count(),
+        'resources': telemetry(
+            threads=int(os.environ.get('FAST_THREADS', '2'))),
         'threads': fast_sgwb._THREADS,
         'col_step': fast_sgwb._COL_STEP,
         'numpy': np.__version__,

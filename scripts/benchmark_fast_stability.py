@@ -2,15 +2,21 @@
 """Run a current-HEAD fast-only stability screen over named and Sobol points."""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import numpy as np
-import psutil
-from scipy.stats import qmc
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
+import psutil  # noqa: E402
+from scipy.stats import qmc  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -45,16 +51,13 @@ def sample_points(n=16):
     return rows
 
 
-def main():
+def main(threads=2):
     process = psutil.Process()
-    available = process.cpu_affinity()
-    if len(available) < 20:
-        raise SystemExit('当前进程可用 CPU 少于 20')
-    process.cpu_affinity(available[:20])
+    limit_affinity(process, threads)
     FS.apply_accuracy_mode('fast')
-    FS.set_threads(20)
+    FS.set_threads(threads)
     config = FS.FastSolverConfig(h=0.005, col_step=8, z_tail=5.0,
-                                 phase_max=0.25, freq_grid='goal', threads=20)
+                                 phase_max=0.25, freq_grid='goal', threads=threads)
     points = list(SINGLE.items()) + sample_points()
     rows = []
     for label, kw in points:
@@ -85,9 +88,7 @@ def main():
         })
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
-        'threads': 20,
-        'affinity': process.cpu_affinity(),
-        'threading_layer': __import__('numba').threading_layer(),
+        'resources': telemetry(process, threads=threads),
         'n_points': len(rows),
         'rows': rows,
         'guard_count': sum(row['status'] == 'guard' for row in rows),
@@ -99,4 +100,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--threads', type=int, default=2)
+    main(parser.parse_args().threads)

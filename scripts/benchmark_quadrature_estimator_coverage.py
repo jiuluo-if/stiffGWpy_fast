@@ -7,10 +7,15 @@ import os
 import sys
 from pathlib import Path
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
 
-import numpy as np
-from scipy import integrate, interpolate
+apply_environment()
+
+import numpy as np  # noqa: E402
+from scipy import integrate, interpolate  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -176,6 +181,7 @@ def main():
         })
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
+        'resources': telemetry(threads=2),
         'estimator_method': 'pchip_minus_local_simpson_panel',
         'rows': rows,
         'summary': {

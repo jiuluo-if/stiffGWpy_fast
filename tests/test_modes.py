@@ -198,7 +198,7 @@ def test_pool_size_mpi_default(monkeypatch):
     monkeypatch.setattr('stiffgwpy_fast.stiff_SGWB._mpi_world_size', lambda: 4)
     assert _sgwb_pool_size() == 1
     monkeypatch.setattr('stiffgwpy_fast.stiff_SGWB._mpi_world_size', lambda: 1)
-    assert _sgwb_pool_size() == 4
+    assert _sgwb_pool_size() == 1
 
 
 def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):

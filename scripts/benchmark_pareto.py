@@ -23,18 +23,25 @@ import subprocess
 import sys
 import time
 
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy_fast import fast_sgwb as FS
-from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 KW = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 
 
 def env_meta():
-    meta = {'numpy': np.__version__}
+    meta = telemetry(threads=2)
+    meta['numpy'] = np.__version__
     for mod in ('numba', 'scipy'):
         try:
             meta[mod] = __import__(mod).__version__

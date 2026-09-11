@@ -9,9 +9,14 @@ import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import numpy as np
-import psutil
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
+import psutil  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -37,11 +42,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--phase-max', type=float, nargs='+', default=[0.25, 0.35, 0.5])
     ap.add_argument('--reps', type=int, default=25)
-    ap.add_argument('--threads', type=int, default=20)
+    ap.add_argument('--threads', type=int, default=2)
     ap.add_argument('--out', default='docs/benchmark_phase_candidate_head.json')
     args = ap.parse_args()
     process = psutil.Process()
-    process.cpu_affinity(process.cpu_affinity()[:args.threads])
+    limit_affinity(process, args.threads)
     os.environ['FAST_THREADS'] = str(args.threads)
     FS.apply_accuracy_mode('fast')
     FS.set_threads(args.threads)
@@ -98,9 +103,7 @@ def main():
             rows.append(row)
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
-        'threads': args.threads,
-        'affinity': process.cpu_affinity(),
-        'threading_layer': __import__('numba').threading_layer(),
+        'resources': telemetry(process, threads=args.threads),
         'rows': rows,
     }
     with open(args.out, 'w', encoding='utf-8') as handle:

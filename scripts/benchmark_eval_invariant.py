@@ -6,8 +6,13 @@ import json
 import os
 import sys
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -55,7 +60,7 @@ def main():
         })
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
-        'threads': 1,
+        'resources': telemetry(threads=1),
         'eval_freqs': eval_freqs.tolist(),
         'rows': rows,
     }

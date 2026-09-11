@@ -8,21 +8,27 @@ import os
 import sys
 import time
 
-import numpy as np
+import numpy as np  # noqa: E402
+
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument('--threads', type=int, default=20)
-    ap.add_argument('--affinity-count', type=int, default=20)
+    ap.add_argument('--threads', type=int, default=2)
+    ap.add_argument('--affinity-count', type=int, default=2)
     ap.add_argument('--case', choices=('default', 'lowT', 'highT', 'stiff'), default='default')
     ap.add_argument('--out', default='docs/error_budget_probe_head.json')
     args = ap.parse_args()
-    os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
     os.environ['FAST_THREADS'] = str(args.threads)
     import psutil
     process = psutil.Process()
-    process.cpu_affinity(process.cpu_affinity()[:args.affinity_count])
+    limit_affinity(process, args.affinity_count)
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     from stiffgwpy_fast import exact_background as EB
@@ -100,7 +106,7 @@ def main() -> None:
         FS._OUTER_FULL_REUSE_ENABLED = original_reuse
     payload = {'commit': os.popen('git rev-parse HEAD').read().strip(),
                'case': args.case,
-               'threads': args.threads, 'affinity': process.cpu_affinity(),
+               'resources': telemetry(process, threads=args.threads),
                'rows': rows}
     with open(args.out, 'w', encoding='utf-8') as handle:
         json.dump(payload, handle, ensure_ascii=False, indent=2)

@@ -2,13 +2,19 @@
 """测试不同 goal-grid seed 的 DN 收敛，不改变正式默认 seed。"""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import psutil
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
+import psutil  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -18,12 +24,12 @@ from stiffgwpy_fast import freq_adaptive as FA  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 
-def main():
+def main(threads=2):
     process = psutil.Process()
-    process.cpu_affinity(process.cpu_affinity()[:20])
-    os.environ['FAST_THREADS'] = '20'
+    limit_affinity(process, threads)
+    os.environ['FAST_THREADS'] = str(threads)
     FS.apply_accuracy_mode('fast')
-    FS.set_threads(20)
+    FS.set_threads(threads)
     original = FA.goal_oriented_freqs
     kw = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     rows = []
@@ -53,9 +59,7 @@ def main():
     FA.goal_oriented_freqs = original
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
-        'threads': 20,
-        'affinity': process.cpu_affinity(),
-        'threading_layer': __import__('numba').threading_layer(),
+        'resources': telemetry(process, threads=threads),
         'rows': rows,
     }
     with open('docs/benchmark_goal_seeds_head.json', 'w', encoding='utf-8') as handle:
@@ -64,4 +68,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--threads', type=int, default=2)
+    main(parser.parse_args().threads)

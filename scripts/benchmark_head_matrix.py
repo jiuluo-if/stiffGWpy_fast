@@ -2,15 +2,21 @@
 """固定环境下冻结六个代表点的 warm runtime 与 Simpson/PCHIP 差异。"""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import statistics
 import sys
 import time
 
-os.environ.setdefault('NUMBA_THREADING_LAYER', 'workqueue')
-import numpy as np
-import psutil
+try:
+    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, limit_affinity, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
+import psutil  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -40,15 +46,12 @@ def pchip_dn(model):
     return float(gp.Neff0 * FS.ln10 * integral / omega_nu)
 
 
-def main():
+def main(threads=2):
     process = psutil.Process()
-    available = process.cpu_affinity()
-    if len(available) < 20:
-        raise SystemExit('当前进程可用 CPU 少于 20')
-    process.cpu_affinity(available[:20])
-    os.environ['FAST_THREADS'] = '20'
+    limit_affinity(process, threads)
+    os.environ['FAST_THREADS'] = str(threads)
     FS.apply_accuracy_mode('fast')
-    FS.set_threads(20)
+    FS.set_threads(threads)
     rows = []
     for name, kw in CASES.items():
         timings = []
@@ -76,9 +79,7 @@ def main():
         })
     payload = {
         'commit': os.popen('git rev-parse HEAD').read().strip(),
-        'threads': 20,
-        'affinity': process.cpu_affinity(),
-        'threading_layer': __import__('numba').threading_layer(),
+        'resources': telemetry(process, threads=threads),
         'repeats': 25,
         'rows': rows,
     }
@@ -88,4 +89,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--threads', type=int, default=2)
+    main(parser.parse_args().threads)

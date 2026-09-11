@@ -31,14 +31,20 @@ import subprocess
 import sys
 import time
 
-import numpy as np
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
+
+apply_environment()
+import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from stiffgwpy_fast import fast_sgwb as FS
-from stiffgwpy_fast import reference as REF
-from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega, signal_mask
-from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import reference as REF  # noqa: E402
+from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega, signal_mask  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 ln10 = math.log(10.0)
 
@@ -57,12 +63,8 @@ FREQ_SUBSET = [-18.4, -18.0, -17.5, -17.0, -16.5, -16.0, -15.5, -15.0,
 
 
 def env_meta():
-    meta = {
-        'python': sys.version.split()[0],
-        'platform': sys.platform,
-        'cpu_count': os.cpu_count(),
-        'numpy': np.__version__,
-    }
+    meta = telemetry(threads=2)
+    meta['numpy'] = np.__version__
     for mod in ('numba', 'scipy'):
         try:
             meta[mod] = __import__(mod).__version__
