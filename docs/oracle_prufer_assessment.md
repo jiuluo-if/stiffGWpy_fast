@@ -52,20 +52,32 @@ the Prüfer and Cartesian iteration counts identical. The largest
 outer-loop `DN_gw` relative difference was `3.44e-9`, and no point crossed the
 `DN_eff` guard.
 
+The boundary follow-up used two reheating-axis points (`T_re=12.6` and
+`T_re=7.94e5`) plus fixed Sobol points `sobol_000`, `sobol_002`, and
+`sobol_006`, again with eight native frequencies and both handoff depths. The
+low reheating edge and all three Sobol points converged with matching outer
+iteration counts; their largest outer `DN_gw` relative differences were
+`8.33e-10`, `2.12e-9`, `2.06e-9`, and `2.50e-9`, respectively. The high
+reheating edge produced an explicit `shared_Neff_guard` on both depths in both
+implementations, so it is classified as a physical rejection rather than a
+numerical failure. Across the four accepted points, the largest handoff power
+error was `2.37e-7` and the largest observed Prüfer/Cartesian runtime ratio was
+`0.913`.
+
 ## Decision
 
 **Accepted as a standalone prototype; rejected for formal-kernel promotion.**
 
-The prototype satisfies the standalone screening signal (>30% local speedup
-with sub-`1e-6` amplitude/power differences) across the four representative
-points.  It has not yet compared the complete today-spectrum and `DN_gw`
-observable through the formal outer self-consistency loop, nor the complete
-reheating-neighborhood edge suite. Those are mandatory before any production
-integration.
+The prototype satisfies the standalone screening signal on the accepted
+representative, boundary, and Sobol points, with sub-`1e-6` amplitude/power
+differences and matching physical guard behavior. It remains a reference-only
+prototype: the sampled frequencies are still sparse, the full production
+frequency grid has not been certified, and no formal-kernel integration is
+proposed.
 
 ## Next experiment
 
-Run the Prüfer state through the formal outer self-consistency loop on the
-reheating-edge and fixed Sobol points, then compare `DN_gw`, guard behavior,
-determinism, and cold/warm channel cost. Keep it reference-only until that
-comparison is complete.
+Extend the same protocol to a larger fixed Sobol subset and the complete
+reheating/guard edge suite, then add a full-grid `DN_gw` comparison and a
+deterministic replay. Keep it reference-only until those comparisons are
+complete.

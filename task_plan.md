@@ -33,7 +33,7 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
 - [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
 - [ ] 继续优化 DN/速度；本轮必须先重建远端 HEAD fresh profiling 与 DN_gw 误差分解，不得在 profiler 证据前 micro-optimize；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
-- [ ] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；有限 phase-window Oracle B 原型已完成但不晋升；Prüfer standalone 已完成固定 8 频率完整 `Ogw/Oj/Opgw/DN_gw` 与 outer self-consistency 复核（四点、outer 最大 DN 差 `3.44e-9`、无 guard crossing、Prüfer/Cartesian 迭代次数一致），下一步是 reheating/Sobol 边界和 formal full-grid 复核，不得切换正式 kernel
+- [ ] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；有限 phase-window Oracle B 原型已完成但不晋升；Prüfer standalone 已完成固定 8 频率完整 `Ogw/Oj/Opgw/DN_gw` 与 outer self-consistency 复核，并完成 `edge_tre_lo/hi` 与三个固定 Sobol 点的 guard/outer 复核（有效点最大 outer DN 差 `2.50e-9`，高 reheating 边界双方一致物理拒绝），下一步是更大固定 Sobol 子集、完整 edge suite 与 formal full-grid 复核，不得切换正式 kernel
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification

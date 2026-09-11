@@ -19,11 +19,17 @@ from scipy.integrate import solve_ivp  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scripts.benchmark_same_grid_reference import CASES  # noqa: E402
+from scripts.benchmark_same_grid_reference import CASES as _REFERENCE_CASES  # noqa: E402
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast import global_param as gp  # noqa: E402
 from stiffgwpy_fast import reference as REF  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
+
+CASES = dict(_REFERENCE_CASES)
+CASES.update({
+    'edge_tre_lo': dict(r=1e-2, cr=1, T_re=12.6, kappa10=1e-2),
+    'edge_tre_hi': dict(r=1e-2, cr=1, T_re=7.94e5, kappa10=1e-2),
+})
 
 
 def _prufer_derivatives(z, sigma, phase):
@@ -170,7 +176,15 @@ def prufer_self_consistent(model, freqs, z_tail, rtol=1e-10, tol=1e-7,
         if not math.isfinite(dn_new):
             raise RuntimeError('Prüfer outer solve produced non-finite DN_gw')
         if dn_eff_orig + dn_new > 5.0:
-            raise RuntimeError('Prüfer outer solve crossed the DN_eff guard')
+            return {
+                'status': 'physical_guard',
+                'DN_eff': float(dn_eff_orig),
+                'DN_gw': 0.0,
+                'n_iter': len(history),
+                'history': [float(value) for value in history] + [dn_new],
+                'guard_trial_DN_eff': float(dn_eff_orig + dn_new),
+                'spectrum': None,
+            }
         if abs(_outer_convergence_metric(dn_eff_orig, dn_new, history[-1])) < tol:
             trial = dn_new
             history.append(dn_new)
@@ -190,6 +204,7 @@ def prufer_self_consistent(model, freqs, z_tail, rtol=1e-10, tol=1e-7,
     final = spectrum_prufer(
         model, freqs, dn_eff_orig + trial, z_tail, rtol=rtol)
     return {
+        'status': 'ok',
         'DN_eff': float(dn_eff_orig + trial),
         'DN_gw': float(trial),
         'n_iter': len(history) - 1,
@@ -200,10 +215,34 @@ def prufer_self_consistent(model, freqs, z_tail, rtol=1e-10, tol=1e-7,
 
 def compare_outer(model, freqs, z_tail, rtol=1e-10, tol=1e-7):
     prufer = prufer_self_consistent(model, freqs, z_tail, rtol=rtol, tol=tol)
+    if prufer['status'] == 'physical_guard':
+        try:
+            REF.run_reference(
+                model, dn_eff=None, z_tail=z_tail, rtol=rtol,
+                freq_subset=freqs, self_consistent=True, workers=1, tol=tol)
+        except RuntimeError as exc:
+            return {
+                'status': 'physical_guard',
+                'cartesian_status': 'physical_guard',
+                'z_tail': float(z_tail),
+                'prufer_n_iter': prufer['n_iter'],
+                'prufer_history': prufer['history'],
+                'guard_trial_DN_eff': prufer['guard_trial_DN_eff'],
+                'cartesian_message': str(exc),
+            }
+        return {
+            'status': 'physical_guard',
+            'cartesian_status': 'not_rejected',
+            'z_tail': float(z_tail),
+            'prufer_n_iter': prufer['n_iter'],
+            'prufer_history': prufer['history'],
+            'guard_trial_DN_eff': prufer['guard_trial_DN_eff'],
+        }
     cartesian = REF.run_reference(
         model, dn_eff=None, z_tail=z_tail, rtol=rtol,
         freq_subset=freqs, self_consistent=True, workers=1, tol=tol)
     return {
+        'status': 'ok',
         'z_tail': float(z_tail),
         'prufer_DN_eff': prufer['DN_eff'],
         'cartesian_DN_eff': float(cartesian['DN_eff']),
