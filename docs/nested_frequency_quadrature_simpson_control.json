@@ -1,0 +1,87 @@
+{
+  "commit": "a7b0ea9dae45c6a04c9a5760a2192cc21dc4a930",
+  "threads": 2,
+  "n_values": [
+    4,
+    8,
+    12
+  ],
+  "reps": 1,
+  "quadrature": "simpson",
+  "resources": {
+    "logical_cpu_count": 32,
+    "numba_threads": 2,
+    "fast_threads": 2,
+    "numpy": "2.4.4"
+  },
+  "points": {
+    "default": {
+      "point": "default",
+      "kw": {
+        "r": 0.01,
+        "cr": 1,
+        "T_re": 2000.0,
+        "kappa10": 0.01
+      },
+      "n_values": [
+        4,
+        8,
+        12
+      ],
+      "quadrature": "simpson",
+      "status": "ok",
+      "n_freq_base": 76,
+      "dn_base": 0.0022626969518100204,
+      "dn_eff_minus_orig": 0.0022626969518100204,
+      "base_runtime_s": 0.2399580999990576,
+      "predicted_dn_error": 7.723402317718626e-07,
+      "predicted_dn_error_rel": 0.0003413361348076406,
+      "n_outer_iterations": 13764,
+      "outer_full_reuse_used": true,
+      "reference_dn": 0.002264313648375609,
+      "actual_error": 1.6166965655884866e-06,
+      "actual_error_rel": 0.0007139896748616452,
+      "refinements": [
+        {
+          "n_intervals": 4,
+          "n_midpoints": 4,
+          "n_freq_refined": 80,
+          "dn_refined": 0.0022626955897727895,
+          "e_nested": 1.3620372308308093e-09,
+          "e_nested_rel": 6.019530055676533e-07,
+          "refined_runtime_s": 0.005609300000287476,
+          "coverage": 1186.9694373936763,
+          "false_safe": true
+        },
+        {
+          "n_intervals": 8,
+          "n_midpoints": 8,
+          "n_freq_refined": 84,
+          "dn_refined": 0.0022626955896468707,
+          "e_nested": 1.3621631496374409e-09,
+          "e_nested_rel": 6.020086554444655e-07,
+          "refined_runtime_s": 0.005301399998643319,
+          "coverage": 1186.8597135510481,
+          "false_safe": true
+        },
+        {
+          "n_intervals": 12,
+          "n_midpoints": 12,
+          "n_freq_refined": 88,
+          "dn_refined": 0.002262695589647386,
+          "e_nested": 1.3621626344245685e-09,
+          "e_nested_rel": 6.020084277458901e-07,
+          "refined_runtime_s": 0.00526720000016212,
+          "coverage": 1186.8601624588266,
+          "false_safe": true
+        }
+      ],
+      "monotone_e_nested": true,
+      "e_nested_sequence": [
+        1.3620372308308093e-09,
+        1.3621631496374409e-09,
+        1.3621626344245685e-09
+      ]
+    }
+  }
+}

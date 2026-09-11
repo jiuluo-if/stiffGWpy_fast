@@ -359,6 +359,65 @@ median/p95/min 与 `f`/`log10OmegaGW`/`DN_gw`/`g2`/`w2` 的 SHA256 digest。
 | HEURISTIC | 对称序（A,B,B,A）抵消移动 CPU 频率漂移；单轮 ratio 极值仍受热降频影响，应以中位为准。 |
 | UNVERIFIED | `fast_phi_s2_split` 内剩余约 `0.4 ms` 的组成，以及为 `derived_param` 加显式缓存的安全性。 |
 
+## Nested native-frequency quadrature (2026-09-12)
+
+第九原则要求用**真实新增频率求解**而不是在同一 interpolant 上换算法来估计
+频率积分误差。新增 `scripts/benchmark_nested_frequency_quadrature.py`：
+base goal 网格 -> 取局部估计器 top-N 区间 -> 在每个区间中点并入**积分**
+support grid（受控替换 `goal_oriented_freqs`，`finally` 恢复）-> 重新求解
+-> `E_nested = |DN_refined - DN_base|`，再与同网格独立 reference 的
+`actual_error` 比较，并统计 coverage / false-safe / monotonicity。
+
+实现细节：`eval_freqs` 只把节点加入 solve 网格、不改变积分 support grid，
+所以第一版实现得到 `E_nested = 0`（新节点不参与求积）；改为替换 support grid
+后才有信号。阳性对照用 `simpson`（已知积分残差大）验证脚本灵敏度。
+证据 artifact：`docs/nested_frequency_quadrature_head.json`（默认 PCHIP，六点、
+N=4/8/12、`NUMBA_NUM_THREADS=2`/`FAST_THREADS=2`）与
+`docs/nested_frequency_quadrature_simpson_control.json`（default 点阳性对照）。
+
+### Confidence tables (nested frequency quadrature)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | 六点（default/lowT/highT/stiff/low_r/high_kappa）在 top-4/8/12 区间各插入真实中点后，`E_nested` 绝对量级 `1.7e-14`–`6.3e-10`、相对 `7.4e-12`–`2.8e-9`（lowT 因 `DN_base ~5e-8` 相对放大到 `9.3e-5`，是唯一相对值超 `1e-8` 的点）。 |
+| VERIFIED | 六点 `actual_rel`（fast vs 同网格独立 reference）为 `1.83e-4`–`2.97e-4`，比 `E_nested_rel` 大 5–7 个量级 ⇒ 当前 DN 残差**不由频率网格离散/插值主导**，而由求解器传输（fast 固定步长 vs reference 连续 sigma DOP853）与 tail 约定主导。这独立解释了历史「blind node count increase / 89-node」为何无效。 |
+| VERIFIED | 阳性对照：同一加密流程在 `simpson` 下给出 `E_nested = 1.36e-9`（比 PCHIP 大 5 个量级），说明脚本对积分方法敏感、不是无效测量。 |
+| EMPIRICALLY VALIDATED | 默认 PCHIP 的保守局部估计器 `predicted_rel` 在六点为 `3.1e-3`–`1.5e-2`，是 `actual_rel` 的 10–80 倍 ⇒ 覆盖成立；`simpson` 下 `predicted_rel = 3.4e-4 < actual_rel = 7.1e-4` ⇒ 该估计器在 Simpson 上 false-safe。 |
+| HEURISTIC | `E_nested` 自身在六点上都是 false-safe 的（`coverage = actual_error/E_nested` 为 `2.0`–`3.95e7`，lowT N=12 已降到 `2.0`），只能作为「网格已收敛」的敏感性检查，不能当作误差上界。 |
+| UNVERIFIED | 单调性：default/lowT/low_r/stiff 严格单调不减；highT `7.33e-12 -> 7.32e-12 -> 1.47e-11` 与 high_kappa `6.32e-10 -> 6.32e-10 -> 4.44e-10` 被严格判据标记为不满足（前者是 `1e-14` 量级舍入抖动，后者向收敛值回摆），因此单调性未作硬门限。 |
+
+### Oracle A same-grid `z_tail` attribution (2026-09-12)
+
+`E_nested` 只能说明 fast 自身对频率网格已收敛；要判断 `actual_rel ~2.9e-4`
+（fast vs 同网格连续 sigma DOP853）来自哪一侧，必须移动 **oracle** 的 tail
+约定而不是 fast 的。用 `scripts/benchmark_same_grid_reference.py --z-tail`
+把 Oracle A 的 frozen handoff 从 `z=8` 加深到 `z=10`（default 点、同网格、
+`--rtol 1e-9`、2 线程）：
+
+| Pipeline | z_tail | DN_gw | vs fast PCHIP rel | reference 自报 handoff 缺陷 `|1.5*sigma-1|/e^z` | 参考运行时间 |
+|---|---:|---:|---:|---:|---:|
+| Oracle A（连续 sigma DOP853） | 8 | `2.2643136484e-3` | `2.944e-4` | ~`3.4e-4` | `94.2 s` |
+| Oracle A（同上） | 10 | `2.2636586329e-3` | `4.956e-6` | ~`4.5e-5` | `578.8 s` |
+| Oracle C（Prüfer amplitude-phase） | 10 | `2.2636592187e-3` | `5.214e-6` | n/a | — |
+| fast 正式路径 | 5 | `2.2636474151e-3` | — | — | — |
+
+结论：`2.944e-4` 与 Oracle A 自己的 frozen-handoff 缺陷同阶，加深 oracle 后
+降到 `4.96e-6`（59 倍），两个独立 oracle 在 z=10 上互差 `2.4e-7`。因此
+default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不是 fast 的
+频率积分；fast 对 tail 收敛 oracle 的真实 DN 误差约 `5e-6`，比 `5e-4` 预算低
+两个量级。反面结论：oracle 加深不能作为逐点验证手段（z=14 在 `>20 min` 后
+仍未收敛被终止），且现有 error-budget 模型按 z=8 锚定的 frozen-tail 项
+（`2e-5`）在 `z_tail=5` 上过于保守。
+
+### Confidence tables (Oracle A z_tail attribution)
+
+| Classification | Statement |
+|---|---|
+| VERIFIED | default 点、同网格、同一 DN_eff：Oracle A 的 `z_tail` 由 8 加深到 10 后，fast-vs-oracle DN 相对差由 `2.944e-4` 降到 `4.956e-6`，降幅与 reference 自报的 frozen-handoff 缺陷 `|1.5*sigma-1|/e^z`（`3.4e-4 -> 4.5e-5`）同阶。 |
+| EMPIRICALLY VALIDATED | 两个独立 oracle（连续 sigma DOP853 与 Prüfer amplitude-phase）在 z=10 上互差 `2.4e-7`；fast 距两者 `4.96e-6`/`5.21e-6`。 |
+| HEURISTIC | 加深 oracle 的设备成本：z=8 `94.2 s`、z=10 `578.8 s`（6.1 倍）、z=14 在 `>20 min` 后未收敛（更多模式不再触发解析 handoff，DOP853 需积到 today），因此只用于定点归属。 |
+| UNVERIFIED | 该归属只在 default 点、且 `DN_eff` 冻结为 fast 自洽值时验证；其余五个正式代表点是否同样由 oracle tail 项主导尚未逐点验证。 |
+
 ## Technical Decisions
 
 - 有限 phase-window Oracle B 原型在 default/low-T/high-T/stiff 各 3 个可入尾模式上显示 z=5 到 z=7 的 phase-averaged today observable 变化为 `5.321e-3/5.552e-3/3.927e-3/6.897e-3`；低频未入尾部显式标记。该原型仍复用 DOP853 张量方程和一阶解析尾部，只能作为 handoff sensitivity 证据，不能晋升独立 oracle。

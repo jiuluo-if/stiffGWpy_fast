@@ -1,8 +1,8 @@
 # `fast_v0.2` audit report
 
-Evidence generation HEAD: `f87e969c96bff54bcdca8146f49d8b7a86ea501f`
+Evidence generation HEAD: `a7b0ea9dae45c6a04c9a5760a2192cc21dc4a930`
 
-Date: 2026-09-11
+Date: 2026-09-12
 
 Authoritative manifest: [`validation_manifest.json`](validation/validation_manifest.json)
 
@@ -19,7 +19,9 @@ exact kink split, `freq_grid=goal`, and (as of this HEAD) the default
 | Measure | Fresh result | Gate | Decision |
 |---|---:|---:|---|
 | Fast vs Oracle C WKB, default PCHIP, four named points (median / max) | `1.1e-5 / 1.66e-4` | `<2e-4` | pass |
-| Same-grid DN rel vs independent reference, PCHIP (default), six named points (median / max) | `2.93e-4 / 2.96e-4` | `<2e-4` | not met |
+| Same-grid DN rel vs independent reference at its own `z_tail=8`, PCHIP (default), six named points (median / max) | `2.93e-4 / 2.96e-4` | `<2e-4` | not met, oracle-limited (see `z_tail` attribution) |
+| Same-grid DN rel vs Oracle A deepened to `z_tail=10`, PCHIP, default point | `4.96e-6` | `<2e-4` | pass |
+| Nested native-frequency refinement, PCHIP, six named points, `N=4/8/12` (absolute / relative) | `1.7e-14-6.3e-10` / `7.4e-12-2.8e-9` | native grid converged | pass |
 | Same-grid DN rel, legacy Simpson option, six named points (median / max) | `1.35e-3 / 1.24e-2` | `<2e-4` | not met |
 | Formal default warm median / p95 | `4.77 / 5.58 ms` | stable `<4 ms` | not met |
 | Formal six-point stability | `0` numerical failures, `3` explicit guards / 24 points | no silent fallback | pass |
@@ -29,13 +31,21 @@ The additional `cr0`, tilt, and Sobol oracle sample has no numerical failure;
 the same-grid PCHIP DN relative error there is `2.76e-4–2.98e-4`, so the
 parameter-space gate is also `NOT VERIFIED`.
 
-The oracle-choice check is material: on the same default native grid, the
-independent reference gives `DN=0.0022718753` at `z_tail=5` versus
-`0.0022643136` at `z_tail=8` (relative delta `3.34e-3`). The formal fast
-same-grid residual must therefore be interpreted as a combined tail/transfer
-and frequency-integration residual; it is not valid to attribute all of it to
-the frequency quadrature alone. That is why the Oracle C WKB anchor, which
-holds the shared tail convention fixed, is reported alongside it.
+The oracle-choice check is material and is now resolved by moving the *oracle*,
+not fast: on the same default native grid the independent reference gives
+`DN=0.0022718753` at `z_tail=5`, `0.0022643136` at `z_tail=8`, and
+`0.0022636586` at `z_tail=10`, while fast (`z_tail=5`) gives `0.0022636474`.
+The reference's own frozen-handoff defect `|1.5*sigma-1|/exp(z)` is `3.4e-4`
+at `z=8` and `4.5e-5` at `z=10`, the same order as its distance from fast
+(`2.944e-4 -> 4.956e-6`). At `z=10` the Oracle C anchor (Prüfer
+amplitude-phase, `2.2636592187e-3`) and Oracle A agree to `2.4e-7`, and fast
+sits `4.96e-6`/`5.21e-6` from them. The six-point `2.93e-4` row above therefore
+measures the audited oracle's frozen-tail convention rather than fast's
+frequency integration; the defensible default-point `DN_gw` residual against
+tail-converged oracles is `~5e-6`.  Deepening the oracle is a one-point
+attribution tool, not a per-point validation method: `z_tail=8` costs `94 s`,
+`z_tail=10` costs `579 s`, and `z_tail=14` did not converge within `20 min`
+(more modes stop triggering the analytic handoff and are integrated to today).
 
 ## Accepted changes
 
@@ -84,9 +94,13 @@ holds the shared tail convention fixed, is reported alongside it.
 ## Remaining dominant errors and hotspots
 
 With PCHIP as the default, the recoverable frequency-quadrature error is now at
-or below `1.66e-4` against the Oracle C WKB anchor, so the largest remaining
-fast-scale DN term is the same-grid reference residual (`2.93e-4`), which mixes
-the frozen-tail/transfer systematic with the sparse-spectrum representation.
+or below `1.66e-4` against the Oracle C WKB anchor, and the nested-frequency
+refinement bounds the native-grid discretisation term at `<=6.3e-10` absolute
+over six regimes.  The earlier headline same-grid residual (`2.93e-4`) is
+dominated by the audited oracle's own `z_tail=8` frozen-handoff defect; against
+tail-converged oracles the default-point DN residual is `~5e-6`.  The remaining
+fast-side terms are the `z_tail=5` frozen-tail convention (shared with every
+oracle) and the sparse-spectrum transfer representation.
 The fast-vs-reference spectrum p95/max (`~7.8e-4/~3.6e-3` at default) shows
 that solver transfer error also contributes. The fresh 20-thread 25-repeat
 matrix gives a default warm median of `4.77 ms`; high-T / stiff / high-kappa
@@ -113,6 +127,9 @@ the kernel.
 - `error_budget_probe_*_current.json`
 - `quadrature_estimator_coverage_head.json`
 - `fast_pyoverhead_ab_symmetric.json`
+- `nested_frequency_quadrature_head.json`
+- `nested_frequency_quadrature_simpson_control.json`
+- `oracle_a_same_grid_z10_default.json`
 
 The branch must remain `PARTIALLY VERIFIED` until the parameter-space same-grid
 DN gate and the stable `<4 ms` runtime gate are both met.
@@ -127,3 +144,12 @@ evidence rather than current-HEAD measurements.  Their spectrum bands are set by
 the ODE and frequency grid, not by the bolometric quadrature, so only the
 `DN_gw` aggregates are expected to move; re-running that suite is a
 pre-registered follow-up, not a silent gap.
+
+The `z_tail` attribution above is a single-point (default) measurement made
+with `DN_eff` frozen at fast's self-consistent value.  The other five named
+regimes still gate against the `z_tail=8` oracle, so the six-point `not met`
+row is retained as an oracle-limited status instead of being reinterpreted per
+point.  The nested-refinement check is likewise a sensitivity bound: it shows
+the native grid is not the limiter, but it cannot certify an absolute error by
+itself because `E_nested` is false-safe by 4-7 orders against the oracle
+residual.

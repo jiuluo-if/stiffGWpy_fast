@@ -1,5 +1,46 @@
 # Progress Log: stiffgwpy_fast 单一 fast 生产求解器
 
+## Session: 2026-09-12 (nested native-frequency quadrature + oracle tail attribution)
+
+### Actions Taken
+
+- 第九原则要求的真实嵌套频率求值已落地：新增
+  `scripts/benchmark_nested_frequency_quadrature.py`，流程为 base goal 网格
+  -> 局部估计器 top-N 区间 -> 把区间中点并入**积分** support grid（受控替换
+  `goal_oriented_freqs`，`finally` 恢复）-> 重新求解 ->
+  `E_nested = |DN_refined - DN_base|`，再与同网格独立 reference 的
+  `actual_error` 比较，并统计 coverage / false-safe / monotonicity。
+- 实现陷阱：`eval_freqs` 只把节点加入 solve 网格、不改变积分 support grid，
+  第一版实现因此读到 `E_nested = 0`；必须替换积分 support grid 才有信号。
+- 阳性对照：同一加密流程在 `simpson` 下给出 `E_nested = 1.362e-09`
+  （default），比 PCHIP 的 `9.07e-14` 大 4-5 个量级，证明测量对积分方法敏感。
+- 归属实验（移动 oracle 而不是 fast）：`scripts/benchmark_same_grid_reference.py
+  --z-tail 10` 把 Oracle A 的 frozen handoff 从 `z=8` 加深到 `z=10`，default 点
+  的 fast-vs-oracle DN 相对差从 `2.944e-4` 降到 `4.956e-6`，与 reference 自报
+  的 handoff 缺陷 `|1.5*sigma-1|/e^z`（`3.4e-4 -> 4.5e-5`）同阶下降；z=14
+  版本在 `>20 min` 后仍未收敛而被终止（更多模式不再触发解析 handoff）。
+
+### Test Results
+
+- PCHIP 六点（N=4/8/12、2 线程）：`E_nested` 绝对 `1.7e-14`-`6.3e-10`、相对
+  `7.4e-12`-`2.8e-9`（lowT 例外 `9.3e-5`）；同点 `actual_rel` 为
+  `1.83e-4`-`2.97e-4`，比 `E_nested_rel` 大 5-7 个量级，即 native 频率网格
+  已收敛，DN 残差不由网格离散/插值主导。
+- 三方差值一致性（default、同网格、同一 DN_eff、z=10）：Oracle A
+  `2.2636586329e-3`、Oracle C（Prüfer）`2.2636592187e-3`、fast（z_tail=5）
+  `2.2636474151e-3`；两个独立 oracle 互差 `2.4e-7`，fast 距两者
+  `4.96e-6`/`5.21e-6`。
+- 参考运行成本：z=8 `94.2 s`、z=10 `578.8 s`（6.1 倍）、z=14 `>20 min` 未收敛。
+
+### Artifacts
+
+- `docs/nested_frequency_quadrature_head.json`（六点 PCHIP，新增 `commit` 字段）
+- `docs/nested_frequency_quadrature_simpson_control.json`（default 阳性对照）
+- `docs/oracle_a_same_grid_z10_default.json`（Oracle A `z_tail=10` 归属证据）
+- `scripts/benchmark_nested_frequency_quadrature.py`
+- `findings.md` 的「Nested native-frequency quadrature」与
+  「Oracle A same-grid `z_tail` attribution」小节
+
 ## Session: 2026-09-12
 
 ### Actions Taken

@@ -60,6 +60,10 @@ def run_once(case, kink_split=False):
         'prep_frequency_only': FS.prep_frequency_only,
         'fast_phi_s2_split': EB.fast_phi_s2_split,
         'goal_oriented_freqs': FA.goal_oriented_freqs,
+        'correct_kink_background': FS._correct_kink_background,
+        'pchip_fine': FS.pchip_fine,
+        'quadrature_local_estimator': FS.estimate_frequency_quadrature_local,
+        'pchip_vector_integrals': FS._pchip_integrals_vectorized,
     }
     FS.gen_fast = lambda *a, **k: timed_call(totals, 'expansion_background', original['gen_fast'], *a, **k)
     FS.prep_fast = lambda *a, **k: timed_call(totals, 'kernel_prepare', original['prep_fast'], *a, **k)
@@ -88,6 +92,14 @@ def run_once(case, kink_split=False):
         totals, 'fast_phi_s2_split', original['fast_phi_s2_split'], *a, **k)
     FA.goal_oriented_freqs = lambda *a, **k: timed_call(
         totals, 'goal_frequency_construction', original['goal_oriented_freqs'], *a, **k)
+    FS._correct_kink_background = lambda *a, **k: timed_call(
+        totals, 'correct_kink_background', original['correct_kink_background'], *a, **k)
+    FS.pchip_fine = lambda *a, **k: timed_call(
+        totals, 'pchip_fine', original['pchip_fine'], *a, **k)
+    FS.estimate_frequency_quadrature_local = lambda *a, **k: timed_call(
+        totals, 'quadrature_local_estimator', original['quadrature_local_estimator'], *a, **k)
+    FS._pchip_integrals_vectorized = lambda *a, **k: timed_call(
+        totals, 'pchip_vector_integrals', original['pchip_vector_integrals'], *a, **k)
     try:
         model = LCDM_SG(**case)
         start = time.perf_counter()
@@ -105,6 +117,10 @@ def run_once(case, kink_split=False):
         FS.prep_frequency_only = original['prep_frequency_only']
         EB.fast_phi_s2_split = original['fast_phi_s2_split']
         FA.goal_oriented_freqs = original['goal_oriented_freqs']
+        FS._correct_kink_background = original['correct_kink_background']
+        FS.pchip_fine = original['pchip_fine']
+        FS.estimate_frequency_quadrature_local = original['quadrature_local_estimator']
+        FS._pchip_integrals_vectorized = original['pchip_vector_integrals']
 
 
 def main():
