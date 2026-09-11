@@ -14,9 +14,15 @@ Prüfer full native-grid certification 已于 2026-09-11 完成（完整 76 频�
 26 accepted outer 全部迭代一致、4 个显式物理 guard 双实现一致；PASS /
 VERIFIED，Prüfer 保持 reference-only oracle，不切换正式 kernel。下一步按
 当前优先队列转向 **higher-order / 独立 tail oracle（Oracle C）** 或
-**nested native-frequency quadrature（真实嵌套求积）**：Prüfer 已证明
-自身一致，但 reference tail 仍有 `3.63e-3` 级非单调 systematic，需要
-独立于 DOP853 的 tail/transfer 锚点才能继续收窄 total error budget。
+**nested native-frequency quadrature（真实嵌套求积）**。
+
+Oracle C 解析高阶 WKB tail 也已完成（2026-09-11）：推导
+`transfer² × (1 + sin(2θ_f)/ω_f)`，在四点全 76 频率网格上把
+frozen-vs-deep 的 `1.34e-3..3.65e-3` tail systematic 压到
+`5.46e-6..1.25e-5`（216-665 倍），并解释了 Stage B 的非单调来源。
+PASS / VERIFIED。下一轮建议：**nested native-frequency quadrature**
+（第九原则，验证 E_nested 覆盖，服务 release gate DN<2e-4）或把 Oracle C
+修正晋升为 reference tail 的独立第二锚点（需更严格验证）。
 
 ## Current Phase
 

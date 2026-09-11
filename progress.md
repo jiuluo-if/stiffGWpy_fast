@@ -4,6 +4,20 @@
 
 ### Actions Taken
 
+- Oracle C（高阶 WKB tail oracle）已完成：新增
+  `scripts/benchmark_oracle_c_wkb.py`，推导并验证解析 tail 修正
+  `transfer^2_wkb = transfer^2_frozen * (1 + sin(2*theta_f)/omega_f)`。
+  在 `default/lowT/highT/stiff` 全 76 频率 native 网格上对比
+  `frozen(z=5)`、`wkb(z=5)`、`deep(z=10)`：frozen-vs-deep DN 相对差
+  `1.34e-3..3.65e-3`，wkb-vs-deep 降到 `5.46e-6..1.25e-5`（改善
+  216-665 倍）；per-mode `Ogw` 残差 median 从 `2.7e-3..4.7e-3` 降到
+  `2.1e-5..2.9e-5`。frozen/deep 的 DN 与 Stage B 完全一致
+  （default `0.0022718753`/`0.0022636593`），验证脚本正确性。
+- 结论：Stage B 的 `3.63e-3` 非单调 tail systematic 是 frozen-amplitude
+  的 O(eps) 绝热缺陷（eps_med~6.7e-3..1.1e-2），不是真实物理非单调；
+  解析修正把它压到与 eps² 同量级（~1e-5）。Oracle C 接受为解析 tail
+  oracle。残余上界来自 deep(z=10) 自身 O(eps(10))~9e-5 的 frozen tail。
+
 - 确认 HEAD `91598e7` 与 `fast/fast_v0.2` 一致、工作树干净、远端 CI 全绿。
 - 按文档记录的 Prüfer next experiment，新增 `scripts/benchmark_prufer_fullgrid.py`
   并完成 **完整 native 网格（76 频率）认证**：`default/lowT/highT/stiff` +

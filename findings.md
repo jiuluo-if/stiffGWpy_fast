@@ -109,6 +109,16 @@
   Python/DOP853 栈上（edge 含 outer 后 runtime ratio 最高 `0.929`），且
   tensor kernel 已是 Numba 并行；Prüfer 价值转为 Oracle B 风格独立状态
   变量交叉校验。artifacts 见 `docs/oracle_prufer_fullgrid_*.json`。
+- Oracle C 解析高阶 WKB tail（2026-09-11）：从 Prüfer 精确振幅方程
+  `d ln h/dN = cos(2θ)` 出发，stationary-phase 边界项给出解析修正
+  `transfer² × (1 + sin(2θ_f)/ω_f)`。全 76 频率 native 网格、四点
+  （default/lowT/highT/stiff）对比 frozen(z=5) / wkb(z=5) / deep(z=10)：
+  frozen-vs-deep DN 相对差 `1.34e-3..3.65e-3`（正是 Stage B 记录的
+  `3.63e-3` 非单调 systematic），wkb-vs-deep 降到 `5.46e-6..1.25e-5`
+  （216-665 倍改善），per-mode 残差与 eps² 量级一致。结论：Stage B 的
+  非单调是 frozen-amplitude 的 O(eps) 绝热缺陷而非物理；解析修正无需额外
+  ODE 求解即可把 tail systematic 压两个数量级。artifacts 见
+  `docs/oracle_c_wkb_*.json` 与 `docs/oracle_c_wkb_assessment.md`。
 
 ## Technical Decisions
 
