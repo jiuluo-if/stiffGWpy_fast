@@ -64,6 +64,16 @@ numerical failure. Across the four accepted points, the largest handoff power
 error was `2.37e-7` and the largest observed Prüfer/Cartesian runtime ratio was
 `0.913`.
 
+The complete ten-point parameter-axis edge suite was then replayed, together
+with fixed Sobol points `sobol_000`, `sobol_002`, `sobol_006`, `sobol_010`, and
+`sobol_015`. This produced 26 accepted outer comparisons and four physical
+guard records (`edge_tre_hi` and `edge_nt_blue`, both handoff depths), with no
+numerical failures. On accepted comparisons, outer iteration counts matched
+in every case; the maximum `DN_gw` relative difference was `6.44e-9`, the
+maximum handoff power error was `3.26e-7`, and the maximum runtime ratio was
+`0.929`. These results expand the standalone screening evidence but do not
+certify the full production frequency grid.
+
 ## Decision
 
 **Accepted as a standalone prototype; rejected for formal-kernel promotion.**
@@ -77,7 +87,6 @@ proposed.
 
 ## Next experiment
 
-Extend the same protocol to a larger fixed Sobol subset and the complete
-reheating/guard edge suite, then add a full-grid `DN_gw` comparison and a
-deterministic replay. Keep it reference-only until those comparisons are
-complete.
+Add a full-grid `DN_gw` comparison and a deterministic replay for the accepted
+edge/Sobol cases. Keep it reference-only until the full-grid comparison and
+its oracle uncertainty are documented.

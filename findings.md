@@ -107,6 +107,7 @@
 - Prüfer 固定 8 频率完整 today 输出复核已完成：四点、z=5/7 的 `DN_gw` 最大相对差 `2.26e-9`，`Ogw/Oj/Opgw` 最大分量差 `1.67e-7`；default 重复运行的数值字段 bitwise 一致。该证据仍固定 `DN_eff`，未覆盖正式 outer self-consistency，因此不晋升正式 kernel。
 - Prüfer outer self-consistency 复核已完成：default/low-T/high-T/stiff 四点、z=5/7 为 1–2 次迭代收敛，且 Prüfer/Cartesian 迭代次数一致；`DN_gw` 最大相对差 `3.44e-9`，无 `DN_eff` guard crossing。仍只覆盖固定 8 频率，reheating edge/Sobol/full-grid 尚未认证。
 - Prüfer reheating/Sobol follow-up 已完成：`edge_tre_lo` 与 `sobol_000/002/006` 均在 z=5/7 收敛且 outer 迭代次数一致，最大 outer `DN_gw` 相对差分别为 `8.33e-10/2.12e-9/2.06e-9/2.50e-9`；`edge_tre_hi` 两个 z_tail 均由 Prüfer 与 Cartesian 一致触发显式物理 guard。新增 guard 分类后，物理拒绝不再被误报为数值失败；原型仍不进入正式 kernel。
+- Prüfer complete edge/Sobol replay 已完成：十个参数轴 edge 加 `sobol_000/002/006/010/015` 共 15 点、z=5/7 产生 26 个 accepted outer comparisons 与 4 个显式 physical-guard records，无 numerical failure；accepted 点 outer 迭代计数全部一致，最大 outer `DN_gw` 差 `6.44e-9`、最大 handoff power 差 `3.26e-7`、最大 runtime ratio `0.929`。full production frequency-grid comparison 仍未完成，不能晋升正式 kernel。
 
 | Decision | Rationale |
 |----------|-----------|

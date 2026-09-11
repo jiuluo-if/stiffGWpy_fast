@@ -119,6 +119,7 @@
 | Phase 1 CI/package audit | 修复仓库级 Ruff `I001`；本机镜像 403 与旧 setuptools 环境问题已区分，使用官方 PyPI 完成 isolated sdist/wheel、distribution boundary、installed-wheel smoke；full pytest `132 passed, 6 deselected, 2 warnings`、Cobaya `1 passed, 137 deselected`、Ruff/mypy/manifest/comment gate 全部通过 | PASS |
 
 | Prüfer reheating/Sobol outer follow-up | `edge_tre_lo`、`sobol_000/002/006` 在 z=5/7 均为 matching outer iterations，最大 `DN_gw` relative difference `8.33e-10/2.12e-9/2.06e-9/2.50e-9`；`edge_tre_hi` 两个深度均为 Prüfer/Cartesian 一致的 physical guard；新增 artifacts 记录资源 telemetry 与 guard status | PASS / STANDALONE ONLY |
+| Prüfer complete edge/Sobol replay | 10 个参数轴 edge + `sobol_000/002/006/010/015`，共 15 点、26 个 accepted outer comparisons、4 个 physical guards、0 numerical failure；accepted 最大 outer DN 差 `6.44e-9`、power 差 `3.26e-7`、runtime ratio `0.929` | PASS / STANDALONE ONLY |
 
 | Oracle tail convergence scaffolding | 新增 `reference.summarize_tail_convergence`，显式报告 deepest-tail central value、observed systematic bound、相邻变化和仅描述性的指数衰减率；`run_reference` 新增可选 `workers` 传递；新增 `scripts/benchmark_oracle_tail_convergence.py` 固定 fast `DN_eff` 扫描 `z_tail=5/6/7/8/10`。完整 native-grid default 扫描因 reference 计算过慢停止，未生成不完整 artifact，尚无新的 tail 数值结论 | IMPLEMENTED / NUMERICAL SWEEP PENDING |
 | Oracle scaffolding verification | focused reference tests `6 passed, 1 deselected`；full pytest `133 passed, 6 deselected, 2 warnings`；Cobaya `1 passed, 138 deselected`；maintained Ruff、mypy、manifest、compileall/diff check、官方 PyPI isolated build、distribution boundary、installed-wheel smoke 全部通过 | PASS |

@@ -27,8 +27,20 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 CASES = dict(_REFERENCE_CASES)
 CASES.update({
+    'edge_r_lo': dict(r=1.26e-6, cr=1, T_re=2e3, kappa10=1e-2),
+    'edge_r_hi': dict(r=7.94e-2, cr=1, T_re=2e3, kappa10=1e-2),
     'edge_tre_lo': dict(r=1e-2, cr=1, T_re=12.6, kappa10=1e-2),
     'edge_tre_hi': dict(r=1e-2, cr=1, T_re=7.94e5, kappa10=1e-2),
+    'edge_dnre_lo': dict(r=1e-2, cr=0, n_t=0.0, T_re=2e3,
+                         DN_re=0.6, kappa10=1e-2),
+    'edge_dnre_hi': dict(r=1e-2, cr=0, n_t=0.0, T_re=2e3,
+                         DN_re=29.4, kappa10=1e-2),
+    'edge_kap_lo': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1.3e-6),
+    'edge_kap_hi': dict(r=1e-2, cr=1, T_re=2e3, kappa10=0.76),
+    'edge_nt_red': dict(r=1e-2, cr=0, n_t=-0.48,
+                        T_re=2e3, kappa10=1e-2),
+    'edge_nt_blue': dict(r=1e-2, cr=0, n_t=0.48,
+                         T_re=2e3, kappa10=1e-2),
 })
 
 
