@@ -90,8 +90,10 @@ python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 
 当前 fresh HEAD 使用正式 fast 路径（`h=.005`、`col_step=8`、`z_tail=5`、
 `phase_max=.25`、exact kink split、goal grid、默认 PCHIP 频率积分）。固定
-20 threads/workqueue 的六点 25 次矩阵中，default warm median/p95 为
-`4.93/5.47 ms/point`，尚未稳定达到 `<4 ms`。同一 76-node 网格的独立 reference
+20 threads/workqueue 的六点 A,B,B,A 配对矩阵中，default warm median/p95 为
+`4.77/5.58 ms/point`，尚未稳定达到 `<4 ms`；本轮 Python 准备层冗余消除在 20
+线程使 default 中位改善 `5.4%`、2 线程改善 `8.2%`，且数值输出逐位不变。同一
+76-node 网格的独立 reference
 对照给出 `DN_gw` 相对误差 `2.94e-4`，它是尾部/传递与频率积分的合并残差；对独立
 Oracle C WKB 锚点，PCHIP 积分残差本身在四个命名点为 `1.07e-5`–`1.66e-4`。因此
 PCHIP 是唯一正式 fast 默认，`simpson` 仍可显式选择用于审计。`eval_freqs` 已与积分
