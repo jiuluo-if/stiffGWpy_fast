@@ -1,5 +1,33 @@
 # Progress Log: stiffgwpy_fast 单一 fast 生产求解器
 
+## Session: 2026-09-11
+
+### Actions Taken
+
+- 确认 HEAD `91598e7` 与 `fast/fast_v0.2` 一致、工作树干净、远端 CI 全绿。
+- 按文档记录的 Prüfer next experiment，新增 `scripts/benchmark_prufer_fullgrid.py`
+  并完成 **完整 native 网格（76 频率）认证**：`default/lowT/highT/stiff` +
+  10 个参数轴 edge + 5 个 Sobol 点，`z_tail=5/7`，固定 `DN_eff` 频谱比较 +
+  outer 自洽重放。
+- Full-grid `DN_gw` 相对差 median `6.44e-10`、max `2.44e-9`；`Ogw/Oj/Opgw`
+  p95 分别 `<=4.9e-7/1.9e-6/1.1e-5`；分量 max 异常全部位于未入尾低频模式
+  （零点附近相对放大，绝对差 `1e-19..1e-22`，物理无关）；`used_tail`
+  逐行一致；26 accepted outer 比较迭代次数全部一致、4 个显式
+  `shared_Neff_guard`（`edge_tre_hi`/`edge_nt_blue`）双实现一致。
+- 确定性重放：default 全网格 `DN_gw` 与全部频谱数组在 Prüfer/Cartesian
+  两条路径均 bitwise 一致。
+- 决策：PASS / VERIFIED（相对 Cartesian DOP853 reference）。Prüfer 仍为
+  reference-only 原型，不晋升正式 kernel：速度信号在 Python/DOP853 栈上
+  测得（8 频 0.53-0.55x，edge 含 outer 后最高 0.93x），不代表 Numba
+  kernel 收益；其价值转为独立状态变量 oracle 交叉校验。
+
+### Artifacts
+
+- `docs/oracle_prufer_fullgrid_{default,lowT,highT,stiff}.json`
+- `docs/oracle_prufer_fullgrid_edge_{r,tre,dnre,kap,nt}_*.json`
+- `docs/oracle_prufer_fullgrid_sobol_{000,002,006,010,015}.json`
+- `scripts/benchmark_prufer_fullgrid.py`
+
 ## Session: 2026-09-09
 
 ### Current Status

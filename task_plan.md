@@ -8,6 +8,16 @@
 
 已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry，主要参数/参考扫描入口已增加 `--threads` 与外层并行时的内层单线程保护。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`；default 完整 76 点 Stage B 已完成，Stage C 已以 low-T/high-T/stiff 各 8 点最小网格完成并记录到 `docs/oracle_tail_convergence_stageC_min8.json`。default full-grid tail systematic `3.6295e-3` 且非单调；Stage C 三点仍为 oracle-sensitive，正式 tail correction 仍未放行。新增有限 phase-window Oracle B 原型后，四点最大 z=5→7 observable 变化为 `3.927e-3–6.897e-3`，证明 handoff 仍敏感但未形成独立 truth anchor，候选不晋升。
 
+Prüfer full native-grid certification 已于 2026-09-11 完成（完整 76 频率、
+4 named + 10 edge + 5 Sobol、z=5/7、频谱 + outer 重放 + default 确定性
+重放）：full-grid `DN_gw` 相对差 median `6.44e-10`、max `2.44e-9`；
+26 accepted outer 全部迭代一致、4 个显式物理 guard 双实现一致；PASS /
+VERIFIED，Prüfer 保持 reference-only oracle，不切换正式 kernel。下一步按
+当前优先队列转向 **higher-order / 独立 tail oracle（Oracle C）** 或
+**nested native-frequency quadrature（真实嵌套求积）**：Prüfer 已证明
+自身一致，但 reference tail 仍有 `3.63e-3` 级非单调 systematic，需要
+独立于 DOP853 的 tail/transfer 锚点才能继续收窄 total error budget。
+
 ## Current Phase
 
 Phase 3: Implementation and evidence-driven optimization
@@ -33,7 +43,8 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] 实现 Phase C goal frequency grid 和 native eval nodes
 - [x] 合并为唯一正式 fast preset；高层旧 production/transition-refine 别名弃用并映射到 fast，底层 validation 入口保留（`c9110c9`）
 - [ ] 继续优化 DN/速度；本轮必须先重建远端 HEAD fresh profiling 与 DN_gw 误差分解，不得在 profiler 证据前 micro-optimize；已接受物理尾部匹配修正（gamma=1）、背景节点缓存、formal kink 的 frequency-only preparation、受门限保护的 exact primitive 复用、smooth-node `fast_phi_s2_split` 和受背景稳定性门控的 outer full-solve 复用，四阶 Magnus/曲率子步、low-T 局部加密、无门控删除第二次 full solve、批量 sigma 采样、phase_max 加密及 z_tail 加深已拒绝
-- [ ] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；有限 phase-window Oracle B 原型已完成但不晋升；Prüfer standalone 已完成固定 8 频率完整 `Ogw/Oj/Opgw/DN_gw` 与 outer self-consistency 复核，并完成 10 个参数轴 edge + 5 个固定 Sobol 点的 guard/outer 复核（26 个 accepted comparison、4 个 physical guard、accepted 最大 outer DN 差 `6.44e-9`），下一步是 formal full-grid comparison 与 deterministic replay，不得切换正式 kernel
+- [x] 继续优化 DN/速度；已完成固定环境 fresh profiling、六点 25-repeat runtime/积分差矩阵、同网格 oracle 与 PCHIP/插值法探针；默认 telemetry 的 Simpson-trapezoid estimator 已以 50-repeat profiler 证明约 8.7% 局部收益，DN-driven midpoint 排序原型因默认点收敛不单调暂不接受；有限 phase-window Oracle B 原型已完成但不晋升；Prüfer standalone 已完成固定 8 频率完整 `Ogw/Oj/Opgw/DN_gw` 与 outer self-consistency 复核，并完成 10 个参数轴 edge + 5 个固定 Sobol 点的 guard/outer 复核（26 个 accepted comparison、4 个 physical guard、accepted 最大 outer DN 差 `6.44e-9`）
+- [x] Prüfer full native-grid certification：`scripts/benchmark_prufer_fullgrid.py` 在完整 76 频率网格完成 19 点（4 named + 10 edge + 5 Sobol）x `z_tail=5/7` 的频谱与 outer 自洽重放；full-grid `DN_gw` 相对差 median `6.44e-10`、max `2.44e-9`；26 accepted outer 迭代一致、4 个显式 physical guard 双实现一致；default 重放 bitwise 一致；PASS / VERIFIED，Prüfer 保持 reference-only oracle，不切换正式 kernel
 - **Status:** in_progress
 
 ### Phase 4: Testing & Verification

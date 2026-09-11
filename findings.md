@@ -99,6 +99,16 @@
 - phase-cap A/B（`phase_max=0.35/0.5`，六工况各 25 次）没有稳定 >5% runtime 收益：相对 formal `.25` 的中位数多数持平或变慢；spectrum max 变化约 `5.2e-6..1.3e-5`、DN 变化约 `0.4e-6..6.8e-6`，数值扰动虽小但不能抵消速度失败，两个候选均拒绝升级。
 - `solve_kernel` 的 Numba `literally(assemble)` 专门化实验被拒绝：focused regression `42 passed, 1 deselected`，但 50-repeat profiler 中 warm tensor kernel 约从 `1 ms` 退化到 `150 ms`，说明该 dispatch 方案不适合当前 parallel kernel；源码已完全回退。
 - default same-grid oracle tail A/B：reference `z_tail=5` 给 `DN=0.0022718753`，`z_tail=8` 给 `0.0022643136`，相对差 `3.34e-3`；因此当前 fast PCHIP 的约 `2.94e-4` residual 是 tail/transfer 与 sparse quadrature 的合成，不能只归因于积分器。
+- Prüfer full native-grid certification（2026-09-11）：完整 76 频率网格在
+  `default/lowT/highT/stiff`、10 个 edge、5 个 Sobol 点上与 Cartesian DOP853
+  的 full-grid `DN_gw` 相对差 median `6.44e-10`、max `2.44e-9`；分量 p95
+  `Oj<=1.9e-6`、`Opgw<=1.1e-5`；max 异常均为未入尾低频模式的零点附近
+  相对放大（绝对差 `1e-19..1e-22`）；outer 自洽 26 accepted 全部迭代一致、
+  4 个物理 guard 双实现一致；default 全网格重放 bitwise 一致。PASS /
+  VERIFIED（相对 Cartesian reference）。仍不晋升正式 kernel：速度证据在
+  Python/DOP853 栈上（edge 含 outer 后 runtime ratio 最高 `0.929`），且
+  tensor kernel 已是 Numba 并行；Prüfer 价值转为 Oracle B 风格独立状态
+  变量交叉校验。artifacts 见 `docs/oracle_prufer_fullgrid_*.json`。
 
 ## Technical Decisions
 

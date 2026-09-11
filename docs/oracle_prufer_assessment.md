@@ -90,3 +90,52 @@ proposed.
 Add a full-grid `DN_gw` comparison and a deterministic replay for the accepted
 edge/Sobol cases. Keep it reference-only until the full-grid comparison and
 its oracle uncertainty are documented.
+
+## Full native-grid certification (2026-09-11)
+
+The next experiment is complete: the Prüfer prototype was replayed on the
+complete formal `freq_grid='goal'` native grid (76 frequencies) for
+`default`, `lowT`, `highT`, `stiff`, all ten parameter-axis edges, and the five
+fixed Sobol points, at both `z_tail=5` and `z_tail=7`, using
+`scripts/benchmark_prufer_fullgrid.py` (reference-only). Each point produced a
+fixed-`DN_eff` full-spectrum comparison and an outer self-consistency replay
+(26 accepted comparisons, 4 explicit `shared_Neff_guard` records for
+`edge_tre_hi`/`edge_nt_blue`, no numerical failure).
+
+### Results
+
+- Full-grid `DN_gw` relative error vs Cartesian DOP853: median `6.44e-10`,
+  max `2.44e-9` across all 38 point/z-tail rows.
+- Spectrum components: `Ogw` p95 `<=4.9e-7`, `Oj` p95 `<=1.9e-6`, `Opgw` p95
+  `<=1.1e-5` everywhere; per-frequency max outliers are confined to
+  low-frequency modes that never reach the tail (`used_tail=False`), where the
+  relative error is amplified near a zero crossing but the absolute difference
+  stays at the `1e-19..1e-22` level and is physically irrelevant.
+- Tail usage fractions match exactly on every row (`used_tail` identical).
+- Outer self-consistency: iteration counts identical on every accepted point;
+  maximum outer `DN_gw` relative difference `1.2e-9`-scale; guard behavior
+  identical (`edge_tre_hi`, `edge_nt_blue` reject on both depths in both
+  implementations).
+- Determinism: a full-grid replay of the default point reproduced `DN_gw` and
+  every `Ogw/Oj/Opgw` array bitwise for both the Prüfer and Cartesian paths.
+
+### Decision
+
+**PASS / VERIFIED (relative to the Cartesian DOP853 reference).** The complete
+native frequency grid, all parameter-axis edges, and the fixed Sobol set now
+agree with the Cartesian reference at the `1e-9` level, with matching guard
+behavior and bitwise determinism. The prototype remains reference-only: no
+formal-kernel integration is proposed because the speed signal
+(0.53-0.55x on the 8-frequency screen, up to 0.93x including outer loops on
+edge points) is measured on the Python/DOP853 reference stack, not on the
+Numba kernel, and the tensor equation is already fast. The prototype's value
+is now as an independent-state-variable oracle cross-check (Oracle B style),
+not as a kernel replacement.
+
+### Artifacts
+
+- `docs/oracle_prufer_fullgrid_default.json`
+- `docs/oracle_prufer_fullgrid_{lowT,highT,stiff}.json`
+- `docs/oracle_prufer_fullgrid_edge_{r,tre,dnre,kap,nt}_*.json`
+- `docs/oracle_prufer_fullgrid_sobol_{000,002,006,010,015}.json`
+- `scripts/benchmark_prufer_fullgrid.py`
