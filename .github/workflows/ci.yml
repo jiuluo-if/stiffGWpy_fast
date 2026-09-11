@@ -107,6 +107,8 @@ jobs:
 
   cobaya:
     runs-on: ubuntu-latest
+    env:
+      SGWB_POOL_SIZE: "2"
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
