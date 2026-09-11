@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "commit": "40bded2bc8e02e7c0906b31c228405eba81fa515",
-  "date": "2026-09-10",
+  "commit": "2094ab054157e0e4ac1ba4d938b66dd26a524d1c",
+  "date": "2026-09-11",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "audit_report": "docs/fast_v02_audit_report.md",
   "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
@@ -973,8 +973,9 @@
     "definition": "current formal fast path; this section is the active HEAD audit, while the legacy profiles below are retained for historical compatibility",
     "source_commits": [
       "34fca5159bf0a5c91da440db24711e36fca23ff4",
-      "6a328383bb4eded677b71b76ad4f4db4c375954b",
-      "9bb269702bc40a19b7768bb93661f97e036d2eb0"
+      "9bb269702bc40a19b7768bb93661f97e036d2eb0",
+      "bd648fc805c95c641f76d4d8ebfda9f5a2beb56c",
+      "f939c07fe8a1a10d3ba0c1665271b50f8f2cca5a"
     ],
     "runtime": {
       "threads": 20,
@@ -1130,16 +1131,68 @@
             "seed_n": 64,
             "dn_eff": 0.05694040544255328,
             "used_tail_fraction": 0.8378378378378378,
-            "fast_runtime_s": 0.24466660000052798,
-            "reference_runtime_s": 154.56614350000018,
+            "fast_runtime_s": 0.22291349999977683,
+            "reference_runtime_s": 97.5935430999998,
             "fast_simpson_dn": 0.056940405442785454,
             "fast_pchip_dn": 0.056974972663539195,
+            "fast_dn_by_method": {
+              "simpson": 0.056940405442785454,
+              "pchip": 0.056974972663539195,
+              "log_pchip": 0.05691209022269618,
+              "gauss2": 0.056974972663539195,
+              "gauss3": 0.056974972663539195,
+              "gauss5": 0.056974972663539195,
+              "natural_cubic": 0.05696022335838159,
+              "chebyshev": 0.056974972663539195
+            },
+            "estimator_local_sum_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0038069853061388015,
+              "log_pchip": 0.0035490798295832846,
+              "gauss2": 0.003806985306138799,
+              "gauss3": 0.0038069853061386775,
+              "gauss5": 0.0038069853061387555,
+              "natural_cubic": 0.0019377495746429876,
+              "chebyshev": 0.0038069853061387772
+            },
+            "estimator_local_max_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0007726900319044967,
+              "log_pchip": 0.0007177531230218218,
+              "gauss2": 0.0007726900319045036,
+              "gauss3": 0.0007726900319044967,
+              "gauss5": 0.0007726900319044967,
+              "natural_cubic": 0.0004644921984932785,
+              "chebyshev": 0.0007726900319044899
+            },
+            "local_estimator": {
+              "method": "ensemble_minus_local_simpson_panel",
+              "actual_sum_rel": 0.0016017365173316607,
+              "predicted_sum_rel": 0.007289133135483078,
+              "actual_max_rel": 0.00027128478967920717,
+              "predicted_max_rel": 0.0006058011780584289,
+              "pearson_r": 0.7377386160374175,
+              "coverage": 0.8904109589041096,
+              "false_safe_rate": 0.1095890410958904,
+              "actual_over_predicted_p95": 2.7995045370286182,
+              "actual_over_predicted_p99": 5.33705784817394,
+              "actual_over_predicted_max": 5.33705784817394,
+              "required_safety_factor_95": 2.7995045370286182,
+              "required_safety_factor_99": 5.33705784817394,
+              "mixed_pchip_reference_actual_sum_rel": 0.0001266091757734258
+            },
             "reference_pchip_dn_same_grid": 0.05699072846328021,
             "reference_quadrature_error": 7.8408300274713e-21,
             "reference_interpolation_error": 1.6455633544392952e-09,
             "dn_relative_error": {
               "simpson": 0.0008830036367613783,
-              "pchip": 0.00027646250830373845
+              "pchip": 0.00027646250830373845,
+              "log_pchip": 0.00137984269905759,
+              "gauss2": 0.00027646250830373845,
+              "gauss3": 0.00027646250830373845,
+              "gauss5": 0.00027646250830373845,
+              "natural_cubic": 0.0005352643442392999,
+              "chebyshev": 0.00027646250830373845
             },
             "spectrum_relative_error": {
               "simpson_max": 0.003045527525222268,
@@ -1150,29 +1203,82 @@
             "point": "positive_tilt",
             "kw": {
               "r": 0.01,
-              "cr": 1,
+              "cr": 0,
               "n_t": 0.2,
+              "DN_re": 5.0,
               "T_re": 2000.0,
               "kappa10": 0.01
             },
-            "n_freq": 76,
+            "n_freq": 75,
             "seed_n": 64,
-            "dn_eff": 0.0022626969518100204,
-            "used_tail_fraction": 0.881578947368421,
-            "fast_runtime_s": 0.21481369999946764,
-            "reference_runtime_s": 166.13042769999993,
-            "fast_simpson_dn": 0.0022626969518100616,
-            "fast_pchip_dn": 0.002263647415085622,
-            "reference_pchip_dn_same_grid": 0.0022643136483710326,
-            "reference_quadrature_error": 3.1152608370675335e-22,
-            "reference_interpolation_error": 7.97058807807353e-11,
+            "dn_eff": 3.7886690635942,
+            "used_tail_fraction": 0.8533333333333334,
+            "fast_runtime_s": 0.22159230000033858,
+            "reference_runtime_s": 95.21587490000093,
+            "fast_simpson_dn": 3.78866906361953,
+            "fast_pchip_dn": 3.788633087978581,
+            "fast_dn_by_method": {
+              "simpson": 3.78866906361953,
+              "pchip": 3.788633087978581,
+              "log_pchip": 3.783877805228909,
+              "gauss2": 3.788633087978581,
+              "gauss3": 3.7886330879785812,
+              "gauss5": 3.788633087978581,
+              "natural_cubic": 3.7870693289123,
+              "chebyshev": 3.78863308797858
+            },
+            "estimator_local_sum_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.005327238681320493,
+              "log_pchip": 0.004548482017361202,
+              "gauss2": 0.005327238681320478,
+              "gauss3": 0.005327238681320559,
+              "gauss5": 0.005327238681320483,
+              "natural_cubic": 0.0024706876838104077,
+              "chebyshev": 0.005327238681320426
+            },
+            "estimator_local_max_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0010074917130185454,
+              "log_pchip": 0.0010376861974032998,
+              "gauss2": 0.0010074917130185673,
+              "gauss3": 0.0010074917130185454,
+              "gauss5": 0.001007491713018567,
+              "natural_cubic": 0.000602552310655345,
+              "chebyshev": 0.0010074917130185666
+            },
+            "local_estimator": {
+              "method": "ensemble_minus_local_simpson_panel",
+              "actual_sum_rel": 0.0023540162126302147,
+              "predicted_sum_rel": 0.008679776585739301,
+              "actual_max_rel": 0.0003986313151864528,
+              "predicted_max_rel": 0.0008611162444075505,
+              "pearson_r": 0.9211021839442869,
+              "coverage": 0.9459459459459459,
+              "false_safe_rate": 0.05405405405405406,
+              "actual_over_predicted_p95": 1.4903418274103053,
+              "actual_over_predicted_p99": 5.128437847935312,
+              "actual_over_predicted_max": 5.128437847935312,
+              "required_safety_factor_95": 1.4903418274103053,
+              "required_safety_factor_99": 5.128437847935312,
+              "mixed_pchip_reference_actual_sum_rel": 0.00013174820029597555
+            },
+            "reference_pchip_dn_same_grid": 3.7897424366312964,
+            "reference_quadrature_error": 5.213957970841952e-19,
+            "reference_interpolation_error": 6.496598658757004e-08,
             "dn_relative_error": {
-              "simpson": 0.0007139896728238829,
-              "pchip": 0.00029423189048483165
+              "simpson": 0.00028323112446669726,
+              "pchip": 0.0002927240231401357,
+              "log_pchip": 0.0015475013145222212,
+              "gauss2": 0.0002927240231401357,
+              "gauss3": 0.0002927240231400185,
+              "gauss5": 0.0002927240231401357,
+              "natural_cubic": 0.0007053534016345088,
+              "chebyshev": 0.00029272402314037006
             },
             "spectrum_relative_error": {
-              "simpson_max": 0.003571661760305857,
-              "simpson_p95": 0.0007842716874306186
+              "simpson_max": 0.007182174359666521,
+              "simpson_p95": 0.004792465317344355
             }
           },
           {
@@ -1189,16 +1295,68 @@
             "seed_n": 64,
             "dn_eff": 1.3367419642719864e-07,
             "used_tail_fraction": 0.881578947368421,
-            "fast_runtime_s": 0.23177059999943594,
-            "reference_runtime_s": 162.99721390000013,
+            "fast_runtime_s": 0.22897809999994934,
+            "reference_runtime_s": 109.52629420000085,
             "fast_simpson_dn": 1.3367419642719864e-07,
             "fast_pchip_dn": 1.3377473627465301e-07,
+            "fast_dn_by_method": {
+              "simpson": 1.3367419642719864e-07,
+              "pchip": 1.3377473627465301e-07,
+              "log_pchip": 1.336386726836848e-07,
+              "gauss2": 1.3377473627465304e-07,
+              "gauss3": 1.3377473627465307e-07,
+              "gauss5": 1.3377473627465301e-07,
+              "natural_cubic": 1.3371899046033877e-07,
+              "chebyshev": 1.3377473627465304e-07
+            },
+            "estimator_local_sum_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.003876357388383579,
+              "log_pchip": 0.0031353556451811835,
+              "gauss2": 0.0038763573883835965,
+              "gauss3": 0.0038763573883836915,
+              "gauss5": 0.0038763573883835306,
+              "natural_cubic": 0.002566462891681148,
+              "chebyshev": 0.00387635738838357
+            },
+            "estimator_local_max_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0007723739760266237,
+              "log_pchip": 0.0005728303651314632,
+              "gauss2": 0.0007723739760266356,
+              "gauss3": 0.0007723739760266356,
+              "gauss5": 0.0007723739760266237,
+              "natural_cubic": 0.0005563952434710948,
+              "chebyshev": 0.0007723739760266237
+            },
+            "local_estimator": {
+              "method": "ensemble_minus_local_simpson_panel",
+              "actual_sum_rel": 0.001743497237893137,
+              "predicted_sum_rel": 0.006420406194351818,
+              "actual_max_rel": 0.0002481944811091324,
+              "predicted_max_rel": 0.0004887317414867661,
+              "pearson_r": 0.8547608792007092,
+              "coverage": 0.92,
+              "false_safe_rate": 0.08,
+              "actual_over_predicted_p95": 1.1870529043153155,
+              "actual_over_predicted_p99": 2.074637740355373,
+              "actual_over_predicted_max": 2.074637740355373,
+              "required_safety_factor_95": 1.1870529043153155,
+              "required_safety_factor_99": 2.074637740355373,
+              "mixed_pchip_reference_actual_sum_rel": 0.00013153789397666509
+            },
             "reference_pchip_dn_same_grid": 1.3381440218848242e-07,
             "reference_quadrature_error": 1.8410292534926905e-26,
             "reference_interpolation_error": 2.837645557928753e-15,
             "dn_relative_error": {
               "simpson": 0.0010477628640174032,
-              "pchip": 0.0002964248480035322
+              "pchip": 0.0002964248480035322,
+              "log_pchip": 0.0013132331193325937,
+              "gauss2": 0.0002964248480033344,
+              "gauss3": 0.00029642484800313656,
+              "gauss5": 0.0002964248480035322,
+              "natural_cubic": 0.0007130153898476532,
+              "chebyshev": 0.0002964248480033344
             },
             "spectrum_relative_error": {
               "simpson_max": 0.004455539772270833,
@@ -1219,16 +1377,68 @@
             "seed_n": 64,
             "dn_eff": 1.2205139219664978,
             "used_tail_fraction": 0.8947368421052632,
-            "fast_runtime_s": 0.22463019999941025,
-            "reference_runtime_s": 152.04633300000023,
+            "fast_runtime_s": 0.21554769999966084,
+            "reference_runtime_s": 95.59838969999873,
             "fast_simpson_dn": 1.220513921966513,
             "fast_pchip_dn": 1.2213508155213288,
+            "fast_dn_by_method": {
+              "simpson": 1.220513921966513,
+              "pchip": 1.2213508155213288,
+              "log_pchip": 1.219985769229432,
+              "gauss2": 1.2213508155213288,
+              "gauss3": 1.2213508155213288,
+              "gauss5": 1.2213508155213288,
+              "natural_cubic": 1.2207032465197687,
+              "chebyshev": 1.2213508155213286
+            },
+            "estimator_local_sum_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0037419181582531093,
+              "log_pchip": 0.003060666218350996,
+              "gauss2": 0.0037419181582530594,
+              "gauss3": 0.0037419181582531084,
+              "gauss5": 0.0037419181582530087,
+              "natural_cubic": 0.0025615557832248926,
+              "chebyshev": 0.0037419181582529124
+            },
+            "estimator_local_max_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.000771543779521792,
+              "log_pchip": 0.0005702833193442821,
+              "gauss2": 0.0007715437795217811,
+              "gauss3": 0.0007715437795217921,
+              "gauss5": 0.0007715437795217811,
+              "natural_cubic": 0.0005558989618228942,
+              "chebyshev": 0.0007715437795217811
+            },
+            "local_estimator": {
+              "method": "ensemble_minus_local_simpson_panel",
+              "actual_sum_rel": 0.0016855046696216411,
+              "predicted_sum_rel": 0.006448985927667511,
+              "actual_max_rel": 0.0002478094769243539,
+              "predicted_max_rel": 0.000488196500302817,
+              "pearson_r": 0.8394254947064496,
+              "coverage": 1.0,
+              "false_safe_rate": 0.0,
+              "actual_over_predicted_p95": 0.5463530352393086,
+              "actual_over_predicted_p99": 0.62072243747686,
+              "actual_over_predicted_max": 0.62072243747686,
+              "required_safety_factor_95": 0.5463530352393086,
+              "required_safety_factor_99": 0.62072243747686,
+              "mixed_pchip_reference_actual_sum_rel": 0.00013054776877459692
+            },
             "reference_pchip_dn_same_grid": 1.2217092165809904,
             "reference_quadrature_error": 1.6808373166134684e-19,
             "reference_interpolation_error": 3.647554596732154e-08,
             "dn_relative_error": {
               "simpson": 0.000978378977791788,
-              "pchip": 0.0002933603633314346
+              "pchip": 0.0002933603633314346,
+              "log_pchip": 0.0014106853972842485,
+              "gauss2": 0.0002933603633314346,
+              "gauss3": 0.0002933603633314346,
+              "gauss5": 0.0002933603633314346,
+              "natural_cubic": 0.0008234120260113701,
+              "chebyshev": 0.00029336036333161636
             },
             "spectrum_relative_error": {
               "simpson_max": 0.003622618286070514,
@@ -1249,16 +1459,68 @@
             "seed_n": 64,
             "dn_eff": 5.5691169420976625e-06,
             "used_tail_fraction": 0.8533333333333334,
-            "fast_runtime_s": 0.20985840000048483,
-            "reference_runtime_s": 127.3158112000001,
+            "fast_runtime_s": 0.23514269999941462,
+            "reference_runtime_s": 95.23368769999979,
             "fast_simpson_dn": 5.569116942097664e-06,
             "fast_pchip_dn": 5.5722271145815666e-06,
+            "fast_dn_by_method": {
+              "simpson": 5.569116942097664e-06,
+              "pchip": 5.5722271145815666e-06,
+              "log_pchip": 5.5676533703692235e-06,
+              "gauss2": 5.5722271145815666e-06,
+              "gauss3": 5.572227114581569e-06,
+              "gauss5": 5.5722271145815666e-06,
+              "natural_cubic": 5.570588601807002e-06,
+              "chebyshev": 5.5722271145815666e-06
+            },
+            "estimator_local_sum_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0024919462940558813,
+              "log_pchip": 0.0019383510768688512,
+              "gauss2": 0.0024919462940558674,
+              "gauss3": 0.002491946294055884,
+              "gauss5": 0.0024919462940559017,
+              "natural_cubic": 0.0014796209715087166,
+              "chebyshev": 0.002491946294055815
+            },
+            "estimator_local_max_rel_by_method": {
+              "simpson": 0.0,
+              "pchip": 0.0005752937109123307,
+              "log_pchip": 0.00031466097101755095,
+              "gauss2": 0.0005752937109123215,
+              "gauss3": 0.0005752937109123305,
+              "gauss5": 0.0005752937109123215,
+              "natural_cubic": 0.0004031741073896942,
+              "chebyshev": 0.0005752937109123124
+            },
+            "local_estimator": {
+              "method": "ensemble_minus_local_simpson_panel",
+              "actual_sum_rel": 0.001139277432295657,
+              "predicted_sum_rel": 0.005018845333086051,
+              "actual_max_rel": 0.00018664691244094832,
+              "predicted_max_rel": 0.00036961736329597163,
+              "pearson_r": 0.7270200771805049,
+              "coverage": 0.9459459459459459,
+              "false_safe_rate": 0.05405405405405406,
+              "actual_over_predicted_p95": 1.4228713242494142,
+              "actual_over_predicted_p99": 11.09162776249067,
+              "actual_over_predicted_max": 11.09162776249067,
+              "required_safety_factor_95": 1.4228713242494142,
+              "required_safety_factor_99": 11.09162776249067,
+              "mixed_pchip_reference_actual_sum_rel": 0.0001341556256710108
+            },
             "reference_pchip_dn_same_grid": 5.573887107794463e-06,
             "reference_quadrature_error": 7.66859848662733e-25,
             "reference_interpolation_error": 7.0437166750861e-14,
             "dn_relative_error": {
               "simpson": 0.0008558059401899265,
-              "pchip": 0.0002978160807338312
+              "pchip": 0.0002978160807338312,
+              "log_pchip": 0.0011183824330640048,
+              "gauss2": 0.0002978160807338312,
+              "gauss3": 0.00029781608073337534,
+              "gauss5": 0.0002978160807338312,
+              "natural_cubic": 0.0005917783987493826,
+              "chebyshev": 0.0002978160807338312
             },
             "spectrum_relative_error": {
               "simpson_max": 0.004921420027235612,
@@ -1278,8 +1540,8 @@
           {
             "case": "positive_tilt",
             "predicted_rel": null,
-            "actual_simpson_rel": 0.0007139896728238829,
-            "actual_pchip_rel": 0.00029423189048483165,
+            "actual_simpson_rel": 0.00028323112446669726,
+            "actual_pchip_rel": 0.0002927240231401357,
             "covers_simpson": false,
             "covers_pchip": false
           },
@@ -1309,24 +1571,24 @@
           }
         ],
         "spectrum_rel_p95": {
-          "median": 0.0017193223980487434,
-          "p95": 0.002910017172967667,
-          "max": 0.0031779600827391186,
-          "mean": 0.0018149166089121687,
+          "median": 0.0018382455338818626,
+          "p95": 0.0044695642704233075,
+          "max": 0.004792465317344355,
+          "mean": 0.002616555334894916,
           "n": 5
         },
         "dn_rel_simpson": {
           "median": 0.0008830036367613783,
           "p95": 0.0010338860867722803,
           "max": 0.0010477628640174032,
-          "mean": 0.0008957882183168757,
+          "mean": 0.0008096365086454387,
           "n": 5
         },
         "dn_rel_pchip": {
-          "median": 0.00029423189048483165,
+          "median": 0.0002933603633314346,
           "p95": 0.0002975378341877714,
           "max": 0.0002978160807338312,
-          "mean": 0.00029165913817147366,
+          "mean": 0.00029135756470253447,
           "n": 5
         },
         "failure_count": 0,
@@ -1859,7 +2121,7 @@
         "reason": "Neither larger phase cap achieved a stable >5% runtime improvement across the six-point matrix."
       },
       "node_count_sweep": {
-        "commit": "9bb269702bc40a19b7768bb93661f97e036d2eb0",
+        "commit": "bd648fc805c95c641f76d4d8ebfda9f5a2beb56c",
         "threads": 20,
         "affinity": [
           0,
@@ -1890,8 +2152,42 @@
             "target_n_freq": 76,
             "seed_n": 64,
             "n_freq": 76,
-            "runtime_s": 0.22244199999977354,
+            "runtime_s": 0.22837569999865082,
             "DN_gw": 0.0022626969518100204,
+            "DN_by_method_same_spectrum": {
+              "simpson": 0.0022626969518100616,
+              "pchip": 0.0022636474150856214,
+              "log_pchip": 0.0022607657706572564,
+              "gauss5": 0.0022636474150856214,
+              "natural_cubic": 0.0022620759777915046,
+              "chebyshev": 0.0022636474150856214
+            },
+            "estimator_by_method_same_spectrum": {
+              "simpson": {
+                "sum_rel": 0.0,
+                "max_rel": 0.0
+              },
+              "pchip": {
+                "sum_rel": 0.0031181627786371715,
+                "max_rel": 0.0005615018949436681
+              },
+              "log_pchip": {
+                "sum_rel": 0.003290459781758671,
+                "max_rel": 0.0004523960857378336
+              },
+              "gauss5": {
+                "sum_rel": 0.003118162778637111,
+                "max_rel": 0.0005615018949436681
+              },
+              "natural_cubic": {
+                "sum_rel": 0.0018118044630264123,
+                "max_rel": 0.0003257278479815792
+              },
+              "chebyshev": {
+                "sum_rel": 0.003118162778637155,
+                "max_rel": 0.0005615018949436681
+              }
+            },
             "DN_rel_to_dense_reference": 6.010834149598733e-05,
             "reuse": true,
             "failure": null,
@@ -1904,8 +2200,42 @@
             "target_n_freq": 80,
             "seed_n": 68,
             "n_freq": 80,
-            "runtime_s": 0.006198000000040338,
+            "runtime_s": 0.005189900000914349,
             "DN_gw": 0.0022615764775845235,
+            "DN_by_method_same_spectrum": {
+              "simpson": 0.0022615764775845643,
+              "pchip": 0.00226306434117032,
+              "log_pchip": 0.0022607744372088604,
+              "gauss5": 0.00226306434117032,
+              "natural_cubic": 0.0022621109288507683,
+              "chebyshev": 0.00226306434117032
+            },
+            "estimator_by_method_same_spectrum": {
+              "simpson": {
+                "sum_rel": 0.0,
+                "max_rel": 0.0
+              },
+              "pchip": {
+                "sum_rel": 0.003796707353149831,
+                "max_rel": 0.0007714520161181134
+              },
+              "log_pchip": {
+                "sum_rel": 0.0030884373728160388,
+                "max_rel": 0.0005699672870503657
+              },
+              "gauss5": {
+                "sum_rel": 0.003796707353149777,
+                "max_rel": 0.0007714520161181019
+              },
+              "natural_cubic": {
+                "sum_rel": 0.0025391178281234344,
+                "max_rel": 0.000555845353282653
+              },
+              "chebyshev": {
+                "sum_rel": 0.0037967073531496166,
+                "max_rel": 0.0007714520161180901
+              }
+            },
             "DN_rel_to_dense_reference": 0.0005552726960301601,
             "reuse": true,
             "failure": null,
@@ -1918,8 +2248,42 @@
             "target_n_freq": 90,
             "seed_n": 79,
             "n_freq": 90,
-            "runtime_s": 0.006677299999864772,
+            "runtime_s": 0.004932499999995343,
             "DN_gw": 0.0022625154291945385,
+            "DN_by_method_same_spectrum": {
+              "simpson": 0.002262515429194592,
+              "pchip": 0.0022633242091378136,
+              "log_pchip": 0.002260751348693548,
+              "gauss5": 0.0022633242091378136,
+              "natural_cubic": 0.0022621573319452147,
+              "chebyshev": 0.0022633242091378136
+            },
+            "estimator_by_method_same_spectrum": {
+              "simpson": {
+                "sum_rel": 0.0,
+                "max_rel": 0.0
+              },
+              "pchip": {
+                "sum_rel": 0.003465240750167773,
+                "max_rel": 0.0007711318609035915
+              },
+              "log_pchip": {
+                "sum_rel": 0.002704031344337129,
+                "max_rel": 0.0005697307486847336
+              },
+              "gauss5": {
+                "sum_rel": 0.0034652407501677444,
+                "max_rel": 0.0007711318609035799
+              },
+              "natural_cubic": {
+                "sum_rel": 0.002184063176509163,
+                "max_rel": 0.0005556144320777966
+              },
+              "chebyshev": {
+                "sum_rel": 0.003465240750167595,
+                "max_rel": 0.000771131860903568
+              }
+            },
             "DN_rel_to_dense_reference": 0.00014032752609040994,
             "reuse": true,
             "failure": null,
@@ -1932,8 +2296,42 @@
             "target_n_freq": 110,
             "seed_n": 101,
             "n_freq": 110,
-            "runtime_s": 0.005494900000030611,
+            "runtime_s": 0.005250600001090788,
             "DN_gw": 0.0022623149885474484,
+            "DN_by_method_same_spectrum": {
+              "simpson": 0.0022623149885475052,
+              "pchip": 0.0022625614814249517,
+              "log_pchip": 0.0022607679636847664,
+              "gauss5": 0.0022625614814249513,
+              "natural_cubic": 0.002262248153897276,
+              "chebyshev": 0.0022625614814249513
+            },
+            "estimator_by_method_same_spectrum": {
+              "simpson": {
+                "sum_rel": 0.0,
+                "max_rel": 0.0
+              },
+              "pchip": {
+                "sum_rel": 0.00280206069579522,
+                "max_rel": 0.0005615966974343955
+              },
+              "log_pchip": {
+                "sum_rel": 0.002922376023405179,
+                "max_rel": 0.0004524724670931051
+              },
+              "gauss5": {
+                "sum_rel": 0.002802060695795158,
+                "max_rel": 0.0005615966974343955
+              },
+              "natural_cubic": {
+                "sum_rel": 0.0014375182587024692,
+                "max_rel": 0.0003257827713618874
+              },
+              "chebyshev": {
+                "sum_rel": 0.002802060695795221,
+                "max_rel": 0.0005615966974343955
+              }
+            },
             "DN_rel_to_dense_reference": 0.00022890704124594794,
             "reuse": true,
             "failure": null,
