@@ -207,6 +207,30 @@ def _make_tail_event(z_tail):
     return event
 
 
+def _handoff_diagnostics(bg, N, zf, xf, yf):
+    """Return phase/amplitude and local adiabaticity at a mode hand-off."""
+    _, sigma = _H2_and_sigma(bg, N)
+    omega = math.exp(zf)
+    z_prime = 1.5 * sigma - 1.0
+    delta = min(1e-5, max(1e-8, 0.25 * (bg.N_inf - N)))
+    left = max(0.0, N - delta)
+    right = min(bg.N_inf, N + delta)
+    if right > left:
+        _, sigma_left = _H2_and_sigma(bg, left)
+        _, sigma_right = _H2_and_sigma(bg, right)
+        sigma_prime = (sigma_right - sigma_left) / (right - left)
+    else:
+        sigma_prime = 0.0
+    return {
+        'phase_handoff': float(math.atan2(xf, yf)),
+        'amplitude_handoff': float(math.sqrt(0.5 * (xf * xf + yf * yf))),
+        'omega_handoff': float(omega),
+        'omega_prime_over_omega2': float(z_prime / omega),
+        'omega_second_over_omega3': float(
+            (1.5 * sigma_prime + z_prime * z_prime) / (omega * omega)),
+    }
+
+
 def _find_start_N(bg, freq, z_start):
     """Smallest N in [0, N_inf] with z(N) >= z_start (z increasing in N)."""
     Nlast = bg.N_inf
@@ -310,7 +334,8 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
                     Opgw_today=float(Opgw_hf[-1]), used_tail=used_tail,
                     event_N=t_event, n_steps=n_steps, z0=z0,
                     eps_handoff=eps_handoff,
-                    matching_error_rel=matching_error_rel)
+                    matching_error_rel=matching_error_rel,
+                    **_handoff_diagnostics(bg, t_event, zf, xf, yf))
 
     # Mode never reached the tail threshold before today.
     zf, xf, yf = result.y[:, -1]
@@ -322,7 +347,8 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
                 Opgw_today=float(Opgw), used_tail=False,
                 event_N=None, n_steps=n_steps, z0=z0,
                 eps_handoff=eps_handoff,
-                matching_error_rel=matching_error_rel)
+                matching_error_rel=matching_error_rel,
+                **_handoff_diagnostics(bg, bg.N_inf, zf, xf, yf))
 
 
 # ---------------------------------------------------------------------------
