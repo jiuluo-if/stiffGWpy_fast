@@ -75,8 +75,8 @@ def wkb_corrected_today(model, bg, freq, row):
     tensor_power = model.derived_param['A_t'] \
         * (10.0 ** freq / gp.f_piv) ** model.derived_param['nt']
     n_inf = bg.N_inf
-    # solve_prufer stores amplitude_handoff = A / sqrt(2), so its square is
-    # exactly the phase-averaged power A^2/2 used by the frozen tail.
+    # solve_prufer 存的是 amplitude_handoff = A/sqrt(2)，其平方正好是
+    # frozen tail 使用的相平均功率 A^2/2。
     frozen_ts = row['amplitude_handoff'] ** 2 \
         * math.exp(-2.0 * row['z_handoff'] + 2.0 * row['event_N']
                    - 2.0 * n_inf)
