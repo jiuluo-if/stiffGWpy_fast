@@ -555,3 +555,24 @@ rtol=`1e-9`，并对每点进行 25 次 warm propagation A/B：
 `REJECTED FOR PRODUCTION`。本结果同时否定了“直接在 Python prototype 中用矩阵指数
 替换当前 map”这一实现路径；若未来继续 phase 线，必须先给出 Numba/解析闭式的
 低开销 transfer map，并证明其 full-grid DN 与 spectrum 收益，不能重复当前实验。
+
+## Closed-form Numba follow-up for Magnus map (2026-09-16)
+
+为排除上一轮 `scipy.linalg.expm` 的实现性成本，保留同一二阶 Magnus 公式，改用
+无迹 2x2 矩阵指数的解析闭式并加 Numba 编译。current-SHA artifact
+`docs/transfer_map_phase_numba_round.json` 绑定 `19869ef`，仍固定
+Numba=2/workqueue/BLAS=1/reference workers=1，覆盖五个命名 regime、35 个 tail
+modes 与每点 25 repeats。
+
+- 35/35 个 tail modes 的 candidate 振幅方向略优于 midpoint，但最大振幅变化只有
+  `1.486e-5`，最大相位变化 `7.109e-4 rad`，没有达到 10x handoff 精度改善，
+  也没有 full-grid DN/spectrum 证据支持晋升。
+- propagation median baseline -> candidate：default `3.254 -> 5.076 ms`、
+  low-T `2.667 -> 4.950 ms`、high-T `2.602 -> 4.821 ms`、stiff
+  `2.570 -> 4.708 ms`、high-kappa `2.600 -> 4.751 ms`；candidate 在所有
+  regime 均超过 5% 成本预算。
+- 所有模式保持有限，未改变 physical guard、failure 语义或 production API。
+
+决策：`REJECTED FOR PRODUCTION`。这次结果拒绝的是线性-z 二阶 Magnus 假设本身，
+不是单纯的 Python 实现；后续 phase 线不得重复该 map，应转向非振荡 Riccati 或
+真正能减少 tensor solve 次数的解析分支。

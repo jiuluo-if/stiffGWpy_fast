@@ -487,3 +487,18 @@
 - 决策：`REJECTED FOR PRODUCTION`；未做 full-grid promotion，生产 fast 默认与
   输出契约不变。下一实验必须转向能减少真实 tensor solve 的解析/Numba transfer
   map 或 Riccati reduction，并同时测 model alignment。
+
+## Session: 2026-09-16 (closed-form Numba Magnus follow-up)
+
+- 将上一轮二阶线性-z Magnus map 从 `scipy.linalg.expm` 换为无迹 2x2 矩阵指数
+  解析闭式并用 Numba 编译；artifact `docs/transfer_map_phase_numba_round.json`
+  绑定 current SHA `19869ef`。
+- 五个命名 regime、35 个 tail modes：最大振幅变化 `1.486e-5`、最大相位变化
+  `7.109e-4 rad`，35/35 模式仅有微小方向改善，未达 10x 精度标准。
+- 25-repeat propagation median baseline -> candidate 为
+  `3.254->5.076`、`2.667->4.950`、`2.602->4.821`、`2.570->4.708`、
+  `2.600->4.751 ms`（default/low-T/high-T/stiff/high-kappa），全部超过 5%
+  成本预算。
+- 决策：线性-z 二阶 Magnus 假设整体 `REJECTED FOR PRODUCTION`；无 full-grid
+  promotion，production fast 默认不变。下一项转向 nonoscillatory Riccati 或
+  能真实减少 tensor solves 的解析分支。
