@@ -15,7 +15,7 @@ except ImportError:
 apply_environment()
 
 import numpy as np  # noqa: E402
-from scipy.linalg import expm  # noqa: E402
+from numba import njit  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -26,19 +26,32 @@ from stiffgwpy_fast.exact_background import fast_phi_s2_split  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 
-def _matrix(z):
-    w = math.exp(z)
-    return np.array([[-1.0, -w], [w, 1.0]], dtype=float)
-
-
+@njit(cache=True, inline='always')
 def magnus_linear_step(xh, yh, z0, z1, h):
-    """Apply the second-order Magnus map for linearly interpolated z."""
-    a0 = _matrix(z0)
-    a1 = _matrix(z1)
-    commutator = a1 @ a0 - a0 @ a1
-    omega = 0.5 * h * (a0 + a1) + (h * h / 12.0) * commutator
-    state = expm(omega) @ np.array([xh, yh], dtype=float)
-    return float(state[0]), float(state[1])
+    """Apply the second-order Magnus map using a closed 2x2 exponential."""
+    w0 = math.exp(z0)
+    w1 = math.exp(z1)
+    wsum = w0 + w1
+    dw = w1 - w0
+    m00 = -h
+    m11 = h
+    m01 = -0.5 * h * wsum - h * h * dw / 6.0
+    m10 = 0.5 * h * wsum + h * h * dw / 6.0
+    q = m00 * m00 + m01 * m10
+    if q > 1e-16:
+        root = math.sqrt(q)
+        scale = math.sinh(root) / root
+        c = math.cosh(root)
+    elif q < -1e-16:
+        root = math.sqrt(-q)
+        scale = math.sin(root) / root
+        c = math.cos(root)
+    else:
+        # The series keeps the transition through q=0 finite.
+        scale = 1.0 + q / 6.0 + q * q / 120.0
+        c = 1.0 + q / 2.0 + q * q / 24.0
+    return (c * xh + scale * (m00 * xh + m01 * yh),
+            c * yh + scale * (m10 * xh + m11 * yh))
 
 
 def _phase_segment(xh, yh, z0, z1, h, phase_max):
