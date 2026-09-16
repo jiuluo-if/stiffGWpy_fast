@@ -169,7 +169,8 @@ def main():
             row[name + '_s'] = float(sum(values))
             row[name + '_calls'] = len(values)
         records.append(row)
-    summary = {'threads': FS._THREADS, 'case': CASES[args.case], 'case_id': args.case,
+    summary = {'commit': os.popen('git rev-parse HEAD').read().strip(),
+               'threads': FS._THREADS, 'case': CASES[args.case], 'case_id': args.case,
                'kink_split': args.kink_split,
                'reps': args.reps, 'records': records,
                'median_s': {}, 'p95_s': {}}
