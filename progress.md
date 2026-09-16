@@ -447,3 +447,27 @@
   provenance tooling 记录一起提交。
 - 后续复核确认正式 profile 必须显式 `kink_split=true`；已在 release HEAD 重生成四份
   正式路径 artifact，替代此前 false-kink profile 的速度结论。
+## Session: 2026-09-16 (current-HEAD step-size Pareto)
+
+### Actions Taken
+
+- 刷新当前 SHA 的 Oracle C WKB anchors，并以 h=.005 baseline、h=.00625、h=.0075、
+  h=.01 做正式 fast runtime A/B。
+- 对 h=.0075 与 h=.005 运行相同 10 点 matched continuous-sigma reference 矩阵，覆盖
+  named edge/tilt/regime 与 Sobol；另检查当前 quadrature estimator 的 actual/predicted、
+  p95/p99、false-safe。
+
+### Test Results
+
+| Test | Result | Status |
+|---|---|---|
+| step-size runtime A/B | h=.0075 相对 h=.005 快约 `15–34%`；h=.00625 收益不稳定 | PASS / CANDIDATE |
+| Oracle C WKB/deep | h=.0075 多数点误差增加；h=.01 更差 | REJECTED FOR PRECISION REGRESSION |
+| matched parameter matrix | h=.0075 signal max rel `6.7833e-3`、DN max `3.6052e-3`；baseline 分别 `6.7832e-3`、`3.6014e-3` | REJECTED / MODEL ALIGNMENT STILL OPEN |
+| estimator diagnostic | 9 points；coverage `1.0`；false-safe `0`；p95/p99 actual/pred recorded | PASS / DIAGNOSTIC ONLY |
+
+### Decision
+
+- 不改变 fast 默认 h；本轮没有 production algorithm change。
+- 最高价值方向仍是 exact Cartesian transfer-map phase representation 或 Riccati
+  reduction，且必须直接验证 continuous-sigma model alignment。

@@ -503,3 +503,22 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
   `6.34/2.69/0.57/0.73`、`10.34/4.70/0.73/0.73`、`10.39/5.20/0.67/0.67`、
   `10.21/5.08/0.71/0.71 ms`（分别为 total/tensor/prepare/expansion；prepare 在
   exact-kink 路径由独立计时点不产生可比调用）。旧的 false-kink 结论作废。
+## Fresh current-HEAD step-size Pareto and parameter-space audit (2026-09-16)
+
+- 在正式 `kink_split=true`、goal native grid、20 threads、workqueue、BLAS=1、25
+  repeats 下测试 h=`0.005/0.00625/0.0075/0.01`；所有候选均无 numerical failure。
+- h=.0075 相对 h=.005 的 warm median 约快 `34%/26%/22%/15%`
+  （default/high-T/stiff/high-kappa），但 deep Oracle C 相对误差由
+  `5.21e-6/2.24e-5/3.35e-6/2.45e-5` 变为
+  `8.01e-6/2.59e-5/6.61e-6/2.75e-5`；多数 regime 精度回退。
+- h=.00625 的 warm median 为 `4.47/5.90/6.17/6.21 ms`，未形成四点稳定 >5%
+  收益，且 deep 误差也未改善。h=.01 的 WKB/deep 误差进一步升高。
+- matched continuous-sigma 10 点参数验证（default、low-T、high-T、stiff、
+  rad-dominant、tiny-r、transition、cr0-blue、extreme、Sobol）显示 h=.0075
+  的 signal max relative `6.7833e-3`、DN max `3.6052e-3`；h=.005 为
+  `6.7832e-3`、`3.6014e-3`，没有可证明的精度收益。
+- 当前 quadrature estimator 9 点诊断为 coverage `1.0`、false-safe `0`；但输入
+  reference provenance 不完整，仍不能把它晋升为新的独立 estimator certification。
+- 决策：h=.0075、h=.00625、h=.01 均 `REJECTED FOR PRODUCTION`；不为速度牺牲
+  已有精度。下一步回到 exact transfer-map/减少 tensor solves，并修复 fast 与
+  continuous-sigma 的 model-alignment 误差。
