@@ -502,3 +502,13 @@
 - 决策：线性-z 二阶 Magnus 假设整体 `REJECTED FOR PRODUCTION`；无 full-grid
   promotion，production fast 默认不变。下一项转向 nonoscillatory Riccati 或
   能真实减少 tensor solves 的解析分支。
+
+## Session: 2026-09-16 (fresh four-regime breakdown)
+
+- 在 HEAD `65578a5` 重新以正式 `kink_split=true`、25 repeats、Numba=2、workqueue、
+  BLAS=1、workers=1 profile default/high-T/stiff/high-kappa。
+- total median 为 `8.384/12.379/12.577/12.449 ms`，tensor solve median 为
+  `3.174/5.329/5.575/5.630 ms`，mean steps/channel 为 `8187.4/8143.9/8229.6/
+  8043.2`（按 default/high-T/stiff/high-kappa）。
+- tensor solve/propagation 是最大真实热点；prepare、background、PCHIP 均非首要
+  瓶颈。下一项转向减少真实 channel propagation work 的 Riccati/解析分支。

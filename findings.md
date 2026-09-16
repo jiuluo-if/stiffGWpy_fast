@@ -576,3 +576,21 @@ modes 与每点 25 repeats。
 决策：`REJECTED FOR PRODUCTION`。这次结果拒绝的是线性-z 二阶 Magnus 假设本身，
 不是单纯的 Python 实现；后续 phase 线不得重复该 map，应转向非振荡 Riccati 或
 真正能减少 tensor solve 次数的解析分支。
+
+## Fresh four-regime breakdown (2026-09-16, HEAD 65578a5)
+
+重新以正式 `kink_split=true`、25 repeats、Numba=2、workqueue、BLAS=1、workers=1
+测量 default/high-T/stiff/high-kappa，产物为
+`docs/profile_numba_round_20260916_{default,highT,stiff,high_kappa}.json`。
+
+| regime | total median | tensor median | mean steps/channel |
+|---|---:|---:|---:|
+| default | 8.384 ms | 3.174 ms | 8187.4 |
+| high-T | 12.379 ms | 5.329 ms | 8143.9 |
+| stiff | 12.577 ms | 5.575 ms | 8229.6 |
+| high-kappa | 12.449 ms | 5.630 ms | 8043.2 |
+
+tensor solve/propagation remains the largest directly measured component；prepare、
+background and PCHIP 均明显较小。结论是下一候选必须减少真实 channel propagation
+work（例如经过独立 oracle 验证的 nonoscillatory Riccati/解析分支），不能再做
+prepare-layer 或 quadrature micro-optimization。
