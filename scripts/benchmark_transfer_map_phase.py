@@ -47,7 +47,7 @@ def magnus_linear_step(xh, yh, z0, z1, h):
         scale = math.sin(root) / root
         c = math.cos(root)
     else:
-        # The series keeps the transition through q=0 finite.
+        # 级数展开保证 q=0 附近的过渡保持有限。
         scale = 1.0 + q / 6.0 + q * q / 120.0
         c = 1.0 + q / 2.0 + q * q / 24.0
     return (c * xh + scale * (m00 * xh + m01 * yh),
