@@ -445,3 +445,5 @@
   不是可接受的主要优化对象。
 - profiling artifact 现包含 `commit` 字段；四份当前 SHA profile 已重生成并待随本轮
   provenance tooling 记录一起提交。
+- 后续复核确认正式 profile 必须显式 `kink_split=true`；已在 release HEAD 重生成四份
+  正式路径 artifact，替代此前 false-kink profile 的速度结论。

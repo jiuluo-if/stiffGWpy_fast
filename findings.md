@@ -497,3 +497,9 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
 - 为避免 profiling artifact 与源码脱钩，`scripts/profile_fast_breakdown.py` 已让 JSON
   写入 `commit`；在新工具 SHA `dce33d0ce874bafc36693dc873ec27c222cd1f54` 重跑四点，
   tensor-solve median 为 default/high-T/stiff/high-kappa `4.93/4.72/4.84/4.17 ms`。
+- 复核发现上述 profile 使用了 `kink_split=false`，不等同正式 fast benchmark；已在
+  release HEAD `abd3d042600a1cfd507ffdf8949eaeeb8c5f60ab` 以 `kink_split=true` 重跑，
+  正式路径 total/tensor median 为 default/high-T/stiff/high-kappa
+  `6.34/2.69/0.57/0.73`、`10.34/4.70/0.73/0.73`、`10.39/5.20/0.67/0.67`、
+  `10.21/5.08/0.71/0.71 ms`（分别为 total/tensor/prepare/expansion；prepare 在
+  exact-kink 路径由独立计时点不产生可比调用）。旧的 false-kink 结论作废。
