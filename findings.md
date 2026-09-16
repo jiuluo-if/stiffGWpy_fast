@@ -471,3 +471,21 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
 - 该 full-grid 对照给出的是 `z_tail=5` 下 Prüfer/Cartesian 的离散化交叉不确定度；
   tail 的绝对系统误差仍未被这四个点的 pairwise agreement 证明，不能把
   `2–5e-10` 直接当作完整 production error budget。
+
+## Fresh current-HEAD native tail A/B and production handoff test (2026-09-16)
+
+- 在同一当前 SHA、完整 76/77 native goal nodes、固定 affinity、Numba=20、
+  workqueue、BLAS=1、workers=1 下，重新比较 production `z_tail=5/6/7`；三份
+  benchmark artifact 为 `docs/benchmark_head_matrix_ztail5_round_20260916.json`、
+  `docs/benchmark_head_matrix_ztail6_round_20260916.json`、
+  `docs/benchmark_head_matrix_ztail7_round_20260916.json`。
+- production `DN_gw` 从 z=5 到 z=7 的相对变化仅约
+  `4.1e-6/1.0e-4/5.1e-6/5.2e-6/4.5e-6`
+  （default/low-T/high-T/stiff/high-kappa），而 warm median 升至约
+  `5.74/5.20/8.22/8.59/8.68 ms`（z=7，按同顺序）。
+- 与当前 SHA Prüfer/Cartesian z=7 deep-tail outer oracle 的 production DN 相对差为
+  `7.56e-4/1.03e-4/7.55e-4/7.60e-4/7.54e-4`；这表明主要差异不是 production
+  handoff 深度，而是 propagation/grid/solver model 对齐误差。
+- 决策：单纯把 production handoff 从 z=5 推到 z=6/7 为 `REJECTED`；精度收益
+  不足且速度退化，不能进入 production。下一轮应攻击 propagation/grid/model
+  alignment，并用 current-SHA deep oracle 重新验证。

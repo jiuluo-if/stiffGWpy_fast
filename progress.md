@@ -410,3 +410,28 @@
 | Error | Resolution |
 |---|---|
 | package gate 首次使用默认镜像时出现非 UTF-8 解码错误，构建工具未能完成 | 切换到官方 PyPI index 后重新执行 sdist、wheel、distribution verification 和 installed-wheel smoke，全部通过 |
+
+## Session: 2026-09-16 (current-HEAD native tail A/B)
+
+### Actions Taken
+
+- fetch 并确认远端 `fast_v0.2` 与本地 HEAD 均为 `16ea185c84f50f081a6a1c17e9c47e2380d9d67a`。
+- 重新运行 current-SHA full native-grid Prüfer/Cartesian tail nested A/B，覆盖
+  default、low-T、high-T、stiff、high-kappa 的 z=5/6/7；所有 artifact 记录
+  Numba=2、workqueue、BLAS=1、workers=1 与代码 SHA。
+- 重新运行 25-repeat production warm matrix；同时以 per-process 显式 `set_z_tail`
+  运行 production handoff A/B，避免 benchmark preset 覆盖环境变量造成假实验。
+
+### Test Results
+
+| Test | Result | Status |
+|---|---|---|
+| Prüfer/Cartesian native tail A/B | production-like oracle 的 z=5 到 z=7 DN 漂移约 low-T `1.4e-3`、其他点 `2.8–2.9e-3`；pairwise cross-oracle 差约 `1e-9` | PASS / TAIL SYSTEMATIC CONFIRMED |
+| Production z_tail 5/6/7 | DN handoff 变化仅 `4.1e-6/1.0e-4/5.1e-6/5.2e-6/4.5e-6`；z=7 warm median 约 `5.74/5.20/8.22/8.59/8.68 ms` | REJECTED FOR PROMOTION |
+| Fresh production matrix, z=5 | 25 repeats；default median/p95 `5.09/5.49 ms`；high-T/stiff/high-kappa median `6.90/6.57/6.09 ms`；0 failure | PASS / PERFORMANCE BASELINE |
+
+### Decision
+
+- handoff 深度不是当前 production DN 主要瓶颈；不改变 production z_tail。
+- 下一阶段转向 propagation/grid/model alignment，避免重复 fixed-step phase 与简单
+  z_tail 加深方向。
