@@ -447,3 +447,27 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
 - `F:\codex\stiffGWpy\stiffgwpy_fast\fast_sgwb.py`
 - `F:\codex\stiffGWpy\stiffgwpy_fast\stiff_SGWB.py`
 - `F:\codex\stiffGWpy\stiffgwpy_fast\reference.py`
+
+## Fresh current-HEAD phase-kernel feasibility spike (2026-09-16)
+
+- 重新 fetch 后确认本地 `codex/fast_v0.2`、远端 `fast/fast_v0.2` 和当前源码
+  HEAD 均为 `a1d701a5c9da8aa3a2132088e12c09fd011a8151`。
+- 现有 standalone Prüfer 在完整 76/77 native goal nodes、z_tail=5、
+  `NUMBA=2`、BLAS=1、reference workers=1 下重新对照 Cartesian DOP853：
+  `DN_gw` 相对差 default/high-T/stiff/high-kappa 为
+  `3.02e-10/2.53e-10/2.66e-10/4.66e-10`；outer 自洽差均约 `2–5e-10`，
+  无 numerical failure。这是当前 SHA 的独立 Oracle 认证，不复用旧 SHA 的数值结论。
+- 可删除的 Numba Prüfer propagation spike 以相同 `j0/z0/Phi/S2` 数据流测试：
+  固定步 RK4 的纯 propagation warm median 为
+  `2.41/2.31/2.41/2.33 ms`（default/high-T/stiff/high-kappa，25 repeats）；
+  相对同 handoff DOP853 的 amplitude 最大误差为
+  `1.74%/0.97%/1.48%/2.37%`，phase 最大误差为
+  `0.0136/0.0181/0.0082/0.0103 rad`。相对同一 production Cartesian step
+  的 amplitude 仍有 `0.74%–1.48%` 偏差，未达到生产精度或复杂度 gate。
+- 决策：固定步 midpoint/RK4 phase kernel 均 `REJECTED`，不接入 production API；
+  失败原因是当前 fixed-step Cartesian exact transfer 与 phase ODE 离散化的
+  amplitude 误差仍为百分比量级，且 kernel 没有稳定速度收益。后续若继续 phase
+  线，必须研究保持 exact transfer map 的 phase representation，而不是重复调 RK 阶数。
+- 该 full-grid 对照给出的是 `z_tail=5` 下 Prüfer/Cartesian 的离散化交叉不确定度；
+  tail 的绝对系统误差仍未被这四个点的 pairwise agreement 证明，不能把
+  `2–5e-10` 直接当作完整 production error budget。

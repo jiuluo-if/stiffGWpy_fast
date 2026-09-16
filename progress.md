@@ -375,3 +375,38 @@
 | 固定 profiler 首次用 `from scripts import profile_fast_breakdown` 导入失败 | `scripts` 无包初始化文件；改为把脚本目录加入 `sys.path` 后直接导入 |
 | 全仓 `ruff check stiffgwpy_fast scripts tests` 暴露 200+ 个既有 lint 错误 | 未对无关旧文件做大范围格式化；改为对本轮新增/修改 profiling scripts 做 scoped ruff，结果通过，并保留全仓门禁未通过事实 |
 | quadrature 比较脚本先导入 SciPy/NumPy 后才设置 `NUMBA_THREADING_LAYER`，实际 layer 为 `tbb` | 该次输出作废；已将环境设置移到数值库导入前，重新运行时强制验证 `workqueue` |
+
+## Session: 2026-09-16 (current-HEAD Prüfer kernel feasibility)
+
+### Actions Taken
+
+- fetch `fast/fast_v0.2` 并复核当前 HEAD、`progress.md`、`findings.md`、fresh
+  runtime matrix、outer-reuse A/B、最近 rejected experiments；确认无新的远端代码。
+- 以 2 threads、workqueue、BLAS=1、reference workers=1 重新运行完整 native-grid
+  Prüfer/Cartesian DOP853 对照，覆盖 default/high-T/stiff/high-kappa。
+- 创建并删除临时 Numba phase-kernel spike；先测试 midpoint，发现 crossing handoff
+  比较口径问题后改为 production 同一 `kend`，再测试 RK4，并补充同初值 DOP853
+  与同一 Cartesian exact-step 对照。
+
+### Test Results
+
+| Test | Result | Status |
+|---|---|---|
+| current-HEAD full-grid Prüfer vs Cartesian, z_tail=5 | 4 points, 76/77 native nodes；DN relative `3.02e-10/2.53e-10/2.66e-10/4.66e-10`；0 numerical failure；outer difference约 `2–5e-10` | PASS / ORACLE VERIFIED |
+| Numba phase RK4 propagation spike | 25-repeat warm median `2.41/2.31/2.41/2.33 ms`；handoff amplitude error `1.74%/0.97%/1.48%/2.37%`；phase `0.0136/0.0181/0.0082/0.0103 rad` | REJECTED |
+| clean canonical pytest | `159 passed, 6 deselected, 2 warnings` | PASS |
+| recent remote CI | run `34628009527`, HEAD `a1d701a5`, 9/9 success | PASS |
+
+### Decision
+
+- 固定步 midpoint/RK4 Prüfer kernel 不进入 production；其百分比 amplitude 偏差
+  与无稳定 speedup 不满足 acceptance criteria。当前正式 fast 行为未改变，未产生
+  可推送的代码突破。
+- 当前最高价值后续实验是 exact Cartesian transfer map 的 phase-coordinate
+  重写或 nonoscillatory Riccati phase-function，而不是继续调 fixed-step RK 阶数。
+
+### Errors
+
+| Error | Resolution |
+|---|---|
+| package gate 首次使用默认镜像时出现非 UTF-8 解码错误，构建工具未能完成 | 切换到官方 PyPI index 后重新执行 sdist、wheel、distribution verification 和 installed-wheel smoke，全部通过 |
