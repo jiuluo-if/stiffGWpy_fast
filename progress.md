@@ -435,3 +435,13 @@
 - handoff 深度不是当前 production DN 主要瓶颈；不改变 production z_tail。
 - 下一阶段转向 propagation/grid/model alignment，避免重复 fixed-step phase 与简单
   z_tail 加深方向。
+
+### Fresh breakdown profile
+
+- 当前 SHA 四点 7-repeat profile 的 tensor-solve kernel median 为
+  default/high-T/stiff/high-kappa `4.57/4.36/4.75/4.52 ms`；kernel prepare
+  `1.37/1.12/1.39/1.08 ms`；PCHIP `0.13/0.12/0.13/0.13 ms`。
+- 结论：speed hotspot 已定位到真实 tensor solve/传播路径；frequency quadrature
+  不是可接受的主要优化对象。
+- profiling artifact 现包含 `commit` 字段；四份当前 SHA profile 已重生成并待随本轮
+  provenance tooling 记录一起提交。

@@ -489,3 +489,11 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
 - 决策：单纯把 production handoff 从 z=5 推到 z=6/7 为 `REJECTED`；精度收益
   不足且速度退化，不能进入 production。下一轮应攻击 propagation/grid/model
   alignment，并用 current-SHA deep oracle 重新验证。
+- current-SHA 7-repeat breakdown（Numba=2、workqueue、BLAS=1）显示 median
+  `tensor_solve_kernel` 为 `4.36–4.75 ms`，约占 `8.75–10.21 ms` profile total；
+  `kernel_prepare` 约 `1.08–1.39 ms`，expansion 约 `0.66–0.77 ms`，而 PCHIP
+  仅约 `0.12–0.13 ms`。速度线最高价值目标因此是减少真实 tensor solve/传播复杂度，
+  不是继续优化 quadrature。
+- 为避免 profiling artifact 与源码脱钩，`scripts/profile_fast_breakdown.py` 已让 JSON
+  写入 `commit`；在新工具 SHA `dce33d0ce874bafc36693dc873ec27c222cd1f54` 重跑四点，
+  tensor-solve median 为 default/high-T/stiff/high-kappa `4.93/4.72/4.84/4.17 ms`。
