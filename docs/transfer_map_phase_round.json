@@ -1,0 +1,1028 @@
+{
+  "schema_version": 1,
+  "generated_commit": "d6aef07dc3890032ab2687b991c494714b774044",
+  "z_tail": 5.0,
+  "rtol": 1e-09,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "summary": {
+    "tail_mode_count": 35,
+    "max_candidate_vs_baseline_amplitude_rel": 6.8021133362964875e-06,
+    "max_candidate_vs_baseline_phase_abs": 0.0004228770804186599,
+    "candidate_amplitude_oracle_better_count": 31
+  },
+  "runtime_ab": [
+    {
+      "point": "default",
+      "candidate": false,
+      "repeats": 25,
+      "median_ms": 2.5606999988667667,
+      "p95_ms": 3.0067199972108933
+    },
+    {
+      "point": "default",
+      "candidate": true,
+      "repeats": 25,
+      "median_ms": 45.523900000262074,
+      "p95_ms": 52.88871999946422
+    },
+    {
+      "point": "lowT",
+      "candidate": false,
+      "repeats": 25,
+      "median_ms": 2.5776000002224464,
+      "p95_ms": 2.663780000875704
+    },
+    {
+      "point": "lowT",
+      "candidate": true,
+      "repeats": 25,
+      "median_ms": 49.605100000917446,
+      "p95_ms": 58.682620000763556
+    },
+    {
+      "point": "highT",
+      "candidate": false,
+      "repeats": 25,
+      "median_ms": 3.0205999973986764,
+      "p95_ms": 4.209820000687614
+    },
+    {
+      "point": "highT",
+      "candidate": true,
+      "repeats": 25,
+      "median_ms": 53.140500000154134,
+      "p95_ms": 65.61318000167375
+    },
+    {
+      "point": "stiff",
+      "candidate": false,
+      "repeats": 25,
+      "median_ms": 2.6500000021769665,
+      "p95_ms": 3.8143000012496464
+    },
+    {
+      "point": "stiff",
+      "candidate": true,
+      "repeats": 25,
+      "median_ms": 47.31010000250535,
+      "p95_ms": 57.71934000003966
+    },
+    {
+      "point": "high_kappa",
+      "candidate": false,
+      "repeats": 25,
+      "median_ms": 2.751400003035087,
+      "p95_ms": 3.787679999368265
+    },
+    {
+      "point": "high_kappa",
+      "candidate": true,
+      "repeats": 25,
+      "median_ms": 45.92930000217166,
+      "p95_ms": 72.39112000024758
+    }
+  ],
+  "rows": [
+    {
+      "point": "default",
+      "frequency": -18.459378758443304,
+      "used_tail": false,
+      "baseline_amplitude_rel_to_oracle": 34161.86309503722,
+      "candidate_amplitude_rel_to_oracle": 34161.79728565318,
+      "candidate_vs_baseline_amplitude_rel": 1.9263427616716515e-06,
+      "baseline_phase_abs_to_oracle": 3.538449844242564e-06,
+      "candidate_phase_abs_to_oracle": 2.9153847901364216e-06,
+      "candidate_vs_baseline_phase_abs": 6.230650541061422e-07,
+      "baseline": {
+        "amplitude_handoff": 9223.856047157,
+        "phase_handoff": -0.6490237391011205,
+        "last_z": 2.1923867983275613e-05,
+        "k": 13763
+      },
+      "candidate": {
+        "amplitude_handoff": 9223.838278848669,
+        "phase_handoff": -0.6490243621661747,
+        "last_z": 2.1923867983275613e-05,
+        "k": 13763
+      }
+    },
+    {
+      "point": "default",
+      "frequency": -14.4620120931128,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 415.6260007038339,
+      "candidate_amplitude_rel_to_oracle": 415.62457891112035,
+      "candidate_vs_baseline_amplitude_rel": 3.412635579989805e-06,
+      "baseline_phase_abs_to_oracle": 0.5460610810216979,
+      "candidate_phase_abs_to_oracle": 0.5462618198083466,
+      "candidate_vs_baseline_phase_abs": 0.00020073878664872424,
+      "baseline": {
+        "amplitude_handoff": 231.94693239636874,
+        "phase_handoff": -1.8848353919942502,
+        "last_z": 4.998917267506819,
+        "k": 12041
+      },
+      "candidate": {
+        "amplitude_handoff": 231.94614084601457,
+        "phase_handoff": -1.885036130780899,
+        "last_z": 4.998917267506819,
+        "k": 12041
+      }
+    },
+    {
+      "point": "default",
+      "frequency": -10.04386998932646,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 327.8140004074332,
+      "candidate_amplitude_rel_to_oracle": 327.81352625541876,
+      "candidate_vs_baseline_amplitude_rel": 1.4420067692297384e-06,
+      "baseline_phase_abs_to_oracle": 0.6276289056700535,
+      "candidate_phase_abs_to_oracle": 0.627835836380764,
+      "candidate_vs_baseline_phase_abs": 0.00020693071071054003,
+      "baseline": {
+        "amplitude_handoff": 211.38579877750837,
+        "phase_handoff": 0.2397377948874102,
+        "last_z": 4.999197167624352,
+        "k": 9958
+      },
+      "candidate": {
+        "amplitude_handoff": 211.3854939577556,
+        "phase_handoff": 0.23953086417669966,
+        "last_z": 4.999197167624352,
+        "k": 9958
+      }
+    },
+    {
+      "point": "default",
+      "frequency": -5.6257278855401145,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 605.4905240708994,
+      "candidate_amplitude_rel_to_oracle": 605.487813408828,
+      "candidate_vs_baseline_amplitude_rel": 4.469421967585578e-06,
+      "baseline_phase_abs_to_oracle": 0.6510082353853677,
+      "candidate_phase_abs_to_oracle": 0.6514219536702022,
+      "candidate_vs_baseline_phase_abs": 0.0004137182848344967,
+      "baseline": {
+        "amplitude_handoff": 5660.014399745997,
+        "phase_handoff": -1.9667643967552941,
+        "last_z": 4.998842199058629,
+        "k": 8047
+      },
+      "candidate": {
+        "amplitude_handoff": 5659.989102753302,
+        "phase_handoff": -1.9671781150401286,
+        "last_z": 4.998842199058629,
+        "k": 8047
+      }
+    },
+    {
+      "point": "default",
+      "frequency": -1.5231673605956528,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 65662.4619690627,
+      "candidate_amplitude_rel_to_oracle": 65662.32331261369,
+      "candidate_vs_baseline_amplitude_rel": 2.1116225803948385e-06,
+      "baseline_phase_abs_to_oracle": 0.0236438682743616,
+      "candidate_phase_abs_to_oracle": 0.02406248730244931,
+      "candidate_vs_baseline_phase_abs": 0.0004186190280877078,
+      "baseline": {
+        "amplitude_handoff": 639635.9527337927,
+        "phase_handoff": 1.9537683754298336,
+        "last_z": 4.990322016450644,
+        "k": 7093
+      },
+      "candidate": {
+        "amplitude_handoff": 639634.6020640717,
+        "phase_handoff": 1.953349756401746,
+        "last_z": 4.990322016450644,
+        "k": 7093
+      }
+    },
+    {
+      "point": "default",
+      "frequency": 0.2767656568807144,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 520382.17060748045,
+      "candidate_amplitude_rel_to_oracle": 520381.4491254476,
+      "candidate_vs_baseline_amplitude_rel": 1.38644382379598e-06,
+      "baseline_phase_abs_to_oracle": 0.35918157521371175,
+      "candidate_phase_abs_to_oracle": 0.3595983385339836,
+      "candidate_vs_baseline_phase_abs": 0.00041676332027185126,
+      "baseline": {
+        "amplitude_handoff": 2462771.2142169685,
+        "phase_handoff": 1.3224221212698313,
+        "last_z": 4.99482608439455,
+        "k": 6679
+      },
+      "candidate": {
+        "amplitude_handoff": 2462767.799723029,
+        "phase_handoff": 1.3220053579495594,
+        "last_z": 4.99482608439455,
+        "k": 6679
+      }
+    },
+    {
+      "point": "default",
+      "frequency": 2.4741993047348485,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 3874700.5878871647,
+      "candidate_amplitude_rel_to_oracle": 3874696.5337087545,
+      "candidate_vs_baseline_amplitude_rel": 1.0463201664767882e-06,
+      "baseline_phase_abs_to_oracle": 0.5516817106685294,
+      "candidate_phase_abs_to_oracle": 0.5517875194977981,
+      "candidate_vs_baseline_phase_abs": 0.00010580882926869428,
+      "baseline": {
+        "amplitude_handoff": 13850.265321310631,
+        "phase_handoff": 1.0699164360165756,
+        "last_z": 4.999351853092217,
+        "k": 6069
+      },
+      "candidate": {
+        "amplitude_handoff": 13850.250829498715,
+        "phase_handoff": 1.069810627187307,
+        "last_z": 4.999351853092217,
+        "k": 6069
+      }
+    },
+    {
+      "point": "default",
+      "frequency": 6.892341408521191,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 147.41304399194712,
+      "candidate_amplitude_rel_to_oracle": 147.41304083000134,
+      "candidate_vs_baseline_amplitude_rel": 2.1305039540732708e-08,
+      "baseline_phase_abs_to_oracle": 3.421376984458213e-05,
+      "candidate_phase_abs_to_oracle": 7.001693863717406e-05,
+      "candidate_vs_baseline_phase_abs": 0.0001042307084817562,
+      "baseline": {
+        "amplitude_handoff": 1.077418642847704,
+        "phase_handoff": 1.885062517208375,
+        "last_z": 4.997500000000002,
+        "k": 1999
+      },
+      "candidate": {
+        "amplitude_handoff": 1.0774186198932572,
+        "phase_handoff": 1.8849582864998933,
+        "last_z": 4.997500000000002,
+        "k": 1999
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": -18.459378758443304,
+      "used_tail": false,
+      "baseline_amplitude_rel_to_oracle": 1614844411.5061243,
+      "candidate_amplitude_rel_to_oracle": 1614841297.5825658,
+      "candidate_vs_baseline_amplitude_rel": 1.9283118139796493e-06,
+      "baseline_phase_abs_to_oracle": 3.5977827345101687e-06,
+      "candidate_phase_abs_to_oracle": 2.9744660331454398e-06,
+      "candidate_vs_baseline_phase_abs": 6.233167013647289e-07,
+      "baseline": {
+        "amplitude_handoff": 436002007.3174329,
+        "phase_handoff": -0.6490237606921399,
+        "last_z": 2.1870860592798635e-05,
+        "k": 14840
+      },
+      "candidate": {
+        "amplitude_handoff": 436001166.56961125,
+        "phase_handoff": -0.6490243840088412,
+        "last_z": 2.1870860592798635e-05,
+        "k": 14840
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": -14.853430897453727,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 27494820.346431777,
+      "candidate_amplitude_rel_to_oracle": 27494790.316645026,
+      "candidate_vs_baseline_amplitude_rel": 1.0921979224206774e-06,
+      "baseline_phase_abs_to_oracle": 0.34009940501432445,
+      "candidate_phase_abs_to_oracle": 0.340283884550141,
+      "candidate_vs_baseline_phase_abs": 0.0001844795358166007,
+      "baseline": {
+        "amplitude_handoff": 10997003.117906518,
+        "phase_handoff": 0.10200625770852065,
+        "last_z": 4.998201399185852,
+        "k": 13363
+      },
+      "candidate": {
+        "amplitude_handoff": 10996991.10700256,
+        "phase_handoff": 0.10182177817270405,
+        "last_z": 4.998201399185852,
+        "k": 13363
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": -10.823253876347726,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 15556677.10278186,
+      "candidate_amplitude_rel_to_oracle": 15556703.43856544,
+      "candidate_vs_baseline_amplitude_rel": 1.6928924932027394e-06,
+      "baseline_phase_abs_to_oracle": 5.8580628108176,
+      "candidate_phase_abs_to_oracle": 5.857853035441519,
+      "candidate_vs_baseline_phase_abs": 0.0002097753760814669,
+      "baseline": {
+        "amplitude_handoff": 10031890.575562168,
+        "phase_handoff": 3.019955152128757,
+        "last_z": 4.997857588406141,
+        "k": 11393
+      },
+      "candidate": {
+        "amplitude_handoff": 10031907.558474416,
+        "phase_handoff": 3.0197453767526756,
+        "last_z": 4.997857588406141,
+        "k": 11393
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": -6.7930768552417256,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 14073875.596958859,
+      "candidate_amplitude_rel_to_oracle": 14073854.670274876,
+      "candidate_vs_baseline_amplitude_rel": 1.4869168305520094e-06,
+      "baseline_phase_abs_to_oracle": 0.11882145713771858,
+      "candidate_phase_abs_to_oracle": 0.11913402512059895,
+      "candidate_vs_baseline_phase_abs": 0.000312567982880374,
+      "baseline": {
+        "amplitude_handoff": 70018106.52224089,
+        "phase_handoff": 0.23093411902459537,
+        "last_z": 4.995671463994569,
+        "k": 9517
+      },
+      "candidate": {
+        "amplitude_handoff": 70018002.41113986,
+        "phase_handoff": 0.230621551041715,
+        "last_z": 4.995671463994569,
+        "k": 9517
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": -4.772815975605057,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 73896590.4904416,
+      "candidate_amplitude_rel_to_oracle": 73896436.19554101,
+      "candidate_vs_baseline_amplitude_rel": 2.087983998690605e-06,
+      "baseline_phase_abs_to_oracle": 0.27767694680844746,
+      "candidate_phase_abs_to_oracle": 0.278096989976244,
+      "candidate_vs_baseline_phase_abs": 0.0004200431677965355,
+      "baseline": {
+        "amplitude_handoff": 619557452.1789387,
+        "phase_handoff": 1.268653022321607,
+        "last_z": 4.993795857935108,
+        "k": 8919
+      },
+      "candidate": {
+        "amplitude_handoff": 619556158.5528923,
+        "phase_handoff": 1.2682329791538105,
+        "last_z": 4.993795857935108,
+        "k": 8919
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": -3.5053008643394623,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 316749414.0364302,
+      "candidate_amplitude_rel_to_oracle": 316747259.47100985,
+      "candidate_vs_baseline_amplitude_rel": 6.8021133362964875e-06,
+      "baseline_phase_abs_to_oracle": 0.1616898513359979,
+      "candidate_phase_abs_to_oracle": 0.16206810034944463,
+      "candidate_vs_baseline_phase_abs": 0.0003782490134467409,
+      "baseline": {
+        "amplitude_handoff": 60612474.899562754,
+        "phase_handoff": 1.0276924940372951,
+        "last_z": 4.992170782464065,
+        "k": 8626
+      },
+      "candidate": {
+        "amplitude_handoff": 60612062.60663889,
+        "phase_handoff": 1.0273142450238484,
+        "last_z": 4.992170782464065,
+        "k": 8626
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": 0.5248761567665374,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 1590369.8627180408,
+      "candidate_amplitude_rel_to_oracle": 1590367.5352412597,
+      "candidate_vs_baseline_amplitude_rel": 1.463480522434648e-06,
+      "baseline_phase_abs_to_oracle": 0.051739538659116846,
+      "candidate_phase_abs_to_oracle": 0.05184491274218073,
+      "candidate_vs_baseline_phase_abs": 0.00010537408306388052,
+      "baseline": {
+        "amplitude_handoff": 5684.839984946045,
+        "phase_handoff": 1.5698586081079282,
+        "last_z": 4.997674469074172,
+        "k": 5711
+      },
+      "candidate": {
+        "amplitude_handoff": 5684.831665293454,
+        "phase_handoff": 1.5697532340248643,
+        "last_z": 4.997674469074172,
+        "k": 5711
+      }
+    },
+    {
+      "point": "lowT",
+      "frequency": 4.555053177872537,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 147.41304384984784,
+      "candidate_amplitude_rel_to_oracle": 147.41304068790208,
+      "candidate_vs_baseline_amplitude_rel": 2.1305039540732708e-08,
+      "baseline_phase_abs_to_oracle": 3.421345634579964e-05,
+      "candidate_phase_abs_to_oracle": 7.001725213595655e-05,
+      "candidate_vs_baseline_phase_abs": 0.0001042307084817562,
+      "baseline": {
+        "amplitude_handoff": 1.077418642847704,
+        "phase_handoff": 1.885062517208375,
+        "last_z": 4.997500000000002,
+        "k": 1999
+      },
+      "candidate": {
+        "amplitude_handoff": 1.0774186198932572,
+        "phase_handoff": 1.8849582864998933,
+        "last_z": 4.997500000000002,
+        "k": 1999
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": -18.459378758443304,
+      "used_tail": false,
+      "baseline_amplitude_rel_to_oracle": 1364.1683484399393,
+      "candidate_amplitude_rel_to_oracle": 1364.165718414229,
+      "candidate_vs_baseline_amplitude_rel": 1.9265211600610713e-06,
+      "baseline_phase_abs_to_oracle": 3.557792482178357e-06,
+      "candidate_phase_abs_to_oracle": 2.934711199720219e-06,
+      "candidate_vs_baseline_phase_abs": 6.230812824581378e-07,
+      "baseline": {
+        "amplitude_handoff": 368.6000008734397,
+        "phase_handoff": -0.6490217119025427,
+        "last_z": 2.182764171720919e-05,
+        "k": 13441
+      },
+      "candidate": {
+        "amplitude_handoff": 368.5992907577384,
+        "phase_handoff": -0.6490223349838251,
+        "last_z": 2.182764171720919e-05,
+        "k": 13441
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": -14.36266387966522,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 14.929355628590912,
+      "candidate_amplitude_rel_to_oracle": 14.929307017387968,
+      "candidate_vs_baseline_amplitude_rel": 3.051674159169392e-06,
+      "baseline_phase_abs_to_oracle": 0.475588496372483,
+      "candidate_phase_abs_to_oracle": 0.4757887604962028,
+      "candidate_vs_baseline_phase_abs": 0.0002002641237197622,
+      "baseline": {
+        "amplitude_handoff": 9.332702121795094,
+        "phase_handoff": 1.8105849059000836,
+        "last_z": 4.998492056192234,
+        "k": 11664
+      },
+      "candidate": {
+        "amplitude_handoff": 9.332673641429194,
+        "phase_handoff": 1.8103846417763638,
+        "last_z": 4.998492056192234,
+        "k": 11664
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": -9.74072914463354,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 12.055179909986016,
+      "candidate_amplitude_rel_to_oracle": 12.055153917238234,
+      "candidate_vs_baseline_amplitude_rel": 1.9909911590680564e-06,
+      "baseline_phase_abs_to_oracle": 0.5187806168586286,
+      "candidate_phase_abs_to_oracle": 0.5189860543879916,
+      "candidate_vs_baseline_phase_abs": 0.00020543752936297288,
+      "baseline": {
+        "amplitude_handoff": 8.490232384904353,
+        "phase_handoff": -1.8012538942046536,
+        "last_z": 4.99852343711003,
+        "k": 9496
+      },
+      "candidate": {
+        "amplitude_handoff": 8.490215480926736,
+        "phase_handoff": -1.8014593317340166,
+        "last_z": 4.99852343711003,
+        "k": 9496
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": -5.223838380852577,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 36.70250795542782,
+      "candidate_amplitude_rel_to_oracle": 36.702515578061266,
+      "candidate_vs_baseline_amplitude_rel": 2.0217841901992622e-07,
+      "baseline_phase_abs_to_oracle": 0.5671131051104743,
+      "candidate_phase_abs_to_oracle": 0.5675315075655131,
+      "candidate_vs_baseline_phase_abs": 0.00041840245503882434,
+      "baseline": {
+        "amplitude_handoff": 359.5617204971011,
+        "phase_handoff": 0.20887516239947515,
+        "last_z": 4.997654778845998,
+        "k": 7627
+      },
+      "candidate": {
+        "amplitude_handoff": 359.56179319272127,
+        "phase_handoff": 0.20845675994443633,
+        "last_z": 4.997654778845998,
+        "k": 7627
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": -1.127123502074495,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 4135.786305824359,
+      "candidate_amplitude_rel_to_oracle": 4135.774592422729,
+      "candidate_vs_baseline_amplitude_rel": 2.831522047244515e-06,
+      "baseline_phase_abs_to_oracle": 0.15628339503749866,
+      "candidate_phase_abs_to_oracle": 0.15670310515977315,
+      "candidate_vs_baseline_phase_abs": 0.0004197101222744859,
+      "baseline": {
+        "amplitude_handoff": 40309.271719732315,
+        "phase_handoff": 1.8212978878412522,
+        "last_z": 4.9921143643473656,
+        "k": 6680
+      },
+      "candidate": {
+        "amplitude_handoff": 40309.15758314073,
+        "phase_handoff": 1.8208781777189778,
+        "last_z": 4.9921143643473656,
+        "k": 6680
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": 1.4251350634053601,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 77866.81696533489,
+      "candidate_amplitude_rel_to_oracle": 77866.75210699177,
+      "candidate_vs_baseline_amplitude_rel": 8.329287456295283e-07,
+      "baseline_phase_abs_to_oracle": 0.6639131793085911,
+      "candidate_phase_abs_to_oracle": 0.6643340744817097,
+      "candidate_vs_baseline_phase_abs": 0.00042089517311860725,
+      "baseline": {
+        "amplitude_handoff": 594260.0454128949,
+        "phase_handoff": 1.238964068125749,
+        "last_z": 4.998908982482378,
+        "k": 6093
+      },
+      "candidate": {
+        "amplitude_handoff": 594259.5504366207,
+        "phase_handoff": 1.2385431729526304,
+        "last_z": 4.998908982482378,
+        "k": 6093
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": 3.074635347954308,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 521598.9370487975,
+      "candidate_amplitude_rel_to_oracle": 521596.3919995313,
+      "candidate_vs_baseline_amplitude_rel": 4.879312832388991e-06,
+      "baseline_phase_abs_to_oracle": 0.5260442451835929,
+      "candidate_phase_abs_to_oracle": 0.526306989020566,
+      "candidate_vs_baseline_phase_abs": 0.00026274383697311166,
+      "baseline": {
+        "amplitude_handoff": 17376.151528189774,
+        "phase_handoff": -2.418624288254958,
+        "last_z": 4.997023754042327,
+        "k": 5713
+      },
+      "candidate": {
+        "amplitude_handoff": 17376.066744510645,
+        "phase_handoff": -2.418887032091931,
+        "last_z": 4.997023754042327,
+        "k": 5713
+      }
+    },
+    {
+      "point": "highT",
+      "frequency": 7.59152611173527,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 147.41304399194775,
+      "candidate_amplitude_rel_to_oracle": 147.41304083000173,
+      "candidate_vs_baseline_amplitude_rel": 2.1305040983358702e-08,
+      "baseline_phase_abs_to_oracle": 3.421377041457063e-05,
+      "candidate_phase_abs_to_oracle": 7.00169380698501e-05,
+      "candidate_vs_baseline_phase_abs": 0.00010423070848442073,
+      "baseline": {
+        "amplitude_handoff": 1.0774186428477084,
+        "phase_handoff": 1.885062517208945,
+        "last_z": 4.9975000000000005,
+        "k": 1999
+      },
+      "candidate": {
+        "amplitude_handoff": 1.07741861989326,
+        "phase_handoff": 1.8849582865004606,
+        "last_z": 4.9975000000000005,
+        "k": 1999
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": -18.459378758443304,
+      "used_tail": false,
+      "baseline_amplitude_rel_to_oracle": 50143.27139923746,
+      "candidate_amplitude_rel_to_oracle": 50143.17477059401,
+      "candidate_vs_baseline_amplitude_rel": 1.9270126129671265e-06,
+      "baseline_phase_abs_to_oracle": 3.6121806007427537e-06,
+      "candidate_phase_abs_to_oracle": 2.989035413958341e-06,
+      "candidate_vs_baseline_phase_abs": 6.231451867844129e-07,
+      "baseline": {
+        "amplitude_handoff": 13538.86144507577,
+        "phase_handoff": -0.6490231721144081,
+        "last_z": 2.1814134584019484e-05,
+        "k": 13917
+      },
+      "candidate": {
+        "amplitude_handoff": 13538.835355519,
+        "phase_handoff": -0.6490237952595949,
+        "last_z": 2.1814134584019484e-05,
+        "k": 13917
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": -14.452359338286207,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 608.6761314082338,
+      "candidate_amplitude_rel_to_oracle": 608.6740229716493,
+      "candidate_vs_baseline_amplitude_rel": 3.4582895344130835e-06,
+      "baseline_phase_abs_to_oracle": 0.43398430028258084,
+      "candidate_phase_abs_to_oracle": 0.4341839591112945,
+      "candidate_vs_baseline_phase_abs": 0.0001996588287136447,
+      "baseline": {
+        "amplitude_handoff": 341.83579393986787,
+        "phase_handoff": -1.378498333514092,
+        "last_z": 4.998314266891498,
+        "k": 12189
+      },
+      "candidate": {
+        "amplitude_handoff": 341.8346117727192,
+        "phase_handoff": -1.3786979923428055,
+        "last_z": 4.998314266891498,
+        "k": 12189
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": -9.918100520740019,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 481.3748618827652,
+      "candidate_amplitude_rel_to_oracle": 481.3743273434921,
+      "candidate_vs_baseline_amplitude_rel": 1.1081408160221167e-06,
+      "baseline_phase_abs_to_oracle": 0.12686236106306398,
+      "candidate_phase_abs_to_oracle": 0.12706731270097327,
+      "candidate_vs_baseline_phase_abs": 0.00020495163790926196,
+      "baseline": {
+        "amplitude_handoff": 311.5757714331907,
+        "phase_handoff": -0.21617447957478822,
+        "last_z": 4.995871642818514,
+        "k": 10053
+      },
+      "candidate": {
+        "amplitude_handoff": 311.5754261633611,
+        "phase_handoff": -0.21637943121269748,
+        "last_z": 4.995871642818514,
+        "k": 10053
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": -5.489289582671647,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 1032.7929951233132,
+      "candidate_amplitude_rel_to_oracle": 1032.7905256052943,
+      "candidate_vs_baseline_amplitude_rel": 2.388793530663078e-06,
+      "baseline_phase_abs_to_oracle": 0.19390075841050441,
+      "candidate_phase_abs_to_oracle": 0.19431347532142568,
+      "candidate_vs_baseline_phase_abs": 0.0004127169109212625,
+      "baseline": {
+        "amplitude_handoff": 9772.22044220632,
+        "phase_handoff": -0.5396007827230187,
+        "last_z": 4.993080783380577,
+        "k": 8166
+      },
+      "candidate": {
+        "amplitude_handoff": 9772.197098389348,
+        "phase_handoff": -0.54001349963394,
+        "last_z": 4.993080783380577,
+        "k": 8166
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": -1.482270162514551,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 100603.18990822905,
+      "candidate_amplitude_rel_to_oracle": 100602.92115683405,
+      "candidate_vs_baseline_amplitude_rel": 2.6713737791019923e-06,
+      "baseline_phase_abs_to_oracle": 0.7028249767570456,
+      "candidate_phase_abs_to_oracle": 0.7032478538374642,
+      "candidate_vs_baseline_phase_abs": 0.0004228770804186599,
+      "baseline": {
+        "amplitude_handoff": 979939.526514246,
+        "phase_handoff": 1.2745935076994968,
+        "last_z": 4.999434978185498,
+        "k": 7238
+      },
+      "candidate": {
+        "amplitude_handoff": 979936.9087294898,
+        "phase_handoff": 1.274170630619078,
+        "last_z": 4.999434978185498,
+        "k": 7238
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": 0.27676565688203536,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 762624.8453795641,
+      "candidate_amplitude_rel_to_oracle": 762625.128901194,
+      "candidate_vs_baseline_amplitude_rel": 3.7177028753949544e-07,
+      "baseline_phase_abs_to_oracle": 0.7305346989326048,
+      "candidate_phase_abs_to_oracle": 0.730952149676048,
+      "candidate_vs_baseline_phase_abs": 0.0004174507434432373,
+      "baseline": {
+        "amplitude_handoff": 3609211.6204999113,
+        "phase_handoff": 0.9510689874434114,
+        "last_z": 4.999769355015692,
+        "k": 6833
+      },
+      "candidate": {
+        "amplitude_handoff": 3609212.962297553,
+        "phase_handoff": 0.9506515366999682,
+        "last_z": 4.999769355015692,
+        "k": 6833
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": 2.6301971371203647,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 3969603.813695214,
+      "candidate_amplitude_rel_to_oracle": 3969599.9109808495,
+      "candidate_vs_baseline_amplitude_rel": 9.831493430421445e-07,
+      "baseline_phase_abs_to_oracle": 0.6815848280509446,
+      "candidate_phase_abs_to_oracle": 0.6816907663976653,
+      "candidate_vs_baseline_phase_abs": 0.00010593834672079083,
+      "baseline": {
+        "amplitude_handoff": 14189.500432288443,
+        "phase_handoff": 0.9400133185959386,
+        "last_z": 4.999785954314789,
+        "k": 6079
+      },
+      "candidate": {
+        "amplitude_handoff": 14189.486481890415,
+        "phase_handoff": 0.9399073802492178,
+        "last_z": 4.999785954314789,
+        "k": 6079
+      }
+    },
+    {
+      "point": "stiff",
+      "frequency": 7.059008075188736,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 146.74334753630714,
+      "candidate_amplitude_rel_to_oracle": 146.7433578666889,
+      "candidate_vs_baseline_amplitude_rel": 6.992112971772576e-08,
+      "baseline_phase_abs_to_oracle": 0.7434753527046023,
+      "candidate_phase_abs_to_oracle": 0.7435804389804117,
+      "candidate_vs_baseline_phase_abs": 0.00010508627580940733,
+      "baseline": {
+        "amplitude_handoff": 1.0725569175778233,
+        "phase_handoff": 1.1415529507339282,
+        "last_z": 4.999999999999996,
+        "k": 2000
+      },
+      "candidate": {
+        "amplitude_handoff": 1.0725569925722147,
+        "phase_handoff": 1.1414478644581187,
+        "last_z": 4.999999999999996,
+        "k": 2000
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": -18.459378758443304,
+      "used_tail": false,
+      "baseline_amplitude_rel_to_oracle": 1585.2471879477027,
+      "candidate_amplitude_rel_to_oracle": 1585.2441320578853,
+      "candidate_vs_baseline_amplitude_rel": 1.9264902978169094e-06,
+      "baseline_phase_abs_to_oracle": 3.5340763330227176e-06,
+      "candidate_phase_abs_to_oracle": 2.9110166614998434e-06,
+      "candidate_vs_baseline_phase_abs": 6.230596715228742e-07,
+      "baseline": {
+        "amplitude_handoff": 428.32542502536455,
+        "phase_handoff": -0.6490153961761189,
+        "last_z": 2.1544329761979952e-05,
+        "k": 13456
+      },
+      "candidate": {
+        "amplitude_handoff": 428.32459986058893,
+        "phase_handoff": -0.6490160192357904,
+        "last_z": 2.1544329761979952e-05,
+        "k": 13456
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": -14.351212416322431,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 17.626843678109896,
+      "candidate_amplitude_rel_to_oracle": 17.62681661939696,
+      "candidate_vs_baseline_amplitude_rel": 1.4526730027505707e-06,
+      "baseline_phase_abs_to_oracle": 0.08189710764319358,
+      "candidate_phase_abs_to_oracle": 0.08209786212981074,
+      "candidate_vs_baseline_phase_abs": 0.00020075448661716067,
+      "baseline": {
+        "amplitude_handoff": 10.975976314229479,
+        "phase_handoff": 2.715291051245845,
+        "last_z": 4.996238031986927,
+        "k": 11674
+      },
+      "candidate": {
+        "amplitude_handoff": 10.975960369725009,
+        "phase_handoff": 2.715090296759228,
+        "last_z": 4.996238031986927,
+        "k": 11674
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": -9.821695680137884,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 14.443385640313622,
+      "candidate_amplitude_rel_to_oracle": 14.443349619753393,
+      "candidate_vs_baseline_amplitude_rel": 2.3324263904840473e-06,
+      "baseline_phase_abs_to_oracle": 0.36897024328720474,
+      "candidate_phase_abs_to_oracle": 0.3691750165962584,
+      "candidate_vs_baseline_phase_abs": 0.00020477330905366298,
+      "baseline": {
+        "amplitude_handoff": 11.087053845132305,
+        "phase_handoff": -0.923076833560834,
+        "last_z": 4.997525779891369,
+        "k": 9551
+      },
+      "candidate": {
+        "amplitude_handoff": 11.087027985395324,
+        "phase_handoff": -0.9232816068698877,
+        "last_z": 4.997525779891369,
+        "k": 9551
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": -5.292178943953335,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 124.80797498284801,
+      "candidate_amplitude_rel_to_oracle": 124.80761647652935,
+      "candidate_vs_baseline_amplitude_rel": 2.8496311041352262e-06,
+      "baseline_phase_abs_to_oracle": 0.32214862757333007,
+      "candidate_phase_abs_to_oracle": 0.32256902342965676,
+      "candidate_vs_baseline_phase_abs": 0.00042039585632669407,
+      "baseline": {
+        "amplitude_handoff": 1221.488197660256,
+        "phase_handoff": 1.4571038567767822,
+        "last_z": 4.994368473027787,
+        "k": 7885
+      },
+      "candidate": {
+        "amplitude_handoff": 1221.4847168694946,
+        "phase_handoff": 1.4566834609204555,
+        "last_z": 4.994368473027787,
+        "k": 7885
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": -0.657324609252866,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 26102.949438150907,
+      "candidate_amplitude_rel_to_oracle": 26102.88161025244,
+      "candidate_vs_baseline_amplitude_rel": 2.59837687123229e-06,
+      "baseline_phase_abs_to_oracle": 0.1131505000603652,
+      "candidate_phase_abs_to_oracle": 0.1135698404169605,
+      "candidate_vs_baseline_phase_abs": 0.0004193403565952991,
+      "baseline": {
+        "amplitude_handoff": 254317.31487229676,
+        "phase_handoff": 1.8644790290832338,
+        "last_z": 4.991532126315107,
+        "k": 6817
+      },
+      "candidate": {
+        "amplitude_handoff": 254316.65406006784,
+        "phase_handoff": 1.8640596887266385,
+        "last_z": 4.991532126315107,
+        "k": 6817
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": 1.1517656565822412,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 208943.4302921341,
+      "candidate_amplitude_rel_to_oracle": 208943.40961467035,
+      "candidate_vs_baseline_amplitude_rel": 9.896154551562379e-08,
+      "baseline_phase_abs_to_oracle": 0.5298515803159043,
+      "candidate_phase_abs_to_oracle": 0.5302698575036107,
+      "candidate_vs_baseline_phase_abs": 0.0004182771877063729,
+      "baseline": {
+        "amplitude_handoff": 1338193.8447751733,
+        "phase_handoff": 1.303271710905766,
+        "last_z": 4.997116479605172,
+        "k": 6401
+      },
+      "candidate": {
+        "amplitude_handoff": 1338193.7123454423,
+        "phase_handoff": 1.3028534337180597,
+        "last_z": 4.997116479605172,
+        "k": 6401
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": 3.0294913388043243,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 1820896.8587372312,
+      "candidate_amplitude_rel_to_oracle": 1820894.9250984895,
+      "candidate_vs_baseline_amplitude_rel": 1.0619149957334086e-06,
+      "baseline_phase_abs_to_oracle": 0.055170809023668,
+      "candidate_phase_abs_to_oracle": 0.055329212400874184,
+      "candidate_vs_baseline_phase_abs": 0.00015840337720618436,
+      "baseline": {
+        "amplitude_handoff": 17898.077021172878,
+        "phase_handoff": -2.109781508047485,
+        "last_z": 4.99073964532064,
+        "k": 5968
+      },
+      "candidate": {
+        "amplitude_handoff": 17898.058014936494,
+        "phase_handoff": -2.109939911424691,
+        "last_z": 4.99073964532064,
+        "k": 5968
+      }
+    },
+    {
+      "point": "high_kappa",
+      "frequency": 7.559008074988872,
+      "used_tail": true,
+      "baseline_amplitude_rel_to_oracle": 147.41304399194712,
+      "candidate_amplitude_rel_to_oracle": 147.41304083000134,
+      "candidate_vs_baseline_amplitude_rel": 2.1305039540732708e-08,
+      "baseline_phase_abs_to_oracle": 3.421376984458213e-05,
+      "candidate_phase_abs_to_oracle": 7.001693863717406e-05,
+      "candidate_vs_baseline_phase_abs": 0.0001042307084817562,
+      "baseline": {
+        "amplitude_handoff": 1.077418642847704,
+        "phase_handoff": 1.885062517208375,
+        "last_z": 4.997500000000002,
+        "k": 1999
+      },
+      "candidate": {
+        "amplitude_handoff": 1.0774186198932572,
+        "phase_handoff": 1.8849582864998933,
+        "last_z": 4.997500000000002,
+        "k": 1999
+      }
+    }
+  ],
+  "semantics": "linear-z second-order Magnus map versus current midpoint map and Cartesian DOP853"
+}

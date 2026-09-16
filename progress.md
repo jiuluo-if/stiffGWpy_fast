@@ -471,3 +471,19 @@
 - 不改变 fast 默认 h；本轮没有 production algorithm change。
 - 最高价值方向仍是 exact Cartesian transfer-map phase representation 或 Riccati
   reduction，且必须直接验证 continuous-sigma model alignment。
+
+## Session: 2026-09-16 (linear-z Magnus transfer-map prototype)
+
+- 预注册并实现 standalone 二阶 Magnus map：每个 native step 对线性插值的 `z(N)`
+  构造无迹矩阵指数；当前 production midpoint map 保留作 baseline。
+- current SHA `d6aef07` artifact `docs/transfer_map_phase_round.json` 覆盖
+  5 个命名 regime、35 个 tail modes、z_tail=5、Cartesian DOP853 rtol=1e-9，
+  以及每个 regime 25-repeat runtime A/B；资源固定 Numba=2/workqueue/BLAS=1/
+  workers=1。
+- focused 对照：最大振幅变化 `6.80e-6`、最大相位变化 `4.23e-4 rad`，没有
+  10x 精度改善；baseline -> candidate median 分别为
+  `2.56->45.52`、`2.58->49.61`、`3.02->53.14`、`2.65->47.31`、
+  `2.75->45.93 ms`（default/low-T/high-T/stiff/high-kappa）。
+- 决策：`REJECTED FOR PRODUCTION`；未做 full-grid promotion，生产 fast 默认与
+  输出契约不变。下一实验必须转向能减少真实 tensor solve 的解析/Numba transfer
+  map 或 Riccati reduction，并同时测 model alignment。

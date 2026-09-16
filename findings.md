@@ -522,3 +522,36 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
 - 决策：h=.0075、h=.00625、h=.01 均 `REJECTED FOR PRODUCTION`；不为速度牺牲
   已有精度。下一步回到 exact transfer-map/减少 tensor solves，并修复 fast 与
   continuous-sigma 的 model-alignment 误差。
+
+## Linear-z Magnus transfer-map phase prototype (2026-09-16)
+
+### Hypothesis and scope
+
+在每个 native step 内把变换后的无迹传播矩阵 `A(z)` 按线性 `z(N)` 处理，使用
+二阶 Magnus transfer map，可能比当前 constant-midpoint map 减少传播/模型对齐误差，
+且不增加真实 tensor solve。原型保持 standalone/reference-only，验收标准见
+`docs/transfer_map_phase_assessment.md`。
+
+### Current-SHA evidence
+
+Artifact `docs/transfer_map_phase_round.json` 绑定 commit `d6aef07`，固定 Numba=2、
+workqueue、BLAS=1、reference workers=1，覆盖 default、low-T、high-T、stiff、
+high-kappa，每点 8 个 native representative modes、z_tail=5、Cartesian DOP853
+rtol=`1e-9`，并对每点进行 25 次 warm propagation A/B：
+
+- 35 个进入尾部的模式中，candidate 相对当前 midpoint 的最大振幅变化仅
+  `6.80e-6`，最大相位变化 `4.23e-4 rad`；31/35 个模式的振幅方向略有改善，
+  但没有达到预注册的 10x handoff 精度改善，更不能推断 full-grid DN 改善。
+- Python prototype propagation median (baseline -> candidate) 为
+  default `2.56 -> 45.52 ms`、low-T `2.58 -> 49.61 ms`、high-T
+  `3.02 -> 53.14 ms`、stiff `2.65 -> 47.31 ms`、high-kappa
+  `2.75 -> 45.93 ms`；candidate p95 同样显著变慢。
+- 所有模式均保持有限；本实验没有触发 physical guard，也没有改变 production
+  API 或默认路径。由于 focused accuracy gate 已失败，未进入 full-grid DN、
+  parameter-space promotion 或生产 kernel 接入阶段。
+
+### Decision
+
+`REJECTED FOR PRODUCTION`。本结果同时否定了“直接在 Python prototype 中用矩阵指数
+替换当前 map”这一实现路径；若未来继续 phase 线，必须先给出 Numba/解析闭式的
+低开销 transfer map，并证明其 full-grid DN 与 spectrum 收益，不能重复当前实验。
