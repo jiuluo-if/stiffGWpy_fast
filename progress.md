@@ -512,3 +512,13 @@
   8043.2`（按 default/high-T/stiff/high-kappa）。
 - tensor solve/propagation 是最大真实热点；prepare、background、PCHIP 均非首要
   瓶颈。下一项转向减少真实 channel propagation work 的 Riccati/解析分支。
+
+## Session: 2026-09-16 (assembly lower-bound profile)
+
+- 以 `PROFILE_ASSEMBLE=0` 做理论下界 profile，覆盖 default/high-T/stiff/high-kappa，
+  25 repeats、Numba=2/workqueue/BLAS=1；仅作速度诊断，不作数值输出。
+- total median 正式路径 -> no-assembly：`8.384->8.090`、`12.379->12.066`、
+  `12.577->12.291`、`12.449->11.988 ms`；tensor median：
+  `3.174->2.497`、`5.329->4.361`、`5.575->5.117`、`5.630->4.794 ms`。
+- total 收益仅 `2–4%`，排除 assembly 作为 10% 级优化方向；下一阶段仍需减少真实
+  propagation arithmetic/steps，转向有极点规避的 Riccati phase-function 原型。

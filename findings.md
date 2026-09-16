@@ -594,3 +594,16 @@ tensor solve/propagation remains the largest directly measured component；prepa
 background and PCHIP 均明显较小。结论是下一候选必须减少真实 channel propagation
 work（例如经过独立 oracle 验证的 nonoscillatory Riccati/解析分支），不能再做
 prepare-layer 或 quadrature micro-optimization。
+
+## Assembly lower-bound profile (2026-09-16, HEAD 7230c6d)
+
+以 `PROFILE_ASSEMBLE=0` 关闭中间列 assembly，仅测 `solve_kernel` 的理论下界；该
+模式不产生可用于科学结论的完整输出。25-repeat、2 threads、workqueue、BLAS=1
+结果（total/tensor median）为 default `8.090/2.497 ms`、high-T `12.066/4.361 ms`、
+stiff `12.291/5.117 ms`、high-kappa `11.988/4.794 ms`，对应正式路径的
+`8.384/3.174`、`12.379/5.329`、`12.577/5.575`、`12.449/5.630 ms`。
+
+因此去除 assembly 的 total 收益仅约 `2–4%`，不可能达到速度突破门槛；tensor
+kernel 的主要成本仍是 propagation arithmetic/步数。产物为
+`docs/profile_noassemble_round_20260916_{default,highT,stiff,high_kappa}.json`，
+不进入 production。
