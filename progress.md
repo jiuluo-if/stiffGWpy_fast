@@ -769,3 +769,17 @@ Decision: `ACCEPTED FOR PRODUCTION`。该改动只缓存同一次 grid build 的
 Decision: `REJECTED FOR PRODUCTION / PROTOTYPE DEFERRED`。当前 eligible work 明显低于
 >30% tensor-work 优先门槛，且 low-T 独立边界更差；不重复旧 fixed-z radiation 原型。
 原始 artifact：`docs/analytic_branch_eligibility_round_20260917.json`。
+
+## Session: 2026-09-17 (unused Psi preparation buffer)
+
+- 当前 HEAD `f3e5f6b131daa639a036abb9fe04ca1e863171ca` fresh 16-thread profile 的稳定
+  preparation/kernel median 为 high-T `1.19/1.66 ms`、stiff `1.27/2.11 ms`、
+  high-kappa `1.14/1.74 ms`；继续检查 `prep_kernel` 的 allocation/copy 热点。
+- standalone 原型 `scripts/benchmark_prep_kernel_no_psi.py` 去掉未被正式 `solve_kernel`
+  消费的 `Psi` 写入和 buffer，仅比较其余七个输出数组。default/high-T/stiff/
+  high-kappa/low-T 各 50 次，所有比较数组逐位一致；准备层 candidate/baseline ratio
+  分别为 `0.9767/1.0230/1.0239/0.9556/1.0237`。
+
+Decision: `REJECTED FOR PRODUCTION`；最好 high-kappa 也只有约 `4.44%`，未达到稳定
+`>5%` runtime gate，且其余目标区间变慢。证据保留于
+`docs/prep_kernel_no_psi_round_20260917.json` 与四个 regime artifact；不进入正式代码。

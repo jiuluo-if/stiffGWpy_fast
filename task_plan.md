@@ -251,6 +251,11 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] 补齐 `j0/z0/tail/phase-path` 响应项，先以 standalone 形式和 Cartesian/Prüfer/WKB
   oracle 对照；未获得预算内 target-regime coverage 前不做 runtime A/B。
 
+- [x] standalone no-Psi preparation A/B：五个 regime 各 50 次逐位一致，但 target
+  best runtime gain 仅 `4.44%` 且其他目标点变慢，REJECTED，不改 production。
+- [ ] 下一候选继续从 fresh profile 的 allocation/copy 或 tensor-kernel 结构中寻找可证明
+  的收益；不得重复已拒绝的 Psi、derived-param、goal-grid 或固定 z 解析分支实验。
+
 - [x] 完成一阶绝热性触发 carrier prototype；`eps=3e-4` 精度可接受但无稳定 >5%
   runtime 收益，`eps>=1e-3` 误差或速度不合格，故 rejected。
 - [x] 定位并修复本轮 CI 根因：Ruff `I001` import order；Ruff、mypy 已复核通过。

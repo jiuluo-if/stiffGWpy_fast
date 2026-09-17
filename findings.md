@@ -896,3 +896,16 @@ sigma 是否落在常系数 radiation (`4/3`) 或 stiff (`2`) 邻域内；结果
 均低于 >30% tensor-work 优先门槛，且严格 radiation 段没有出现，暂不建立新的 closed-form
 handoff prototype，也不做 production 修改。artifact 为
 `docs/analytic_branch_eligibility_round_20260917.json`。
+
+## Unused Psi preparation buffer (2026-09-17)
+
+Fresh round-4 16-thread profile 仍显示 `prep_kernel` 是稳定热点，但源码审计确认其
+`Psi` 数组只在 preparation 中写入并返回，正式 `solve_kernel` 和 outer/quad 路径均不读它。
+standalone no-Psi prototype 保留完全相同的 spline/primitive、`S2/S2inv`、horizon-start
+和 tail arrays；五个 regime 各 50 次逐位 digest 比较均相等。准备层 candidate/baseline
+median ratio 为 default `0.9767`、high-T `1.0230`、stiff `1.0239`、high-kappa
+`0.9556`、low-T `1.0237`。因此收益不稳定，目标 regime 最佳也只有 `4.44%`。
+
+Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`。不能用单个 high-kappa
+结果越过 `>5%` 门槛，也没有必要为此做 oracle promotion；原始 artifacts 为
+`docs/prep_kernel_no_psi*_round_20260917.json`，正式实现未修改。
