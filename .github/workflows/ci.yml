@@ -23,8 +23,6 @@ jobs:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 2
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
@@ -73,10 +71,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install .[dev]
-      - name: 中文注释门禁
-        env:
-          BASE_SHA: ${{ github.event.before }}
-        run: python scripts/validate_chinese_comments.py --base "$BASE_SHA"
       - name: Ruff
         run: ruff check stiffgwpy_fast/__init__.py stiffgwpy_fast/cobaya/__init__.py stiffgwpy_fast/cobaya/stiffGW.py stiffgwpy_fast/_metrics.py stiffgwpy_fast/_resources.py stiffgwpy_fast/config.py stiffgwpy_fast/global_param.py stiffgwpy_fast/exact_background.py stiffgwpy_fast/freq_adaptive.py stiffgwpy_fast/reference.py scripts tests
       - name: Mypy

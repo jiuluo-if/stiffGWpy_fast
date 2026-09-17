@@ -748,3 +748,10 @@ A/B 结果保留在 `docs/derived_param_local_cache_round_20260917.json`。
 Decision: `ACCEPTED FOR PRODUCTION`。该改动只缓存同一次 grid build 的纯 H2 端点值，
 不跨 outer iteration；正式实现与回归测试保留，完整 A/B 见
 `docs/h2_endpoint_cache_round_20260917.json`，oracle 见三个 `docs/h2_endpoint_oracle_*`。
+
+## Session: 2026-09-17 (remove unrelated comment-language CI gate)
+
+- 按用户要求删除 `.github/workflows/ci.yml` 中的中文注释门禁及其专用脚本，
+  同时更新测试覆盖矩阵；保留 Ruff、mypy、compileall、manifest、pytest、package、
+  Cobaya 和多 Python 版本兼容性测试。
+- 编码声明不再作为 CI 失败来源；代码质量检查仍由 Ruff 和类型/编译门禁负责。

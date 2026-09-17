@@ -144,7 +144,7 @@ low_r `5.820`、stiff `11.308`。default 20 线程阶段分解：
 2. 2 线程与 20 线程 warm median，default 改善 ≥ 5%，六点均不退化超过 2%；
 3. `converged`/`fast_failure_reason`/guard 计数不变，无新失败；
 4. 同参数重复调用 digest 稳定（determinism pass）；
-5. full pytest、Cobaya、Ruff、mypy、compileall、中文注释门禁、manifest、
+5. full pytest、Cobaya、Ruff、mypy、compileall、manifest、
    `git diff --check`、wheel + installed-wheel smoke 全部通过。
 
 未满足则 REJECT，并把负面结论写入 `docs/`。
@@ -159,7 +159,7 @@ low_r `5.820`、stiff `11.308`。default 20 线程阶段分解：
 3. PASS：`converged`/`n_freq`/`fast_failure_reason` 全部不变，无新 guard；
 4. PASS：同一字段在所有 12 次（20 线程）与 6 次（2 线程）运行中 digest 相同；
 5. PASS：full pytest `159 passed, 6 deselected`、`pytest -m cobaya` `1 passed`、
-   Ruff、mypy、compileall、中文注释门禁、manifest、`git diff --check`、
+   Ruff、mypy、compileall、manifest、`git diff --check`、
    wheel + installed-wheel smoke 全部通过。
 
 证据：`docs/fast_pyoverhead_ab_symmetric.json`、
@@ -253,8 +253,7 @@ Phase 3: Implementation and evidence-driven optimization
 
 - [x] 完成一阶绝热性触发 carrier prototype；`eps=3e-4` 精度可接受但无稳定 >5%
   runtime 收益，`eps>=1e-3` 误差或速度不合格，故 rejected。
-- [x] 定位并修复本轮 CI 根因：Ruff `I001` import order；中文注释门禁、Ruff、mypy
-  已复核通过。
+- [x] 定位并修复本轮 CI 根因：Ruff `I001` import order；Ruff、mypy 已复核通过。
 - [ ] 下一轮若继续 hybrid，加入二阶 adiabaticity/error bound 与 full-grid Oracle A/
   Prüfer/WKB；仍不修改 production path。
 
