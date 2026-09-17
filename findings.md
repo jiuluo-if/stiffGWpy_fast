@@ -1283,3 +1283,20 @@ phase propagation、tail formula、assembly 和 API 不变，仅改变 standalon
 
 Artifact（绑定 HEAD `84c28e645a4d3e0bfd9329fce83355cb992092cb`）：
 `docs/adiabaticity_handoff_round11_20260917.json`。
+
+## Fresh round11 stage profile (2026-09-17, current HEAD)
+
+在 `c5566a825af22342d134824a386a7eb7d32958fd`、Numba=2、BLAS=1、workers=1、
+kink split 下，high-T/stiff/high-kappa 各独立 10-repeat fresh profile 的 warm
+median（ms）为：total `9.696/10.052/10.410`，tensor kernel
+`4.514/5.090/4.660`，`fast_phi_s2_split` `1.378/1.420/1.496`，background
+construction `0.670/0.691/0.783`，column integration `0.231/0.181/0.344`。
+
+tensor propagation 仍是最大单项，`fast_phi_s2_split` 是次要但可量化的准备层热点；
+本轮不根据 p95 作结论，因为每个独立进程的首次编译/初始化 outlier 使 p95 达到
+约 `132–141 ms`。fresh profile artifacts 已绑定该 HEAD；后续候选必须重新用这些
+阶段比例设计，不能回到已拒绝的 phase micro-optimizations。
+
+Artifacts：`docs/profile_fast_breakdown_round11_highT_20260917.json`、
+`docs/profile_fast_breakdown_round11_stiff_20260917.json`、
+`docs/profile_fast_breakdown_round11_high_kappa_20260917.json`。

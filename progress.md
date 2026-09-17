@@ -1043,3 +1043,17 @@ hybrid，必须组合 phase/curvature 或 mode-local amplitude criterion，不�
 epsilon threshold。
 
 Artifact：`docs/adiabaticity_handoff_round11_20260917.json`。
+
+## Current session update: 2026-09-17 (round11 fresh stage profile)
+
+- [x] 当前 HEAD `c5566a8` 重新完成 high-T/stiff/high-kappa 独立 fresh profile，
+  资源为 Numba=2、BLAS=1、workers=1、kink split。
+- [x] warm median total 为 `9.696/10.052/10.410 ms`，tensor kernel 为
+  `4.514/5.090/4.660 ms`；`fast_phi_s2_split` 为 `1.378/1.420/1.496 ms`，
+  background 为 `0.670/0.691/0.783 ms`。
+- [x] tensor propagation 仍为最大单项，下一候选必须围绕真实 propagation 或带
+  高阶安全约束的 hybrid handoff；不再重复已拒绝 micro-optimization。
+
+Artifacts：`docs/profile_fast_breakdown_round11_highT_20260917.json`、
+`docs/profile_fast_breakdown_round11_stiff_20260917.json`、
+`docs/profile_fast_breakdown_round11_high_kappa_20260917.json`。

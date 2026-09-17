@@ -6,6 +6,15 @@
 
 ## Next Step
 
+当前 fresh HEAD `c5566a8` 的 2-thread stage profile 显示 tensor kernel 仍是目标区
+最大阶段（high-T/stiff/high-kappa warm median `4.514/5.090/4.660 ms`），随后是
+`fast_phi_s2_split` `1.378/1.420/1.496 ms` 与 background `0.670/0.691/0.783 ms`。
+本轮 analytic branch、local radiation jump、单独一阶 adiabaticity handoff 均已
+standalone rejected；下一单一动作是设计并验证带高阶 curvature/phase safety guard
+的 hybrid handoff prototype，先过 focused accuracy，再考虑 runtime。
+
+以下为历史阶段记录：
+
 已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry，主要参数/参考扫描入口已增加 `--threads` 与外层并行时的内层单线程保护。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`；default 完整 76 点 Stage B 已完成，Stage C 已以 low-T/high-T/stiff 各 8 点最小网格完成并记录到 `docs/oracle_tail_convergence_stageC_min8.json`。default full-grid tail systematic `3.6295e-3` 且非单调；Stage C 三点仍为 oracle-sensitive，正式 tail correction 仍未放行。新增有限 phase-window Oracle B 原型后，四点最大 z=5→7 observable 变化为 `3.927e-3–6.897e-3`，证明 handoff 仍敏感但未形成独立 truth anchor，候选不晋升。
 
 Prüfer full native-grid certification 已于 2026-09-11 完成（完整 76 频率、
