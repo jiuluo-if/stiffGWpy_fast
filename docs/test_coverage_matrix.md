@@ -8,7 +8,7 @@
 | B | fast 数值、kink、tail、outer reuse、eval_freqs、guard 与 Cobaya adapter 的 canonical 回归 | Python 3.11 一次 | `python -m pytest -q`、`python -m pytest -m cobaya -q` |
 | C | LSODA/reference、oracle tail 与科学精度认证 | 手动或 scheduled，默认串行 | `.github/workflows/slow.yml` 与 `scripts/benchmark_oracle_tail_convergence.py` |
 | D | sdist/wheel、归档边界和安装后 smoke | Python 3.11 一次 | `python -m build --sdist --wheel` |
-| Static | 中文注释、Ruff、mypy、compileall、diff | Python 3.11 一次 | `.github/workflows/ci.yml` 的 `static` job |
+| Static | Ruff、mypy、compileall、diff | Python 3.11 一次 | `.github/workflows/ci.yml` 的 `static` job |
 
 重复执行与成本边界的逐文件审计见 `docs/test_duplication_audit.md`。
 
