@@ -878,3 +878,15 @@ artifact 保留作 rejected evidence。
   REJECTED。
 - [x] 组合两项后 high-T/stiff/high-kappa/low-T ratio 为 `0.956/1.015/0.961/1.000`，
   stiff 退化，整体 REJECTED；组合 artifact 为 `docs/probe_grid_combo_20260917.json`。
+
+## Current session update: 2026-09-17 (full native-grid recurrence audit)
+
+- [x] fetch 后确认 local/remote HEAD 均为 `a1b0393358c1a6fccf5704217670b8d5e00ed659`，
+  production fast 路径未改；重新读取 required state、manifest、benchmark 和 rejected
+  records，旧 manifest 未作为当前认证证据。
+- [x] 完成 default/low-T/high-T/stiff/high-kappa 的完整 native goal grid
+  production-versus-recurrence-versus-Prüfer/DOP853 对照，全部 `status=ok`；最高
+  recurrence spectrum p95/max 为 stiff `4.36e-6/7.60e-6`，最高 full-grid DN
+  relative 为 low-T `3.12e-7`。
+- [ ] 下一步继续 recurrence 的 reheating/kink edge、扩大 Sobol、16/20-thread total
+  runtime 与 Oracle A/WKB 认证；未完成前不得接入正式 fast。

@@ -1027,6 +1027,26 @@ full-grid、reheating/kink edge 与更大 Sobol coverage；在此之前不改正
 `docs/phase_recurrence_parameter_matrix_20260917.json`、
 `docs/phase_recurrence_oracle_20260917/`。
 
+## Phase recurrence full native-grid oracle audit (2026-09-17, HEAD a1b0393)
+
+新增 standalone `scripts/benchmark_phase_recurrence_fullgrid.py`，在 2-thread、PCHIP、
+完整 native goal grid（每点 76 或 77 个频率）上比较 production、recurrence 和独立
+Prüfer/DOP853；production path 未修改。
+
+- 五个 regime 全部 `status=ok`，无 status mismatch。
+- recurrence 相对 production 的 spectrum p95/max：default `2.23e-6/6.70e-6`、
+  low-T `2.08e-6/4.88e-6`、high-T `3.18e-6/6.13e-6`、stiff `4.36e-6/7.60e-6`、
+  high-kappa `2.00e-6/5.56e-6`；full-grid DN relative 最高为 low-T `3.12e-7`。
+- recurrence 对 Prüfer 的 max spectrum systematic 约为
+  `7.31e-3/7.32e-3/7.31e-3/7.30e-3/6.78e-3`（顺序同上），与 production 没有放大；
+  该 fixed-DN systematic 不应误报为 recurrence 新误差。
+
+Decision: `STANDALONE PROTOTYPE RETAINED / NOT PRODUCTION`。full-grid 证据补齐了
+频率覆盖，但不替代既有 14 点矩阵的 `false_safe_count=0`；仍需 edge/kink、扩大
+Sobol、16/20-thread total runtime 和 Oracle A/WKB 独立认证后才能考虑 production。
+
+Artifact: `docs/phase_recurrence_fullgrid_20260917.json`。
+
 no-assembly first-probe kernel 只删除 `assemble=0` 首轮的列装配判断，transfer、kink
 split、tail matching 保持不变。25-repeat total ratio 为 default/high-T/stiff/high-kappa/
 low-T `0.97/0.96/1.00/0.95/1.01`；digest 相等、DN 差为 0，仍 REJECTED。

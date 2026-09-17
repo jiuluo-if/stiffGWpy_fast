@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_full_native_grid_oracle",
+  "production_path_changed": false,
+  "commit": "a1b0393358c1a6fccf5704217670b8d5e00ed659",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "points": [
+      "default",
+      "lowT",
+      "highT",
+      "stiff",
+      "high_kappa"
+    ],
+    "threads": 2,
+    "rtol": 1e-10,
+    "freq_grid": "goal",
+    "frequency_quadrature": "pchip"
+  },
+  "records": [
+    {
+      "point": "default",
+      "n_freq": 76,
+      "dn_eff": 0.0022636474150855806,
+      "dn_gw": {
+        "production": 0.002263647415165795,
+        "recurrence": 0.0022636474151827937,
+        "prufer": 0.002271875267120423,
+        "recurrence_vs_production_relative": 7.50936529567778e-12,
+        "production_vs_prufer_relative": 0.0036216125390795,
+        "recurrence_vs_prufer_relative": 0.003621612531597331
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.1329437064090086e-10,
+          "p95": 2.2272186679295336e-06,
+          "max": 6.697368770120002e-06,
+          "n": 74
+        },
+        "production_vs_prufer": {
+          "p50": 0.004456745549575255,
+          "p95": 0.006721871746319849,
+          "max": 0.0073085423505095505,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004456745468689082,
+          "p95": 0.006722040118793534,
+          "max": 0.007308374257241599,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 3.125664172653026e-22,
+        "interpolation_error": 8.313099442303096e-11
+      },
+      "status": "ok"
+    },
+    {
+      "point": "lowT",
+      "n_freq": 76,
+      "dn_eff": 5.3114602833937826e-08,
+      "dn_gw": {
+        "production": 5.31146028339182e-08,
+        "recurrence": 5.3114619430786416e-08,
+        "prufer": 5.303432977503486e-08,
+        "recurrence_vs_production_relative": 3.124727914971041e-07,
+        "production_vs_prufer_relative": 0.0015136056064787818,
+        "recurrence_vs_prufer_relative": 0.001513918552230848
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 3.6544679539079907e-09,
+          "p95": 2.07867408282836e-06,
+          "max": 4.878735862197734e-06,
+          "n": 67
+        },
+        "production_vs_prufer": {
+          "p50": 0.003790779548829748,
+          "p95": 0.006848870772385421,
+          "max": 0.007319268765521466,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.00379014096323394,
+          "p95": 0.006848858926036323,
+          "max": 0.007319171167098116,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 7.296505529927287e-27,
+        "interpolation_error": 3.1666267166212276e-14
+      },
+      "status": "ok"
+    },
+    {
+      "point": "highT",
+      "n_freq": 76,
+      "dn_eff": 0.05643308427141758,
+      "dn_gw": {
+        "production": 0.0564330842714595,
+        "recurrence": 0.05643308427147638,
+        "prufer": 0.05663703380568944,
+        "recurrence_vs_production_relative": 2.990336288041047e-13,
+        "production_vs_prufer_relative": 0.0036009925048273326,
+        "recurrence_vs_prufer_relative": 0.003600992504529376
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.9066290565095472e-11,
+          "p95": 3.1803439239009276e-06,
+          "max": 6.126994693809685e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.003807148525087888,
+          "p95": 0.006726755647242289,
+          "max": 0.007309928757279348,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.003807141625396417,
+          "p95": 0.0067267555151182025,
+          "max": 0.007309852594393332,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 7.792168433444115e-21,
+        "interpolation_error": 3.6903459182705897e-09
+      },
+      "status": "ok"
+    },
+    {
+      "point": "stiff",
+      "n_freq": 76,
+      "dn_eff": 0.014984335009443728,
+      "dn_gw": {
+        "production": 0.014984335009515634,
+        "recurrence": 0.014984335009692915,
+        "prufer": 0.015039023721306154,
+        "recurrence_vs_production_relative": 1.1831026569739002e-11,
+        "production_vs_prufer_relative": 0.00363645358927393,
+        "recurrence_vs_prufer_relative": 0.0036364535774859263
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.7904866436287007e-10,
+          "p95": 4.3645846082611265e-06,
+          "max": 7.596889813970152e-06,
+          "n": 73
+        },
+        "production_vs_prufer": {
+          "p50": 0.004824494717612924,
+          "p95": 0.0067535756151416385,
+          "max": 0.007302846836300345,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004824495315675119,
+          "p95": 0.006751970144481444,
+          "max": 0.0073026716524232805,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 2.0690809182031545e-21,
+        "interpolation_error": 4.82626663055933e-10
+      },
+      "status": "ok"
+    },
+    {
+      "point": "high_kappa",
+      "n_freq": 77,
+      "dn_eff": 0.22570645394976807,
+      "dn_gw": {
+        "production": 0.22570645394993585,
+        "recurrence": 0.22570645394995323,
+        "prufer": 0.2265215455259521,
+        "recurrence_vs_production_relative": 7.698047632806132e-14,
+        "production_vs_prufer_relative": 0.003598296021350733,
+        "recurrence_vs_prufer_relative": 0.00359829602127403
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 2.4835546882268597e-12,
+          "p95": 2.0044551409764875e-06,
+          "max": 5.563876529644438e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.0047947052897890155,
+          "p95": 0.006716690714544667,
+          "max": 0.006780488940102225,
+          "n": 77
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004794705289800495,
+          "p95": 0.0067166751182519855,
+          "max": 0.006780503338789504,
+          "n": 77
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.922077922077922,
+        "quadrature_error": 3.116501550201213e-20,
+        "interpolation_error": 5.619538903875487e-09
+      },
+      "status": "ok"
+    }
+  ]
+}

@@ -291,3 +291,11 @@ Phase 3: Implementation and evidence-driven optimization
   Oracle C 完成；速度通过，digest 非逐位一致，保留为 prototype，不进入 production。
 - [ ] 对 recurrence candidate 完成 full-grid Oracle A/Prüfer/WKB、reheating/kink
   edge、扩大 Sobol coverage 和 total runtime gate；未完成前不得接入正式 fast。
+
+### Round continuation: full native-grid audit
+
+- [x] Fetch latest `fast_v0.2` and reread required state/artifacts/rejections.
+- [x] Add and run standalone full native-grid recurrence versus Prüfer/DOP853 audit.
+- [x] Record five-regime spectrum/DN results; keep production path unchanged.
+- [ ] Run edge/kink and expanded Sobol coverage.
+- [ ] Run formal 16/20-thread total-runtime candidate and independent Oracle A/WKB gate.
