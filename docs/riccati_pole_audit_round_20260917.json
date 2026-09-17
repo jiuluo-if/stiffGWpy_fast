@@ -1,0 +1,1402 @@
+{
+  "commit": "d5870311bfcdc814220181d911f3d938a4ebfaf0",
+  "experiment": "raw_riccati_ratio_pole_audit",
+  "guard_policy": "pole is terminal and reported; no fallback or restart",
+  "production_path_changed": false,
+  "records": [
+    {
+      "case": "default",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 2000.0,
+        "cr": 1,
+        "kappa10": 0.01,
+        "r": 0.01
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.953464614310675e-07,
+            "nfev": 1598,
+            "success": true,
+            "x": -2.4968354550088785,
+            "y": 2.485216334918716e-06,
+            "z": 1.5706021931245966
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3881,
+          "pole": true,
+          "pole_N": 36.606722287043716,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0228073379734897e-06,
+            "nfev": 1454,
+            "success": true,
+            "x": -2.4969061963937884,
+            "y": 2.5538539799030424e-06,
+            "z": 1.5706210597988741
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3845,
+          "pole": true,
+          "pole_N": 35.619887252894976,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.024543373407236e-06,
+            "nfev": 1610,
+            "success": true,
+            "x": -2.4968887444243517,
+            "y": 2.5581708172350837e-06,
+            "z": 1.5706230710317717
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4049,
+          "pole": true,
+          "pole_N": 34.63306299026026,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.991387552230828e-07,
+            "nfev": 1562,
+            "success": true,
+            "x": -2.495720580875316,
+            "y": 2.4935711545603922e-06,
+            "z": 1.5705908288677548
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 4109,
+          "pole": true,
+          "pole_N": 33.646224273248095,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0018141832080376e-06,
+            "nfev": 1550,
+            "success": true,
+            "x": -2.4483952717238333,
+            "y": 2.4528371093124335e-06,
+            "z": 1.568881570931549
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4373,
+          "pole": true,
+          "pole_N": 32.65854740649884,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.996384644844608e-07,
+            "nfev": 1694,
+            "success": true,
+            "x": -1.1053492255671358,
+            "y": 1.1049496025650196e-06,
+            "z": 1.433860378351403
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4613,
+          "pole": true,
+          "pole_N": 31.60421461967649,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000082033807055e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.3258506598921786,
+            "y": 3.2585333296919483e-07,
+            "z": 0.809464355234901
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 28.09628223551277,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000092971079058e-06,
+            "nfev": 1010,
+            "success": true,
+            "x": -0.32585065990979495,
+            "y": 3.258536893785413e-07,
+            "z": 0.8094643552347953
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3893,
+          "pole": true,
+          "pole_N": 24.148993504665622,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "highT",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 10000.0,
+        "cr": 1,
+        "kappa10": 0.01,
+        "r": 0.01
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.99999573387181e-07,
+            "nfev": 806,
+            "success": true,
+            "x": -2.4968354692463586,
+            "y": 2.496834404064341e-06,
+            "z": 1.570602191431883
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3149,
+          "pole": true,
+          "pole_N": 34.996790012018735,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.003449605267618e-06,
+            "nfev": 1382,
+            "success": true,
+            "x": -2.4969068319289685,
+            "y": 2.505520174889142e-06,
+            "z": 1.570621080219134
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3761,
+          "pole": true,
+          "pole_N": 34.009954988923326,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0361880326653062e-06,
+            "nfev": 1502,
+            "success": true,
+            "x": -2.496916739783824,
+            "y": 2.587275244325671e-06,
+            "z": 1.570623706900163
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 3917,
+          "pole": true,
+          "pole_N": 33.02313103304563,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0003549781689584e-06,
+            "nfev": 1718,
+            "success": true,
+            "x": -2.496915556157981,
+            "y": 2.4978019066701496e-06,
+            "z": 1.5706240246958771
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 3869,
+          "pole": true,
+          "pole_N": 32.03630859633436,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.99546646791441e-07,
+            "nfev": 1514,
+            "success": true,
+            "x": -2.496805920167294,
+            "y": 2.495673985192237e-06,
+            "z": 1.5706213760078984
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4145,
+          "pole": true,
+          "pole_N": 31.049485033551075,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.996222647125726e-07,
+            "nfev": 1610,
+            "success": true,
+            "x": -2.4921930994366988,
+            "y": 2.4912517101599585e-06,
+            "z": 1.5704815628853603
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4301,
+          "pole": true,
+          "pole_N": 30.06259293730508,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.95223013043873e-07,
+            "nfev": 1538,
+            "success": true,
+            "x": -2.313277982456208,
+            "y": 2.302227483708119e-06,
+            "z": 1.5629159267939856
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 4397,
+          "pole": true,
+          "pole_N": 29.071987934623618,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000081891133003e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.32585065989216305,
+            "y": 3.258533283201359e-07,
+            "z": 0.809464355234901
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 27.36885805440626,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "stiff",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 2000.0,
+        "cr": 1,
+        "kappa10": 0.01,
+        "r": 0.1
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.953464659442862e-07,
+            "nfev": 1598,
+            "success": true,
+            "x": -2.496835455008877,
+            "y": 2.48521634618748e-06,
+            "z": 1.5706021931245941
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3881,
+          "pole": true,
+          "pole_N": 37.37425065137507,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0228073325266585e-06,
+            "nfev": 1454,
+            "success": true,
+            "x": -2.496906196393783,
+            "y": 2.5538539663028104e-06,
+            "z": 1.5706210597988763
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3845,
+          "pole": true,
+          "pole_N": 36.38741561722633,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0245433698500947e-06,
+            "nfev": 1610,
+            "success": true,
+            "x": -2.496888744424354,
+            "y": 2.5581708083532995e-06,
+            "z": 1.5706230710317735
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4049,
+          "pole": true,
+          "pole_N": 35.40059135459161,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.991903228712282e-07,
+            "nfev": 1562,
+            "success": true,
+            "x": -2.4957205808753256,
+            "y": 2.4936998530011856e-06,
+            "z": 1.5705908288463115
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 4121,
+          "pole": true,
+          "pole_N": 34.41375263756873,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0032801089458875e-06,
+            "nfev": 1550,
+            "success": true,
+            "x": -2.4483952717238293,
+            "y": 2.4564262749576793e-06,
+            "z": 1.5688815703209087
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4373,
+          "pole": true,
+          "pole_N": 33.426075770524875,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0003245375421762e-06,
+            "nfev": 1682,
+            "success": true,
+            "x": -1.1053492255710857,
+            "y": 1.1057079528919989e-06,
+            "z": 1.433860378025185
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4601,
+          "pole": true,
+          "pole_N": 32.37174298384136,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.000008206447145e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.325850659892178,
+            "y": 3.2585333396839555e-07,
+            "z": 0.8094643552349001
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 28.863810599844122,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000027568140232e-06,
+            "nfev": 1046,
+            "success": true,
+            "x": -0.3258506598916935,
+            "y": 3.2585155820136213e-07,
+            "z": 0.8094643552347438
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3893,
+          "pole": true,
+          "pole_N": 24.91652186899687,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "high_kappa",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 2000.0,
+        "cr": 1,
+        "kappa10": 1.0,
+        "r": 0.01
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0393958182340573e-06,
+            "nfev": 1418,
+            "success": true,
+            "x": -2.4969098697766303,
+            "y": 2.595277677153174e-06,
+            "z": 1.5706218686322568
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3581,
+          "pole": true,
+          "pole_N": 36.22294472430894,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.950484604673718e-07,
+            "nfev": 1466,
+            "success": true,
+            "x": -2.4969171796488325,
+            "y": 2.4845535955241027e-06,
+            "z": 1.5706238292052577
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3833,
+          "pole": true,
+          "pole_N": 35.23612125241935,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.007829038111478e-06,
+            "nfev": 1514,
+            "success": true,
+            "x": -2.4969178413382633,
+            "y": 2.51646630627933e-06,
+            "z": 1.570624080356329
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 34.24929888590929,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.014958478864836e-06,
+            "nfev": 1658,
+            "success": true,
+            "x": -2.4969033624209294,
+            "y": 2.534253238595241e-06,
+            "z": 1.5706237881381064
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 33.262476513769066,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.01935718155136e-06,
+            "nfev": 1598,
+            "success": true,
+            "x": -2.4962759935008085,
+            "y": 2.544596861109305e-06,
+            "z": 1.5706069048384232
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4145,
+          "pole": true,
+          "pole_N": 32.27564588384218,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.952526250229203e-07,
+            "nfev": 1670,
+            "success": true,
+            "x": -2.470577072701331,
+            "y": 2.4588483169274422e-06,
+            "z": 1.5697264428562325
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4385,
+          "pole": true,
+          "pole_N": 31.28838346876664,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.999850228477286e-07,
+            "nfev": 1730,
+            "success": true,
+            "x": -1.6224360355678962,
+            "y": 1.6224117360963408e-06,
+            "z": 1.5125433647456976
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 4625,
+          "pole": true,
+          "pole_N": 30.272969747449917,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000081891133003e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.32585065989216305,
+            "y": 3.258533283201359e-07,
+            "z": 0.809464355234901
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 27.21910696107488,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "edge_r_lo",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 2000.0,
+        "cr": 1,
+        "kappa10": 0.01,
+        "r": 1.26e-06
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.953464689456877e-07,
+            "nfev": 1598,
+            "success": true,
+            "x": -2.496835455008877,
+            "y": 2.4852163536814853e-06,
+            "z": 1.570602193124593
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3881,
+          "pole": true,
+          "pole_N": 33.613646070039444,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0228073332158473e-06,
+            "nfev": 1454,
+            "success": true,
+            "x": -2.4969061963937893,
+            "y": 2.553853968023656e-06,
+            "z": 1.5706210597988757
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3845,
+          "pole": true,
+          "pole_N": 32.626811035890704,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0388440643184046e-06,
+            "nfev": 1610,
+            "success": true,
+            "x": -2.4968887444203753,
+            "y": 2.593878051404541e-06,
+            "z": 1.5706230650846107
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4025,
+          "pole": true,
+          "pole_N": 31.63998677013726,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.001914640530738e-06,
+            "nfev": 1562,
+            "success": true,
+            "x": -2.4957205808670477,
+            "y": 2.5004989886445728e-06,
+            "z": 1.5705908277136706
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 4169,
+          "pole": true,
+          "pole_N": 30.653148055884063,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0104550514942554e-06,
+            "nfev": 1586,
+            "success": true,
+            "x": -2.4483952717444035,
+            "y": 2.473993370388783e-06,
+            "z": 1.5688815673329355
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4337,
+          "pole": true,
+          "pole_N": 29.665471187568535,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0004205294942888e-06,
+            "nfev": 1550,
+            "success": true,
+            "x": -1.105349225580117,
+            "y": 1.1058140575309627e-06,
+            "z": 1.4338603779814005
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4529,
+          "pole": true,
+          "pole_N": 28.611138402476136,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000096207267116e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.3258506598879477,
+            "y": 3.258537948080953e-07,
+            "z": 0.8094643552349117
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 3917,
+          "pole": true,
+          "pole_N": 25.103206018508512,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.00000351073411e-06,
+            "nfev": 938,
+            "success": true,
+            "x": -0.32585066058482237,
+            "y": 3.258518045598513e-07,
+            "z": 0.809464355234893
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3821,
+          "pole": true,
+          "pole_N": 21.15591728766155,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "edge_r_hi",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 2000.0,
+        "cr": 1,
+        "kappa10": 0.01,
+        "r": 0.0794
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.953464659442862e-07,
+            "nfev": 1598,
+            "success": true,
+            "x": -2.496835455008877,
+            "y": 2.48521634618748e-06,
+            "z": 1.5706021931245941
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3881,
+          "pole": true,
+          "pole_N": 37.2973600454634,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0228073325266585e-06,
+            "nfev": 1454,
+            "success": true,
+            "x": -2.496906196393783,
+            "y": 2.5538539663028104e-06,
+            "z": 1.5706210597988763
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3845,
+          "pole": true,
+          "pole_N": 36.31052501131466,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0245433698500947e-06,
+            "nfev": 1610,
+            "success": true,
+            "x": -2.496888744424354,
+            "y": 2.5581708083532995e-06,
+            "z": 1.5706230710317735
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4049,
+          "pole": true,
+          "pole_N": 35.32370074867994,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.97560486361261e-07,
+            "nfev": 1562,
+            "success": true,
+            "x": -2.4957205808753264,
+            "y": 2.4896322364797996e-06,
+            "z": 1.5705908295240707
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 4193,
+          "pole": true,
+          "pole_N": 34.336862031995935,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0032801089458875e-06,
+            "nfev": 1550,
+            "success": true,
+            "x": -2.4483952717238293,
+            "y": 2.4564262749576793e-06,
+            "z": 1.5688815703209087
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4373,
+          "pole": true,
+          "pole_N": 33.3491851646132,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0005327330405481e-06,
+            "nfev": 1658,
+            "success": true,
+            "x": -1.1053492255043516,
+            "y": 1.1059380815581221e-06,
+            "z": 1.433860377911121
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4601,
+          "pole": true,
+          "pole_N": 32.294852377929686,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000082070433922e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.3258506598921795,
+            "y": 3.258533341626846e-07,
+            "z": 0.8094643552349001
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 28.78691999393245,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000152479236417e-06,
+            "nfev": 1010,
+            "success": true,
+            "x": -0.3258506599064619,
+            "y": 3.2585562845244276e-07,
+            "z": 0.8094643552344853
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3893,
+          "pole": true,
+          "pole_N": 24.839631263084684,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "edge_tre_hi",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "T_re": 794000.0,
+        "cr": 1,
+        "kappa10": 0.01,
+        "r": 0.01
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.99999609937573e-07,
+            "nfev": 806,
+            "success": true,
+            "x": -2.4968354692463763,
+            "y": 2.4968344953246735e-06,
+            "z": 1.570602191431867
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3149,
+          "pole": true,
+          "pole_N": 30.6212518054941,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000019133577846e-06,
+            "nfev": 806,
+            "success": true,
+            "x": -2.4969068332737034,
+            "y": 2.49691161074983e-06,
+            "z": 1.5706210816749129
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3149,
+          "pole": true,
+          "pole_N": 29.634416783280418,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.99998615428348e-07,
+            "nfev": 806,
+            "success": true,
+            "x": -2.496916797526495,
+            "y": 2.49691334036628e-06,
+            "z": 1.5706237229765532
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 3149,
+          "pole": true,
+          "pole_N": 28.64759283472003,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.999981698603286e-07,
+            "nfev": 806,
+            "success": true,
+            "x": -2.496918133896175,
+            "y": 2.496913564187242e-06,
+            "z": 1.570624077923451
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 3149,
+          "pole": true,
+          "pole_N": 27.660770416541514,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.99998169859881e-07,
+            "nfev": 806,
+            "success": true,
+            "x": -2.4969183113112567,
+            "y": 2.4969137416008813e-06,
+            "z": 1.570624124981879
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 3149,
+          "pole": true,
+          "pole_N": 26.67394820215381,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.859772400932598e-07,
+            "nfev": 1502,
+            "success": true,
+            "x": -2.4969183354112303,
+            "y": 2.461904649087021e-06,
+            "z": 1.5706241372608374
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 3857,
+          "pole": true,
+          "pole_N": 25.687126017170005,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0531345913904165e-06,
+            "nfev": 1490,
+            "success": true,
+            "x": -2.4969183279715845,
+            "y": 2.6295910630635966e-06,
+            "z": 1.5706241100481573
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 3749,
+          "pole": true,
+          "pole_N": 24.700303819338043,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0223579868215885e-06,
+            "nfev": 1562,
+            "success": true,
+            "x": -2.49691784272738,
+            "y": 2.552743898949668e-06,
+            "z": 1.5706241135841819
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3845,
+          "pole": true,
+          "pole_N": 23.71348163949372,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    },
+    {
+      "case": "sobol_000",
+      "frequencies": [
+        -4.0,
+        -3.142857142857143,
+        -2.2857142857142856,
+        -1.4285714285714288,
+        -0.5714285714285716,
+        0.2857142857142856,
+        1.1428571428571423,
+        2.0
+      ],
+      "numerical_failure_count": 0,
+      "parameters": {
+        "DN_re": 18.787082182243466,
+        "T_re": 34989.571710260374,
+        "cr": 1.0,
+        "kappa10": 5.28549585835966e-06,
+        "n_t": -0.12252988945692778,
+        "r": 3.4845505440304265
+      },
+      "pole_count": 8,
+      "rows": [
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.958801031946081e-07,
+            "nfev": 1538,
+            "success": true,
+            "x": -2.4934377300472383,
+            "y": 2.4831650239087733e-06,
+            "z": 1.569699571271818
+          },
+          "freq": -4.0,
+          "message": "A termination event occurred.",
+          "nfev": 3617,
+          "pole": true,
+          "pole_N": 36.324533483865366,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.97807412952289e-07,
+            "nfev": 1574,
+            "success": true,
+            "x": -2.496453772328468,
+            "y": 2.4909800801220516e-06,
+            "z": 1.5705009059278277
+          },
+          "freq": -3.142857142857143,
+          "message": "A termination event occurred.",
+          "nfev": 3797,
+          "pole": true,
+          "pole_N": 35.33717899069384,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0074594990053927e-06,
+            "nfev": 1610,
+            "success": true,
+            "x": -2.4968539125011673,
+            "y": 2.5154791917780805e-06,
+            "z": 1.570607231270844
+          },
+          "freq": -2.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 3857,
+          "pole": true,
+          "pole_N": 34.350285333142025,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.89432654214448e-07,
+            "nfev": 1730,
+            "success": true,
+            "x": -2.496880293183113,
+            "y": 2.4704948957399164e-06,
+            "z": 1.5706211236141805
+          },
+          "freq": -1.4285714285714288,
+          "message": "A termination event occurred.",
+          "nfev": 3989,
+          "pole": true,
+          "pole_N": 33.363452957421444,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0082659949109033e-06,
+            "nfev": 1598,
+            "success": true,
+            "x": -2.4956713788418967,
+            "y": 2.5163005857586906e-06,
+            "z": 1.5705891376918246
+          },
+          "freq": -0.5714285714285716,
+          "message": "A termination event occurred.",
+          "nfev": 4181,
+          "pole": true,
+          "pole_N": 32.37661240294833,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 9.930422521619159e-07,
+            "nfev": 1562,
+            "success": true,
+            "x": -2.4464860892290443,
+            "y": 2.429464055930808e-06,
+            "z": 1.568806495628323
+          },
+          "freq": 0.2857142857142856,
+          "message": "A termination event occurred.",
+          "nfev": 4409,
+          "pole": true,
+          "pole_N": 31.38889856784851,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0016024800385495e-06,
+            "nfev": 1766,
+            "success": true,
+            "x": -1.0685850316755345,
+            "y": 1.0702974178582875e-06,
+            "z": 1.425471130604998
+          },
+          "freq": 1.1428571428571423,
+          "message": "A termination event occurred.",
+          "nfev": 4625,
+          "pole": true,
+          "pole_N": 30.3304086565118,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        },
+        {
+          "cartesian_at_pole": {
+            "abs_y_over_abs_x": 1.0000081724182676e-06,
+            "nfev": 1034,
+            "success": true,
+            "x": -0.32585065989215767,
+            "y": 3.258533228800431e-07,
+            "z": 0.8094643552349046
+          },
+          "freq": 2.0,
+          "message": "A termination event occurred.",
+          "nfev": 3929,
+          "pole": true,
+          "pole_N": 26.79539411496504,
+          "success": true,
+          "tail_reached": false,
+          "terminal": "pole"
+        }
+      ],
+      "tail_count": 0
+    }
+  ],
+  "resource": {
+    "affinity": [],
+    "blas_threads": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "concurrent_processes": 1,
+    "logical_cpu_count": 32,
+    "numba": "0.67.0",
+    "numba_threading_layer": "workqueue",
+    "numba_threads": 2,
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "scipy": "1.17.1",
+    "threads_argument": 2,
+    "workers": 1
+  },
+  "settings": {
+    "cases": [
+      "default",
+      "highT",
+      "stiff",
+      "high_kappa",
+      "edge_r_lo",
+      "edge_r_hi",
+      "edge_tre_hi",
+      "sobol_000"
+    ],
+    "dn_eff": 0.0,
+    "freqs": [
+      -4.0,
+      -3.142857142857143,
+      -2.2857142857142856,
+      -1.4285714285714288,
+      -0.5714285714285716,
+      0.2857142857142856,
+      1.1428571428571423,
+      2.0
+    ],
+    "out": "docs/riccati_pole_audit_round_20260917.json",
+    "ratio_limit": 1000000.0,
+    "rtol": 1e-10,
+    "z_tail": 5.0
+  }
+}

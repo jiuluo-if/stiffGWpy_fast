@@ -607,3 +607,45 @@ stiff `12.291/5.117 ms`、high-kappa `11.988/4.794 ms`，对应正式路径的
 kernel 的主要成本仍是 propagation arithmetic/步数。产物为
 `docs/profile_noassemble_round_20260916_{default,highT,stiff,high_kappa}.json`，
 不进入 production。
+
+## Raw Riccati ratio pole audit (2026-09-17, HEAD d587031)
+
+### Hypothesis and scope
+
+将原始 tensor 方程用 `r=x/y` 化为 Riccati 方程，可能减少双分量传播工作。该
+实验严格为 standalone/reference-only；极点是显式终止状态，不允许重启、正则化或
+silent fallback。审计脚本为
+`scripts/benchmark_riccati_pole_audit.py`，结果为
+`docs/riccati_pole_audit_round_20260917.json`。
+
+### Independent evidence
+
+由 `reference._tensor_orig` 直接推导得到
+`r' = -2 r - exp(z) (1+r^2)`。在 default、high-T、stiff、high-kappa、两个
+`r` edge、high-`T_re` edge 和固定 Sobol 点上，各取 8 个频率（共 64 modes），
+raw Riccati 全部在 `z=5` 前触发极点：`64/64 pole`、`0/64 tail reached`、
+`0 numerical failure`。对每个终止位置独立用 Cartesian DOP853 重放，均成功，且
+`abs(y)/abs(x)` 的最大值为 `1.053e-6`、中位数 `1.000e-6`，确认极点对应物理
+的 `y` 零交叉而非 Riccati 实现异常。
+
+### Decision
+
+`REJECTED FOR PRODUCTION`：raw `x/y` Riccati 不能跨越物理零点，不能作为单一
+fast solver，也没有资格进入 runtime A/B 或生产 fallback。若继续 phase-function
+线，只能研究无极点的复对数导数/非振荡 carrier，并且必须先建立独立 Cartesian/
+Prüfer Oracle 对照与显式 guard。
+
+### Fresh speed baseline
+
+当前 HEAD 以 2 threads、workqueue、BLAS=1、reference workers=1、正式
+`kink_split=true`、25 warm repeats 重跑四点 profile：
+
+| regime | total median | total p95 | tensor median |
+|---|---:|---:|---:|
+| default | 6.442 ms | 7.541 ms | 2.633 ms |
+| high-T | 9.427 ms | 10.837 ms | 4.513 ms |
+| stiff | 9.750 ms | 10.675 ms | 4.931 ms |
+| high-kappa | 9.719 ms | 10.450 ms | 4.578 ms |
+
+四份 profile 均记录 current HEAD、25 repeats、线程与 BLAS 配置；tensor
+propagation 仍是首要速度瓶颈。

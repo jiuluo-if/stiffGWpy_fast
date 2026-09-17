@@ -522,3 +522,33 @@
   `3.174->2.497`、`5.329->4.361`、`5.575->5.117`、`5.630->4.794 ms`。
 - total 收益仅 `2–4%`，排除 assembly 作为 10% 级优化方向；下一阶段仍需减少真实
   propagation arithmetic/steps，转向有极点规避的 Riccati phase-function 原型。
+
+## Session: 2026-09-17 (raw Riccati pole audit)
+
+### Actions Taken
+
+- fetch `fast_v0.2` 并确认本地/远端 HEAD 均为
+  `d5870311bfcdc814220181d911f3d938a4ebfaf0`。
+- 阅读当前 progress/findings、验证清单、既有 profile 与最近 phase/Magnus rejected
+  artifacts；未使用旧 profile 推断本轮热点。
+- 在不改变 production path 的 standalone 脚本中，从 `reference._tensor_orig` 推导
+  并积分 `r=x/y` Riccati；极点作为 terminal fail-closed 状态记录。
+- 以 8 个参数点（4 named regimes、2 edge、high-T_re edge、固定 Sobol）和 8 个
+  频率完成 64-mode audit，并以独立 Cartesian DOP853 重放每个极点位置。
+- 以当前 HEAD、正式 `kink_split=true`、2 threads/workqueue、BLAS=1、25 warm
+  repeats fresh profile default/high-T/stiff/high-kappa。
+
+### Test Results
+
+| Test | Result | Status |
+|---|---|---|
+| raw Riccati pole audit | 64/64 modes pole before z=5；0 numerical failure；0 tail reached | REJECTED |
+| Cartesian cross-check at pole | 64/64 solve success；max `abs(y)/abs(x)=1.053e-6` | PASS / POLE CONFIRMED |
+| fresh 2-thread four-regime profile | total median `6.442/9.427/9.750/9.719 ms`；tensor median `2.633/4.513/4.931/4.578 ms` | PASS / HOTSPOT CONFIRMED |
+
+### Decision
+
+- raw `x/y` Riccati `REJECTED FOR PRODUCTION`；不进入 runtime A/B、API 或 fallback。
+- 当前 propagation/tensor solve 仍是速度首攻；tail、PCHIP 和 assembly 暂无理由优先。
+- 下一项 phase 研究必须改为无极点的 complex-log-derivative/nonoscillatory
+  carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
