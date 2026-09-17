@@ -612,3 +612,32 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
 |---|---|
 | `run_fixed_profile.py` 外层只允许 `A/B` | 改用支持六点的 runtime benchmark，并以独立进程直接调用 profiler 获取四个目标 regime；未据失败输出形成结论 |
 | outer-reuse A/B 包含 guard 点后访问缺失的 `DN_gw` | 排除显式 guard 点完成 accepted-point A/B；guard 仍保留为物理边界问题 |
+
+## Session: 2026-09-18 (observable-aware reuse proxy prototype)
+
+### Actions Taken
+
+- fetch `fast_v0.2` 后确认本地/远端 HEAD 为 `083fdf5c44d18e2d417ed9561571110aaa9ee29a`，
+  并重读当前 progress/findings、manifest、benchmark 与 rejected records。
+- 新增 standalone `scripts/benchmark_outer_observable_proxy.py`，强制关闭 shortcut
+  以捕获 first→second outer update，记录 `delta log Omega`、`delta Phi`、`delta S2`、
+  horizon shift 与 frequency-weighted DN sensitivity proxy；不改变 production code。
+- 修正两处原型数据流错误：`prep_frequency_only` 不含 Phi，改从真实 kernel 参数捕获；
+  频率数组降序导致积分符号错误，改为按 log-frequency 升序积分。
+
+### Test Results
+
+| Test | Result | Status |
+|---|---|---|
+| standalone proxy | 当前 HEAD、Numba=2、BLAS=1、workers=1，5 个需 second solve 的点成功捕获 2 kernels；low-T 正常 1 kernel 收敛 | PASS / DIAGNOSTIC |
+| proxy values | high-T `dlogOmega=3.944e-3`、`dPhi=7.694e-5`、`dS2=6.560e-5`、`dH=2.008e-3`；high-kappa `1.547e-2/2.964e-4/1.800e-4/7.728e-3`；stiff `1.051e-3/2.092e-5/1.300e-8/5.349e-4` | OBSERVED |
+| focused validation | `py_compile` 与 `git diff --check` 通过 | PASS |
+
+### Decision
+
+- 当前代理只能事后复现 first→second 的频谱差；`delta Phi`、`delta S2`、horizon shift
+  与频率加权 proxy 尚未形成可提前保证 spectrum budget 的上界。尤其 high-T/high-kappa
+  的小代理值对应明显频谱偏差，暂不进入 runtime A/B 或 production。
+- 原型 artifact 为 `docs/outer_observable_proxy_round_20260918.json`。下一步应先把
+  kernel 输出对背景扰动的局部线性响应做成独立 sensitivity estimate，再谈
+  coverage/p95/p99/false-safe；禁止把本轮诊断称为 estimator。

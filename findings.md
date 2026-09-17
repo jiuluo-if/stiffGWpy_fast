@@ -723,3 +723,31 @@ high-kappa 和 positive-tilt 均可明显偏移；该候选 `REJECTED FOR PRODUC
 frequency-weighted DN sensitivity；只有在 25--50 repeat、Cartesian/Prüfer/WKB
 独立 oracle、named+Sobol、coverage/p95/p99/false-safe=0 后，才允许进入 runtime A/B。
 本轮没有 production code change。
+
+## Observable-aware outer reuse proxy prototype (2026-09-18, `083fdf5`)
+
+为避免继续用固定 `sigma/f_hor` threshold 猜测，本轮新增 standalone
+`scripts/benchmark_outer_observable_proxy.py`。它关闭 shortcut、捕获 first→second
+真实 outer update，并记录 `delta log Omega`、`delta Phi`、`delta S2`、horizon shift
+和按 log-frequency 积分的 DN sensitivity proxy；不改变 production path。
+
+| point | dlogOmega max | dPhi relative | dS2 relative | horizon shift | DN sensitivity proxy |
+|---|---:|---:|---:|---:|---:|
+| high-T | `3.944e-3` | `7.694e-5` | `6.560e-5` | `2.008e-3` | `3.460e-11` |
+| high-kappa | `1.547e-2` | `2.964e-4` | `1.800e-4` | `7.728e-3` | `3.362e-11` |
+| stiff | `1.051e-3` | `2.092e-5` | `1.300e-8` | `5.349e-4` | `3.139e-10` |
+| default | `3.923e-4` | `0` | `0` | `8.089e-5` | `8.142e-10` |
+| positive-tilt | `6.226e-4` | `0` | `0` | `9.590e-5` | `9.034e-10` |
+
+这些量的物理解释边界已明确：`delta log Omega` 是 first/second kernel 输出的事后差，
+不能证明在第二次 kernel 前可计算；`delta Phi`/`delta S2`/horizon shift 在 high-T、
+high-kappa 上很小，却与明显 spectrum 偏差同时出现；当前 DN proxy 还受末列动态范围
+和 weighting 定义影响，不能称为误差上界。原型为 `DIAGNOSTIC ONLY`，不进入
+runtime A/B、production 或 fallback；完整原始结果见
+`docs/outer_observable_proxy_round_20260918.json`。
+
+### Next hypothesis
+
+研究 kernel 对 `Phi/S2/f_hor` 扰动的局部响应：用已完成的 first solve 输出和背景差分
+构造一阶 observable sensitivity，再与第二次独立 Cartesian/Prüfer/WKB solve 对照。
+接受前必须在 named+Sobol 上报告 coverage、p95/p99 和 false-safe=0；本轮尚未满足。

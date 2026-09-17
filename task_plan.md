@@ -241,4 +241,4 @@ Phase 3: Implementation and evidence-driven optimization
 
 ## Next Step
 
-运行当前 HEAD 的六点 fresh runtime 矩阵与 A/B 阶段 profile，解析 tensor propagation 与 outer reuse 基线，再决定是否登记一个新的最小 standalone 候选。
+已完成当前 HEAD fresh runtime/阶段 profile 与 outer-reuse baseline；当前下一步为验证 kernel 对背景扰动的一阶 observable sensitivity standalone 原型，尚未进入 production。
