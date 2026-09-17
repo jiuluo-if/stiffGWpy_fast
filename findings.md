@@ -774,3 +774,21 @@ S2-only response 在 stiff/high-kappa 上接近实际频谱偏差，Phi-only res
 下一实验必须将这些项化为不调用第二次 tensor kernel 的低成本解析响应，并以独立
 Cartesian/Prüfer/WKB、named+Sobol、coverage、p95/p99、false-safe=0 验证；未满足前
 不得进入 production。
+
+## Analytic outer-response boundary (2026-09-20, standalone)
+
+本轮把 `S2` 响应化为传播端点的闭式缩放项，并加入固定 `j0` 的 horizon-start 缩放项，
+然后在全部 named/edge/Sobol 集合上回放 first→second outer update。该回放仍调用额外
+kernel 取得真实差分，故只能验证响应结构，不能作为可部署 estimator 或 runtime A/B。
+
+`14/24` 点可比较；令 `pred=max(S2_closed_form,horizon_start_closed_form)`，以
+`1.1*pred <= 1e-3` 为暂定安全筛选时 coverage 为 `4/14`、false-safe 为 `0/4`；
+eligible actual spectrum-delta 的 p95/max 为 `8.217e-2/2.075e-1 dex`。通过点为
+default、negative-tilt、edge_dnre_lo、edge_dnre_hi，目标 high-T/stiff/high-kappa
+为 `0/3`。
+
+后三者实际 max spectrum delta 为 `3.944e-3/1.051e-3/1.547e-2 dex`，解析 max
+proxy 为 `4.017e-3/1.068e-3/1.544e-2`，均超出 `1e-3` 预算；default 与
+positive-tilt 仍存在 S2/Phi 为零但频谱有残差的情况，edge_dnre_hi 也显示两项不完整。
+状态为 `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`，不能宣称已获得 >5% runtime
+改善。完整数据见 `docs/outer_observable_proxy_full_round_20260920.json`。

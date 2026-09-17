@@ -671,3 +671,15 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
 - 状态：`CANDIDATE FOR FURTHER DERIVATION`，不进入 runtime A/B、production 或
   fallback。下一步要把 response 化为不调用第二次 kernel 的解析/低成本估计，并在
   named+Sobol 上验证 coverage、p95/p99、false-safe=0。
+
+## Session: 2026-09-20 (analytic observable-response boundary)
+
+- 当前 HEAD `0253550ee4ac5e920125444ba138775ffdfbefed` 上，standalone proxy 已覆盖
+  全部 24 个 named/edge/Sobol 输入；显式 physical guard 标记为 ineligible。
+- 新增 S2 端点缩放与固定 j0 horizon-start 的解析诊断项；`14/24` eligible，安全因子
+  1.1 下 coverage `4/14`、false-safe `0/4`，eligible actual spectrum-delta
+  p95/max 为 `8.217e-2/2.075e-1 dex`，high-T/stiff/high-kappa 为 `0/3` safe。
+- Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`；下一轮补齐
+  `j0/z0/tail/phase-path` 响应并用 Cartesian/Prüfer/WKB oracle 复核，不做 runtime A/B。
+
+原始 artifact：`docs/outer_observable_proxy_full_round_20260920.json`。

@@ -13,19 +13,39 @@ sys.path.insert(0, ROOT)
 
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
-
-CASES = {
-    'default': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2),
-    'lowT': dict(r=1e-2, cr=1, T_re=1e1, kappa10=1e-2),
-    'highT': dict(r=1e-2, cr=1, T_re=1e4, kappa10=1e-2),
-    'stiff': dict(r=1e-1, cr=1, T_re=2e3, kappa10=1e-2),
-    'high_kappa': dict(r=1e-2, cr=1, T_re=2e3, kappa10=1.0),
-    'positive_tilt': dict(r=1e-2, cr=0, T_re=2e3, kappa10=1e-2, nt=0.2),
-}
+from benchmark_prufer_oracle import CASES  # noqa: E402
 
 
 def _relative_max(a, b):
     return float(np.max(np.abs(a - b)) / max(1.0, float(np.max(np.abs(b)))))
+
+
+def _analytic_s2_proxy(first, second):
+    """用 S2 的端点缩放关系估计 log10 Omega 的局部变化。"""
+    phi = np.asarray(first[1], dtype=float)
+    s2_first = np.asarray(first[3], dtype=float)
+    s2_second = np.asarray(second[3], dtype=float)
+    j0s = np.asarray(first[5], dtype=np.int64)
+    z0s = np.asarray(first[6], dtype=float)
+    z_tail = float(first[15])
+    delta_psi = np.log(s2_second) - np.log(s2_first)
+    out = np.empty(len(j0s), dtype=float)
+    for mode, j0 in enumerate(j0s):
+        phi0 = phi[j0]
+        z0 = z0s[mode]
+        k = j0
+        while k < len(phi) - 1 and z0 + phi[k] - phi0 < z_tail:
+            k += 1
+        kend = len(phi) - 1 if z0 + phi[k] - phi0 < z_tail else max(j0, k - 1)
+        out[mode] = (delta_psi[kend] - delta_psi[j0]) / np.log(10.0)
+    return float(np.max(np.abs(out)))
+
+
+def _analytic_horizon_proxy(first_f_hor, second_f_hor, first):
+    """固定 j0 时，初始 z0 对 log10 Omega 的一阶缩放代理。"""
+    delta_f = np.asarray(second_f_hor, dtype=float) - np.asarray(first_f_hor, dtype=float)
+    j0s = np.asarray(first[5], dtype=np.int64)
+    return float(np.max(np.abs(-2.0 * delta_f[j0s])))
 
 
 def _run(name):
@@ -78,8 +98,9 @@ def _run(name):
         (FS.gen_fast, FS.prep_frequency_only, FS.solve_kernel,
          FS._OUTER_FULL_REUSE_SIGMA_TOL, FS._OUTER_FULL_REUSE_FHOR_TOL) = saved
 
-    if len(spectra) < 2:
-        return {'point': name, 'kernel_calls': len(spectra), 'eligible': False}
+    if not hasattr(model, 'DN_gw') or len(spectra) < 2:
+        return {'point': name, 'kernel_calls': len(spectra), 'eligible': False,
+                'failure': getattr(model, 'fast_failure_reason', 'physical_guard')}
     old_i = spectra[0]
     new_i = spectra[1]
     delta_i = np.log10(new_i) - np.log10(old_i)
@@ -113,6 +134,8 @@ def _run(name):
     s2_response = run_input_variant('s2')
     phi_pred = float(np.max(np.abs(np.log10(phi_response) - np.log10(old_i))))
     s2_pred = float(np.max(np.abs(np.log10(s2_response) - np.log10(old_i))))
+    s2_closed_form = _analytic_s2_proxy(snapshots[0], snapshots[1])
+    horizon_closed_form = _analytic_horizon_proxy(f_hor[0], f_hor[1], snapshots[0])
     return {
         'point': name,
         'kernel_calls': len(spectra),
@@ -126,9 +149,12 @@ def _run(name):
         'frequency_weighted_dn_sensitivity_proxy': sensitivity,
         'linear_response_predicted_dlogomega_phi': phi_pred,
         'linear_response_predicted_dlogomega_s2': s2_pred,
+        's2_closed_form_predicted_dlogomega': s2_closed_form,
+        'horizon_start_closed_form_predicted_dlogomega': horizon_closed_form,
         'linear_response_actual_dlogomega': float(np.max(np.abs(delta_i))),
         'dn_gw_first': float(model.DN_gw[0]),
         'dn_gw_last': float(np.asarray(model.DN_gw)[-1]),
+        'failure': getattr(model, 'fast_failure_reason', None),
     }
 
 

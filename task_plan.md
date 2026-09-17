@@ -242,3 +242,11 @@ Phase 3: Implementation and evidence-driven optimization
 ## Next Step
 
 已完成当前 HEAD fresh runtime/阶段 profile、outer-reuse baseline 和 kernel 输入局部响应原型；当前下一步为推导不调用第二次 kernel 的低成本 observable response criterion，尚未进入 production。
+
+## Current session update: 2026-09-20
+
+- [x] 完成全 named/edge/Sobol 的解析 S2 端点项 + horizon-start 项边界诊断；`14/24`
+  eligible，安全因子 1.1 下 coverage `4/14`、false-safe `0/4`，目标
+  high-T/stiff/high-kappa `0/3`，因此不进入 production。
+- [ ] 补齐 `j0/z0/tail/phase-path` 响应项，先以 standalone 形式和 Cartesian/Prüfer/WKB
+  oracle 对照；未获得预算内 target-regime coverage 前不做 runtime A/B。
