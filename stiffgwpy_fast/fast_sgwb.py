@@ -1028,14 +1028,14 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
         elif k == nv-1:
             assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
         if zz < z_tail:
-            while k < nv-1 and (z0 + Phi_grid[k] - Phi0) < z_tail:
+            while k < nv-1 and zz < z_tail:
                 h_step = h_arr[k] if h_arr is not None else h
+                z_node = zz
                 z_mid_step = z0 + Phi_mid[k] - Phi0
                 if k == kink_index and 0.0 < kink_fraction < 1.0:
                     # Split the unique interval containing N_re.  Phi_re is
                     # computed from the two background regimes, so neither
                     # transfer sub-step samples across the sigma kink.
-                    z_node = z0 + Phi_grid[k] - Phi0
                     z_break = z0 + phi_re - Phi0
                     z_end = z0 + Phi_grid[k + 1] - Phi0
                     h_left = h_step * kink_fraction
@@ -1045,7 +1045,6 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                     xh, yh = _phase_segment(xh, yh, z_break, z_end,
                                              h_right, phase_max)
                 else:
-                    z_node = z0 + Phi_grid[k] - Phi0
                     z_end = 2.0 * z_mid_step - z_node
                     xh, yh = _phase_segment(xh, yh, z_node, z_end,
                                              h_step, phase_max)
