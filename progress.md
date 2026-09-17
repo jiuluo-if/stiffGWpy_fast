@@ -950,3 +950,18 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。速度门�
 
 Artifacts：`docs/phase_exp_hoist_spike_round9_20260917.json`、
 `docs/phase_exp_hoist_outer_round9_20260917.json`。
+
+## Current session update: 2026-09-17 (round9 assembly attribution)
+
+- [x] 在当前 HEAD `df6880a`、Numba=2、BLAS=1、workers=1 下重跑目标三点
+  `PROFILE_ASSEMBLE=0` 诊断；tensor median 从正式的
+  high-T/stiff/high-kappa `4.409/4.895/4.663 ms` 降到
+  `3.971/4.284/4.312 ms`。
+- [x] 这是删除绝大多数中间 assembly 写入的理论上限诊断，不是可接受的 solver
+  候选；完整 total median 没有形成稳定同幅收益，且会破坏中间列输出契约。
+- [x] 结论：assembly-only 不能作为下一步 >5% total 优化方向；不修改 production，
+  下一轮转向真正减少 propagation 工作量的 hybrid/phase 结构研究。
+
+Artifact：`docs/profile_fast_breakdown_round9_noassemble_highT_20260917.json`、
+`docs/profile_fast_breakdown_round9_noassemble_stiff_20260917.json`、
+`docs/profile_fast_breakdown_round9_noassemble_high_kappa_20260917.json`。

@@ -1154,3 +1154,14 @@ runtime gate 已失败，不继续 Oracle A/Prüfer/WKB、named+Sobol 或 false-
 Artifacts（绑定 spike HEAD `06b7df1f6b1cdab406d7d7bc441dc29716a212a4`）：
 `docs/phase_exp_hoist_spike_round9_20260917.json`、
 `docs/phase_exp_hoist_outer_round9_20260917.json`。
+
+## Round9 assembly attribution (2026-09-17, current HEAD)
+
+在当前 HEAD `df6880a` 重新运行 `PROFILE_ASSEMBLE=0`，目标三点 tensor stage
+median 为 high-T/stiff/high-kappa `3.971/4.284/4.312 ms`，而正式 assemble=1
+分别为 `4.409/4.895/4.663 ms`。这只能给出“删除大部分中间列 assembly”的上限，
+不是可部署算法；该诊断会丢失中间列，不能用于精度、oracle 或输出契约认证。
+
+完整 total 没有形成稳定的对应 >5% 收益，且 low-T 仍需独立处理。因此 assembly-only
+优化排除，不重复 no-assembly kernel 或其组合；下一候选必须减少真实 propagation
+工作量，并先满足 hybrid/phase standalone 的精度与 runtime gate。
