@@ -195,7 +195,35 @@ def _adiabatic_trigger(arrays, eps_trigger, z_tail, consecutive=3):
     return matches
 
 
-def run_case(name, z_match, z_tail, repeats, trigger_eps=None):
+def _adiabatic_trigger_second_order(arrays, eps_trigger, z_tail, consecutive=3):
+    """Require first- and second-order WKB indicators to stay below the bound."""
+    (nv, phi_grid, _, _, _, j0s, z0s, sigma, _, _, _, _, _) = arrays
+    q = 1.5 * np.asarray(sigma, dtype=np.float64) - 1.0
+    q_prime = np.empty_like(q)
+    q_prime[0] = (q[1] - q[0]) / (nv[1] - nv[0])
+    q_prime[-1] = (q[-1] - q[-2]) / (nv[-1] - nv[-2])
+    q_prime[1:-1] = (q[2:] - q[:-2]) / (nv[2:] - nv[:-2])
+    curvature = q * q + q_prime
+    matches = np.full(len(j0s), np.inf, dtype=np.float64)
+    for mode, j0 in enumerate(j0s):
+        z_initial = z0s[mode]
+        phi_initial = phi_grid[j0]
+        for index in range(j0, len(phi_grid) - consecutive):
+            z_values = z_initial + phi_grid[index:index + consecutive] - phi_initial
+            omega = np.exp(z_values)
+            first = np.abs(q[index:index + consecutive]) / omega
+            second = np.abs(curvature[index:index + consecutive]) / (omega * omega)
+            # 二阶项防止 q 接近零时把快速背景变化误判为绝热。
+            if (z_values[-1] < z_tail
+                    and np.all(first <= eps_trigger)
+                    and np.all(second <= eps_trigger)):
+                matches[mode] = z_values[0]
+                break
+    return matches
+
+
+def run_case(name, z_match, z_tail, repeats, trigger_eps=None,
+              trigger_order=1):
     FS.apply_accuracy_mode('fast')
     FS.set_threads(2)
     model = LCDM_SG(**CASES[name])
@@ -203,9 +231,13 @@ def run_case(name, z_match, z_tail, repeats, trigger_eps=None):
     arrays = _prepared(model)
     (nv, phi_grid, phi_mid, s2, s2inv, j0s, z0s, sigma,
      carrier_cumulative, carrier_inverse, kink_index, kink_fraction, phi_re) = arrays
-    z_match_values = (np.full(len(j0s), z_match, dtype=np.float64)
-                      if trigger_eps is None
-                      else _adiabatic_trigger(arrays, trigger_eps, z_tail))
+    if trigger_eps is None:
+        z_match_values = np.full(len(j0s), z_match, dtype=np.float64)
+    elif trigger_order == 2:
+        z_match_values = _adiabatic_trigger_second_order(
+            arrays, trigger_eps, z_tail)
+    else:
+        z_match_values = _adiabatic_trigger(arrays, trigger_eps, z_tail)
     baseline = _run_kernel(arrays, z_match_values, z_tail, False)
     candidate = _run_kernel(arrays, z_match_values, z_tail, True)
     amp_rel = np.abs(np.sqrt(candidate[2]) - np.sqrt(baseline[2])) \
@@ -261,12 +293,13 @@ def main():
     parser.add_argument('--z-match', type=float, default=4.0)
     parser.add_argument('--z-tail', type=float, default=5.0)
     parser.add_argument('--trigger-eps', type=float, default=None)
+    parser.add_argument('--trigger-order', type=int, choices=(1, 2), default=1)
     parser.add_argument('--repeats', type=int, default=25)
     parser.add_argument('--out', default='docs/wkb_carrier_numba_spike_round_20260917.json')
     args = parser.parse_args()
     names = ['default', 'highT', 'stiff', 'high_kappa']
     records = [run_case(name, args.z_match, args.z_tail, args.repeats,
-                        args.trigger_eps)
+                        args.trigger_eps, args.trigger_order)
                for name in names]
     payload = {
         'experiment': 'wkb_carrier_numba_standalone_spike',
