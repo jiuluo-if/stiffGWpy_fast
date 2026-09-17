@@ -1,0 +1,63 @@
+{
+  "commit": "7742f770c1ebd948612351a66ab47d430a4fd56c",
+  "round": 22,
+  "candidate": "observable-aware outer full-solve reuse",
+  "status": "REJECTED_FOR_PRODUCTION",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1,
+    "repeats": 25
+  },
+  "fresh_profile": {
+    "artifact_glob": "docs/profile_fast_breakdown_round22_{case}_20260917.json",
+    "warm_total_ms": {
+      "default": 7.04,
+      "highT": 10.42,
+      "stiff": 10.50,
+      "high_kappa": 10.28,
+      "lowT": 6.62
+    },
+    "warm_kernel_ms": {
+      "default": 2.46,
+      "highT": 4.48,
+      "stiff": 4.74,
+      "high_kappa": 4.68,
+      "lowT": 2.98
+    },
+    "outer_iterations": {
+      "default": 1,
+      "highT": 2,
+      "stiff": 2,
+      "high_kappa": 2,
+      "lowT": 1
+    }
+  },
+  "forced_reuse_ab": {
+    "artifact_named": "docs/outer_reuse_headroom_round22_20260917.json",
+    "artifact_extended": "docs/outer_reuse_headroom_round22_extended_20260917.json",
+    "observed_rows": {
+      "highT": {"runtime_ratio_forced_over_current": 0.7938184702580202, "spectrum_max_abs_dex_diff": 0.003943946950140997, "DN_rel": 3.387256706276512e-11},
+      "stiff": {"runtime_ratio_forced_over_current": 0.7658288000517361, "spectrum_max_abs_dex_diff": 0.0010507593453290553, "DN_rel": 3.0527811046902874e-10},
+      "high_kappa": {"runtime_ratio_forced_over_current": 0.7676858791423676, "spectrum_max_abs_dex_diff": 0.015473770285939992, "DN_rel": 3.2826762385638345e-11},
+      "cr0_blue": {"runtime_ratio_forced_over_current": 0.7427023246147696, "spectrum_max_abs_dex_diff": 0.004429564877611369, "DN_rel": 2.5611180440112795e-09},
+      "positive_tilt": {"runtime_ratio_forced_over_current": 0.7746491938815687, "spectrum_max_abs_dex_diff": 0.2075092852514384, "DN_rel": 4.162130984675888e-09},
+      "sobol_002": {"runtime_ratio_forced_over_current": 0.7232955577366699, "spectrum_max_abs_dex_diff": 0.08361142903103058, "DN_rel": 3.107095252440968e-11},
+      "sobol_010": {"runtime_ratio_forced_over_current": 0.7827340746496598, "spectrum_max_abs_dex_diff": 0.04774802050416049, "DN_rel": 2.3771476342194854e-10},
+      "sobol_015": {"runtime_ratio_forced_over_current": 0.7396280733333896, "spectrum_max_abs_dex_diff": 0.000978008861899582, "DN_rel": 1.044349212075567e-12}
+    }
+  },
+  "proxy": {
+    "artifact_named": "docs/outer_observable_proxy_round22_20260917.json",
+    "artifact_extended": "docs/outer_observable_proxy_round22_extended_20260917.json",
+    "definition": "The existing S2 and horizon-start response proxies are diagnostic only; they are not an a-priori error bound and do not certify DN sensitivity.",
+    "provisional_screen": "max(abs(s2_closed_form_predicted_dlogomega), abs(horizon_start_closed_form_predicted_dlogomega)) <= 1.5e-3",
+    "screen_result": "The screen separates the observed small-update stiff/sobol_015 rows from the large-error highT/high-kappa/tilt/Sobol rows in this sample, but the sample is too small and DN certification is missing."
+  },
+  "decision_basis": [
+    "Forced reuse saves about 21-28% when it removes a second kernel, but it changes the spectrum for several representative and Sobol points.",
+    "A proxy-based gate would be a non-bitwise algorithmic change and requires independent Oracle A/Prüfer/WKB, named cases, and broader Sobol validation before production.",
+    "No production threshold or outer-reuse behavior was changed."
+  ],
+  "next_action": "Keep the current exact reuse gate; investigate a separately validated predictor or another strict-equivalence hotspot."
+}

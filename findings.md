@@ -1675,3 +1675,11 @@ Fresh postcommit attribution at `3e5bf7ee82d50a5901d5c66aad886ef909819d80` check
 Under the fixed study resources (Numba=2, BLAS=1, workers=1, 25 repeats), the complete `correct_kink_background` stage is only `0.10–0.18 ms` warm median against `6.04–10.15 ms` total. Even removing the whole stage would have a theoretical total-runtime ceiling below 2%, so it cannot satisfy the >5% acceptance gate. No production patch was made; changing the `gen_kernel` return contract would add risk without sufficient payoff.
 
 Decision: **REJECTED — insufficient speed headroom**. Artifact: `docs/h2_endpoint_cross_layer_round21_20260917.json`.
+
+## Round 22 — Observable-aware outer reuse screen (2026-09-17)
+
+Fresh current-HEAD profiles at `7742f770c1ebd948612351a66ab47d430a4fd56c` kept the same regime split: high-T/stiff/high-kappa require two kernel calls, with warm kernel medians `4.48/4.74/4.68 ms` and total medians `10.42/10.50/10.28 ms` in the fixed 2-thread study environment. The fresh artifacts are `docs/profile_fast_breakdown_round22_{default,highT,stiff,high_kappa,lowT}_20260917.json`.
+
+The existing outer reuse headroom A/B was rerun for five named cases plus `cr0_blue`, `positive_tilt`, `negative_tilt`, and four Sobol points. Forced reuse saves about 21–28% when it removes the second kernel, but the spectrum changes are `3.94e-3 dex` for high-T, `1.55e-2 dex` for high-kappa, `0.208 dex` for positive tilt, `8.36e-2/4.77e-2 dex` for two Sobol points, and `4.43e-3 dex` for cr0-blue. The small-update rows stiff and sobol_015 are `1.05e-3` and `9.78e-4 dex`, respectively, with tiny DN relative differences.
+
+The S2/horizon observable proxies can screen this sample with a provisional `1.5e-3` threshold, but the proxies are explicitly diagnostic rather than error bounds and provide no independent DN safety certificate. This would be a non-bitwise algorithmic change requiring Oracle A/Prüfer/WKB and broader Sobol validation. **No production outer-reuse threshold was changed; candidate rejected for production pending a certified predictor.** Artifacts: `docs/outer_reuse_headroom_round22_20260917.json`, `docs/outer_reuse_headroom_round22_extended_20260917.json`, `docs/outer_observable_proxy_round22_20260917.json`, `docs/outer_observable_proxy_round22_extended_20260917.json`, and `docs/outer_observable_gate_round22_20260917.json`.

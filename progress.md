@@ -1277,3 +1277,13 @@ production path 未修改。下一候选必须避免仅改变浮点运算顺序�
 - Result: rejected before code change. The full stage is only `0.10–0.18 ms` warm median across named cases; removing it cannot reach the >5% runtime gate.
 - Artifact: `docs/h2_endpoint_cross_layer_round21_20260917.json`.
 - Next: fresh high-T/stiff/high-kappa attribution at tensor/outer-loop granularity; do not alter the H2 return contract for this low-headroom candidate.
+
+## Round 22 — Observable-aware outer reuse screen (2026-09-17)
+
+- Fresh HEAD: `7742f770c1ebd948612351a66ab47d430a4fd56c`.
+- Fresh 25-repeat stage profiles: high-T/stiff/high-kappa total `10.42/10.50/10.28 ms`, tensor kernel `4.48/4.74/4.68 ms`; each has two outer iterations.
+- Forced-reuse A/B on named, tilt, and Sobol points: second-kernel removal saves `21–28%`, but spectrum deviations range from zero/small-update to `0.208 dex`; DN relative differences alone are not sufficient evidence of spectrum safety.
+- Observable proxy screen (`delta S2`, horizon shift, `delta Phi`) separates the observed small-update rows, but remains diagnostic and has no certified DN error bound.
+- Decision: **REJECTED_FOR_PRODUCTION**. No formal threshold or production behavior changed.
+- Artifacts: `docs/outer_observable_gate_round22_20260917.json` plus the four named/extended profile and outer-reuse/proxy artifacts listed in the findings entry.
+- Next: seek a certified predictor only if it can satisfy non-bitwise oracle/Sobol gates; otherwise continue strict-equivalence hotspot attribution.
