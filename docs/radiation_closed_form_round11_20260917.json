@@ -1,0 +1,74 @@
+{
+  "commit": "ba95ecc013dbd7c5423e6efdd3f614547a26cf15",
+  "experiment": "constant_radiation_closed_form_standalone",
+  "production_path_changed": false,
+  "settings": {
+    "z_match": 3.75,
+    "z_tail": 5.0,
+    "repeats": 30,
+    "out": "docs/radiation_closed_form_round11_20260917.json"
+  },
+  "records": [
+    {
+      "case": "default",
+      "n_modes": 76,
+      "max_amplitude_rel": 0.01691243354320487,
+      "p99_amplitude_rel": 0.009690248111755971,
+      "numerical_failure_count": 0,
+      "exact_median_ms": 1.1581000017031329,
+      "candidate_median_ms": 1.330999999481719,
+      "candidate_over_exact": 1.1492962589796345
+    },
+    {
+      "case": "highT",
+      "n_modes": 76,
+      "max_amplitude_rel": 0.006188011780987634,
+      "p99_amplitude_rel": 0.005352125607511521,
+      "numerical_failure_count": 0,
+      "exact_median_ms": 1.1157499993714737,
+      "candidate_median_ms": 1.2895999989268603,
+      "candidate_over_exact": 1.155814474257961
+    },
+    {
+      "case": "stiff",
+      "n_modes": 76,
+      "max_amplitude_rel": 0.018564857485359968,
+      "p99_amplitude_rel": 0.00939447946317725,
+      "numerical_failure_count": 0,
+      "exact_median_ms": 1.241449999724864,
+      "candidate_median_ms": 1.371050000670948,
+      "candidate_over_exact": 1.1043940561237315
+    },
+    {
+      "case": "high_kappa",
+      "n_modes": 77,
+      "max_amplitude_rel": 0.018105687329450813,
+      "p99_amplitude_rel": 0.009568023601349698,
+      "numerical_failure_count": 0,
+      "exact_median_ms": 1.160999998319312,
+      "candidate_median_ms": 1.31975000113016,
+      "candidate_over_exact": 1.1367355754010833
+    }
+  ],
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  }
+}

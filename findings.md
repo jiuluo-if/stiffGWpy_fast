@@ -1202,3 +1202,23 @@ Artifacts（均绑定 HEAD `164bd84f2984fce72755c3ad10c5f7698b33663f`）：
 `docs/phase_exp_fastmath_outer_round10_20260917.json`、
 `docs/phase_exp_fastmath_outer_16t_round10_20260917.json`、
 `docs/phase_exp_fastmath_outer_20t_round10_20260917.json`。
+
+## Analytic branch eligibility boundary (2026-09-17, fresh HEAD)
+
+在当前 HEAD `ba95ecc013dbd7c5423e6efdd3f614547a26cf15`、2 threads、BLAS=1、
+workers=1 下，先重新统计实际 kernel segment 的背景可解析性，未修改 production。
+严格 `sigma=4/3` 的 radiation segment 为 0；严格 `sigma=2` 的 stiff segment 在
+high-T/stiff/high-kappa/low-T 分别为 `40202/28140/48294/0`。放宽到相邻节点
+`|sigma-sigma_target|<1e-4` 后，eligible fraction 为
+high-T/stiff/high-kappa/low-T `16.47%/14.31%/17.66%/6.62%`。
+
+已有固定 `z_match=3.75` radiation closed-form spike 的 30-repeat kernel A/B
+也在同一 HEAD 重跑：candidate/exact runtime ratio 为 default/high-T/stiff/high-kappa
+`1.149/1.156/1.104/1.137`，且 amplitude max relative 为
+`1.69%/0.62%/1.86%/1.81%`。因此固定 handoff 既没有速度收益，也不能作为
+误差受控的 analytic branch；后续只测试按 sigma 连续区间局部跳跃，不能把该结果
+外推为 branch 可行性。
+
+Artifacts（绑定 HEAD `ba95ecc013dbd7c5423e6efdd3f614547a26cf15`）：
+`docs/analytic_branch_eligibility_round11_20260917.json`、
+`docs/radiation_closed_form_round11_20260917.json`。

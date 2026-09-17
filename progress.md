@@ -993,3 +993,20 @@ Artifacts：`docs/phase_exp_fastmath_spike_round10_20260917.json`、
 `docs/phase_exp_fastmath_outer_round10_20260917.json`、
 `docs/phase_exp_fastmath_outer_16t_round10_20260917.json`、
 `docs/phase_exp_fastmath_outer_20t_round10_20260917.json`。
+
+## Current session update: 2026-09-17 (analytic branch eligibility boundary)
+
+- [x] fresh HEAD `ba95ecc` 重跑实际 segment eligibility；严格 radiation segment 为
+  `0`，严格 stiff segment 为 high-T/stiff/high-kappa/low-T
+  `40202/28140/48294/0`。
+- [x] `|Δsigma|<1e-4` 的 branch fraction 为 high-T/stiff/high-kappa/low-T
+  `16.47%/14.31%/17.66%/6.62%`；不能据此直接声称可减少 30% tensor work。
+- [x] 固定 `z_match=3.75` radiation closed-form 30-repeat candidate/exact ratio 为
+  `1.149/1.156/1.104/1.137`，amplitude max relative 为
+  `1.69%/0.62%/1.86%/1.81%`，因此固定 handoff 诊断拒绝。
+
+下一步：只做按实际 sigma 连续区间识别的局部 radiation/stiff 跳跃 prototype，
+先验证 output error，再决定是否值得 runtime A/B；production source 保持不变。
+
+Artifacts：`docs/analytic_branch_eligibility_round11_20260917.json`、
+`docs/radiation_closed_form_round11_20260917.json`。
