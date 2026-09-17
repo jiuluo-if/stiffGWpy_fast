@@ -1660,3 +1660,11 @@ Artifacts：
 `docs/phase_z_reuse_outer_round20_50_20260917.json`、
 `docs/phase_z_reuse_outer_round20_t16_20260917.json`、
 `docs/phase_z_reuse_outer_round20_t20_20260917.json`。
+
+### Post-commit verification
+
+Production patch commit `94144c14c0a79869b2043845b83f13c18ab7e4f1` 的 fresh
+full pytest 为 `165 passed, 6 deselected, 2 warnings`。新 stage artifacts
+`docs/profile_fast_breakdown_round20_postcommit_*.json` 均直接绑定该 SHA；
+post-commit warm total median 为 default/high-T/stiff/high-kappa/low-T
+`6.04/9.83/10.15/9.98/6.42 ms`，五点均 converged，failure reason 为 null。

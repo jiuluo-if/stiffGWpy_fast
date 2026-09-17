@@ -394,3 +394,5 @@ Phase 3: Implementation and evidence-driven optimization
   层限制；不把候选宣称为 10% breakthrough。
 - [x] 接入 production 的最小 loop-state reuse patch；待新 HEAD post-commit
   benchmark、全门禁和 artifact provenance 复核。
+- [x] 新 HEAD `94144c1` post-commit full pytest 通过（`165 passed, 6 deselected`），
+  五点 fresh profile artifacts 已绑定该 SHA；production 优化保留。

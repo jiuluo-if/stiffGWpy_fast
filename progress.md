@@ -1259,3 +1259,13 @@ production path 未修改。下一候选必须避免仅改变浮点运算顺序�
 `ACCEPTED / PRODUCTION PATCH READY`。将 `while` 条件和 `z_node` 改为复用现有
 `zz`，不改变任何数值表达式；production source 仅作最小修改，随后绑定新 HEAD
 重跑 post-commit verification。
+
+### Post-commit verification
+
+- production commit：`94144c14c0a79869b2043845b83f13c18ab7e4f1`，已 push 到
+  `fast_v0.2`。
+- 全量 pytest：`165 passed, 6 deselected, 2 warnings`。
+- post-commit fresh stage profile：default/high-T/stiff/high-kappa/lowT total
+  median `6.04/9.83/10.15/9.98/6.42 ms`，均 converged、无 failure。
+- artifacts：`docs/profile_fast_breakdown_round20_postcommit_*.json`，每个 JSON
+  的 `commit` 字段均为 `94144c1`。
