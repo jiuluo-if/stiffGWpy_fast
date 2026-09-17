@@ -1514,6 +1514,33 @@ lookup，不改变插值函数或浮点计算顺序，production source 未修�
 Artifacts：`docs/fd_lookup_cache_round16_*.json`、
 `docs/fd_lookup_cache_round16_50_*.json`。
 
+## Cross-channel exact transfer reuse boundary (2026-09-17, fresh HEAD)
+
+### Hypothesis and scope
+
+若多个频率通道共享 horizon start `j0` 或 tail endpoint，可计算一次线性 transfer
+path 后复用，减少 tensor propagation work。只做 read-only overlap diagnostic，不
+改变 kernel；并显式检查 `(j0, tail_index)` pair，而不是把单独的 `j0` 重合误当作
+可复用证据。
+
+### Evidence
+
+- 当前 HEAD `780d70e`、Numba=2、BLAS=1、workers=1；round17 fresh profile 的
+  tensor kernel median default/high-T/stiff/high-kappa 为 `2.34/4.29/4.49/4.19 ms`。
+- 五工况 `j0` reuse fraction 仅 `9.1%–10.5%`，tail-index reuse fraction 约 `6.5%`；
+  但每个 `(j0, tail_index)` pair 均唯一，pair reuse fraction 为 `0`，最大 pair
+  multiplicity 为 `1`。
+- formal `phase_max=.25` 下，即使 `j0` 相同，不同 `z0` 也可能产生不同的 phase
+  subdivision；因此不能用单一 shared transfer map 保持逐位结果。
+
+### Decision
+
+`REJECTED AS EXACT REUSE CANDIDATE / DIAGNOSTIC RETAINED`。不建立简单的跨通道
+transfer cache；下一步转向 outer allocation/assembly attribution，或提出能处理
+mode-local phase subdivision 的独立数学 prototype。
+
+Artifact：`docs/channel_overlap_round17_20260917.json`。
+
 ### Decision
 
 `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。该 carrier 预积分在

@@ -1159,3 +1159,15 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。production 
 修改，不再重复 Python import/cache 微优化。
 
 Artifacts：`docs/fd_lookup_cache_round16_*.json`。
+
+## Current session update: 2026-09-17 (cross-channel overlap diagnostic)
+
+- [x] fresh round17 profile 重新确认 tensor kernel 为主要热点。
+- [x] 统计五工况 `j0`、tail endpoint 与 `(j0, tail_index)` overlap；pair reuse 为
+  `0`，不具备简单 exact transfer 共享条件。
+
+Decision: `REJECTED AS EXACT REUSE CANDIDATE / DIAGNOSTIC RETAINED`。production 未
+修改，下一步转向 outer allocation/assembly 或新的 mode-local 数学路径。
+
+Artifacts：`docs/profile_fast_breakdown_round17_*.json`、
+`docs/channel_overlap_round17_20260917.json`。

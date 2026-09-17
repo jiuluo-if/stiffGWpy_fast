@@ -356,3 +356,10 @@ Phase 3: Implementation and evidence-driven optimization
   Python lookup/cache 微优化。
 - [ ] 下一轮重新 fetch/profile，转向尚未验证的 outer allocation/assembly 或新的
   standalone 数学路径，并保持独立 precision gate。
+
+### Round 17 decision
+
+- [x] Fresh stage profile 与 channel-overlap diagnostic 完成；`(j0, tail_index)`
+  pair 无重复，简单 cross-channel exact transfer reuse 排除。
+- [ ] 下一轮重新 fetch/profile，重点拆解 outer allocation/assembly；若尝试结构性
+  propagation，必须先处理 mode-local phase subdivision 的 exactness。
