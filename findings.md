@@ -1579,3 +1579,38 @@ PCHIP 或 outer assembly bookkeeping。
 assembly shortcut；保留可复查的阶段归因脚本和 artifact，下一候选必须减少
 真实 channel propagation 工作量，并先以 standalone 数学残差及
 Cartesian/Prüfer/WKB 对照证明安全。
+
+## Tail-factor cache spike (2026-09-17, HEAD 3921c8c)
+
+### Hypothesis and scope
+
+tail assembly 在每个 coarse slot 重复计算 `ev_minus[kk2] * fp_minus[kk2]`。
+standalone candidate 预计算该 grid-only factor，并只用于 `xf` 的 tail
+amplitude；`Th` 保留 production 的原始计算顺序。脚本为
+`scripts/benchmark_tail_factor_cache.py`，TDD contract 为
+`tests/test_tail_factor_cache_spike.py`，production source 未修改。
+
+### Evidence
+
+当前 HEAD、Numba=2、BLAS=1、workers=1、workqueue，25-repeat kernel A/B：
+
+| regime | candidate/base | spectrum p50/p95/max | DN relative | digest |
+|---|---:|---:|---:|---|
+| default | 0.9633 | `1.13e-10/2.23e-6/6.70e-6` | `7.51e-12` | mismatch |
+| high-T | 0.9763 | `1.91e-11/3.18e-6/6.13e-6` | `2.99e-13` | mismatch |
+| stiff | 0.8911 | `1.79e-10/4.36e-6/7.60e-6` | `1.18e-11` | mismatch |
+| high-kappa | 0.9610 | `2.48e-12/2.00e-6/5.56e-6` | `7.79e-14` | mismatch |
+| low-T | 0.8892 | `3.65e-9/2.08e-6/4.88e-6` | `3.12e-7` | mismatch |
+
+所有 A/B kernel 调用均完成且无 numerical failure；但 factor 重排改变了浮点
+运算顺序，无法满足 bitwise digest gate。该结果只证明 tail assembly 有局部
+算术冗余，不证明可安全改变科学结果；kernel-only speed 也不能直接外推为
+full outer runtime。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS FAILED SPIKE`：不进入 Oracle A/Prüfer/WKB
+或 outer gate，不修改 production；后续若再研究 tail，只能寻找保持原始运算
+顺序的缓存边界，不能把近似数值一致误报为严格等价。
+
+Artifact：`docs/tail_factor_cache_round19_20260917.json`。

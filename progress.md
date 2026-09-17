@@ -1202,3 +1202,32 @@ Artifact: `docs/outer_attribution_round18_20260917.json`；script:
 `DIAGNOSTIC CONFIRMED / NO PRODUCTION CHANGE`。high-T/stiff/high-kappa 的额外
 完整 solve 已被直接观测，但 assembly shortcut 已有 2--4% 上限证据，不能满足
 候选门槛；下一轮继续寻找减少 propagation arithmetic/steps 的 standalone 方向。
+
+## Session: 2026-09-17 (round19 tail-factor cache spike)
+
+### Actions Taken
+
+- fresh fetch 后确认本地与 `fast/fast_v0.2` 同为 `3921c8c`，重新读取最近
+  commits、profile、validation 和 rejection artifacts。
+- 先写 TDD identity contract，再实现 standalone tail-factor cache twin；只将
+  `ev_minus * fp_minus` 的预计算结果用于 `xf`，保持 `Th` 的原始表达式。
+- 固定 Numba=2、BLAS=1、workers=1、workqueue，完成五工况 25-repeat kernel A/B。
+
+### Test Results
+
+| regime | candidate/base | digest | spectrum max relative | DN relative |
+|---|---:|---|---:|---:|
+| default | 0.9633 | mismatch | `6.70e-6` | `7.51e-12` |
+| high-T | 0.9763 | mismatch | `6.13e-6` | `2.99e-13` |
+| stiff | 0.8911 | mismatch | `7.60e-6` | `1.18e-11` |
+| high-kappa | 0.9610 | mismatch | `5.56e-6` | `7.79e-14` |
+| low-T | 0.8892 | mismatch | `4.88e-6` | `3.12e-7` |
+
+TDD contract：`1 passed`；artifact：
+`docs/tail_factor_cache_round19_20260917.json`。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS FAILED SPIKE`。候选局部 kernel 速度有改善，
+但所有 regime 均未保持 bitwise digest，且本轮没有理由进入独立 oracle promotion；
+production path 未修改。下一候选必须避免仅改变浮点运算顺序。

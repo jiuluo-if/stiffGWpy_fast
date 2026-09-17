@@ -374,3 +374,13 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] 下一阶段只研究能减少真实 propagation arithmetic/steps 的 standalone
   phase-function/Riccati/WKB 方向；先做数学残差和独立 Cartesian/Prüfer/WKB
   对照，再考虑 25--50 repeat runtime gate。
+
+## Round 19: tail-factor cache spike (2026-09-17)
+
+- [x] 先完成 TDD identity contract，再做只读 tail-factor cache twin。
+- [x] 五工况 25-repeat kernel A/B 完成；candidate/base 为
+  `0.9633/0.9763/0.8911/0.9610/0.8892`。
+- [x] 发现五工况 digest 均 mismatch；拒绝 production，不进入 Oracle 或 outer
+  gate，保留失败 artifact 与精度边界。
+- [ ] 下一候选必须保持原始浮点运算顺序，或提出新的 standalone 数学依据；不再
+  直接推广预计算乘积到正式 kernel。

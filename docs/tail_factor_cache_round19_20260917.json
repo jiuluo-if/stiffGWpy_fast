@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_tail_factor_cache",
+  "production_path_changed": false,
+  "commit": "3921c8cc54e1cfe38fbe6ea78de35d9e66601fcb",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "repeats": 25,
+    "cases": [
+      "default",
+      "highT",
+      "stiff",
+      "high_kappa",
+      "lowT"
+    ],
+    "threads": 2
+  },
+  "records": [
+    {
+      "case": "default",
+      "n_freq": 76,
+      "repeats": 25,
+      "baseline_median_ms": 2.2471999982371926,
+      "candidate_median_ms": 2.1646999994118232,
+      "baseline_p95_ms": 2.6123400006326847,
+      "candidate_p95_ms": 2.833219998865388,
+      "candidate_over_baseline": 0.9632876473433223,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 4.523095498155705e-14,
+        "spectrum_rel_p50": 1.1329470180802592e-10,
+        "spectrum_rel_p95": 2.2272186672589643e-06,
+        "spectrum_rel_max": 6.697368770120002e-06,
+        "DN_gw_relative": 7.509700766062208e-12
+      },
+      "tail_factor_digest": "2e64f6788b12377493caee16bf71eb33ec9ebbf428d4408034479041f82623a1"
+    },
+    {
+      "case": "highT",
+      "n_freq": 76,
+      "repeats": 25,
+      "baseline_median_ms": 2.028500002779765,
+      "candidate_median_ms": 1.9804000003205147,
+      "baseline_p95_ms": 2.824860000691841,
+      "candidate_p95_ms": 2.226979998522438,
+      "candidate_over_baseline": 0.976287896281323,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 4.319992118039539e-14,
+        "spectrum_rel_p50": 1.906637854802518e-11,
+        "spectrum_rel_p95": 3.180343922553994e-06,
+        "spectrum_rel_max": 6.1269946960240195e-06,
+        "DN_gw_relative": 2.9928497651207703e-13
+      },
+      "tail_factor_digest": "9f2535f90782e8ff27cc1340f09afde4610bcfd94d8214c928ff5583e5fa98d4"
+    },
+    {
+      "case": "stiff",
+      "n_freq": 76,
+      "repeats": 25,
+      "baseline_median_ms": 2.372700000705663,
+      "candidate_median_ms": 2.114300001267111,
+      "baseline_p95_ms": 2.9645399983564853,
+      "candidate_p95_ms": 2.6880800003709733,
+      "candidate_over_baseline": 0.8910945339226612,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.4308181298292043e-13,
+        "spectrum_rel_p50": 1.7904757111506012e-10,
+        "spectrum_rel_p95": 4.3645846082611265e-06,
+        "spectrum_rel_max": 7.596889816206415e-06,
+        "DN_gw_relative": 1.1830794736273223e-11
+      },
+      "tail_factor_digest": "e03ae2d2a23d79ef761738d977d7f2f59a84d58d2a5f60d11a28cc0c3d6cd2a7"
+    },
+    {
+      "case": "high_kappa",
+      "n_freq": 77,
+      "repeats": 25,
+      "baseline_median_ms": 2.2676000007777475,
+      "candidate_median_ms": 2.179200000682613,
+      "baseline_p95_ms": 2.7228000006289217,
+      "candidate_p95_ms": 2.636979999806499,
+      "candidate_over_baseline": 0.9610160521852112,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.8234825734463973e-14,
+        "spectrum_rel_p50": 2.4829976700604798e-12,
+        "spectrum_rel_p95": 2.0044551403815726e-06,
+        "spectrum_rel_max": 5.56387652637739e-06,
+        "DN_gw_relative": 7.792412691535258e-14
+      },
+      "tail_factor_digest": "8f8dd0afc6db2c9ed1f43b3b89a944b15e8f8a62a590aed26bf5208a6c0bd3d4"
+    },
+    {
+      "case": "lowT",
+      "n_freq": 76,
+      "repeats": 25,
+      "baseline_median_ms": 2.845899998646928,
+      "candidate_median_ms": 2.5304999981017318,
+      "baseline_p95_ms": 3.5390400000324,
+      "candidate_p95_ms": 2.8629600004933304,
+      "candidate_over_baseline": 0.8891738990494564,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.683051932519754e-14,
+        "spectrum_rel_p50": 3.6544679539079907e-09,
+        "spectrum_rel_p95": 2.0786740847962297e-06,
+        "spectrum_rel_max": 4.878735862197734e-06,
+        "DN_gw_relative": 3.124727904463016e-07
+      },
+      "tail_factor_digest": "b28eeaac80b95c5c26a01ada2d74fd28d10fd98a3cc449a3fc4fe2154f8b8fb1"
+    }
+  ]
+}
