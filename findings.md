@@ -1047,6 +1047,40 @@ Sobol、16/20-thread total runtime 和 Oracle A/WKB 独立认证后才能考虑 
 
 Artifact: `docs/phase_recurrence_fullgrid_20260917.json`。
 
+## Phase recurrence edge/Sobol outer certification and total-runtime gate (2026-09-17, HEAD 3c631e5)
+
+本轮将 recurrence standalone audit 扩展到 Prüfer 参数表的全部 24 点，并把
+`edge_tre_hi`、`edge_nt_blue` 的 `shared_Neff_guard` 显式作为 physical guard 记录，
+不再把它们误报为数值失败。
+
+- full native-grid Prüfer/DOP853：`22/24` accepted、`2/24` physical guard、无
+  numerical failure；accepted 点的 fixed-DN recurrence-vs-production 最大 spectrum
+  relative 为 `1.609e-5`（positive-tilt），最大 DN relative 为 `6.44e-6`
+  （cr0-blue）。
+- full outer self-consistency：base/candidate 均 `22/24` accepted，两个 guard 点
+  同步拒绝；`status_mismatch=0`、`false_safe_count=0`；最大 spectrum delta
+  `6.988e-6 dex`，最大 DN relative `6.441e-6`。low-T outer delta 保持
+  p95/max `8.68e-7/2.12e-6 dex`，DN relative `3.12e-7`，未由高频结果外推。
+- formal total runtime 30-repeat、PCHIP、完整 outer solve：16-thread 重跑的
+  high-T/stiff/high-kappa median ratio 为 `1.000/0.967/0.986`；20-thread 为
+  `1.010/0.939/1.005`。跨线程与重复轮次均不能证明目标 regime 稳定 `>5%`
+  total-runtime 改善；p95 也没有形成一致优势。
+- accepted 目标点的 total A/B 精度仍为 high-T spectrum p95/max
+  `1.38e-6/2.66e-6 dex`、stiff `1.86e-6/3.30e-6 dex`、high-kappa
+  `8.68e-7/2.42e-6 dex`；DN relative 分别 `3.0e-13/1.18e-11/7.62e-14`。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE PROTOTYPE`。recurrence
+的精度与 guard 语义通过扩大参数空间验证，但 total-runtime gate 未通过；不修改
+正式 fast，不声称已达到 default `<4 ms` 或目标 regime `4–5 ms`。后续转向新的
+profiler-driven tensor/background 结构候选，不能重复本 recurrence 的同一 runtime
+路径。
+
+Artifacts：
+`docs/phase_recurrence_fullgrid_all24_20260917.json`、
+`docs/phase_recurrence_outer_matrix_20260917.json`、
+`docs/phase_recurrence_total_runtime_16t_20260917.json`、
+`docs/phase_recurrence_total_runtime_20t_20260917.json`。
+
 no-assembly first-probe kernel 只删除 `assemble=0` 首轮的列装配判断，transfer、kink
 split、tail matching 保持不变。25-repeat total ratio 为 default/high-T/stiff/high-kappa/
 low-T `0.97/0.96/1.00/0.95/1.01`；digest 相等、DN 差为 0，仍 REJECTED。

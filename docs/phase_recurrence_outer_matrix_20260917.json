@@ -1,0 +1,482 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_outer_matrix",
+  "production_path_changed": false,
+  "commit": "3c631e57da392b05fcc3f55ad938e267de551721",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "points": [
+      "default",
+      "lowT",
+      "highT",
+      "stiff",
+      "high_kappa",
+      "low_r",
+      "cr0_blue",
+      "positive_tilt",
+      "negative_tilt",
+      "sobol_000",
+      "sobol_002",
+      "sobol_006",
+      "sobol_010",
+      "sobol_015",
+      "edge_r_lo",
+      "edge_r_hi",
+      "edge_tre_lo",
+      "edge_tre_hi",
+      "edge_dnre_lo",
+      "edge_dnre_hi",
+      "edge_kap_lo",
+      "edge_kap_hi",
+      "edge_nt_red",
+      "edge_nt_blue"
+    ],
+    "threads": 2,
+    "frequency_quadrature": "pchip",
+    "freq_grid": "goal",
+    "kink_split": true
+  },
+  "summary": {
+    "total": 24,
+    "base_ok": 22,
+    "candidate_ok": 22,
+    "status_mismatch": 0,
+    "false_safe_count": 0,
+    "max_spectrum_delta_dex": 6.988214773961943e-06,
+    "max_DN_rel": 6.441432691439203e-06
+  },
+  "rows": [
+    {
+      "point": "default",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 2.1392665416897216e-11,
+        "p95": 9.55406195934927e-07,
+        "max": 2.9075948315693267e-06,
+        "n": 76
+      },
+      "DN_rel": 7.51415492071168e-12,
+      "base_DN_gw": 0.0022636474150855806,
+      "candidate_DN_gw": 0.00226364741510259
+    },
+    {
+      "point": "lowT",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 3.332942810629902e-10,
+        "p95": 8.682897383316401e-07,
+        "max": 2.118802894912619e-06,
+        "n": 76
+      },
+      "DN_rel": 3.1247279037569617e-07,
+      "base_DN_gw": 5.3114602833937826e-08,
+      "candidate_DN_gw": 5.3114619430805983e-08
+    },
+    {
+      "point": "highT",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 8.282263763703668e-12,
+        "p95": 1.3812080208452926e-06,
+        "max": 2.660928151598796e-06,
+        "n": 76
+      },
+      "DN_rel": 2.998943341503919e-13,
+      "base_DN_gw": 0.05643308427141758,
+      "candidate_DN_gw": 0.0564330842714345
+    },
+    {
+      "point": "stiff",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 1.8892443165441364e-11,
+        "p95": 1.8561607020295412e-06,
+        "max": 3.299274821344511e-06,
+        "n": 76
+      },
+      "DN_rel": 1.1830331954996435e-11,
+      "base_DN_gw": 0.014984335009443728,
+      "candidate_DN_gw": 0.014984335009620998
+    },
+    {
+      "point": "high_kappa",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 77,
+      "spectrum_delta_dex": {
+        "p50": 5.915268275202834e-13,
+        "p95": 8.676194738654887e-07,
+        "max": 2.4163541425537005e-06,
+        "n": 77
+      },
+      "DN_rel": 7.624264428663499e-14,
+      "base_DN_gw": 0.22570645394976807,
+      "candidate_DN_gw": 0.22570645394978528
+    },
+    {
+      "point": "low_r",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 3.0108360249414545e-11,
+        "p95": 1.0214241097372678e-06,
+        "max": 2.1161044081452474e-06,
+        "n": 76
+      },
+      "DN_rel": 7.06256988241931e-12,
+      "base_DN_gw": 0.00023602751802088214,
+      "candidate_DN_gw": 0.0002360275180225491
+    },
+    {
+      "point": "cr0_blue",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 74,
+      "spectrum_delta_dex": {
+        "p50": 8.066369261428008e-08,
+        "p95": 6.114935322054648e-06,
+        "max": 6.988214567904549e-06,
+        "n": 74
+      },
+      "DN_rel": 6.441432691439203e-06,
+      "base_DN_gw": 0.056974972663419284,
+      "candidate_DN_gw": 0.056974605662967776
+    },
+    {
+      "point": "positive_tilt",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 75,
+      "spectrum_delta_dex": {
+        "p50": 9.372173437327547e-07,
+        "p95": 6.107584426651158e-06,
+        "max": 6.988214773961943e-06,
+        "n": 75
+      },
+      "DN_rel": 6.440751828956776e-06,
+      "base_DN_gw": 3.788633087947823,
+      "candidate_DN_gw": 3.7886086863023327
+    },
+    {
+      "point": "negative_tilt",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 2.1392665416897216e-11,
+        "p95": 9.55406195934927e-07,
+        "max": 2.9075948315693267e-06,
+        "n": 76
+      },
+      "DN_rel": 7.51415492071168e-12,
+      "base_DN_gw": 0.0022636474150855806,
+      "candidate_DN_gw": 0.00226364741510259
+    },
+    {
+      "point": "sobol_000",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 1.8184387329256424e-10,
+        "p95": 1.0509398666869174e-06,
+        "max": 2.2554198864099817e-06,
+        "n": 76
+      },
+      "DN_rel": 4.301043442484016e-11,
+      "base_DN_gw": 1.3377473627465304e-07,
+      "candidate_DN_gw": 1.3377473628040675e-07
+    },
+    {
+      "point": "sobol_002",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 8.275158336346067e-12,
+        "p95": 1.543037198903363e-06,
+        "max": 2.8772569873325438e-06,
+        "n": 76
+      },
+      "DN_rel": 1.1271753643915627e-14,
+      "base_DN_gw": 1.221350815521336,
+      "candidate_DN_gw": 1.2213508155213497
+    },
+    {
+      "point": "sobol_006",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 75,
+      "spectrum_delta_dex": {
+        "p50": 1.477856059750593e-09,
+        "p95": 1.7193547973803886e-06,
+        "max": 3.178996239583398e-06,
+        "n": 75
+      },
+      "DN_rel": 2.2107538993024366e-09,
+      "base_DN_gw": 5.572227114581569e-06,
+      "candidate_DN_gw": 5.572227126900392e-06
+    },
+    {
+      "point": "sobol_010",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 4.037659095956769e-12,
+        "p95": 8.419732218101217e-07,
+        "max": 3.2651489263457734e-06,
+        "n": 76
+      },
+      "DN_rel": 2.2301171075697586e-13,
+      "base_DN_gw": 0.7203624918080003,
+      "candidate_DN_gw": 0.7203624918081609
+    },
+    {
+      "point": "sobol_015",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 75,
+      "spectrum_delta_dex": {
+        "p50": 1.0595826438475342e-09,
+        "p95": 8.205463323918136e-07,
+        "max": 2.54424695000921e-06,
+        "n": 75
+      },
+      "DN_rel": 7.143291464265163e-15,
+      "base_DN_gw": 0.008499628212417353,
+      "candidate_DN_gw": 0.008499628212417414
+    },
+    {
+      "point": "edge_r_lo",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 5.697042837482513e-11,
+        "p95": 1.6590117661863246e-06,
+        "max": 2.734023137662689e-06,
+        "n": 76
+      },
+      "DN_rel": 7.0264278226858434e-12,
+      "base_DN_gw": 2.9865405867944827e-07,
+      "candidate_DN_gw": 2.9865405868154674e-07
+    },
+    {
+      "point": "edge_r_hi",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 1.866062859789963e-11,
+        "p95": 1.2349745510675803e-06,
+        "max": 2.3767922829875943e-06,
+        "n": 76
+      },
+      "DN_rel": 1.0556969351347966e-11,
+      "base_DN_gw": 0.013074959525751578,
+      "candidate_DN_gw": 0.01307495952588961
+    },
+    {
+      "point": "edge_tre_lo",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 75,
+      "spectrum_delta_dex": {
+        "p50": 3.438351825479913e-10,
+        "p95": 8.833671014230048e-07,
+        "max": 3.1955193779964475e-06,
+        "n": 75
+      },
+      "DN_rel": 2.0131596445041298e-07,
+      "base_DN_gw": 8.148918973835836e-08,
+      "candidate_DN_gw": 8.148920614343319e-08
+    },
+    {
+      "point": "edge_tre_hi",
+      "base_status": "physical_guard",
+      "candidate_status": "physical_guard",
+      "status_match": true,
+      "base_failure": "shared_Neff_guard",
+      "candidate_failure": "shared_Neff_guard"
+    },
+    {
+      "point": "edge_dnre_lo",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 77,
+      "spectrum_delta_dex": {
+        "p50": 5.636151101384712e-08,
+        "p95": 2.6951430843524807e-06,
+        "max": 3.432649078760619e-06,
+        "n": 77
+      },
+      "DN_rel": 3.690739087125064e-06,
+      "base_DN_gw": 0.0029385953319464478,
+      "candidate_DN_gw": 0.002938584486357795
+    },
+    {
+      "point": "edge_dnre_hi",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 5.011213666250569e-08,
+        "p95": 3.1617068487754807e-06,
+        "max": 4.0591929089117684e-06,
+        "n": 76
+      },
+      "DN_rel": 2.9870834270532236e-06,
+      "base_DN_gw": 0.0023759939053810296,
+      "candidate_DN_gw": 0.002375986808089012
+    },
+    {
+      "point": "edge_kap_lo",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 6.838822841359615e-10,
+        "p95": 1.7993721779241412e-06,
+        "max": 2.115362157439904e-06,
+        "n": 76
+      },
+      "DN_rel": 5.544705914696209e-08,
+      "base_DN_gw": 3.003666414765613e-07,
+      "candidate_DN_gw": 3.0036665813100824e-07
+    },
+    {
+      "point": "edge_kap_hi",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 77,
+      "spectrum_delta_dex": {
+        "p50": 5.559996907322784e-13,
+        "p95": 1.0935987905469364e-06,
+        "max": 2.726698307142783e-06,
+        "n": 77
+      },
+      "DN_rel": 9.916654238119291e-14,
+      "base_DN_gw": 0.1715716555587733,
+      "candidate_DN_gw": 0.1715716555587903
+    },
+    {
+      "point": "edge_nt_red",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 77,
+      "spectrum_delta_dex": {
+        "p50": 5.8703449212771375e-08,
+        "p95": 2.2053670310384642e-06,
+        "max": 3.1953359656000657e-06,
+        "n": 77
+      },
+      "DN_rel": 4.297128748047532e-06,
+      "base_DN_gw": 5.109984906740277e-08,
+      "candidate_DN_gw": 5.110006865003322e-08
+    },
+    {
+      "point": "edge_nt_blue",
+      "base_status": "physical_guard",
+      "candidate_status": "physical_guard",
+      "status_match": true,
+      "base_failure": "shared_Neff_guard",
+      "candidate_failure": "shared_Neff_guard"
+    }
+  ]
+}

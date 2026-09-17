@@ -890,3 +890,17 @@ artifact 保留作 rejected evidence。
   relative 为 low-T `3.12e-7`。
 - [ ] 下一步继续 recurrence 的 reheating/kink edge、扩大 Sobol、16/20-thread total
   runtime 与 Oracle A/WKB 认证；未完成前不得接入正式 fast。
+
+## Current session update: 2026-09-17 (recurrence edge/Sobol and total-runtime gate)
+
+- [x] fetch 后确认 remote/local HEAD，重新读取 progress/findings、manifest、benchmark
+  artifacts 与 rejected records；当前 validation manifest 仍绑定旧 commit，未冒充本轮证据。
+- [x] recurrence full-grid 扩展到全部 24 个 named/edge/Sobol 点：22 accepted、2
+  同步 `shared_Neff_guard`，无 numerical failure。
+- [x] full outer matrix：`status_mismatch=0`、`false_safe_count=0`，最大 spectrum
+  delta `6.988e-6 dex`，最大 DN relative `6.441e-6`；low-T 独立误差仍受控。
+- [x] 16/20-thread 各 30-repeat total runtime A/B 完成；high-T/stiff/high-kappa
+  未形成稳定超过 5% 的 total-runtime 改善，recurrence `REJECTED FOR PRODUCTION`，
+  保留 standalone 证据。
+- [ ] 下一候选回到 fresh profile 的 background/primitive/grid allocation 或 tensor
+  kernel 结构；不得重复 recurrence、固定 threshold widening 或已列 rejected 路径。

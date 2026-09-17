@@ -1,0 +1,929 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_full_native_grid_oracle",
+  "production_path_changed": false,
+  "commit": "3c631e57da392b05fcc3f55ad938e267de551721",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "points": [
+      "default",
+      "lowT",
+      "highT",
+      "stiff",
+      "high_kappa",
+      "low_r",
+      "cr0_blue",
+      "positive_tilt",
+      "negative_tilt",
+      "sobol_000",
+      "sobol_002",
+      "sobol_006",
+      "sobol_010",
+      "sobol_015",
+      "edge_r_lo",
+      "edge_r_hi",
+      "edge_tre_lo",
+      "edge_tre_hi",
+      "edge_dnre_lo",
+      "edge_dnre_hi",
+      "edge_kap_lo",
+      "edge_kap_hi",
+      "edge_nt_red",
+      "edge_nt_blue"
+    ],
+    "threads": 2,
+    "rtol": 1e-10,
+    "freq_grid": "goal",
+    "frequency_quadrature": "pchip"
+  },
+  "records": [
+    {
+      "point": "default",
+      "n_freq": 76,
+      "dn_eff": 0.0022636474150855806,
+      "dn_gw": {
+        "production": 0.002263647415165795,
+        "recurrence": 0.0022636474151827937,
+        "prufer": 0.002271875267120423,
+        "recurrence_vs_production_relative": 7.50936529567778e-12,
+        "production_vs_prufer_relative": 0.0036216125390795,
+        "recurrence_vs_prufer_relative": 0.003621612531597331
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.1329437064090086e-10,
+          "p95": 2.2272186679295336e-06,
+          "max": 6.697368770120002e-06,
+          "n": 74
+        },
+        "production_vs_prufer": {
+          "p50": 0.004456745549575255,
+          "p95": 0.006721871746319849,
+          "max": 0.0073085423505095505,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004456745468689082,
+          "p95": 0.006722040118793534,
+          "max": 0.007308374257241599,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 3.125664172653026e-22,
+        "interpolation_error": 8.313099442303096e-11
+      },
+      "status": "ok"
+    },
+    {
+      "point": "lowT",
+      "n_freq": 76,
+      "dn_eff": 5.3114602833937826e-08,
+      "dn_gw": {
+        "production": 5.31146028339182e-08,
+        "recurrence": 5.3114619430786416e-08,
+        "prufer": 5.303432977503486e-08,
+        "recurrence_vs_production_relative": 3.124727914971041e-07,
+        "production_vs_prufer_relative": 0.0015136056064787818,
+        "recurrence_vs_prufer_relative": 0.001513918552230848
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 3.6544679539079907e-09,
+          "p95": 2.07867408282836e-06,
+          "max": 4.878735862197734e-06,
+          "n": 67
+        },
+        "production_vs_prufer": {
+          "p50": 0.003790779548829748,
+          "p95": 0.006848870772385421,
+          "max": 0.007319268765521466,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.00379014096323394,
+          "p95": 0.006848858926036323,
+          "max": 0.007319171167098116,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 7.296505529927287e-27,
+        "interpolation_error": 3.1666267166212276e-14
+      },
+      "status": "ok"
+    },
+    {
+      "point": "highT",
+      "n_freq": 76,
+      "dn_eff": 0.05643308427141758,
+      "dn_gw": {
+        "production": 0.0564330842714595,
+        "recurrence": 0.05643308427147638,
+        "prufer": 0.05663703380568944,
+        "recurrence_vs_production_relative": 2.990336288041047e-13,
+        "production_vs_prufer_relative": 0.0036009925048273326,
+        "recurrence_vs_prufer_relative": 0.003600992504529376
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.9066290565095472e-11,
+          "p95": 3.1803439239009276e-06,
+          "max": 6.126994693809685e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.003807148525087888,
+          "p95": 0.006726755647242289,
+          "max": 0.007309928757279348,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.003807141625396417,
+          "p95": 0.0067267555151182025,
+          "max": 0.007309852594393332,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 7.792168433444115e-21,
+        "interpolation_error": 3.6903459182705897e-09
+      },
+      "status": "ok"
+    },
+    {
+      "point": "stiff",
+      "n_freq": 76,
+      "dn_eff": 0.014984335009443728,
+      "dn_gw": {
+        "production": 0.014984335009515634,
+        "recurrence": 0.014984335009692915,
+        "prufer": 0.015039023721306154,
+        "recurrence_vs_production_relative": 1.1831026569739002e-11,
+        "production_vs_prufer_relative": 0.00363645358927393,
+        "recurrence_vs_prufer_relative": 0.0036364535774859263
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.7904866436287007e-10,
+          "p95": 4.3645846082611265e-06,
+          "max": 7.596889813970152e-06,
+          "n": 73
+        },
+        "production_vs_prufer": {
+          "p50": 0.004824494717612924,
+          "p95": 0.0067535756151416385,
+          "max": 0.007302846836300345,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004824495315675119,
+          "p95": 0.006751970144481444,
+          "max": 0.0073026716524232805,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 2.0690809182031545e-21,
+        "interpolation_error": 4.82626663055933e-10
+      },
+      "status": "ok"
+    },
+    {
+      "point": "high_kappa",
+      "n_freq": 77,
+      "dn_eff": 0.22570645394976807,
+      "dn_gw": {
+        "production": 0.22570645394993585,
+        "recurrence": 0.22570645394995323,
+        "prufer": 0.2265215455259521,
+        "recurrence_vs_production_relative": 7.698047632806132e-14,
+        "production_vs_prufer_relative": 0.003598296021350733,
+        "recurrence_vs_prufer_relative": 0.00359829602127403
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 2.4835546882268597e-12,
+          "p95": 2.0044551409764875e-06,
+          "max": 5.563876529644438e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.0047947052897890155,
+          "p95": 0.006716690714544667,
+          "max": 0.006780488940102225,
+          "n": 77
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004794705289800495,
+          "p95": 0.0067166751182519855,
+          "max": 0.006780503338789504,
+          "n": 77
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.922077922077922,
+        "quadrature_error": 3.116501550201213e-20,
+        "interpolation_error": 5.619538903875487e-09
+      },
+      "status": "ok"
+    },
+    {
+      "point": "low_r",
+      "n_freq": 76,
+      "dn_eff": 0.00023602751802088214,
+      "dn_gw": {
+        "production": 0.00023602751802087488,
+        "recurrence": 0.0002360275180225423,
+        "prufer": 0.0002368832356690972,
+        "recurrence_vs_production_relative": 7.0645221375089765e-12,
+        "production_vs_prufer_relative": 0.003612402734221713,
+        "recurrence_vs_prufer_relative": 0.003612402727182711
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.225124059634855e-10,
+          "p95": 2.3872813272392865e-06,
+          "max": 4.8725223408896045e-06,
+          "n": 74
+        },
+        "production_vs_prufer": {
+          "p50": 0.004565366317854936,
+          "p95": 0.006717550818192104,
+          "max": 0.007272755539549939,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004565366266953599,
+          "p95": 0.006717557300638856,
+          "max": 0.007272581894799921,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 3.259058512360542e-23,
+        "interpolation_error": 1.55285052316821e-11
+      },
+      "status": "ok"
+    },
+    {
+      "point": "cr0_blue",
+      "n_freq": 74,
+      "dn_eff": 0.056974972663419284,
+      "dn_gw": {
+        "production": 0.056974972664450764,
+        "recurrence": 0.05697460566399984,
+        "prufer": 0.05716395675241095,
+        "recurrence_vs_production_relative": 6.441432681092356e-06,
+        "production_vs_prufer_relative": 0.0033060008210893024,
+        "recurrence_vs_prufer_relative": 0.0033124209583886618
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.6957318072211088e-07,
+          "p95": 1.4080131308564452e-05,
+          "max": 1.609082918281129e-05,
+          "n": 74
+        },
+        "production_vs_prufer": {
+          "p50": 0.004553989269336422,
+          "p95": 0.007157262947171976,
+          "max": 0.0077493525341320955,
+          "n": 74
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004557067858326448,
+          "p95": 0.007157255492114967,
+          "max": 0.007749264563149903,
+          "n": 74
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.8918918918918919,
+        "quadrature_error": 7.864662914111779e-21,
+        "interpolation_error": 1.7848621223215787e-09
+      },
+      "status": "ok"
+    },
+    {
+      "point": "positive_tilt",
+      "n_freq": 75,
+      "dn_eff": 3.788633087947823,
+      "dn_gw": {
+        "production": 3.7886330880615424,
+        "recurrence": 3.788608686416133,
+        "prufer": 3.801231008359922,
+        "recurrence_vs_production_relative": 6.440751807430101e-06,
+        "production_vs_prufer_relative": 0.003314168560309411,
+        "recurrence_vs_prufer_relative": 0.003320587966379696
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.1606146869595816e-07,
+          "p95": 1.4063195251128307e-05,
+          "max": 1.6090829606177317e-05,
+          "n": 75
+        },
+        "production_vs_prufer": {
+          "p50": 0.004921883402979312,
+          "p95": 0.006907680782437225,
+          "max": 0.007186009257721498,
+          "n": 75
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004921962466094295,
+          "p95": 0.006907778477776745,
+          "max": 0.007185972646744657,
+          "n": 75
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9066666666666666,
+        "quadrature_error": 5.229764039760797e-19,
+        "interpolation_error": 5.604528193345742e-08
+      },
+      "status": "ok"
+    },
+    {
+      "point": "negative_tilt",
+      "n_freq": 76,
+      "dn_eff": 0.0022636474150855806,
+      "dn_gw": {
+        "production": 0.002263647415165795,
+        "recurrence": 0.0022636474151827937,
+        "prufer": 0.002271875267120423,
+        "recurrence_vs_production_relative": 7.50936529567778e-12,
+        "production_vs_prufer_relative": 0.0036216125390795,
+        "recurrence_vs_prufer_relative": 0.003621612531597331
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.1329437064090086e-10,
+          "p95": 2.2272186679295336e-06,
+          "max": 6.697368770120002e-06,
+          "n": 74
+        },
+        "production_vs_prufer": {
+          "p50": 0.004456745549575255,
+          "p95": 0.006721871746319849,
+          "max": 0.0073085423505095505,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004456745468689082,
+          "p95": 0.006722040118793534,
+          "max": 0.007308374257241599,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 3.125664172653026e-22,
+        "interpolation_error": 8.313099442303096e-11
+      },
+      "status": "ok"
+    },
+    {
+      "point": "sobol_000",
+      "n_freq": 76,
+      "dn_eff": 1.3377473627465304e-07,
+      "dn_gw": {
+        "production": 1.3377473627465301e-07,
+        "recurrence": 1.3377473628040675e-07,
+        "prufer": 1.3426054505534744e-07,
+        "recurrence_vs_production_relative": 4.3010632293139805e-11,
+        "production_vs_prufer_relative": 0.003618403161510749,
+        "recurrence_vs_prufer_relative": 0.0036184031186557463
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 4.187106391974615e-10,
+          "p95": 2.419881531073668e-06,
+          "max": 5.19328272498986e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.004548995164861046,
+          "p95": 0.007173171359797663,
+          "max": 0.007953965791215298,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.00454899509774569,
+          "p95": 0.007173336877091036,
+          "max": 0.007953835258059774,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 1.8471673227565566e-26,
+        "interpolation_error": 2.674787426368263e-15
+      },
+      "status": "ok"
+    },
+    {
+      "point": "sobol_002",
+      "n_freq": 76,
+      "dn_eff": 1.221350815521336,
+      "dn_gw": {
+        "production": 1.2213508155220698,
+        "recurrence": 1.2213508155220867,
+        "prufer": 1.2257896704283737,
+        "recurrence_vs_production_relative": 1.3816988337694725e-14,
+        "production_vs_prufer_relative": 0.003621220681972852,
+        "recurrence_vs_prufer_relative": 0.0036212206819590848
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.903305069275292e-11,
+          "p95": 3.552971355143468e-06,
+          "max": 6.625150937127817e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.00479915307659059,
+          "p95": 0.006860344194120219,
+          "max": 0.007524599271017777,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004799153062149356,
+          "p95": 0.0068609228495146125,
+          "max": 0.007524475722572849,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 1.6864512376695716e-19,
+        "interpolation_error": 3.4986285174225255e-08
+      },
+      "status": "ok"
+    },
+    {
+      "point": "sobol_006",
+      "n_freq": 75,
+      "dn_eff": 5.572227114581569e-06,
+      "dn_gw": {
+        "production": 5.5722271145815666e-06,
+        "recurrence": 5.572227126900392e-06,
+        "prufer": 5.593377079828162e-06,
+        "recurrence_vs_production_relative": 2.2107543553317397e-09,
+        "production_vs_prufer_relative": 0.0037812514594930857,
+        "recurrence_vs_prufer_relative": 0.0037812492570981483
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 3.4028885420601704e-09,
+          "p95": 3.9589598014105805e-06,
+          "max": 7.319936141779903e-06,
+          "n": 75
+        },
+        "production_vs_prufer": {
+          "p50": 0.00486234429737119,
+          "p95": 0.006855198711881965,
+          "max": 0.007199310733547852,
+          "n": 75
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004862344297346229,
+          "p95": 0.006855239083503997,
+          "max": 0.007199194982042373,
+          "n": 75
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9066666666666666,
+        "quadrature_error": 7.695412946115218e-25,
+        "interpolation_error": 6.18287402300646e-14
+      },
+      "status": "ok"
+    },
+    {
+      "point": "sobol_010",
+      "n_freq": 76,
+      "dn_eff": 0.7203624918080003,
+      "dn_gw": {
+        "production": 0.7203624918080118,
+        "recurrence": 0.7203624918081718,
+        "prufer": 0.7230081768196334,
+        "recurrence_vs_production_relative": 2.220869904635778e-13,
+        "production_vs_prufer_relative": 0.0036592739839532364,
+        "recurrence_vs_prufer_relative": 0.003659273983731962
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 9.30363808637395e-12,
+          "p95": 1.9387159304413225e-06,
+          "max": 7.518311581106416e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.004568519412797505,
+          "p95": 0.0067518075909438445,
+          "max": 0.008296279226475202,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.00456851770423008,
+          "p95": 0.006751796622630751,
+          "max": 0.008288823288906283,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 9.94720435371738e-20,
+        "interpolation_error": 2.9498677496769155e-08
+      },
+      "status": "ok"
+    },
+    {
+      "point": "sobol_015",
+      "n_freq": 75,
+      "dn_eff": 0.008499628212417353,
+      "dn_gw": {
+        "production": 0.00849962821241739,
+        "recurrence": 0.008499628212417456,
+        "prufer": 0.008527771219288468,
+        "recurrence_vs_production_relative": 7.755573589773573e-15,
+        "production_vs_prufer_relative": 0.0033001596955864513,
+        "recurrence_vs_prufer_relative": 0.0033001596955787213
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 3.18837218300424e-10,
+          "p95": 1.735349541727336e-06,
+          "max": 4.855071895037266e-06,
+          "n": 62
+        },
+        "production_vs_prufer": {
+          "p50": 0.004857122217504731,
+          "p95": 0.006865058026200796,
+          "max": 0.00793325106928705,
+          "n": 75
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004857122217492003,
+          "p95": 0.006866408823803483,
+          "max": 0.00793314466250995,
+          "n": 75
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.92,
+        "quadrature_error": 1.1732575884985279e-21,
+        "interpolation_error": 1.890355800291693e-10
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_r_lo",
+      "n_freq": 76,
+      "dn_eff": 2.9865405867944827e-07,
+      "dn_gw": {
+        "production": 2.986540586794482e-07,
+        "recurrence": 2.9865405868154674e-07,
+        "prufer": 2.997332510803387e-07,
+        "recurrence_vs_production_relative": 7.026605083157165e-12,
+        "production_vs_prufer_relative": 0.003600509442982034,
+        "recurrence_vs_prufer_relative": 0.003600509435980728
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.3117942931425807e-10,
+          "p95": 3.820008422346981e-06,
+          "max": 6.295301104432097e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.004757713094648277,
+          "p95": 0.0070714431098170185,
+          "max": 0.007920274167177672,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.0047577130532873,
+          "p95": 0.007071426176227965,
+          "max": 0.007913929005562528,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 4.1237540538134157e-26,
+        "interpolation_error": 6.0667982909442225e-15
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_r_hi",
+      "n_freq": 76,
+      "dn_eff": 0.013074959525751578,
+      "dn_gw": {
+        "production": 0.0130749595258061,
+        "recurrence": 0.013074959525944077,
+        "prufer": 0.01312266560231226,
+        "recurrence_vs_production_relative": 1.055272374342105e-11,
+        "production_vs_prufer_relative": 0.0036353952734841355,
+        "recurrence_vs_prufer_relative": 0.0036353952629697753
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.7292708091473997e-10,
+          "p95": 2.8599964893243556e-06,
+          "max": 5.4727514375554404e-06,
+          "n": 73
+        },
+        "production_vs_prufer": {
+          "p50": 0.004755695999670056,
+          "p95": 0.0066796546241674245,
+          "max": 0.007303702044492652,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004755694289205771,
+          "p95": 0.006679647685525982,
+          "max": 0.007303528849687832,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 1.8054268346713547e-21,
+        "interpolation_error": 4.386867069069717e-10
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_tre_lo",
+      "n_freq": 75,
+      "dn_eff": 8.148918973835836e-08,
+      "dn_gw": {
+        "production": 8.148918973832788e-08,
+        "recurrence": 8.148920614340253e-08,
+        "prufer": 8.145853368064018e-08,
+        "recurrence_vs_production_relative": 2.0131596233912152e-07,
+        "production_vs_prufer_relative": 0.0003763394245210407,
+        "recurrence_vs_prufer_relative": 0.0003765408162465132
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.3547772057462962e-09,
+          "p95": 2.0668557754429168e-06,
+          "max": 7.3579823668950295e-06,
+          "n": 66
+        },
+        "production_vs_prufer": {
+          "p50": 0.0028537618559780725,
+          "p95": 0.007046420779808086,
+          "max": 0.007320436896910861,
+          "n": 75
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.0028558529002402676,
+          "p95": 0.007046541693805026,
+          "max": 0.007320339879697254,
+          "n": 75
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.92,
+        "quadrature_error": 1.1207130249062687e-26,
+        "interpolation_error": 3.308877066003085e-14
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_tre_hi",
+      "status": "physical_guard",
+      "message": "fast preparation failed for case edge_tre_hi: shared_Neff_guard"
+    },
+    {
+      "point": "edge_dnre_lo",
+      "n_freq": 77,
+      "dn_eff": 0.0029385953319464478,
+      "dn_gw": {
+        "production": 0.002938595331948337,
+        "recurrence": 0.002938584486359693,
+        "prufer": 0.0029603456863430545,
+        "recurrence_vs_production_relative": 3.6907390840234903e-06,
+        "production_vs_prufer_relative": 0.007347234647311095,
+        "recurrence_vs_prufer_relative": 0.007350898269669046
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.3152941578002167e-07,
+          "p95": 6.204933333861502e-06,
+          "max": 7.903935357157314e-06,
+          "n": 77
+        },
+        "production_vs_prufer": {
+          "p50": 0.0056406711912085255,
+          "p95": 0.008623522821109201,
+          "max": 0.008643838826202977,
+          "n": 77
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.005640985725702442,
+          "p95": 0.008623525601018797,
+          "max": 0.008643842814828682,
+          "n": 77
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.8961038961038961,
+        "quadrature_error": 4.072867284742506e-22,
+        "interpolation_error": 1.5079898248143554e-11
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_dnre_hi",
+      "n_freq": 76,
+      "dn_eff": 0.0023759939053810296,
+      "dn_gw": {
+        "production": 0.002375993905462972,
+        "recurrence": 0.002375986808170956,
+        "prufer": 0.002378659577810572,
+        "recurrence_vs_production_relative": 2.987083426220102e-06,
+        "production_vs_prufer_relative": 0.001120661557654976,
+        "recurrence_vs_prufer_relative": 0.001123645293571631
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.2115966696456559e-07,
+          "p95": 7.293601302985361e-06,
+          "max": 9.3466807635787e-06,
+          "n": 75
+        },
+        "production_vs_prufer": {
+          "p50": 0.0021711958123663334,
+          "p95": 0.007044875962771777,
+          "max": 0.007310682152151845,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.0021711986104496457,
+          "p95": 0.007045076481464651,
+          "max": 0.007310555916446041,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 3.2725788818169223e-22,
+        "interpolation_error": 1.1708737449035818e-10
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_kap_lo",
+      "n_freq": 76,
+      "dn_eff": 3.003666414765613e-07,
+      "dn_gw": {
+        "production": 3.0036664147645177e-07,
+        "recurrence": 3.003666581308995e-07,
+        "prufer": 3.0103313803737744e-07,
+        "recurrence_vs_production_relative": 5.544706179072925e-08,
+        "production_vs_prufer_relative": 0.0022140305391990128,
+        "recurrence_vs_prufer_relative": 0.0022139752148987103
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 2.6427731903638725e-09,
+          "p95": 4.159417608697543e-06,
+          "max": 4.870813243918925e-06,
+          "n": 72
+        },
+        "production_vs_prufer": {
+          "p50": 0.0034584093356082295,
+          "p95": 0.006741247942948954,
+          "max": 0.007936129985171101,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.0034594281268484563,
+          "p95": 0.006741252607895649,
+          "max": 0.007935906130655803,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 4.14163800258876e-26,
+        "interpolation_error": 3.769604479142948e-14
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_kap_hi",
+      "n_freq": 77,
+      "dn_eff": 0.1715716555587733,
+      "dn_gw": {
+        "production": 0.17157165555890025,
+        "recurrence": 0.17157165555891735,
+        "prufer": 0.17219613405522288,
+        "recurrence_vs_production_relative": 9.965185988053773e-14,
+        "production_vs_prufer_relative": 0.0036265535213605015,
+        "recurrence_vs_prufer_relative": 0.003626553521261211
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 2.8159361427560005e-12,
+          "p95": 2.5901493182462083e-06,
+          "max": 6.2784351392625205e-06,
+          "n": 76
+        },
+        "production_vs_prufer": {
+          "p50": 0.004805385223257734,
+          "p95": 0.0067054809287615084,
+          "max": 0.007659118715139481,
+          "n": 77
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004805385223252642,
+          "p95": 0.006705629947590907,
+          "max": 0.0076554197238295684,
+          "n": 77
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.922077922077922,
+        "quadrature_error": 2.3690881919233384e-20,
+        "interpolation_error": 4.506832324772418e-09
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_nt_red",
+      "n_freq": 77,
+      "dn_eff": 5.109984906740277e-08,
+      "dn_gw": {
+        "production": 5.1099849067402795e-08,
+        "recurrence": 5.11000686500332e-08,
+        "prufer": 5.104703014907352e-08,
+        "recurrence_vs_production_relative": 4.297128747141028e-06,
+        "production_vs_prufer_relative": 0.0010347108965012505,
+        "recurrence_vs_prufer_relative": 0.0010390124715343298
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.3516969624656962e-07,
+          "p95": 5.078058187759783e-06,
+          "max": 7.357560030625762e-06,
+          "n": 77
+        },
+        "production_vs_prufer": {
+          "p50": 0.0030671137455282357,
+          "p95": 0.006956164532471346,
+          "max": 0.007318371643372058,
+          "n": 77
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.0030698841534891907,
+          "p95": 0.006956160333385048,
+          "max": 0.007318280482115004,
+          "n": 77
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.8961038961038961,
+        "quadrature_error": 7.023091257097628e-27,
+        "interpolation_error": 2.1389021290789595e-13
+      },
+      "status": "ok"
+    },
+    {
+      "point": "edge_nt_blue",
+      "status": "physical_guard",
+      "message": "fast preparation failed for case edge_nt_blue: shared_Neff_guard"
+    }
+  ]
+}

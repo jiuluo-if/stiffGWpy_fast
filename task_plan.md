@@ -299,3 +299,11 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] Record five-regime spectrum/DN results; keep production path unchanged.
 - [ ] Run edge/kink and expanded Sobol coverage.
 - [ ] Run formal 16/20-thread total-runtime candidate and independent Oracle A/WKB gate.
+
+### Recurrence decision
+
+- [x] Full 24-point edge/Sobol native-grid audit with explicit physical-guard handling.
+- [x] Full outer matrix: status match and false-safe gate passed (`0` mismatches / `0` false-safe).
+- [x] Formal 16/20-thread total-runtime A/B completed; target-wide stable `>5%` gate failed.
+- [x] Reject recurrence for production; preserve artifacts and precision/guard evidence.
+- [ ] Select the next candidate only after a new fresh stage profile; do not repeat this path.

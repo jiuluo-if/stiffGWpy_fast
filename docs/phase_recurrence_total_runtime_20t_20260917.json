@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_total_runtime",
+  "production_path_changed": false,
+  "commit": "3c631e57da392b05fcc3f55ad938e267de551721",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 20,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 20
+  },
+  "settings": {
+    "points": [
+      "highT",
+      "stiff",
+      "high_kappa"
+    ],
+    "repeats": 30,
+    "threads": 20,
+    "kink_split": true,
+    "frequency_quadrature": "pchip"
+  },
+  "records": [
+    {
+      "point": "highT",
+      "status": "ok",
+      "repeats": 30,
+      "baseline_median_ms": 6.203349999850616,
+      "candidate_median_ms": 6.263850000323146,
+      "baseline_p95_ms": 6.908464997468399,
+      "candidate_p95_ms": 6.963719999657769,
+      "candidate_over_baseline": 1.0097527949372496,
+      "n_freq": 76,
+      "spectrum_delta_dex_p95": 1.3812080208452926e-06,
+      "spectrum_delta_dex_max": 2.660928151598796e-06,
+      "DN_rel": 2.998943341503919e-13
+    },
+    {
+      "point": "stiff",
+      "status": "ok",
+      "repeats": 30,
+      "baseline_median_ms": 6.723250000504777,
+      "candidate_median_ms": 6.314149999525398,
+      "baseline_p95_ms": 7.2638349989574635,
+      "candidate_p95_ms": 6.965650001257018,
+      "candidate_over_baseline": 0.9391514519096176,
+      "n_freq": 76,
+      "spectrum_delta_dex_p95": 1.8561607020295412e-06,
+      "spectrum_delta_dex_max": 3.299274821344511e-06,
+      "DN_rel": 1.1830331954996435e-11
+    },
+    {
+      "point": "high_kappa",
+      "status": "ok",
+      "repeats": 30,
+      "baseline_median_ms": 6.0387999983504415,
+      "candidate_median_ms": 6.06694999987667,
+      "baseline_p95_ms": 6.868889999168459,
+      "candidate_p95_ms": 6.698395000421442,
+      "candidate_over_baseline": 1.0046615224107303,
+      "n_freq": 77,
+      "spectrum_delta_dex_p95": 8.676194738654887e-07,
+      "spectrum_delta_dex_max": 2.4163541425537005e-06,
+      "DN_rel": 7.624264428663499e-14
+    }
+  ]
+}
