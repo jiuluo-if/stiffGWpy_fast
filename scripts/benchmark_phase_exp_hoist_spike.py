@@ -33,7 +33,7 @@ from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 
-@njit(inline='always', cache=True)
+@njit(inline='always', fastmath=True, cache=True)
 def _scaled_step_with_w(xh, yh, w, h):
     w2 = w * w
     if w2 >= 1.0:
@@ -48,7 +48,7 @@ def _scaled_step_with_w(xh, yh, w, h):
     return (c - si) * xh - w * si * yh, w * si * xh + (c + si) * yh
 
 
-@njit(inline='always', cache=True)
+@njit(inline='always', fastmath=True, cache=True)
 def _phase_segment_hoist(xh, yh, z_start, z_end, h_step, phase_max):
     z_mid = 0.5 * (z_start + z_end)
     w_mid = math.exp(z_mid)
@@ -68,7 +68,7 @@ def _phase_segment_hoist(xh, yh, z_start, z_end, h_step, phase_max):
     return xh, yh
 
 
-@njit(parallel=True, cache=True)
+@njit(parallel=True, fastmath=True, cache=True)
 def solve_kernel_exp_hoist(
     Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus,
     fp_minus, fp_freq, assemble, n_coarse, col_step, h, z_tail, Ogw, Oj,
@@ -265,7 +265,7 @@ def main():
     cases = args.case or list(CASES)
     runner = _run_outer if args.outer else _run_kernel
     result = {
-        'candidate': 'phase_exp_hoist',
+        'candidate': 'phase_exp_hoist_fastmath',
         'commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
         'production_unchanged': True,
         'scope': 'full_outer' if args.outer else 'kernel',
