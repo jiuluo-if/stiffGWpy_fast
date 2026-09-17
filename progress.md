@@ -641,3 +641,33 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
 - 原型 artifact 为 `docs/outer_observable_proxy_round_20260918.json`。下一步应先把
   kernel 输出对背景扰动的局部线性响应做成独立 sensitivity estimate，再谈
   coverage/p95/p99/false-safe；禁止把本轮诊断称为 estimator。
+
+## Session: 2026-09-19 (local observable response sensitivity)
+
+### Actions Taken
+
+- fetch `fast_v0.2` 后确认本地/远端 HEAD 为 `dca9bd85bd9e0aae19bcbd871077bad06601dc0d`，
+  并重读当前研究记录、manifest、benchmark 与 rejected artifacts。
+- 扩展 standalone proxy：保存首轮 kernel 输入，分别对 `Phi/Phi_mid` 与 `S2/S2inv`
+  注入真实 first→second 背景差分，运行额外 reference-only kernel，测量一阶响应预测
+  的 `dlogOmega`；正式 solver 未改变。
+
+### Test Results
+
+| point | Phi predicted | S2 predicted | actual dlogOmega |
+|---|---:|---:|---:|
+| high-T | `7.443e-3` | `4.017e-3` | `3.944e-3` |
+| stiff | `2.840e-3` | `1.063e-3` | `1.051e-3` |
+| high-kappa | `2.795e-2` | `1.544e-2` | `1.547e-2` |
+
+`default`/`positive-tilt` 的 Phi/S2 背景差为零，但实际频谱差分别为
+`3.923e-4`/`6.226e-4`，说明仍有未捕获的 kernel/尾部响应项；low-T 首轮已收敛，
+未形成 second-solve 样本。
+
+### Decision
+
+- 结果支持继续推导“背景输入到 observable 的局部响应”，尤其 S2 响应在 stiff 与
+  high-kappa 上接近实际偏差；但当前预测依赖额外 kernel 调用，不是可部署 criterion。
+- 状态：`CANDIDATE FOR FURTHER DERIVATION`，不进入 runtime A/B、production 或
+  fallback。下一步要把 response 化为不调用第二次 kernel 的解析/低成本估计，并在
+  named+Sobol 上验证 coverage、p95/p99、false-safe=0。

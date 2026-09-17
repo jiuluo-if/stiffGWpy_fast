@@ -751,3 +751,26 @@ runtime A/B、production 或 fallback；完整原始结果见
 研究 kernel 对 `Phi/S2/f_hor` 扰动的局部响应：用已完成的 first solve 输出和背景差分
 构造一阶 observable sensitivity，再与第二次独立 Cartesian/Prüfer/WKB solve 对照。
 接受前必须在 named+Sobol 上报告 coverage、p95/p99 和 false-safe=0；本轮尚未满足。
+
+## Local observable response sensitivity (2026-09-19, `dca9bd8`)
+
+在 standalone 原型中保存首轮 `solve_kernel` 输入，然后分别把实际 first→second
+背景差分注入 `Phi/Phi_mid` 或 `S2/S2inv`，再额外调用 kernel 测量局部响应。该实验
+只判断结构，不声称 estimator，也不改变 production。
+
+| point | Phi response prediction | S2 response prediction | actual first→second dlogOmega |
+|---|---:|---:|---:|
+| high-T | `7.443e-3` | `4.017e-3` | `3.944e-3` |
+| stiff | `2.840e-3` | `1.063e-3` | `1.051e-3` |
+| high-kappa | `2.795e-2` | `1.544e-2` | `1.547e-2` |
+
+S2-only response 在 stiff/high-kappa 上接近实际频谱偏差，Phi-only response 偏保守；
+这比直接使用 `max(delta Phi)`、`max(delta S2)` 更有希望。但 default/positive-tilt
+中 Phi/S2 差分为零而 actual dlogOmega 仍为 `3.923e-4`/`6.226e-4`，表明响应还
+包括 horizon start、tail matching、`j0`/`z0` 或 kernel phase-path 项。当前 proxy
+本身用额外 kernel 求导，不能用于节省 runtime，状态为
+`CANDIDATE FOR FURTHER DERIVATION`。
+
+下一实验必须将这些项化为不调用第二次 tensor kernel 的低成本解析响应，并以独立
+Cartesian/Prüfer/WKB、named+Sobol、coverage、p95/p99、false-safe=0 验证；未满足前
+不得进入 production。

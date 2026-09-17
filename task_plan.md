@@ -241,4 +241,4 @@ Phase 3: Implementation and evidence-driven optimization
 
 ## Next Step
 
-已完成当前 HEAD fresh runtime/阶段 profile 与 outer-reuse baseline；当前下一步为验证 kernel 对背景扰动的一阶 observable sensitivity standalone 原型，尚未进入 production。
+已完成当前 HEAD fresh runtime/阶段 profile、outer-reuse baseline 和 kernel 输入局部响应原型；当前下一步为推导不调用第二次 kernel 的低成本 observable response criterion，尚未进入 production。

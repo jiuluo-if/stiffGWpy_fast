@@ -36,6 +36,7 @@ def _run(name):
     phases = []
     s2s = []
     spectra = []
+    snapshots = []
     frequency_x = None
 
     def gen(*args, **kwargs):
@@ -51,6 +52,9 @@ def _run(name):
     def solve(*args, **kwargs):
         nonlocal frequency_x
         out = saved[2](*args, **kwargs)
+        snapshot = tuple(value.copy() if isinstance(value, np.ndarray) else value
+                         for value in args)
+        snapshots.append(snapshot)
         ogw = np.asarray(args[16], dtype=float)
         oj = np.asarray(args[17], dtype=float)
         spectra.append(np.maximum(ogw[:, -1] - oj[:, -1], 1e-300).copy())
@@ -87,15 +91,42 @@ def _run(name):
     x_sorted = frequency_x[order]
     sensitivity = float(np.trapezoid(np.abs(new_i[order] - old_i[order]), x=x_sorted)
                         / max(np.trapezoid(new_i[order], x=x_sorted), 1e-300))
+
+    def run_input_variant(kind):
+        variant = list(snapshots[0])
+        if kind == 'phi':
+            variant[1] = variant[1] + (snapshots[1][1] - snapshots[0][1])
+            variant[2] = variant[2] + (snapshots[1][2] - snapshots[0][2])
+        elif kind == 's2':
+            variant[3] = variant[3] + (snapshots[1][3] - snapshots[0][3])
+            variant[4] = variant[4] + (snapshots[1][4] - snapshots[0][4])
+        else:
+            raise ValueError(kind)
+        variant[11] = 1
+        for index in (16, 17, 18):
+            variant[index] = np.zeros_like(snapshots[0][index])
+        variant[22] = np.full_like(snapshots[0][22], -1.0)
+        saved[2](*tuple(variant))
+        return np.maximum(variant[16][:, -1] - variant[17][:, -1], 1e-300)
+
+    phi_response = run_input_variant('phi')
+    s2_response = run_input_variant('s2')
+    phi_pred = float(np.max(np.abs(np.log10(phi_response) - np.log10(old_i))))
+    s2_pred = float(np.max(np.abs(np.log10(s2_response) - np.log10(old_i))))
     return {
         'point': name,
         'kernel_calls': len(spectra),
+        'outer_kernel_calls': len(spectra),
+        'response_kernel_calls': 2,
         'eligible': True,
         'delta_log_omega_max': float(np.max(np.abs(delta_i))),
         'delta_phi_relative_max': delta_phi,
         'delta_s2_relative_max': delta_s2,
         'horizon_shift_max': horizon_shift,
         'frequency_weighted_dn_sensitivity_proxy': sensitivity,
+        'linear_response_predicted_dlogomega_phi': phi_pred,
+        'linear_response_predicted_dlogomega_s2': s2_pred,
+        'linear_response_actual_dlogomega': float(np.max(np.abs(delta_i))),
         'dn_gw_first': float(model.DN_gw[0]),
         'dn_gw_last': float(np.asarray(model.DN_gw)[-1]),
     }
