@@ -1452,7 +1452,39 @@ Cartesian exact propagation 到 handoff；这是与已拒绝的 early-tail trunc
   `numerical_failure_count=0`，但这只是 standalone twin 的局部等价性证据，尚未
   通过独立 Oracle A/Prüfer/WKB。
 - smoke 与 formal run 均绑定 `cf183c4`；formal artifact 为
-  `docs/wkb_carrier_round14_20260917.json`。
+`docs/wkb_carrier_round14_20260917.json`。
+
+## Primitive sigma-node no-copy boundary (2026-09-17, fresh HEAD)
+
+### Hypothesis and scope
+
+formal `kink_split` 网格通常不含精确 `N_re` 节点；此时
+`_sigma_node_limits` 返回的 left/right node 数组逐位相同，却仍复制两份。standalone
+candidate 只在无 exact kink node 时让两个视图共享输入 `sigma_nodes`，遇到 exact
+kink 时保留原有 one-sided copy 和 branch convention；production source 未修改。
+
+### Evidence
+
+- TDD contract 覆盖 formal grid 与显式 exact-kink grid，primitive 四组数组及
+  kink metadata 均逐位一致；测试结果 `2 passed`。
+- 当前 HEAD `b23190a`、Numba=2、BLAS=1、workers=1，五工况 outer 25-repeat
+  A/B 的 candidate/baseline median ratio 为
+  default/high-T/stiff/high-kappa/low-T `0.997/0.982/0.987/0.997/0.989`。
+- 五工况 `f/log10OmegaGW/DN_gw/g2/w2` digest 全部一致，spectrum max absolute
+  dex diff 为 `0`，DN relative 为 `0`，两边均 converged 且 failure reason 为
+  `null`；但总耗时改善最高仅 high-T `1.81%`，不满足 `>5%`。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。零复制语义安全但
+收益过小，未进入 production；不再继续围绕同一 primitive allocation 做微调。
+
+Artifacts：
+`docs/fast_phi_nocopy_round15_default_20260917.json`、
+`docs/fast_phi_nocopy_round15_highT_20260917.json`、
+`docs/fast_phi_nocopy_round15_stiff_20260917.json`、
+`docs/fast_phi_nocopy_round15_high_kappa_20260917.json`、
+`docs/fast_phi_nocopy_round15_lowT_20260917.json`。
 
 ### Decision
 

@@ -338,3 +338,12 @@ Phase 3: Implementation and evidence-driven optimization
   evidence，production source 未修改。
 - [ ] 下一轮重新读取 fresh profile 与全部 rejection evidence，再选择新的
   propagation 工作量候选；不得继续微调同一 handoff。
+
+### Round 15 decision
+
+- [x] Fresh stage profile 重新确认 tensor kernel 为主要热点；完成 sigma-node
+  no-copy standalone spike 与 formal/exact-kink TDD contract。
+- [x] 五工况 25-repeat digest/guard/收敛一致，但最高 runtime 改善仅 1.81%，拒绝
+  production；不再重复 primitive allocation 微调。
+- [ ] 下一轮重新 fetch/profile，优先寻找尚未验证的严格等价 kernel 外围重复工作，
+  或在 standalone 中提出新的数学依据后再做结构性 prototype。

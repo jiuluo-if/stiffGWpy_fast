@@ -1134,3 +1134,16 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。收益不�
 regime 稳定，且尚未值得进入独立 oracle 认证；production 未修改。
 
 Artifact：`docs/wkb_carrier_round14_20260917.json`。
+
+## Current session update: 2026-09-17 (primitive sigma-node no-copy)
+
+- [x] fresh HEAD `b23190a` 上完成 formal/exact-kink TDD contract，primitive 输出
+  逐位一致（`2 passed`）。
+- [x] 五工况 outer 25-repeat A/B ratio 为
+  `0.997/0.982/0.987/0.997/0.989`（default/high-T/stiff/high-kappa/lowT），
+  digest、spectrum、DN、convergence/failure 全部一致。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。最高总耗时
+改善约 `1.81%`，不满足速度门槛；production 未修改。
+
+Artifacts：`docs/fast_phi_nocopy_round15_*.json`。
