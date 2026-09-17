@@ -1165,3 +1165,40 @@ median 为 high-T/stiff/high-kappa `3.971/4.284/4.312 ms`，而正式 assemble=1
 完整 total 没有形成稳定的对应 >5% 收益，且 low-T 仍需独立处理。因此 assembly-only
 优化排除，不重复 no-assembly kernel 或其组合；下一候选必须减少真实 propagation
 工作量，并先满足 hybrid/phase standalone 的精度与 runtime gate。
+
+## Phase fastmath boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+在 phase-exp hoist twin 的 `scaled_step`、phase segment 和 parallel kernel 上启用
+Numba `fastmath=True`，期望只改善 trig/标量 arithmetic 调度。该假设不改变 phase
+subdivision、handoff、tail、assembly、输出 API 或 production fast source；由于
+fastmath 放宽 IEEE 浮点语义，digest 不逐位相同，必须把误差与速度分别看待。
+
+### Evidence
+
+- 2-thread kernel 30-repeat ratio 为 default/high-T/stiff/high-kappa/low-T
+  `0.8692/0.8468/0.9018/0.8695/0.9434`，但 full-outer ratio 只有
+  `0.9527/0.9620/0.9061/0.9418/0.9957`。
+- formal 16-thread ratio 为目标三点 high-T/stiff/high-kappa
+  `0.9992/0.9840/0.9680`，20-thread 为 `1.0050/0.9649/0.9771`；收益不稳定且
+  未达到 >5% total-runtime gate。default 在 20T 略慢 `1.0038`，low-T 在 16T 慢
+  `1.0343`，不能把 2-thread kernel 收益外推。
+- 2-thread full-outer 目标点 spectrum delta p50/p95/max（dex）分别为 high-T
+  `8.28e-12/1.38e-6/2.66e-6`、stiff `1.89e-11/1.86e-6/3.30e-6`、
+  high-kappa `5.92e-13/8.68e-7/2.42e-6`；DN relative 分别为
+  `3.01e-13/1.18e-11/7.80e-14`。low-T spectrum max `2.12e-6`、DN relative
+  `3.12e-7`。这些是 production 对照差异，不是独立 oracle 或 false-safe 证明。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。runtime gate 失败，
+因此不继续 Oracle A/Prüfer/WKB、named+Sobol、coverage/p95/p99 或 false-safe 认证；
+不修改 production、不更新 error budget。fastmath 只能作为局部编译实验，不能替代
+真正减少 propagation 工作量的 hybrid solver。
+
+Artifacts（均绑定 HEAD `164bd84f2984fce72755c3ad10c5f7698b33663f`）：
+`docs/phase_exp_fastmath_spike_round10_20260917.json`、
+`docs/phase_exp_fastmath_outer_round10_20260917.json`、
+`docs/phase_exp_fastmath_outer_16t_round10_20260917.json`、
+`docs/phase_exp_fastmath_outer_20t_round10_20260917.json`。

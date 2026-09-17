@@ -965,3 +965,31 @@ Artifacts：`docs/phase_exp_hoist_spike_round9_20260917.json`、
 Artifact：`docs/profile_fast_breakdown_round9_noassemble_highT_20260917.json`、
 `docs/profile_fast_breakdown_round9_noassemble_stiff_20260917.json`、
 `docs/profile_fast_breakdown_round9_noassemble_high_kappa_20260917.json`。
+
+## Current session update: 2026-09-17 (phase fastmath standalone)
+
+- [x] 在 fresh HEAD `4f8acc3` 上只对 standalone phase-exp hoist twin 添加 Numba
+  `fastmath=True`；不改变步长、handoff、公式、tail 或 production source。脚本随后
+  以 `164bd84` 单独提交并推送，artifact 均绑定该 SHA。
+- [x] 2-thread kernel 30-repeat ratio 为 default/high-T/stiff/high-kappa/low-T
+  `0.8692/0.8468/0.9018/0.8695/0.9434`；full-outer ratio 为
+  `0.9527/0.9620/0.9061/0.9418/0.9957`。
+- [x] 正式 16-thread full-outer ratio 为
+  `0.9354/0.9992/0.9840/0.9680/1.0343`，20-thread 为
+  `1.0038/1.0050/0.9649/0.9771/0.9921`（顺序均为 default/high-T/stiff/high-kappa/low-T）；
+  目标 regime 未形成稳定 >5% 收益。
+- [x] 2-thread full-outer 目标点 spectrum delta p50/p95/max（dex）为 high-T
+  `8.28e-12/1.38e-6/2.66e-6`、stiff `1.89e-11/1.86e-6/3.30e-6`、
+  high-kappa `5.92e-13/8.68e-7/2.42e-6`；DN relative 为
+  `3.01e-13/1.18e-11/7.80e-14`。low-T spectrum max `2.12e-6`、DN relative
+  `3.12e-7`。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。formal runtime
+gate 失败，不进入独立 Oracle、Sobol、coverage 或 false-safe 认证；production source
+未修改。下一轮继续真正减少 propagation 工作量的 hybrid phase/Riccati/WKB standalone
+prototype。
+
+Artifacts：`docs/phase_exp_fastmath_spike_round10_20260917.json`、
+`docs/phase_exp_fastmath_outer_round10_20260917.json`、
+`docs/phase_exp_fastmath_outer_16t_round10_20260917.json`、
+`docs/phase_exp_fastmath_outer_20t_round10_20260917.json`。
