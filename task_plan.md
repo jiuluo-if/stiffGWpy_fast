@@ -257,3 +257,8 @@ Phase 3: Implementation and evidence-driven optimization
   已复核通过。
 - [ ] 下一轮若继续 hybrid，加入二阶 adiabaticity/error bound 与 full-grid Oracle A/
   Prüfer/WKB；仍不修改 production path。
+
+- [x] 完成 outer goal-grid invariant 与 25-repeat named/Sobol/edge A/B；`10/13`
+  digest 不一致且 speed ratio `0.960..1.003`，候选 rejected。
+- [ ] 研究只缓存不影响最终 `f` digest 的 background/primitive 中间量；先建立逐位
+  输出契约，再做目标 regime runtime A/B。

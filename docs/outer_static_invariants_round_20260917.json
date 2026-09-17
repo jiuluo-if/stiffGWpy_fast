@@ -1,0 +1,498 @@
+{
+  "experiment": "outer_static_invariant_probe",
+  "production_path_changed": false,
+  "generated_commit": "f9b4e9828bad9eab75e09cd7212658211040978b",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "rows": [
+    {
+      "case": "default",
+      "converged": true,
+      "failure": null,
+      "calls": {
+        "gen": 2,
+        "goal": 2,
+        "prep": 2,
+        "primitive": 1
+      },
+      "gen": {
+        "Nv": {
+          "shape_changed": false,
+          "max_abs": 3.552713678800501e-13,
+          "digest_equal": false
+        },
+        "sigma": {
+          "shape_changed": false,
+          "max_abs": 6.964792810570941e-05,
+          "digest_equal": false
+        },
+        "f_hor": {
+          "shape_changed": false,
+          "max_abs": 8.089436005498385e-05,
+          "digest_equal": false
+        }
+      },
+      "goal": {
+        "shape_changed": false,
+        "max_abs": 2.345901251032956e-13,
+        "digest_equal": false
+      },
+      "prep": [
+        {
+          "shape_changed": false,
+          "max_abs": 6.964792810570941e-05,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 8.089436005498385e-05,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.0,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.004737550319042327,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 5146052770704.0,
+          "digest_equal": false
+        }
+      ],
+      "primitive": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        }
+      ]
+    },
+    {
+      "case": "lowT",
+      "converged": true,
+      "failure": null,
+      "calls": {
+        "gen": 1,
+        "goal": 1,
+        "prep": 1,
+        "primitive": 1
+      },
+      "gen": {
+        "Nv": {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        "sigma": {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        "f_hor": {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        }
+      },
+      "goal": {
+        "shape_changed": false,
+        "max_abs": 0.0,
+        "digest_equal": true
+      },
+      "prep": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        }
+      ],
+      "primitive": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        }
+      ]
+    },
+    {
+      "case": "highT",
+      "converged": true,
+      "failure": null,
+      "calls": {
+        "gen": 2,
+        "goal": 2,
+        "prep": 2,
+        "primitive": 2
+      },
+      "gen": {
+        "Nv": {
+          "shape_changed": false,
+          "max_abs": 3.694822225952521e-13,
+          "digest_equal": false
+        },
+        "sigma": {
+          "shape_changed": false,
+          "max_abs": 0.001728586637387064,
+          "digest_equal": false
+        },
+        "f_hor": {
+          "shape_changed": false,
+          "max_abs": 0.0020077740280175504,
+          "digest_equal": false
+        }
+      },
+      "goal": {
+        "shape_changed": false,
+        "max_abs": 2.3447910280083306e-13,
+        "digest_equal": false
+      },
+      "prep": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.001728586637387064,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0020077740280175504,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.0,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0038855010432774506,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 128059366982048.0,
+          "digest_equal": false
+        }
+      ],
+      "primitive": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.004624901469284737,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.004624900022804468,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 6.559950142144728e-05,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.054918620150322894,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 7.389644451905042e-11,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.8474111129762605e-13,
+          "digest_equal": false
+        }
+      ]
+    },
+    {
+      "case": "stiff",
+      "converged": true,
+      "failure": null,
+      "calls": {
+        "gen": 2,
+        "goal": 2,
+        "prep": 2,
+        "primitive": 2
+      },
+      "gen": {
+        "Nv": {
+          "shape_changed": false,
+          "max_abs": 2.3874235921539366e-12,
+          "digest_equal": false
+        },
+        "sigma": {
+          "shape_changed": false,
+          "max_abs": 0.00046055330128003114,
+          "digest_equal": false
+        },
+        "f_hor": {
+          "shape_changed": false,
+          "max_abs": 0.0005349249322499361,
+          "digest_equal": false
+        }
+      },
+      "goal": {
+        "shape_changed": false,
+        "max_abs": 1.5554224574998443e-12,
+        "digest_equal": false
+      },
+      "prep": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.00046055330128003114,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0005349249322499361,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.0,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.00394698847888364,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 34050052847392.0,
+          "digest_equal": false
+        }
+      ],
+      "primitive": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.0012321983104470746,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0012321986777834582,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.2998055281867957e-08,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.5365334509274362,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 4.774847184307873e-10,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.1937117960769683e-12,
+          "digest_equal": false
+        }
+      ]
+    },
+    {
+      "case": "high_kappa",
+      "converged": true,
+      "failure": null,
+      "calls": {
+        "gen": 2,
+        "goal": 2,
+        "prep": 2,
+        "primitive": 2
+      },
+      "gen": {
+        "Nv": {
+          "shape_changed": false,
+          "max_abs": 3.694822225952521e-13,
+          "digest_equal": false
+        },
+        "sigma": {
+          "shape_changed": false,
+          "max_abs": 0.005919084693692955,
+          "digest_equal": false
+        },
+        "f_hor": {
+          "shape_changed": false,
+          "max_abs": 0.007728291347572025,
+          "digest_equal": false
+        }
+      },
+      "goal": {
+        "shape_changed": false,
+        "max_abs": 2.3447910280083306e-13,
+        "digest_equal": false
+      },
+      "prep": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.005919084693692955,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.007728291347572025,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 4.0,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.007686580283432498,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 509309517687728.0,
+          "digest_equal": false
+        }
+      ],
+      "primitive": [
+        {
+          "shape_changed": false,
+          "max_abs": 0.01779682670999705,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.01779682725134535,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.00018001021609720565,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.2502634761961229,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 0.0,
+          "digest_equal": true
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 7.389644451905042e-11,
+          "digest_equal": false
+        },
+        {
+          "shape_changed": false,
+          "max_abs": 1.8474111129762605e-13,
+          "digest_equal": false
+        }
+      ]
+    }
+  ],
+  "semantics": "Compare first and last captured outer inputs; diagnostic only."
+}

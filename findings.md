@@ -816,3 +816,21 @@ positive-tilt 仍存在 S2/Phi 为零但频谱有残差的情况，edge_dnre_hi 
 本轮本地复现新增诊断脚本的 CI 失败：唯一门禁错误为 Ruff `I001`，原因是新增
 `CASES` 导入未按规则排序。已修复并复核中文注释门禁、Ruff 与 mypy；以后新增脚本
 提交前必须执行同一 import-order 门禁，避免重复触发该原因。
+
+## Outer goal-grid reuse A/B (2026-09-17, standalone)
+
+Fresh 分层 profile（当前 HEAD、16 threads、10 repeats）显示 high-T/stiff/high-kappa
+total median `6.557/6.556/6.355 ms`，tensor median `1.701/1.693/1.533 ms`；
+fresh 2-thread runtime matrix 的四点 median/p95 为 default `7.907/8.605`、high-T
+`12.982/13.932`、stiff `14.263/15.351`、high-kappa `13.584/16.852 ms`。
+
+Invariant probe 发现 outer 第二轮 goal grid 的最大漂移只有约 `1.6e-12`，但不是逐位
+相同。随后在 13 个 named/Sobol/edge 点进行了 25-repeat A/B：复用首轮 goal grid 后
+`10/13` 个点的最终 `f` SHA256 digest 改变，最大绝对频率差 `1.56e-12`；
+`log10OmegaGW`、`DN_gw`、`g2`、`w2` 的数值 max delta 为 0。candidate/current
+median ratio 为 `0.960..1.003`，不满足稳定 >5% runtime gate。
+
+这排除了“因漂移很小即可跳过第二次 goal grid construction”的 production 方案：
+本项目的准备层去重要求输出 digest 完全一致，近似数值相等不足以接受。候选状态为
+`REJECTED FOR PRODUCTION`，原始数据为 `docs/outer_goal_grid_reuse_round_20260917.json`
+与 `docs/outer_static_invariants_round_20260917.json`。

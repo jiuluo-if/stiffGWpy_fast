@@ -697,3 +697,23 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
 
 Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`；若继续 hybrid，必须加入
 二阶 adiabaticity、独立 full-grid oracle 与 25--50 repeat A/B。
+
+## Session: 2026-09-17 (outer goal-grid invariant A/B)
+
+- 当前远端/本地 HEAD 为 `f9b4e9828bad9eab75e09cd7212658211040978b`；fresh 25-repeat
+  baseline（Numba=2、affinity=2、BLAS=1、workers=1）为 default/highT/stiff/
+  high-kappa `7.907/12.982/14.263/13.584 ms` median，p95 为
+  `8.605/13.932/15.351/16.852 ms`。16-thread 分层 profile 的目标点 total median
+  为 `6.557/6.556/6.355 ms`，tensor 为 `1.701/1.693/1.533 ms`；准备层与 outer
+  重复调用仍是主要可研究部分。
+- 新增 standalone `benchmark_outer_static_invariants.py`，确认 high-T/stiff/
+  high-kappa 第二轮 `Nv` 仅有 `1e-12` 量级漂移，goal grid 仅有 `1.6e-12` 量级漂移，
+  但 sigma/f_hor/primitive 仍随背景更新，不能凭近似相等直接复用。
+- 新增 standalone `benchmark_outer_grid_reuse.py`，在 13 个 named/Sobol/edge 点以
+  25-repeat A/B 测试复用首轮 goal grid。`10/13` 点 final `f` digest 不一致；最大
+  频率差 `1.56e-12`，而 `log10OmegaGW/DN_gw/g2/w2` 的数值差为 0。speed ratio
+  范围 `0.960..1.003`，没有稳定 >5% 收益。
+
+Decision: `REJECTED FOR PRODUCTION`。即使科学量数值相同，输出契约要求 digest 完全
+一致；该候选不能作为准备层去重。下一候选应转向 background/primitive 的可证明缓存，
+并继续保留 low-T 独立检查。
