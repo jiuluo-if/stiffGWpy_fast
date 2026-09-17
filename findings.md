@@ -979,6 +979,54 @@ HEAD `42b5526` 的 fresh 16-thread kink profile（25 repeats）为：
 逐位相同；static grid reuse 50-repeat ratio 为 high-T/stiff/high-kappa `0.96/0.99/0.98`，
 虽然 digest/DN 完全一致，仍无稳定 >5% 收益，REJECTED。
 
+## Phase-substep exponential recurrence prototype (2026-09-17, HEAD 58af509)
+
+### Hypothesis and scope
+
+当前 `solve_kernel` 在每个 phase substep 独立计算 `exp(z)`。standalone
+prototype 保持 production 的 `scaled_step`、phase subdivision、kink split、完整
+assembly、tail matching 和 `phase_max=0.25` 不变，只将同一 substep 内的
+`exp(z)` 替换为一次初值加 `w *= exp(dz)` recurrence；不修改 production API、默认
+solver 或 fallback。
+
+### Evidence
+
+- 2-thread、30-repeat kernel A/B：candidate/production median ratio 为
+  default/high-T/stiff/high-kappa/low-T = `0.873/0.809/0.899/0.898/0.904`。
+- 固定 16-thread、30-repeat formal kernel A/B：ratio 为
+  `0.802/0.851/0.926/0.932/0.916`；对应 p95 除 high-T 外均下降或接近，
+  说明收益不是只来自单线程调度。
+- 完整 outer self-consistency 五工况全部 converged。named + edge + Sobol 共
+  14 点全部 status match，`status_mismatch=0`，测试稳定门下
+  `false_safe_count=0`；最大 spectrum delta `6.99e-6 dex`，最大 DN delta
+  `6.44e-6`，异常来自 `positive_tilt/cr0_blue`，不是目标 high-T/stiff/
+  high-kappa 点。
+- 目标工况完整 solve 的 spectrum delta dex p95/max：default
+  `9.55e-7/2.91e-6`、high-T `1.38e-6/2.66e-6`、stiff
+  `1.86e-6/3.30e-6`、high-kappa `8.68e-7/2.42e-6`；low-T 独立为
+  `8.68e-7/2.12e-6`。
+- fresh Oracle C 当前 HEAD、每点 12 native frequencies：candidate-vs-WKB
+  DN relative 为 default/high-T/stiff/high-kappa/low-T =
+  `1.073e-5/9.881e-6/1.148e-5/1.087e-5/1.659e-4`；与 production
+  的差异仅由 recurrence 造成的 `7.6e-12/3.0e-13/1.2e-11/7.6e-14/
+  3.1e-7`，没有新增 oracle systematic。
+
+### Decision
+
+`ACCEPTED AS STANDALONE PROTOTYPE / NOT PRODUCTION`。该方法在目标 regime
+满足 >5% kernel runtime gate，且 precision 变化远低于当前 error budget；但输出
+digest 不再逐位一致，positive-tilt/cr0-blue 的参数矩阵差异也不能用当前五点
+结果外推为全空间认证。若要进入 production，下一步必须把 recurrence 直接接入
+opt-in candidate，完成完整 16/20-thread total runtime、Oracle A/Prüfer/WKB
+full-grid、reheating/kink edge 与更大 Sobol coverage；在此之前不改正式 fast。
+
+原始 artifacts：
+`docs/phase_recurrence_round_20260917.json`、
+`docs/phase_recurrence_round_16t_20260917.json`、
+`docs/phase_recurrence_fullsolve_20260917.json`、
+`docs/phase_recurrence_parameter_matrix_20260917.json`、
+`docs/phase_recurrence_oracle_20260917/`。
+
 no-assembly first-probe kernel 只删除 `assemble=0` 首轮的列装配判断，transfer、kink
 split、tail matching 保持不变。25-repeat total ratio 为 default/high-T/stiff/high-kappa/
 low-T `0.97/0.96/1.00/0.95/1.01`；digest 相等、DN 差为 0，仍 REJECTED。

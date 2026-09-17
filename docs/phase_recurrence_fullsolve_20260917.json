@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_fullsolve",
+  "production_path_changed": false,
+  "commit": "58af509ba5e15c28017ded9c4abceebc3594c5c2",
+  "rows": [
+    {
+      "case": "default",
+      "base_converged": true,
+      "candidate_converged": true,
+      "spectrum_delta_dex_p50": 2.1392665416897216e-11,
+      "spectrum_delta_dex_p95": 9.55406195934927e-07,
+      "spectrum_delta_dex_max": 2.9075948315693267e-06,
+      "DN_base": 0.0022636474150855806,
+      "DN_candidate": 0.00226364741510259,
+      "DN_candidate_vs_base_rel": 7.51415492071168e-12,
+      "DN_candidate_vs_WKB_rel": 1.0726267425969775e-05,
+      "DN_base_vs_WKB_rel": 1.0726274940044097e-05,
+      "oracle_frozen_to_wkb_rel": 0.003629542984127448,
+      "oracle_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd"
+    },
+    {
+      "case": "highT",
+      "base_converged": true,
+      "candidate_converged": true,
+      "spectrum_delta_dex_p50": 8.282263763703668e-12,
+      "spectrum_delta_dex_p95": 1.3812080208452926e-06,
+      "spectrum_delta_dex_max": 2.660928151598796e-06,
+      "DN_base": 0.05643308427141758,
+      "DN_candidate": 0.0564330842714345,
+      "DN_candidate_vs_base_rel": 2.998943341503919e-13,
+      "DN_candidate_vs_WKB_rel": 9.880929768302209e-06,
+      "DN_base_vs_WKB_rel": 9.880930068193578e-06,
+      "oracle_frozen_to_wkb_rel": 0.0035915285866256123,
+      "oracle_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd"
+    },
+    {
+      "case": "stiff",
+      "base_converged": true,
+      "candidate_converged": true,
+      "spectrum_delta_dex_p50": 1.8892443165441364e-11,
+      "spectrum_delta_dex_p95": 1.8561607020295412e-06,
+      "spectrum_delta_dex_max": 3.299274821344511e-06,
+      "DN_base": 0.014984335009443728,
+      "DN_candidate": 0.014984335009620998,
+      "DN_candidate_vs_base_rel": 1.1830331954996435e-11,
+      "DN_candidate_vs_WKB_rel": 1.1483324765464623e-05,
+      "DN_base_vs_WKB_rel": 1.1483336595660727e-05,
+      "oracle_frozen_to_wkb_rel": 0.0036463599915489884,
+      "oracle_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd"
+    },
+    {
+      "case": "high_kappa",
+      "base_converged": true,
+      "candidate_converged": true,
+      "spectrum_delta_dex_p50": 5.915268275202834e-13,
+      "spectrum_delta_dex_p95": 8.676194738654887e-07,
+      "spectrum_delta_dex_max": 2.4163541425537005e-06,
+      "DN_base": 0.22570645394976807,
+      "DN_candidate": 0.22570645394978528,
+      "DN_candidate_vs_base_rel": 7.624264428663499e-14,
+      "DN_candidate_vs_WKB_rel": 1.086915262707259e-05,
+      "DN_base_vs_WKB_rel": 1.0869152703314405e-05,
+      "oracle_frozen_to_wkb_rel": 0.0035867247590141327,
+      "oracle_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd"
+    },
+    {
+      "case": "lowT",
+      "base_converged": true,
+      "candidate_converged": true,
+      "spectrum_delta_dex_p50": 3.332942810629902e-10,
+      "spectrum_delta_dex_p95": 8.682897383316401e-07,
+      "spectrum_delta_dex_max": 2.118802894912619e-06,
+      "DN_base": 5.3114602833937826e-08,
+      "DN_candidate": 5.3114619430805983e-08,
+      "DN_candidate_vs_base_rel": 3.1247279037569617e-07,
+      "DN_candidate_vs_WKB_rel": 0.00016590416391259024,
+      "DN_base_vs_WKB_rel": 0.00016559163937933293,
+      "oracle_frozen_to_wkb_rel": 0.001339819731622711,
+      "oracle_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd"
+    }
+  ]
+}

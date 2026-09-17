@@ -570,6 +570,42 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
 - 新假设“辐射主导段常系数闭式 transfer map”在 `z_match=3.75` 四 regime
   的最大振幅误差为 `6.19e-3..1.86e-2`，传播 median 反而增加约 `11.0–17.5%`；
   `REJECTED FOR PRODUCTION`。
+
+## Session: 2026-09-17 (phase-substep exponential recurrence prototype)
+
+### Actions Taken
+
+- 重新 fetch `fast/fast_v0.2`，确认本地与远端均为 `58af509ba5e15c28017ded9c4abceebc3594c5c2`；重新读取 progress/findings、validation manifest、round7 fresh profiles 与 rejected experiments。
+- 新增 standalone `scripts/benchmark_phase_recurrence.py`。候选只替换 phase
+  substep 内 `exp(z)` 的计算方式，保留完整 assembly、kink split、tail matching
+  和 production `phase_max`；正式 `fast_sgwb.py` 未修改。
+- 完成 2-thread/16-thread 各 30-repeat kernel A/B、五工况 full outer solve、
+  named+edge+Sobol 14 点矩阵，以及当前 HEAD 的 fresh Oracle C focused 对照。
+
+### Test Results
+
+| Test | Result |
+|---|---|
+| 2-thread kernel median ratio default/high-T/stiff/high-kappa/low-T | `0.873/0.809/0.899/0.898/0.904` |
+| 16-thread kernel median ratio default/high-T/stiff/high-kappa/low-T | `0.802/0.851/0.926/0.932/0.916` |
+| Full outer solve | 五工况 candidate/production 均 converged |
+| Named + edge + Sobol matrix | `14/14` status match，`false_safe_count=0`，最大 spectrum delta `6.99e-6 dex`，最大 DN delta `6.44e-6` |
+| Fresh Oracle C | candidate 未新增 oracle systematic；low-T 独立保留，candidate-vs-WKB `1.659e-4` |
+
+### Decision
+
+`ACCEPTED AS STANDALONE PROTOTYPE / NOT PRODUCTION`。recurrence 在目标 regime
+达到速度门，但 digest 不逐位一致，且尚未完成 full-grid Oracle A/Prüfer/WKB 与
+更大参数空间认证；不修改 production，不更新当前 stale validation manifest。
+
+### Artifacts
+
+- `scripts/benchmark_phase_recurrence.py`
+- `docs/phase_recurrence_round_20260917.json`
+- `docs/phase_recurrence_round_16t_20260917.json`
+- `docs/phase_recurrence_fullsolve_20260917.json`
+- `docs/phase_recurrence_parameter_matrix_20260917.json`
+- `docs/phase_recurrence_oracle_20260917/`
 - 完整整理的 artifacts 包括 WKB、block-transfer、radiation closed-form、
   true-error、outer-reuse、residual decomposition、validation 与 estimator
   复核文件；资源记录为 Numba/workqueue=2、BLAS=1、reference workers=1（涉及

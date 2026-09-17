@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence",
+  "production_path_changed": false,
+  "commit": "58af509ba5e15c28017ded9c4abceebc3594c5c2",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "repeats": 30,
+    "cases": [
+      "default",
+      "highT",
+      "stiff",
+      "high_kappa",
+      "lowT"
+    ]
+  },
+  "records": [
+    {
+      "case": "default",
+      "n_freq": 76,
+      "repeats": 30,
+      "baseline_median_ms": 2.314950000254612,
+      "candidate_median_ms": 2.0204499996907543,
+      "baseline_p95_ms": 2.744840000377735,
+      "candidate_p95_ms": 2.5054849992557133,
+      "candidate_over_baseline": 0.87278342921814,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 4.5230954981356716e-14,
+        "spectrum_rel_p50": 1.1329437064090086e-10,
+        "spectrum_rel_p95": 2.2272186679295336e-06,
+        "spectrum_rel_max": 6.697368770120002e-06,
+        "DN_gw_relative": 7.509293375557549e-12
+      }
+    },
+    {
+      "case": "highT",
+      "n_freq": 76,
+      "repeats": 30,
+      "baseline_median_ms": 2.327799999875424,
+      "candidate_median_ms": 1.8832499999916763,
+      "baseline_p95_ms": 2.6893950002886413,
+      "candidate_p95_ms": 2.5085300000682755,
+      "candidate_over_baseline": 0.809025689531945,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 4.31999211799818e-14,
+        "spectrum_rel_p50": 1.9066290565095472e-11,
+        "spectrum_rel_p95": 3.1803439239009276e-06,
+        "spectrum_rel_max": 6.126994693809685e-06,
+        "DN_gw_relative": 2.9893636267805013e-13
+      }
+    },
+    {
+      "case": "stiff",
+      "n_freq": 76,
+      "repeats": 30,
+      "baseline_median_ms": 2.296300000125484,
+      "candidate_median_ms": 2.064000001155364,
+      "baseline_p95_ms": 2.7330299993991503,
+      "candidate_p95_ms": 2.5266599994210988,
+      "candidate_over_baseline": 0.8988372603939268,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.4308181298167965e-13,
+        "spectrum_rel_p50": 1.7904866436287007e-10,
+        "spectrum_rel_p95": 4.3645846082611265e-06,
+        "spectrum_rel_max": 7.596889813970152e-06,
+        "DN_gw_relative": 1.1830958852280552e-11
+      }
+    },
+    {
+      "case": "high_kappa",
+      "n_freq": 77,
+      "repeats": 30,
+      "baseline_median_ms": 2.1698500004276866,
+      "candidate_median_ms": 1.9475000008242205,
+      "baseline_p95_ms": 2.7047800005675526,
+      "candidate_p95_ms": 2.410739999686484,
+      "candidate_over_baseline": 0.8975274790609304,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.8234825734961574e-14,
+        "spectrum_rel_p50": 2.4835546882268597e-12,
+        "spectrum_rel_p95": 2.0044551409764875e-06,
+        "spectrum_rel_max": 5.563876529644438e-06,
+        "DN_gw_relative": 7.687816548024718e-14
+      }
+    },
+    {
+      "case": "lowT",
+      "n_freq": 76,
+      "repeats": 30,
+      "baseline_median_ms": 2.7970500004812493,
+      "candidate_median_ms": 2.5289000004704576,
+      "baseline_p95_ms": 3.132010000263108,
+      "candidate_p95_ms": 2.9911999994510547,
+      "candidate_over_baseline": 0.9041311381760587,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.68305193259601e-14,
+        "spectrum_rel_p50": 3.6544679539079907e-09,
+        "spectrum_rel_p95": 2.07867408282836e-06,
+        "spectrum_rel_max": 4.878735862197734e-06,
+        "DN_gw_relative": 3.124727913293908e-07
+      }
+    }
+  ]
+}

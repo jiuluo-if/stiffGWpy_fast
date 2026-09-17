@@ -241,7 +241,7 @@ Phase 3: Implementation and evidence-driven optimization
 
 ## Next Step
 
-已完成当前 HEAD fresh runtime/阶段 profile、outer-reuse baseline 和 kernel 输入局部响应原型；当前下一步为推导不调用第二次 kernel 的低成本 observable response criterion，尚未进入 production。
+已完成当前 HEAD fresh runtime/阶段 profile、outer-reuse baseline、kernel 输入局部响应原型，以及 phase-substep exponential recurrence 的 standalone A/B、outer solve、Oracle C focused 对照和 14 点 named/edge/Sobol 矩阵；当前下一步为扩大 recurrence 的 full-grid Oracle A/Prüfer/WKB 与 total-runtime candidate 认证，仍未进入 production。
 
 ## Current session update: 2026-09-20
 
@@ -286,3 +286,8 @@ Phase 3: Implementation and evidence-driven optimization
   区间未稳定超过 5% 而 rejected，未修改 production。
 - [ ] 下轮转向 phase transfer 的跨 channel 结构复用或独立 adiabaticity estimator；
   不重复本轮两个 specialization。
+- [x] Phase-substep exponential recurrence standalone prototype：2/16-thread 30-repeat
+  kernel A/B、五工况 outer solve、14 点 named/edge/Sobol 矩阵与当前 HEAD fresh
+  Oracle C 完成；速度通过，digest 非逐位一致，保留为 prototype，不进入 production。
+- [ ] 对 recurrence candidate 完成 full-grid Oracle A/Prüfer/WKB、reheating/kink
+  edge、扩大 Sobol coverage 和 total runtime gate；未完成前不得接入正式 fast。
