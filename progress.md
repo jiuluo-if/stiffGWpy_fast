@@ -1026,3 +1026,20 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。下一步�
 `|omega'/omega^2|` adiabaticity-trigger prototype，不再调整该 branch threshold。
 
 Artifact：`docs/radiation_local_branch_round11_20260917.json`。
+
+## Current session update: 2026-09-17 (adiabaticity-trigger handoff)
+
+- [x] standalone prototype 用 `|omega'/omega^2|=|1.5*sigma-1|exp(-z)` 触发
+  现有 analytic tail，production source 未修改。
+- [x] threshold `0.02/0.01/0.005/0.001` 均未通过 accuracy/runtime gate；以
+  `0.001` 为例目标点 runtime ratio high-T/stiff/high-kappa 为
+  `1.489/1.425/1.514`，spectrum max 为 `0.463/0.400/0.463`，low-T max
+  `0.345`、DN relative `8.45e-3`。
+- [x] 定位到 `sigma≈2/3` 使一阶 epsilon 因 `omega'≈0` 虚假变小，导致 z<5
+  的 premature handoff；criterion 不能单独使用。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。下一步若继续
+hybrid，必须组合 phase/curvature 或 mode-local amplitude criterion，不再单独调
+epsilon threshold。
+
+Artifact：`docs/adiabaticity_handoff_round11_20260917.json`。

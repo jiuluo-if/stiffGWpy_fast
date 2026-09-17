@@ -1251,3 +1251,35 @@ prototype 只改变 standalone kernel，未触碰 production。
 
 Artifact（绑定 HEAD `a7773d2e01dcdfd9c387429348b09cdea782edd2`）：
 `docs/radiation_local_branch_round11_20260917.json`。
+
+## Adiabaticity-trigger handoff boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+用 `epsilon=|omega'/omega^2|=|1.5*sigma-1| exp(-z)` 替代固定 `z_tail=5`，
+在 epsilon 低于阈值时提前进入现有 analytic tail。prototype 保持 production
+phase propagation、tail formula、assembly 和 API 不变，仅改变 standalone handoff。
+
+### Evidence
+
+- 2-thread 30-repeat kernel probe 的 threshold `0.02/0.01/0.005/0.001` 在目标
+  high-T/stiff/high-kappa 上均比 baseline 慢；以 `0.001` 为例 runtime ratio
+  分别为 `1.489/1.425/1.514`，low-T 为 `1.483`。
+- 同一 `0.001` 阈值的 spectrum relative p50/p95/max：high-T
+  `1.91e-11/2.46e-2/4.63e-1`、stiff `4.35e-11/1.98e-3/4.00e-1`、
+  high-kappa `1.36e-12/2.22e-2/4.63e-1`、low-T
+  `7.67e-10/1.97e-2/3.45e-1`；DN relative 分别
+  `2.76e-8/1.24e-7/6.95e-9/8.45e-3`。
+- 误差最大的 mode 在 `sigma≈2/3` 时因 `1.5*sigma-1≈0` 使一阶 epsilon
+  虚假变小，提前 handoff；此时尚未满足 tail 的整体 phase/background 条件。
+  这证明单独使用 `|omega'/omega^2|` 不是充分的 handoff criterion。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。accuracy gate 已失败，
+不进入 16/20-thread runtime、Oracle A/Prüfer/WKB 或 false-safe certification；
+不修改 production。后续若再研究 hybrid，必须加入至少一个独立的 phase/curvature
+或 mode-local amplitude criterion，不能继续只调 epsilon threshold。
+
+Artifact（绑定 HEAD `84c28e645a4d3e0bfd9329fce83355cb992092cb`）：
+`docs/adiabaticity_handoff_round11_20260917.json`。
