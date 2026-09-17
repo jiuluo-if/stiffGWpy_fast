@@ -1364,3 +1364,37 @@ bitwise 结果上安全，但收益不足且目标慢工况退化；不继续放
 
 Artifact（绑定当前 HEAD `b8e71bfffd98504f14084458c724493c03633340`）：
 `docs/kink_sigma_cache_round12_20260917.json`。
+
+## Observable-aware outer reuse boundary (2026-09-17, fresh HEAD)
+
+### Hypothesis and scope
+
+用 first-to-second outer update 的 `delta log Omega`、`delta Phi`、`delta S2`、
+horizon shift 和频率加权 DN sensitivity 预测是否可以安全跳过第二次 tensor
+kernel。实验只做 forced-reuse diagnostic，不改变正式 reuse 判据或 production source。
+
+### Evidence
+
+- 当前 HEAD `8d8102d`、Numba=2、BLAS=1、workers=1 下，forced reuse 的总耗时比现行
+  判据为 high-T/stiff/high-kappa `0.748/0.766/0.729`；但 spectrum 最大偏差为
+  `3.944e-3/1.051e-3/1.547e-2 dex`，不能作为安全复用。
+- 对应 DN 相对差仅为 `3.39e-11/3.05e-10/3.28e-11`，说明 DN sensitivity proxy
+  单独不足以约束 spectrum；`delta log Omega` 分别为
+  `3.944e-3/1.051e-3/1.547e-2`。
+- `delta Phi` 为 `7.69e-5/2.09e-5/2.96e-4`，`delta S2` 为
+  `6.56e-5/1.30e-8/1.80e-4`，horizon shift 为
+  `2.01e-3/5.35e-4/7.73e-3`；这些量可解释误差来源，但尚未形成无需第二次
+  kernel 的充分安全判据。
+- default/lowT 当前路径已经只调用一次 kernel；强制复用没有额外收益，不能用其
+  结果外推目标慢工况。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS OBSERVABLE-AWARE DIAGNOSTIC`。任何能覆盖
+ 目标慢工况的宽松 guard 都会放大 spectrum 误差；DN-only 或单一 `Phi/S2` 阈值均不够。
+不继续调阈值，下一步回到有新数学依据的 nonoscillatory phase/Riccati standalone
+propagation prototype。
+
+Artifacts（均绑定当前 HEAD `8d8102dbfcd9345f43d91b99fa6f656f9c24623f`）：
+`docs/outer_observable_proxy_round12_20260917.json`、
+`docs/outer_reuse_headroom_round12_20260917.json`。

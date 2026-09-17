@@ -1093,3 +1093,17 @@ Artifacts：`docs/profile_fast_breakdown_round12_default_20260917.json`、
 `docs/profile_fast_breakdown_round12_high_kappa_20260917.json`、
 `docs/profile_fast_breakdown_round12_lowT_20260917.json`、
 `docs/kink_sigma_cache_round12_20260917.json`。
+
+## Current session update: 2026-09-17 (observable-aware outer reuse)
+
+- [x] 当前 HEAD `8d8102d` fresh 运行 observable proxy 与 15-repeat 交替 headroom
+  A/B；记录 `delta log Omega`、`delta Phi`、`delta S2`、horizon shift、DN proxy。
+- [x] forced reuse 对 high-T/stiff/high-kappa 的 runtime ratio 为
+  `0.748/0.766/0.729`，但 spectrum max 偏差为 `3.944e-3/1.051e-3/1.547e-2`
+  dex；DN 相对差虽为 `3.39e-11/3.05e-10/3.28e-11`，不能替代 spectrum gate。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS OBSERVABLE-AWARE DIAGNOSTIC`。
+不放宽 outer reuse threshold，不继续调单一 observable 阈值。
+
+Artifacts：`docs/outer_observable_proxy_round12_20260917.json`、
+`docs/outer_reuse_headroom_round12_20260917.json`。
