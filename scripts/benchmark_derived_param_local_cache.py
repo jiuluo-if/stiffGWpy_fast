@@ -78,7 +78,7 @@ def main():
     FS.set_threads(int(os.environ.get('FAST_THREADS', '2')))
     rows = []
     for case in CASES:
-        # Warm both variants before collecting timings.
+        # 先预热两个实现，再采集计时。
         _run(case, old_method, new_method)
         _run(case, None, new_method)
         baseline = [_run(case, old_method, new_method) for _ in range(reps)]
