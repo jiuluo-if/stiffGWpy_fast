@@ -755,3 +755,17 @@ Decision: `ACCEPTED FOR PRODUCTION`。该改动只缓存同一次 grid build 的
   同时更新测试覆盖矩阵；保留 Ruff、mypy、compileall、manifest、pytest、package、
   Cobaya 和多 Python 版本兼容性测试。
 - 编码声明不再作为 CI 失败来源；代码质量检查仍由 Ruff 和类型/编译门禁负责。
+
+## Session: 2026-09-17 (analytic branch eligibility boundary)
+
+- 当前 HEAD `9b979c36b1cce46e3beb268892a09df7e4a7d9a5` 完成 fresh 16-thread profile：
+  high-T/stiff/high-kappa total median `6.16/6.74/6.68 ms`，tensor kernel
+  `1.62/1.94/1.84 ms`。
+- 新增 standalone `benchmark_analytic_branch_eligibility.py`，按实际 mode crossing
+  与 `sigma` 统计 z_tail=5 前可进入常系数 radiation/stiff branch 的 segment；目标点
+  eligible fraction 为 `16.47%/14.31%/17.66%`，low-T 为 `6.62%`，严格 radiation
+  segment 为 `0`。
+
+Decision: `REJECTED FOR PRODUCTION / PROTOTYPE DEFERRED`。当前 eligible work 明显低于
+>30% tensor-work 优先门槛，且 low-T 独立边界更差；不重复旧 fixed-z radiation 原型。
+原始 artifact：`docs/analytic_branch_eligibility_round_20260917.json`。

@@ -266,3 +266,5 @@ Phase 3: Implementation and evidence-driven optimization
   收益最高约 1.9%，按 >5% 门槛拒绝并撤回正式实现。
 - [x] 接受 H2 endpoint 函数内缓存：13 点 digest mismatch 为 0，high-kappa 50-repeat
   runtime 改善 6.54%，Cartesian/Prüfer oracle 与 error budget 通过。
+- [x] 完成 analytic branch eligibility boundary；目标 regime 可覆盖比例仅
+  `14.31%–17.66%`，低于 >30% 优先门槛，closed-form prototype 暂缓。

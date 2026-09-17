@@ -878,3 +878,21 @@ delta 均为 `0/0/0`，parameter-space false-safe `0`。目标点 runtime ratio 
 原始证据：`docs/h2_endpoint_cache_round_20260917.json` 与
 `docs/h2_endpoint_oracle_highT_20260917.json`、`docs/h2_endpoint_oracle_stiff_20260917.json`、
 `docs/h2_endpoint_oracle_high_kappa_20260917.json`。
+
+## Analytic branch eligibility boundary (2026-09-17, standalone)
+
+当前 fresh profile 的 tensor kernel median 为 high-T/stiff/high-kappa
+`1.62/1.94/1.84 ms`。新诊断沿每个实际 mode 的 `j0 -> z_tail` 区间统计两端
+sigma 是否落在常系数 radiation (`4/3`) 或 stiff (`2`) 邻域内；结果为：
+
+| regime | segments before tail | sigma-near eligible fraction | exact radiation segments |
+|---|---:|---:|---:|
+| high-T | `618864` | `16.47%` | `0` |
+| stiff | `625376` | `14.31%` | `0` |
+| high-kappa | `619253` | `17.66%` | `0` |
+| low-T | `646759` | `6.62%` | `0` |
+
+该结果只证明 branch 的可覆盖区域边界，不是 solver accuracy estimator；因为目标 regime
+均低于 >30% tensor-work 优先门槛，且严格 radiation 段没有出现，暂不建立新的 closed-form
+handoff prototype，也不做 production 修改。artifact 为
+`docs/analytic_branch_eligibility_round_20260917.json`。

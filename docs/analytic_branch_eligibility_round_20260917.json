@@ -1,0 +1,48 @@
+{
+  "commit": "9b979c36b1cce46e3beb268892a09df7e4a7d9a5",
+  "experiment": "analytic_branch_eligibility_standalone",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "z_tail": 5.0,
+  "rows": [
+    {
+      "case": "highT",
+      "n_modes": 76,
+      "segments_before_tail": 618864,
+      "radiation_exact_segments": 0,
+      "stiff_exact_segments": 40202,
+      "eligible_segments_sigma_1e-4": 101957,
+      "eligible_fraction": 0.16474863621086377
+    },
+    {
+      "case": "stiff",
+      "n_modes": 76,
+      "segments_before_tail": 625376,
+      "radiation_exact_segments": 0,
+      "stiff_exact_segments": 28140,
+      "eligible_segments_sigma_1e-4": 89511,
+      "eligible_fraction": 0.14313149209435602
+    },
+    {
+      "case": "high_kappa",
+      "n_modes": 77,
+      "segments_before_tail": 619253,
+      "radiation_exact_segments": 0,
+      "stiff_exact_segments": 48294,
+      "eligible_segments_sigma_1e-4": 109331,
+      "eligible_fraction": 0.1765530405181727
+    },
+    {
+      "case": "lowT",
+      "n_modes": 76,
+      "segments_before_tail": 646759,
+      "radiation_exact_segments": 0,
+      "stiff_exact_segments": 0,
+      "eligible_segments_sigma_1e-4": 42828,
+      "eligible_fraction": 0.06621941093977819
+    }
+  ]
+}
