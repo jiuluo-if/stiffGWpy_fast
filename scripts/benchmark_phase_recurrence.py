@@ -185,12 +185,19 @@ def _digest(array):
     return hashlib.sha256(np.ascontiguousarray(array).tobytes()).hexdigest()
 
 
-def _prepared(case_name, threads):
+def _prepared(case_name, threads, cases=None):
     FS.apply_accuracy_mode('fast')
     FS.set_threads(threads)
-    model = LCDM_SG(**CASES[case_name])
-    FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                      frequency_quadrature='pchip')
+    case_map = CASES if cases is None else cases
+    model = LCDM_SG(**case_map[case_name])
+    result = FS.SGWB_iter_fast(
+        model, kink_split=True, freq_grid='goal',
+        frequency_quadrature='pchip')
+    if result is None:
+        raise RuntimeError(
+            f'fast preparation failed for case {case_name}: '
+            f"{getattr(model, 'fast_failure_reason', 'unknown')}"
+        )
     Nv = np.asarray(model.Nv, dtype=np.float64)
     freqs = np.asarray(model.f, dtype=np.float64)
     dn_eff = float(model.cosmo_param['DN_eff'])

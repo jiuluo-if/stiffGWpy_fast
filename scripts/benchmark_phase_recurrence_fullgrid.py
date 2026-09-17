@@ -26,9 +26,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.benchmark_phase_recurrence import (  # noqa: E402
-    CASES as RECURRENCE_CASES,
-)
-from scripts.benchmark_phase_recurrence import (  # noqa: E402
     _make_args,
     _prepared,
     solve_kernel_recurrence,
@@ -61,7 +58,7 @@ def _integrated_dn(model, values):
 
 
 def run_case(point, threads, rtol):
-    model, common = _prepared(point, threads)
+    model, common = _prepared(point, threads, cases=ORACLE_CASES)
     baseline = _make_args(common)
     candidate = _make_args(common)
     FS.solve_kernel(*baseline)
@@ -117,15 +114,27 @@ def run_case(point, threads, rtol):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--points', nargs='+',
-                        choices=sorted(set(RECURRENCE_CASES) & set(ORACLE_CASES)),
+                        choices=sorted(ORACLE_CASES),
                         default=['default', 'lowT', 'highT', 'stiff',
                                  'high_kappa'])
     parser.add_argument('--threads', type=int, default=2)
     parser.add_argument('--rtol', type=float, default=1e-10)
     parser.add_argument('--out', default='docs/phase_recurrence_fullgrid_20260917.json')
     args = parser.parse_args(argv)
-    records = [run_case(point, args.threads, args.rtol)
-               for point in args.points]
+    records = []
+    for point in args.points:
+        try:
+            records.append(run_case(point, args.threads, args.rtol))
+        except RuntimeError as exc:
+            message = str(exc)
+            status = ('physical_guard'
+                      if 'shared_Neff_guard' in message else
+                      'fast_preparation_failure')
+            records.append({
+                'point': point,
+                'status': status,
+                'message': message,
+            })
     payload = {
         'schema_version': 1,
         'experiment': 'standalone_phase_exp_recurrence_full_native_grid_oracle',
