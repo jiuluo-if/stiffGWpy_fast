@@ -937,3 +937,28 @@ production 且没有数值差异；原始数据见 `docs/profile_tridiag_candida
 干净 Python 子进程，在导入数值库前调用 `apply_environment()` 并核对八项环境值，避免
 污染后续测试的 Numba runtime。完整 gate 已通过（Ruff/mypy/compileall/diff/manifest；
 `160 passed, 6 deselected`）。
+
+## Fresh round-5 profile and rejected phase/primitive candidates (2026-09-17)
+
+当前 HEAD `759d5cc` 的 fresh 16-thread kink profile（25 repeats）为：
+
+| regime | total median/p95 ms | tensor median ms | exact phase primitive median ms |
+|---|---:|---:|---:|
+| default | 5.35 / 5.74 | 1.08 | 0.90 |
+| high-T | 6.86 / 7.89 | 1.81 | 1.35 |
+| stiff | 7.49 / 8.26 | 1.92 | 1.49 |
+| high-kappa | 7.20 / 8.18 | 1.85 | 1.46 |
+| low-T | 4.32 / 5.67 | 1.15 | 0.89 |
+
+这轮重新检验了两个与既有 rejected 实验不同的候选。其一是 exact primitive 的中间
+数组融合；五个 regime 各 50 次，输出 digest 完全一致且 max abs/rel 为 0，但 runtime
+ratio 为 `1.0355/0.9874/0.9947/1.0024/1.0092`，没有稳定收益，REJECTED。
+其二是 phase envelope 中 `exp(z_mid)` 的单次复用；focused tests 通过，kernel 输出
+digest 与 baseline 一致，但目标区间 tensor ratio 约 `1.00/1.01/1.01/0.99`，没有
+>5% 改善，REJECTED 并回退。两者因未通过 runtime gate，未进入 spectrum/oracle/
+false-safe certification；不能把 machine-level digest 相等误报为独立精度认证。
+
+`PROFILE_ASSEMBLE=0` 仅作为 attribution 诊断，估计 assembly 占 high-T/stiff/
+high-kappa/low-T tensor 时间约 `0.19/0.17/0.03/0.16 ms`，不足以支持近似删除。
+正式 production source 已恢复无 diff；后续候选仍需从 phase kernel 的结构性工作量
+或 background/primitive 共享入手，并先通过同口径 fresh A/B。

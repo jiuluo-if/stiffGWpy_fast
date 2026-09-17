@@ -278,3 +278,7 @@ Phase 3: Implementation and evidence-driven optimization
   `14.31%–17.66%`，低于 >30% 优先门槛，closed-form prototype 暂缓。
 - [x] 清理无关中文注释/编码门禁及同类 workflow 检查；将 Numba 资源环境测试隔离到
   导入前子进程，避免同一环境污染原因重复触发 CI 失败。
+- [x] 完成 HEAD `759d5cc` fresh round-5 分层 profile；exact primitive allocation/fusion
+  与 phase exponential reuse 均按 digest/稳定 runtime gate rejected，production 未改。
+- [ ] 下一候选聚焦 tensor phase kernel 的结构性工作量削减；先做 standalone exact
+  prototype，再进行 25–50 repeat A/B 与独立 Oracle A/Prüfer/WKB 检验。

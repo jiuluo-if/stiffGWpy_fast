@@ -809,3 +809,21 @@ artifact 保留作 rejected evidence。
   pytest 进程中修改 `NUMBA_*` 环境变量。
 - [x] 本地 CI 同口径 gate 全部通过：Ruff、mypy、compileall、diff check、manifest，
   `160 passed, 6 deselected`。
+
+## Fresh round-5 profile and phase/primitive candidates (2026-09-17)
+
+- [x] 在 HEAD `759d5cc`、16 threads/workqueue、BLAS=1、`kink_split=true`、25 repeats
+  重新 profile：default/high-T/stiff/high-kappa/low-T total median 为
+  `5.35/6.86/7.49/7.20/4.32 ms`，对应 p95 为 `5.74/7.89/8.26/8.18/5.67 ms`。
+  tensor kernel median 为 `1.08/1.81/1.92/1.85/1.15 ms`，exact phase primitive 为
+  `0.90/1.35/1.49/1.46/0.89 ms`。原始 artifacts 为
+  `docs/profile_fast_breakdown_round5_*_20260917.json`。
+- [x] exact primitive allocation/fusion standalone prototype：五个 regime 各 50 次，
+  digest 完全一致、max abs/rel 均为 0，但 fused/baseline median ratio 为
+  `1.0355/0.9874/0.9947/1.0024/1.0092`；REJECTED，未进入 production 或 oracle gate。
+- [x] phase envelope exponential reuse candidate：focused tests `54 passed, 3 deselected`，
+  spectrum/DN digest 与 baseline 一致；kernel median ratio（default/high-T/stiff/
+  high-kappa/low-T）约 `1.00/1.01/1.01/0.99/0.91`，没有目标区间稳定 >5% 改善，
+  REJECTED 并回退。候选 artifacts 为 `docs/profile_phase_exp_reuse_candidate_*.json`。
+- [x] `PROFILE_ASSEMBLE=0` 诊断显示 assembly 可归属约 `0.19/0.17/0.03/0.16 ms`
+  （high-T/stiff/high-kappa/low-T），不是足以单独达到目标的主热点；不据此做近似。
