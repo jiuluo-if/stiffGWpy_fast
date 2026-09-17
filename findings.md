@@ -1300,3 +1300,39 @@ tensor propagation 仍是最大单项，`fast_phi_s2_split` 是次要但可量�
 Artifacts：`docs/profile_fast_breakdown_round11_highT_20260917.json`、
 `docs/profile_fast_breakdown_round11_stiff_20260917.json`、
 `docs/profile_fast_breakdown_round11_high_kappa_20260917.json`。
+
+## Second-order adiabaticity trigger boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+在一阶 `epsilon_1=|q|/omega` 之外加入
+`epsilon_2=|q^2+q'|/omega^2`，其中 `q=1.5*sigma-1`，要求连续三个 native
+node 同时满足两个界限后才启动 WKB carrier。该项用于抑制 `q≈0` 的假绝热判断；
+只修改 standalone `scripts/benchmark_wkb_carrier_numba_spike.py`，不改变 production。
+
+### Evidence
+
+- `eps=3e-4`、2-thread focused 5-repeat：目标 high-T/stiff/high-kappa 的
+  amplitude p50/p95/max 分别为 high-T `1.91e-11/9.6e-7/3.83e-6`、
+  stiff `4.35e-11/1.15e-5/4.58e-5`、high-kappa
+  `1.36e-12/7.3e-6/3.04e-5`；DN proxy 分别为
+  `2.54e-13/5.71e-12/2.00e-12`。但 runtime ratio 为
+  `1.071/1.026/0.998`，没有稳定的目标区收益。
+- `eps=1e-3` 的目标 runtime ratio 为 `0.885/1.039/1.002`，amplitude max
+  `3.52e-5/1.36e-4/1.21e-4`；`eps=3e-3` 的 ratio 为 `1.068/0.735/1.016`，
+  high-T/high-kappa amplitude max `1.79e-3/1.06e-3`，已接近或超过既定 budget。
+- 以上 DN 是同一 standalone carrier 的 proxy 对照，不是 Oracle A/Prüfer/WKB
+  independent systematic；由于候选未通过稳定 runtime gate，未继续 full-grid
+  oracle、coverage、false-safe 或 p95/p99 certification，避免把局部精度改善误报为
+  production evidence。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。二阶项能显著收紧 handoff
+误差，但没有产生目标 regime 的稳定速度收益；下一步回到真正减少 propagation
+work 的 nonoscillatory phase/Riccati 结构，不再继续调该 trigger threshold。
+
+Artifacts（均绑定 HEAD `db4685fa7cf6aa485b285cde3f1aa7fec2fd740c`）：
+`docs/wkb_carrier_second_order_3e-4_round11_20260917.json`、
+`docs/wkb_carrier_second_order_1e-3_round11_20260917.json`、
+`docs/wkb_carrier_second_order_3e-3_round11_20260917.json`。

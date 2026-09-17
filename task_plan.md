@@ -13,6 +13,9 @@
 standalone rejected；下一单一动作是设计并验证带高阶 curvature/phase safety guard
 的 hybrid handoff prototype，先过 focused accuracy，再考虑 runtime。
 
+二阶 adiabaticity trigger focused A/B 已完成：精度改善但目标 runtime 不稳定，已
+rejected；下一单一动作改为 nonoscillatory phase/Riccati 的结构性 propagation prototype。
+
 以下为历史阶段记录：
 
 已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry，主要参数/参考扫描入口已增加 `--threads` 与外层并行时的内层单线程保护。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`；default 完整 76 点 Stage B 已完成，Stage C 已以 low-T/high-T/stiff 各 8 点最小网格完成并记录到 `docs/oracle_tail_convergence_stageC_min8.json`。default full-grid tail systematic `3.6295e-3` 且非单调；Stage C 三点仍为 oracle-sensitive，正式 tail correction 仍未放行。新增有限 phase-window Oracle B 原型后，四点最大 z=5→7 observable 变化为 `3.927e-3–6.897e-3`，证明 handoff 仍敏感但未形成独立 truth anchor，候选不晋升。

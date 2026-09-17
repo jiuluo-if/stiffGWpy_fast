@@ -1057,3 +1057,21 @@ Artifact：`docs/adiabaticity_handoff_round11_20260917.json`。
 Artifacts：`docs/profile_fast_breakdown_round11_highT_20260917.json`、
 `docs/profile_fast_breakdown_round11_stiff_20260917.json`、
 `docs/profile_fast_breakdown_round11_high_kappa_20260917.json`。
+
+## Current session update: 2026-09-17 (second-order adiabaticity trigger)
+
+- [x] 在 standalone WKB carrier 中加入 `epsilon_2=|q^2+q'|/omega^2` 联合
+  trigger，要求连续三个 native node；production source 未修改。
+- [x] `eps=3e-4` 目标 high-T/stiff/high-kappa amplitude max 为
+  `3.83e-6/4.58e-5/3.04e-5`，DN proxy 为
+  `2.54e-13/5.71e-12/2.00e-12`，但 runtime ratio 为 `1.071/1.026/0.998`。
+- [x] `eps=1e-3/3e-3` 仍无跨目标区稳定收益；`3e-3` high-T/high-kappa
+  spectrum max 为 `1.79e-3/1.06e-3`，不满足精度预算。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。不进入 full-grid
+Oracle、false-safe 或 production candidate 认证；下一步转向真正减少 propagation
+work 的 nonoscillatory phase/Riccati 结构。
+
+Artifacts：`docs/wkb_carrier_second_order_3e-4_round11_20260917.json`、
+`docs/wkb_carrier_second_order_1e-3_round11_20260917.json`、
+`docs/wkb_carrier_second_order_3e-3_round11_20260917.json`。
