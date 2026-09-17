@@ -1,0 +1,26 @@
+{
+  "commit": "72231d76c47732b35d484c42ce07a0c9a6fa532e",
+  "experiment": "standalone_numba_phi_s2_primitive",
+  "production_path_changed": false,
+  "case": "sobol_000",
+  "repeats": 25,
+  "threads": 2,
+  "primitive": {
+    "baseline_median_ms": 0.23660000078962184,
+    "candidate_median_ms": 0.20170000061625615,
+    "candidate_over_baseline": 0.8524936599455136,
+    "digest_equal": true,
+    "max_abs": 0.0,
+    "max_rel": 0.0
+  },
+  "outer": {
+    "baseline_median_ms": 5.363000000215834,
+    "candidate_median_ms": 4.794500000571134,
+    "candidate_over_baseline": 0.8939958978889015,
+    "digest_equal": true,
+    "status_equal": true,
+    "dn_relative": 0.0,
+    "baseline_failure": null,
+    "candidate_failure": null
+  }
+}

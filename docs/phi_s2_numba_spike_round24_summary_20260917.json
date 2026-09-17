@@ -1,0 +1,83 @@
+{
+  "commit": "72231d76c47732b35d484c42ce07a0c9a6fa532e",
+  "round": 24,
+  "experiment": "standalone_numba_phi_s2_primitive",
+  "production_path_changed": false,
+  "status": "REJECTED_FOR_PRODUCTION",
+  "resources": {
+    "study_threads": 2,
+    "formal_threads": [16, 20],
+    "blas_threads": 1,
+    "workers": 1,
+    "outer_repeats": 25,
+    "long_repeats": 50
+  },
+  "primitive_gate": {
+    "digest_equal_all_cases": true,
+    "max_abs": 0.0,
+    "max_rel": 0.0,
+    "candidate_over_baseline_2thread_25": {
+      "default": 0.8255987957200976,
+      "highT": 0.7936202854146788,
+      "stiff": 0.8657972280009762,
+      "high_kappa": 0.8584825159219337,
+      "lowT": 0.866205776125056
+    }
+  },
+  "outer_gate": {
+    "candidate_over_baseline_2thread_25": {
+      "default": 1.004725699960023,
+      "highT": 0.9309210891062797,
+      "stiff": 0.9593660990185341,
+      "high_kappa": 0.9761168063265582,
+      "lowT": 0.9850958848510207
+    },
+    "candidate_over_baseline_2thread_50": {
+      "default": 0.9502117925918852,
+      "highT": 0.9677298438846719,
+      "stiff": 0.9763044309262704,
+      "high_kappa": 1.0068996954549092,
+      "lowT": 1.0034906591488328
+    },
+    "candidate_over_baseline_16thread_25": {
+      "default": 0.9986403479284602,
+      "highT": 0.9207262930442456,
+      "stiff": 0.9699173414825637,
+      "high_kappa": 0.9833600001836568,
+      "lowT": 0.8989036305924454
+    },
+    "candidate_over_baseline_20thread_25": {
+      "default": 1.0418612701844197,
+      "highT": 0.8754084675597753,
+      "stiff": 0.9568139810975457,
+      "high_kappa": 0.9864128446296888,
+      "lowT": 0.966940711351333
+    },
+    "extended_2thread_25": {
+      "cr0_blue": 0.980895092986881,
+      "positive_tilt": 0.9602060684681976,
+      "negative_tilt": 0.9790980427935638,
+      "sobol_000": 0.8939958978889015,
+      "sobol_002": 0.9644114285282085,
+      "sobol_006": 1.0157088343588596,
+      "sobol_010": 0.9734851918858528,
+      "sobol_015": 0.9826389817860193
+    }
+  },
+  "accuracy": {
+    "all_full_outer_digests_equal": true,
+    "all_status_and_failure_pairs_equal": true,
+    "dn_relative_all_cases": 0.0,
+    "spectrum_p50_p95_max": "zero because the full output digests are identical"
+  },
+  "decision_basis": [
+    "The compiled primitive itself is substantially faster and bitwise identical.",
+    "The end-to-end gain is not stable across the required regimes and repeat counts: default regresses 4.19% at 20 threads, high-kappa regresses 0.69% in the 50-repeat study, and several cases are only noise-level improvements.",
+    "Do not promote a preparation-layer speedup whose full solver gate is not stable; retain the standalone prototype and return to another hotspot."
+  ],
+  "artifacts": {
+    "prototype": "scripts/benchmark_phi_s2_numba_spike.py",
+    "contract_test": "tests/test_phi_s2_numba_spike.py",
+    "per_case_glob": "docs/phi_s2_numba_spike_round24_*.json"
+  }
+}

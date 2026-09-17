@@ -1287,3 +1287,14 @@ production path 未修改。下一候选必须避免仅改变浮点运算顺序�
 - Decision: **REJECTED_FOR_PRODUCTION**. No formal threshold or production behavior changed.
 - Artifacts: `docs/outer_observable_gate_round22_20260917.json` plus the four named/extended profile and outer-reuse/proxy artifacts listed in the findings entry.
 - Next: seek a certified predictor only if it can satisfy non-bitwise oracle/Sobol gates; otherwise continue strict-equivalence hotspot attribution.
+
+## Round 24 — Standalone Numba Phi/S2 primitive (2026-09-17)
+
+- Fresh HEAD: `72231d76c47732b35d484c42ce07a0c9a6fa532e`.
+- Added only a standalone prototype and contract test; production source was not changed.
+- Primitive arithmetic was bitwise identical and `13–21%` faster at 2 threads.
+- Full outer 50-repeat ratios at 2 threads: default/high-T/stiff/high-kappa/lowT `0.950/0.968/0.976/1.007/1.003`.
+- Formal 20-thread 25-repeat ratios: `1.042/0.875/0.957/0.986/0.967`; extended Sobol/tilt outputs remained digest-equal, with `sobol_006` at `1.016`.
+- Decision: **REJECTED_FOR_PRODUCTION** because end-to-end improvement is not stable across the required regimes and formal default regresses.
+- Artifact: `docs/phi_s2_numba_spike_round24_summary_20260917.json`.
+- Next: continue strict-equivalence attribution; do not promote this helper or revisit the same primitive allocation variants.
