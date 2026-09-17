@@ -250,3 +250,10 @@ Phase 3: Implementation and evidence-driven optimization
   high-T/stiff/high-kappa `0/3`，因此不进入 production。
 - [ ] 补齐 `j0/z0/tail/phase-path` 响应项，先以 standalone 形式和 Cartesian/Prüfer/WKB
   oracle 对照；未获得预算内 target-regime coverage 前不做 runtime A/B。
+
+- [x] 完成一阶绝热性触发 carrier prototype；`eps=3e-4` 精度可接受但无稳定 >5%
+  runtime 收益，`eps>=1e-3` 误差或速度不合格，故 rejected。
+- [x] 定位并修复本轮 CI 根因：Ruff `I001` import order；中文注释门禁、Ruff、mypy
+  已复核通过。
+- [ ] 下一轮若继续 hybrid，加入二阶 adiabaticity/error bound 与 full-grid Oracle A/
+  Prüfer/WKB；仍不修改 production path。

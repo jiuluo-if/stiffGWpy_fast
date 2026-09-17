@@ -1,0 +1,99 @@
+{
+  "commit": "f47665d863ba7a29f9356c67977109597b45a340",
+  "experiment": "wkb_carrier_numba_standalone_spike",
+  "production_path_changed": false,
+  "records": [
+    {
+      "candidate_median_ms": 1.5584000002490939,
+      "candidate_over_exact": 1.252129198272046,
+      "candidate_p95_ms": 1.8418100005874294,
+      "case": "default",
+      "exact_median_ms": 1.244600000063656,
+      "exact_p95_ms": 1.2990500004889327,
+      "max_amplitude_rel": 0.002376217520640472,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0012261086258270387,
+      "tail_integral_rel": 1.4223875218022897e-09,
+      "trigger_eps": 0.001,
+      "trigger_z_p50": 3.277459848795715,
+      "triggered_modes": 4
+    },
+    {
+      "candidate_median_ms": 1.1754000006476417,
+      "candidate_over_exact": 1.000936728425498,
+      "candidate_p95_ms": 1.2070799995854031,
+      "case": "highT",
+      "exact_median_ms": 1.1743000004571513,
+      "exact_p95_ms": 1.6184500002054847,
+      "max_amplitude_rel": 0.0009806532479270528,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0005184647353064014,
+      "tail_integral_rel": 5.114268808287446e-10,
+      "trigger_eps": 0.001,
+      "trigger_z_p50": 3.514447095728226,
+      "triggered_modes": 4
+    },
+    {
+      "candidate_median_ms": 1.4314999998532585,
+      "candidate_over_exact": 1.180715934784813,
+      "candidate_p95_ms": 2.007589999902848,
+      "case": "stiff",
+      "exact_median_ms": 1.2124000004405389,
+      "exact_p95_ms": 1.227970000309142,
+      "max_amplitude_rel": 0.0018551817614657418,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0006039572248950756,
+      "tail_integral_rel": 2.9734575863496226e-09,
+      "trigger_eps": 0.001,
+      "trigger_z_p50": 3.406392040765212,
+      "triggered_modes": 4
+    },
+    {
+      "candidate_median_ms": 1.2797999997928855,
+      "candidate_over_exact": 0.9702805154095029,
+      "candidate_p95_ms": 1.4048999995793565,
+      "case": "high_kappa",
+      "exact_median_ms": 1.3189999999667634,
+      "exact_p95_ms": 1.7612600000575185,
+      "max_amplitude_rel": 0.0013036960612443137,
+      "n_modes": 77,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0006463877995787696,
+      "tail_integral_rel": 1.1920179658597758e-09,
+      "trigger_eps": 0.001,
+      "trigger_z_p50": 3.5239134360855466,
+      "triggered_modes": 4
+    }
+  ],
+  "resource": {
+    "affinity": [],
+    "blas_threads": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "concurrent_processes": 1,
+    "logical_cpu_count": 32,
+    "numba": "0.67.0",
+    "numba_threading_layer": "workqueue",
+    "numba_threads": 2,
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "scipy": "1.17.1",
+    "threads_argument": 2,
+    "workers": 1
+  },
+  "settings": {
+    "out": "docs/wkb_carrier_adiabatic_trigger_1e-3_round_20260917.json",
+    "repeats": 3,
+    "trigger_eps": 0.001,
+    "z_match": 4.0,
+    "z_tail": 5.0
+  }
+}

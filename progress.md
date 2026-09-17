@@ -683,3 +683,17 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
   `j0/z0/tail/phase-path` 响应并用 Cartesian/Prüfer/WKB oracle 复核，不做 runtime A/B。
 
 原始 artifact：`docs/outer_observable_proxy_full_round_20260920.json`。
+
+## Session: 2026-09-17 (adiabaticity-triggered carrier prototype)
+
+- 在最新 HEAD `a65eaa73d3e0ca0adec31b6da26e2f154578f45f` 上，将 standalone WKB-carrier
+  spike 扩展为按 mode 的触发器：连续 3 个 native node 满足
+  `|1.5*sigma-1|*exp(-z) <= eps_trigger` 才切换；正式 solver 未改变。
+- `eps=3e-4` 的 amplitude p50/p95/max 为 `2.429e-4/5.993e-4/5.993e-4`，但
+  runtime ratio 为 `0.857..1.033`；`eps=1e-3` 的 amplitude max 为 `2.376e-3`，
+  runtime ratio 为 `0.970..1.252`。`eps=3e-3/5e-3` 的 amplitude max 达
+  `6.654e-2/7.375e-2`。
+- 低阈值触发点晚于生产 `z_tail=5`，已加入显式限制；未触发 mode 不进入 carrier。
+
+Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`；若继续 hybrid，必须加入
+二阶 adiabaticity、独立 full-grid oracle 与 25--50 repeat A/B。

@@ -44,6 +44,7 @@ def _propagate(Nv, Phi_grid, Phi_mid, S2inv, j0s, z0s, z_match,
     for mode in prange(len(j0s)):
         j0 = j0s[mode]
         z_initial = z0s[mode]
+        z_match_mode = z_match[mode]
         phi_initial = Phi_grid[j0]
         x_value = 0.0
         y_value = math.exp(z_initial) * S2inv[j0]
@@ -60,7 +61,7 @@ def _propagate(Nv, Phi_grid, Phi_mid, S2inv, j0s, z0s, z_match,
             z_node = z_initial + Phi_grid[k] - phi_initial
             z_end = z_initial + Phi_grid[k + 1] - phi_initial
             z_mid = z_initial + Phi_mid[k] - phi_initial
-            if not carrier_started and (not candidate or z_end < z_match):
+            if not carrier_started and (not candidate or z_end < z_match_mode):
                 if (k == kink_index and 0.0 < kink_fraction < 1.0
                         ):
                     z_break = z_initial + phi_re - phi_initial
@@ -165,6 +166,9 @@ def _run_kernel(arrays, z_match, z_tail, candidate):
     out_y = np.empty(len(j0s))
     out_amp2 = np.empty(len(j0s))
     out_k = np.empty(len(j0s), dtype=np.int64)
+    z_match = np.asarray(z_match, dtype=np.float64)
+    if z_match.ndim == 0:
+        z_match = np.full(len(j0s), float(z_match))
     _propagate(nv, phi_grid, phi_mid, s2inv, j0s, z0s, z_match,
                z_tail, kink_index, kink_fraction, phi_re, sigma,
                carrier_cumulative, carrier_inverse, candidate, out_x, out_y,
@@ -172,7 +176,26 @@ def _run_kernel(arrays, z_match, z_tail, candidate):
     return out_x, out_y, out_amp2, out_k
 
 
-def run_case(name, z_match, z_tail, repeats):
+def _adiabatic_trigger(arrays, eps_trigger, z_tail, consecutive=3):
+    """Return the first node whose first-order adiabaticity stays small."""
+    (nv, phi_grid, _, _, _, j0s, z0s, sigma, _, _, _, _, _) = arrays
+    del nv
+    matches = np.full(len(j0s), np.inf, dtype=np.float64)
+    for mode, j0 in enumerate(j0s):
+        z_initial = z0s[mode]
+        phi_initial = phi_grid[j0]
+        for index in range(j0, len(phi_grid) - consecutive):
+            z_values = z_initial + phi_grid[index:index + consecutive] - phi_initial
+            eps_values = np.abs(1.5 * sigma[index:index + consecutive] - 1.0) \
+                * np.exp(-z_values)
+            if (z_values[-1] < z_tail
+                    and np.all(eps_values <= eps_trigger)):
+                matches[mode] = z_values[0]
+                break
+    return matches
+
+
+def run_case(name, z_match, z_tail, repeats, trigger_eps=None):
     FS.apply_accuracy_mode('fast')
     FS.set_threads(2)
     model = LCDM_SG(**CASES[name])
@@ -180,8 +203,11 @@ def run_case(name, z_match, z_tail, repeats):
     arrays = _prepared(model)
     (nv, phi_grid, phi_mid, s2, s2inv, j0s, z0s, sigma,
      carrier_cumulative, carrier_inverse, kink_index, kink_fraction, phi_re) = arrays
-    baseline = _run_kernel(arrays, z_match, z_tail, False)
-    candidate = _run_kernel(arrays, z_match, z_tail, True)
+    z_match_values = (np.full(len(j0s), z_match, dtype=np.float64)
+                      if trigger_eps is None
+                      else _adiabatic_trigger(arrays, trigger_eps, z_tail))
+    baseline = _run_kernel(arrays, z_match_values, z_tail, False)
+    candidate = _run_kernel(arrays, z_match_values, z_tail, True)
     amp_rel = np.abs(np.sqrt(candidate[2]) - np.sqrt(baseline[2])) \
         / np.maximum(np.sqrt(baseline[2]), 1e-300)
     end_index = baseline[3]
@@ -204,10 +230,10 @@ def run_case(name, z_match, z_tail, repeats):
     candidate_times = []
     for _ in range(repeats):
         start = time.perf_counter()
-        _run_kernel(arrays, z_match, z_tail, False)
+        _run_kernel(arrays, z_match_values, z_tail, False)
         exact_times.append(time.perf_counter() - start)
         start = time.perf_counter()
-        _run_kernel(arrays, z_match, z_tail, True)
+        _run_kernel(arrays, z_match_values, z_tail, True)
         candidate_times.append(time.perf_counter() - start)
     return {
         'case': name,
@@ -222,6 +248,11 @@ def run_case(name, z_match, z_tail, repeats):
         'candidate_p95_ms': float(np.percentile(candidate_times, 95) * 1e3),
         'candidate_over_exact': statistics.median(candidate_times)
         / statistics.median(exact_times),
+        'trigger_eps': trigger_eps,
+        'triggered_modes': int(np.count_nonzero(np.isfinite(z_match_values))),
+        'trigger_z_p50': (float(np.nanmedian(np.where(np.isfinite(z_match_values),
+                                                       z_match_values, np.nan)))
+                          if np.any(np.isfinite(z_match_values)) else None),
     }
 
 
@@ -229,11 +260,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--z-match', type=float, default=4.0)
     parser.add_argument('--z-tail', type=float, default=5.0)
+    parser.add_argument('--trigger-eps', type=float, default=None)
     parser.add_argument('--repeats', type=int, default=25)
     parser.add_argument('--out', default='docs/wkb_carrier_numba_spike_round_20260917.json')
     args = parser.parse_args()
     names = ['default', 'highT', 'stiff', 'high_kappa']
-    records = [run_case(name, args.z_match, args.z_tail, args.repeats)
+    records = [run_case(name, args.z_match, args.z_tail, args.repeats,
+                        args.trigger_eps)
                for name in names]
     payload = {
         'experiment': 'wkb_carrier_numba_standalone_spike',

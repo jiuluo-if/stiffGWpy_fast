@@ -792,3 +792,27 @@ proxy 为 `4.017e-3/1.068e-3/1.544e-2`，均超出 `1e-3` 预算；default 与
 positive-tilt 仍存在 S2/Phi 为零但频谱有残差的情况，edge_dnre_hi 也显示两项不完整。
 状态为 `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`，不能宣称已获得 >5% runtime
 改善。完整数据见 `docs/outer_observable_proxy_full_round_20260920.json`。
+
+## Adiabaticity-triggered carrier boundary (2026-09-17, standalone)
+
+旧的固定 `z_match` carrier 证据已否决；本轮测试新假设：由
+`epsilon=|omega'/omega^2|=|1.5*sigma-1| exp(-z)` 触发，并要求连续 3 个节点满足阈值。
+代码在 `scripts/benchmark_wkb_carrier_numba_spike.py`，产物为四个
+`docs/wkb_carrier_adiabatic_trigger_*_round_20260917.json`，未改变 production path。
+
+| eps trigger | amplitude p50/p95/max | DN proxy p50/p95/max | target runtime median ratio |
+|---|---:|---:|---:|
+| `3e-4` | `2.429e-4/5.993e-4/5.993e-4` | `3.292e-11/1.279e-10/1.279e-10` | `0.857..1.033` |
+| `1e-3` | `1.304e-3/2.376e-3/2.376e-3` | `1.192e-9/2.973e-9/2.973e-9` | `0.970..1.252` |
+| `3e-3` | `6.392e-2/6.654e-2/6.654e-2` | `2.566e-7/4.351e-7/4.351e-7` | `0.912..1.159` |
+| `5e-3` | `7.370e-2/7.375e-2/7.375e-2` | `2.368e-6/3.061e-6/3.061e-6` | `0.859..1.019` |
+
+`3e-4` 虽然精度最好，却没有稳定速度收益且 high-kappa 变慢约 28%；更松阈值在
+生产 `z_tail=5` 前已产生明显振幅误差。结论为
+`REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`；不得将本轮 proxy 当认证。
+
+## CI root cause (2026-09-17)
+
+本轮本地复现新增诊断脚本的 CI 失败：唯一门禁错误为 Ruff `I001`，原因是新增
+`CASES` 导入未按规则排序。已修复并复核中文注释门禁、Ruff 与 mypy；以后新增脚本
+提交前必须执行同一 import-order 门禁，避免重复触发该原因。
