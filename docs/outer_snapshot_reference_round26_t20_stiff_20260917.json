@@ -1,0 +1,20 @@
+{
+  "commit": "91696a3b53ad6668b63dc7c5713f2f17b52e1f06",
+  "experiment": "outer_snapshot_reference_reuse",
+  "production_path_changed": true,
+  "case": "stiff",
+  "repeats": 25,
+  "threads": 20,
+  "outer": {
+    "copy_median_ms": 6.381799998052884,
+    "reference_median_ms": 6.303199999820208,
+    "reference_over_copy": 0.987683725867834,
+    "copy_p95_ms": 7.3326600024302016,
+    "reference_p95_ms": 7.267580000188899,
+    "digest_equal": true,
+    "status_equal": true,
+    "dn_relative": 0.0,
+    "copy_failure": null,
+    "reference_failure": null
+  }
+}

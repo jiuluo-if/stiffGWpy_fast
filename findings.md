@@ -1732,3 +1732,27 @@ high-kappa/low-T `5.64/7.68/8.55/7.87/5.52 ms`; every case converged with no
 failure, and repeated spectrum/f/DN/g2/w2 digests were stable. The default
 target remains `<4 ms`, so this round does not claim that final target has been
 reached. Artifacts: `docs/profile_fast_breakdown_round25_postcommit_*.json`.
+
+## Round 26 — Outer snapshot reference reuse (2026-09-17)
+
+Fresh profile attribution showed that high-T, stiff, and high-kappa are slower
+primarily because they execute two outer iterations. The candidate targeted only
+allocation/copy overhead: because `gen_fast` replaces `m.Nv`, `m.sigma`, and
+`m.f_hor` on the next iteration, the previous outer snapshots can theoretically
+be retained by reference rather than copied. No reuse threshold, kernel formula,
+or numerical expression was changed.
+
+The TDD identity contract passed. A/B output digests for `f`, spectrum, `DN_gw`,
+`g2`, and `w2` were equal in every named case; status and failure were equal and
+DN relative difference was zero.
+
+| resources | default | high-T | stiff | high-kappa | low-T |
+|---|---:|---:|---:|---:|---:|
+| 2 threads, 50 repeats | 0.9905 | 0.9697 | 0.9870 | 0.9713 | 0.9543 |
+| 16 threads, 25 repeats | 0.9890 | 0.9312 | 0.9735 | 0.9566 | 1.0056 |
+| 20 threads, 25 repeats | 0.9543 | 0.9351 | 0.9877 | 0.9826 | 0.9863 |
+
+**REJECTED FOR PRODUCTION**: the candidate is strict-equivalence safe but fails
+the stable >5% gate and has a small formal low-T regression. The production source
+was restored; the A/B artifacts remain under
+`docs/outer_snapshot_reference_round26_*.json` to prevent repeating this test.

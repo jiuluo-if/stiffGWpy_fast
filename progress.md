@@ -1328,3 +1328,22 @@ is limited to a Numba fill helper plus model-local workspace allocation/reuse.
   all five cases converged, had no numerical failure, and each repeated digest
   was stable. The default remains above the final `<4 ms` target.
 - Fresh artifacts: `docs/profile_fast_breakdown_round25_postcommit_*.json`.
+
+## Round 26 — Outer snapshot reference reuse (2026-09-17)
+
+- Fresh HEAD: `91696a3b53ad6668b63dc7c5713f2f17b52e1f06`.
+- Hypothesis: `outer_sigma_prev`, `outer_f_hor_prev`, `exact_Nv`,
+  `exact_sigma`, and `exact_f_hor` are only compared until the next
+  `gen_fast`, which replaces the model-owned arrays; retaining references could
+  remove redundant copies without changing the reuse test.
+- TDD identity contract passed, and all A/B outputs were digest-equal with
+  zero DN relative difference and no numerical failure.
+- 2-thread 50-repeat ratios default/high-T/stiff/high-kappa/low-T:
+  `0.991/0.970/0.987/0.971/0.954`.
+- Formal 16-thread ratios: `0.989/0.931/0.974/0.957/1.006`; formal 20-thread
+  ratios: `0.954/0.935/0.988/0.983/0.986`.
+
+Decision: **REJECTED FOR PRODUCTION**. Although safe and beneficial in several
+slow regimes, it does not provide a stable >5% multi-regime improvement and
+slightly regresses low-T at 16 threads. Production source was restored; only
+the diagnostic artifacts are retained.
