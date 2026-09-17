@@ -117,9 +117,17 @@ def grid_independent_freqs(m, freq_res=1.0):
     N_re_abs = N_inf - d['N_re']
     dn = m.cosmo_param['DN_eff']
     # 与 N 无关的连续背景量只求值一次；原实现每次调用 f_hor_cont 都重算它们。
-    H2_last = float(H2_vec(np.array([N_inf]), m, dn)[0])
+    h2_cache = {}
+
+    def h2_at(N):
+        N = float(N)
+        if N not in h2_cache:
+            h2_cache[N] = float(H2_vec(np.array([N]), m, dn)[0])
+        return h2_cache[N]
+
+    H2_last = h2_at(N_inf)
     raw_last = -0.5 * N_inf + 0.5 * _m.log(H2_last)
-    H2_re = float(H2_vec(np.array([N_re_abs]), m, dn)[0])
+    H2_re = h2_at(N_re_abs)
     raw_re = -0.5 * N_re_abs + 0.5 * _m.log(H2_re)
     Delta_f = _m.log(2.0 * _m.pi / d['H_0'])
     ln10v = _m.log(10.0)
@@ -127,7 +135,7 @@ def grid_independent_freqs(m, freq_res=1.0):
     def f_hor_cont(N):
         # Continuous log10(aH/(2pi)/Hz) at absolute N (grid-independent).
         N = float(N)
-        H2 = float(H2_vec(np.array([N]), m, dn)[0])
+        H2 = h2_at(N)
         raw = -0.5 * N + 0.5 * _m.log(H2)
         if N < N_re_abs:
             raw = raw_re - 0.5 * (N - N_re_abs)
