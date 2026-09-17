@@ -1,0 +1,30 @@
+{
+  "commit": "3e5bf7ee82d50a5901d5c66aad886ef909819d80",
+  "round": 21,
+  "candidate": "cross-layer H2 endpoint reuse in _correct_kink_background",
+  "status": "REJECTED",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1,
+    "repeats": 25,
+    "source_profile": "docs/profile_fast_breakdown_round20_postcommit_{case}_20260917.json"
+  },
+  "source_observation": {
+    "file": "stiffgwpy_fast/fast_sgwb.py",
+    "lines": "785-809",
+    "behavior": "_correct_kink_background recomputes H2 at n_re and Nv[-1] with one vectorized H2_vec call per invocation"
+  },
+  "warm_median_ms": {
+    "default": {"total": 6.04, "correct_kink_background": 0.16, "calls": 2},
+    "highT": {"total": 9.83, "correct_kink_background": 0.18, "calls": 2},
+    "stiff": {"total": 10.15, "correct_kink_background": 0.16, "calls": 2},
+    "high_kappa": {"total": 9.98, "correct_kink_background": 0.18, "calls": 2},
+    "lowT": {"total": 6.42, "correct_kink_background": 0.10, "calls": 1}
+  },
+  "decision_basis": {
+    "max_theoretical_total_speedup": "<2%",
+    "reason": "The complete stage is too small to meet the >5% warm-median acceptance gate, even assuming the H2 work can be removed without changing the exact bitwise path.",
+    "next_action": "Do not change gen_kernel signature or production H2 plumbing for this candidate; return to high-T/stiff/high-kappa tensor or outer-loop attribution."
+  }
+}

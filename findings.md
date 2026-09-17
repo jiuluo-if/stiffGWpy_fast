@@ -1668,3 +1668,10 @@ full pytest 为 `165 passed, 6 deselected, 2 warnings`。新 stage artifacts
 `docs/profile_fast_breakdown_round20_postcommit_*.json` 均直接绑定该 SHA；
 post-commit warm total median 为 default/high-T/stiff/high-kappa/low-T
 `6.04/9.83/10.15/9.98/6.42 ms`，五点均 converged，failure reason 为 null。
+## Round 21 — Cross-layer H2 endpoint reuse rejected (2026-09-17)
+
+Fresh postcommit attribution at `3e5bf7ee82d50a5901d5c66aad886ef909819d80` checked whether `_correct_kink_background` should receive the endpoint values already evaluated by the frequency-grid preparation layer. The current code recomputes `H2_vec([n_re, Nv[-1]], ...)` once per invocation (`stiffgwpy_fast/fast_sgwb.py:785-809`).
+
+Under the fixed study resources (Numba=2, BLAS=1, workers=1, 25 repeats), the complete `correct_kink_background` stage is only `0.10–0.18 ms` warm median against `6.04–10.15 ms` total. Even removing the whole stage would have a theoretical total-runtime ceiling below 2%, so it cannot satisfy the >5% acceptance gate. No production patch was made; changing the `gen_kernel` return contract would add risk without sufficient payoff.
+
+Decision: **REJECTED — insufficient speed headroom**. Artifact: `docs/h2_endpoint_cross_layer_round21_20260917.json`.

@@ -1269,3 +1269,11 @@ production path 未修改。下一候选必须避免仅改变浮点运算顺序�
   median `6.04/9.83/10.15/9.98/6.42 ms`，均 converged、无 failure。
 - artifacts：`docs/profile_fast_breakdown_round20_postcommit_*.json`，每个 JSON
   的 `commit` 字段均为 `94144c1`。
+## Round 21 — H2 cross-layer endpoint reuse triage (2026-09-17)
+
+- Fresh HEAD verified: `3e5bf7ee82d50a5901d5c66aad886ef909819d80`.
+- Profiled the current `goal` path from the postcommit 25-repeat artifacts with fixed study resources.
+- Candidate: pass H2 endpoint values from grid generation into `_correct_kink_background`.
+- Result: rejected before code change. The full stage is only `0.10–0.18 ms` warm median across named cases; removing it cannot reach the >5% runtime gate.
+- Artifact: `docs/h2_endpoint_cross_layer_round21_20260917.json`.
+- Next: fresh high-T/stiff/high-kappa attribution at tensor/outer-loop granularity; do not alter the H2 return contract for this low-headroom candidate.
