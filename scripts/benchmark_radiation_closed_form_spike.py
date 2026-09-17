@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Standalone audit of the constant-radiation closed-form transfer map."""
 from __future__ import annotations
 
