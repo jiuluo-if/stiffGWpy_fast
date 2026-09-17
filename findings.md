@@ -1430,3 +1430,33 @@ nonoscillatory phase/carrier prototype，并保持 production `z_tail=5`。
 
 Artifact（绑定当前 HEAD `b0cdf549cb0d9b2026a3f51fa3bfa67b81f5e695`）：
 `docs/wkb_tail_handoff_round13_20260917.json`。
+
+## WKB carrier preintegration handoff boundary (2026-09-17, fresh HEAD)
+
+### Hypothesis and scope
+
+在 standalone tensor propagation 中，保持 production 的 `z_tail=5`，仅把
+`z_match=4` 到 `z_tail=5` 的 carrier 相位积分改为预积分 Simpson 累积，并保留
+Cartesian exact propagation 到 handoff；这是与已拒绝的 early-tail truncation 不同的
+工作量削减候选，production source 未修改。
+
+### Evidence
+
+- 当前 HEAD `cf183c4`、Numba=2、BLAS=1、workers=1，四工况 25-repeat kernel
+  candidate/exact median ratio 为 default/high-T/stiff/high-kappa
+  `0.910/0.943/1.051/0.928`。stiff 反而退化 `5.1%`，没有目标工况一致的稳定
+  `>5%` 收益。
+- candidate 相对 exact twin 的最大 amplitude 相对差为
+  default/high-T/stiff/high-kappa `1.352e-4/1.282e-4/1.069e-4/2.071e-4`，tail
+  integral 相对差为 `4.963e-5/5.141e-5/5.601e-5/5.911e-5`；四工况
+  `numerical_failure_count=0`，但这只是 standalone twin 的局部等价性证据，尚未
+  通过独立 Oracle A/Prüfer/WKB。
+- smoke 与 formal run 均绑定 `cf183c4`；formal artifact 为
+  `docs/wkb_carrier_round14_20260917.json`。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。该 carrier 预积分在
+default/high-T/high-kappa 有局部收益，但 stiff 退化且未达到跨目标 regime 的稳定
+速度门槛；不进入独立 oracle 认证，也不修改 production。下一轮回到 fresh profile
+后选择新的、具有独立数学依据的 propagation 工作量候选，避免重复调同一 handoff。

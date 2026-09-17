@@ -329,3 +329,12 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] Formal 16/20-thread total-runtime A/B completed; target-wide stable `>5%` gate failed.
 - [x] Reject recurrence for production; preserve artifacts and precision/guard evidence.
 - [ ] Select the next candidate only after a new fresh stage profile; do not repeat this path.
+
+### Round 14 decision
+
+- [x] Fresh HEAD `cf183c4` 上完成 WKB carrier `z_match=4 -> z_tail=5` standalone
+  25-repeat A/B；default/high-T/high-kappa 有局部收益，但 stiff 退化约 5.1%。
+- [x] Reject carrier preintegration for production；保留 artifact 和 twin accuracy
+  evidence，production source 未修改。
+- [ ] 下一轮重新读取 fresh profile 与全部 rejection evidence，再选择新的
+  propagation 工作量候选；不得继续微调同一 handoff。

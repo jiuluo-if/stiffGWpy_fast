@@ -1120,3 +1120,17 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。一阶 WKB 
 correction 不足以支撑 z=4 handoff，production 未修改。
 
 Artifact：`docs/wkb_tail_handoff_round13_20260917.json`。
+
+## Current session update: 2026-09-17 (WKB carrier preintegration)
+
+- [x] 在 fresh HEAD `cf183c4` 上完成 `z_match=4 -> z_tail=5` 的 standalone
+  carrier 预积分 A/B；25 repeats、Numba=2、BLAS=1、workers=1。
+- [x] candidate/exact kernel median ratio 为
+  `0.910/0.943/1.051/0.928`（default/high-T/stiff/high-kappa），stiff 退化约
+  `5.1%`；amplitude max 相对差为 `1.35e-4/1.28e-4/1.07e-4/2.07e-4`，无
+  numerical failure。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。收益不跨目标
+regime 稳定，且尚未值得进入独立 oracle 认证；production 未修改。
+
+Artifact：`docs/wkb_carrier_round14_20260917.json`。
