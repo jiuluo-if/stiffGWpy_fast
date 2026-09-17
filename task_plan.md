@@ -282,3 +282,7 @@ Phase 3: Implementation and evidence-driven optimization
   与 phase exponential reuse 均按 digest/稳定 runtime gate rejected，production 未改。
 - [ ] 下一候选聚焦 tensor phase kernel 的结构性工作量削减；先做 standalone exact
   prototype，再进行 25–50 repeat A/B 与独立 Oracle A/Prüfer/WKB 检验。
+- [x] 完成 round-6 fresh profile；static-grid reuse、no-assembly probe 及组合均因目标
+  区间未稳定超过 5% 而 rejected，未修改 production。
+- [ ] 下轮转向 phase transfer 的跨 channel 结构复用或独立 adiabaticity estimator；
+  不重复本轮两个 specialization。

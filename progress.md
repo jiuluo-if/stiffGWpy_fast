@@ -827,3 +827,18 @@ artifact 保留作 rejected evidence。
   REJECTED 并回退。候选 artifacts 为 `docs/profile_phase_exp_reuse_candidate_*.json`。
 - [x] `PROFILE_ASSEMBLE=0` 诊断显示 assembly 可归属约 `0.19/0.17/0.03/0.16 ms`
   （high-T/stiff/high-kappa/low-T），不是足以单独达到目标的主热点；不据此做近似。
+
+## Fresh round-6 profile and kernel specialization candidates (2026-09-17)
+
+- [x] 在 HEAD `42b5526`、16 threads/workqueue、BLAS=1、`kink_split=true`、25 repeats
+  fresh profile：default/high-T/stiff/high-kappa/low-T total median 为
+  `4.60/6.36/7.27/6.44/4.45 ms`；tensor median 为 `1.03/1.78/2.04/1.75/1.11 ms`。
+  原始 artifacts 为 `docs/profile_fast_breakdown_round6_*_20260917.json`。
+- [x] static `gen_fast` grid reuse standalone：目标 regime 第二次 `Nv` 仅最后 anchor 改变；
+  50-repeat total ratio high-T/stiff/high-kappa 为 `0.96/0.99/0.98`，digest/DN 完全一致，
+  REJECTED。
+- [x] no-assembly first-probe kernel standalone：25-repeat ratio 为
+  default/high-T/stiff/high-kappa/low-T `0.97/0.96/1.00/0.95/1.01`，digest/DN 完全一致，
+  REJECTED。
+- [x] 组合两项后 high-T/stiff/high-kappa/low-T ratio 为 `0.956/1.015/0.961/1.000`，
+  stiff 退化，整体 REJECTED；组合 artifact 为 `docs/probe_grid_combo_20260917.json`。

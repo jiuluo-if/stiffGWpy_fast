@@ -962,3 +962,28 @@ false-safe certification；不能把 machine-level digest 相等误报为独立�
 high-kappa/low-T tensor 时间约 `0.19/0.17/0.03/0.16 ms`，不足以支持近似删除。
 正式 production source 已恢复无 diff；后续候选仍需从 phase kernel 的结构性工作量
 或 background/primitive 共享入手，并先通过同口径 fresh A/B。
+
+## Fresh round-6 and kernel specialization rejection (2026-09-17)
+
+HEAD `42b5526` 的 fresh 16-thread kink profile（25 repeats）为：
+
+| regime | total median ms | p95 ms | tensor median ms |
+|---|---:|---:|---:|
+| default | 4.60 | 5.44 | 1.03 |
+| high-T | 6.36 | 7.66 | 1.78 |
+| stiff | 7.27 | 8.36 | 2.04 |
+| high-kappa | 6.44 | 7.80 | 1.75 |
+| low-T | 4.45 | 5.19 | 1.11 |
+
+目标 regime 的第二次 `gen_fast` 调用中只有最后 present-day anchor 改变，其余 grid 节点
+逐位相同；static grid reuse 50-repeat ratio 为 high-T/stiff/high-kappa `0.96/0.99/0.98`，
+虽然 digest/DN 完全一致，仍无稳定 >5% 收益，REJECTED。
+
+no-assembly first-probe kernel 只删除 `assemble=0` 首轮的列装配判断，transfer、kink
+split、tail matching 保持不变。25-repeat total ratio 为 default/high-T/stiff/high-kappa/
+low-T `0.97/0.96/1.00/0.95/1.01`；digest 相等、DN 差为 0，仍 REJECTED。
+
+组合两项后 high-T/stiff/high-kappa/low-T 为 `0.956/1.015/0.961/1.000`，stiff 退化，
+整体不接受。候选相对 baseline 的 spectrum p50/p95/max 均为 0、DN 相对差为 0；但因
+runtime gate 失败，没有把等价性误报为 Oracle A/Prüfer/WKB 或 parameter-space
+false-safe 认证。production source 未改。

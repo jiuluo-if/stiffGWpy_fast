@@ -1,0 +1,16 @@
+{
+  "commit": "42b5526cfeb299c643a2c5479e54468ab64cf15d",
+  "threads": 16,
+  "repeats": 25,
+  "cases": {
+    "highT": {"baseline_ms": 6.9188, "candidate_ms": 6.6160, "ratio": 0.95624, "p95_baseline_ms": 8.09218, "p95_candidate_ms": 7.20240},
+    "stiff": {"baseline_ms": 7.0795, "candidate_ms": 7.1856, "ratio": 1.01499, "p95_baseline_ms": 7.51242, "p95_candidate_ms": 7.87598},
+    "high_kappa": {"baseline_ms": 6.8516, "candidate_ms": 6.5874, "ratio": 0.96144, "p95_baseline_ms": 7.62498, "p95_candidate_ms": 7.58606},
+    "lowT": {"baseline_ms": 3.7117, "candidate_ms": 3.7125, "ratio": 1.00022, "p95_baseline_ms": 4.55878, "p95_candidate_ms": 4.06836}
+  },
+  "digest_equal": true,
+  "dn_max_abs": 0.0,
+  "all_converged": true,
+  "decision": "REJECTED_FOR_PRODUCTION",
+  "reason": "The combined static-grid and no-assembly probe specialization did not produce stable >5% improvement across the target regimes; stiff regressed."
+}
