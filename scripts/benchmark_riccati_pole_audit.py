@@ -49,7 +49,7 @@ def _rhs(n_value, state, bg):
     _, sigma = REF._H2_and_sigma(bg, n_value)
     z_prime = 1.5 * sigma - 1.0
     omega = math.exp(z)
-    # Exact quotient reduction of REF._tensor_orig, valid only while y != 0.
+    # 这是 REF._tensor_orig 在 y != 0 时的精确商变量化简。
     ratio_prime = -2.0 * ratio - omega * (1.0 + ratio * ratio)
     log_abs_y_prime = -1.0 + 1.5 * sigma + omega * ratio
     return z_prime, ratio_prime, log_abs_y_prime
