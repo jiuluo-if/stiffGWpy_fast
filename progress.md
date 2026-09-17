@@ -1171,3 +1171,34 @@ Decision: `REJECTED AS EXACT REUSE CANDIDATE / DIAGNOSTIC RETAINED`。production
 
 Artifacts：`docs/profile_fast_breakdown_round17_*.json`、
 `docs/channel_overlap_round17_20260917.json`。
+## Session: 2026-09-17 (round18 outer assembly attribution)
+
+### Actions Taken
+
+- 先尝试 fetch `fast_v0.2`；远端 TLS handshake 两次失败，但本地 tracking ref
+  与远端已知 HEAD 均为 `9173f0d41e2264926d0a5f4c458530f872a17b13`，未以旧 SHA
+  替代当前状态。
+- 阅读最近 commits、`progress.md`、`findings.md`、既有 profile/validation
+  artifacts，并确认 raw Riccati pole audit 与 Prüfer full-grid oracle 已有结论，
+  不重复已否决实验。
+- 新增只读 stage attribution：warm 后每个 regime 重复 5 次，记录 preparation、
+  primitive、每次 `solve_kernel` 的 `assemble` 标志、积分与插值阶段。
+
+### Test Results
+
+| regime | total median | primitive | solve per call | full solves/run |
+|---|---:|---:|---:|---:|
+| default | 6.182 ms | 0.847 ms | 2.450 ms | 1 |
+| high-T | 9.094 ms | 0.588 ms | 2.201 ms | 2 |
+| stiff | 9.921 ms | 0.690 ms | 2.452 ms | 2 |
+| high-kappa | 9.214 ms | 0.636 ms | 2.115 ms | 2 |
+| low-T | 6.323 ms | 0.787 ms | 3.123 ms | 1 |
+
+Artifact: `docs/outer_attribution_round18_20260917.json`；script:
+`scripts/benchmark_outer_attribution.py`。
+
+### Decision
+
+`DIAGNOSTIC CONFIRMED / NO PRODUCTION CHANGE`。high-T/stiff/high-kappa 的额外
+完整 solve 已被直接观测，但 assembly shortcut 已有 2--4% 上限证据，不能满足
+候选门槛；下一轮继续寻找减少 propagation arithmetic/steps 的 standalone 方向。

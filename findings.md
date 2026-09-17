@@ -1547,3 +1547,35 @@ Artifact：`docs/channel_overlap_round17_20260917.json`。
 default/high-T/high-kappa 有局部收益，但 stiff 退化且未达到跨目标 regime 的稳定
 速度门槛；不进入独立 oracle 认证，也不修改 production。下一轮回到 fresh profile
 后选择新的、具有独立数学依据的 propagation 工作量候选，避免重复调同一 handoff。
+## Outer assembly attribution (2026-09-17, HEAD 9173f0d)
+
+### Fresh diagnostic
+
+本轮先以当前 HEAD 运行 `scripts/benchmark_outer_attribution.py`，固定
+Numba=2、BLAS=1、workers=1、workqueue，并对 default、high-T、stiff、
+high-kappa、low-T 各 warm 后重复 5 次。脚本只包裹现有 production path 的
+stages，不修改计算结果或控制流；产物为
+`docs/outer_attribution_round18_20260917.json`。
+
+### Evidence
+
+| regime | total median | primitive | solve per call | full solves/run |
+|---|---:|---:|---:|---:|
+| default | 6.182 ms | 0.847 ms | 2.450 ms | 1 |
+| high-T | 9.094 ms | 0.588 ms | 2.201 ms | 2 |
+| stiff | 9.921 ms | 0.690 ms | 2.452 ms | 2 |
+| high-kappa | 9.214 ms | 0.636 ms | 2.115 ms | 2 |
+| low-T | 6.323 ms | 0.787 ms | 3.123 ms | 1 |
+
+所有观测到的 `solve_kernel` 调用均为 `assemble=1`；慢工况确实因 outer
+收敛需要两次完整 assembly，但单纯移除 assembly 或强制 first-probe 的方向
+已有独立 profile，收益仅约 2--4%，不足以成为新的速度候选。当前证据因此把
+主要优化目标继续收敛到 tensor propagation arithmetic/steps，而不是 tail、
+PCHIP 或 outer assembly bookkeeping。
+
+### Decision
+
+`DIAGNOSTIC CONFIRMED / NO PRODUCTION CHANGE`：不放宽 outer reuse，不新增
+assembly shortcut；保留可复查的阶段归因脚本和 artifact，下一候选必须减少
+真实 channel propagation 工作量，并先以 standalone 数学残差及
+Cartesian/Prüfer/WKB 对照证明安全。

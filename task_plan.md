@@ -363,3 +363,14 @@ Phase 3: Implementation and evidence-driven optimization
   pair 无重复，简单 cross-channel exact transfer reuse 排除。
 - [ ] 下一轮重新 fetch/profile，重点拆解 outer allocation/assembly；若尝试结构性
   propagation，必须先处理 mode-local phase subdivision 的 exactness。
+## Round 18: outer assembly attribution (2026-09-17)
+
+- [x] Fresh stage attribution at current HEAD；确认 high-T/stiff/high-kappa
+  每次运行执行两次 `assemble=1` full solve，default/low-T 执行一次。
+- [x] 保留 artifact `docs/outer_attribution_round18_20260917.json` 与脚本
+  `scripts/benchmark_outer_attribution.py`；production path 未修改。
+- [x] 排除把 outer assembly shortcut 当作新候选：既有独立 profile 显示总收益
+  仅约 2--4%，低于速度门槛。
+- [ ] 下一阶段只研究能减少真实 propagation arithmetic/steps 的 standalone
+  phase-function/Riccati/WKB 方向；先做数学残差和独立 Cartesian/Prüfer/WKB
+  对照，再考虑 25--50 repeat runtime gate。
