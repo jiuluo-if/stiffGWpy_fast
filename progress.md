@@ -1318,3 +1318,13 @@ production path 未修改。下一候选必须避免仅改变浮点运算顺序�
 Decision: **ACCEPTED / PRODUCTION PATCH PENDING POST-COMMIT GATE**. The candidate
 passes strict-equivalence and the multi-regime speed screen; production integration
 is limited to a Numba fill helper plus model-local workspace allocation/reuse.
+
+### Post-commit verification
+
+- Production commit `bd2cff602339b386efe9cfdcb3c19056d113e6b8` was pushed to
+  `fast_v0.2`.
+- Fresh 25-repeat fixed-resource profiles at that SHA: total medians in ms
+  default/high-T/stiff/high-kappa/low-T = `5.64/7.68/8.55/7.87/5.52`;
+  all five cases converged, had no numerical failure, and each repeated digest
+  was stable. The default remains above the final `<4 ms` target.
+- Fresh artifacts: `docs/profile_fast_breakdown_round25_postcommit_*.json`.

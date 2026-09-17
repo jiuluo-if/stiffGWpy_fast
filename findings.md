@@ -1722,3 +1722,13 @@ per-case artifacts are the `docs/phi_s2_workspace_spike_round25_*.json` files.
 Decision: **ACCEPTED FOR PRODUCTION** pending a fresh post-commit full test and
 profile gate. This is strict-equivalence allocation reuse, not an arithmetic or
 scientific algorithm change; no Oracle promotion is required.
+
+### Post-commit verification
+
+Production commit `bd2cff602339b386efe9cfdcb3c19056d113e6b8` was pushed to
+`fast_v0.2`. Fresh fixed-resource profiles at this SHA used 25 repeats and
+Numba=2/BLAS=1/workers=1. Warm total medians were default/high-T/stiff/
+high-kappa/low-T `5.64/7.68/8.55/7.87/5.52 ms`; every case converged with no
+failure, and repeated spectrum/f/DN/g2/w2 digests were stable. The default
+target remains `<4 ms`, so this round does not claim that final target has been
+reached. Artifacts: `docs/profile_fast_breakdown_round25_postcommit_*.json`.
