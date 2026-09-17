@@ -276,3 +276,5 @@ Phase 3: Implementation and evidence-driven optimization
   runtime 改善 6.54%，Cartesian/Prüfer oracle 与 error budget 通过。
 - [x] 完成 analytic branch eligibility boundary；目标 regime 可覆盖比例仅
   `14.31%–17.66%`，低于 >30% 优先门槛，closed-form prototype 暂缓。
+- [x] 清理无关中文注释/编码门禁及同类 workflow 检查；将 Numba 资源环境测试隔离到
+  导入前子进程，避免同一环境污染原因重复触发 CI 失败。

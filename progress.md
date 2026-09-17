@@ -800,3 +800,12 @@ artifact 保留作 rejected evidence。
 本轮另发现一次本地测试命令环境错误：测试进程未在启动前固定 Numba 线程，随后测试 fixture
 改变环境导致 Numba 已初始化线程与环境值冲突。以后测试与 formal benchmark 使用独立进程，
 并在启动前分别固定 `NUMBA=2/FAST=2` 或 `NUMBA=16/FAST=16`；远端 CI 当前 run 已验证通过。
+
+## CI resource-environment isolation (2026-09-17)
+
+- [x] 复核 `ci.yml` 与 `slow.yml`，中文注释/编码语言门禁及其脚本已删除，未发现同类
+  无关检查；兼容性、数值回归、manifest、构建、Cobaya 和静态检查均保留。
+- [x] 将资源环境契约改为干净子进程、数值库导入前验证，避免在已初始化 Numba 的
+  pytest 进程中修改 `NUMBA_*` 环境变量。
+- [x] 本地 CI 同口径 gate 全部通过：Ruff、mypy、compileall、diff check、manifest，
+  `160 passed, 6 deselected`。

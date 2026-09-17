@@ -927,3 +927,13 @@ production 且没有数值差异；原始数据见 `docs/profile_tridiag_candida
 用启动前 `NUMBA_NUM_THREADS=2`, `NUMBA_THREADING_LAYER=workqueue`, `FAST_THREADS=2`
 重跑后 `54 passed, 3 deselected`；正式 benchmark 单独使用 16/16 进程。CI workflow
 不包含中文注释/编码语言门禁，远端全矩阵保持 green，避免该类环境错误与旧门禁错误混淆。
+
+## CI gate scope and Numba environment isolation (2026-09-17)
+
+复核确认中文注释/编码语言门禁及脚本已由 `9b979c3` 删除，当前两个 workflow 没有同类
+检查；保留的 job 覆盖兼容性、数值正确性、发布归档、集成或静态契约。
+
+资源契约测试的重复失败根因是 pytest 已导入 Numba 后才修改线程环境。测试已改为启动
+干净 Python 子进程，在导入数值库前调用 `apply_environment()` 并核对八项环境值，避免
+污染后续测试的 Numba runtime。完整 gate 已通过（Ruff/mypy/compileall/diff/manifest；
+`160 passed, 6 deselected`）。
