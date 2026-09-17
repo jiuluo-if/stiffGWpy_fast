@@ -1336,3 +1336,31 @@ Artifacts（均绑定 HEAD `db4685fa7cf6aa485b285cde3f1aa7fec2fd740c`）：
 `docs/wkb_carrier_second_order_3e-4_round11_20260917.json`、
 `docs/wkb_carrier_second_order_1e-3_round11_20260917.json`、
 `docs/wkb_carrier_second_order_3e-3_round11_20260917.json`。
+
+## Kink post-transition sigma probe cache boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+formal `kink_split` 的 `gen_fast` 不把 `N_re` 插入网格；因此每次
+`fast_phi_s2_split` 都会在同一 outer solver 调用中重复计算相同的三 probe
+`sigma_vec([N_re]` 左/点/右)。候选只在 standalone wrapper 中按 model、DN 和
+probe 坐标缓存第二次结果，production source 未修改。
+
+### Evidence
+
+- 固定 Numba=2、BLAS=1、workers=1，五点各 50 repeats；`f`、`log10OmegaGW`、
+  `DN_gw`、`g2`、`w2` digest 全部逐位一致，收敛状态与 failure reason 一致。
+- candidate/baseline warm median ratio：default `0.996`、high-T `1.004`、
+  stiff `1.010`、high-kappa `1.008`、low-T `0.916`。目标 high-T/stiff/high-kappa
+  没有稳定收益，且 stiff/high-kappa 退化；不满足总耗时稳定改善 `>5%`。
+- candidate 每次 solver 调用只保留一次 probe 计算，证明缓存命中；low-T 的局部收益
+  不能外推为目标工况收益。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。该准备层去重在
+bitwise 结果上安全，但收益不足且目标慢工况退化；不继续放大到 full-grid/oracle
+认证，下一步继续围绕真实 tensor propagation 的结构性 standalone prototype。
+
+Artifact（绑定当前 HEAD `b8e71bfffd98504f14084458c724493c03633340`）：
+`docs/kink_sigma_cache_round12_20260917.json`。

@@ -1075,3 +1075,21 @@ work 的 nonoscillatory phase/Riccati 结构。
 Artifacts：`docs/wkb_carrier_second_order_3e-4_round11_20260917.json`、
 `docs/wkb_carrier_second_order_1e-3_round11_20260917.json`、
 `docs/wkb_carrier_second_order_3e-3_round11_20260917.json`。
+
+## Current session update: 2026-09-17 (kink sigma probe cache)
+
+- [x] fresh HEAD `b8e71bf` 重新完成固定资源阶段 profile：2-thread warm median
+  total default/highT/stiff/high-kappa/lowT 为 `6.057/8.910/9.994/9.678/6.388 ms`；
+  tensor kernel 为 `2.442/4.131/4.682/4.375/2.909 ms`。
+- [x] standalone 缓存同一 solver 调用内重复的三 probe `sigma_vec`，50-repeat
+  A/B 五点 digest 与状态逐位一致；runtime ratio 为 `0.996/1.004/1.010/1.008/0.916`。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。缓存对目标
+慢工况无稳定 >5% 收益，且 stiff/high-kappa 退化；production 未修改。
+
+Artifacts：`docs/profile_fast_breakdown_round12_default_20260917.json`、
+`docs/profile_fast_breakdown_round12_highT_20260917.json`、
+`docs/profile_fast_breakdown_round12_stiff_20260917.json`、
+`docs/profile_fast_breakdown_round12_high_kappa_20260917.json`、
+`docs/profile_fast_breakdown_round12_lowT_20260917.json`、
+`docs/kink_sigma_cache_round12_20260917.json`。

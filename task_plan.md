@@ -6,15 +6,17 @@
 
 ## Next Step
 
-当前 fresh HEAD `c5566a8` 的 2-thread stage profile 显示 tensor kernel 仍是目标区
-最大阶段（high-T/stiff/high-kappa warm median `4.514/5.090/4.660 ms`），随后是
-`fast_phi_s2_split` `1.378/1.420/1.496 ms` 与 background `0.670/0.691/0.783 ms`。
+当前 fresh HEAD `b8e71bf` 的 2-thread stage profile 显示 tensor kernel 仍是目标区
+最大阶段（high-T/stiff/high-kappa warm median `4.131/4.682/4.375 ms`），随后是
+`fast_phi_s2_split` `1.350/1.535/1.475 ms` 与 background `0.647/0.717/0.710 ms`。
 本轮 analytic branch、local radiation jump、单独一阶 adiabaticity handoff 均已
 standalone rejected；下一单一动作是设计并验证带高阶 curvature/phase safety guard
 的 hybrid handoff prototype，先过 focused accuracy，再考虑 runtime。
 
 二阶 adiabaticity trigger focused A/B 已完成：精度改善但目标 runtime 不稳定，已
-rejected；下一单一动作改为 nonoscillatory phase/Riccati 的结构性 propagation prototype。
+rejected；kink post-transition sigma probe cache 也已 bitwise 安全但目标 runtime
+无收益，已 rejected。下一单一动作改为 nonoscillatory phase/Riccati 的结构性
+propagation prototype。
 
 以下为历史阶段记录：
 
