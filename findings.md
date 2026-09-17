@@ -1089,3 +1089,39 @@ low-T `0.97/0.96/1.00/0.95/1.01`；digest 相等、DN 差为 0，仍 REJECTED。
 整体不接受。候选相对 baseline 的 spectrum p50/p95/max 均为 0、DN 相对差为 0；但因
 runtime gate 失败，没有把等价性误报为 Oracle A/Prüfer/WKB 或 parameter-space
 false-safe 认证。production source 未改。
+
+## Inline scalar transfer-map boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+fresh round-8 profile 的目标热点仍为 `tensor_solve_kernel`。本候选不改变数值公式，
+只把 production `scaled_step` 的标量 2x2 transfer-map 计算内联到 phase loop，
+保留 `exp/cos/sin/sqrt`、phase subdivision、reheating/kink split、tail matching
+和 assembly；production fast source 未修改。
+
+### Evidence
+
+- 2-thread full-outer 25-repeat ratio 为 default/high-T/stiff/high-kappa/low-T
+  `0.9656/0.9351/0.9488/0.9137/0.9669`；正式目标 ratio 为 16-thread
+  `0.9856/0.9974/0.9127`、20-thread `1.0690/0.9876/0.9986`，只有 16-thread
+  high-kappa 单点超过 5%，跨 formal 线程不稳定。
+- 2-thread outer spectrum delta p50/p95/max（dex）：default
+  `2.14e-11/9.55e-7/2.91e-6`，high-T `8.28e-12/1.38e-6/2.66e-6`，
+  stiff `1.89e-11/1.86e-6/3.30e-6`，high-kappa `5.92e-13/8.68e-7/2.42e-6`，
+  low-T `3.33e-10/8.68e-7/2.12e-6`。
+- 对应 DN relative 为 default/high-T/stiff/high-kappa/low-T
+  `7.51e-12/3.01e-13/1.18e-11/7.70e-14/3.12e-7`。candidate digest 不逐位
+  相同，但变化属于舍入级；这不等于独立 oracle 或 parameter-space 认证。
+- formal runtime gate 失败，因此没有进入 Oracle A/Prüfer/WKB、named+Sobol、
+  coverage/p95/p99/false-safe gate，避免把局部 2-thread 收益误报为 production 证据。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。不修改 production fast，
+不更新 error budget，不声称 default `<4 ms` 或目标 regime `4--5 ms` 已达成。
+
+Artifacts（均绑定 HEAD `0671e1fc549bf45428496935c364956b17b64405`）：
+`docs/kernel_inline_spike_round8_20260917.json`、
+`docs/kernel_inline_outer_spike_round8_20260917.json`、
+`docs/kernel_inline_outer_spike_16t_round8_20260917.json`、
+`docs/kernel_inline_outer_spike_20t_round8_20260917.json`。

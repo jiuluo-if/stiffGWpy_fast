@@ -904,3 +904,29 @@ artifact 保留作 rejected evidence。
   保留 standalone 证据。
 - [ ] 下一候选回到 fresh profile 的 background/primitive/grid allocation 或 tensor
   kernel 结构；不得重复 recurrence、固定 threshold widening 或已列 rejected 路径。
+
+## Current session update: 2026-09-17 (inline tensor transfer-map spike)
+
+- [x] 重新 fetch 并复核当前 HEAD `10f539b`；发现 proposed 的
+  `fast_phi_s2_split` allocation/fusion 已在历史记录中完成且已 rejected，未重复。
+- [x] standalone prototype 只将 `scaled_step` 的 2x2 transfer-map 表达式内联到
+  phase loop；phase subdivision、kink split、tail、assembly 和 production source
+  均未改变。脚本提交于 HEAD `0671e1f`。
+- [x] 当前 HEAD 下完成 2-thread kernel/outer 25--30 repeat，以及 16/20-thread
+  formal outer A/B；所有 artifact 均带 `commit=0671e1fc549bf45428496935c364956b17b64405`。
+- [x] 2-thread outer ratio high-T/stiff/high-kappa 为 `0.9351/0.9488/0.9137`，
+  formal 16-thread 为 `0.9856/0.9974/0.9127`，20-thread 为 `1.0690/0.9876/0.9986`；
+  不能证明稳定 >5% total-runtime 改善。
+- [x] 2-thread outer spectrum delta p50/p95/max（dex）目标点为 high-T
+  `8.28e-12/1.38e-6/2.66e-6`、stiff `1.89e-11/1.86e-6/3.30e-6`、
+  high-kappa `5.92e-13/8.68e-7/2.42e-6`；DN relative 分别
+  `3.01e-13/1.18e-11/7.70e-14`。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。不进入 Oracle、
+Sobol 或 production candidate 认证；下一轮继续寻找未重复的 tensor/background
+结构候选。
+
+Artifacts：`docs/kernel_inline_spike_round8_20260917.json`、
+`docs/kernel_inline_outer_spike_round8_20260917.json`、
+`docs/kernel_inline_outer_spike_16t_round8_20260917.json`、
+`docs/kernel_inline_outer_spike_20t_round8_20260917.json`。
