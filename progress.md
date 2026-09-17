@@ -1298,3 +1298,23 @@ production path 未修改。下一候选必须避免仅改变浮点运算顺序�
 - Decision: **REJECTED_FOR_PRODUCTION** because end-to-end improvement is not stable across the required regimes and formal default regresses.
 - Artifact: `docs/phi_s2_numba_spike_round24_summary_20260917.json`.
 - Next: continue strict-equivalence attribution; do not promote this helper or revisit the same primitive allocation variants.
+
+## Round 25 — Phi/S2 workspace reuse (2026-09-17)
+
+- Fresh HEAD before the candidate: `b22042329f8da8f6aabcc986c89fa49231b43cca`.
+- TDD first: standalone workspace identity test and production buffer-lifetime
+  test were red before implementation; both are now green.
+- Candidate reuses only model-local arrays whose prior values are dead before the
+  next `fast_phi_s2_split` call. Formulas, kink probes, node inputs, and output
+  ordering are unchanged.
+- Standalone full-outer A/B, 2 threads, 50 repeats, ratios
+  default/high-T/stiff/high-kappa/low-T: `0.948/0.927/0.925/0.916/0.917`;
+  all digest-equal and DN relative difference `0`.
+- Formal 16-thread ratios: `0.877/0.907/0.896/0.915/0.886`; formal 20-thread
+  ratios: `0.918/0.919/0.889/0.925/0.894`; all digest-equal.
+- Extended tilt/Sobol 2-thread ratios range `0.918–0.977`; all digest-equal and
+  DN relative difference `0`.
+
+Decision: **ACCEPTED / PRODUCTION PATCH PENDING POST-COMMIT GATE**. The candidate
+passes strict-equivalence and the multi-regime speed screen; production integration
+is limited to a Numba fill helper plus model-local workspace allocation/reuse.

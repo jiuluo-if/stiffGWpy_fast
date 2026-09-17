@@ -1691,3 +1691,34 @@ Fresh current HEAD `72231d76c47732b35d484c42ce07a0c9a6fa532e` was used for a sta
 The full solver did not meet the stable multi-regime gate. At 2 threads and 50 repeats, ratios were `0.950/0.968/0.976/1.007/1.003`; at 20 formal threads and 25 repeats they were `1.042/0.875/0.957/0.986/0.967`. Extended named/tilt/Sobol 25-repeat output digests all remained equal, but `sobol_006` showed a `1.6%` slowdown and the default 20-thread point regressed `4.2%`. **REJECTED_FOR_PRODUCTION**: the primitive win does not transfer stably to end-to-end runtime. Prototype and contract test remain standalone only.
 
 Artifact: `docs/phi_s2_numba_spike_round24_summary_20260917.json` plus per-case `docs/phi_s2_numba_spike_round24_*.json`.
+
+## Round 25 — Phi/S2 workspace reuse (2026-09-17)
+
+The previous arithmetic-only Numba spike was not promoted because its end-to-end
+benefit was unstable. This round isolated allocation/copy overhead instead: a
+Numba fill helper writes the existing formulas into model-local buffers, and the
+next primitive call reuses those buffers after the previous primitive has been
+consumed by the outer iteration.
+
+The standalone contract first failed on missing implementation, then passed with
+array identity reuse. The production contract first failed on distinct output
+identities, then passed after the minimal integration. The formal kink-grid
+regressions and the existing fast split accuracy test also pass after correcting
+the midpoint buffer length to `n-1`.
+
+Fresh standalone A/B evidence at candidate source HEAD `b22042329f8da8f6aabcc986c89fa49231b43cca`:
+
+| resources | default | high-T | stiff | high-kappa | low-T |
+|---|---:|---:|---:|---:|---:|
+| 2 threads, 50 repeats | 0.9480 | 0.9267 | 0.9247 | 0.9163 | 0.9171 |
+| 16 threads, 25 repeats | 0.8768 | 0.9071 | 0.8957 | 0.9155 | 0.8856 |
+| 20 threads, 25 repeats | 0.9181 | 0.9186 | 0.8892 | 0.9249 | 0.8943 |
+
+All listed comparisons are digest-equal, converged, failure-free, with zero DN
+relative difference. Eight additional tilt/Sobol cases at 2 threads and 25
+repeats were also digest-equal, with ratios `0.9182–0.9770`. The complete
+per-case artifacts are the `docs/phi_s2_workspace_spike_round25_*.json` files.
+
+Decision: **ACCEPTED FOR PRODUCTION** pending a fresh post-commit full test and
+profile gate. This is strict-equivalence allocation reuse, not an arithmetic or
+scientific algorithm change; no Oracle promotion is required.

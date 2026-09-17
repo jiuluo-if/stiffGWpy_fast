@@ -17,6 +17,7 @@ without changing the ODE integration itself.
 import math
 
 import numpy as np
+from numba import njit
 
 from . import global_param as gp
 
@@ -407,6 +408,61 @@ def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
             kink_index, float(kink_fraction), float(phi_re))
 
 
+@njit(cache=True)
+def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
+                      kink_fraction, sig_left, sig_re, sig_right,
+                      h_arr, mid_sigma, integral, F_nodes, F_mid,
+                      Phi_grid, Phi_mid, S2, S2inv):
+    n = len(Nv)
+    for i in range(n - 1):
+        h_arr[i] = Nv[i + 1] - Nv[i]
+        mid_sigma[i] = 0.5 * (nodes_left[i] + nodes_right[i + 1])
+        integral[i] = h_arr[i] * (
+            nodes_left[i] + 4.0 * mid_sigma[i] + nodes_right[i + 1]) / 6.0
+    left_integral = 0.0
+    if 0 <= kink_index < n - 1 and 0.0 < kink_fraction < 1.0:
+        left_h = h_arr[kink_index] * kink_fraction
+        right_h = h_arr[kink_index] - left_h
+        left_integral = left_h * (
+            nodes_left[kink_index] + 4.0 * sig_left + 1.0) / 6.0
+        right_integral = right_h * (
+            sig_re + 4.0 * sig_right + nodes_right[kink_index + 1]) / 6.0
+        integral[kink_index] = left_integral + right_integral
+    F_nodes[0] = 0.0
+    for i in range(n - 1):
+        F_nodes[i + 1] = F_nodes[i] + integral[i]
+        F_mid[i] = F_nodes[i] + h_arr[i] * (
+            nodes_left[i] + 4.0 * (0.75 * nodes_left[i]
+                                    + 0.25 * nodes_right[i + 1])
+            + mid_sigma[i]) / 12.0
+    N0 = Nv[0]
+    for i in range(n):
+        Phi_grid[i] = 1.5 * F_nodes[i] - Nv[i] + N0
+        Psi = 3.0 * F_nodes[i] - 4.0 * Nv[i]
+        S2[i] = np.exp(Psi)
+        S2inv[i] = np.exp(-0.5 * Psi)
+    for i in range(n - 1):
+        Phi_mid[i] = 1.5 * F_mid[i] - 0.5 * (Nv[i] + Nv[i + 1]) + N0
+    return left_integral
+
+
+def _fast_phi_s2_workspace(m, n):
+    workspace = getattr(m, '_fast_phi_s2_workspace', None)
+    if workspace is None or workspace['n'] != n:
+        workspace = {'n': n}
+        workspace['h_arr'] = np.empty(n - 1, dtype=np.float64)
+        workspace['mid_sigma'] = np.empty(n - 1, dtype=np.float64)
+        workspace['integral'] = np.empty(n - 1, dtype=np.float64)
+        workspace['F_nodes'] = np.empty(n, dtype=np.float64)
+        workspace['F_mid'] = np.empty(n - 1, dtype=np.float64)
+        workspace['Phi_grid'] = np.empty(n, dtype=np.float64)
+        workspace['Phi_mid'] = np.empty(n - 1, dtype=np.float64)
+        workspace['S2'] = np.empty(n, dtype=np.float64)
+        workspace['S2inv'] = np.empty(n, dtype=np.float64)
+        m._fast_phi_s2_workspace = workspace
+    return workspace
+
+
 def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     """Build a kink-exact primitive with a cheap smooth-background estimate.
 
@@ -416,22 +472,21 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     values instead of evaluating the full continuous-sigma spline twice.  The
     interval containing ``N_re`` is still integrated on both sides with exact
     one-sided probes, so no transition step is allowed to cross the kink.
+    Returned arrays are model-local work buffers and are overwritten by the
+    next call for the same model.  The fast outer iteration consumes each
+    primitive before requesting the next one, so this lifetime is intentional.
     """
-    Nv = np.asarray(Nv, dtype=float)
-    h_arr = np.diff(Nv).astype(np.float64)
+    Nv = np.asarray(Nv, dtype=np.float64)
     if Nv.size < 2:
         return (np.zeros_like(Nv), np.zeros_like(Nv), np.ones_like(Nv),
                 np.ones_like(Nv), -1, 0.0, 0.0)
     nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff, sigma_nodes)
-    mid_sigma = 0.5 * (nodes_left[:-1] + nodes_right[1:])
-    quarter_sigma = 0.75 * nodes_left[:-1] + 0.25 * nodes_right[1:]
-    integral = h_arr * (nodes_left[:-1] + 4.0 * mid_sigma + nodes_right[1:]) / 6.0
 
     d = m.derived_param
     n_re = float(d['N_inf'] - d['N_re'])
     kink_index = int(np.searchsorted(Nv, n_re, side='right') - 1)
     kink_fraction = 0.0
-    left_integral = None
+    sig_left = sig_re = sig_right = 0.0
     if 0 <= kink_index < Nv.size - 1:
         left = float(Nv[kink_index])
         right = float(Nv[kink_index + 1])
@@ -443,31 +498,22 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
                 n_re + 0.5 * (right - n_re),
             ], dtype=float)
             sig_left, sig_re, sig_right = sigma_vec(probes, m, DN_eff)
-            left_h = n_re - left
-            right_h = right - n_re
-            left_integral = left_h * (nodes_left[kink_index] +
-                                      4.0 * sig_left + 1.0) / 6.0
-            right_integral = right_h * (sig_re +
-                                         4.0 * sig_right +
-                                         nodes_right[kink_index + 1]) / 6.0
-            integral[kink_index] = left_integral + right_integral
         else:
             kink_index = -1
             kink_fraction = 0.0
 
-    F_nodes = np.concatenate(([0.0], np.cumsum(integral)))
-    if kink_index >= 0 and left_integral is not None:
-        phi_re = 1.5 * (F_nodes[kink_index] + left_integral) - n_re + Nv[0]
+    workspace = _fast_phi_s2_workspace(m, Nv.size)
+    left_integral = _fast_phi_s2_fill(
+        Nv, nodes_left, nodes_right, kink_index, kink_fraction,
+        sig_left, sig_re, sig_right, workspace['h_arr'],
+        workspace['mid_sigma'], workspace['integral'], workspace['F_nodes'],
+        workspace['F_mid'], workspace['Phi_grid'], workspace['Phi_mid'],
+        workspace['S2'], workspace['S2inv'])
+    if kink_index >= 0 and 0.0 < kink_fraction < 1.0:
+        phi_re = (1.5 * (workspace['F_nodes'][kink_index] + left_integral)
+                  - n_re + Nv[0])
     else:
         phi_re = 0.0
-    F_mid = F_nodes[:-1] + h_arr * (
-        nodes_left[:-1] + 4.0 * quarter_sigma + mid_sigma) / 12.0
-    N0 = Nv[0]
-    Phi_grid = 1.5 * F_nodes - Nv + N0
-    Phi_mid = 1.5 * F_mid - 0.5 * (Nv[:-1] + Nv[1:]) + N0
-    Psi = 3.0 * F_nodes - 4.0 * Nv
-    S2 = np.exp(Psi)
-    S2inv = np.exp(-0.5 * Psi)
-    return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
-            S2.astype(np.float64), S2inv.astype(np.float64),
+    return (workspace['Phi_grid'], workspace['Phi_mid'],
+            workspace['S2'], workspace['S2inv'],
             kink_index, float(kink_fraction), float(phi_re))
