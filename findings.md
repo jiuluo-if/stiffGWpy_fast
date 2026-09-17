@@ -1398,3 +1398,35 @@ propagation prototype。
 Artifacts（均绑定当前 HEAD `8d8102dbfcd9345f43d91b99fa6f656f9c24623f`）：
 `docs/outer_observable_proxy_round12_20260917.json`、
 `docs/outer_reuse_headroom_round12_20260917.json`。
+
+## WKB-corrected early-tail handoff boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+Oracle C 给出了 frozen tail 的一阶边界修正
+`transfer^2 *= 1 + sin(2 theta_handoff) / exp(z_handoff)`。候选将 tensor
+Cartesian propagation 的 `z_tail` 从 5 提前到 4，并在 standalone kernel twin
+中应用该修正；production solver 未修改。
+
+### Focused evidence
+
+- 当前 HEAD `b0cdf54`、default、Numba=2、BLAS=1、workers=1；本轮 focused
+  accuracy/runtime 使用 5 warm repeats，candidate/kernel median ratio
+  为 `0.708`，约减少 29% propagation kernel 时间。
+- 与同一 native grid 的独立 Prüfer z=10 oracle 比较：现行 z=5 baseline 的
+  DN 相对差为 `5.21e-6`，candidate z=4 的 DN 相对差为 `7.40e-3`；candidate
+  spectrum 相对误差 p50/p95/max 为 `1.292e-2/1.833e-2/2.407e-2`。
+- candidate 相对 production z=5 的 spectrum p50/p95/max 为
+  `1.291e-2/1.832e-2/2.391e-2`；这不是可接受的舍入级变化，且已在 focused
+  accuracy gate 失败，因此不进入 named/Sobol/full-grid 认证。
+- 首次 prototype smoke 曾暴露缺失 endpoint assembly；修正后重跑，当前正式
+  artifact 使用完整中间/末端 assembly，错误不再来自装配缺口。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。Oracle C 的一阶修正
+不足以把 handoff 提前到 z=4；不继续调 z_tail 或同一 correction，转向真正的
+nonoscillatory phase/carrier prototype，并保持 production `z_tail=5`。
+
+Artifact（绑定当前 HEAD `b0cdf549cb0d9b2026a3f51fa3bfa67b81f5e695`）：
+`docs/wkb_tail_handoff_round13_20260917.json`。

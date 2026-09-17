@@ -22,6 +22,10 @@ fresh observable-aware outer reuse 也已完成：强制复用可降低目标工
 `23–27%`，但 spectrum 最大偏差为 `1.05e-3–1.55e-2 dex`，DN-only proxy 不足以
 放行；不再继续单一阈值调参。
 
+Oracle C 一阶 tail correction 的 z=4 early-handoff standalone 也已拒绝：kernel
+约快 29%，但 default spectrum p95 约 `1.83e-2`、DN relative `7.4e-3`；下一步
+只研究更完整的 nonoscillatory carrier/phase prototype，不调同一 correction。
+
 以下为历史阶段记录：
 
 已完成 Phase A 测试去重审计与 Phase B/C 的本地实现：compatibility 五版本只跑轻量 smoke，3.11 承担一次 canonical regression，static/package/Cobaya 分离；默认 Numba=2、BLAS=1、reference/oracle workers=1。benchmark 脚本已统一低压力默认值并记录资源 telemetry，主要参数/参考扫描入口已增加 `--threads` 与外层并行时的内层单线程保护。oracle tail 脚本新增 commit/schema/reference-version 绑定的 cache key、逐 z_tail 原子 checkpoint 与 `--resume`；default 完整 76 点 Stage B 已完成，Stage C 已以 low-T/high-T/stiff 各 8 点最小网格完成并记录到 `docs/oracle_tail_convergence_stageC_min8.json`。default full-grid tail systematic `3.6295e-3` 且非单调；Stage C 三点仍为 oracle-sensitive，正式 tail correction 仍未放行。新增有限 phase-window Oracle B 原型后，四点最大 z=5→7 observable 变化为 `3.927e-3–6.897e-3`，证明 handoff 仍敏感但未形成独立 truth anchor，候选不晋升。

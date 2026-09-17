@@ -1107,3 +1107,16 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS OBSERVABLE-AWARE DIAGNOSTIC`。
 
 Artifacts：`docs/outer_observable_proxy_round12_20260917.json`、
 `docs/outer_reuse_headroom_round12_20260917.json`。
+
+## Current session update: 2026-09-17 (WKB early-tail handoff)
+
+- [x] fresh HEAD `b0cdf54` 上完成 standalone z=4 early-tail kernel twin；修正
+  endpoint assembly 后重新运行。
+- [x] candidate kernel median ratio `0.708`，但 default 对 Prüfer z=10 oracle 的
+  spectrum p50/p95/max 为 `1.292e-2/1.833e-2/2.407e-2`，DN relative `7.405e-3`；
+  当前 z=5 baseline DN relative 为 `5.214e-6`。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。一阶 WKB tail
+correction 不足以支撑 z=4 handoff，production 未修改。
+
+Artifact：`docs/wkb_tail_handoff_round13_20260917.json`。

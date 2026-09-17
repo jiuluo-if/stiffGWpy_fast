@@ -1,0 +1,56 @@
+{
+  "experiment": "standalone_wkb_corrected_early_tail_handoff",
+  "production_path_changed": false,
+  "commit": "b0cdf549cb0d9b2026a3f51fa3bfa67b81f5e695",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "settings": {
+    "z_tail": [
+      4.0
+    ],
+    "cases": "default",
+    "repeats": 5,
+    "threads": 2,
+    "oracle_z_tail": 10.0,
+    "out": "docs/wkb_tail_handoff_round13_20260917.json"
+  },
+  "records": [
+    {
+      "case": "default",
+      "z_tail": 4.0,
+      "repeats": 5,
+      "baseline_median_ms": 2.109299999574432,
+      "candidate_median_ms": 1.4923999988241121,
+      "candidate_over_baseline": 0.7075333044731501,
+      "spectrum_relative": {
+        "p50": 0.012909894465198107,
+        "p95": 0.018323398353216287,
+        "max": 0.023905058783003683,
+        "n": 76
+      },
+      "baseline_vs_oracle": {
+        "p50": 3.795322399237458e-05,
+        "p95": 0.0008337653776249445,
+        "max": 0.003283435617353933,
+        "n": 76
+      },
+      "candidate_vs_oracle": {
+        "p50": 0.012924983127836805,
+        "p95": 0.018329070780990386,
+        "max": 0.02406858601850158,
+        "n": 76
+      },
+      "DN_base": 1.2182619915169081e-08,
+      "DN_candidate": 1.2092470725557295e-08,
+      "DN_relative": 0.00739981959870047,
+      "DN_oracle": 1.2182683439985099e-08,
+      "DN_base_vs_oracle_relative": 5.214353334434396e-06,
+      "DN_candidate_vs_oracle_relative": 0.007404995366760906,
+      "baseline_digest": "7647644fc23fffcf205a5a7a088c0d942b4cef8789a6b121c6d392a521d19eac",
+      "candidate_digest": "86a7bad748a7aead691a5c26f386b963e5c3e5761bf7abba4a36fec2de1acdbe"
+    }
+  ]
+}
