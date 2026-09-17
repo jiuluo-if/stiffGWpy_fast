@@ -649,3 +649,41 @@ Prüfer Oracle 对照与显式 guard。
 
 四份 profile 均记录 current HEAD、25 repeats、线程与 BLAS 配置；tensor
 propagation 仍是首要速度瓶颈。
+
+## Consolidated standalone rejection record (2026-09-17, HEAD 85cbfc5)
+
+本次整理将工作区中尚未提交的实验脚本和 artifacts 统一纳入审计范围。所有
+standalone 候选都未修改 production path，代码 SHA、Numba/workqueue=2、BLAS=1、
+reference workers=1 和重复次数写入对应 JSON。
+
+### WKB carrier / block transfer
+
+预积分 WKB carrier 在 `z_match=3.625` 的四 regime DN proxy 为
+`1.497e-4–1.843e-4`，但 candidate 只替代 propagation 后段；结合当前 fresh
+total profile，不能达到稳定 10% total runtime 改善，且尚无 Oracle A/B/C full-grid
+认证。`z_match=3.75` 的 proxy 为 `8.45e-5–1.07e-4`，仍不足以抵消未认证和总耗时
+约束。block transfer 在 block 4/6/8 的振幅误差与速度折衷未满足 production gate。
+结论：`REJECTED FOR PRODUCTION`，保留为 reference-only 研究记录。
+
+### Constant-radiation closed form
+
+由 `sigma=4/3` 推导的 standalone map 满足辐射近似下的闭式方程，但真实背景并非
+全段常系数。`z_match=3.75`、四命名 regime、25 warm repeats 的最大振幅误差为
+default `1.691e-2`、high-T `6.188e-3`、stiff `1.856e-2`、high-kappa `1.811e-2`；
+candidate propagation 比 baseline 慢 `10.9–17.5%`。结论：数学近似和 runtime 均不合格，
+`REJECTED FOR PRODUCTION`，无 fallback。
+
+### Estimator boundary
+
+当前 estimator coverage artifact 在 9 个已有点上对同一 native interpolant 内部
+诊断可显示 coverage=1，但真实 nested native-node 对照的历史记录在多 regime
+出现 `false_safe=true`，且部分 `E_nested` 比独立 reference actual error 小数个
+数量级。因此不能晋升为科研 error estimator；必须继续以独立 native solves 和
+Oracle A/B/C 报告不确定度。
+
+### Current precision/speed boundary
+
+fresh Oracle C true-error 复核显示 default/high-T/stiff/high-kappa 的 deep-anchor
+相对差约为 `5.21e-6/2.24e-5/3.35e-6/2.45e-5`，low-T 为 `1.72e-4`；当前真正的
+速度热点仍是 tensor propagation，现有候选均未同时满足 full-grid 独立精度与
+稳定总耗时突破条件。生产 solver 与 physical guard 语义保持不变。

@@ -1,0 +1,82 @@
+{
+  "commit": "85cbfc50653e8d11dd3a1398a4496fc9d0a345d0",
+  "experiment": "wkb_carrier_numba_standalone_spike",
+  "production_path_changed": false,
+  "records": [
+    {
+      "candidate_median_ms": 1.1438999999882071,
+      "candidate_over_exact": 0.9485074627467859,
+      "candidate_p95_ms": 1.6942400000516495,
+      "case": "default",
+      "exact_median_ms": 1.2059999999110005,
+      "exact_p95_ms": 1.3871799999833456,
+      "max_amplitude_rel": 0.000807263399042632,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0007003821577782104
+    },
+    {
+      "candidate_median_ms": 1.04940000028364,
+      "candidate_over_exact": 0.9319715809754395,
+      "candidate_p95_ms": 1.6889799999262323,
+      "case": "highT",
+      "exact_median_ms": 1.126000000112981,
+      "exact_p95_ms": 1.393220000227302,
+      "max_amplitude_rel": 0.000663914495393183,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0006574628335300711
+    },
+    {
+      "candidate_median_ms": 1.1471000002529763,
+      "candidate_over_exact": 0.9624129544265116,
+      "candidate_p95_ms": 1.5788000001521134,
+      "case": "stiff",
+      "exact_median_ms": 1.1918999998670188,
+      "exact_p95_ms": 1.393260000077134,
+      "max_amplitude_rel": 0.0006535272899859595,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0006529408454823237
+    },
+    {
+      "candidate_median_ms": 1.0908999997809588,
+      "candidate_over_exact": 0.938570076357452,
+      "candidate_p95_ms": 1.5608400000928662,
+      "case": "high_kappa",
+      "exact_median_ms": 1.162300000032701,
+      "exact_p95_ms": 1.2431600001036713,
+      "max_amplitude_rel": 0.0006650521138119728,
+      "n_modes": 77,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0006573765144008512
+    }
+  ],
+  "resource": {
+    "affinity": [],
+    "blas_threads": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "concurrent_processes": 1,
+    "logical_cpu_count": 32,
+    "numba": "0.67.0",
+    "numba_threading_layer": "workqueue",
+    "numba_threads": 2,
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "scipy": "1.17.1",
+    "threads_argument": 2,
+    "workers": 1
+  },
+  "settings": {
+    "out": "docs\\wkb_carrier_endpoint_z35_round_20260917.json",
+    "repeats": 25,
+    "z_match": 3.5,
+    "z_tail": 5.0
+  }
+}

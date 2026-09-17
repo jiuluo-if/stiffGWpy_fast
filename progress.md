@@ -551,4 +551,26 @@
 - raw `x/y` Riccati `REJECTED FOR PRODUCTION`；不进入 runtime A/B、API 或 fallback。
 - 当前 propagation/tensor solve 仍是速度首攻；tail、PCHIP 和 assembly 暂无理由优先。
 - 下一项 phase 研究必须改为无极点的 complex-log-derivative/nonoscillatory
-  carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
+carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
+
+## Session: 2026-09-17 (phase/WKB and closed-form branch consolidation)
+
+- 以当前 HEAD `85cbfc50653e8d11dd3a1398a4496fc9d0a345d0` 重新 fetch，确认远端
+  `fast_v0.2` 同 SHA；整理本轮 standalone scripts 与 JSON artifacts，生产
+  `fast_sgwb` 路径未改变。
+- WKB carrier 在 `z_match=3.625/3.75/4.0` 的四 regime 对照中，`z=3.625`
+  的 DN proxy 为 `1.50e-4..1.84e-4`，但仅减少后段传播，按 fresh total profile
+  预计总收益不足 10%；其余 match 点同样未形成跨 regime 总体突破。
+- nested native-frequency 复核确认已有局部 estimator 在多 regime 上
+  `false_safe=true`，不能作为独立 error bound；同插值器内的 PCHIP/Gauss 对照
+  只保留为诊断。
+- Oracle C WKB 当前 HEAD fresh true-error：default/high-T/stiff/high-kappa
+  对深锚点分别约 `5.21e-6/2.24e-5/3.35e-6/2.45e-5`，low-T 约 `1.72e-4`；
+  precision 首要剩余风险仍是 low-T/transition 与 tail oracle uncertainty。
+- 新假设“辐射主导段常系数闭式 transfer map”在 `z_match=3.75` 四 regime
+  的最大振幅误差为 `6.19e-3..1.86e-2`，传播 median 反而增加约 `11.0–17.5%`；
+  `REJECTED FOR PRODUCTION`。
+- 完整整理的 artifacts 包括 WKB、block-transfer、radiation closed-form、
+  true-error、outer-reuse、residual decomposition、validation 与 estimator
+  复核文件；资源记录为 Numba/workqueue=2、BLAS=1、reference workers=1（涉及
+  25-repeat standalone 对照），无 silent fallback 或 API 变化。

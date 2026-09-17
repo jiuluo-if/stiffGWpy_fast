@@ -1,0 +1,86 @@
+{
+  "commit": "85cbfc50653e8d11dd3a1398a4496fc9d0a345d0",
+  "experiment": "wkb_carrier_numba_standalone_spike",
+  "production_path_changed": false,
+  "records": [
+    {
+      "candidate_median_ms": 1.0782999997900333,
+      "candidate_over_exact": 0.8920416941729782,
+      "candidate_p95_ms": 1.5089400000761084,
+      "case": "default",
+      "exact_median_ms": 1.2087999998584564,
+      "exact_p95_ms": 1.581500000247615,
+      "max_amplitude_rel": 0.0007813574848945393,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.00043492878570345066,
+      "tail_integral_rel": 0.0003709274634452848
+    },
+    {
+      "candidate_median_ms": 1.1220999999750347,
+      "candidate_over_exact": 0.9610311751068848,
+      "candidate_p95_ms": 1.3685800000530435,
+      "case": "highT",
+      "exact_median_ms": 1.1675999999170017,
+      "exact_p95_ms": 1.685960000122577,
+      "max_amplitude_rel": 0.0003173441280450177,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0003172260208609929,
+      "tail_integral_rel": 0.0003600192989340492
+    },
+    {
+      "candidate_median_ms": 1.3710999996874307,
+      "candidate_over_exact": 0.9751084556746331,
+      "candidate_p95_ms": 2.1583399997325614,
+      "case": "stiff",
+      "exact_median_ms": 1.4061000001674984,
+      "exact_p95_ms": 2.2947800001020364,
+      "max_amplitude_rel": 0.0003922147002509365,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.000361441217918541,
+      "tail_integral_rel": 0.0003678607975708326
+    },
+    {
+      "candidate_median_ms": 1.106799999888608,
+      "candidate_over_exact": 0.905135753878732,
+      "candidate_p95_ms": 1.696720000109053,
+      "case": "high_kappa",
+      "exact_median_ms": 1.2228000000504835,
+      "exact_p95_ms": 1.8196599999100722,
+      "max_amplitude_rel": 0.00042254095359748077,
+      "n_modes": 77,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.00034238079888920814,
+      "tail_integral_rel": 0.0003644853189006098
+    }
+  ],
+  "resource": {
+    "affinity": [],
+    "blas_threads": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "concurrent_processes": 1,
+    "logical_cpu_count": 32,
+    "numba": "0.67.0",
+    "numba_threading_layer": "workqueue",
+    "numba_threads": 2,
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "scipy": "1.17.1",
+    "threads_argument": 2,
+    "workers": 1
+  },
+  "settings": {
+    "out": "docs\\wkb_carrier_preintegrated_dn_z35_round_20260917.json",
+    "repeats": 25,
+    "z_match": 3.5,
+    "z_tail": 5.0
+  }
+}

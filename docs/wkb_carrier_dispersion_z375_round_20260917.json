@@ -1,0 +1,86 @@
+{
+  "commit": "85cbfc50653e8d11dd3a1398a4496fc9d0a345d0",
+  "experiment": "wkb_carrier_numba_standalone_spike",
+  "production_path_changed": false,
+  "records": [
+    {
+      "candidate_median_ms": 1.1653999999907683,
+      "candidate_over_exact": 0.9304590816866926,
+      "candidate_p95_ms": 1.5218800002912753,
+      "case": "default",
+      "exact_median_ms": 1.2525000001915032,
+      "exact_p95_ms": 1.4557199998307624,
+      "max_amplitude_rel": 0.000461113915029239,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.00023560548897227953,
+      "tail_integral_rel": 8.450593082541835e-05
+    },
+    {
+      "candidate_median_ms": 1.0667999999895983,
+      "candidate_over_exact": 0.939001848281601,
+      "candidate_p95_ms": 1.6022999996494032,
+      "case": "highT",
+      "exact_median_ms": 1.1361000001670618,
+      "exact_p95_ms": 1.676799999677314,
+      "max_amplitude_rel": 0.00016147121215689977,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0001486742336179427,
+      "tail_integral_rel": 9.220057011141258e-05
+    },
+    {
+      "candidate_median_ms": 1.17950000003475,
+      "candidate_over_exact": 0.8827271367027991,
+      "candidate_p95_ms": 1.7401400000380818,
+      "case": "stiff",
+      "exact_median_ms": 1.3361999999688123,
+      "exact_p95_ms": 1.8850200002816562,
+      "max_amplitude_rel": 0.0002466179445036939,
+      "n_modes": 76,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.0001805356563682751,
+      "tail_integral_rel": 9.206526724243052e-05
+    },
+    {
+      "candidate_median_ms": 1.1096000002908113,
+      "candidate_over_exact": 0.8976620017534861,
+      "candidate_p95_ms": 1.37799999984054,
+      "case": "high_kappa",
+      "exact_median_ms": 1.236099999914586,
+      "exact_p95_ms": 1.8245400000523655,
+      "max_amplitude_rel": 0.000395356582563136,
+      "n_modes": 77,
+      "numerical_failure_count": 0,
+      "p99_amplitude_rel": 0.00022249190610815526,
+      "tail_integral_rel": 0.00010657224372106125
+    }
+  ],
+  "resource": {
+    "affinity": [],
+    "blas_threads": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "concurrent_processes": 1,
+    "logical_cpu_count": 32,
+    "numba": "0.67.0",
+    "numba_threading_layer": "workqueue",
+    "numba_threads": 2,
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "scipy": "1.17.1",
+    "threads_argument": 2,
+    "workers": 1
+  },
+  "settings": {
+    "out": "docs\\wkb_carrier_dispersion_z375_round_20260917.json",
+    "repeats": 25,
+    "z_match": 3.75,
+    "z_tail": 5.0
+  }
+}
