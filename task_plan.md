@@ -262,3 +262,6 @@ Phase 3: Implementation and evidence-driven optimization
   digest 不一致且 speed ratio `0.960..1.003`，候选 rejected。
 - [ ] 研究只缓存不影响最终 `f` digest 的 background/primitive 中间量；先建立逐位
   输出契约，再做目标 regime runtime A/B。
+
+- [x] 完成 `derived_param` 单次 expansion 局部缓存 A/B；四个 regime digest 一致但
+  收益最高约 1.9%，按 >5% 门槛拒绝并撤回正式实现。

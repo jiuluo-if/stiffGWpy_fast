@@ -1,0 +1,126 @@
+{
+  "commit": "a9564eab3f0203a3d57dac46127047142ee30059",
+  "threads": 2,
+  "rows": [
+    {
+      "case": "lowT",
+      "reps": 25,
+      "baseline_median_s": 0.005689599999641359,
+      "candidate_median_s": 0.005668700000569515,
+      "speed_ratio_candidate_over_baseline": 0.9963266312090198,
+      "digest_equal": true,
+      "baseline": {
+        "elapsed_s": 0.005895899999813992,
+        "digest_Nv": "01f10b5a09fed7d436c47c650b700597d0a4908397c9889025a3cc108b96ea69",
+        "digest_sigma": "a9c41c179601f43e60ba1fe44da23d7c3848ecd03ce6e0bf284a775d9e2cf4a4",
+        "digest_f_hor": "3d140fa799515e74c81d0ef10075b0c3ba1e39b3bd0819435e210bf5641edf74",
+        "digest_spectrum": "50f8033d88cfc1927206314219bb6e60727c3673817f36d61802b38837232d2c",
+        "digest_DN_gw": "5cb2de565ca4c66245a0f8f8bbd77d1225ecc5364ca649ef3d1671e13eddbfa0",
+        "DN_gw": 5.3114602833937826e-08,
+        "n_freq": 76,
+        "result_type": "LCDM_SG"
+      },
+      "candidate": {
+        "elapsed_s": 0.005547200000364683,
+        "digest_Nv": "01f10b5a09fed7d436c47c650b700597d0a4908397c9889025a3cc108b96ea69",
+        "digest_sigma": "a9c41c179601f43e60ba1fe44da23d7c3848ecd03ce6e0bf284a775d9e2cf4a4",
+        "digest_f_hor": "3d140fa799515e74c81d0ef10075b0c3ba1e39b3bd0819435e210bf5641edf74",
+        "digest_spectrum": "50f8033d88cfc1927206314219bb6e60727c3673817f36d61802b38837232d2c",
+        "digest_DN_gw": "5cb2de565ca4c66245a0f8f8bbd77d1225ecc5364ca649ef3d1671e13eddbfa0",
+        "DN_gw": 5.3114602833937826e-08,
+        "n_freq": 76,
+        "result_type": "LCDM_SG"
+      }
+    },
+    {
+      "case": "highT",
+      "reps": 25,
+      "baseline_median_s": 0.008448199999293138,
+      "candidate_median_s": 0.008290300000226125,
+      "speed_ratio_candidate_over_baseline": 0.9813096281953286,
+      "digest_equal": true,
+      "baseline": {
+        "elapsed_s": 0.008596200000283716,
+        "digest_Nv": "47d81772c3463ab9b7f23626de8996880320905054b9f5f0e3d6880290a4fc45",
+        "digest_sigma": "0af25501fffb4bb859814e604ef00fab8802378ba3831832ba37b0f7cad5d7ab",
+        "digest_f_hor": "9c68edf7f2ec833300beeb64e285210eb7c2cfbc18e8a6f6d8ea4d57aca54641",
+        "digest_spectrum": "cce0defb8cb36661d16cb6a254e0494ac337aa38e61a367730efb173abeebc62",
+        "digest_DN_gw": "5d864508c96ed892666f834a0be79cf25a2ed92f6a76c24eb9f235afe006b13a",
+        "DN_gw": 0.05643308427141758,
+        "n_freq": 76,
+        "result_type": "LCDM_SG"
+      },
+      "candidate": {
+        "elapsed_s": 0.008074700000179291,
+        "digest_Nv": "47d81772c3463ab9b7f23626de8996880320905054b9f5f0e3d6880290a4fc45",
+        "digest_sigma": "0af25501fffb4bb859814e604ef00fab8802378ba3831832ba37b0f7cad5d7ab",
+        "digest_f_hor": "9c68edf7f2ec833300beeb64e285210eb7c2cfbc18e8a6f6d8ea4d57aca54641",
+        "digest_spectrum": "cce0defb8cb36661d16cb6a254e0494ac337aa38e61a367730efb173abeebc62",
+        "digest_DN_gw": "5d864508c96ed892666f834a0be79cf25a2ed92f6a76c24eb9f235afe006b13a",
+        "DN_gw": 0.05643308427141758,
+        "n_freq": 76,
+        "result_type": "LCDM_SG"
+      }
+    },
+    {
+      "case": "stiff",
+      "reps": 25,
+      "baseline_median_s": 0.008833900000354333,
+      "candidate_median_s": 0.008756600000197068,
+      "speed_ratio_candidate_over_baseline": 0.9912496179315857,
+      "digest_equal": true,
+      "baseline": {
+        "elapsed_s": 0.00918900000033318,
+        "digest_Nv": "ae3b31ab3f2ae89d0d0b619fe6eec5e2f64037f889773a9f7e2b7b46792665b9",
+        "digest_sigma": "0b80084b99a44d69d0e14d511967e72e7867de54a61f7c60cf0f69fa2c1fc9e8",
+        "digest_f_hor": "fb7f2e339956690f854bb631821eaccd699dbaa3c676e45844608abc2f2956fb",
+        "digest_spectrum": "ea4acdb22e890c8c38cbd3aa7d5a0d28de9bb2d5c8c0f2e96c01758e574b89a5",
+        "digest_DN_gw": "0cc970e131c6aba3fde8e659cff0f9129d8142bf70db94ffb5be6efc5ccad611",
+        "DN_gw": 0.014984335009443728,
+        "n_freq": 76,
+        "result_type": "LCDM_SG"
+      },
+      "candidate": {
+        "elapsed_s": 0.00922179999997752,
+        "digest_Nv": "ae3b31ab3f2ae89d0d0b619fe6eec5e2f64037f889773a9f7e2b7b46792665b9",
+        "digest_sigma": "0b80084b99a44d69d0e14d511967e72e7867de54a61f7c60cf0f69fa2c1fc9e8",
+        "digest_f_hor": "fb7f2e339956690f854bb631821eaccd699dbaa3c676e45844608abc2f2956fb",
+        "digest_spectrum": "ea4acdb22e890c8c38cbd3aa7d5a0d28de9bb2d5c8c0f2e96c01758e574b89a5",
+        "digest_DN_gw": "0cc970e131c6aba3fde8e659cff0f9129d8142bf70db94ffb5be6efc5ccad611",
+        "DN_gw": 0.014984335009443728,
+        "n_freq": 76,
+        "result_type": "LCDM_SG"
+      }
+    },
+    {
+      "case": "high_kappa",
+      "reps": 25,
+      "baseline_median_s": 0.008573600000090664,
+      "candidate_median_s": 0.00855539999975008,
+      "speed_ratio_candidate_over_baseline": 0.9978772044018391,
+      "digest_equal": true,
+      "baseline": {
+        "elapsed_s": 0.008282499999950232,
+        "digest_Nv": "9762d95c0a274a26433115d540bfd33ce1a2b4ad14bf44da72b377abafa0ccba",
+        "digest_sigma": "c9a0d6c9d762ddf47310ccc83d0076cdbc3e60b627ee9bbfc6b1ca401085cab8",
+        "digest_f_hor": "79c50467f71ac33a72da8e86dc603651461df3859d873755308ba5ff1727ad4a",
+        "digest_spectrum": "2dfbbfa1d3d98efd3b27c87cc649c8b5d5783798f1ab8daf57826d3db9cb6b98",
+        "digest_DN_gw": "7e80866e2e2e1d6fa7027a272e81100583be0c6cab13f8febfc6be7c039ddf9d",
+        "DN_gw": 0.22570645394976807,
+        "n_freq": 77,
+        "result_type": "LCDM_SG"
+      },
+      "candidate": {
+        "elapsed_s": 0.008721299999706389,
+        "digest_Nv": "9762d95c0a274a26433115d540bfd33ce1a2b4ad14bf44da72b377abafa0ccba",
+        "digest_sigma": "c9a0d6c9d762ddf47310ccc83d0076cdbc3e60b627ee9bbfc6b1ca401085cab8",
+        "digest_f_hor": "79c50467f71ac33a72da8e86dc603651461df3859d873755308ba5ff1727ad4a",
+        "digest_spectrum": "2dfbbfa1d3d98efd3b27c87cc649c8b5d5783798f1ab8daf57826d3db9cb6b98",
+        "digest_DN_gw": "7e80866e2e2e1d6fa7027a272e81100583be0c6cab13f8febfc6be7c039ddf9d",
+        "DN_gw": 0.22570645394976807,
+        "n_freq": 77,
+        "result_type": "LCDM_SG"
+      }
+    }
+  ]
+}

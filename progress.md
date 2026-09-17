@@ -717,3 +717,16 @@ Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`；若继续 hybrid，�
 Decision: `REJECTED FOR PRODUCTION`。即使科学量数值相同，输出契约要求 digest 完全
 一致；该候选不能作为准备层去重。下一候选应转向 background/primitive 的可证明缓存，
 并继续保留 low-T 独立检查。
+
+## Session: 2026-09-17 (local derived-param cache A/B)
+
+- 当前 HEAD `a9564eab3f0203a3d57dac46127047142ee30059` 的 fresh profile 显示，
+  `gen_expansion` 一次调用内重复读取 `derived_param`；旧实现测试计数为 9 次。
+- standalone `scripts/benchmark_derived_param_local_cache.py` 以 25-repeat A/B 覆盖
+  low-T、high-T、stiff、high-kappa；Nv、sigma、f_hor、spectrum、DN_gw digest
+  全部逐位一致。
+- candidate/baseline warm median ratio 为 `0.9963/0.9813/0.9912/0.9979`，最大稳定
+  收益约 1.9%，未达到 >5% runtime acceptance gate。
+
+Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`。正式实现已撤回，原始
+A/B 结果保留在 `docs/derived_param_local_cache_round_20260917.json`。

@@ -834,3 +834,21 @@ median ratio 为 `0.960..1.003`，不满足稳定 >5% runtime gate。
 本项目的准备层去重要求输出 digest 完全一致，近似数值相等不足以接受。候选状态为
 `REJECTED FOR PRODUCTION`，原始数据为 `docs/outer_goal_grid_reuse_round_20260917.json`
 与 `docs/outer_static_invariants_round_20260917.json`。
+
+## Local derived-param cache (2026-09-17, standalone)
+
+当前 HEAD 的 fresh profile 显示 `gen_expansion` 内多次访问 `derived_param`。候选只在
+单次 expansion 调用内把 property 结果绑定到局部变量，不跨 outer iteration 缓存，因而
+不改变 DN_eff 更新边界。25-repeat A/B 覆盖 low-T/high-T/stiff/high-kappa，输出
+`Nv/sigma/f_hor/log10OmegaGW/DN_gw` digest 全部一致。
+
+| regime | candidate/baseline warm median | digest | decision |
+|---|---:|---|---|
+| low-T | `0.9963` | equal | reject: <5% |
+| high-T | `0.9813` | equal | reject: <5% |
+| stiff | `0.9912` | equal | reject: <5% |
+| high-kappa | `0.9979` | equal | reject: <5% |
+
+该优化仅带来噪声范围内至约 1.9% 的收益，不能满足本轮速度线；正式代码已撤回，
+原始证据保留于 `docs/derived_param_local_cache_round_20260917.json`。原型入口已
+经过 Ruff 导入门禁复核，避免重现此前 `I001` CI 原因。
