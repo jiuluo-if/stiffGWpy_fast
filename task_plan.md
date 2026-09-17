@@ -255,6 +255,9 @@ Phase 3: Implementation and evidence-driven optimization
   best runtime gain 仅 `4.44%` 且其他目标点变慢，REJECTED，不改 production。
 - [ ] 下一候选继续从 fresh profile 的 allocation/copy 或 tensor-kernel 结构中寻找可证明
   的收益；不得重复已拒绝的 Psi、derived-param、goal-grid 或固定 z 解析分支实验。
+- [x] 三对角恒定 `aa/cc` buffer standalone production-candidate A/B：digest 全一致，
+  high-T/stiff 收益 `3.95%/2.67%`，high-kappa 退化 `3.85%`，REJECTED 并回退；测试与
+  benchmark 线程环境改为独立进程启动时固定，避免复现 Numba 环境冲突。
 
 - [x] 完成一阶绝热性触发 carrier prototype；`eps=3e-4` 精度可接受但无稳定 >5%
   runtime 收益，`eps>=1e-3` 误差或速度不合格，故 rejected。

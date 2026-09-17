@@ -909,3 +909,21 @@ median ratio 为 default `0.9767`、high-T `1.0230`、stiff `1.0239`、high-kapp
 Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`。不能用单个 high-kappa
 结果越过 `>5%` 门槛，也没有必要为此做 oracle promotion；原始 artifacts 为
 `docs/prep_kernel_no_psi*_round_20260917.json`，正式实现未修改。
+
+## Constant tridiagonal buffers (2026-09-17)
+
+`prep_kernel` 的 natural-cubic spline linear solve 中 `aa` 与 `cc` 每个元素恒等于 1。
+候选删除这两个 allocation，并将前消元/回代中的乘法改为常数专用形式。focused tests
+在正确的固定线程独立进程中通过；目标三 regime 25-repeat 的逐字段 output digest
+`f/log10OmegaGW/DN_gw/g2/w2` 全部一致。candidate/baseline total median ratio 为
+high-T `0.9605`、stiff `0.9733`、high-kappa `1.0385`，故最高稳定收益不足 5%，且
+high-kappa 退化，candidate 已回退。此项不需要独立 oracle promotion，因为未进入
+production 且没有数值差异；原始数据见 `docs/profile_tridiag_candidate_*.json`。
+
+## Test-process resource isolation (2026-09-17)
+
+一次本地 focused test 失败的根因是测试启动时未固定 `NUMBA_NUM_THREADS`，之后测试代码
+改变环境，Numba 在已初始化线程池后拒绝重新加载线程数。不是 solver candidate 的数值失败。
+用启动前 `NUMBA_NUM_THREADS=2`, `NUMBA_THREADING_LAYER=workqueue`, `FAST_THREADS=2`
+重跑后 `54 passed, 3 deselected`；正式 benchmark 单独使用 16/16 进程。CI workflow
+不包含中文注释/编码语言门禁，远端全矩阵保持 green，避免该类环境错误与旧门禁错误混淆。

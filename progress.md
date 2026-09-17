@@ -783,3 +783,20 @@ Decision: `REJECTED FOR PRODUCTION / PROTOTYPE DEFERRED`。当前 eligible work 
 Decision: `REJECTED FOR PRODUCTION`；最好 high-kappa 也只有约 `4.44%`，未达到稳定
 `>5%` runtime gate，且其余目标区间变慢。证据保留于
 `docs/prep_kernel_no_psi_round_20260917.json` 与四个 regime artifact；不进入正式代码。
+
+## Session: 2026-09-17 (constant tridiagonal buffers)
+
+- fresh round-4 profile 后检查 `prep_kernel` 的三对角 spline solve；`aa`/`cc` 全程为常数
+  1，建立候选以去除两 个只读常数 buffer，同时保留其余计算路径。
+- focused tests（进程启动即固定 `NUMBA_NUM_THREADS=2`）`54 passed, 3 deselected`；
+  high-T/stiff/high-kappa 25-repeat candidate total median 为 `5.995/6.606/6.043 ms`，
+  与 fresh baseline `6.241/6.787/5.818 ms` 的 ratio 为 `0.9605/0.9733/1.0385`。
+  三个 regime 的 `f/log10OmegaGW/DN_gw/g2/w2` digest 均一致。
+
+Decision: `REJECTED FOR PRODUCTION`；high-T 约 `3.95%` 改善、stiff 约 `2.67%` 改善，
+high-kappa 反而变慢约 `3.85%`，未达到稳定 `>5%`。候选 patch 已回退，candidate profile
+artifact 保留作 rejected evidence。
+
+本轮另发现一次本地测试命令环境错误：测试进程未在启动前固定 Numba 线程，随后测试 fixture
+改变环境导致 Numba 已初始化线程与环境值冲突。以后测试与 formal benchmark 使用独立进程，
+并在启动前分别固定 `NUMBA=2/FAST=2` 或 `NUMBA=16/FAST=16`；远端 CI 当前 run 已验证通过。
