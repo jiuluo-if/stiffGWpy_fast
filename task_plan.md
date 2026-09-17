@@ -384,3 +384,13 @@ Phase 3: Implementation and evidence-driven optimization
   gate，保留失败 artifact 与精度边界。
 - [ ] 下一候选必须保持原始浮点运算顺序，或提出新的 standalone 数学依据；不再
   直接推广预计算乘积到正式 kernel。
+
+## Round 20: phase loop-state reuse (2026-09-17)
+
+- [x] fresh stage profile 与 high-T/stiff/high-kappa outer iteration 归因完成。
+- [x] standalone exact twin 通过 kernel/full-outer bitwise、spectrum/DN、failure
+  gate；2-thread 50-repeat default/high-kappa full-outer 改善 `7.4%/8.6%`。
+- [x] 16/20-thread formal A/B 无明显退化，确认正式资源下收益受 preparation
+  层限制；不把候选宣称为 10% breakthrough。
+- [x] 接入 production 的最小 loop-state reuse patch；待新 HEAD post-commit
+  benchmark、全门禁和 artifact provenance 复核。

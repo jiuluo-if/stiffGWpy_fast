@@ -1231,3 +1231,31 @@ TDD contract：`1 passed`；artifact：
 `REJECTED FOR PRODUCTION / RETAINED AS FAILED SPIKE`。候选局部 kernel 速度有改善，
 但所有 regime 均未保持 bitwise digest，且本轮没有理由进入独立 oracle promotion；
 production path 未修改。下一候选必须避免仅改变浮点运算顺序。
+
+## Session: 2026-09-17 (round20 phase loop-state reuse)
+
+### Actions Taken
+
+- fresh fetch 后确认 HEAD `6c35c1e`；重新读取 round19 rejection、round17/20
+  profiles、outer static-invariant 与 validation artifacts。
+- fresh 25-repeat stage profile：default/high-T/stiff/high-kappa/lowT total
+  `6.620/9.390/9.860/9.930/6.260 ms`；kernel `2.440/4.670/5.010/4.700/3.000 ms`。
+- standalone twin 只复用已计算的 `zz` loop state；修正 kink endpoint 后，kernel
+  和 full outer 均完成 bitwise gate。
+
+### Test Results
+
+- kernel 25-repeat：五工况 digest、spectrum p50/p95/max、DN 全部零差；ratio
+  `0.880/0.849/0.845/0.895/0.861`。
+- full outer 50-repeat、2 threads：ratio
+  `0.926/0.997/0.976/0.914/0.956`；digest equal、failure 全为 null。
+- full outer 25-repeat、16 threads：`0.984/1.016/0.977/0.985/0.940`；20 threads：
+  `0.988/0.978/0.996/0.952/1.007`；全部 digest equal、无 failure。
+- TDD contract 与 scoped regression：`56 passed, 1 deselected`（首次未固定线程
+  的 pytest 环境冲突已按既有资源契约在干净 2-thread 进程重跑通过）。
+
+### Decision
+
+`ACCEPTED / PRODUCTION PATCH READY`。将 `while` 条件和 `z_node` 改为复用现有
+`zz`，不改变任何数值表达式；production source 仅作最小修改，随后绑定新 HEAD
+重跑 post-commit verification。

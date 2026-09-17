@@ -1614,3 +1614,49 @@ full outer runtime。
 顺序的缓存边界，不能把近似数值一致误报为严格等价。
 
 Artifact：`docs/tail_factor_cache_round19_20260917.json`。
+
+## Phase loop-state reuse (2026-09-17, candidate source HEAD 6c35c1e)
+
+### Hypothesis and scope
+
+在 `solve_kernel` 的每个 mode/interval 中，`zz = z0 + Phi_grid[k] - Phi0`
+已在进入 interval 前计算；原实现仍在 while 条件和 `z_node` 再次计算同一表达式。
+候选只复用这个 loop state，不改变 `z_mid_step`、kink 分支 endpoint、transfer
+map、assembly 或 tail expression。standalone twin 为
+`scripts/benchmark_phase_z_reuse.py`，TDD contract 为
+`tests/test_phase_z_reuse_spike.py`。
+
+### Evidence
+
+2-thread、BLAS=1、workers=1、workqueue，25-repeat kernel A/B：五工况 digest、
+spectrum p50/p95/max、DN 全部逐位相同，kernel median ratio 为
+default/high-T/stiff/high-kappa/low-T `0.880/0.849/0.845/0.895/0.861`。
+
+Full outer 50-repeat（2 threads）结果：
+
+| regime | candidate/base | digest | failure |
+|---|---:|---|---|
+| default | 0.9260 | equal | none |
+| high-T | 0.9970 | equal | none |
+| stiff | 0.9755 | equal | none |
+| high-kappa | 0.9138 | equal | none |
+| low-T | 0.9560 | equal | none |
+
+固定正式资源的 25-repeat full outer 结果同样逐位一致且无 failure：16 threads
+ratio 为 `0.984/1.016/0.977/0.985/0.940`，20 threads ratio 为
+`0.988/0.978/0.996/0.952/1.007`（default/high-T/stiff/high-kappa/low-T）。
+正式线程下收益较小，说明 Python/background preparation 已成为主要限制；未将
+kernel 局部收益夸大为全路径 10% breakthrough。
+
+### Decision
+
+`ACCEPTED / STRICT-EQUIVALENCE PRODUCTION PATCH`：这是保持原始浮点运算顺序的
+loop-state 去重，满足 bitwise、determinism、spectrum/DN、failure/guard gate，
+接入 production；不触碰 phase threshold、outer reuse 或结构性数学路径。
+
+Artifacts：
+`docs/phase_z_reuse_round20_20260917.json`、
+`docs/phase_z_reuse_outer_round20_20260917.json`、
+`docs/phase_z_reuse_outer_round20_50_20260917.json`、
+`docs/phase_z_reuse_outer_round20_t16_20260917.json`、
+`docs/phase_z_reuse_outer_round20_t20_20260917.json`。
