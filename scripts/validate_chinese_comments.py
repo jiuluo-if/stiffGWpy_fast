@@ -12,6 +12,8 @@ from pathlib import Path
 
 CODE_SUFFIXES = {".js", ".py", ".sh", ".ts", ".yaml", ".yml"}
 MACHINE_DIRECTIVES = (
+    "# -*-",
+    "# coding:",
     "# noqa",
     "# pragma:",
     "# pylint:",
