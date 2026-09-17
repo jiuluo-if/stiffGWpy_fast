@@ -55,3 +55,14 @@ solver defect.  This is reported as an honest bound, never gated away.
 The combined budget never claims to be a universal per-point error estimate when
 its dominant systematic terms are fiducial-calibrated; it reports
 `certification_status = certified-fiducial-calibrated` in that case.
+
+## Accepted preparation optimization: H2 endpoint cache
+
+The goal-grid builder now reuses only repeated scalar `H2` endpoint evaluations
+within one call. It does not cache across outer iterations, so the existing
+`DN_eff` self-consistency boundary is unchanged. A 50-repeat A/B over 13
+named/Sobol/edge points produced identical `f`, spectrum, `DN_gw`, `g2`, and
+`w2` digests; the measured spectrum and `DN_gw` deltas are p50/p95/max = 0/0/0.
+The independent Cartesian/Prüfer check remains below `2.0e-9` in `DN_gw` relative
+error on high-T, stiff, and high-kappa points. The high-kappa warm median improved
+by 6.54%; no new error-budget term is introduced.

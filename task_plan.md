@@ -265,3 +265,5 @@ Phase 3: Implementation and evidence-driven optimization
 
 - [x] 完成 `derived_param` 单次 expansion 局部缓存 A/B；四个 regime digest 一致但
   收益最高约 1.9%，按 >5% 门槛拒绝并撤回正式实现。
+- [x] 接受 H2 endpoint 函数内缓存：13 点 digest mismatch 为 0，high-kappa 50-repeat
+  runtime 改善 6.54%，Cartesian/Prüfer oracle 与 error budget 通过。

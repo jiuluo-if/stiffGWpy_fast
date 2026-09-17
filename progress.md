@@ -730,3 +730,21 @@ Decision: `REJECTED FOR PRODUCTION`。即使科学量数值相同，输出契约
 
 Decision: `REJECTED FOR PRODUCTION / DIAGNOSTIC RETAINED`。正式实现已撤回，原始
 A/B 结果保留在 `docs/derived_param_local_cache_round_20260917.json`。
+
+## Session: 2026-09-17 (H2 endpoint cache acceptance)
+
+- 当前 HEAD `6dff78ef440f9d4f8e363a7ee7f3016ebd307137` fresh 16-thread profile：
+  high-T/stiff/high-kappa total median `6.36/6.94/6.95 ms`，对应 background
+  `0.76/0.68/0.74 ms`、goal preparation `0.40/0.40/0.47 ms`。
+- 在 goal-grid 的 `H2_vec` 端点增加函数内缓存；测试先复现旧实现 4 次端点调用，
+  候选降为不超过 3 次。50-repeat、13 个 named/Sobol/edge 点 A/B 的 digest mismatch
+  为 `0/13`，spectrum 与 DN 的 candidate-baseline p50/p95/max 均为 `0`。
+- 目标 regime candidate/baseline warm median ratio：high-T `0.9838`、stiff `1.0110`、
+  high-kappa `0.9346`，即 high-kappa 稳定改善约 `6.54%`，满足 >5% 速度门槛。
+- 独立 Cartesian/Prüfer oracle：三点 DN 相对差 `8.88e-10–1.996e-9`，频谱最大相对差
+  `1.49e-7–2.73e-7`；未观察到新的 error-budget 项。13/13 输出契约比较通过，
+  因而参数空间 false-safe 计数为 `0`。
+
+Decision: `ACCEPTED FOR PRODUCTION`。该改动只缓存同一次 grid build 的纯 H2 端点值，
+不跨 outer iteration；正式实现与回归测试保留，完整 A/B 见
+`docs/h2_endpoint_cache_round_20260917.json`，oracle 见三个 `docs/h2_endpoint_oracle_*`。

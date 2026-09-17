@@ -74,6 +74,22 @@ def test_goal_oriented_freqs_keeps_transition_and_eval_nodes():
     assert np.min(np.abs(grid - m.f_re)) < 0.1
 
 
+def test_grid_independent_freqs_reuses_endpoint_h2(monkeypatch):
+    """The endpoint H2 evaluations should not repeat within one grid build."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    original = EB.H2_vec
+    calls = []
+
+    def counted(*args, **kwargs):
+        calls.append(np.asarray(args[0]).copy())
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(EB, 'H2_vec', counted)
+    FA.grid_independent_freqs(m)
+
+    assert len(calls) <= 3
+
+
 def test_breakpoint_phi_s2_is_accurate_without_dense_subgrid():
     """The Phase-A primitive uses the breakpoint grid without a global subgrid."""
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)

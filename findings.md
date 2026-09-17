@@ -852,3 +852,29 @@ median ratio 为 `0.960..1.003`，不满足稳定 >5% runtime gate。
 该优化仅带来噪声范围内至约 1.9% 的收益，不能满足本轮速度线；正式代码已撤回，
 原始证据保留于 `docs/derived_param_local_cache_round_20260917.json`。原型入口已
 经过 Ruff 导入门禁复核，避免重现此前 `I001` CI 原因。
+
+## H2 endpoint cache (2026-09-17, accepted)
+
+fresh 16-thread profile 的 current target total median 为 high-T/stiff/high-kappa
+`6.36/6.94/6.95 ms`；goal preparation 为 `0.40/0.40/0.47 ms`。`grid_independent_freqs`
+原先对 `N_inf` 的 H2 重复求值，候选在单次函数调用内用浮点 N 作键缓存，未跨 outer
+iteration，也未改变 `DN_eff` 或任何 background array 的更新顺序。
+
+50-repeat、13 个 named/Sobol/edge 点 A/B 的最终 `f/log10OmegaGW/DN_gw/g2/w2`
+digest 全部一致（mismatch `0/13`），所以 spectrum p50/p95/max 与 DN relative
+delta 均为 `0/0/0`，parameter-space false-safe `0`。目标点 runtime ratio 为：
+
+| point | candidate/baseline median | result |
+|---|---:|---|
+| high-T | `0.9838` | pass |
+| stiff | `1.0110` | neutral |
+| high-kappa | `0.9346` | pass, 6.54% faster |
+
+独立 Cartesian/Prüfer 交叉验证的 DN relative error 为 high-T/stiff/high-kappa
+`9.13e-10/1.996e-9/8.876e-10`，spectrum max relative error 为
+`1.490e-7/1.759e-7/2.728e-7`；reheating/kink 路径无新增 failure。该候选满足
+输出逐位一致、runtime >5%、精度不退，接受进入 production。
+
+原始证据：`docs/h2_endpoint_cache_round_20260917.json` 与
+`docs/h2_endpoint_oracle_highT_20260917.json`、`docs/h2_endpoint_oracle_stiff_20260917.json`、
+`docs/h2_endpoint_oracle_high_kappa_20260917.json`。
