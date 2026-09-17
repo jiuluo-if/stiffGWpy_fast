@@ -782,6 +782,11 @@ def gen_fast(m, h=0.01, kink_split=False):
     return len_inf, index_re
 
 
+def _retain_outer_background_snapshot(Nv, sigma, f_hor):
+    """Retain generation-owned arrays until the next background generation."""
+    return Nv, sigma, f_hor
+
+
 def _correct_kink_background(m):
     """Correct the nearest-grid-node convention for the internal kink split."""
     from .exact_background import H2_vec
@@ -908,13 +913,28 @@ def prep_frequency_kernel(f_hor, freqs, ln10v, j0s, z0s, fp_minus):
         z0s[mm] = (freqs[mm] - f_hor[j0])*ln10v
 
 
+def _fast_frequency_workspace(m, nv, nf):
+    workspace = getattr(m, '_fast_frequency_workspace', None)
+    if (workspace is None or workspace['nv'] != nv
+            or workspace['nf'] != nf):
+        workspace = {
+            'nv': nv,
+            'nf': nf,
+            'fp_minus': np.empty(nv, dtype=np.float64),
+            'j0s': np.empty(nf, dtype=np.int64),
+            'z0s': np.empty(nf, dtype=np.float64),
+        }
+        m._fast_frequency_workspace = workspace
+    return workspace
+
+
 def prep_frequency_only(m, Nv, freqs):
-    """Prepare only frequency starts for the exact-background kink path."""
-    fp_minus = np.empty(len(Nv))
-    j0s = np.empty(len(freqs), dtype=np.int64)
-    z0s = np.empty(len(freqs))
-    prep_frequency_kernel(m.f_hor, freqs, ln10, j0s, z0s, fp_minus)
-    return m.sigma, m.f_hor, j0s, z0s, fp_minus
+    """Prepare frequency starts using model-local, overwritten work buffers."""
+    workspace = _fast_frequency_workspace(m, len(Nv), len(freqs))
+    prep_frequency_kernel(m.f_hor, freqs, ln10, workspace['j0s'],
+                          workspace['z0s'], workspace['fp_minus'])
+    return (m.sigma, m.f_hor, workspace['j0s'], workspace['z0s'],
+            workspace['fp_minus'])
 
 
 def prep_fast(m, Nv, freqs, h, variable_grid=False):
@@ -1586,6 +1606,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         m.fast_failure_reason = 'invalid_cutoff'
         print('High-end cutoff frequency has not been set properly.')
         return None
+
     if getattr(m, 'SGWB_converge', False):
         return m
 
@@ -1652,6 +1673,14 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                              % (_MAX_THREADS, config.threads))
         if config.threads != thread_before:
             set_num_threads(config.threads)
+    # Within one fast evaluation, all repeated derived-parameter reads are
+    # keyed by the current DN_eff.  The cache is opt-in and is disabled
+    # again in the existing solver finally block, preserving the public
+    # property semantics outside this path.
+    derived_cache_was_enabled = getattr(
+        m, '_fast_derived_cache_enabled', False)
+    m._fast_derived_cache_enabled = True
+    m._fast_derived_cache_key = None
     try:
         for _iter in range(MAX_ITER):
             if transition_refine:
@@ -1676,8 +1705,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                         <= _OUTER_FULL_REUSE_SIGMA_TOL
                         and float(np.max(np.abs(m.f_hor - outer_f_hor_prev)))
                         <= _OUTER_FULL_REUSE_FHOR_TOL)
-                outer_sigma_prev = m.sigma.copy()
-                outer_f_hor_prev = m.f_hor.copy()
+                _, outer_sigma_prev, outer_f_hor_prev = (
+                    _retain_outer_background_snapshot(
+                        m.Nv, m.sigma, m.f_hor))
             support_grid = None
             if freq_grid == 'grid_independent':
                 from .freq_adaptive import grid_independent_freqs
@@ -1763,9 +1793,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                     from .exact_background import fast_phi_s2_split
                     exact_primitive = fast_phi_s2_split(
                         m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
-                    exact_Nv = Nv.copy()
-                    exact_sigma = m.sigma.copy()
-                    exact_f_hor = m.f_hor.copy()
+                    exact_Nv, exact_sigma, exact_f_hor = (
+                        _retain_outer_background_snapshot(
+                            Nv, m.sigma, m.f_hor))
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 h_arr = None
             elif transition_refine:
@@ -1912,6 +1942,18 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             m.fast_failure_reason = 'max_iter'
             print('SGWB_iter_fast: did not converge within %d iterations.' % MAX_ITER)
     finally:
+        if derived_cache_was_enabled:
+            m._fast_derived_cache_enabled = True
+        else:
+            try:
+                delattr(m, '_fast_derived_cache_enabled')
+            except AttributeError:
+                pass
+            try:
+                delattr(m, '_fast_derived_cache_key')
+                delattr(m, '_fast_derived_cache')
+            except AttributeError:
+                pass
         if config.threads is not None and config.threads != thread_before:
             set_num_threads(thread_before)
         if not converged:

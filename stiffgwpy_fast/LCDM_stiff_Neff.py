@@ -64,6 +64,17 @@ class LCDM_SN:
 
     @property
     def derived_param(self):
+        fast_cache = (bool(getattr(self, '_fast_derived_cache_enabled', False))
+                      and not bool(getattr(
+                          self, '_fast_derived_cache_disabled', False)))
+        if fast_cache:
+            # During one fast solve all cosmological inputs except DN_eff are
+            # immutable; the outer loop changes only this self-consistency
+            # variable.  The fast driver clears this cache at solve start.
+            cache_key = self.cosmo_param['DN_eff']
+            if (getattr(self, '_fast_derived_cache_key', None)
+                    == cache_key):
+                return self._fast_derived_cache
         derived_dict = {
             'h': self.cosmo_param['H0']/100,
             'H_0': self.cosmo_param['H0']/(10*parsec),     # s^-1
@@ -108,6 +119,12 @@ class LCDM_SN:
         else:
             derived_dict['N_inf'] = derived_dict['N_re'] + self.cosmo_param['DN_re']
 
+        if fast_cache:
+            # ``cr > 0`` may update DN_re while constructing N_inf; retain the
+            # post-computation key so the next unchanged lookup is reusable.
+            cache_key = self.cosmo_param['DN_eff']
+            self._fast_derived_cache_key = cache_key
+            self._fast_derived_cache = derived_dict
         return derived_dict
 
 
