@@ -11,9 +11,10 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from benchmark_prufer_oracle import CASES  # noqa: E402
+
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
-from benchmark_prufer_oracle import CASES  # noqa: E402
 
 
 def _relative_max(a, b):
