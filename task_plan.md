@@ -347,3 +347,12 @@ Phase 3: Implementation and evidence-driven optimization
   production；不再重复 primitive allocation 微调。
 - [ ] 下一轮重新 fetch/profile，优先寻找尚未验证的严格等价 kernel 外围重复工作，
   或在 standalone 中提出新的数学依据后再做结构性 prototype。
+
+### Round 16 decision
+
+- [x] Fresh cProfile 定位并验证 FD interpolator lookup cache 假设；50-repeat
+  determinism 与逐位输出契约通过。
+- [x] 25-repeat 局部收益无法在 50 repeats 复现，拒绝 production；不再重复同一
+  Python lookup/cache 微优化。
+- [ ] 下一轮重新 fetch/profile，转向尚未验证的 outer allocation/assembly 或新的
+  standalone 数学路径，并保持独立 precision gate。

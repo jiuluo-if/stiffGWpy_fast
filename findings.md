@@ -1486,6 +1486,34 @@ Artifacts：
 `docs/fast_phi_nocopy_round15_high_kappa_20260917.json`、
 `docs/fast_phi_nocopy_round15_lowT_20260917.json`。
 
+## FD interpolator lookup cache boundary (2026-09-17, fresh HEAD)
+
+### Hypothesis and scope
+
+`exact_background._fd_from_ref()` 在每次 `H2_vec/sigma_vec` 调用中重复解析同一对
+FD interpolator；standalone candidate 在模块加载后缓存 callable identity，并只替换
+lookup，不改变插值函数或浮点计算顺序，production source 未修改。
+
+### Evidence
+
+- TDD identity contract 通过：cached lookup 返回与 production lookup 相同的两个
+  callable 对象。
+- 当前 HEAD `2dd7547`、Numba=2、BLAS=1、workers=1；初始 25-repeat 结果曾出现
+  default `0.914`，但扩大到 50 repeats 后 candidate/baseline median ratio 为
+  default/high-T/stiff/high-kappa/low-T `1.011/1.004/0.999/1.016/1.012`。
+- 50 repeats 中五个输出字段的 baseline/candidate digest unique count 均为 `1`；
+  最终 digest 相等、spectrum max delta `0`、DN relative `0`、两边均 converged 且
+  failure reason 为 `null`。runtime 结果显示 lookup cache 的 25-repeat 局部收益
+  是测量噪声，不能稳定复现。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。不把一次较短重复数的
+局部改善误认为速度突破，也不继续微调同一 Python import/cache 路径。
+
+Artifacts：`docs/fd_lookup_cache_round16_*.json`、
+`docs/fd_lookup_cache_round16_50_*.json`。
+
 ### Decision
 
 `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。该 carrier 预积分在

@@ -1147,3 +1147,15 @@ Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。最高总�
 改善约 `1.81%`，不满足速度门槛；production 未修改。
 
 Artifacts：`docs/fast_phi_nocopy_round15_*.json`。
+
+## Current session update: 2026-09-17 (FD interpolator lookup cache)
+
+- [x] fresh HEAD `2dd7547` 上完成 FD lookup identity contract；对象身份与输出
+  determinism 均保持一致。
+- [x] 25-repeat 的局部 default 改善在扩大到 50 repeats 后消失；五工况 ratio 为
+  `1.011/1.004/0.999/1.016/1.012`，无稳定收益。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。production 未
+修改，不再重复 Python import/cache 微优化。
+
+Artifacts：`docs/fd_lookup_cache_round16_*.json`。
