@@ -1010,3 +1010,19 @@ Artifacts：`docs/phase_exp_fastmath_spike_round10_20260917.json`、
 
 Artifacts：`docs/analytic_branch_eligibility_round11_20260917.json`、
 `docs/radiation_closed_form_round11_20260917.json`。
+
+## Current session update: 2026-09-17 (radiation local-branch jump)
+
+- [x] standalone prototype 只在实际 `sigma≈4/3` 连续 run 上合并 radiation exact map，
+  非候选段保持 production `_phase_segment`。
+- [x] tolerance `1e-4` 的 branch segment 总数约 `7723–8914`，每 mode median run
+  length 为 0；candidate/baseline runtime ratio default/high-T/stiff/high-kappa/low-T
+  为 `1.022/1.070/1.020/1.045/1.195`。
+- [x] amplitude p95/max（目标 high-T/stiff/high-kappa）为
+  `1.51e-4/3.58e-3`、`3.35e-4/2.09e-3`、`1.51e-4/3.02e-3`；low-T max
+  `5.67e-3`，不满足 error budget。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。下一步转向
+`|omega'/omega^2|` adiabaticity-trigger prototype，不再调整该 branch threshold。
+
+Artifact：`docs/radiation_local_branch_round11_20260917.json`。

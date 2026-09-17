@@ -1222,3 +1222,32 @@ high-T/stiff/high-kappa/low-T `16.47%/14.31%/17.66%/6.62%`。
 Artifacts（绑定 HEAD `ba95ecc013dbd7c5423e6efdd3f614547a26cf15`）：
 `docs/analytic_branch_eligibility_round11_20260917.json`、
 `docs/radiation_closed_form_round11_20260917.json`。
+
+## Radiation local-branch jump boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+如果仅在实际 `sigma≈4/3` 的连续 segment run 上合并调用 radiation exact map，
+可以减少真实 propagation 调用；非候选段仍逐段使用 production `_phase_segment`。
+prototype 只改变 standalone kernel，未触碰 production。
+
+### Evidence
+
+- tolerance `1e-8/1e-6/1e-4` 的 2-thread 30-repeat 结果显示，前两者几乎没有
+  branch hit；`1e-4` 时 branch segment 总数仅约 `7723–8914`，每 mode median
+  run length 为 0，说明 eligibility 不是长连续区间。
+- `1e-4` candidate/baseline runtime ratio 为 default/high-T/stiff/high-kappa/low-T
+  `1.022/1.070/1.020/1.045/1.195`，没有目标 regime 的稳定 >5% 改善。
+- `1e-4` amplitude relative p95/max 为 high-T
+  `1.51e-4/3.58e-3`、stiff `3.35e-4/2.09e-3`、high-kappa
+  `1.51e-4/3.02e-3`；low-T `1.51e-4/5.67e-3`。这不是可接受的 production
+  error budget，也没有独立 oracle 支持。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。局部 branch 的连续性与
+速度门均失败；不继续 threshold tuning、Oracle 或 parameter-space certification，
+转向基于 `|omega'/omega^2|` 的 adiabaticity-trigger prototype。
+
+Artifact（绑定 HEAD `a7773d2e01dcdfd9c387429348b09cdea782edd2`）：
+`docs/radiation_local_branch_round11_20260917.json`。
