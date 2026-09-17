@@ -574,3 +574,41 @@ carrier，并先建立数学残差与 Cartesian/Prüfer 独立交叉验证。
   true-error、outer-reuse、residual decomposition、validation 与 estimator
   复核文件；资源记录为 Numba/workqueue=2、BLAS=1、reference workers=1（涉及
   25-repeat standalone 对照），无 silent fallback 或 API 变化。
+
+## Session: 2026-09-17 (current HEAD fresh outer-reuse headroom)
+
+### Actions Taken
+
+- 从 `fast` 远端 fetch 后确认本地/远端 HEAD 均为
+  `f411bbb252e20b7626b33d007ea73d40bf34f46c`；重读现有 progress/findings、manifest、
+  benchmark 与 rejected records。
+- 在正式 `kink_split=true`、Numba=2/workqueue、BLAS=1、workers=1 下完成六点 25-repeat
+  fresh runtime；另完成 default/high-T/stiff/high-kappa 的 25-repeat 阶段 breakdown。
+- 对现有 outer reuse 判据与 forced reuse 完成 7 个 accepted 点的 25-repeat A/B；显式
+  `shared_Neff_guard` 点单独记录为 guard，不计 numerical failure。
+
+### Test Results
+
+| Test | Result | Status |
+|---|---|---|
+| fresh six-point runtime | median/p95 default `6.99/8.03 ms`；high-T `11.76/12.23`；stiff `12.38/13.44`；high-kappa `12.20/12.92`；六点 converged、0 failure | PASS / BASELINE |
+| fresh stage breakdown | high-T/stiff/high-kappa tensor median `7.07/7.62/7.20 ms`；准备层各项均低于约 `1.6 ms` | PASS / HOTSPOT CONFIRMED |
+| forced outer reuse | high-T/stiff/high-kappa runtime ratio `0.735/0.747/0.757`，spectrum max `3.944e-3/1.051e-3/1.547e-2 dex`；DN relative `3.387e-11/3.053e-10/3.283e-11` | REJECTED |
+| low-T / independent points | low-T ratio `0.976`、spectrum `0`；positive-tilt ratio `0.705`、spectrum `2.075e-1 dex`；sobol_000 ratio `0.988`、spectrum `0` | REJECTED FOR SIMPLE THRESHOLD WIDENING |
+| manifest refresh | `build_two_mode_manifest.py` 重建并绑定当前 HEAD；fast plain-grid `NOT VERIFIED`、transition-refine `PARTIALLY VERIFIED` | PASS / PROVENANCE |
+
+### Decision
+
+- 不放宽固定 outer reuse threshold，也不修改 production solver。DN_gw 单值几乎不变
+  不能作为安全判据；频谱误差在 high-T/stiff/high-kappa 与 positive-tilt 显示明显
+  observable false-safe。
+- 下一候选只能是 standalone observable-aware criterion，组合 `delta log Omega`、
+  `delta Phi`、`delta S2`、horizon shift 与 frequency-weighted DN sensitivity；本轮
+  尚未具备接受该 criterion 的证据。
+
+### Errors
+
+| Error | Resolution |
+|---|---|
+| `run_fixed_profile.py` 外层只允许 `A/B` | 改用支持六点的 runtime benchmark，并以独立进程直接调用 profiler 获取四个目标 regime；未据失败输出形成结论 |
+| outer-reuse A/B 包含 guard 点后访问缺失的 `DN_gw` | 排除显式 guard 点完成 accepted-point A/B；guard 仍保留为物理边界问题 |

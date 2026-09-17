@@ -687,3 +687,39 @@ fresh Oracle C true-error 复核显示 default/high-T/stiff/high-kappa 的 deep-
 相对差约为 `5.21e-6/2.24e-5/3.35e-6/2.45e-5`，low-T 为 `1.72e-4`；当前真正的
 速度热点仍是 tensor propagation，现有候选均未同时满足 full-grid 独立精度与
 稳定总耗时突破条件。生产 solver 与 physical guard 语义保持不变。
+
+## Current HEAD fresh outer-reuse headroom (2026-09-17, `f411bbb`)
+
+本轮先从 `fast` 远端 fetch，并重读全部现有研究记录与验证产物；本节只采用当前
+HEAD 新生成的 profile/runtime/reuse JSON。资源固定为 Numba=2、workqueue、BLAS=1、
+workers=1，正式 `kink_split=true`。
+
+### Fresh baseline
+
+六点 25-repeat warm runtime 为：default `6.99/8.03 ms`、high-T `11.76/12.23`、
+stiff `12.38/13.44`、high-kappa `12.20/12.92`（median/p95）；low-T `8.03/8.53`、
+low-r `6.98/7.40`。所有点 converged，0 failure。阶段 profile 对 high-T/stiff/
+high-kappa 给出 tensor median `7.07/7.62/7.20 ms`，确认传播仍是首要热点。
+
+### Observable-aware reuse headroom
+
+当前 reuse gate 与 forced reuse 的 25-repeat A/B：
+
+| point | runtime forced/current | DN relative | spectrum max abs dex | kernel calls |
+|---|---:|---:|---:|---:|
+| high-T | `0.7353` | `3.387e-11` | `3.944e-3` | `2 -> 1` |
+| stiff | `0.7470` | `3.053e-10` | `1.051e-3` | `2 -> 1` |
+| high-kappa | `0.7571` | `3.283e-11` | `1.547e-2` | `2 -> 1` |
+| low-T | `0.9760` | `0` | `0` | `1 -> 1` |
+| positive-tilt | `0.7052` | `4.162e-9` | `2.075e-1` | `2 -> 1` |
+
+结论：forced reuse 的单值 `DN_gw` 几乎不变，但 spectrum observable 在高-T、stiff、
+high-kappa 和 positive-tilt 均可明显偏移；该候选 `REJECTED FOR PRODUCTION`。
+
+### Next hypothesis
+
+仅保留一个未验证的 standalone 方向：在第二次 kernel 之前建立 observable-aware
+上界，组合 `delta log Omega`、`delta Phi`、`delta S2`、horizon-crossing shift 与
+frequency-weighted DN sensitivity；只有在 25--50 repeat、Cartesian/Prüfer/WKB
+独立 oracle、named+Sobol、coverage/p95/p99/false-safe=0 后，才允许进入 runtime A/B。
+本轮没有 production code change。

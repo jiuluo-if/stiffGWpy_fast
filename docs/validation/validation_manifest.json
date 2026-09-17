@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "commit": "e1d2dde28404827f2c7c43107fab15420edf5ffb",
-  "date": "2026-09-12",
+  "commit": "f411bbb252e20b7626b33d007ea73d40bf34f46c",
+  "date": "2026-09-17",
   "generated_by": "scripts/build_two_mode_manifest.py (read-only replay)",
   "audit_report": "docs/fast_v02_audit_report.md",
   "oracle_semantics": "the precision anchor is the independent continuous-sigma DOP853 reference pipeline; LSODA is only a regression/runtime anchor, never a precision oracle",
@@ -974,6 +974,7 @@
     },
     "definition": "current formal fast path; this section is the active HEAD audit, while the legacy profiles below are retained for historical compatibility",
     "source_commits": [
+      "16ea185c84f50f081a6a1c17e9c47e2380d9d67a",
       "f87e969c96bff54bcdca8146f49d8b7a86ea501f"
     ],
     "runtime": {
@@ -1004,34 +1005,34 @@
       "repeats": 25,
       "cases": {
         "default": {
-          "cold_ms": 222.36659999998665,
-          "warm_median_ms": 4.93209999967803,
-          "warm_p95_ms": 5.466700000397395
+          "cold_ms": 231.3493000001472,
+          "warm_median_ms": 5.092199999126024,
+          "warm_p95_ms": 5.485900001076516
         },
         "lowT": {
-          "cold_ms": 4.655899999306712,
-          "warm_median_ms": 4.744599999867205,
-          "warm_p95_ms": 5.194499999561231
+          "cold_ms": 4.694000002928078,
+          "warm_median_ms": 4.837599999518716,
+          "warm_p95_ms": 5.393700001150137
         },
         "highT": {
-          "cold_ms": 8.017300000574323,
-          "warm_median_ms": 7.79259999990245,
-          "warm_p95_ms": 8.246600000347826
+          "cold_ms": 7.754800000839168,
+          "warm_median_ms": 6.904600000780192,
+          "warm_p95_ms": 7.789600000251085
         },
         "stiff": {
-          "cold_ms": 6.804300000112562,
-          "warm_median_ms": 7.788000000346074,
-          "warm_p95_ms": 8.23339999988093
+          "cold_ms": 6.449200001952704,
+          "warm_median_ms": 6.569700000909506,
+          "warm_p95_ms": 7.098100002622232
         },
         "low_r": {
-          "cold_ms": 4.605699999956414,
-          "warm_median_ms": 4.723850000118546,
-          "warm_p95_ms": 5.105600000206323
+          "cold_ms": 4.2347999988123775,
+          "warm_median_ms": 4.016349999801605,
+          "warm_p95_ms": 4.34049999967101
         },
         "high_kappa": {
-          "cold_ms": 7.355699999607168,
-          "warm_median_ms": 7.26749999967069,
-          "warm_p95_ms": 8.039099999223254
+          "cold_ms": 5.98609999724431,
+          "warm_median_ms": 6.089300000894582,
+          "warm_p95_ms": 6.389599999238271
         }
       }
     },

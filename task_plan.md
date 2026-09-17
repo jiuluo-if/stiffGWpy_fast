@@ -231,3 +231,14 @@ Phase 3: Implementation and evidence-driven optimization
 | 本轮对修改文件执行全量 ruff 暴露 84 个既有 E701/E702/F841 | 未扩大范围格式化；compileall 与 diff check 通过，保留该既有门禁问题并单独报告 |
 | Q2 dense-reference 首次运行暴露局部 estimator 的 Chebyshev spline 未初始化 | 补充局部 Chebyshev 回归测试并初始化 PCHIP spline 后重跑通过 |
 | 全局 Simpson 权重分摊造成局部 estimator 假保守 | 改为非重叠 local composite-Simpson panel；default 仍约 15.3% 过保守，保留为诊断候选，不进入 production |
+
+## Current Session Notes: 2026-09-17
+
+- 已从正确的 `fast` 远端 fetch `fast_v0.2`，本地 HEAD 与远端同为 `f411bbb252e20b7626b33d007ea73d40bf34f46c`，工作树初始干净。
+- 已重新读取 `progress.md`、`findings.md`、`docs/validation/validation_manifest.json` 与当前 round benchmark/rejection artifacts；manifest 仍绑定旧 commit `e1d2dde28404827f2c7c43107fab15420edf5ffb`，不能直接作为当前 HEAD 证据。
+- fresh profile 首次尝试失败：`run_fixed_profile.py` 外层参数只允许 `A/B`，无法接受内层已定义的 `default/highT/stiff/high_kappa`；未据此形成性能结论，改用支持六点的 runtime 矩阵与 `A/B` 阶段 profiler。
+- outer reuse headroom 首次包含 `edge_tre_hi` 后被既有 `total N_eff too large` physical guard 中止，脚本未将 guard 转为记录而直接访问缺失的 `DN_gw`；该点不计 numerical failure，后续先排除显式 guard 点完成 accepted-point 诊断。
+
+## Next Step
+
+运行当前 HEAD 的六点 fresh runtime 矩阵与 A/B 阶段 profile，解析 tensor propagation 与 outer reuse 基线，再决定是否登记一个新的最小 standalone 候选。
