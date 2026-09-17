@@ -930,3 +930,23 @@ Artifacts：`docs/kernel_inline_spike_round8_20260917.json`、
 `docs/kernel_inline_outer_spike_round8_20260917.json`、
 `docs/kernel_inline_outer_spike_16t_round8_20260917.json`、
 `docs/kernel_inline_outer_spike_20t_round8_20260917.json`。
+
+## Current session update: 2026-09-17 (phase-exp hoist spike)
+
+- [x] 当前 HEAD `0dae703` fresh round9 profile 已重新生成并固化；2-thread total
+  median default/high-T/stiff/high-kappa/low-T 为 `6.284/9.257/9.660/9.501/6.587 ms`，
+  tensor median 为 `2.505/4.409/4.895/4.663/3.077 ms`。
+- [x] standalone phase-exp hoist 只复用 `n_sub=1` 分支中重复计算的同一
+  `exp(z_mid)`；production source 未修改。脚本提交于 `06b7df1`。
+- [x] 2-thread kernel 30-repeat ratio high-T/stiff/high-kappa 为
+  `0.9238/0.9285/0.9911`；full outer 25-repeat ratio 为
+  `0.9597/0.9610/0.9865`，未形成稳定 >5% total-runtime 改善。
+- [x] full outer spectrum relative p95/max 为 high-T `3.18e-6/6.13e-6`、
+  stiff `4.27e-6/7.60e-6`、high-kappa `2.00e-6/5.56e-6`；DN relative
+  分别 `3.01e-13/1.18e-11/7.70e-14`。digest 不逐位相同但变化为舍入级。
+
+Decision: `REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。速度门在
+2-thread full outer 已失败，不进入 formal 16/20-thread、Oracle 或 Sobol 认证。
+
+Artifacts：`docs/phase_exp_hoist_spike_round9_20260917.json`、
+`docs/phase_exp_hoist_outer_round9_20260917.json`。

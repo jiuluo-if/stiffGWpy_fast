@@ -1125,3 +1125,32 @@ Artifacts（均绑定 HEAD `0671e1fc549bf45428496935c364956b17b64405`）：
 `docs/kernel_inline_outer_spike_round8_20260917.json`、
 `docs/kernel_inline_outer_spike_16t_round8_20260917.json`、
 `docs/kernel_inline_outer_spike_20t_round8_20260917.json`。
+
+## Phase exponential hoist boundary (2026-09-17, standalone)
+
+### Hypothesis and scope
+
+fresh round9 tensor profile 显示 high-T/stiff/high-kappa 的 propagation 仍是主热点。
+本候选只在 `n_sub=1` 分支复用 phase subdivision 已计算的 `exp(z_mid)`，不改变
+transfer map、phase subdivision、kink split、tail matching、assembly 或 production
+API；正式 fast source 未修改。
+
+### Evidence
+
+- 2-thread kernel 30-repeat ratio 为 default/high-T/stiff/high-kappa/low-T
+  `0.9582/0.9238/0.9285/0.9911/0.9236`。
+- 2-thread full-outer 25-repeat ratio 为
+  `0.9786/0.9597/0.9610/0.9865/0.9375`；目标 high-T/stiff/high-kappa 均未达到
+  稳定 >5% total-runtime 改善，故不进入 formal 16/20-thread gate。
+- full-outer spectrum relative p95/max：high-T `3.18e-6/6.13e-6`、stiff
+  `4.27e-6/7.60e-6`、high-kappa `2.00e-6/5.56e-6`；DN relative
+  `3.01e-13/1.18e-11/7.70e-14`。digest 不逐位相同，不能替代独立 oracle。
+
+### Decision
+
+`REJECTED FOR PRODUCTION / RETAINED AS STANDALONE SPIKE`。由于最小 full-outer
+runtime gate 已失败，不继续 Oracle A/Prüfer/WKB、named+Sobol 或 false-safe 认证。
+
+Artifacts（绑定 spike HEAD `06b7df1f6b1cdab406d7d7bc441dc29716a212a4`）：
+`docs/phase_exp_hoist_spike_round9_20260917.json`、
+`docs/phase_exp_hoist_outer_round9_20260917.json`。
