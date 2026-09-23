@@ -16,9 +16,9 @@ def model():
     return LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def fast_settings():
-    """Snapshot and restore process-global fast-solver settings."""
+    """Snapshot and restore process-global fast-solver settings for every test."""
     saved = FS.get_settings()
     freq_grid = FS._FREQ_GRID
     yield saved
