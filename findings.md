@@ -2879,3 +2879,14 @@ this entry was written; the latest visible run remained #229 for Round 60,
 which failed only in `canonical` while `static`, `package`, `cobaya`, and
 compatibility 3.9--3.13 passed. The new run must be checked again after
 GitHub schedules it.
+
+## Round 63 local CI-equivalent verification (2026-09-23)
+
+Under the workflow resource environment (`NUMBA_NUM_THREADS=2`, workqueue,
+`FAST_THREADS=2`, BLAS threads capped at one), the complete local pytest run
+finished with `217 passed, 4 failed, 6 deselected`. The four failures are the
+known baseline failures: two stale `solve_kernel` monkeypatch signatures, the
+existing shared-`N_eff` guard in the eval-frequency transition-refine case,
+and the existing default kink-split module-state expectation. All new Round
+61--63 tests passed, and no production source was changed to mask the known
+failures.

@@ -1012,3 +1012,6 @@ Phase 3: Implementation and evidence-driven optimization
   push.
 - [ ] Next: defect-canceling local polynomial transfer reusing the production
   trigonometric map, with an independent error bound before timing. No AI.
+
+- [x] Local full pytest was rerun under the CI resource contract: `217 passed,
+  4 known baseline failures, 6 deselected`; new research tests passed.

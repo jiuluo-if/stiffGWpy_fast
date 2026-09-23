@@ -1460,3 +1460,7 @@ the diagnostic artifacts are retained.
   yet visible, while the latest visible run #229 had canonical failure only.
 - [ ] Next: defect-canceling local polynomial transfer reusing the production
   trigonometric map, with an independent bound before timing. No AI.
+
+- Local CI-equivalent full pytest at Round 63: `217 passed, 4 failed,
+  6 deselected`; all four failures match the documented baseline and all
+  Round 61--63 tests passed. No unrelated fix was applied.
