@@ -2489,3 +2489,32 @@ projective normalization; (3) sensitivity-assisted outer correction. The
 first is selected because it is the only variant that can preserve the
 Round 51 work reduction while removing its measured bottleneck. No AI/learned
 model is used.
+
+## Round 53 result — scaled Riccati/log-amplitude screen (2026-09-23)
+
+Fresh fetch/profile at `2969196015ab63ee8490ac7a82317d371103f1c8` gave noisy
+total/tensor medians in ms: default `8.62/3.44`, lowT `8.22/4.32`, highT
+`12.74/2.65`, stiff `7.38/2.21`, and high-kappa `9.72/2.07`. Hard cases
+continued to use two propagation calls.
+
+The standalone mathematical representation propagated either `x/y` or `y/x`
+with a log-amplitude and deterministic chart switching. It is materially
+different from Round 45's Cayley projective map and Round 49's native Prüfer
+state: it avoids per-step trigonometric reconstruction but retains the
+production phase subdivision. TDD passed the finite/close one-step and chart
+round-trip gates; all sampled named paths were finite, with maximum power
+relative to production `5.32e-6`.
+
+The canonical subdivision timing gate failed: baseline median `0.0420 ms`,
+candidate median `0.0842 ms`, ratio `2.005`, candidate p95 `0.0888 ms`.
+The representation adds ratio, division, logarithm, and chart branches while
+reducing no real propagation substeps. It is **REJECTED_BY_AMDAHL** before a
+full kernel/full outer; production remains unchanged. Artifact:
+`docs/scaled_riccati_round53_20260923.json`.
+
+The next pool is now: (1) mathematically exact block action from the closed
+two-by-two transfer algebra with a precomputed block schedule, only if the
+schedule eliminates actual phase substeps rather than merely changing state
+coordinates; (2) a fresh LLVM vectorization/data-layout audit after the
+current Numba build; (3) sensitivity-assisted outer correction. Select (1)
+for a tiny operation-count screen, with no AI/learned model.

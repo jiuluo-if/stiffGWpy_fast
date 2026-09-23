@@ -876,3 +876,13 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: tiny standalone scaled Riccati/WKB projective-normalization
   feasibility screen. Do not promote without finite defect and real-work
   reduction evidence.
+
+## Round 53 — scaled Riccati/log-amplitude feasibility (2026-09-23)
+
+- [x] Re-fetched at `2969196` and refreshed the canonical profile.
+- [x] TDD and sampled finite/accuracy gates passed; same canonical phase
+  subdivision was used for the timing comparison.
+- [x] Candidate was `2.005x` baseline and reduced no real substeps; rejected
+  by Amdahl before full kernel/full outer. Production unchanged.
+- [ ] Next: screen an exact two-by-two block action with a precomputed schedule
+  only if it removes actual phase substeps. No AI/learned model.
