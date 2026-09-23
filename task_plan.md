@@ -290,6 +290,21 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   gate. This is a table/data-layout hypothesis, not a retune of the rejected
   Taylor or range-reduced-polynomial implementations.
 
+### Round 39 outcome and next selection
+
+- [x] Fresh current-HEAD profile at `0d0d77c` completed: total/tensor medians
+  `5.337/2.489`, `5.127/2.757`, `7.823/4.222`, `8.608/4.723`,
+  `8.086/4.486 ms` for default/lowT/highT/stiff/high-kappa.
+- [x] A 4097-node cubic table over `z∈[-1,5.1]`, 32 substep rows and
+  ~2.1 MiB footprint had local transfer error `9.73e-10`, above the `1e-11`
+  prerequisite; no kernel/outer benchmark was justified.
+- [x] Reject the combined table implementation; do not retune table density or
+  interpolation order as the same candidate.
+- [ ] Next experiment: standalone Levin-collocation nonoscillatory phase
+  feasibility on a smooth post-horizon interval, a different phase construction
+  from the rejected Kummer fixed-window and WKB-boundary solves. Require an
+  independently checked residual and transfer agreement before timing.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

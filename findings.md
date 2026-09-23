@@ -2090,3 +2090,24 @@ The next selected hypothesis is a combined transfer-map lookup/interpolation
 table. It is distinct from the rejected Taylor and range-reduced polynomial
 forms: the table approximates the already-composed transfer coefficients and
 will be rejected early if memory lookup/interpolation costs exceed libm.
+
+## Round 39 result — combined transfer-map table (2026-09-23)
+
+Fresh profiles at `0d0d77c73478cd4fa0f3dfaa1773ff215616647a` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.337/2.489` default, `5.127/2.757` low-T,
+`7.823/4.222` high-T, `8.608/4.723` stiff and `8.086/4.486` high-kappa ms.
+Artifacts: `docs/profile_fast_breakdown_round39_20260923_*.json`.
+
+The table feasibility screen stored the combined transfer coefficients for
+`z∈[-1,5.1]` at 4097 nodes and 32 phase-substep rows, using about 2.1 MiB.
+Cubic interpolation still reached only `9.73e-10` maximum absolute transfer
+error, above the `1e-11` local prerequisite. It is
+**REJECTED_FOR_PRODUCTION** before kernel timing; no table-density or
+interpolation-order retuning is allowed.
+Artifact: `docs/transfer_table_round39_20260923.json`.
+
+The next selected mathematical direction is a Levin-collocation
+nonoscillatory phase feasibility prototype. It is distinct from the rejected
+arbitrary-basis Kummer fit and right-boundary-WKB solve, and must first pass
+residual/transfer gates before any performance claim.
