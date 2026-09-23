@@ -1517,3 +1517,23 @@ the diagnostic artifacts are retained.
   static, package, Cobaya, and compatibility 3.9--3.13. No AI/learned model.
 - [ ] Resume the next standalone mathematical optimization experiment only
   after recording a fresh HEAD/profile and the ranked candidate pool.
+
+## Round 66 — event-aware outer tangent endpoint screen (2026-09-23)
+
+- [x] Reconfirmed local/remote HEAD `8b56cb7` and refreshed the five-case
+  fixed-resource profile; formal `kink_split=true` and 2-thread/workqueue
+  resources were recorded.
+- [x] Generated multiple hypotheses after Amdahl review. Selected an
+  event-aware tangent correction because it was the only remaining candidate
+  that could remove a hard-case second propagation without changing the
+  transfer equation.
+- [x] Standalone prototype and child-process TDD gate passed. Default mode 20
+  endpoint relative error was `1.84e-15`; tangent/direct runtime was `1.74x`.
+  Low-T had no comparable second snapshot; high-T/stiff/high-kappa changed
+  the discrete kink representation and failed closed.
+- [x] Rejected before full-outer timing on correctness coverage and Amdahl;
+  production source unchanged. Artifact:
+  `docs/outer_sensitivity_round66_20260923.json`.
+- [ ] Next: implement only a tiny pre-kernel monotone transfer-perturbation
+  certificate with explicit event guards; reject immediately if its bound is
+  not informative. No AI/learned model.

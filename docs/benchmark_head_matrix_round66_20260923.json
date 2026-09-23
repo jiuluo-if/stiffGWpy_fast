@@ -1,0 +1,114 @@
+{
+  "commit": "8b56cb7734afa7194ea797d8508fcaecb623d998",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [
+      0,
+      1
+    ],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "repeats": 25,
+  "rows": [
+    {
+      "case": "default",
+      "cold_ms": 274.46080000299844,
+      "warm_min_ms": 6.16489999811165,
+      "warm_median_ms": 6.814899998062174,
+      "warm_p95_ms": 7.600799999636365,
+      "n_freq": 76,
+      "quadrature": "pchip",
+      "DN_gw_default": 0.0022636474150855806,
+      "DN_gw_scipy_pchip_same_spectrum": 0.0022636474150856214,
+      "scipy_pchip_delta_rel": 1.8008989126919196e-14,
+      "reuse": true,
+      "failure": null
+    },
+    {
+      "case": "lowT",
+      "cold_ms": 6.855200001155026,
+      "warm_min_ms": 5.771000000095228,
+      "warm_median_ms": 6.4083500001288485,
+      "warm_p95_ms": 6.774199999199482,
+      "n_freq": 76,
+      "quadrature": "pchip",
+      "DN_gw_default": 5.3114602833937826e-08,
+      "DN_gw_scipy_pchip_same_spectrum": 5.311460283393785e-08,
+      "scipy_pchip_delta_rel": 4.983522080444494e-16,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "highT",
+      "cold_ms": 10.141199996724026,
+      "warm_min_ms": 9.11640000049374,
+      "warm_median_ms": 9.578450000844896,
+      "warm_p95_ms": 10.24659999893629,
+      "n_freq": 76,
+      "quadrature": "pchip",
+      "DN_gw_default": 0.05643308427141758,
+      "DN_gw_scipy_pchip_same_spectrum": 0.05643308427141854,
+      "scipy_pchip_delta_rel": 1.7091149014720982e-14,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "stiff",
+      "cold_ms": 10.274399999616435,
+      "warm_min_ms": 9.233200002199737,
+      "warm_median_ms": 10.069349998957478,
+      "warm_p95_ms": 10.54389999990235,
+      "n_freq": 76,
+      "quadrature": "pchip",
+      "DN_gw_default": 0.014984335009443728,
+      "DN_gw_scipy_pchip_same_spectrum": 0.014984335009446084,
+      "scipy_pchip_delta_rel": 1.5721448291778136e-13,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "low_r",
+      "cold_ms": 6.041000000550412,
+      "warm_min_ms": 5.330699998012278,
+      "warm_median_ms": 5.879350001123385,
+      "warm_p95_ms": 6.673399999272078,
+      "n_freq": 76,
+      "quadrature": "pchip",
+      "DN_gw_default": 0.00023602751802088214,
+      "DN_gw_scipy_pchip_same_spectrum": 0.0002360275180208821,
+      "scipy_pchip_delta_rel": 1.148385346734847e-16,
+      "reuse": false,
+      "failure": null
+    },
+    {
+      "case": "high_kappa",
+      "cold_ms": 10.695900000428082,
+      "warm_min_ms": 9.233500000846107,
+      "warm_median_ms": 9.691400000519934,
+      "warm_p95_ms": 11.007099998096237,
+      "n_freq": 77,
+      "quadrature": "pchip",
+      "DN_gw_default": 0.22570645394976807,
+      "DN_gw_scipy_pchip_same_spectrum": 0.2257064539497741,
+      "scipy_pchip_delta_rel": 2.6684925500322243e-14,
+      "reuse": false,
+      "failure": null
+    }
+  ]
+}

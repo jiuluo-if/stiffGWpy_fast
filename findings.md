@@ -3042,3 +3042,38 @@ physical guard, failure semantic, or API contract is weakened. Production
 source remains unchanged. Local focused and full canonical gates pass; the
 remote run #237 for `e4d2a1f` is now fully green across canonical, static,
 package, Cobaya, and compatibility 3.9--3.13.
+
+## Round 66 result — event-aware outer tangent endpoint screen (2026-09-23)
+
+After the green CI HEAD `8b56cb7734afa7194ea797d8508fcaecb623d998`, a fresh
+25-repeat fixed-resource profile was run with `kink_split=true`, goal/PCHIP,
+Numba 2/workqueue, affinity `[0,1]`, and BLAS-family threads capped at one.
+Warm medians were `6.815/6.408/9.578/10.069/9.691 ms` for
+default/low-T/high-T/stiff/high-kappa; high-cost cases still showed two
+propagation calls. The current profile is
+`docs/benchmark_head_matrix_round66_20260923.json`.
+
+The selected candidate propagated a first variation of the Cartesian transfer
+state alongside the old outer map and applied a first-order endpoint correction
+to avoid the second propagation. It explicitly rejected changes in `j0`, kink
+representation, tail handoff, or phase subdivision. The standalone TDD gate
+passed. On default mode 20 the endpoint state error was `1.84e-15`, but the
+tangent path cost `1.74x` a direct propagation. The other hard named cases
+were not eligible: low-T produced no second snapshot, and high-T/stiff/
+high-kappa changed the kink representation. Thus this candidate cannot claim
+full-spectrum correctness or stable end-to-end benefit and is
+**REJECTED_BY_CORRECTNESS_AND_AMDAHL** before full-outer timing.
+
+The sensitivity literature supports the fail-closed rule: tangent equations
+require a fixed event sequence; parameter-dependent switches need separate
+event/saltation handling. This prototype did not hide those discontinuities.
+Production source remains unchanged. Artifact and prototype:
+`docs/outer_sensitivity_round66_20260923.json`,
+`scripts/benchmark_outer_sensitivity_round66.py`, and
+`tests/test_outer_sensitivity_round66.py`.
+
+Next concrete experiment: a pre-kernel interval certificate that combines
+event-sequence invariance with a conservative monotone bound on the full
+transfer perturbation; it must prove the same full-spectrum output before any
+reuse. If the bound is vacuous, retire the outer-reuse family and move to a
+new residual-certified transfer representation. No AI/learned model.

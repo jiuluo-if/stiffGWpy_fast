@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "candidate": "event_aware_outer_tangent_endpoint_round66",
+  "generated_commit": "8b56cb7734afa7194ea797d8508fcaecb623d998",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [
+      0,
+      1
+    ],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "production_unchanged": true,
+  "rows": [
+    {
+      "case": "default",
+      "mode": 20,
+      "eligible": true,
+      "native_intervals": 3522,
+      "substeps": 3673,
+      "finite": true,
+      "state_relative_error": 1.8408420708819624e-15,
+      "tangent_over_direct": 1.740072192209262,
+      "tangent_median_us": 48.19999958272092,
+      "direct_median_us": 27.69999991869554,
+      "z0_delta": -3.6148861681795097e-13
+    },
+    {
+      "case": "lowT",
+      "eligible": false,
+      "reason": "outer run did not produce two propagation snapshots"
+    },
+    {
+      "case": "highT",
+      "eligible": false,
+      "reason": "kink representation changed"
+    },
+    {
+      "case": "stiff",
+      "eligible": false,
+      "reason": "kink representation changed"
+    },
+    {
+      "case": "high_kappa",
+      "eligible": false,
+      "reason": "kink representation changed"
+    }
+  ],
+  "semantics": "First-variation endpoint correction over the production midpoint transfer; discrete event changes fail closed."
+}

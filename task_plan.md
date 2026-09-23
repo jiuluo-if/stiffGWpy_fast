@@ -1072,3 +1072,19 @@ Phase 3: Implementation and evidence-driven optimization
   nine jobs.
 - [ ] Re-fetch the green HEAD, refresh the canonical profile, and select the
   next standalone math-only optimization direction from the ranked pool.
+
+## Round 66 — event-aware outer tangent endpoint screen (2026-09-23)
+
+- [x] Fresh profile at HEAD `8b56cb7`: warm total medians
+  `6.815/6.408/9.578/10.069/9.691 ms`; hard cases still use two
+  propagation calls.
+- [x] Built the standalone event-aware tangent endpoint prototype with
+  `j0`/kink/tail/subdivision fail-closed guards; child-process TDD passed.
+- [x] Endpoint state error was `1.84e-15` on the eligible default mode, but
+  tangent/direct cost was `1.74x`; three hard cases changed the event
+  representation and low-T had no second snapshot. Rejected before full-outer
+  timing; production unchanged.
+- [x] Recorded artifact and no-AI mathematical rationale.
+- [ ] Next concrete experiment: conservative pre-kernel monotone transfer
+  perturbation certificate with the same event guards; otherwise retire outer
+  reuse and select a new residual-certified transfer map.
