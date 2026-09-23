@@ -934,3 +934,16 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: asymptotic Bessel/WKB coefficient-recurrence operation-count
   screen, with a hard >=100x cost-reduction precondition. No AI/learned
   model.
+
+## Round 58 — full-native WKB phase-integral (2026-09-23)
+
+- [x] Re-fetched `fast_v0.2` at `6cb3bc7` and refreshed the canonical 25-repeat
+  profile with the fixed resources and `kink_split=true`; digests remained
+  stable despite host timing noise.
+- [x] TDD passed for finite post-turning-point feasibility and independent
+  DOP853 scale comparison; the actual path gate was then run separately.
+- [x] All five actual regimes hit a turning-point/forbidden interval in the
+  first 32-interval probe, making the full-native WKB state non-finite.
+  Rejected by correctness before timing/full kernel; production unchanged.
+- [ ] Next: uniform turning-point Airy/Bessel connection feasibility screen,
+  with a hard finite horizon-crossing gate. No AI/learned model.

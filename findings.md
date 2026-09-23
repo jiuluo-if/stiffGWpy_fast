@@ -2645,3 +2645,39 @@ solve-kernel monkeypatch signatures, the unchanged shared-N_eff guard, and
 the existing default kink-split state expectation), not with Round 57,
 which changes only standalone research files and artifacts. No unrelated CI
 test or production behavior was modified.
+
+## Round 58 result — full-native WKB phase-integral screen (2026-09-23)
+
+After pushing Round 57, the remote `fast_v0.2` branch was fetched again at
+`6cb3bc7a700ccb908bd33a0912768fe4401cb23d`. The canonical warm profile was
+rerun with the same fixed resources and 25 repeats. This run was slower from
+host noise (median milliseconds default/lowT/highT/stiff/high-kappa:
+`10.066/7.771/14.792/17.094/13.325`), but all output digests matched the
+Round 57 baseline, so it is not evidence of a production change.
+
+The selected hypothesis was a local WKB fundamental matrix over each entire
+native interval, using the analytic phase integral of the constant-q
+transformed equation. This differs from the historical boundary-WKB handoff:
+it attempts to replace every native interval's phase substeps, not only the
+tail handoff. The Numba prototype uses elementary operations and applies a
+turning-point guard where the WKB frequency squared is non-positive.
+
+The correctness gate failed on all five actual regimes at mode 20: the first
+32-interval probe entered a turning-point/forbidden region, so the candidate
+state was non-finite and no performance number was recorded. It cannot cover
+the production horizon-to-tail path without a separate uniform turning-point
+connection method; adding that method would be a different, higher-risk
+algorithm and is not justified by this screen. The candidate is
+**REJECTED_BY_CORRECTNESS** before timing/full-kernel integration. Production
+source remains unchanged. Artifact:
+`docs/wkb_phase_integral_round58_20260923.json`; prototype/tests:
+`scripts/benchmark_wkb_phase_integral_round58.py` and
+`tests/test_wkb_phase_integral_round58.py`.
+
+The next pool is ordered as: (1) a certified macrostep method with a uniform
+turning-point chart, only after a minimal Airy/Bessel connection screen proves
+finite horizon crossing; (2) a cheap remainder bound for selectively relaxing
+phase subdivision, only if its certificate has no matrix-product cost; (3) a
+fresh LLVM/data-layout audit only after a compiler/runtime change. Do not
+reopen boundary-WKB, raw Bessel, phase recurrence, CF4/Magnus, Riccati, or
+outer secant implementations. No AI/learned model is used.

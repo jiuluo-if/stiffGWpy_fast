@@ -1397,3 +1397,13 @@ the diagnostic artifacts are retained.
 - The Bessel variable-coefficient transfer passed standalone DOP853 accuracy (`1.4e-15–1.0e-14` power error) and finite named-path gates, but was `166.7–188.7x` slower than the native midpoint transfer. Rejected by Amdahl before full kernel/full outer; production unchanged.
 - CI run 225: static/package/cobaya and Python 3.9–3.13 compatibility passed; canonical failed with the known baseline failures.
 - Next: tiny asymptotic Bessel/WKB coefficient-recurrence operation-count screen, only if it can remove the special-function cost by >=100x. No AI/learned model.
+
+- Round 58 completed at fresh HEAD `6cb3bc7`. The 25-repeat full-path profile
+  was host-noisy (`10.066/7.771/14.792/17.094/13.325 ms` median for
+  default/lowT/highT/stiff/high-kappa), but digests matched Round 57.
+- Full-native WKB phase-integral prototype failed correctness on all five
+  actual regimes: the first 32-interval mode probe crossed a turning-point /
+  forbidden interval and became non-finite. Rejected before timing and full
+  kernel; production unchanged.
+- Next: tiny uniform turning-point Airy/Bessel connection feasibility screen,
+  only if it can prove finite horizon crossing. No AI/learned model.
