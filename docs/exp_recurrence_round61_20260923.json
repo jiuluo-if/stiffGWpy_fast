@@ -1,0 +1,77 @@
+{
+  "experiment": "round61_exp_coefficient_recurrence",
+  "production_path_changed": false,
+  "commit": "7090dbd330007d1f85bf89195c010d491fd543cb",
+  "settings": {
+    "repeats": 25,
+    "out": "docs/exp_recurrence_round61_20260923.json"
+  },
+  "phase_max": 0.25,
+  "rows": [
+    {
+      "case": "default",
+      "native_segments": 3523,
+      "phase_substeps": 3672,
+      "finite": true,
+      "baseline_median_ms": 0.034500000765547156,
+      "candidate_median_ms": 0.04350000017439015,
+      "candidate_over_baseline": 1.26086954229377,
+      "baseline_p95_ms": 0.03477999925962649,
+      "candidate_p95_ms": 0.04360000020824373,
+      "power_relative_error": 1.0836236270179456e-15,
+      "component_relative_error": 3.2422049293706357e-15
+    },
+    {
+      "case": "highT",
+      "native_segments": 3350,
+      "phase_substeps": 3499,
+      "finite": true,
+      "baseline_median_ms": 0.03230000220355578,
+      "candidate_median_ms": 0.04070000068168156,
+      "candidate_over_baseline": 1.2600618546459745,
+      "baseline_p95_ms": 0.032500000088475645,
+      "candidate_p95_ms": 0.04090000220458023,
+      "power_relative_error": 1.711463423749848e-15,
+      "component_relative_error": 2.2857073038118042e-15
+    },
+    {
+      "case": "stiff",
+      "native_segments": 3523,
+      "phase_substeps": 3672,
+      "finite": true,
+      "baseline_median_ms": 0.03420000211917795,
+      "candidate_median_ms": 0.04310000076657161,
+      "candidate_over_baseline": 1.2602338624535612,
+      "baseline_p95_ms": 0.036800000816583626,
+      "candidate_p95_ms": 0.04755999907501973,
+      "power_relative_error": 0.0,
+      "component_relative_error": 4.7702355801945104e-14
+    },
+    {
+      "case": "high_kappa",
+      "native_segments": 3437,
+      "phase_substeps": 3586,
+      "finite": true,
+      "baseline_median_ms": 0.033799999073380604,
+      "candidate_median_ms": 0.04239999907440506,
+      "candidate_over_baseline": 1.2544378768281517,
+      "baseline_p95_ms": 0.03803999934461899,
+      "candidate_p95_ms": 0.04260000059730373,
+      "power_relative_error": 9.635428799238934e-16,
+      "component_relative_error": 2.7720153037252916e-15
+    },
+    {
+      "case": "lowT",
+      "native_segments": 4480,
+      "phase_substeps": 4671,
+      "finite": true,
+      "baseline_median_ms": 0.049600002967054024,
+      "candidate_median_ms": 0.08850000085658394,
+      "candidate_over_baseline": 1.7842741040835943,
+      "baseline_p95_ms": 0.0705999984347727,
+      "candidate_p95_ms": 0.16964000096777432,
+      "power_relative_error": 8.551858562544288e-16,
+      "component_relative_error": 4.026488637167099e-15
+    }
+  ]
+}

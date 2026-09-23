@@ -971,3 +971,17 @@ Phase 3: Implementation and evidence-driven optimization
   DOP853; rejected by correctness before production/full user-facing timing.
 - [ ] Next: full-chain residual-certified phase-function feasibility screen.
   No AI/learned model.
+
+## Round 61 — exp coefficient recurrence (2026-09-23)
+
+- [x] Re-fetched Round 60 HEAD and refreshed the canonical fixed-resource
+  profile with `kink_split=true`; output digests were stable.
+- [x] Standalone exact-map gate passed with power error `0--1.71e-15` and
+  component error at most `4.77e-14`.
+- [x] Candidate transfer ratios were `1.25--1.78x` baseline and removed no
+  meaningful full-path work; rejected by Amdahl before production integration.
+- [x] Production source unchanged; Round 61 artifact, test, and ledger entry
+  are ready to commit and push.
+- [ ] Next: direct residual-controlled phase-function integration over the
+  full oscillatory chain, with an independent residual bound before timing.
+  This is a deterministic mathematical prototype only; no AI/learned model.

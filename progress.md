@@ -1424,3 +1424,17 @@ the diagnostic artifacts are retained.
   Rejected by correctness before production/full user-facing benchmark.
 - Next: full-chain residual-certified phase-function feasibility, only if an
   independent residual bound is established first. No AI/learned model.
+
+- Round 61 completed at `7090dbd`: fresh canonical total medians/p95 were
+  `6.723/8.355`, `7.364/8.128`, `10.712/12.554`, `13.646/26.556`, and
+  `11.164/12.535 ms` for default/lowT/highT/stiff/high-kappa; digests were
+  unchanged.
+- The exp coefficient recurrence was finite and nearly bitwise on actual
+  paths (`0--1.71e-15` power error), but its transfer ratios were `1.25--1.78x`
+  baseline, so it was rejected by Amdahl before full-kernel/full-outer timing.
+- CI run 229 for the pushed Round 60 HEAD failed only in canonical;
+  static/package/cobaya and compatibility 3.9--3.13 passed. Production source
+  remains unchanged.
+- [ ] Next: direct residual-controlled phase-function integration over a full
+  oscillatory chain, distinct from the rejected Chebyshev and boundary-WKB
+  representations. No AI/learned model.

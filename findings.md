@@ -2740,3 +2740,52 @@ analytic remainder bound that does not use WKB amplitude transport; (3) a
 fresh compiler/data-layout audit only after a runtime/compiler change. Do not
 reopen simple WKB, boundary-WKB, raw Bessel, or the local Airy block alone.
 No AI/learned model is used.
+
+## Round 61 result — exp coefficient recurrence screen (2026-09-23)
+
+Round 61 fetched the pushed Round 60 HEAD `7090dbd330007d1f85bf89195c010d491fd543cb`
+and refreshed the canonical profile with the fixed resource contract,
+`kink_split=true`, and 25 warm repeats. The fresh total medians/p95 values
+were default `6.723/8.355 ms`, low-T `7.364/8.128 ms`, high-T
+`10.712/12.554 ms`, stiff `13.646/26.556 ms`, and high-kappa
+`11.164/12.535 ms`; all output digests matched the previous production
+baseline.
+
+The selected exact-arithmetic hypothesis generated `w=exp(z)` once at the
+first phase substep and advanced it with `w *= exp(dz)` while retaining the
+production subdivision, `sin/cos/sqrt` transfer, guards, and assembly. The
+standalone correctness test passed: all actual paths were finite, power
+relative error was `0--1.71e-15`, and component relative error was at most
+`4.77e-14`. The transfer timings were baseline/candidate medians
+`0.0345/0.0435 ms` default, `0.0323/0.0407 ms` high-T,
+`0.0342/0.0431 ms` stiff, `0.0338/0.0424 ms` high-kappa, and
+`0.0496/0.0885 ms` low-T; ratios were `1.25--1.78x` slower. Since the
+candidate neither reduces phase substeps nor removes a transcendental from
+the full path sufficiently to overcome this local regression, it was
+**REJECTED_BY_AMDAHL** before full-kernel/full-outer timing. Production
+source remains unchanged. A pytest import-order conflict was isolated to the
+test process's preloaded Numba thread pool and fixed in the standalone test by
+running the candidate gate in a resource-pinned child process; the normal
+test and ruff checks then passed.
+
+Artifact: `docs/exp_recurrence_round61_20260923.json`; prototype and test:
+`scripts/benchmark_exp_recurrence_round61.py` and
+`tests/test_exp_recurrence_round61.py`.
+
+The next pool is ordered as: (1) a full-chain phase-function formulation
+using direct residual-controlled amplitude/phase integration, not the
+rejected Chebyshev or boundary-WKB fits, and only after an independent
+residual gate; (2) a macrostep transfer with an analytic defect bound that
+does not propagate a matrix product for every retained substep; (3) fresh
+LLVM/data-layout work only after a compiler/runtime change. Do not reopen raw
+exp recurrence, phase-angle recurrence, simple/composite WKB, Bessel, or
+unmodified CF4/Magnus. No AI/learned model is used.
+
+## CI status at Round 61 (2026-09-23)
+
+GitHub Actions run `229` for `7090dbd330007d1f85bf89195c010d491fd543cb`
+completed with overall **failure**: `canonical` failed, while `static`,
+`package`, `cobaya`, and all five compatibility jobs completed successfully.
+The run had no artifacts and the canonical job exited with code 1; its known
+baseline failures remain separate from the standalone Round 61 files. This
+was verified on the GitHub Actions run page before the Round 61 commit.
