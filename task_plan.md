@@ -828,3 +828,12 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: test native-grid Prüfer/WKB hybrid feasibility as a pure numerical
   state-reduction method. No AI/learned model, no recurrence retune, and no
   production modification before native-grid correctness is established.
+
+## Round 49 — native-grid Prüfer transfer feasibility (2026-09-23)
+
+- [x] Re-fetched at `2485e99` and distinguished existing Prüfer oracle
+  certification from the new Numba/native production-kernel question.
+- [x] TDD and native discrete-map chains passed finite invariant accuracy, but
+  candidate/base ratios `1.656–2.129` failed Amdahl before full-kernel work.
+- [ ] Next: audit LLVM/ASM for repeated `w*si`, then test only a strict-
+  equivalence coefficient-reuse spike if the compiler has not already merged it.

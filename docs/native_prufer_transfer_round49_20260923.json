@@ -1,0 +1,43 @@
+{
+  "experiment": "round49_native_prufer_transfer_screen",
+  "production_path_changed": false,
+  "commit": "2485e99cd75da832bcdbdd59f4df7fedfe0c686c",
+  "records": [
+    {
+      "z0": 0.2,
+      "z1": 3.0,
+      "h": 0.01,
+      "steps": 256,
+      "repeats": 25,
+      "finite": true,
+      "power_relative_error": 2.8948682212349558e-15,
+      "baseline_median_us": 6.100000973674469,
+      "candidate_median_us": 10.100000508828089,
+      "candidate_over_baseline": 1.6557375240456942
+    },
+    {
+      "z0": 0.2,
+      "z1": 5.0,
+      "h": 0.005,
+      "steps": 1024,
+      "repeats": 25,
+      "finite": true,
+      "power_relative_error": 4.813987407389114e-16,
+      "baseline_median_us": 23.70000038354192,
+      "candidate_median_us": 40.70000068168156,
+      "candidate_over_baseline": 1.7172995790305985
+    },
+    {
+      "z0": -1.2,
+      "z1": 0.4,
+      "h": 0.01,
+      "steps": 256,
+      "repeats": 25,
+      "finite": true,
+      "power_relative_error": 3.0537813825576127e-15,
+      "baseline_median_us": 3.099999958067201,
+      "candidate_median_us": 6.599999323952943,
+      "candidate_over_baseline": 2.1290320687836184
+    }
+  ]
+}

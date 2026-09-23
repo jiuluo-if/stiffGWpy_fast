@@ -2370,3 +2370,29 @@ high cost and low probability after the prior block/WKB screens. Select (1)
 next because it changes the state representation rather than retuning a
 rejected recurrence, and first require finite native-grid transfer accuracy
 before any kernel timing.
+
+## Round 49 result — native-grid Prüfer transfer feasibility (2026-09-23)
+
+The latest HEAD `2485e99cd75da832bcdbdd59f4df7fedfe0c686c` was fetched and
+the existing full-grid Prüfer evidence was reviewed. That evidence certifies
+Prüfer as an independent reference/oracle, but not as a Numba production
+kernel; this experiment therefore tested the production discrete transfer map
+directly in amplitude/phase state, rather than repeating the old continuous
+DOP853 or WKB-handoff implementation.
+
+The native candidate reconstructed `x=A*sin(theta), y=A*cos(theta)` around
+each exact production transfer and updated `A=sqrt(x^2+y^2)` and
+`theta=atan2(x,y)`. TDD passed after correcting the invariant comparison to
+compare `A^2` with `x^2+y^2`. Three long chains were finite and had power
+relative error `4.81e-16–3.05e-15`, but candidate/base loop ratios were
+`1.656/1.717/2.129`. The per-step `sin/cos/atan2/sqrt` work eliminates any
+state-reduction benefit, so the candidate is **REJECTED_BY_AMDAHL** before a
+full kernel twin. Artifact: `docs/native_prufer_transfer_round49_20260923.json`.
+
+The next pool is now pure strict-equivalence arithmetic: (1) explicit reuse
+of the repeated `w*si` transfer coefficient, after verifying LLVM/ASM does
+not already perform CSE; (2) a certified local phase-fitted block, high risk
+and likely to repeat prior Magnus residual failures; (3) safeguarded scalar
+outer residual correction, high potential but low semantic success. Select
+(1): it is bitwise-preserving in exact arithmetic, directly targets a proven
+inner expression, and has low experiment cost. No AI/learned model is used.
