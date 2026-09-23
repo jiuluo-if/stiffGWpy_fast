@@ -2277,3 +2277,66 @@ Artifact: `docs/phase_increment_recurrence_round46_20260923.json`.
 Next selected experiment is the full kernel twin with this one recurrence
 factor, exact fallback for low-frequency/kink branches, named/edge/Sobol
 correctness gates, and then alternating full end-to-end benchmark.
+
+## Round 47 result — full phase-increment kernel twin (2026-09-23)
+
+Fresh canonical profiling was rerun at `5ee89d5eeda9375421eccddbe14c18210d609794`
+with 2-thread/workqueue, affinity `[0,1]`, BLAS budget one, 25 repeats,
+`goal`/PCHIP and `kink_split=true`. Total/tensor medians were
+`3.750/1.640`, `3.609/1.877`, `5.479/1.297`, `5.508/1.626` and
+`5.848/1.341` ms for default/low-T/high-T/stiff/high-kappa; tensor shares
+were `43.7%/52.0%/23.7%/29.5%/22.9%`. Hard regimes still used two kernel
+calls. Artifact: `docs/profile_fast_breakdown_round47_20260923.json`.
+
+The standalone full-kernel twin changed only high-frequency substep
+sin/cos evaluation: it used a phase-increment recurrence with exact
+re-anchors every 32 substeps, while retaining production subdivision,
+`z_mid`/`z_end`, kink split, assembly, tail, and exact low-frequency fallback.
+The re-anchor-one TDD transfer test was bitwise equal to production. Fixed-DN
+named kernels were finite but intentionally non-bitwise, with maximum relative
+spectrum error `1.10e-4–1.25e-4` and DN relative error
+`8.61e-5–1.02e-4`; this passed the experimental gate. Full outer named,
+edge, and Sobol cases converged identically except the same pre-existing
+`shared_Neff_guard` failures at `edge_tre_hi` and `edge_nt_blue`.
+The independent continuous-sigma DOP853 oracle screen at default/high-T/
+Sobol-010 was finite and returned `0.00357–0.00361 dex` maximum signal error
+and `0.00442–0.00448` DN relative error, consistent with the existing fast
+oracle budget.
+
+An initial rerun exposed an experimental age-counter bug in the re-anchor-one
+test; its first timing records are superseded. After fixing that candidate
+harness bug, the re-anchor-one transfer test remained bitwise equal and all
+correctness/oracle gates were rerun. The corrected alternating 25-repeat
+full-outer candidate/base median ratios (default/low-T/high-T/stiff/high-kappa)
+were:
+
+* 2 threads: `0.981/0.978/0.994/0.987/0.981`;
+* 16 threads: `0.975/1.016/0.989/1.012/0.972`;
+* 20 threads: `0.984/0.981/1.014/0.990/1.022`.
+
+The corrected candidate has only `0.6%–2.2%` 2-thread end-to-end median
+improvement and formal 16/20-thread regressions. It is
+**REJECTED_FOR_PRODUCTION**; production source remains unchanged. Artifacts:
+`docs/phase_increment_kernel_twin_round47_20260923.json`,
+`docs/phase_increment_correctness_round47_20260923.json`,
+`docs/phase_increment_oracle_round47_20260923.json`,
+`docs/phase_increment_outer_round47_t2_20260923.json`,
+`docs/phase_increment_outer_round47_t16_20260923.json`,
+`docs/phase_increment_outer_round47_t20_20260923.json`.
+
+The rejection closes this particular periodic phase-recurrence promotion;
+do not retune its re-anchor period or reopen the earlier exp-recurrence
+hoist. The next candidate pool is restricted to pure deterministic math:
+(1) an exact algebraic state-basis transfer rewrite, medium expected gain
+and low-to-medium success probability; (2) a safeguarded scalar outer
+residual predictor with an exact final correction, high potential but low
+success after the Round 30 semantics failure; (3) a new work-reducing
+uniform-asymptotic block with an explicit residual certificate, high cost and
+low success because prior block/WKB variants failed. The next selected
+experiment is (1), first as a bitwise/local arithmetic and full-kernel twin;
+it has the highest information value at the lowest cost and does not use any
+AI/learned model.
+
+The corrected rerun supersedes the preliminary Round 47 timing paragraph
+above; the preliminary files were overwritten in place with the corrected
+candidate and remain bound to the same production HEAD.

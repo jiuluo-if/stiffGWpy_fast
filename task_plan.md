@@ -800,3 +800,20 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next round: build the full standalone kernel twin with exact low-frequency
   and kink fallback, then run output/guard/oracle and alternating full outer
   gates before any production consideration.
+
+## Round 47 — full phase-increment kernel twin (2026-09-23)
+
+- [x] Re-fetched and refreshed the canonical profile at `5ee89d5`; tensor
+  shares were `22.9%–52.0%` and hard cases retained two propagation calls.
+- [x] TDD, fixed-DN, full outer named/edge/Sobol, and independent DOP853
+  oracle gates passed at the experimental numerical budget. Existing guard
+  failures remained identical between baseline and candidate.
+- [x] Alternating 25-repeat full-outer A/B at 2/16/20 threads failed the
+  stable improvement gate, with formal regressions. Candidate rejected and
+  production source unchanged.
+- [ ] Next: test the selected exact algebraic state-basis transfer rewrite as
+  a standalone pure-math kernel twin. Do not use AI/learned models; do not
+  retune phase recurrence or reopen exp-hoist without new compiler evidence.
+- [x] Corrected an experimental re-anchor age-counter bug found by the exact
+  transfer test; reran fixed-DN, correctness, oracle, and all 2/16/20-thread
+  timings. The corrected candidate still failed the stable full-outer gate.

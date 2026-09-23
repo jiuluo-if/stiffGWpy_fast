@@ -1,0 +1,274 @@
+{
+  "experiment": "round47_phase_increment_full_outer_correctness",
+  "production_path_changed": false,
+  "commit": "5ee89d5eeda9375421eccddbe14c18210d609794",
+  "settings": {
+    "threads": 2,
+    "kink_split": true,
+    "freq_grid": "goal",
+    "frequency_quadrature": "pchip",
+    "reanchor": 32
+  },
+  "records": [
+    {
+      "name": "default",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13764,
+      "candidate_iterations": 13764,
+      "spectrum_max_abs_dex": 5.155972904802297e-05,
+      "spectrum_max_rel_linear": 0.00011871361648581461,
+      "DN_gw_relative": 8.249379164785995e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "highT",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13442,
+      "candidate_iterations": 13442,
+      "spectrum_max_abs_dex": 4.837329719720174e-05,
+      "spectrum_max_rel_linear": 0.0001113774300986747,
+      "DN_gw_relative": 8.228346546924667e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "stiff",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13918,
+      "candidate_iterations": 13918,
+      "spectrum_max_abs_dex": 5.190737974025694e-05,
+      "spectrum_max_rel_linear": 0.00011951401643712145,
+      "DN_gw_relative": 8.177141779852351e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "high_kappa",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13457,
+      "candidate_iterations": 13457,
+      "spectrum_max_abs_dex": 5.221626006246538e-05,
+      "spectrum_max_rel_linear": 0.00012022515440852672,
+      "DN_gw_relative": 8.150075662143294e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "lowT",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 14841,
+      "candidate_iterations": 14841,
+      "spectrum_max_abs_dex": 4.831961290818754e-05,
+      "spectrum_max_rel_linear": 0.00011125383121508617,
+      "DN_gw_relative": 6.835264766599348e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "edge_r_lo",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13166,
+      "candidate_iterations": 13166,
+      "spectrum_max_abs_dex": 5.17161071229566e-05,
+      "spectrum_max_rel_linear": 0.00011907364749928633,
+      "DN_gw_relative": 8.175034793737793e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "edge_tre_hi",
+      "baseline_result_none": true,
+      "candidate_result_none": true,
+      "baseline_converged": false,
+      "candidate_converged": false,
+      "baseline_failure": "shared_Neff_guard",
+      "candidate_failure": "shared_Neff_guard"
+    },
+    {
+      "name": "edge_kap_lo",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 14361,
+      "candidate_iterations": 14361,
+      "spectrum_max_abs_dex": 5.135870742201121e-05,
+      "spectrum_max_rel_linear": 0.00011825080192814439,
+      "DN_gw_relative": 7.959629804162686e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "edge_nt_blue",
+      "baseline_result_none": true,
+      "candidate_result_none": true,
+      "baseline_converged": false,
+      "candidate_converged": false,
+      "baseline_failure": "shared_Neff_guard",
+      "candidate_failure": "shared_Neff_guard"
+    },
+    {
+      "name": "sobol_000",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13164,
+      "candidate_iterations": 13164,
+      "spectrum_max_abs_dex": 5.0977291909504174e-05,
+      "spectrum_max_rel_linear": 0.00011737266372190216,
+      "DN_gw_relative": 8.167183367295493e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "sobol_006",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 8412,
+      "candidate_iterations": 8412,
+      "spectrum_max_abs_dex": 5.155276497958994e-05,
+      "spectrum_max_rel_linear": 0.00011869758302912261,
+      "DN_gw_relative": 8.24270377825541e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "sobol_010",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 13064,
+      "candidate_iterations": 13064,
+      "spectrum_max_abs_dex": 5.4425758280629566e-05,
+      "spectrum_max_rel_linear": 0.00012531208747620364,
+      "DN_gw_relative": 8.179881965028266e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    },
+    {
+      "name": "sobol_015",
+      "baseline_result_none": false,
+      "candidate_result_none": false,
+      "baseline_converged": true,
+      "candidate_converged": true,
+      "baseline_failure": null,
+      "candidate_failure": null,
+      "baseline_iterations": 9553,
+      "candidate_iterations": 9553,
+      "spectrum_max_abs_dex": 5.14929042338963e-05,
+      "spectrum_max_rel_linear": 0.00011855976491950534,
+      "DN_gw_relative": 8.195043859178157e-05,
+      "finite_candidate": true,
+      "digests": {
+        "f_equal": true,
+        "spectrum_equal": false,
+        "DN_gw_equal": false,
+        "g2_equal": false,
+        "w2_equal": false
+      }
+    }
+  ]
+}

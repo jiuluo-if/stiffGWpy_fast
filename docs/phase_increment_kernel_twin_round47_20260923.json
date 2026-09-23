@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "experiment": "round47_phase_increment_full_kernel_twin",
+  "production_path_changed": false,
+  "commit": "5ee89d5eeda9375421eccddbe14c18210d609794",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "repeats": 25,
+    "cases": [
+      "default",
+      "highT",
+      "stiff",
+      "high_kappa",
+      "lowT"
+    ],
+    "threads": 2,
+    "reanchor": 32
+  },
+  "records": [
+    {
+      "case": "default",
+      "reanchor": 32,
+      "repeats": 25,
+      "n_freq": 76,
+      "baseline_median_ms": 2.3908000002847984,
+      "candidate_median_ms": 2.261499999804073,
+      "baseline_p95_ms": 2.8774400005204366,
+      "candidate_p95_ms": 2.8815800007578214,
+      "candidate_over_baseline": 0.9459176842624549,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 1.3468730398775303e-08,
+        "spectrum_rel_p50": 7.896133215195574e-05,
+        "spectrum_rel_p95": 0.00010046478796291476,
+        "spectrum_rel_max": 0.00011867200390056819,
+        "DN_gw_relative": 8.249379137407696e-05,
+        "handoff_eps_max": 1.0
+      },
+      "baseline_digests": {
+        "Ogw": "3c1bed4e57e0319e082a9d9fcd08c4aecce88f80bfd436dd363cc7fb1d876124",
+        "Oj": "8351bbed3604e12b1b32946a890211d8b94dc7e1bd3ac2fb3eff4535fd4ef554",
+        "Opgw": "9431cdf30c79c3926c221ff3c34c731b5d9d4c77fd26e08d3d341ec0ed4756ba"
+      },
+      "candidate_digests": {
+        "Ogw": "1a24543da352ba2623736d6b5ddf48ee67d1e7e3d9ba4551321dee27081aea7c",
+        "Oj": "ebfb10e71f5a0e8bb70166b1a178bfb77326797b7e737cd3a3f8a869d6f50c2d",
+        "Opgw": "d58613c504fe6ad756f7f64f958dbb693e6eb2047926f8a30577e8dddf2f1284"
+      }
+    },
+    {
+      "case": "highT",
+      "reanchor": 32,
+      "repeats": 25,
+      "n_freq": 76,
+      "baseline_median_ms": 2.31799999892246,
+      "candidate_median_ms": 2.1161999993637437,
+      "baseline_p95_ms": 3.182239999659941,
+      "candidate_p95_ms": 2.985680001074797,
+      "candidate_over_baseline": 0.9129421916943381,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 3.3236539802652953e-07,
+        "spectrum_rel_p50": 7.794011423527212e-05,
+        "spectrum_rel_p95": 8.719438215455363e-05,
+        "spectrum_rel_max": 0.00011063564129781455,
+        "DN_gw_relative": 8.228346548068045e-05,
+        "handoff_eps_max": 1.0
+      },
+      "baseline_digests": {
+        "Ogw": "4a133bb49635f4fa025bd3fe4268640ef063b771b0765d32abf8d76e4cc47ac5",
+        "Oj": "148837f2d6a8c8fbfa65e81190bebfc5081909674e8d85ca0af1995ba324859d",
+        "Opgw": "75212da73facfef023cd2ea3567680def80228005e97b570cd92a5cfe7d21c86"
+      },
+      "candidate_digests": {
+        "Ogw": "9a7e7d2a655d7bfe0d3e8830051961adc86d2b00926361452bc2db2f798860f3",
+        "Oj": "a595de1aa5984f96f511aa204d2d6b242a3d6b479882bd9bda7316720d24f786",
+        "Opgw": "c9620182955e1ffe54c101923062d33f47f696693af07ab9d0f21099e44a2025"
+      }
+    },
+    {
+      "case": "stiff",
+      "reanchor": 32,
+      "repeats": 25,
+      "n_freq": 76,
+      "baseline_median_ms": 2.6519000002735993,
+      "candidate_median_ms": 2.411499999652733,
+      "baseline_p95_ms": 3.2880200000363398,
+      "candidate_p95_ms": 3.297979999842937,
+      "candidate_over_baseline": 0.9093480144062507,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 9.309750787704456e-08,
+        "spectrum_rel_p50": 7.818191676930266e-05,
+        "spectrum_rel_p95": 0.00010078074276223538,
+        "spectrum_rel_max": 0.00011935278061587571,
+        "DN_gw_relative": 8.177141776897032e-05,
+        "handoff_eps_max": 1.0
+      },
+      "baseline_digests": {
+        "Ogw": "76ed4816021bcd95576f2cd15d04c85246c36e872cc1a473c9a8da0ec2853a86",
+        "Oj": "519dff5a4fcec4acfe4fd51d00c6e792137bdb03112ab3b9d6ef85884581dca1",
+        "Opgw": "dfb27a9acfe12105b2fe22ede85e9f43aaa424e4e78842970184ca0d793e0534"
+      },
+      "candidate_digests": {
+        "Ogw": "846eedb582b47c4bc9eb2e42060e6c83050e3495b550d4cd1c83af575880801d",
+        "Oj": "01aed1aeeb322d65e8bc17fd466072fc6a8640795ca1727a8ca1e2c2cd24d761",
+        "Opgw": "fa6bec09e6526aade4fd5a2eeb0818822190fd17ec89ee477a87fb2d4e7914ad"
+      }
+    },
+    {
+      "case": "high_kappa",
+      "reanchor": 32,
+      "repeats": 25,
+      "n_freq": 77,
+      "baseline_median_ms": 2.3010999993857695,
+      "candidate_median_ms": 2.1962999999232125,
+      "baseline_p95_ms": 3.043720000641769,
+      "candidate_p95_ms": 2.9658600000402653,
+      "candidate_over_baseline": 0.9544565644732819,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 1.2346545441750678e-06,
+        "spectrum_rel_p50": 7.811425541769499e-05,
+        "spectrum_rel_p95": 8.717859467355845e-05,
+        "spectrum_rel_max": 0.00011810506171460727,
+        "DN_gw_relative": 8.150075662400073e-05,
+        "handoff_eps_max": 1.0
+      },
+      "baseline_digests": {
+        "Ogw": "3487ecea8be0406e9dc1c0b6933876cdcb5c8bbdc1496be28c90ad4e0790e326",
+        "Oj": "bd040206ee1eb3e56e686705f8ab98d530fe6dcac11797fcda883bd83fb9993d",
+        "Opgw": "18d8e55a1d9762f02e3e40efbcfb1f2474fb3b023b3d2e00663f960e136a8ced"
+      },
+      "candidate_digests": {
+        "Ogw": "84a388ca251aa7eb575a1796ed0322bc8220090d4de78fc6407ba2077c0580d5",
+        "Oj": "565eeb162cb6c02cebdd24a261447d8df48314d844209280410c90f1727cd776",
+        "Opgw": "991ab743b29ed1534873ebcbadc37eeb90194b49800f5c7f7f0597bd07a3fad8"
+      }
+    },
+    {
+      "case": "lowT",
+      "reanchor": 32,
+      "repeats": 25,
+      "n_freq": 76,
+      "baseline_median_ms": 2.861299999494804,
+      "candidate_median_ms": 2.8304999996180413,
+      "baseline_p95_ms": 3.2567399997788016,
+      "candidate_p95_ms": 3.6668000007921364,
+      "candidate_over_baseline": 0.9892356621527973,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 2.7939536702977427e-13,
+        "spectrum_rel_p50": 7.701346231410077e-05,
+        "spectrum_rel_p95": 0.00010504006744901039,
+        "spectrum_rel_max": 0.000111253831173842,
+        "DN_gw_relative": 6.835264766517281e-05,
+        "handoff_eps_max": 1.0
+      },
+      "baseline_digests": {
+        "Ogw": "d6773cf5edde4a46cd9bcac4ebf1d7fd0232eaa74c170cea5b82670f5c573d56",
+        "Oj": "e9b7106cbff2e0e65f538f8468aeb47ba35e8d440623fb36a1e2a8ee72e14206",
+        "Opgw": "df6566987d1fec2cc12a9b4718ab494e7a60c4e0331ddc1884cc2a0f68ec882e"
+      },
+      "candidate_digests": {
+        "Ogw": "34445219baa2522dee864906ad0bff87f23f16ecb0ab2851b46d21278a3d6f60",
+        "Oj": "444a11dfd284e1240dc362ae9fb35272585dfc16590a3a1b0e458b48e6cf8cd8",
+        "Opgw": "22a82d0d4aa7978b6ad74635c3db16076393ed991edadba5a057065c9ed07a98"
+      }
+    }
+  ]
+}
