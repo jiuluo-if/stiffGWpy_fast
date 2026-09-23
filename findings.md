@@ -1892,3 +1892,30 @@ was restored; the A/B artifacts remain under
   intervals, with an independently computed local defect gate and exact
   production fallback. This is a different integrator order/composition, not
   a threshold or bucket-width retune.
+
+## Round 32 — fourth-order commutator-free Magnus screen (2026-09-23)
+
+- The prototype implements the published Gaussian-node two-exponential CF4
+  composition for the existing 2x2 Cartesian transfer matrix, with a local
+  commutator defect gate and exact production fallback. Threshold zero passed
+  full intermediate/final output bitwise equality, not only the final column.
+- At threshold `1e-3`, the candidate's independent-oracle residual remained
+  close to baseline on all five named cases: candidate DN-relative-to-oracle
+  was `0.001514–0.003639` versus baseline `0.001514–0.003636`, while the
+  candidate spectrum max-dex residual was `0.002934–0.003163`. This was a
+  scientific screen only; no production source was changed.
+- The full-assembly kernel screen did not provide a stable multi-regime win:
+  at threshold `1e-3`, 2-thread candidate/base ratios were
+  `0.913/1.069/0.812/0.824/0.790` for default/high-T/stiff/high-kappa/low-T;
+  high-T regressed and the candidate's full-output path is not a formal
+  end-to-end improvement across regimes. Lower threshold `1e-4` also left
+  high-T and high-kappa above baseline. Since the core kernel prerequisite
+  already fails the stable named-regime gate, no misleading full-outer timing
+  expansion was run.
+- Artifacts: `docs/cf4_magnus_round32_kernel_20260923.json` and
+  `docs/cf4_magnus_round32_oracle_20260923.json`.
+- Decision: **REJECTED_FOR_PRODUCTION**. Do not retune CF4 coefficients,
+  threshold or phase cap on this sample. Next candidate: a phase-function
+  Chebyshev representation feasibility spike with residual certification,
+  explicitly avoiding the previously rejected raw Riccati-pole and
+  first-order WKB-handoff implementations.

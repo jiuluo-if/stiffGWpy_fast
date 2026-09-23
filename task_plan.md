@@ -128,6 +128,29 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   at 2/16/20 threads. Reject on any formal-regime regression or lack of stable
   >5% total improvement.
 
+### Round 32 outcome
+
+- [x] Threshold-zero CF4 fallback passed full output bitwise equality.
+- [x] Named independent oracle screen completed; candidate residual stayed near
+  the existing production residual and no guard semantics changed.
+- [x] Full-assembly kernel screen at 2 threads failed the stable named-regime
+  prerequisite (`0.790–1.069` ratios at threshold `1e-3`, high-T regression),
+  so formal full-outer expansion was correctly skipped.
+- [x] Reject CF4 for production and do not retune its coefficients or gate on
+  the same sample.
+
+### Next experiment: residual-certified phase-function Chebyshev spike
+
+- [ ] Construct a tiny standalone phase-function representation for the
+  nonoscillatory transformed background on each smooth regime, fitted with
+  Chebyshev coefficients and checked by the Kummer/Riccati residual; do not
+  use raw `y'/y` Riccati coordinates with poles.
+- [ ] Use the representation only to predict transfer blocks, with exact
+  Cartesian fallback when the residual/turning-point gate fails.
+- [ ] First gate: threshold-zero fallback bitwise, named/edge/Sobol reference
+  agreement, guards/failure/determinism, and measured reduction in real
+  propagation evaluations. No production edit.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.
