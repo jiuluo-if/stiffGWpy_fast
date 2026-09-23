@@ -2396,3 +2396,29 @@ and likely to repeat prior Magnus residual failures; (3) safeguarded scalar
 outer residual correction, high potential but low semantic success. Select
 (1): it is bitwise-preserving in exact arithmetic, directly targets a proven
 inner expression, and has low experiment cost. No AI/learned model is used.
+
+## Round 50 result — LLVM/ASM audit of transfer coefficient reuse (2026-09-23)
+
+The latest HEAD `d230d938e829f8039f26d1a79d9672122f4a148f` was fetched and the
+canonical profile was refreshed under the fixed two-thread/workqueue resource
+contract. The diagnostic medians were noisy (`total/tensor`, ms): default
+`6.230/2.406`, lowT `7.927/3.944`, highT `11.476/2.591`, stiff `8.229/2.029`,
+and high-kappa `7.956/1.635`; these are attribution data, not a performance
+verdict.
+
+The selected strict-equivalence hypothesis was explicit reuse of the repeated
+`w*si` transfer coefficient. The fresh LLVM audit recompiled `scaled_step`,
+`_phase_substeps`, `_phase_segment`, and `solve_kernel`: `scaled_step` retains
+one `exp`, one `sin`, one `cos`, and no integer div/rem; its SSA already has
+`%.93 = fmul double %.14, %.si.2.0` shared by both state updates. Thus LLVM
+already performs the proposed CSE. The candidate is
+**REJECTED_AS_ALREADY_OPTIMIZED** without a twin or full-outer benchmark;
+production remains unchanged. Artifacts:
+`docs/profile_fast_breakdown_round50_20260923.json` and
+`docs/audit_fast_kernel_llvm_round50_20260923.json`.
+
+The next pool is a residual-certified two-interval uniform-asymptotic block,
+with an embedded one-interval versus two-interval defect bound; it is distinct
+from the rejected midpoint residual block, CF4 Magnus block, and boundary-WKB
+screens. Only a tiny mathematical accuracy screen will be attempted first.
+No AI/learned model is used.

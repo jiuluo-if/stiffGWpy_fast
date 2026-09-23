@@ -837,3 +837,14 @@ Phase 3: Implementation and evidence-driven optimization
   candidate/base ratios `1.656–2.129` failed Amdahl before full-kernel work.
 - [ ] Next: audit LLVM/ASM for repeated `w*si`, then test only a strict-
   equivalence coefficient-reuse spike if the compiler has not already merged it.
+
+## Round 50 — LLVM/ASM coefficient-reuse audit (2026-09-23)
+
+- [x] Re-fetched at `d230d938e829f8039f26d1a79d9672122f4a148f` and ran a fresh
+  canonical profile under the fixed resource contract.
+- [x] LLVM audit showed the repeated `w*si` product is already shared in the
+  `scaled_step` SSA; no production candidate was needed.
+- [x] Rejected as already optimized; production source remains unchanged.
+- [ ] Next: run a standalone residual-certified two-interval
+  uniform-asymptotic defect screen only. Do not modify production unless the
+  embedded defect and all existing numerical gates justify promotion.
