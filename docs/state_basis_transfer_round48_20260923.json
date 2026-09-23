@@ -1,0 +1,43 @@
+{
+  "experiment": "round48_state_basis_transfer_screen",
+  "production_path_changed": false,
+  "commit": "0b4b208739eaa5751bc4601f301bbd382b7a030b",
+  "records": [
+    {
+      "z0": 0.2,
+      "z1": 3.0,
+      "h": 0.01,
+      "steps": 256,
+      "repeats": 25,
+      "finite": true,
+      "power_relative_error": 1.1579472884939824e-15,
+      "baseline_median_us": 6.000000212225132,
+      "candidate_median_us": 5.899999450775795,
+      "candidate_over_baseline": 0.9833332070146292
+    },
+    {
+      "z0": 0.2,
+      "z1": 5.0,
+      "h": 0.005,
+      "steps": 1024,
+      "repeats": 25,
+      "finite": true,
+      "power_relative_error": 3.3697911851723804e-15,
+      "baseline_median_us": 23.299999156733975,
+      "candidate_median_us": 23.099999452824704,
+      "candidate_over_baseline": 0.9914163214099745
+    },
+    {
+      "z0": -1.2,
+      "z1": 0.4,
+      "h": 0.01,
+      "steps": 256,
+      "repeats": 25,
+      "finite": true,
+      "power_relative_error": 7.416326214782774e-15,
+      "baseline_median_us": 3.0000010156072676,
+      "candidate_median_us": 2.999999196617864,
+      "candidate_over_baseline": 0.9999993936704041
+    }
+  ]
+}

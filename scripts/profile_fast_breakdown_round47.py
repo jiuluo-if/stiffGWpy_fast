@@ -1,6 +1,7 @@
 """Round 47 fresh canonical stage profile; diagnostic only."""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import statistics
@@ -31,6 +32,9 @@ CASES = {
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--out', default='docs/profile_fast_breakdown_round47_20260923.json')
+    args = parser.parse_args()
     process = psutil.Process()
     selected = limit_affinity(process, 2)
     os.environ['FAST_THREADS'] = '2'
@@ -88,7 +92,7 @@ def main() -> None:
         'repeats': 25,
         'rows': rows,
     }
-    out = Path('docs/profile_fast_breakdown_round47_20260923.json')
+    out = Path(args.out)
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8')
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 

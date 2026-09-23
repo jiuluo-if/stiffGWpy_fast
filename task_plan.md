@@ -817,3 +817,14 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] Corrected an experimental re-anchor age-counter bug found by the exact
   transfer test; reran fixed-DN, correctness, oracle, and all 2/16/20-thread
   timings. The corrected candidate still failed the stable full-outer gate.
+
+## Round 48 — algebraic characteristic-state basis screen (2026-09-23)
+
+- [x] Re-fetched at `0b4b208` and refreshed the canonical profile; tensor
+  shares remained `22.6%–50.8%`.
+- [x] TDD and three long-chain probes passed finite/near-machine-precision
+  correctness, but the best local ratio was only `0.983`, below the Amdahl
+  threshold for a full kernel twin. Candidate rejected before promotion.
+- [ ] Next: test native-grid Prüfer/WKB hybrid feasibility as a pure numerical
+  state-reduction method. No AI/learned model, no recurrence retune, and no
+  production modification before native-grid correctness is established.

@@ -2340,3 +2340,33 @@ AI/learned model.
 The corrected rerun supersedes the preliminary Round 47 timing paragraph
 above; the preliminary files were overwritten in place with the corrected
 candidate and remain bound to the same production HEAD.
+
+## Round 48 result — algebraic characteristic-state basis screen (2026-09-23)
+
+Fresh profiling at `0b4b208739eaa5751bc4601f301bbd382b7a030b` used the same
+fixed canonical contract. Total/tensor medians were
+`3.862/1.641`, `3.743/1.903`, `5.971/1.352`, `6.025/1.753` and
+`5.861/1.361` ms for default/low-T/high-T/stiff/high-kappa; tensor shares
+were `42.5%/50.8%/22.6%/29.1%/23.2%`.
+
+The pure algebraic basis `u=x+y`, `v=y-x` rewrites the exact constant-
+coefficient transfer as `u'=c*u-si*(w-1)*v` and
+`v'=c*v+si*(w+1)*u`. The TDD transfer reconstruction passed; three long
+chains remained finite with power relative error `1.16e-15–7.42e-15`.
+However, candidate/base loop ratios were only `0.983/0.991/1.000`, so the
+best local gain was about `1.7%`. Amdahl bounds its end-to-end contribution
+to roughly `0.4%–0.9%` across the fresh regimes, below the study threshold.
+The standalone candidate is **REJECTED_BY_AMDAHL** before a full kernel twin;
+production is unchanged. Artifact: `docs/state_basis_transfer_round48_20260923.json`.
+The first run also exposed and fixed only a Numba cache entry-point issue in
+the diagnostic harness (`cache=False`); no numerical result was taken from
+the failed run.
+
+The next pure-math pool is: (1) native-grid Prüfer/WKB hybrid state reduction,
+high possible work reduction but numerical-risky; (2) safeguarded scalar outer
+residual correction with exact final-spectrum semantics, high potential but
+low success after Round 30; (3) a residual-certified uniform asymptotic block,
+high cost and low probability after the prior block/WKB screens. Select (1)
+next because it changes the state representation rather than retuning a
+rejected recurrence, and first require finite native-grid transfer accuracy
+before any kernel timing.
