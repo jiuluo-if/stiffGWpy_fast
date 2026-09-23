@@ -3093,3 +3093,30 @@ cost). The next Actions run must confirm the dependency fix remotely.
 The fix was confirmed: run #241 for `ef8f293` is fully green across canonical,
 static, package, Cobaya, and compatibility Python 3.9--3.13. The latest
 remote branch SHA is therefore CI-verified.
+
+## Round 67 result — conservative outer transfer certificate (2026-09-23)
+
+The fresh fixed-resource baseline at `f064599` still has Amdahl headroom in
+the hard cases because they execute two propagation calls, but a second
+propagation may be skipped only with an independent certificate. The
+standalone candidate propagated a monotone Frobenius-norm bound through the
+same production midpoint transfer matrices. It did not change production
+code, thresholds, event handling, or failure semantics.
+
+The candidate was rejected before full-outer timing. On `default`, 74/76
+frequencies retained the event path; one changed the phase subdivision and
+one changed the frequency start index. On the event-stable frequencies, the
+bound grew to `inf` after roughly 2.6k--5.4k substeps because the Frobenius
+factor is about `1.414` per transfer, while the directly propagated endpoint
+relative perturbation remained about `1e-10` for the first modes. `highT`,
+`stiff`, and `high_kappa` additionally changed the kink representation; low-T
+did not produce a comparable second snapshot. Thus the bound is vacuous and
+cannot certify reuse. **REJECTED_BY_VACUOUS_BOUND_OR_EVENT_CHANGE**.
+
+Artifacts are `scripts/benchmark_outer_certificate_round67.py`,
+`tests/test_outer_certificate_round67.py`, and
+`docs/outer_certificate_round67_20260923.json`. The result retires this
+outer-reuse certificate construction; no full-outer benchmark was justified.
+The next ranked direction is a new residual-certified transfer
+representation, beginning with a tiny production-independent phase-space
+residual screen. No AI/learned model is involved.

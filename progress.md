@@ -1548,3 +1548,25 @@ the diagnostic artifacts are retained.
 - [x] Current HEAD `ef8f293` run #241 is fully green across all nine jobs;
   the optional-dependency failure is closed.
 - [ ] Continue with the pre-kernel certificate experiment.
+
+## Round 67 — outer transfer perturbation certificate (2026-09-23)
+
+- [x] Reconfirmed HEAD `f064599` against `fast/fast_v0.2`; latest Actions run
+  #242 is fully green. Reused the fresh Round66 2-thread/workqueue,
+  affinity-`[0,1]`, BLAS-one profile and its Amdahl headroom assessment.
+- [x] Built a standalone norm-bound prototype using the production midpoint
+  transfer matrices. The bound explicitly checks frequency start index, kink
+  representation, phase subdivision, and finite values; no production source
+  was changed.
+- [x] TDD and Ruff passed (`1 passed`; all checks passed). The five-case run
+  produced `default` 74/76 event-stable modes but an infinite Frobenius bound
+  after thousands of transfers; low-T had no second snapshot and the other
+  hard cases changed kink representation. Direct default endpoint perturbation
+  was around `1e-10` for the first modes, so the infinity is certificate
+  looseness, not evidence of a large physical difference.
+- [x] Rejected before full-outer timing as
+  `REJECTED_BY_VACUOUS_BOUND_OR_EVENT_CHANGE`; artifact:
+  `docs/outer_certificate_round67_20260923.json`.
+- [ ] Next concrete experiment: a standalone residual-certified transfer
+  representation with an invariant residual/energy screen, not an outer
+  reuse predictor. No AI/learned model.

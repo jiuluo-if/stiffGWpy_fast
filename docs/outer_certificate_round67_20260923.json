@@ -1,0 +1,3203 @@
+{
+  "schema_version": 1,
+  "candidate": "outer_transfer_perturbation_certificate_round67",
+  "generated_commit": "f06459930747cf92b2cf543ca52a27d70e357e03",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "resources_affinity": [
+    0,
+    1
+  ],
+  "production_unchanged": true,
+  "targets": {
+    "strict_power_relative": 1e-12,
+    "fast_screen_power_relative": 1e-06
+  },
+  "rows": [
+    {
+      "case": "default",
+      "mode_count": 76,
+      "event_sequence_eligible": false,
+      "all_bounds_finite": false,
+      "fast_target_eligible": false,
+      "strict_target_eligible": false,
+      "max_power_relative_bound": Infinity,
+      "median_power_relative_bound": Infinity,
+      "max_power_relative_actual": 0.09765098485554527,
+      "rows": [
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.6466270174780734e-10,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.085575143902592e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489172694863,
+          "summed_local_perturbation": 2.3172891324079207e-10,
+          "mode": 0,
+          "native_intervals": 2596,
+          "substeps": 2596,
+          "z0_delta": -3.6402893726345215e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 2.374854122060346e-10,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0859679890292387e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489174953439,
+          "summed_local_perturbation": 3.344778143061598e-10,
+          "mode": 1,
+          "native_intervals": 2982,
+          "substeps": 2982,
+          "z0_delta": -3.6404212977458883e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 5.727843343869273e-10,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0881167227534188e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175234054,
+          "summed_local_perturbation": 8.057341772432934e-10,
+          "mode": 2,
+          "native_intervals": 3371,
+          "substeps": 3371,
+          "z0_delta": -3.639311074721263e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.1696415943327912e-09,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0834894016969532e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175269415,
+          "summed_local_perturbation": 1.6490742321492247e-09,
+          "mode": 3,
+          "native_intervals": 3659,
+          "substeps": 3659,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 3.0825104242679365e-09,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0886915487476631e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.414248917527862,
+          "summed_local_perturbation": 4.3380468960211775e-09,
+          "mode": 4,
+          "native_intervals": 4049,
+          "substeps": 4049,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 8.089072446140785e-09,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0821624260577492e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175279949,
+          "summed_local_perturbation": 1.141048297968916e-08,
+          "mode": 5,
+          "native_intervals": 4434,
+          "substeps": 4434,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 2.138044911973531e-08,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0877442835640626e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280137,
+          "summed_local_perturbation": 3.0098688422933804e-08,
+          "mode": 6,
+          "native_intervals": 4824,
+          "substeps": 4824,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 5.612080607651452e-08,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0808987764444054e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280164,
+          "summed_local_perturbation": 7.920023935297921e-08,
+          "mode": 7,
+          "native_intervals": 5209,
+          "substeps": 5209,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.4725824768995786e-07,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0786572519712212e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 2.0739315517034814e-07,
+          "mode": 8,
+          "native_intervals": 5358,
+          "substeps": 5358,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 3.0587739940633766e-07,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0844896165837715e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 4.303352316764151e-07,
+          "mode": 9,
+          "native_intervals": 5359,
+          "substeps": 5359,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 8.072517010585184e-07,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0840617760700269e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 1.1379049533235683e-06,
+          "mode": 10,
+          "native_intervals": 5357,
+          "substeps": 5357,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 2.1332192757372e-06,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 1.0890865847239479e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 3.0018338410253437e-06,
+          "mode": 11,
+          "native_intervals": 5359,
+          "substeps": 5359,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 3.6535927721692127e-06,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 7.079635135848489e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 5.135153543331765e-06,
+          "mode": 12,
+          "native_intervals": 4868,
+          "substeps": 4868,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 5.9113128434243e-06,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 4.320107620984876e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 8.343929840068559e-06,
+          "mode": 13,
+          "native_intervals": 4437,
+          "substeps": 4437,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.1935214549083345e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 3.314133681010944e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 1.6815167783875746e-05,
+          "mode": 14,
+          "native_intervals": 4148,
+          "substeps": 4148,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.3457051593913434e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 3.2768886636726035e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 1.884485264764587e-05,
+          "mode": 15,
+          "native_intervals": 4106,
+          "substeps": 4106,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.7080834654648953e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 3.0911953516873676e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 2.4077740673323794e-05,
+          "mode": 16,
+          "native_intervals": 4018,
+          "substeps": 4018,
+          "z0_delta": -3.6415315207705135e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 2.173318289316533e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.987193263843445e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 3.052307622076438e-05,
+          "mode": 17,
+          "native_intervals": 3932,
+          "substeps": 3932,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 2.840829398605645e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.934187350629396e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 3.9779172822367745e-05,
+          "mode": 18,
+          "native_intervals": 3846,
+          "substeps": 3846,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 3.8665624428167156e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.863740674566706e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 5.458563843573682e-05,
+          "mode": 19,
+          "native_intervals": 3761,
+          "substeps": 3761,
+          "z0_delta": -3.632649736573512e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 4.6517583085330475e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.827022049295452e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 6.500370764016734e-05,
+          "mode": 20,
+          "native_intervals": 3673,
+          "substeps": 3673,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 6.824087964435875e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.7836441366693607e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 9.593969001808605e-05,
+          "mode": 21,
+          "native_intervals": 3587,
+          "substeps": 3587,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 9.587952105444084e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.7528768861659298e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0001354624587534451,
+          "mode": 22,
+          "native_intervals": 3500,
+          "substeps": 3500,
+          "z0_delta": -3.632649736573512e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.00011129549993370585,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.729532514141289e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00015727306587034814,
+          "mode": 23,
+          "native_intervals": 3414,
+          "substeps": 3414,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.00011484007059737589,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.7318872110605907e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0001621205802994117,
+          "mode": 24,
+          "native_intervals": 3329,
+          "substeps": 3329,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.00010865818743163128,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.6865287698327768e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0001539479697208144,
+          "mode": 25,
+          "native_intervals": 3241,
+          "substeps": 3241,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 9.958931698390714e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.6825839844578607e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00014092325681513594,
+          "mode": 26,
+          "native_intervals": 3155,
+          "substeps": 3155,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 8.997785363782981e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.7064717308913867e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00012716718151715577,
+          "mode": 27,
+          "native_intervals": 3069,
+          "substeps": 3069,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 7.975285546200213e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.7174731247099166e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00011258020116622884,
+          "mode": 28,
+          "native_intervals": 2984,
+          "substeps": 2984,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 6.908723875307518e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.6766254422602437e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 9.78670873317803e-05,
+          "mode": 29,
+          "native_intervals": 2895,
+          "substeps": 2895,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 6.042402670056867e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.6869150877101732e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 8.551525767459763e-05,
+          "mode": 30,
+          "native_intervals": 2809,
+          "substeps": 2809,
+          "z0_delta": -3.6148861681795097e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 5.2708098907196924e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.698347347340377e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 7.451289782541827e-05,
+          "mode": 31,
+          "native_intervals": 2723,
+          "substeps": 2723,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 3.514020325607251e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.712023337525522e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 4.961264533371225e-05,
+          "mode": 32,
+          "native_intervals": 2475,
+          "substeps": 2475,
+          "z0_delta": -3.632649736573512e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 2.421903003478322e-05,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 2.6773730135283466e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 3.4299488266647333e-05,
+          "mode": 33,
+          "native_intervals": 2257,
+          "substeps": 2257,
+          "z0_delta": -3.632649736573512e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 2.124620240622305e+286,
+          "endpoint_actual": 1.5087508898141033e-05,
+          "endpoint_relative_bound": 3.813273985500932e+280,
+          "endpoint_relative_actual": 2.707910057867262e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 2.135733218064305e-05,
+          "mode": 34,
+          "native_intervals": 1966,
+          "substeps": 1966,
+          "z0_delta": -3.632649736573512e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 1.2389169200955307e+243,
+          "endpoint_actual": 9.222813397554095e-06,
+          "endpoint_relative_bound": 3.6110976013538645e+237,
+          "endpoint_relative_actual": 2.6881931142787063e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 1.304987223587996e-05,
+          "mode": 35,
+          "native_intervals": 1676,
+          "substeps": 1676,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 5.151726084952616e+199,
+          "endpoint_actual": 5.691201779121806e-06,
+          "endpoint_relative_bound": 2.4386966613110186e+194,
+          "endpoint_relative_actual": 2.6940707927252568e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 8.048150279136665e-06,
+          "mode": 36,
+          "native_intervals": 1385,
+          "substeps": 1385,
+          "z0_delta": -3.623767952376511e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 1.3212675348304416e+193,
+          "endpoint_actual": 4.957603449746268e-06,
+          "endpoint_relative_bound": 1.0157949320829755e+188,
+          "endpoint_relative_actual": 3.8114222341621333e-11,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 7.006995304792286e-06,
+          "mode": 37,
+          "native_intervals": 1341,
+          "substeps": 1341,
+          "z0_delta": -5.10702591327572e-13,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 4.671557954010061e+193,
+          "endpoint_actual": 1.2411703497402997e-05,
+          "endpoint_relative_bound": 5.173114713445615e+188,
+          "endpoint_relative_actual": 1.3744272598871317e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 1.7515402224235504e-05,
+          "mode": 38,
+          "native_intervals": 1342,
+          "substeps": 1342,
+          "z0_delta": -1.8332002582610585e-12,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 9.413007802544212e+193,
+          "endpoint_actual": 2.5008153265305912e-05,
+          "endpoint_relative_bound": 1.6925435197378322e+189,
+          "endpoint_relative_actual": 4.49669102987076e-10,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 3.528037135015495e-05,
+          "mode": 39,
+          "native_intervals": 1342,
+          "substeps": 1342,
+          "z0_delta": -5.992539797716745e-12,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 1.6439364339188804e+194,
+          "endpoint_actual": 4.365417805035959e-05,
+          "endpoint_relative_bound": 4.798033845243023e+189,
+          "endpoint_relative_actual": 1.2741017198127617e-09,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 6.158792291166967e-05,
+          "mode": 40,
+          "native_intervals": 1342,
+          "substeps": 1342,
+          "z0_delta": -1.6978418670987594e-11,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 2.7422432351987898e+194,
+          "endpoint_actual": 7.255946846353417e-05,
+          "endpoint_relative_bound": 1.2978080994887467e+190,
+          "endpoint_relative_actual": 3.4339866229899377e-09,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00010247445076264429,
+          "mode": 41,
+          "native_intervals": 1342,
+          "substeps": 1342,
+          "z0_delta": -4.594724600792688e-11,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 2.508717206565803e+195,
+          "endpoint_actual": 0.00011959739941493427,
+          "endpoint_relative_bound": 1.932556268572928e+191,
+          "endpoint_relative_actual": 9.213023426452472e-09,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00016843781039025375,
+          "mode": 42,
+          "native_intervals": 1347,
+          "substeps": 1347,
+          "z0_delta": -1.2114842462551678e-10,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 3.705770278832536e+197,
+          "endpoint_actual": 0.000201608608656095,
+          "endpoint_relative_bound": 4.629666389432137e+193,
+          "endpoint_relative_actual": 2.518722233395837e-08,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.00028417795962565096,
+          "mode": 43,
+          "native_intervals": 1360,
+          "substeps": 1360,
+          "z0_delta": -3.207434318142077e-10,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 7.76646350106802e+200,
+          "endpoint_actual": 0.0003058964020814193,
+          "endpoint_relative_bound": 1.3951416577549782e+197,
+          "endpoint_relative_actual": 5.49502116944819e-08,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0004311634802187049,
+          "mode": 44,
+          "native_intervals": 1381,
+          "substeps": 1381,
+          "z0_delta": -6.66329214027428e-10,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 4.915052797991299e+212,
+          "endpoint_actual": 0.0005850500727224461,
+          "endpoint_relative_bound": 1.4293095370181222e+209,
+          "endpoint_relative_actual": 1.7013401136140113e-07,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0008264677483557269,
+          "mode": 45,
+          "native_intervals": 1458,
+          "substeps": 1458,
+          "z0_delta": -1.7588943634905263e-09,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 2.0880721923120946e+232,
+          "endpoint_actual": 0.001179467183372006,
+          "endpoint_relative_bound": 9.869405505108374e+228,
+          "endpoint_relative_actual": 5.574826366408729e-07,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0016613864343794202,
+          "mode": 46,
+          "native_intervals": 1587,
+          "substeps": 1587,
+          "z0_delta": -4.640991591031707e-09,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 3.550495727419669e+252,
+          "endpoint_actual": 0.002234055387302508,
+          "endpoint_relative_bound": 2.71113926270863e+249,
+          "endpoint_relative_actual": 1.7059125656189378e-06,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.0031471649265998928,
+          "mode": 47,
+          "native_intervals": 1720,
+          "substeps": 1720,
+          "z0_delta": -1.2243579483595113e-08,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 1.628889451350531e+267,
+          "endpoint_actual": 0.0038498526655371262,
+          "endpoint_relative_bound": 1.9920194467112726e+264,
+          "endpoint_relative_actual": 4.708104267213925e-06,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.005424286306330349,
+          "mode": 48,
+          "native_intervals": 1816,
+          "substeps": 1816,
+          "z0_delta": -3.229723155584452e-08,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 1.4722427857610383e+282,
+          "endpoint_actual": 0.006592307067254568,
+          "endpoint_relative_bound": 2.793611250148005e+279,
+          "endpoint_relative_actual": 1.2509039518229125e-05,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.009289939233452239,
+          "mode": 49,
+          "native_intervals": 1914,
+          "substeps": 1914,
+          "z0_delta": -8.433934883811389e-08,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": 1.0355923163571584e+293,
+          "endpoint_actual": 0.010502138121242588,
+          "endpoint_relative_bound": 2.5733699890467563e+290,
+          "endpoint_relative_actual": 2.6097033200378425e-05,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.014781494129617687,
+          "mode": 50,
+          "native_intervals": 1985,
+          "substeps": 1985,
+          "z0_delta": -1.7496667403804622e-07,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.022169584672612506,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 6.875963311318752e-05,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.031314292338876185,
+          "mode": 51,
+          "native_intervals": 2085,
+          "substeps": 2085,
+          "z0_delta": -4.6117235363851705e-07,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.055680985944300855,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.00018531618555698548,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.07836295100908927,
+          "mode": 52,
+          "native_intervals": 2193,
+          "substeps": 2193,
+          "z0_delta": -1.2138364580138727e-06,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.1473151863473204,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.0004923519157531459,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.2076884223605501,
+          "mode": 53,
+          "native_intervals": 2305,
+          "substeps": 2305,
+          "z0_delta": -3.182743244067865e-06,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.3803915932563188,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.001272505255085595,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 0.5363873465553874,
+          "mode": 54,
+          "native_intervals": 2395,
+          "substeps": 2395,
+          "z0_delta": -8.339893214248661e-06,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 0.7608989942129731,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.0025349096141006927,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 1.0774685433593485,
+          "mode": 55,
+          "native_intervals": 2461,
+          "substeps": 2461,
+          "z0_delta": -1.6960370746055276e-05,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 1.8947575644927377,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.006308700673469713,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 2.680510117656983,
+          "mode": 56,
+          "native_intervals": 2554,
+          "substeps": 2554,
+          "z0_delta": -4.234544454195799e-05,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 4.296762355233449,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.014169846239661376,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 6.069970984719382,
+          "mode": 57,
+          "native_intervals": 2635,
+          "substeps": 2635,
+          "z0_delta": -9.497149704085217e-05,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 7.446536954698576,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.023729768845585253,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 10.480131012185936,
+          "mode": 58,
+          "native_intervals": 2684,
+          "substeps": 2684,
+          "z0_delta": -0.0001586684807604044,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 9.024474207885055,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.02783599965646625,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 12.703727826524096,
+          "mode": 59,
+          "native_intervals": 2700,
+          "substeps": 2700,
+          "z0_delta": -0.00018612272668416807,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 8.925661518478844,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.027318489965022903,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 12.565684443428733,
+          "mode": 60,
+          "native_intervals": 2698,
+          "substeps": 2698,
+          "z0_delta": -0.00018265525103444702,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "mode": 61,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "phase subdivision changed"
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 8.963240373306451,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.02721885868630165,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 12.699810038809241,
+          "mode": 62,
+          "native_intervals": 2705,
+          "substeps": 2705,
+          "z0_delta": -0.0001827070996807123,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 9.092398412440664,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.027790820848299674,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 12.7974492643897,
+          "mode": 63,
+          "native_intervals": 2713,
+          "substeps": 2713,
+          "z0_delta": -0.00018223594832456058,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "mode": 64,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 9.247731428077076,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.028195383476050728,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 13.034438734655003,
+          "mode": 65,
+          "native_intervals": 2786,
+          "substeps": 2786,
+          "z0_delta": -0.00016834379408070532,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 9.777379954075506,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.029774182167255706,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 13.77118266674904,
+          "mode": 66,
+          "native_intervals": 2917,
+          "substeps": 2917,
+          "z0_delta": -0.00015405450324212921,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 11.185893647592449,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.033803676458957974,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 15.81950438082282,
+          "mode": 67,
+          "native_intervals": 3091,
+          "substeps": 3091,
+          "z0_delta": -0.00015197178327230887,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 13.24324845307179,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.03958372608154074,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 18.71965765548643,
+          "mode": 68,
+          "native_intervals": 3341,
+          "substeps": 3341,
+          "z0_delta": -0.00015194939962004383,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 14.743084584882633,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.04262768203131468,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 20.89519028337787,
+          "mode": 69,
+          "native_intervals": 3558,
+          "substeps": 3558,
+          "z0_delta": -0.0001519377408900624,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 17.917424039145608,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.04768840064951815,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 25.436587563821202,
+          "mode": 70,
+          "native_intervals": 3949,
+          "substeps": 3949,
+          "z0_delta": -0.0001519068993065531,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 8.510517860989298,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.01858961605195816,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 11.892702872279308,
+          "mode": 71,
+          "native_intervals": 3038,
+          "substeps": 3038,
+          "z0_delta": -0.00015182560085058583,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 5.334584510398844,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.0074747354248863385,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 7.192495367549463,
+          "mode": 72,
+          "native_intervals": 2844,
+          "substeps": 2844,
+          "z0_delta": -0.00015161155697285267,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 4.060043019010692,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.002969356718792058,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 5.953425031777065,
+          "mode": 73,
+          "native_intervals": 2698,
+          "substeps": 2698,
+          "z0_delta": -0.00015124237645380845,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 4.674704453626126,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.0017913002258693302,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 5.174419852710862,
+          "mode": 74,
+          "native_intervals": 2504,
+          "substeps": 2504,
+          "z0_delta": -0.00015008694943308143,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        },
+        {
+          "finite": false,
+          "endpoint_bound": Infinity,
+          "endpoint_actual": 3.008286402917758,
+          "endpoint_relative_bound": Infinity,
+          "endpoint_relative_actual": 0.00023050502454568614,
+          "power_relative_bound": Infinity,
+          "max_new_matrix_frobenius": 1.4142489175280168,
+          "summed_local_perturbation": 3.9807050318516013,
+          "mode": 75,
+          "native_intervals": 2308,
+          "substeps": 2308,
+          "z0_delta": -0.0001470750063230497,
+          "path_eligible": true,
+          "bound_finite": false,
+          "bound_eligible": false
+        }
+      ]
+    },
+    {
+      "case": "lowT",
+      "path_eligible": false,
+      "bound_eligible": false,
+      "reason": "outer run did not produce two propagation snapshots"
+    },
+    {
+      "case": "highT",
+      "mode_count": 76,
+      "event_sequence_eligible": false,
+      "all_bounds_finite": false,
+      "fast_target_eligible": false,
+      "strict_target_eligible": false,
+      "max_power_relative_bound": Infinity,
+      "median_power_relative_bound": Infinity,
+      "max_power_relative_actual": Infinity,
+      "rows": [
+        {
+          "mode": 0,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 1,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 2,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 3,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 4,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 5,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 6,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 7,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 8,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 9,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 10,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 11,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 12,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 13,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 14,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 15,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 16,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 17,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 18,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 19,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 20,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 21,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 22,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 23,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 24,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 25,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 26,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 27,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 28,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 29,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 30,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 31,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 32,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 33,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 34,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 35,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 36,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 37,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 38,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 39,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 40,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 41,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 42,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 43,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 44,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 45,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 46,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 47,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 48,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 49,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 50,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 51,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 52,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 53,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 54,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 55,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 56,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 57,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 58,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 59,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 60,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 61,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 62,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 63,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 64,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 65,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 66,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 67,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 68,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 69,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 70,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 71,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 72,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 73,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 74,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 75,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        }
+      ]
+    },
+    {
+      "case": "stiff",
+      "mode_count": 76,
+      "event_sequence_eligible": false,
+      "all_bounds_finite": false,
+      "fast_target_eligible": false,
+      "strict_target_eligible": false,
+      "max_power_relative_bound": Infinity,
+      "median_power_relative_bound": Infinity,
+      "max_power_relative_actual": Infinity,
+      "rows": [
+        {
+          "mode": 0,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 1,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 2,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 3,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 4,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 5,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 6,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 7,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 8,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 9,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 10,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 11,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 12,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 13,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 14,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 15,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 16,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 17,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 18,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 19,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 20,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 21,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 22,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 23,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 24,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 25,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 26,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 27,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 28,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 29,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 30,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 31,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 32,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 33,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 34,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 35,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 36,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 37,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 38,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 39,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 40,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 41,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 42,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 43,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 44,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 45,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 46,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 47,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 48,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 49,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 50,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 51,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 52,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 53,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 54,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 55,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 56,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 57,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 58,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 59,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 60,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 61,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 62,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 63,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 64,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 65,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 66,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 67,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 68,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 69,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 70,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 71,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 72,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 73,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 74,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 75,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        }
+      ]
+    },
+    {
+      "case": "high_kappa",
+      "mode_count": 77,
+      "event_sequence_eligible": false,
+      "all_bounds_finite": false,
+      "fast_target_eligible": false,
+      "strict_target_eligible": false,
+      "max_power_relative_bound": Infinity,
+      "median_power_relative_bound": Infinity,
+      "max_power_relative_actual": Infinity,
+      "rows": [
+        {
+          "mode": 0,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 1,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 2,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 3,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 4,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 5,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 6,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 7,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 8,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 9,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 10,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 11,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 12,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 13,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 14,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 15,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 16,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 17,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 18,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 19,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 20,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 21,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 22,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 23,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 24,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 25,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 26,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 27,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 28,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 29,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 30,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 31,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 32,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 33,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 34,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 35,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 36,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 37,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 38,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 39,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 40,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 41,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 42,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 43,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 44,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 45,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 46,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 47,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 48,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 49,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 50,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 51,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 52,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 53,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 54,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 55,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 56,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 57,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 58,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 59,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 60,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "kink representation changed"
+        },
+        {
+          "mode": 61,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 62,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 63,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 64,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 65,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 66,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 67,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 68,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 69,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 70,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 71,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 72,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 73,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 74,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 75,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        },
+        {
+          "mode": 76,
+          "path_eligible": false,
+          "bound_finite": false,
+          "bound_eligible": false,
+          "finite": false,
+          "reason": "frequency start index changed"
+        }
+      ]
+    }
+  ],
+  "decision": "REJECTED_BY_VACUOUS_BOUND_OR_EVENT_CHANGE",
+  "semantics": "Frobenius-norm variation bound for the production midpoint transfer; event-sequence changes fail closed. Standalone only."
+}

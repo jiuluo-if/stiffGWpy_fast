@@ -1097,3 +1097,19 @@ Phase 3: Implementation and evidence-driven optimization
   Windows fallback; production unchanged.
 - [x] Confirmed current HEAD `ef8f293` by fully green remote run #241.
 - [ ] Continue with the pre-kernel monotone perturbation certificate.
+
+## Round 67 — conservative outer transfer certificate (2026-09-23)
+
+- [x] Reconfirmed current branch/HEAD and green remote CI before the
+  experiment.
+- [x] Implemented and tested a standalone Frobenius-norm perturbation bound
+  with fail-closed event guards; production remains unchanged.
+- [x] Ran default/lowT/highT/stiff/high-kappa under the fixed 2-thread,
+  workqueue, BLAS-one contract. Default retained only 74/76 event paths and
+  the bound overflowed to infinity on the retained paths; hard cases changed
+  kink representation.
+- [x] Rejected before full-outer benchmark as
+  `REJECTED_BY_VACUOUS_BOUND_OR_EVENT_CHANGE`.
+- [ ] Next selected experiment: tiny standalone residual-certified transfer
+  representation/energy-invariant screen, then full-outer only if it proves
+  real work reduction and numerical safety. No AI/learned model.
