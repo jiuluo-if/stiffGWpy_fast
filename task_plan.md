@@ -916,3 +916,21 @@ Phase 3: Implementation and evidence-driven optimization
   before production; source unchanged.
 - [ ] Next: standalone representation that demonstrably removes phase
   substeps. No AI/learned model.
+
+## Round 57 — variable-coefficient Bessel transfer (2026-09-23)
+
+- [x] Re-fetched `fast_v0.2` at `493add8` and refreshed the canonical profile
+  under the fixed resource contract with `kink_split=true`.
+- [x] Generated and ranked multiple mathematical hypotheses; selected the
+  Bessel fundamental-matrix transfer because it removes native phase
+  substeps in closed form.
+- [x] TDD and independent DOP853 correctness gates passed; actual named paths
+  stayed finite with power error `1.4e-15–1.0e-14` versus DOP853.
+- [x] Candidate cost was `166.7–188.7x` of the native transfer, so it was
+  rejected by Amdahl before full-kernel/full-outer timing. Production source
+  unchanged.
+- [x] CI run 225 checked: all non-canonical jobs passed; canonical failed in
+  the known baseline test set.
+- [ ] Next: asymptotic Bessel/WKB coefficient-recurrence operation-count
+  screen, with a hard >=100x cost-reduction precondition. No AI/learned
+  model.

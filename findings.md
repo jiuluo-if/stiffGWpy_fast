@@ -2596,3 +2596,52 @@ only if it demonstrably removes phase substeps; (3) another LLVM/data-layout
 probe only after a compiler/runtime change. Select (1) for a tiny derivative
 finite-difference/outer-work screen. This is mathematical only; no AI/learned
 model is used.
+
+## Round 57 result — variable-coefficient Bessel transfer screen (2026-09-23)
+
+The latest remote branch was fetched and verified at
+`493add8333dcb86115a6bd98bf308595f8727fef`. The fresh canonical full-path
+profile used the fixed two-thread/workqueue/2-core-affinity/BLAS-one resource
+contract, 25 warm repeats, goal/PCHIP, and `kink_split=true`. Total median/p95
+milliseconds were default `6.711/7.320`, lowT `7.318/8.610`, highT
+`11.246/12.432`, stiff `11.731/13.486`, and high-kappa `11.309/12.826`.
+Attribution showed tensor propagation at 41% of default and 48--53% of the
+other canonical cases; hard cases still used two kernel calls.
+
+The selected mathematical hypothesis was an exact variable-coefficient
+transfer for one native interval. With constant `q=dz/dN` and `w=exp(z)`, the
+scaled two-component system reduces to a Bessel equation; its fundamental
+matrix removes all phase substeps in that interval. The standalone
+implementation was tested against independent DOP853 and on actual named
+paths. All five regimes were finite; power error versus DOP853 was
+`1.4e-15--1.0e-14`, while the production midpoint map differed by only
+`1.66e-9` on the 32-interval mode probe.
+
+The performance gate rejected the method decisively: Bessel transfer medians
+were `1.076--1.284 ms` versus `0.0058--0.0077 ms` for the existing transfer,
+or `166.7--188.7x` slower, with the same p95 direction. The candidate has no
+credible end-to-end headroom and was **REJECTED_BY_AMDAHL** before full-kernel
+integration. Production source remains unchanged. Artifact:
+`docs/bessel_transfer_round57_20260923.json`; prototype and tests are
+`scripts/benchmark_bessel_transfer_round57.py` and
+`tests/test_bessel_transfer_round57.py`.
+
+The current mathematical hypothesis pool is ordered as: (1) an explicit
+asymptotic Bessel/WKB transfer with recurrence-evaluated coefficients, only if
+a standalone operation-count screen can reduce special-function cost by at
+least two orders of magnitude; (2) a new certified macrostep remainder bound
+that permits fewer phase substeps without per-block matrix products; (3) a
+fresh SIMD/data-layout audit only after a compiler/runtime change. Do not
+reopen raw SciPy Bessel, phase recurrence, CF4/Magnus, Riccati, or outer
+secant variants. No AI/learned model is used.
+
+## CI status at Round 57 (2026-09-23)
+
+GitHub Actions run `225` for `493add8333dcb86115a6bd98bf308595f8727fef` completed
+with overall **failure**. `static`, `package`, `cobaya`, and compatibility
+jobs for Python 3.9--3.13 passed; only `canonical` failed. The failure is
+consistent with the previously reproduced baseline test failures (stale
+solve-kernel monkeypatch signatures, the unchanged shared-N_eff guard, and
+the existing default kink-split state expectation), not with Round 57,
+which changes only standalone research files and artifacts. No unrelated CI
+test or production behavior was modified.
