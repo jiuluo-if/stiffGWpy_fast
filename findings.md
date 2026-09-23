@@ -2023,3 +2023,25 @@ per-transfer `exp(z)` value, while retaining the production exponential for
 the phase-subdivision count. This isolates the other LLVM-confirmed
 transcendental cost and will be rejected early if range-reduction overhead
 outweighs the saved libm call.
+
+## Round 36 result — range-reduced exponential transfer (2026-09-23)
+
+Fresh profiles at `f94785e0a99d46331216d73a1177f6d91798965c` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `6.209/2.750` default, `5.543/3.125` low-T,
+`9.157/4.486` high-T, `9.082/4.908` stiff and `9.244/4.649` high-kappa ms.
+Artifacts: `docs/profile_fast_breakdown_round36_20260923_*.json`.
+
+The standalone candidate kept the production `exp` for phase-subdivision
+counts and used a range-reduced degree-14 Taylor evaluation only for transfer
+values. Its local errors were good (`5.13e-16` relative for exp and
+`1.11e-16` absolute for the transfer), but the extra integer/range-reduction
+and Horner work dominated: default kernel median/p95 were `4.576/4.873 ms`
+versus baseline `2.304/2.529 ms` (`1.986x`). It failed the kernel prerequisite
+and is **REJECTED_FOR_PRODUCTION** without oracle or full-outer expansion.
+Artifact: `docs/range_exp_transfer_round36_default_20260923.json`.
+
+The next hypothesis is a tangent/sensitivity-assisted outer correction. It is
+not the rejected fixed-point predictor: it must produce a first-order response
+for the spectrum/background and preserve the final output semantics, with an
+early cost comparison against the second real propagation.

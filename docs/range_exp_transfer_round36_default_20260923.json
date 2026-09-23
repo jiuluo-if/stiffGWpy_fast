@@ -1,0 +1,33 @@
+{
+  "candidate": "range_reduced_exponential_transfer",
+  "commit": "f94785e0a99d46331216d73a1177f6d91798965c",
+  "production_unchanged": true,
+  "local_errors": {
+    "exp_relative_max": 5.131271431206858e-16,
+    "transfer_absolute_max": 1.1102230246251565e-16
+  },
+  "settings": {
+    "case": [
+      "default"
+    ],
+    "threads": 2,
+    "repeats": 15,
+    "oracle": false,
+    "outer": false,
+    "output": "docs/range_exp_transfer_round36_default_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "threads": 2,
+      "repeats": 15,
+      "baseline_median_ms": 2.304399999047746,
+      "candidate_median_ms": 4.5760000011796365,
+      "baseline_p95_ms": 2.529030001096544,
+      "candidate_p95_ms": 4.872740000791964,
+      "candidate_over_baseline": 1.9857663613394334,
+      "digest_equal": false,
+      "max_abs_output_delta": 4.523095497351789e-14
+    }
+  ]
+}

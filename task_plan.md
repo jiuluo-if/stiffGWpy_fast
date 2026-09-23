@@ -236,6 +236,24 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   kernel gate before any outer timing; do not combine it with the rejected
   trigonometric polynomial.
 
+### Round 36 outcome and next selection
+
+- [x] Fresh current-HEAD profile at `f94785e` completed with the canonical
+  fixed resource contract. Total/tensor medians were
+  `6.209/2.750`, `5.543/3.125`, `9.157/4.486`, `9.082/4.908`, and
+  `9.244/4.649 ms` for default/lowT/highT/stiff/high-kappa.
+- [x] Range-reduced `exp(z)` local error passed (`5.13e-16` relative; transfer
+  error `1.11e-16`), but the isolated default kernel was `1.986x` baseline
+  with p95 `4.873 ms` versus `2.529 ms`; reject before oracle/full outer.
+- [x] Reject the range-reduced exponential implementation; do not retune its
+  polynomial degree or range-reduction constants.
+- [ ] Next experiment: standalone tangent/sensitivity-assisted outer correction.
+  Distinguish it from the rejected fixed-point predictor by propagating an
+  explicit first-order response and reconstructing the final spectrum rather
+  than returning a scalar DN update with a stale first spectrum. First measure
+  sensitivity work versus the saved second propagation, then apply independent
+  oracle/guard/outer gates; no production edit.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.
