@@ -1,0 +1,75 @@
+{
+  "experiment": "round60_composite_airy_wkb_screen",
+  "production_path_changed": false,
+  "commit": "c02ed31e86cd0b04c3eaafde745aeb62cb38d718",
+  "settings": {
+    "out": "docs/composite_airy_wkb_round60_20260923.json"
+  },
+  "rows": [
+    {
+      "case": "default",
+      "status": "ok",
+      "intervals": 4000,
+      "counts": {
+        "forbidden": 2853,
+        "turning_airy": 1,
+        "oscillatory_wkb": 1146
+      },
+      "candidate_power_rel_vs_dop853": 50736.77616736339,
+      "baseline_power_rel_vs_dop853": 0.00013080906600812829,
+      "candidate_finite": true
+    },
+    {
+      "case": "highT",
+      "status": "ok",
+      "intervals": 4000,
+      "counts": {
+        "forbidden": 2892,
+        "turning_airy": 2,
+        "oscillatory_wkb": 1106
+      },
+      "candidate_power_rel_vs_dop853": 1176158761.6197643,
+      "baseline_power_rel_vs_dop853": 2.0598779418451995e-05,
+      "candidate_finite": true
+    },
+    {
+      "case": "stiff",
+      "status": "ok",
+      "intervals": 4000,
+      "counts": {
+        "forbidden": 2852,
+        "turning_airy": 1,
+        "oscillatory_wkb": 1147
+      },
+      "candidate_power_rel_vs_dop853": 541568.7597257963,
+      "baseline_power_rel_vs_dop853": 7.781734829609882e-05,
+      "candidate_finite": true
+    },
+    {
+      "case": "high_kappa",
+      "status": "ok",
+      "intervals": 4000,
+      "counts": {
+        "forbidden": 2864,
+        "turning_airy": 3,
+        "oscillatory_wkb": 1133
+      },
+      "candidate_power_rel_vs_dop853": 50284919.350739434,
+      "baseline_power_rel_vs_dop853": 0.00013244987504798379,
+      "candidate_finite": true
+    },
+    {
+      "case": "lowT",
+      "status": "ok",
+      "intervals": 4000,
+      "counts": {
+        "forbidden": 2853,
+        "turning_airy": 1,
+        "oscillatory_wkb": 1146
+      },
+      "candidate_power_rel_vs_dop853": 26621.574919627063,
+      "baseline_power_rel_vs_dop853": 1.281483177420358e-07,
+      "candidate_finite": true
+    }
+  ]
+}

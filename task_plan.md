@@ -959,3 +959,15 @@ Phase 3: Implementation and evidence-driven optimization
   production by Amdahl; no full-kernel benchmark.
 - [ ] Next: operation-count screen for a composite forbidden-region
   Airy-to-WKB representation. No AI/learned model.
+
+## Round 60 — composite Airy/forbidden/WKB path (2026-09-23)
+
+- [x] Re-fetched `c02ed31` and refreshed the canonical profile before the
+  standalone composite experiment.
+- [x] Extended the path to 4000 native intervals, including the actual
+  forbidden region, `1–3` Airy crossings, and over 1100 oscillatory WKB
+  intervals in each case.
+- [x] Candidate was finite but accumulated `2.66e4–1.18e9` power error versus
+  DOP853; rejected by correctness before production/full user-facing timing.
+- [ ] Next: full-chain residual-certified phase-function feasibility screen.
+  No AI/learned model.

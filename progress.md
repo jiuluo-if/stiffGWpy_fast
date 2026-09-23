@@ -1416,3 +1416,11 @@ the diagnostic artifacts are retained.
   promotion was attempted and production remains unchanged.
 - Next: operation-count screen for a composite forbidden-to-oscillatory
   Airy/WKB representation. No AI/learned model.
+
+- Round 60 completed at `c02ed31`: the 4000-interval composite contained
+  `2852–2892` forbidden, `1–3` Airy, and `1106–1147` WKB intervals.
+- The candidate stayed finite but accumulated catastrophic power error versus
+  DOP853 (`2.66e4–1.18e9`), while midpoint production remained `<=1.31e-4`.
+  Rejected by correctness before production/full user-facing benchmark.
+- Next: full-chain residual-certified phase-function feasibility, only if an
+  independent residual bound is established first. No AI/learned model.

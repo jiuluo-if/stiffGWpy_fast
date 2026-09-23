@@ -2712,3 +2712,31 @@ representation, but only after an operation-count estimate shows it can
 remove many native phase substeps; (2) a certified macrostep remainder bound
 with no matrix-product guard; (3) compiler/data-layout work only after a
 runtime/compiler change. No AI/learned model is used.
+
+## Round 60 result — composite Airy/forbidden/WKB full-path screen (2026-09-23)
+
+Round 60 fetched `c02ed31` and refreshed the fixed-resource canonical profile
+before testing the composite hypothesis. The standalone path was extended to
+4000 native intervals so it included the horizon region, the turning
+interval, and a long oscillatory segment. Across the five cases, the paths
+contained `2852--2892` forbidden intervals, `1--3` Airy intervals, and
+`1106--1147` oscillatory WKB intervals.
+
+The composite remained finite, but the simple post-turning WKB transfer was
+not globally accurate. Power error versus independent DOP853 was default
+`5.07e4`, highT `1.18e9`, stiff `5.42e5`, high-kappa `5.03e7`, and lowT
+`2.66e4`; the same production midpoint chain was `1.3e-4` or smaller. The
+Airy crossing block is locally accurate, but it does not stabilize a long WKB
+chain. The composite is **REJECTED_BY_CORRECTNESS** before production/full
+user-facing timing. Production remains unchanged. Artifact:
+`docs/composite_airy_wkb_round60_20260923.json`; prototype/tests:
+`scripts/benchmark_composite_airy_wkb_round60.py` and
+`tests/test_composite_airy_wkb_round60.py`.
+
+The next pool is ordered as: (1) a uniform phase-function method with a
+certified amplitude/phase residual over the full oscillatory chain, only if
+the residual is bounded before timing; (2) a macrostep transfer with an
+analytic remainder bound that does not use WKB amplitude transport; (3) a
+fresh compiler/data-layout audit only after a runtime/compiler change. Do not
+reopen simple WKB, boundary-WKB, raw Bessel, or the local Airy block alone.
+No AI/learned model is used.
