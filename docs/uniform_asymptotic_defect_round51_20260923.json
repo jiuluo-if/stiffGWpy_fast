@@ -1,0 +1,2652 @@
+{
+  "experiment": "round51_uniform_integral_two_interval_defect_screen",
+  "commit": "b929cb77b5458c4c5b1a15c21b102d08b1e12566",
+  "production_unchanged": true,
+  "method": "log-mean exp coefficient with embedded one-block/two-block matrix defect",
+  "settings": {
+    "output": "docs/uniform_asymptotic_defect_round51_20260923.json",
+    "threshold": [
+      1e-08,
+      1e-06,
+      0.0001
+    ],
+    "phase_cap": 0.5
+  },
+  "transfer_timing": {
+    "repeats": 50,
+    "baseline_median_ms": 0.04959999932907522,
+    "candidate_median_ms": 0.03699999797390774,
+    "baseline_p95_ms": 0.07249500031321077,
+    "candidate_p95_ms": 0.054854999325471,
+    "guarded_median_ms": 0.18649999947228935,
+    "guarded_p95_ms": 0.2543799993873108,
+    "candidate_over_baseline": 0.745967711177338,
+    "guarded_over_baseline": 3.760080685383481,
+    "baseline_state": [
+      1.1971981966027776,
+      -0.6141687481600946
+    ],
+    "candidate_state": [
+      1.1972003182725817,
+      -0.614156452624923
+    ],
+    "guarded_state": [
+      1.1971981966027776,
+      -0.6141687481600946
+    ],
+    "guarded_accepted_blocks": 0,
+    "guarded_fallback_blocks": 2048
+  },
+  "rows": [
+    {
+      "case": "default",
+      "threshold": 1e-08,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 0,
+          "fallback_steps": 256,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1851570191708199e-07,
+          "max_power_relative_to_production": 0.0,
+          "max_power_relative_to_fine_midpoint": 1.875410720870728e-06
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.2405159149294835e-09,
+          "max_power_relative_to_production": 9.322220697607044e-08,
+          "max_power_relative_to_fine_midpoint": 1.066330340388513e-07
+        },
+        {
+          "mode": 10,
+          "j0": 918,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831805655972692e-10,
+          "max_power_relative_to_production": 9.254355742883526e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907985242176e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2524,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8322096747348717e-10,
+          "max_power_relative_to_production": 9.254357239745258e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990920445515e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3099,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831623378048242e-10,
+          "max_power_relative_to_production": 9.2543545588653e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990475823747e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3675,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8319449208729013e-10,
+          "max_power_relative_to_production": 9.2543558456998e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908134317895e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4251,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8322680633473307e-10,
+          "max_power_relative_to_production": 9.254357376380535e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910775113959e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5762,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831482574466862e-10,
+          "max_power_relative_to_production": 9.254354406474714e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906097383731e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6557,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2164664147344428e-09,
+          "max_power_relative_to_production": 9.312708133931588e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646896719277714e-07
+        },
+        {
+          "mode": 45,
+          "j0": 7017,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2094855969636637e-09,
+          "max_power_relative_to_production": 9.31245144973218e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646601970792783e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7477,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1817313661935816e-09,
+          "max_power_relative_to_production": 9.311699676785587e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645736582140183e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7940,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.7000362069617258e-09,
+          "max_power_relative_to_production": 9.277519942768072e-08,
+          "max_power_relative_to_fine_midpoint": 1.0606496956069988e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8672,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.763288467859062e-10,
+          "max_power_relative_to_production": 9.257462302909644e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583544543896017e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9601,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.567956734599325e-10,
+          "max_power_relative_to_production": 9.25718663956313e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583226016451848e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10531,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.753146995695494e-10,
+          "max_power_relative_to_production": 9.257437491720495e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583516971139129e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11455,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.457283245888246e-10,
+          "max_power_relative_to_production": 9.256991429384356e-08,
+          "max_power_relative_to_fine_midpoint": 1.05830016585143e-07
+        }
+      ],
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_embedded_defect": 1.1851570191708199e-07,
+      "max_power_relative_to_production": 9.322220697607044e-08,
+      "max_power_relative_to_fine_midpoint": 1.875410720870728e-06
+    },
+    {
+      "case": "highT",
+      "threshold": 1e-08,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 0,
+          "fallback_steps": 256,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1851570191881653e-07,
+          "max_power_relative_to_production": 0.0,
+          "max_power_relative_to_fine_midpoint": 1.8754107243894977e-06
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.0055271420774712e-09,
+          "max_power_relative_to_production": 9.296489968005471e-08,
+          "max_power_relative_to_fine_midpoint": 1.063168642861619e-07
+        },
+        {
+          "mode": 10,
+          "j0": 1010,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832259002801801e-10,
+          "max_power_relative_to_production": 9.254357518877147e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910621508032e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2110,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.83195124143516e-10,
+          "max_power_relative_to_production": 9.254356414521854e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907857092642e-07
+        },
+        {
+          "mode": 20,
+          "j0": 2686,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832274394563206e-10,
+          "max_power_relative_to_production": 9.254357176643902e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910483764357e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3261,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.83168367983751e-10,
+          "max_power_relative_to_production": 9.25435540993403e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906365335783e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4106,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832286563169968e-10,
+          "max_power_relative_to_production": 9.254358018180874e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910110726102e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5683,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2059721208166053e-09,
+          "max_power_relative_to_production": 9.312319288943984e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646449247688882e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6143,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.219986838841245e-09,
+          "max_power_relative_to_production": 9.312839545369118e-08,
+          "max_power_relative_to_fine_midpoint": 1.0647046781540349e-07
+        },
+        {
+          "mode": 45,
+          "j0": 6626,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1962821405161475e-09,
+          "max_power_relative_to_production": 9.311960951650907e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646037117345473e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7110,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.190841140750919e-09,
+          "max_power_relative_to_production": 9.311936019446447e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646009292982028e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7571,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 2.0471609059356087e-09,
+          "max_power_relative_to_production": 9.285542437213356e-08,
+          "max_power_relative_to_fine_midpoint": 1.0615691922997754e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8257,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.746806093708932e-10,
+          "max_power_relative_to_production": 9.257455459762982e-08,
+          "max_power_relative_to_fine_midpoint": 1.058353469557642e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9232,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.508729501472458e-10,
+          "max_power_relative_to_production": 9.257071338147475e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583094123591407e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10163,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.759598244590166e-10,
+          "max_power_relative_to_production": 9.257450768426833e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583532996445755e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11134,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.461965556439354e-10,
+          "max_power_relative_to_production": 9.257000370122995e-08,
+          "max_power_relative_to_fine_midpoint": 1.058301345904698e-07
+        }
+      ],
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_embedded_defect": 1.1851570191881653e-07,
+      "max_power_relative_to_production": 9.312839545369118e-08,
+      "max_power_relative_to_fine_midpoint": 1.8754107243894977e-06
+    },
+    {
+      "case": "stiff",
+      "threshold": 1e-08,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 0,
+          "fallback_steps": 256,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1851570191881653e-07,
+          "max_power_relative_to_production": 0.0,
+          "max_power_relative_to_fine_midpoint": 1.875410730327416e-06
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.2279960898174975e-09,
+          "max_power_relative_to_production": 9.320714534667041e-08,
+          "max_power_relative_to_fine_midpoint": 1.0661448307267242e-07
+        },
+        {
+          "mode": 10,
+          "j0": 927,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8319068011487194e-10,
+          "max_power_relative_to_production": 9.254356055982032e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907428292443e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2677,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831747951089166e-10,
+          "max_power_relative_to_production": 9.254355040148023e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905817403603e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3253,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8320739367687823e-10,
+          "max_power_relative_to_production": 9.254356629842843e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907185087095e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3828,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8314843653210633e-10,
+          "max_power_relative_to_production": 9.25435411617115e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905812158445e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4404,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831807790878254e-10,
+          "max_power_relative_to_production": 9.254356545008345e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908912652476e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5783,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318563521806807e-10,
+          "max_power_relative_to_production": 9.254356140169408e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907651392958e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6702,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.195328739237911e-09,
+          "max_power_relative_to_production": 9.311924057454042e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645997330800514e-07
+        },
+        {
+          "mode": 45,
+          "j0": 7164,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2164973907823056e-09,
+          "max_power_relative_to_production": 9.312712261632566e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646900682056282e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7625,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1862551604949337e-09,
+          "max_power_relative_to_production": 9.311852953973385e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645912397703964e-07
+        },
+        {
+          "mode": 55,
+          "j0": 8089,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.7336164757091777e-09,
+          "max_power_relative_to_production": 9.278302584080992e-08,
+          "max_power_relative_to_fine_midpoint": 1.0607394504234183e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8770,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.756164746767123e-10,
+          "max_power_relative_to_production": 9.257463994358145e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583547372414144e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9750,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.561743492224398e-10,
+          "max_power_relative_to_production": 9.257174329894899e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583212078934907e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10683,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.762605805549266e-10,
+          "max_power_relative_to_production": 9.257458370156542e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583540625769847e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11609,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.461940915844365e-10,
+          "max_power_relative_to_production": 9.257000514960594e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583012838529226e-07
+        }
+      ],
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_embedded_defect": 1.1851570191881653e-07,
+      "max_power_relative_to_production": 9.320714534667041e-08,
+      "max_power_relative_to_fine_midpoint": 1.875410730327416e-06
+    },
+    {
+      "case": "high_kappa",
+      "threshold": 1e-08,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 0,
+          "fallback_steps": 256,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1851570191708199e-07,
+          "max_power_relative_to_production": 0.0,
+          "max_power_relative_to_fine_midpoint": 1.875410720870728e-06
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 9.938074682228424e-10,
+          "max_power_relative_to_production": 9.295346719457623e-08,
+          "max_power_relative_to_fine_midpoint": 1.0630284726609337e-07
+        },
+        {
+          "mode": 10,
+          "j0": 1020,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8317588990400213e-10,
+          "max_power_relative_to_production": 9.254355524679256e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906593187963e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2332,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8321054535796925e-10,
+          "max_power_relative_to_production": 9.254356350598585e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990830089571e-07
+        },
+        {
+          "mode": 20,
+          "j0": 2907,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8315157900045663e-10,
+          "max_power_relative_to_production": 9.254354105306409e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905402017084e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3483,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318397918797407e-10,
+          "max_power_relative_to_production": 9.254355899559115e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907490526974e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4059,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832157999015935e-10,
+          "max_power_relative_to_production": 9.254356035286993e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910435740837e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5580,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318363372416844e-10,
+          "max_power_relative_to_production": 9.254355939967076e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990719015363e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6306,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2155792692113755e-09,
+          "max_power_relative_to_production": 9.312674368591315e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646857849292392e-07
+        },
+        {
+          "mode": 45,
+          "j0": 6767,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.220572912034415e-09,
+          "max_power_relative_to_production": 9.312860229625443e-08,
+          "max_power_relative_to_fine_midpoint": 1.064707060435926e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7252,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.216942634469196e-09,
+          "max_power_relative_to_production": 9.312733333059574e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646925056327467e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7737,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.113540908796173e-09,
+          "max_power_relative_to_production": 9.310224023341913e-08,
+          "max_power_relative_to_fine_midpoint": 1.0644041516074567e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8211,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.0172290912719934e-09,
+          "max_power_relative_to_production": 9.263663467501856e-08,
+          "max_power_relative_to_fine_midpoint": 1.0590687500290244e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9045,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.494752559503767e-10,
+          "max_power_relative_to_production": 9.257032091709852e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583049522377217e-07
+        },
+        {
+          "mode": 70,
+          "j0": 9983,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.753634179709332e-10,
+          "max_power_relative_to_production": 9.257436484874447e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583515627058337e-07
+        },
+        {
+          "mode": 76,
+          "j0": 11151,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.462627131571885e-10,
+          "max_power_relative_to_production": 9.257000398568897e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583011042317725e-07
+        }
+      ],
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_embedded_defect": 1.1851570191708199e-07,
+      "max_power_relative_to_production": 9.312860229625443e-08,
+      "max_power_relative_to_fine_midpoint": 1.875410720870728e-06
+    },
+    {
+      "case": "lowT",
+      "threshold": 1e-08,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 0,
+          "fallback_steps": 256,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1851570191708199e-07,
+          "max_power_relative_to_production": 0.0,
+          "max_power_relative_to_fine_midpoint": 1.875410720870728e-06
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.896172995478083e-09,
+          "max_power_relative_to_production": 9.422490031061965e-08,
+          "max_power_relative_to_fine_midpoint": 1.078649904038266e-07
+        },
+        {
+          "mode": 10,
+          "j0": 558,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832269908621925e-10,
+          "max_power_relative_to_production": 9.254356718767404e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579909760631508e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2316,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8320118891211026e-10,
+          "max_power_relative_to_production": 9.254356274776366e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908628243861e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3976,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8314662806375283e-10,
+          "max_power_relative_to_production": 9.254353939136651e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905655074727e-07
+        },
+        {
+          "mode": 25,
+          "j0": 4907,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832225191211182e-10,
+          "max_power_relative_to_production": 9.25435704009987e-08,
+          "max_power_relative_to_fine_midpoint": 1.057991097596279e-07
+        },
+        {
+          "mode": 30,
+          "j0": 5482,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831636741304435e-10,
+          "max_power_relative_to_production": 9.254354879271732e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905655681512e-07
+        },
+        {
+          "mode": 35,
+          "j0": 6058,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831959364246931e-10,
+          "max_power_relative_to_production": 9.254356780466477e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907966406212e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6614,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831989635518711e-10,
+          "max_power_relative_to_production": 9.254355848873359e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908813985039e-07
+        },
+        {
+          "mode": 45,
+          "j0": 8363,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1894602458215463e-09,
+          "max_power_relative_to_production": 9.31174693003279e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645793792645589e-07
+        },
+        {
+          "mode": 50,
+          "j0": 8779,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.0061460865071523e-09,
+          "max_power_relative_to_production": 9.307739774489512e-08,
+          "max_power_relative_to_fine_midpoint": 1.0641185222181193e-07
+        },
+        {
+          "mode": 55,
+          "j0": 9215,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 7.840327954615786e-10,
+          "max_power_relative_to_production": 9.259881376456251e-08,
+          "max_power_relative_to_fine_midpoint": 1.0586363007038726e-07
+        },
+        {
+          "mode": 60,
+          "j0": 9970,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.756021718364457e-10,
+          "max_power_relative_to_production": 9.25744693060092e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583529459274265e-07
+        },
+        {
+          "mode": 65,
+          "j0": 10866,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.737200593822344e-10,
+          "max_power_relative_to_production": 9.2574566234942e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583536737845684e-07
+        },
+        {
+          "mode": 70,
+          "j0": 11698,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.760177511305436e-10,
+          "max_power_relative_to_production": 9.257453510021656e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583536571014213e-07
+        },
+        {
+          "mode": 75,
+          "j0": 12531,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.452758875451769e-10,
+          "max_power_relative_to_production": 9.256979581530914e-08,
+          "max_power_relative_to_fine_midpoint": 1.0582988181437077e-07
+        }
+      ],
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_embedded_defect": 1.1851570191708199e-07,
+      "max_power_relative_to_production": 9.422490031061965e-08,
+      "max_power_relative_to_fine_midpoint": 1.875410720870728e-06
+    },
+    {
+      "case": "default",
+      "threshold": 1e-06,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038141822e-07,
+          "max_power_relative_to_production": 8.244815109462505e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.2405159149294835e-09,
+          "max_power_relative_to_production": 9.322220697607044e-08,
+          "max_power_relative_to_fine_midpoint": 1.066330340388513e-07
+        },
+        {
+          "mode": 10,
+          "j0": 918,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831805655972692e-10,
+          "max_power_relative_to_production": 9.254355742883526e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907985242176e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2524,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8322096747348717e-10,
+          "max_power_relative_to_production": 9.254357239745258e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990920445515e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3099,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831623378048242e-10,
+          "max_power_relative_to_production": 9.2543545588653e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990475823747e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3675,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8319449208729013e-10,
+          "max_power_relative_to_production": 9.2543558456998e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908134317895e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4251,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8322680633473307e-10,
+          "max_power_relative_to_production": 9.254357376380535e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910775113959e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5762,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831482574466862e-10,
+          "max_power_relative_to_production": 9.254354406474714e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906097383731e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6557,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2164664147344428e-09,
+          "max_power_relative_to_production": 9.312708133931588e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646896719277714e-07
+        },
+        {
+          "mode": 45,
+          "j0": 7017,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2094855969636637e-09,
+          "max_power_relative_to_production": 9.31245144973218e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646601970792783e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7477,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1817313661935816e-09,
+          "max_power_relative_to_production": 9.311699676785587e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645736582140183e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7940,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.7000362069617258e-09,
+          "max_power_relative_to_production": 9.277519942768072e-08,
+          "max_power_relative_to_fine_midpoint": 1.0606496956069988e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8672,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.763288467859062e-10,
+          "max_power_relative_to_production": 9.257462302909644e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583544543896017e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9601,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.567956734599325e-10,
+          "max_power_relative_to_production": 9.25718663956313e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583226016451848e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10531,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.753146995695494e-10,
+          "max_power_relative_to_production": 9.257437491720495e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583516971139129e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11455,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.457283245888246e-10,
+          "max_power_relative_to_production": 9.256991429384356e-08,
+          "max_power_relative_to_fine_midpoint": 1.05830016585143e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038141822e-07,
+      "max_power_relative_to_production": 8.244815109462505e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+    },
+    {
+      "case": "highT",
+      "threshold": 1e-06,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038488731e-07,
+          "max_power_relative_to_production": 8.24481510682343e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210368798256e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.0055271420774712e-09,
+          "max_power_relative_to_production": 9.296489968005471e-08,
+          "max_power_relative_to_fine_midpoint": 1.063168642861619e-07
+        },
+        {
+          "mode": 10,
+          "j0": 1010,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832259002801801e-10,
+          "max_power_relative_to_production": 9.254357518877147e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910621508032e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2110,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.83195124143516e-10,
+          "max_power_relative_to_production": 9.254356414521854e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907857092642e-07
+        },
+        {
+          "mode": 20,
+          "j0": 2686,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832274394563206e-10,
+          "max_power_relative_to_production": 9.254357176643902e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910483764357e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3261,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.83168367983751e-10,
+          "max_power_relative_to_production": 9.25435540993403e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906365335783e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4106,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832286563169968e-10,
+          "max_power_relative_to_production": 9.254358018180874e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910110726102e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5683,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2059721208166053e-09,
+          "max_power_relative_to_production": 9.312319288943984e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646449247688882e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6143,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.219986838841245e-09,
+          "max_power_relative_to_production": 9.312839545369118e-08,
+          "max_power_relative_to_fine_midpoint": 1.0647046781540349e-07
+        },
+        {
+          "mode": 45,
+          "j0": 6626,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1962821405161475e-09,
+          "max_power_relative_to_production": 9.311960951650907e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646037117345473e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7110,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.190841140750919e-09,
+          "max_power_relative_to_production": 9.311936019446447e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646009292982028e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7571,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 2.0471609059356087e-09,
+          "max_power_relative_to_production": 9.285542437213356e-08,
+          "max_power_relative_to_fine_midpoint": 1.0615691922997754e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8257,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.746806093708932e-10,
+          "max_power_relative_to_production": 9.257455459762982e-08,
+          "max_power_relative_to_fine_midpoint": 1.058353469557642e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9232,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.508729501472458e-10,
+          "max_power_relative_to_production": 9.257071338147475e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583094123591407e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10163,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.759598244590166e-10,
+          "max_power_relative_to_production": 9.257450768426833e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583532996445755e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11134,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.461965556439354e-10,
+          "max_power_relative_to_production": 9.257000370122995e-08,
+          "max_power_relative_to_fine_midpoint": 1.058301345904698e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038488731e-07,
+      "max_power_relative_to_production": 8.24481510682343e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210368798256e-05
+    },
+    {
+      "case": "stiff",
+      "threshold": 1e-06,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038488731e-07,
+          "max_power_relative_to_production": 8.24481510550388e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210373416578e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.2279960898174975e-09,
+          "max_power_relative_to_production": 9.320714534667041e-08,
+          "max_power_relative_to_fine_midpoint": 1.0661448307267242e-07
+        },
+        {
+          "mode": 10,
+          "j0": 927,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8319068011487194e-10,
+          "max_power_relative_to_production": 9.254356055982032e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907428292443e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2677,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831747951089166e-10,
+          "max_power_relative_to_production": 9.254355040148023e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905817403603e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3253,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8320739367687823e-10,
+          "max_power_relative_to_production": 9.254356629842843e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907185087095e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3828,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8314843653210633e-10,
+          "max_power_relative_to_production": 9.25435411617115e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905812158445e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4404,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831807790878254e-10,
+          "max_power_relative_to_production": 9.254356545008345e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908912652476e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5783,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318563521806807e-10,
+          "max_power_relative_to_production": 9.254356140169408e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907651392958e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6702,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.195328739237911e-09,
+          "max_power_relative_to_production": 9.311924057454042e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645997330800514e-07
+        },
+        {
+          "mode": 45,
+          "j0": 7164,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2164973907823056e-09,
+          "max_power_relative_to_production": 9.312712261632566e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646900682056282e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7625,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1862551604949337e-09,
+          "max_power_relative_to_production": 9.311852953973385e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645912397703964e-07
+        },
+        {
+          "mode": 55,
+          "j0": 8089,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.7336164757091777e-09,
+          "max_power_relative_to_production": 9.278302584080992e-08,
+          "max_power_relative_to_fine_midpoint": 1.0607394504234183e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8770,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.756164746767123e-10,
+          "max_power_relative_to_production": 9.257463994358145e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583547372414144e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9750,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.561743492224398e-10,
+          "max_power_relative_to_production": 9.257174329894899e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583212078934907e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10683,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.762605805549266e-10,
+          "max_power_relative_to_production": 9.257458370156542e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583540625769847e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11609,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.461940915844365e-10,
+          "max_power_relative_to_production": 9.257000514960594e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583012838529226e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038488731e-07,
+      "max_power_relative_to_production": 8.24481510550388e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210373416578e-05
+    },
+    {
+      "case": "high_kappa",
+      "threshold": 1e-06,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038141822e-07,
+          "max_power_relative_to_production": 8.244815109462505e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 9.938074682228424e-10,
+          "max_power_relative_to_production": 9.295346719457623e-08,
+          "max_power_relative_to_fine_midpoint": 1.0630284726609337e-07
+        },
+        {
+          "mode": 10,
+          "j0": 1020,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8317588990400213e-10,
+          "max_power_relative_to_production": 9.254355524679256e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906593187963e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2332,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8321054535796925e-10,
+          "max_power_relative_to_production": 9.254356350598585e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990830089571e-07
+        },
+        {
+          "mode": 20,
+          "j0": 2907,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8315157900045663e-10,
+          "max_power_relative_to_production": 9.254354105306409e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905402017084e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3483,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318397918797407e-10,
+          "max_power_relative_to_production": 9.254355899559115e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907490526974e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4059,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832157999015935e-10,
+          "max_power_relative_to_production": 9.254356035286993e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910435740837e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5580,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318363372416844e-10,
+          "max_power_relative_to_production": 9.254355939967076e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990719015363e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6306,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2155792692113755e-09,
+          "max_power_relative_to_production": 9.312674368591315e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646857849292392e-07
+        },
+        {
+          "mode": 45,
+          "j0": 6767,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.220572912034415e-09,
+          "max_power_relative_to_production": 9.312860229625443e-08,
+          "max_power_relative_to_fine_midpoint": 1.064707060435926e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7252,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.216942634469196e-09,
+          "max_power_relative_to_production": 9.312733333059574e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646925056327467e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7737,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.113540908796173e-09,
+          "max_power_relative_to_production": 9.310224023341913e-08,
+          "max_power_relative_to_fine_midpoint": 1.0644041516074567e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8211,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.0172290912719934e-09,
+          "max_power_relative_to_production": 9.263663467501856e-08,
+          "max_power_relative_to_fine_midpoint": 1.0590687500290244e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9045,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.494752559503767e-10,
+          "max_power_relative_to_production": 9.257032091709852e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583049522377217e-07
+        },
+        {
+          "mode": 70,
+          "j0": 9983,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.753634179709332e-10,
+          "max_power_relative_to_production": 9.257436484874447e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583515627058337e-07
+        },
+        {
+          "mode": 76,
+          "j0": 11151,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.462627131571885e-10,
+          "max_power_relative_to_production": 9.257000398568897e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583011042317725e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038141822e-07,
+      "max_power_relative_to_production": 8.244815109462505e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+    },
+    {
+      "case": "lowT",
+      "threshold": 1e-06,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038141822e-07,
+          "max_power_relative_to_production": 8.244815109462505e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.896172995478083e-09,
+          "max_power_relative_to_production": 9.422490031061965e-08,
+          "max_power_relative_to_fine_midpoint": 1.078649904038266e-07
+        },
+        {
+          "mode": 10,
+          "j0": 558,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832269908621925e-10,
+          "max_power_relative_to_production": 9.254356718767404e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579909760631508e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2316,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8320118891211026e-10,
+          "max_power_relative_to_production": 9.254356274776366e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908628243861e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3976,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8314662806375283e-10,
+          "max_power_relative_to_production": 9.254353939136651e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905655074727e-07
+        },
+        {
+          "mode": 25,
+          "j0": 4907,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832225191211182e-10,
+          "max_power_relative_to_production": 9.25435704009987e-08,
+          "max_power_relative_to_fine_midpoint": 1.057991097596279e-07
+        },
+        {
+          "mode": 30,
+          "j0": 5482,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831636741304435e-10,
+          "max_power_relative_to_production": 9.254354879271732e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905655681512e-07
+        },
+        {
+          "mode": 35,
+          "j0": 6058,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831959364246931e-10,
+          "max_power_relative_to_production": 9.254356780466477e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907966406212e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6614,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831989635518711e-10,
+          "max_power_relative_to_production": 9.254355848873359e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908813985039e-07
+        },
+        {
+          "mode": 45,
+          "j0": 8363,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1894602458215463e-09,
+          "max_power_relative_to_production": 9.31174693003279e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645793792645589e-07
+        },
+        {
+          "mode": 50,
+          "j0": 8779,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.0061460865071523e-09,
+          "max_power_relative_to_production": 9.307739774489512e-08,
+          "max_power_relative_to_fine_midpoint": 1.0641185222181193e-07
+        },
+        {
+          "mode": 55,
+          "j0": 9215,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 7.840327954615786e-10,
+          "max_power_relative_to_production": 9.259881376456251e-08,
+          "max_power_relative_to_fine_midpoint": 1.0586363007038726e-07
+        },
+        {
+          "mode": 60,
+          "j0": 9970,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.756021718364457e-10,
+          "max_power_relative_to_production": 9.25744693060092e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583529459274265e-07
+        },
+        {
+          "mode": 65,
+          "j0": 10866,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.737200593822344e-10,
+          "max_power_relative_to_production": 9.2574566234942e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583536737845684e-07
+        },
+        {
+          "mode": 70,
+          "j0": 11698,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.760177511305436e-10,
+          "max_power_relative_to_production": 9.257453510021656e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583536571014213e-07
+        },
+        {
+          "mode": 75,
+          "j0": 12531,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.452758875451769e-10,
+          "max_power_relative_to_production": 9.256979581530914e-08,
+          "max_power_relative_to_fine_midpoint": 1.0582988181437077e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038141822e-07,
+      "max_power_relative_to_production": 8.244815109462505e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+    },
+    {
+      "case": "default",
+      "threshold": 0.0001,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038141822e-07,
+          "max_power_relative_to_production": 8.244815109462505e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.2405159149294835e-09,
+          "max_power_relative_to_production": 9.322220697607044e-08,
+          "max_power_relative_to_fine_midpoint": 1.066330340388513e-07
+        },
+        {
+          "mode": 10,
+          "j0": 918,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831805655972692e-10,
+          "max_power_relative_to_production": 9.254355742883526e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907985242176e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2524,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8322096747348717e-10,
+          "max_power_relative_to_production": 9.254357239745258e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990920445515e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3099,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831623378048242e-10,
+          "max_power_relative_to_production": 9.2543545588653e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990475823747e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3675,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8319449208729013e-10,
+          "max_power_relative_to_production": 9.2543558456998e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908134317895e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4251,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8322680633473307e-10,
+          "max_power_relative_to_production": 9.254357376380535e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910775113959e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5762,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831482574466862e-10,
+          "max_power_relative_to_production": 9.254354406474714e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906097383731e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6557,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2164664147344428e-09,
+          "max_power_relative_to_production": 9.312708133931588e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646896719277714e-07
+        },
+        {
+          "mode": 45,
+          "j0": 7017,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2094855969636637e-09,
+          "max_power_relative_to_production": 9.31245144973218e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646601970792783e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7477,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1817313661935816e-09,
+          "max_power_relative_to_production": 9.311699676785587e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645736582140183e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7940,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.7000362069617258e-09,
+          "max_power_relative_to_production": 9.277519942768072e-08,
+          "max_power_relative_to_fine_midpoint": 1.0606496956069988e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8672,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.763288467859062e-10,
+          "max_power_relative_to_production": 9.257462302909644e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583544543896017e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9601,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.567956734599325e-10,
+          "max_power_relative_to_production": 9.25718663956313e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583226016451848e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10531,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.753146995695494e-10,
+          "max_power_relative_to_production": 9.257437491720495e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583516971139129e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11455,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.457283245888246e-10,
+          "max_power_relative_to_production": 9.256991429384356e-08,
+          "max_power_relative_to_fine_midpoint": 1.05830016585143e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038141822e-07,
+      "max_power_relative_to_production": 8.244815109462505e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+    },
+    {
+      "case": "highT",
+      "threshold": 0.0001,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038488731e-07,
+          "max_power_relative_to_production": 8.24481510682343e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210368798256e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.0055271420774712e-09,
+          "max_power_relative_to_production": 9.296489968005471e-08,
+          "max_power_relative_to_fine_midpoint": 1.063168642861619e-07
+        },
+        {
+          "mode": 10,
+          "j0": 1010,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832259002801801e-10,
+          "max_power_relative_to_production": 9.254357518877147e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910621508032e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2110,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.83195124143516e-10,
+          "max_power_relative_to_production": 9.254356414521854e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907857092642e-07
+        },
+        {
+          "mode": 20,
+          "j0": 2686,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832274394563206e-10,
+          "max_power_relative_to_production": 9.254357176643902e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910483764357e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3261,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.83168367983751e-10,
+          "max_power_relative_to_production": 9.25435540993403e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906365335783e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4106,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832286563169968e-10,
+          "max_power_relative_to_production": 9.254358018180874e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910110726102e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5683,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2059721208166053e-09,
+          "max_power_relative_to_production": 9.312319288943984e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646449247688882e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6143,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.219986838841245e-09,
+          "max_power_relative_to_production": 9.312839545369118e-08,
+          "max_power_relative_to_fine_midpoint": 1.0647046781540349e-07
+        },
+        {
+          "mode": 45,
+          "j0": 6626,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1962821405161475e-09,
+          "max_power_relative_to_production": 9.311960951650907e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646037117345473e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7110,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.190841140750919e-09,
+          "max_power_relative_to_production": 9.311936019446447e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646009292982028e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7571,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 2.0471609059356087e-09,
+          "max_power_relative_to_production": 9.285542437213356e-08,
+          "max_power_relative_to_fine_midpoint": 1.0615691922997754e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8257,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.746806093708932e-10,
+          "max_power_relative_to_production": 9.257455459762982e-08,
+          "max_power_relative_to_fine_midpoint": 1.058353469557642e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9232,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.508729501472458e-10,
+          "max_power_relative_to_production": 9.257071338147475e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583094123591407e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10163,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.759598244590166e-10,
+          "max_power_relative_to_production": 9.257450768426833e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583532996445755e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11134,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.461965556439354e-10,
+          "max_power_relative_to_production": 9.257000370122995e-08,
+          "max_power_relative_to_fine_midpoint": 1.058301345904698e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038488731e-07,
+      "max_power_relative_to_production": 8.24481510682343e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210368798256e-05
+    },
+    {
+      "case": "stiff",
+      "threshold": 0.0001,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038488731e-07,
+          "max_power_relative_to_production": 8.24481510550388e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210373416578e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.2279960898174975e-09,
+          "max_power_relative_to_production": 9.320714534667041e-08,
+          "max_power_relative_to_fine_midpoint": 1.0661448307267242e-07
+        },
+        {
+          "mode": 10,
+          "j0": 927,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8319068011487194e-10,
+          "max_power_relative_to_production": 9.254356055982032e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907428292443e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2677,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831747951089166e-10,
+          "max_power_relative_to_production": 9.254355040148023e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905817403603e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3253,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8320739367687823e-10,
+          "max_power_relative_to_production": 9.254356629842843e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907185087095e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3828,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8314843653210633e-10,
+          "max_power_relative_to_production": 9.25435411617115e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905812158445e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4404,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831807790878254e-10,
+          "max_power_relative_to_production": 9.254356545008345e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908912652476e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5783,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318563521806807e-10,
+          "max_power_relative_to_production": 9.254356140169408e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907651392958e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6702,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.195328739237911e-09,
+          "max_power_relative_to_production": 9.311924057454042e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645997330800514e-07
+        },
+        {
+          "mode": 45,
+          "j0": 7164,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2164973907823056e-09,
+          "max_power_relative_to_production": 9.312712261632566e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646900682056282e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7625,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1862551604949337e-09,
+          "max_power_relative_to_production": 9.311852953973385e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645912397703964e-07
+        },
+        {
+          "mode": 55,
+          "j0": 8089,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.7336164757091777e-09,
+          "max_power_relative_to_production": 9.278302584080992e-08,
+          "max_power_relative_to_fine_midpoint": 1.0607394504234183e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8770,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.756164746767123e-10,
+          "max_power_relative_to_production": 9.257463994358145e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583547372414144e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9750,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.561743492224398e-10,
+          "max_power_relative_to_production": 9.257174329894899e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583212078934907e-07
+        },
+        {
+          "mode": 70,
+          "j0": 10683,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.762605805549266e-10,
+          "max_power_relative_to_production": 9.257458370156542e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583540625769847e-07
+        },
+        {
+          "mode": 75,
+          "j0": 11609,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.461940915844365e-10,
+          "max_power_relative_to_production": 9.257000514960594e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583012838529226e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038488731e-07,
+      "max_power_relative_to_production": 8.24481510550388e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210373416578e-05
+    },
+    {
+      "case": "high_kappa",
+      "threshold": 0.0001,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038141822e-07,
+          "max_power_relative_to_production": 8.244815109462505e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 9.938074682228424e-10,
+          "max_power_relative_to_production": 9.295346719457623e-08,
+          "max_power_relative_to_fine_midpoint": 1.0630284726609337e-07
+        },
+        {
+          "mode": 10,
+          "j0": 1020,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8317588990400213e-10,
+          "max_power_relative_to_production": 9.254355524679256e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579906593187963e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2332,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8321054535796925e-10,
+          "max_power_relative_to_production": 9.254356350598585e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990830089571e-07
+        },
+        {
+          "mode": 20,
+          "j0": 2907,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8315157900045663e-10,
+          "max_power_relative_to_production": 9.254354105306409e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905402017084e-07
+        },
+        {
+          "mode": 25,
+          "j0": 3483,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318397918797407e-10,
+          "max_power_relative_to_production": 9.254355899559115e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907490526974e-07
+        },
+        {
+          "mode": 30,
+          "j0": 4059,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832157999015935e-10,
+          "max_power_relative_to_production": 9.254356035286993e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579910435740837e-07
+        },
+        {
+          "mode": 35,
+          "j0": 5580,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8318363372416844e-10,
+          "max_power_relative_to_production": 9.254355939967076e-08,
+          "max_power_relative_to_fine_midpoint": 1.057990719015363e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6306,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.2155792692113755e-09,
+          "max_power_relative_to_production": 9.312674368591315e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646857849292392e-07
+        },
+        {
+          "mode": 45,
+          "j0": 6767,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.220572912034415e-09,
+          "max_power_relative_to_production": 9.312860229625443e-08,
+          "max_power_relative_to_fine_midpoint": 1.064707060435926e-07
+        },
+        {
+          "mode": 50,
+          "j0": 7252,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.216942634469196e-09,
+          "max_power_relative_to_production": 9.312733333059574e-08,
+          "max_power_relative_to_fine_midpoint": 1.0646925056327467e-07
+        },
+        {
+          "mode": 55,
+          "j0": 7737,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.113540908796173e-09,
+          "max_power_relative_to_production": 9.310224023341913e-08,
+          "max_power_relative_to_fine_midpoint": 1.0644041516074567e-07
+        },
+        {
+          "mode": 60,
+          "j0": 8211,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.0172290912719934e-09,
+          "max_power_relative_to_production": 9.263663467501856e-08,
+          "max_power_relative_to_fine_midpoint": 1.0590687500290244e-07
+        },
+        {
+          "mode": 65,
+          "j0": 9045,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.494752559503767e-10,
+          "max_power_relative_to_production": 9.257032091709852e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583049522377217e-07
+        },
+        {
+          "mode": 70,
+          "j0": 9983,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.753634179709332e-10,
+          "max_power_relative_to_production": 9.257436484874447e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583515627058337e-07
+        },
+        {
+          "mode": 76,
+          "j0": 11151,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.462627131571885e-10,
+          "max_power_relative_to_production": 9.257000398568897e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583011042317725e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038141822e-07,
+      "max_power_relative_to_production": 8.244815109462505e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+    },
+    {
+      "case": "lowT",
+      "threshold": 0.0001,
+      "phase_cap": 0.5,
+      "mode_limit": 16,
+      "step_limit": 256,
+      "rows": [
+        {
+          "mode": 0,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.1821980038141822e-07,
+          "max_power_relative_to_production": 8.244815109462505e-06,
+          "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+        },
+        {
+          "mode": 5,
+          "j0": 0,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 1.896172995478083e-09,
+          "max_power_relative_to_production": 9.422490031061965e-08,
+          "max_power_relative_to_fine_midpoint": 1.078649904038266e-07
+        },
+        {
+          "mode": 10,
+          "j0": 558,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832269908621925e-10,
+          "max_power_relative_to_production": 9.254356718767404e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579909760631508e-07
+        },
+        {
+          "mode": 15,
+          "j0": 2316,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8320118891211026e-10,
+          "max_power_relative_to_production": 9.254356274776366e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908628243861e-07
+        },
+        {
+          "mode": 20,
+          "j0": 3976,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.8314662806375283e-10,
+          "max_power_relative_to_production": 9.254353939136651e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905655074727e-07
+        },
+        {
+          "mode": 25,
+          "j0": 4907,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.832225191211182e-10,
+          "max_power_relative_to_production": 9.25435704009987e-08,
+          "max_power_relative_to_fine_midpoint": 1.057991097596279e-07
+        },
+        {
+          "mode": 30,
+          "j0": 5482,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831636741304435e-10,
+          "max_power_relative_to_production": 9.254354879271732e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579905655681512e-07
+        },
+        {
+          "mode": 35,
+          "j0": 6058,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831959364246931e-10,
+          "max_power_relative_to_production": 9.254356780466477e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579907966406212e-07
+        },
+        {
+          "mode": 40,
+          "j0": 6614,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.831989635518711e-10,
+          "max_power_relative_to_production": 9.254355848873359e-08,
+          "max_power_relative_to_fine_midpoint": 1.0579908813985039e-07
+        },
+        {
+          "mode": 45,
+          "j0": 8363,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.1894602458215463e-09,
+          "max_power_relative_to_production": 9.31174693003279e-08,
+          "max_power_relative_to_fine_midpoint": 1.0645793792645589e-07
+        },
+        {
+          "mode": 50,
+          "j0": 8779,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 3.0061460865071523e-09,
+          "max_power_relative_to_production": 9.307739774489512e-08,
+          "max_power_relative_to_fine_midpoint": 1.0641185222181193e-07
+        },
+        {
+          "mode": 55,
+          "j0": 9215,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 7.840327954615786e-10,
+          "max_power_relative_to_production": 9.259881376456251e-08,
+          "max_power_relative_to_fine_midpoint": 1.0586363007038726e-07
+        },
+        {
+          "mode": 60,
+          "j0": 9970,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.756021718364457e-10,
+          "max_power_relative_to_production": 9.25744693060092e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583529459274265e-07
+        },
+        {
+          "mode": 65,
+          "j0": 10866,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.737200593822344e-10,
+          "max_power_relative_to_production": 9.2574566234942e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583536737845684e-07
+        },
+        {
+          "mode": 70,
+          "j0": 11698,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.760177511305436e-10,
+          "max_power_relative_to_production": 9.257453510021656e-08,
+          "max_power_relative_to_fine_midpoint": 1.0583536571014213e-07
+        },
+        {
+          "mode": 75,
+          "j0": 12531,
+          "accepted_blocks": 128,
+          "fallback_steps": 0,
+          "native_intervals": 256,
+          "max_embedded_defect": 5.452758875451769e-10,
+          "max_power_relative_to_production": 9.256979581530914e-08,
+          "max_power_relative_to_fine_midpoint": 1.0582988181437077e-07
+        }
+      ],
+      "accepted_blocks": 2048,
+      "fallback_steps": 0,
+      "max_embedded_defect": 1.1821980038141822e-07,
+      "max_power_relative_to_production": 8.244815109462505e-06,
+      "max_power_relative_to_fine_midpoint": 1.0120210367918585e-05
+    }
+  ]
+}

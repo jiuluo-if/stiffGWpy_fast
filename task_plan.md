@@ -848,3 +848,18 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: run a standalone residual-certified two-interval
   uniform-asymptotic defect screen only. Do not modify production unless the
   embedded defect and all existing numerical gates justify promotion.
+
+## Round 51 — uniform-integral two-interval defect screen (2026-09-23)
+
+- [x] Re-fetched at `b929cb7` and completed a fresh canonical profile with
+  `kink_split=true`; hard cases remained two-propagation paths.
+- [x] TDD, local defect/accuracy probes, and ideal transfer timing passed the
+  diagnostic gate, but the full embedded matrix-defect guard was `3.76x`
+  baseline and left the timing stress path with zero accepted blocks.
+- [x] Rejected by Amdahl before full kernel/full outer; production unchanged.
+- [x] Recorded the unrelated CI baseline: run #219 canonical failed, while
+  static/package/cobaya/compatibility passed; local canonical was 197 passed,
+  4 known baseline failures, 6 deselected.
+- [ ] Next: test a cheap conservative endpoint defect-bound precomputation as
+  a distinct standalone mathematical screen. No AI/learned model and no
+  production modification before correctness and end-to-end headroom.

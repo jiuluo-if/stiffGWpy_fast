@@ -2422,3 +2422,38 @@ with an embedded one-interval versus two-interval defect bound; it is distinct
 from the rejected midpoint residual block, CF4 Magnus block, and boundary-WKB
 screens. Only a tiny mathematical accuracy screen will be attempted first.
 No AI/learned model is used.
+
+## Round 51 result — uniform-integral two-interval defect screen (2026-09-23)
+
+After a fresh profile at `b929cb77b5458c4c5b1a15c21b102d08b1e12566`, the
+hard-case total medians were `6.26/6.38/6.57 ms` for highT/stiff/high-kappa,
+with two propagation calls; tensor medians were `1.41/1.78/1.43 ms`. The
+Amdahl screen therefore required a real transfer-work reduction.
+
+This standalone mathematical candidate used the logarithmic-mean coefficient
+of `exp(z)` on a linear interval and combined two native transfers into one.
+It was distinct from the rejected Round 31 midpoint block, Round 32 CF4
+Magnus, and Round 34 boundary-WKB screens. TDD passed three tests, including
+symmetry/zero-delta and agreement with the production constant-z map. On
+sampled named paths, the strict `1e-8` defect threshold accepted most blocks
+(`1920` of `2176` sampled blocks) and the accepted-chain power deviation from
+production was about `9.3e-8`; the looser `1e-6` threshold accepted all sampled
+blocks but reached `8.2e-6` deviation. The ideal no-guard transfer ratio was
+`0.768` (median `0.0370` vs `0.0496 ms`, p95 not materially worse).
+
+The required embedded matrix defect calculation changed the result: guarded
+transfer median was `0.1865 ms` versus `0.0496 ms` baseline, ratio `3.760`,
+with all `2048` timing blocks falling back on the stress path. The certificate
+cost is therefore larger than the saved transfer work. The candidate is
+**REJECTED_BY_AMDahl** before a production-kernel/full-outer twin; production
+remains unchanged. Artifact:
+`docs/uniform_asymptotic_defect_round51_20260923.json`.
+
+The next pool is ordered as: (1) a cheap conservative closed-form defect
+bound precomputed from `h` and endpoint `exp(z)` variation, only if it can
+retain the same safety gate without per-block matrix products; (2) a
+mathematically distinct Riccati/WKB adaptive representation with scaled
+projective normalization; (3) sensitivity-assisted outer correction. The
+first is selected because it is the only variant that can preserve the
+Round 51 work reduction while removing its measured bottleneck. No AI/learned
+model is used.
