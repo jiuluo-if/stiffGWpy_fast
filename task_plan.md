@@ -777,3 +777,14 @@ Phase 3: Implementation and evidence-driven optimization
   overhead. Rejected before full twin/outer.
 - [ ] Next round: fetch/profile, then choose a propagation-level numerical or
   compiler method with enough Amdahl headroom to matter end to end.
+
+## Round 45 — Cayley projective Riccati screen (2026-09-23)
+
+- [x] Re-fetched at `724b765881662acd4faee13b714f746cbe6ba9fa` and refreshed
+  canonical median/p95 profiles.
+- [x] TDD and standalone pole-free Cayley coordinate screen completed. It was
+  numerically finite and accurate, but added roughly `2.22x–2.33x` per-step
+  cost without reducing transfer work. Rejected before full-kernel timing.
+- [ ] Next round: fetch/profile, then select a genuinely work-reducing
+  propagation method; raw/Cayley Riccati and sparse-frequency reconstruction
+  remain negative knowledge.

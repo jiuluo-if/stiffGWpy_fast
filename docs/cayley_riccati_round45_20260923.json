@@ -1,0 +1,40 @@
+{
+  "experiment": "round45_cayley_regularized_projective_riccati_screen",
+  "production_path_changed": false,
+  "commit": "724b765881662acd4faee13b714f746cbe6ba9fa",
+  "records": [
+    {
+      "z0": 0.2,
+      "z1": 3.0,
+      "h": 0.01,
+      "steps": 256,
+      "finite": true,
+      "power_relative_error": 6.9476837309638936e-15,
+      "cartesian_median_us": 5.899999450775795,
+      "cayley_median_us": 13.099999705445953,
+      "cayley_over_cartesian": 2.220339139815246
+    },
+    {
+      "z0": 0.2,
+      "z1": 5.0,
+      "h": 0.005,
+      "steps": 1024,
+      "finite": true,
+      "power_relative_error": 1.2034968518472786e-15,
+      "cartesian_median_us": 22.74999951623613,
+      "cayley_median_us": 51.20000059832819,
+      "cayley_over_cartesian": 2.2505495247060545
+    },
+    {
+      "z0": -0.2,
+      "z1": 4.0,
+      "h": 0.005,
+      "steps": 1024,
+      "finite": true,
+      "power_relative_error": 2.691086783868608e-15,
+      "cartesian_median_us": 22.000000171829015,
+      "cayley_median_us": 51.30000045028282,
+      "cayley_over_cartesian": 2.331818184073127
+    }
+  ]
+}

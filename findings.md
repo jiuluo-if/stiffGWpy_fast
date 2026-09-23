@@ -2234,3 +2234,25 @@ Artifact: `docs/tail_assembly_attribution_round44_20260923.json`.
 Next selected direction is a new propagation-level method, not another tail
 or layout micro-optimization; it must reduce transfer evaluations or improve
 the actual tensor kernel enough to clear the end-to-end gate.
+
+## Round 45 result — Cayley-regularized projective Riccati screen (2026-09-23)
+
+Fresh profiles at `724b765881662acd4faee13b714f746cbe6ba9fa` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.608/2.523` default, `5.432/2.769` low-T,
+`7.906/4.048` high-T, `8.564/4.631` stiff and `8.469/4.566` high-kappa ms;
+total p95 values were `6.868/6.388/9.327/10.494/9.655 ms`.
+Artifacts: `docs/profile_fast_breakdown_round45_20260923_*.json`.
+
+The pole-free Cayley coordinate `q=(x+i y)/(x-i y)` plus log-amplitude stayed
+finite and matched Cartesian power to `1.2e-15–6.9e-15` on the standalone
+long-step probes. It did not reduce transfer evaluations and was `2.22x–2.33x`
+slower than the Cartesian loop because every step adds phase reconstruction and
+log-amplitude work. It is **REJECTED_FOR_PRODUCTION** before full-kernel timing;
+this is a distinct mathematical coordinate failure, not a raw-Riccati pole
+failure.
+Artifact: `docs/cayley_riccati_round45_20260923.json`.
+
+Next selected direction is a fresh propagation-level method with an explicit
+work-reduction mechanism; do not reopen raw/Cayley Riccati or sparse-frequency
+reconstruction without a materially different algorithmic basis.
