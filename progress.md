@@ -1513,5 +1513,7 @@ the diagnostic artifacts are retained.
   contract changed.
 - [x] Focused test, full resource-capped canonical pytest (`224 passed, 6
   deselected, 2 warnings`), Ruff, compileall, and diff check pass locally.
-- [ ] Push this repair and verify the next Ubuntu Actions run is green before
-  resuming the next mathematical optimization experiment. No AI/learned model.
+- [x] Pushed as `e4d2a1f`; Actions run #237 is fully green for canonical,
+  static, package, Cobaya, and compatibility 3.9--3.13. No AI/learned model.
+- [ ] Resume the next standalone mathematical optimization experiment only
+  after recording a fresh HEAD/profile and the ranked candidate pool.

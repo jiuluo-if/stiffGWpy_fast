@@ -1068,5 +1068,7 @@ Phase 3: Implementation and evidence-driven optimization
   preserving the matrix metric as diagnostic output and leaving production
   untouched.
 - [x] Local focused/full canonical and static gates pass.
-- [ ] Push and confirm a green remote canonical run; then select the next
-  standalone math-only optimization direction from the ranked pool.
+- [x] Pushed as `e4d2a1f`; remote Actions run #237 is fully green across all
+  nine jobs.
+- [ ] Re-fetch the green HEAD, refresh the canonical profile, and select the
+  next standalone math-only optimization direction from the ranked pool.

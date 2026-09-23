@@ -3040,4 +3040,5 @@ endpoint state `(rho, rho_prime, theta)`. The test gates this direct numerical
 state quantity at the same `1e-8` threshold, so no production tolerance,
 physical guard, failure semantic, or API contract is weakened. Production
 source remains unchanged. Local focused and full canonical gates pass; the
-new remote run is required to confirm Ubuntu.
+remote run #237 for `e4d2a1f` is now fully green across canonical, static,
+package, Cobaya, and compatibility 3.9--3.13.
