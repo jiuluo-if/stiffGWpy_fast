@@ -754,3 +754,15 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next round: fetch/profile, then test phase-aware complex-state
   reconstruction as a distinct sparse-frequency representation; require named,
   edge/Sobol and independent oracle gates before any runtime promotion.
+
+## Round 43 — phase-aware sparse-frequency reconstruction (2026-09-23)
+
+- [x] Re-fetched at `ae28e6cf71df2ab3e2f500804b1d739530820b2a` and refreshed
+  the fixed-resource canonical profile.
+- [x] TDD and endpoint-corrected Cartesian handoff-state prototype completed.
+  It retained the sparse propagation work reduction but failed fixed-DN named
+  spectrum/DN gates by large margins, so no oracle/outer implementation was
+  justified.
+- [ ] Next round: fetch/profile, measure tail assembly attribution, and test
+  only an exact-semantics common-factor reuse if Amdahl shows sufficient
+  end-to-end headroom.

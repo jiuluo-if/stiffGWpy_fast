@@ -1,0 +1,98 @@
+{
+  "experiment": "round43_phase_aware_sparse_frequency_fixed_dn_screen",
+  "production_path_changed": false,
+  "commit": "ae28e6cf71df2ab3e2f500804b1d739530820b2a",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "settings": {
+    "cases": "default,lowT,highT,stiff,high_kappa",
+    "threads": 2,
+    "stride": 2,
+    "out": "docs/phase_aware_sparse_frequency_round43_20260923.json"
+  },
+  "records": [
+    {
+      "case": "default",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "kend_nv_minus_one": 4,
+      "spectrum_dex": {
+        "median": 8.881784197001252e-16,
+        "p95": 0.438418339204798,
+        "max": 1.7337728122338962
+      },
+      "dn_base": 1.2182619915169081e-08,
+      "dn_candidate": 1.1900366674065628e-08,
+      "dn_relative": 0.02316851736891244,
+      "finite": true
+    },
+    {
+      "case": "lowT",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "kend_nv_minus_one": 4,
+      "spectrum_dex": {
+        "median": 0.0,
+        "p95": 0.5075387667990499,
+        "max": 2.3236822174306884
+      },
+      "dn_base": 2.858550381722741e-13,
+      "dn_candidate": 2.8191218785700715e-13,
+      "dn_relative": 0.013793181118923427,
+      "finite": true
+    },
+    {
+      "case": "highT",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "kend_nv_minus_one": 4,
+      "spectrum_dex": {
+        "median": 2.6645352591003757e-15,
+        "p95": 0.5712651516420029,
+        "max": 1.7490322600528785
+      },
+      "dn_base": 3.0371462079908023e-07,
+      "dn_candidate": 2.973894690826186e-07,
+      "dn_relative": 0.020825970444952557,
+      "finite": true
+    },
+    {
+      "case": "stiff",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "kend_nv_minus_one": 4,
+      "spectrum_dex": {
+        "median": 8.881784197001252e-16,
+        "p95": 0.6936450199150195,
+        "max": 2.4614828986546424
+      },
+      "dn_base": 8.064350343585649e-08,
+      "dn_candidate": 7.933508563117796e-08,
+      "dn_relative": 0.016224714315880826,
+      "finite": true
+    },
+    {
+      "case": "high_kappa",
+      "stride": 2,
+      "full_modes": 77,
+      "propagated_modes": 39,
+      "kend_nv_minus_one": 3,
+      "spectrum_dex": {
+        "median": 1.7763568394002505e-15,
+        "p95": 0.6245800596360951,
+        "max": 2.4780153877430884
+      },
+      "dn_base": 1.214719183937613e-06,
+      "dn_candidate": 1.1780337446292449e-06,
+      "dn_relative": 0.030200757338374445,
+      "finite": true
+    }
+  ]
+}

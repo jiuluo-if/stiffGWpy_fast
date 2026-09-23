@@ -2183,3 +2183,30 @@ prototype: interpolate the complex Cartesian transfer state before power and
 tail assembly, rather than fitting the already oscillatory power spectrum.
 This is a new representation hypothesis, not a retune of the rejected scalar
 PCHIP reconstruction; it must first pass fixed-DN named/edge/Sobol oracle gates.
+
+## Round 43 result — phase-aware sparse-frequency reconstruction (2026-09-23)
+
+Fresh profiles at `ae28e6cf71df2ab3e2f500804b1d739530820b2a` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.239/2.372` default, `5.014/2.807` low-T,
+`7.656/4.041` high-T, `7.849/4.478` stiff and `8.081/4.102` high-kappa ms;
+tensor shares were `45.3/56.0/52.8/57.1/50.8%`.
+Artifacts: `docs/profile_fast_breakdown_round43_20260923_*.json`.
+
+The candidate propagated the same 39/76-77 sparse modes as Round 42, but
+retained the two real Cartesian tail-handoff components, interpolated those
+states, and formed power only after reconstruction. Endpoint modes whose
+handoff reached `N_v-1` were evaluated with the production main-state formula;
+the fixed-DN screen remained finite and deterministic. It nevertheless failed:
+maximum spectrum errors were `1.734/2.324/1.749/2.461/2.478 dex` and DN
+relative errors were `2.32e-2/1.38e-2/2.08e-2/1.62e-2/3.02e-2` in named-case
+order. The phase-aware representation therefore is
+**REJECTED_FOR_PRODUCTION** before oracle/outer timing, and the sparse-frequency
+family is closed for stride-two reconstruction; no denser stride retune is
+justified by this evidence.
+Artifact: `docs/phase_aware_sparse_frequency_round43_20260923.json`.
+
+Next selected direction is an exact-semantics tail-assembly factor reuse
+spike. It will first measure tail assembly's Amdahl share and only proceed if
+hoisting the common `ev_minus/fp_minus` work has enough end-to-end headroom;
+production remains unchanged until bitwise/outer gates pass.
