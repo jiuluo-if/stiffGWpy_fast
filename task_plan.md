@@ -254,6 +254,24 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   sensitivity work versus the saved second propagation, then apply independent
   oracle/guard/outer gates; no production edit.
 
+### Round 37 outcome and next selection
+
+- [x] Fresh current-HEAD profile at `c2ff97a` completed: total/tensor medians
+  `5.604/2.462`, `5.479/2.913`, `8.237/4.355`, `8.246/4.515`,
+  `8.321/4.341 ms` for default/lowT/highT/stiff/high-kappa.
+- [x] Analytic one-step tangent Jacobian matched finite difference to
+  `2.62e-11` after adding the exact `omega -> 0` limit at the horizon.
+- [x] The full-state tangent feasibility screen failed: its no-assembly/tail
+  propagation was non-finite on default modes and median `110.8 ms` versus a
+  full production kernel `2.69 ms` (`41.1x`).
+- [x] Reject the naive full-state tangent outer route; do not build a final
+  spectrum correction on this unstable/costly state representation.
+- [ ] Next experiment: standalone observable/adjoint response screen that
+  propagates only the scalar integrated-output sensitivity, not a full tangent
+  state per frequency. First prove its derivative against a finite-difference
+  outer solve and compare its cost with the second propagation; no production
+  edit unless the response is both bounded and materially cheaper.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

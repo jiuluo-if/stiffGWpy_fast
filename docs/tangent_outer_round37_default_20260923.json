@@ -1,0 +1,27 @@
+{
+  "candidate": "tangent_outer_response_cost_screen",
+  "commit": "c2ff97a10b5ae31b2e623980feabd0ad6eaf784b",
+  "production_unchanged": true,
+  "settings": {
+    "case": [
+      "default"
+    ],
+    "threads": 2,
+    "repeats": 15,
+    "output": "docs/tangent_outer_round37_default_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "threads": 2,
+      "repeats": 15,
+      "baseline_full_kernel_median_ms": 2.693499998713378,
+      "tangent_no_assembly_median_ms": 110.79770000105782,
+      "tangent_over_full_baseline": 41.135214425091256,
+      "baseline_full_kernel_p95_ms": 3.0970399995567277,
+      "tangent_no_assembly_p95_ms": 118.14058999989356,
+      "local_jacobian_error": 2.620794184969577e-11,
+      "tangent_finite": false
+    }
+  ]
+}

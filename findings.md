@@ -2045,3 +2045,26 @@ The next hypothesis is a tangent/sensitivity-assisted outer correction. It is
 not the rejected fixed-point predictor: it must produce a first-order response
 for the spectrum/background and preserve the final output semantics, with an
 early cost comparison against the second real propagation.
+
+## Round 37 result — full-state tangent outer screen (2026-09-23)
+
+Fresh profiles at `c2ff97a10b5ae31b2e623980feabd0ad6eaf784b` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.604/2.462` default, `5.479/2.913` low-T,
+`8.237/4.355` high-T, `8.246/4.515` stiff and `8.321/4.341` high-kappa ms.
+Artifacts: `docs/profile_fast_breakdown_round37_20260923_*.json`.
+
+The standalone screen derived the exact constant-z transfer Jacobian and
+carried a tangent `(x,y)` state alongside the production state. The one-step
+Jacobian matched a central finite difference to `2.62e-11`, including the
+analytic `omega->0` limit. However, the long propagation state became
+non-finite for default modes even without assembly/tail, and the median cost
+was `110.8 ms` versus `2.69 ms` for the full production kernel (`41.1x`).
+This naive full-state response is **REJECTED_FOR_PRODUCTION** on both numerical
+stability and cost; no outer correctness gate was attempted.
+Artifact: `docs/tangent_outer_round37_default_20260923.json`.
+
+The next distinct response hypothesis is an observable/adjoint screen: avoid
+retaining a full tangent vector per frequency and estimate only scalar
+integrated-output sensitivity, with finite-difference verification before any
+runtime promotion.
