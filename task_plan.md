@@ -4,6 +4,41 @@
 
 在当前 `codex/fast_v0.2` 分支，将 `fast` 演进为唯一用户可见的科学生产路径，并以独立 reference、参数扫描和性能证据证明精度、速度与稳定性达到目标。
 
+## Current Session: 2026-09-23 — fast_v0.2 tensor propagation optimization
+
+### Goal
+
+在 `fast_v0.2` 目标分支上，以用户指定的 `465196c82b1c938af7bfce125933a4dfda22f4a2` 为基线，先完成同资源配置的 fresh attribution，再逐项验证 P0 repeated-exp elimination、P1 modulo/division assembly elimination 与 P2 LLVM/ASM 热点证据。任何 production candidate 必须先通过 kernel 输出 bitwise gate，再通过 full-outer、edge/Sobol、确定性和正式线程环境门禁；失败候选只保留独立 artifact，不进入生产路径。
+
+### Acceptance criteria
+
+- 不修改 fast profile 的数学公式、精度参数、输出字段、failure/guard 语义或确定性。
+- baseline/candidate 只改变一个可验证因素；`f`、`log10OmegaGW`、`DN_gw`、`g2`、`w2` 以及 `handoff_eps` 通过 bitwise gate 后才能继续。
+- full-outer 至少覆盖 default、lowT、highT、stiff、high_kappa，并记录 total、tensor kernel、expansion、Phi-S2、frequency preparation、integration 的 median/p95、outer iterations、kernel calls、每通道传播步数。
+- 正式资源环境明确记录 Numba threads、threading layer、BLAS budget、affinity、warmup/repeats；不跨资源配置比较。
+- 只有稳定收益且所有门禁通过的最小 production diff 才能提交；无收益或不等价候选不得强行合入。
+- 有效修改完成后使用 `2966684515@qq.com` 提交，并推送到远端 `fast/fast_v0.2`。
+
+### Phases
+
+- [x] P0: fresh baseline/profile and production call-shape audit
+- [x] P1: standalone repeated-exp elimination spike with bitwise gate (REJECTED_FOR_PRODUCTION; no production diff)
+- [x] P2: standalone counted assembly-state spike with digest/guard gate (REJECTED_FOR_PRODUCTION; no production diff)
+- [x] P3: LLVM/ASM hotspot audit and candidate decision (recompile-backed; specialized spike rejected for formal high-kappa regression)
+- [x] P4: final artifact verification and review complete; commit/push is the remaining delivery action (production source unchanged)
+
+### Baseline correction note
+
+The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.
+
+### Verification blocker note
+
+The new candidate contracts pass. The existing fast test scope has three baseline failures unrelated to this round's unchanged production source: two stale monkeypatch signatures and one pre-existing shared-N_eff guard case. Do not claim a green full suite; proceed with scoped review/push while reporting these failures.
+
+### Next Step
+
+读取本节并运行 fresh baseline；保留既有未跟踪实验产物，不纳入本轮提交。
+
 ## Next Step
 
 当前 fresh HEAD `b8e71bf` 的 2-thread stage profile 显示 tensor kernel 仍是目标区

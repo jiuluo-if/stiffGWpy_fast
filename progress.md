@@ -1347,3 +1347,14 @@ Decision: **REJECTED FOR PRODUCTION**. Although safe and beneficial in several
 slow regimes, it does not provide a stable >5% multi-regime improvement and
 slightly regresses low-T at 16 threads. Production source was restored; only
 the diagnostic artifacts are retained.
+## 2026-09-23 — tensor propagation optimization
+
+- Read the pasted specification, relevant memory, existing plan, core fast solver, profiler, resource budget, benchmark docs, and prior 2026-09-17 artifacts.
+- Confirmed branch/remote/base: `codex/fast_v0.2` -> `fast/fast_v0.2`, both at `465196c82b1c938af7bfce125933a4dfda22f4a2`; Git email is `2966684515@qq.com`.
+- Initial 25-repeat stage profile was intentionally invalidated after detecting `kink_split=False`; no production conclusion was taken from it. Corrected canonical profile is next.
+- Corrected canonical five-case profile completed with `kink_split=True`, fixed affinity/resources, and baseline SHA binding. High-T/stiff/high-kappa each require two propagation calls; P0 remains the next candidate because tensor propagation dominates.
+- P0 strict repeated-exp twin passed named kernel bitwise gates at 2/16/20 threads but failed stable full-outer runtime gate; artifacts were saved and production code remained unchanged. Next: P1 counted assembly-state twin.
+- P1 counted assembly-state twin passed output/trace bitwise gates and showed strong 2-thread kernel/outer savings, but formal 20-thread 50-repeat full-outer regressed highT/stiff/high-kappa. Candidate rejected; production source remains unchanged. Next: LLVM/ASM audit.
+- LLVM/ASM audit initially hit cache-disabled inspection; `Dispatcher.recompile()` fixed the audit path. It confirmed duplicate phase exp sites and remaining integer division/remainder operations in generic `solve_kernel`; next is an isolated guarded canonical-fast specialization twin.
+- Canonical-fast specialization passed named bitwise gates and improved most formal points, but canonical 20-thread 50-repeat high-kappa regressed 1.29%; no production dispatch was added. Remaining work is fresh verification, review, commit and push of the diagnostic artifacts.
+- Verification found all three new candidate tests passing. Existing scoped fast tests have 3 baseline failures caused by stale 19–23-argument solve-kernel monkeypatches and an unchanged shared-N_eff guard in the eval-frequency transition-refine case; these remain unmodified and will be disclosed.

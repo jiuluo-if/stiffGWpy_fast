@@ -1756,3 +1756,48 @@ DN relative difference was zero.
 the stable >5% gate and has a small formal low-T regression. The production source
 was restored; the A/B artifacts remain under
 `docs/outer_snapshot_reference_round26_*.json` to prevent repeating this test.
+## 2026-09-23 fresh baseline setup
+
+- Repository state: local `codex/fast_v0.2` and remote `fast/fast_v0.2` both resolve to `465196c82b1c938af7bfce125933a4dfda22f4a2`; configured Git email is `2966684515@qq.com`.
+- The workspace contains many pre-existing untracked 2026-09-17 experiment artifacts. They are preserved and are not implicitly staged.
+- Resource environment for the fresh profile: Windows, affinity `[0, 1]`, Numba 2 threads, `workqueue`, BLAS/OMP/NUMEXPR budgets all 1, Python 3.11.9, NumPy 2.4.4, SciPy 1.17.1, Numba 0.67.0.
+- First attempted profile artifacts `docs/profile_fast_breakdown_round28_fresh_20260923_{default,lowT,highT,stiff,high_kappa}.json` used `kink_split=False` because the wrapper invocation omitted `--kink-split`. They are non-canonical diagnostics only and must not be used for fast-profile performance claims; the corrected run must pass `--kink-split`.
+- Corrected canonical profile artifacts are `docs/profile_fast_breakdown_round28_canonical_20260923_{default,lowT,highT,stiff,high_kappa}.json`, all bound to the baseline SHA and `kink_split=true`. At 2 threads, affinity `[0,1]`, 25 warm repeats, total medians are `6.361/7.239/9.961/10.288/12.397 ms` for default/lowT/highT/stiff/high-kappa; tensor-kernel medians are `3.259/4.160/5.884/6.529/6.349 ms`. Default/lowT use one kernel call; highT/stiff/high-kappa use two. The canonical tensor kernel remains the dominant stage.
+- The first invalid profile exposed a configuration hazard: the profiler's default is not the canonical kink-split fast path. Future profile invocations must explicitly pass `--kink-split` and record that flag in the artifact.
+
+## P0 strict repeated-exp elimination — 2026-09-23
+
+- Candidate: `scripts/benchmark_phase_exp_hoist_strict_spike.py`; production source was unchanged. The candidate computes production `z_mid` and `w_mid = exp(z_mid)` once, reuses `w_mid` for `n_sub` and the `n_sub == 1` transfer step, and retains production `FS.scaled_step` for `n_sub > 1`; no `fastmath` is enabled.
+- TDD contract: `tests/test_phase_exp_hoist_strict_spike.py` first failed at collection because the candidate module did not exist, then passed after the minimal twin was added.
+- Kernel artifacts: `docs/phase_exp_hoist_strict_round28_kernel_20260923.json`, `docs/phase_exp_hoist_strict_round28_t16_20260923.json`, `docs/phase_exp_hoist_strict_round28_t20_20260923.json`. Named default/lowT/highT/stiff/high-kappa kernel outputs had equal `Ogw/Oj/Opgw/handoff_eps` digests and `DN_gw_relative=0` at 2, 16 and 20 threads; no first divergence was found.
+- 2-thread, affinity `[0,1]`, 30-repeat kernel median ratios were `1.0000/0.9951/0.9777/0.9777/1.0045`; 25-repeat full-outer ratios were `0.9843/1.0140/0.9914/1.0028/0.9461` for default/lowT/highT/stiff/high-kappa.
+- Formal 16-thread 20-repeat full-outer ratios were `1.0061/1.0033/1.0679/1.0036/1.0016`; formal 20-thread ratios were `1.0274/0.9894/1.0530/0.9821/1.0004`. All formal full-outer spectrum/DN digests, convergence and failure reasons matched, but runtime was not stable and several points regressed.
+- Decision: `REJECTED_FOR_PRODUCTION` on end-to-end speed stability. Do not repeat this candidate or relax the bitwise gate; move to the independent P1 assembly-state hypothesis.
+
+## P1 counted assembly-state — 2026-09-23
+
+- Candidate: `scripts/benchmark_counted_assembly_spike.py`; TDD contract first failed at collection because the module did not exist, then passed after implementation. The candidate uses `next_output_k`/`output_slot` only for main-loop scheduling and records a trace; a separate production modulo/division reference trace verified the assembly slot sequence.
+- Kernel artifacts: `docs/count_assembly_round28_kernel_20260923.json`, `docs/count_assembly_round28_t16_20260923.json`, `docs/count_assembly_round28_t20_20260923.json`. Named five-regime kernels were bitwise equal, `assembly_nodes_equal=true`, no first divergence, and `DN_gw_relative=0` at 2/16/20 threads.
+- 2-thread 30-repeat kernel ratios were `0.9226/0.9466/0.9297/0.9242/0.9322`; 25-repeat full-outer ratios were `0.9792/0.9759/0.9400/0.9437/0.9171`.
+- Formal 16-thread 20-repeat full-outer ratios were `1.0528/0.9563/0.9669/0.9838/0.9683`; formal 20-thread 20-repeat ratios were `1.0093/0.9554/1.0187/0.9896/0.9270`. The required canonical 20-thread 50-repeat rerun was `0.9977/0.9915/1.0549/1.0058/1.0064`; all output, convergence and failure gates still matched.
+- Decision: `REJECTED_FOR_PRODUCTION` because the formal full-outer result is not stable across regimes; do not modify `solve_kernel` for this candidate. The large isolated kernel win does not establish a production win.
+
+## P2 LLVM/ASM audit — 2026-09-23
+
+- Initial inspection hit Numba's cache limitation (`Inspection disabled for cached code`); after root-cause confirmation, the audit calls `Dispatcher.recompile()` before reading LLVM/ASM. The corrected artifacts are `docs/fast_kernel_llvm_audit_round28_t2_20260923.json` and `docs/fast_kernel_llvm_audit_round28_t20_20260923.json`.
+- The canonical `solve_kernel` signature is specialized with `h_arr=None` and `Sv` as a contiguous float64 array. LLVM still contains 9 integer division and 9 integer remainder operations; ASM is large (`115158` bytes) with 1474 `rsp` references under the current counting heuristic.
+- `_phase_segment` LLVM contains two `exp` call sites in the inlined path (one for substep selection and one inside the one-step transfer); `scaled_step` has one LLVM exp call and separate sin/cos calls. The corrected audit reports no LLVM fast-math flags for these production functions.
+- P2 confirms that generic constant/optional branches remain visible, so a guarded canonical-fast specialization is a justified next standalone hypothesis. It must preserve production modulo/division scheduling to remain independent of P1.
+
+## P3 canonical-fast specialization — 2026-09-23
+
+- Candidate: `scripts/benchmark_canonical_fast_specialized_spike.py`; it fixes only canonical fast constants and known optional facts while retaining production modulo/division scheduling. TDD collection first failed because the module was absent, then the default bitwise test passed.
+- Artifact `docs/canonical_fast_specialized_round28_t2_20260923.json`: five named kernel digests matched at 2 threads; 30-repeat kernel ratios were `0.9392/0.9386/0.9450/0.9172/0.9518`; 25-repeat full-outer ratios were `0.9839/0.9577/0.9732/0.9481/0.9954`.
+- Artifact `docs/canonical_fast_specialized_round28_t20_50_20260923.json`: five named kernel digests matched at 20 threads; canonical 50-repeat full-outer ratios were `0.9644/0.9934/0.9794/0.9741/1.0129`. Spectrum/DN/convergence/failure gates matched in every row, but high-kappa regressed by about 1.3%.
+- Decision: `REJECTED_FOR_PRODUCTION`; no guarded dispatch or production source change is justified by a candidate with a repeatable formal-regime regression. The three candidates are kept as diagnostic evidence only.
+
+## Verification note — 2026-09-23
+
+- The new contracts `tests/test_phase_exp_hoist_strict_spike.py`, `tests/test_counted_assembly_spike.py`, and `tests/test_canonical_fast_specialized_spike.py` pass independently.
+- The scoped existing run `tests/test_fast_sgwb.py tests/test_resource_budget.py` produced 3 failures / 45 passes. Two failures are stale monkeypatch tests that define `solve_kernel` doubles with 19–23 positional parameters while the unchanged baseline call site passes 26 parameters. The third `test_eval_freqs_are_native_grid_nodes` aborts in the unchanged transition-refine path with the existing `shared_Neff_guard`.
+- No production source file was changed in this round, so these failures are recorded as baseline compatibility/guard issues and are not silently repaired within this performance-only task.
