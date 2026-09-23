@@ -2681,3 +2681,34 @@ phase subdivision, only if its certificate has no matrix-product cost; (3) a
 fresh LLVM/data-layout audit only after a compiler/runtime change. Do not
 reopen boundary-WKB, raw Bessel, phase recurrence, CF4/Magnus, Riccati, or
 outer secant implementations. No AI/learned model is used.
+
+## Round 59 result — simple-turning-point Airy connection screen (2026-09-23)
+
+The Round 58 failure identified the missing mathematical piece: WKB cannot
+cross the first real turning interval. A standalone Airy connection was then
+tested on the actual mode-20 crossing interval for each canonical regime. The
+candidate linearized the transformed potential `Omega^2` across one native
+interval and built the corresponding Airy/Bi fundamental matrix. This is a
+local connection building block, not a production solver.
+
+All five regimes had a finite simple turning interval and passed the
+independent DOP853 local gate. Candidate power error was
+`8.10e-11--8.12e-11`; the current midpoint map error was
+`1.61e-10--1.62e-10`. This supports the local Airy connection mathematically,
+but it does not certify a full path: exactly one native interval per mode was
+replaced, while the remaining forbidden-region and oscillatory intervals were
+unchanged.
+
+The building block is therefore **FEASIBILITY_PASS / REJECTED_FOR_PRODUCTION_BY_AMDAHL**:
+even a free crossing interval cannot provide meaningful end-to-end reduction,
+and no full-kernel benchmark was justified. Production source remains
+unchanged. Artifact:
+`docs/turning_airy_round59_20260923.json`; prototype/tests:
+`scripts/benchmark_turning_airy_round59.py` and
+`tests/test_turning_airy_round59.py`.
+
+The next pool is ordered as: (1) a composite forbidden-region Airy-to-WKB
+representation, but only after an operation-count estimate shows it can
+remove many native phase substeps; (2) a certified macrostep remainder bound
+with no matrix-product guard; (3) compiler/data-layout work only after a
+runtime/compiler change. No AI/learned model is used.

@@ -1407,3 +1407,12 @@ the diagnostic artifacts are retained.
   kernel; production unchanged.
 - Next: tiny uniform turning-point Airy/Bessel connection feasibility screen,
   only if it can prove finite horizon crossing. No AI/learned model.
+
+- Round 59 completed at `8fd4975`: the simple-turning-point Airy connection
+  was finite on all five actual canonical crossing intervals and had local
+  DOP853 power error `8.10e-11–8.12e-11` versus midpoint `1.61e-10–1.62e-10`.
+- Only one native interval per mode was replaced, so the building block passed
+  local feasibility but was rejected for production by Amdahl; no full-kernel
+  promotion was attempted and production remains unchanged.
+- Next: operation-count screen for a composite forbidden-to-oscillatory
+  Airy/WKB representation. No AI/learned model.

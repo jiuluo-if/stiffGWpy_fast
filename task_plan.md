@@ -947,3 +947,15 @@ Phase 3: Implementation and evidence-driven optimization
   Rejected by correctness before timing/full kernel; production unchanged.
 - [ ] Next: uniform turning-point Airy/Bessel connection feasibility screen,
   with a hard finite horizon-crossing gate. No AI/learned model.
+
+## Round 59 — simple-turning-point Airy connection (2026-09-23)
+
+- [x] Built a standalone linear-potential Airy/Bi fundamental matrix for the
+  actual horizon-crossing native interval; production remained untouched.
+- [x] All five canonical regimes were finite and passed the independent
+  DOP853 local gate with power error `8.10e-11–8.12e-11`.
+- [x] Exactly one interval per mode was covered, so the building block has no
+  meaningful end-to-end headroom. Marked feasibility pass but rejected for
+  production by Amdahl; no full-kernel benchmark.
+- [ ] Next: operation-count screen for a composite forbidden-region
+  Airy-to-WKB representation. No AI/learned model.
