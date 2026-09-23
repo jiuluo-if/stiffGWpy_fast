@@ -3089,3 +3089,7 @@ fallback; production source and numerical semantics remain unchanged. The
 prototype was rerun at `39a31ec` under affinity `[0,1]`, workqueue=2, and
 BLAS=1 with the same result (`1.84e-15` endpoint error, `1.74x` tangent/direct
 cost). The next Actions run must confirm the dependency fix remotely.
+
+The fix was confirmed: run #241 for `ef8f293` is fully green across canonical,
+static, package, Cobaya, and compatibility Python 3.9--3.13. The latest
+remote branch SHA is therefore CI-verified.

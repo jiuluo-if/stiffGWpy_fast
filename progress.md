@@ -1545,5 +1545,6 @@ the diagnostic artifacts are retained.
 - [x] Removed the hard dependency in `39a31ec`; POSIX uses
   `os.sched_setaffinity`, Windows uses an optional fallback. Focused test,
   Ruff, compileall, and diff checks pass locally.
-- [ ] Verify the next remote run for HEAD `39a31ec`, then continue with the
-  pre-kernel certificate experiment.
+- [x] Current HEAD `ef8f293` run #241 is fully green across all nine jobs;
+  the optional-dependency failure is closed.
+- [ ] Continue with the pre-kernel certificate experiment.

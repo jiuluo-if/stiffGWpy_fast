@@ -1095,4 +1095,5 @@ Phase 3: Implementation and evidence-driven optimization
   test imported undeclared `psutil`; all other jobs passed.
 - [x] Fixed in `39a31ec` with standard-library POSIX affinity and optional
   Windows fallback; production unchanged.
-- [ ] Confirm remote green for `39a31ec` before the next mathematical spike.
+- [x] Confirmed current HEAD `ef8f293` by fully green remote run #241.
+- [ ] Continue with the pre-kernel monotone perturbation certificate.
