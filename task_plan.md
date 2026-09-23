@@ -726,3 +726,18 @@ Phase 3: Implementation and evidence-driven optimization
   benchmark、全门禁和 artifact provenance 复核。
 - [x] 新 HEAD `94144c1` post-commit full pytest 通过（`165 passed, 6 deselected`），
   五点 fresh profile artifacts 已绑定该 SHA；production 优化保留。
+
+## Round 41 — explicit four-lane LLVM feasibility (2026-09-23)
+
+- [x] Re-fetched and verified HEAD `633d3670f022b40cc7f6e2ca4910fa6a1c4babc4`;
+  refreshed the canonical five-case profile with fixed resources and
+  `kink_split=true`.
+- [x] Used Amdahl first: tensor propagation remained `42.7%–56.2%` of the
+  median end-to-end time, so a real propagation-throughput improvement could
+  still matter.
+- [x] TDD probe passed. Explicitly unrolled four scalar lanes were finite and
+  deterministic, but LLVM exposed no vector lane token. Reject before building
+  a larger propagation twin; do not repeat grouped SoA/AoSoA without new
+  compiler/hardware evidence.
+- [ ] Next round: fetch/profile again, then select a distinct standalone method
+  that can reduce real propagation work or expensive transfer evaluations.

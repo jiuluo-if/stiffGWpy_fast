@@ -2134,3 +2134,26 @@ Next selected direction is a fixed-width four-mode lockstep prototype with
 explicit unrolled lanes. It is only a candidate if fresh LLVM confirms real
 vector lanes or a materially different scheduling effect; the prior indirect
 grouped SoA/AoSoA result remains negative knowledge.
+
+## Round 41 result — explicit four-lane LLVM feasibility (2026-09-23)
+
+Fresh profiles at `633d3670f022b40cc7f6e2ca4910fa6a1c4babc4` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.470/2.338` default, `5.041/2.696` low-T,
+`7.795/4.040` high-T, `8.087/4.543` stiff and `8.030/4.460` high-kappa ms;
+tensor shares were `42.7/53.5/51.8/56.2/55.5%`.
+Artifacts: `docs/profile_fast_breakdown_round41_20260923_*.json`.
+
+The standalone probe explicitly unrolled four independent scalar states for
+32 transfer steps with `fastmath=false`. It was deterministic and finite, but
+the optimized LLVM contained no vector lane token (`llvm_vector_lane=false`,
+`llvm_vector_tokens=[]`). This prerequisite fails, so the lockstep idea is
+**REJECTED_FOR_PRODUCTION** before kernel/full-outer timing. This is distinct
+from the earlier grouped SoA/AoSoA runtime rejection, but there is no compiler
+evidence to justify building the larger twin.
+Artifact: `docs/fixed_lane_probe_round41_20260923.json`.
+
+Next selected direction is a fresh standalone candidate that must reduce real
+propagation work rather than retune lane layout; re-profile after fetch before
+implementation and do not reopen the rejected fixed-width lane route without
+new compiler or hardware evidence.
