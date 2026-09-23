@@ -2068,3 +2068,25 @@ The next distinct response hypothesis is an observable/adjoint screen: avoid
 retaining a full tangent vector per frequency and estimate only scalar
 integrated-output sensitivity, with finite-difference verification before any
 runtime promotion.
+
+## Round 38 result — observable adjoint outer screen (2026-09-23)
+
+Fresh profiles at `85cec7aa40e19840a762ce5f151dfb7c604ae736` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.419/2.429` default, `5.247/2.902` low-T,
+`8.280/4.321` high-T, `8.194/4.508` stiff and `8.329/4.343` high-kappa ms.
+Artifacts: `docs/profile_fast_breakdown_round38_20260923_*.json`.
+
+The standalone adjoint used the exact transpose of the constant-z transfer;
+the one-step contract error was `0`. On the long default propagation, however,
+the no-assembly/tail adjoint became non-finite and had median/p95
+`65.1/71.1 ms` versus full baseline `2.68/3.05 ms` (`24.3x`). More
+fundamentally, a scalar adjoint cannot reconstruct the API's full spectrum.
+This route is **REJECTED_FOR_PRODUCTION** on API, numerical-stability and
+Amdahl grounds; no outer benchmark was run.
+Artifact: `docs/adjoint_outer_round38_default_20260923.json`.
+
+The next selected hypothesis is a combined transfer-map lookup/interpolation
+table. It is distinct from the rejected Taylor and range-reduced polynomial
+forms: the table approximates the already-composed transfer coefficients and
+will be rejected early if memory lookup/interpolation costs exceed libm.

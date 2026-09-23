@@ -272,6 +272,24 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   outer solve and compare its cost with the second propagation; no production
   edit unless the response is both bounded and materially cheaper.
 
+### Round 38 outcome and next selection
+
+- [x] Fresh current-HEAD profile at `85cec7a` completed: total/tensor medians
+  `5.419/2.429`, `5.247/2.902`, `8.280/4.321`, `8.194/4.508`,
+  `8.329/4.343 ms` for default/lowT/highT/stiff/high-kappa.
+- [x] Scalar adjoint one-step transpose check passed exactly, but the long
+  adjoint propagation was non-finite on default and cost `65.1 ms` without
+  assembly versus `2.68 ms` full baseline (`24.3x`). It also cannot reconstruct
+  the required full spectrum.
+- [x] Reject scalar observable/adjoint outer correction on API, stability and
+  Amdahl grounds; no outer benchmark.
+- [ ] Next experiment: standalone combined transfer-map table. Approximate the
+  already-composed `(c, sin(omega*h)/omega, w*si)` coefficients from a bounded
+  phase/w range with a read-only lookup/interpolation table; require local
+  coefficient error, guard/determinism checks and kernel cost before any outer
+  gate. This is a table/data-layout hypothesis, not a retune of the rejected
+  Taylor or range-reduced-polynomial implementations.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

@@ -1,0 +1,28 @@
+{
+  "candidate": "observable_adjoint_outer_cost_screen",
+  "commit": "85cec7aa40e19840a762ce5f151dfb7c604ae736",
+  "production_unchanged": true,
+  "settings": {
+    "case": [
+      "default"
+    ],
+    "threads": 2,
+    "repeats": 15,
+    "output": "docs/adjoint_outer_round38_default_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "threads": 2,
+      "repeats": 15,
+      "baseline_full_kernel_median_ms": 2.6782999993884005,
+      "adjoint_no_assembly_median_ms": 65.11060000048019,
+      "adjoint_over_full_baseline": 24.310420795037313,
+      "baseline_full_kernel_p95_ms": 3.0538099999830592,
+      "adjoint_no_assembly_p95_ms": 71.07769000085682,
+      "local_adjoint_error": 0.0,
+      "adjoint_finite": false,
+      "full_spectrum_reconstructable": false
+    }
+  ]
+}
