@@ -1027,3 +1027,21 @@ Phase 3: Implementation and evidence-driven optimization
   to commit and push.
 - [ ] Next: bounded deterministic outer predictor/corrector with a proof that
   the full-spectrum correction removes the second propagation. No AI.
+
+## Round 65 — frozen-transfer outer envelope predictor (2026-09-23)
+
+- [x] Re-fetched and verified local/remote HEAD `2f6cf0891bf2635c246056f0a960eaf4805351c0`.
+- [x] Refreshed all five canonical profiles with fixed resources and
+  `kink_split=true`; median/p95 and tensor medians were recorded in
+  `findings.md` and the five profile JSON artifacts.
+- [x] Added a standalone algebraic predictor and two TDD contracts; production
+  source was not touched.
+- [x] The candidate fail-closed on four cases due to changed discrete `j0`
+  start indices, and low-T had no comparable second snapshot. Rejected by
+  correctness before full E2E timing.
+- [x] Checked GitHub Actions: current pushed SHA is `2f6cf08`; latest visible
+  run #229 still has canonical failure with other jobs successful.
+- [ ] Next concrete experiment: derive and test a pre-kernel interval
+  certificate that explicitly handles `j0` changes; if it cannot certify the
+  output without a response propagation, retire the outer-predictor family
+  and select a new residual-certified transfer representation. No AI.

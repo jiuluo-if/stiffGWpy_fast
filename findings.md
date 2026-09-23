@@ -2934,3 +2934,58 @@ in `canonical`, with `static`, `package`, `cobaya`, and compatibility jobs
 successful. Local full pytest remains `217 passed, 4 known baseline failures,
 6 deselected`; all Round 61--64 tests passed. The remote CI publication issue
 is not treated as a mathematical experiment result.
+
+## Round 65 result — frozen-transfer outer envelope predictor (2026-09-23)
+
+Round 65 refreshed all five canonical profiles at the exact pushed HEAD
+`2f6cf0891bf2635c246056f0a960eaf4805351c0`, with two Numba threads,
+workqueue, one-thread BLAS, fixed `kink_split=true`, five repeats, and median
+/p95 reporting. The total median/p95 values were default `5.851/177.853 ms`,
+low-T `6.860/219.624 ms`, high-T `8.644/193.029 ms`, stiff `9.815/202.410
+ms`, and high-kappa `10.495/212.629 ms`. The first-repeat JIT cost is visible
+in p95; the warm medians retain the previous ordering. Tensor-kernel medians
+were `2.889/3.010/4.367/5.232/4.889 ms` in the same case order.
+
+The selected standalone candidate used one full propagation at the initial
+outer point, then froze transfer dynamics and rescaled every frequency/coarse
+column by the endpoint `S2` ratio and the exact initial-state normalization
+factor. This is distinct from the rejected output-difference proxy: it is an
+explicit algebraic predictor for the complete stored history, with the next
+full production propagation used only as an oracle. TDD passed (`2 passed`),
+but the candidate was fail-closed on four of five named cases because the
+outer update changed the discrete horizon-start index; low-T did not produce
+two comparable propagation snapshots. Since the discrete representation
+changes, no mathematically valid factor can be applied without a new transfer
+response calculation. It therefore failed the eligibility/correctness gate
+before formal end-to-end timing and is **REJECTED_BY_CORRECTNESS**. Production
+source remains unchanged.
+
+Artifact: `docs/outer_envelope_predictor_round65_20260923.json`; prototype and
+test: `scripts/benchmark_outer_envelope_predictor_round65.py` and
+`tests/test_outer_envelope_predictor_round65.py`.
+
+The literature check reinforces the same boundary: sensitivity-based ODE
+error bounds require differentiable solution/quantity-of-interest response,
+while deferred correction adds a correction solve; neither supplies a free
+full-spectrum response here. Do not reopen this frozen-envelope family,
+the old output proxy, fixed-point/secant scalar predictors, or tangent/adjoint
+cost screens without a genuinely different certified state representation.
+
+Next pool: (1) a pre-kernel computable interval certificate that can prove
+the current full-spectrum result is unchanged under the outer background
+update, only if it handles discrete `j0` changes; (2) new SIMD/data-layout
+work only after a compiler/runtime change; (3) a new mathematical transfer
+representation with an a priori residual bound and demonstrated work
+reduction. No AI/learned model is used.
+
+## CI status at Round 65 (2026-09-23)
+
+The local branch and `fast/fast_v0.2` both point to
+`2f6cf0891bf2635c246056f0a960eaf4805351c0`. GitHub Actions still exposes no
+run newer than #229 for the pushed branch; run #229 is `Failure` because
+`canonical` exited 1, while `static`, `package`, `cobaya`, and compatibility
+3.9--3.13 completed successfully. The latest visible run is
+[`#229`](https://github.com/jiuluo-if/stiffGWpy_fast/actions/runs/35826815075).
+This is not evidence about Round 65 and remains an external CI publication
+issue. The local CI-equivalent full pytest result remains `217 passed, 4 known
+baseline failures, 6 deselected`; the new Round 65 tests passed.

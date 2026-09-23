@@ -1474,3 +1474,18 @@ the diagnostic artifacts are retained.
 - [ ] Next: bounded deterministic outer predictor/corrector, only if it can
   eliminate the second propagation while preserving the full spectrum.
   No AI.
+
+- Round 65 completed at `2f6cf08`: fresh five-case profiles used fixed
+  resources and `kink_split=true`; medians/p95 were
+  `5.851/177.853`, `6.860/219.624`, `8.644/193.029`, `9.815/202.410`, and
+  `10.495/212.629 ms` for default/lowT/highT/stiff/high-kappa. The tensor
+  medians were `2.889/3.010/4.367/5.232/4.889 ms`.
+- Frozen-transfer envelope rescaling passed its two TDD tests but was
+  ineligible on four cases because discrete horizon-start indices changed
+  between outer maps; lowT lacked a comparable second snapshot. Rejected by
+  correctness before formal E2E timing; production unchanged.
+- CI remains externally stale: current remote SHA is `2f6cf08`, but GitHub
+  still only shows run #229 with canonical failure and all other jobs passed.
+- [ ] Next: pre-kernel interval certificate that handles discrete `j0`
+  changes, or reject the outer-predictor family and move to a new certified
+  transfer representation. No AI/learned model.

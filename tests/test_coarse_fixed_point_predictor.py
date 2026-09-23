@@ -9,14 +9,14 @@ from stiffgwpy_fast import global_param as gp
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
-def test_coarse_predictor_rejection_is_detected():
+def test_coarse_predictor_rejection_is_detected(fast_settings):
     row = _run_case("default", coarse_count=32, repeats=1, threads=2)
     assert row["status_equal"] is True
     assert row["deterministic_equal"] is True
     assert row["candidate_spectrum_max_dex"] > 1e-3
 
 
-def test_predictor_map_uses_production_pchip_log_frequency_measure():
+def test_predictor_map_uses_production_pchip_log_frequency_measure(fast_settings):
     FS.apply_accuracy_mode("fast")
     FS.set_threads(2)
     model = LCDM_SG(**CASES["default"])
