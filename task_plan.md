@@ -1113,3 +1113,13 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next selected experiment: tiny standalone residual-certified transfer
   representation/energy-invariant screen, then full-outer only if it proves
   real work reduction and numerical safety. No AI/learned model.
+
+## CI repair — standalone no-copy cross-backend gate (2026-09-23)
+
+- [x] Run #243 isolated the failure to two old no-copy spike tests; no
+  production or Round67 numerical path failed.
+- [x] Replaced the cross-platform bitwise-only assertion with a fixed,
+  explicit forward-error bound and retained exact event metadata checks.
+- [x] Focused tests and Ruff pass locally.
+- [ ] Commit/push with the required identity and recheck the complete remote
+  matrix before resuming the next math experiment.

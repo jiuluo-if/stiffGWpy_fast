@@ -1570,3 +1570,15 @@ the diagnostic artifacts are retained.
 - [ ] Next concrete experiment: a standalone residual-certified transfer
   representation with an invariant residual/energy screen, not an outer
   reuse predictor. No AI/learned model.
+
+## CI follow-up — no-copy standalone cross-backend assertion (2026-09-23)
+
+- [x] Read run #243 logs. Only canonical failed, in the two existing
+  `test_fast_phi_nocopy_spike.py` bitwise assertions; all other jobs passed.
+- [x] Confirmed the failure is isolated to NumPy `cumsum` versus production
+  Numba sequential accumulation on Ubuntu, and is unrelated to Round67 or
+  production fast-path code.
+- [x] Changed only the standalone spike tests to use a documented bounded
+  forward-error gate (`rtol=5e-12`, `atol=1e-15`, `equal_nan=False`) while
+  retaining exact kink metadata checks. Focused tests: `3 passed`; Ruff clean.
+- [ ] Push the CI repair and confirm a new all-job green Actions run.

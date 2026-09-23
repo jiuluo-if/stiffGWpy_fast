@@ -3120,3 +3120,19 @@ outer-reuse certificate construction; no full-outer benchmark was justified.
 The next ranked direction is a new residual-certified transfer
 representation, beginning with a tiny production-independent phase-space
 residual screen. No AI/learned model is involved.
+
+## CI follow-up — cross-backend no-copy spike assertion (2026-09-23)
+
+Run #243 for `0c1e892` failed only in the canonical job: the two historical
+`test_fast_phi_nocopy_spike.py` tests required bitwise equality between a
+NumPy `cumsum` standalone candidate and the production Numba sequential
+accumulation. Ubuntu 24.04 differed in the last bits while the candidate was
+already rejected for production and production source was unchanged. Cobaya,
+static, package, and Python 3.9--3.13 jobs all passed.
+
+The minimal CI repair renames those standalone assertions and changes them to
+a documented forward-error gate (`rtol=5e-12`, `atol=1e-15`, no NaN
+acceptance), retaining exact metadata equality. This is not a fast-path
+tolerance change and does not weaken any production correctness gate. Focused
+verification is `3 passed` and Ruff is clean; the fix is ready for a new
+remote matrix run.
