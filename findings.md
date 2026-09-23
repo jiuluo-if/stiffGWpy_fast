@@ -2256,3 +2256,24 @@ Artifact: `docs/cayley_riccati_round45_20260923.json`.
 Next selected direction is a fresh propagation-level method with an explicit
 work-reduction mechanism; do not reopen raw/Cayley Riccati or sparse-frequency
 reconstruction without a materially different algorithmic basis.
+
+## Round 46 result — phase-increment sin/cos recurrence feasibility (2026-09-23)
+
+Fresh profiles at `5e33e5c375fb869d8d9b48b4b3973ac36ba31b54` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+The standalone synthetic screen replaced repeated high-frequency `sin/cos` calls
+with a phase-increment recurrence and periodic exact re-anchors; low-frequency
+and `w^2<1` steps used the production exact map. It reduced the scalar transfer
+loop to `0.45–0.47x` baseline, with synthetic power error `5.45e-10–1.66e-8`.
+
+The actual production z-path screen covered four modes in each named regime,
+with `1,339–4,671` phase substeps per mode. All records were finite and the
+power relative error range was `8.53e-5–5.59e-4` (about `3.7e-5–2.43e-4`
+dex if transferred directly to power). This is **FEASIBILITY_PASS / NOT
+PRODUCTION**: it justifies a full standalone kernel twin, but no oracle, full
+output-column, guard/failure, or end-to-end gate has run yet.
+Artifact: `docs/phase_increment_recurrence_round46_20260923.json`.
+
+Next selected experiment is the full kernel twin with this one recurrence
+factor, exact fallback for low-frequency/kink branches, named/edge/Sobol
+correctness gates, and then alternating full end-to-end benchmark.
