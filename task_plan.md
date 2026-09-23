@@ -305,6 +305,23 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   from the rejected Kummer fixed-window and WKB-boundary solves. Require an
   independently checked residual and transfer agreement before timing.
 
+### Round 40 outcome and next selection
+
+- [x] Fresh current-HEAD profile at `1e88d31` completed: total/tensor medians
+  `5.274/2.277`, `5.192/2.760`, `7.952/4.262`, `8.362/4.698`,
+  `8.106/4.330 ms` for default/lowT/highT/stiff/high-kappa.
+- [x] Levin interaction-picture envelope screen completed on five named
+  regimes and three usable modes each. Degree-12 envelope compression had
+  relative error `1.36e10–1.97e10`; independent scalar-transfer error was
+  `0.0058–0.0562`.
+- [x] Reject the envelope construction before runtime; do not retune degree or
+  window on this implementation.
+- [ ] Next experiment: standalone fixed-width four-mode lockstep propagation
+  with explicit unrolled lanes and lane-local phase guards. It must be compared
+  against the rejected indirect grouped SoA/AoSoA experiment and only proceeds
+  if fresh LLVM shows actual vector lanes or a materially different scheduling
+  benefit.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

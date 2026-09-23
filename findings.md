@@ -2111,3 +2111,26 @@ The next selected mathematical direction is a Levin-collocation
 nonoscillatory phase feasibility prototype. It is distinct from the rejected
 arbitrary-basis Kummer fit and right-boundary-WKB solve, and must first pass
 residual/transfer gates before any performance claim.
+
+## Round 40 result — Levin interaction-picture envelope (2026-09-23)
+
+Fresh profiles at `1e88d3161b32fa780bee10546eb4b1e42d7f84eb` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.274/2.277` default, `5.192/2.760` low-T,
+`7.952/4.262` high-T, `8.362/4.698` stiff and `8.106/4.330` high-kappa ms.
+Artifacts: `docs/profile_fast_breakdown_round40_20260923_*.json`.
+
+The standalone prototype factored the fast WKB carrier from the transformed
+scalar equation and integrated the interaction-picture envelope, then fitted
+its complex fundamental matrix with degree-12 Chebyshev coefficients. Across
+the named regimes, envelope fit relative errors were approximately
+`1.36e10–1.97e10`, and independent scalar-transfer relative errors were
+`0.0058–0.0562`. The carrier transformation did not produce a slowly
+compressible representation, so this implementation is
+**REJECTED_FOR_PRODUCTION** before timing.
+Artifact: `docs/levin_envelope_round40_20260923.json`.
+
+Next selected direction is a fixed-width four-mode lockstep prototype with
+explicit unrolled lanes. It is only a candidate if fresh LLVM confirms real
+vector lanes or a materially different scheduling effect; the prior indirect
+grouped SoA/AoSoA result remains negative knowledge.
