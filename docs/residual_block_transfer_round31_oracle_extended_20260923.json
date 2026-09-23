@@ -1,0 +1,177 @@
+{
+  "candidate": "residual_controlled_two_step_transfer",
+  "commit": "fc26e3408a507cbe8b9b4c56df5199773739895c",
+  "production_unchanged": true,
+  "settings": {
+    "case": [
+      "edge_r_hi",
+      "edge_tre_hi",
+      "edge_kap_hi",
+      "sobol_000",
+      "sobol_002",
+      "sobol_006",
+      "sobol_010",
+      "sobol_015"
+    ],
+    "threshold": [
+      0.001
+    ],
+    "repeats": 30,
+    "threads": 2,
+    "phase_cap": 0.5,
+    "oracle": true,
+    "outer": false,
+    "output": "docs/residual_block_transfer_round31_oracle_extended_20260923.json"
+  },
+  "rows": [
+    {
+      "case": "edge_r_hi",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.013122664204990375,
+      "accepted_blocks": 83202,
+      "fallback_steps": 36599,
+      "baseline": {
+        "dn_gw": 0.013074959525806104,
+        "dn_relative_to_oracle": 0.0036352891790166343,
+        "spectrum_max_dex_to_oracle": 0.0031605558627934016
+      },
+      "candidate": {
+        "dn_gw": 0.013074489252496156,
+        "dn_relative_to_oracle": 0.003671125904136022,
+        "spectrum_max_dex_to_oracle": 0.00315589287773399
+      },
+      "candidate_minus_baseline_dn_relative": 3.5967477300414446e-05
+    },
+    {
+      "case": "edge_tre_hi",
+      "threshold": 0.001,
+      "mode": "oracle",
+      "status": "baseline_physical_guard",
+      "failure_reason": "shared_Neff_guard",
+      "candidate_run": false,
+      "production_result_is_none": true
+    },
+    {
+      "case": "edge_kap_hi",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.17219612341825521,
+      "accepted_blocks": 81091,
+      "fallback_steps": 36033,
+      "baseline": {
+        "dn_gw": 0.17157165555890025,
+        "dn_relative_to_oracle": 0.0036264919729822637,
+        "spectrum_max_dex_to_oracle": 0.0033136610691926194
+      },
+      "candidate": {
+        "dn_gw": 0.17156547752597054,
+        "dn_relative_to_oracle": 0.003662369859238181,
+        "spectrum_max_dex_to_oracle": 0.003313752158044636
+      },
+      "candidate_minus_baseline_dn_relative": 3.600847068581896e-05
+    },
+    {
+      "case": "sobol_000",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 1.3426053353951307e-07,
+      "accepted_blocks": 80608,
+      "fallback_steps": 36088,
+      "baseline": {
+        "dn_gw": 1.3377473627465307e-07,
+        "dn_relative_to_oracle": 0.003618317699572019,
+        "spectrum_max_dex_to_oracle": 0.0034410636422528285
+      },
+      "candidate": {
+        "dn_gw": 1.3376992885833347e-07,
+        "dn_relative_to_oracle": 0.003654124322656711,
+        "spectrum_max_dex_to_oracle": 0.0034358285526963073
+      },
+      "candidate_minus_baseline_dn_relative": 3.5936653313439666e-05
+    },
+    {
+      "case": "sobol_002",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 1.225789542898723,
+      "accepted_blocks": 75093,
+      "fallback_steps": 34390,
+      "baseline": {
+        "dn_gw": 1.2213508155220698,
+        "dn_relative_to_oracle": 0.0036211170199385774,
+        "spectrum_max_dex_to_oracle": 0.0032558711892747283
+      },
+      "candidate": {
+        "dn_gw": 1.2213068089210937,
+        "dn_relative_to_oracle": 0.0036570176369988905,
+        "spectrum_max_dex_to_oracle": 0.003250805027334991
+      },
+      "candidate_minus_baseline_dn_relative": 3.603108985302664e-05
+    },
+    {
+      "case": "sobol_006",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 5.5933765711922675e-06,
+      "accepted_blocks": 51871,
+      "fallback_steps": 31905,
+      "baseline": {
+        "dn_gw": 5.572227114581569e-06,
+        "dn_relative_to_oracle": 0.0037811608679496167,
+        "spectrum_max_dex_to_oracle": 0.003115137018657066
+      },
+      "candidate": {
+        "dn_gw": 5.572028745784939e-06,
+        "dn_relative_to_oracle": 0.003816625813694825,
+        "spectrum_max_dex_to_oracle": 0.0031106282266541996
+      },
+      "candidate_minus_baseline_dn_relative": 3.55995533833779e-05
+    },
+    {
+      "case": "sobol_010",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.7230081057443292,
+      "accepted_blocks": 77732,
+      "fallback_steps": 35102,
+      "baseline": {
+        "dn_gw": 0.7203624918080116,
+        "dn_relative_to_oracle": 0.0036591760386889974,
+        "spectrum_max_dex_to_oracle": 0.0036180096225901792
+      },
+      "candidate": {
+        "dn_gw": 0.7203364667194455,
+        "dn_relative_to_oracle": 0.0036951716082535896,
+        "spectrum_max_dex_to_oracle": 0.003617052797649123
+      },
+      "candidate_minus_baseline_dn_relative": 3.612776742548681e-05
+    },
+    {
+      "case": "sobol_015",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.008527770422336085,
+      "accepted_blocks": 55872,
+      "fallback_steps": 31705,
+      "baseline": {
+        "dn_gw": 0.00849962821241739,
+        "dn_relative_to_oracle": 0.00330006655021866,
+        "spectrum_max_dex_to_oracle": 0.0034310589332591235
+      },
+      "candidate": {
+        "dn_gw": 0.008499338324720806,
+        "dn_relative_to_oracle": 0.0033340599250665766,
+        "spectrum_max_dex_to_oracle": 0.0034257100803962715
+      },
+      "candidate_minus_baseline_dn_relative": 3.410592667570326e-05
+    }
+  ]
+}

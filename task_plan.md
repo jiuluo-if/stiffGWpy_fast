@@ -102,6 +102,32 @@ Write the failing predictor contract test, then implement a standalone one-pass 
 - [ ] Record ACCEPT/REJECT and select the following concrete candidate in this
   ledger immediately.
 
+### Round 31 outcome
+
+- [x] TDD fallback contract passed after reproducing the production midpoint,
+  kink, tail and resource-lifecycle semantics; threshold `0` was bitwise equal.
+- [x] Independent reference screen passed on five named and eight edge/Sobol
+  points; `edge_tre_hi` was recorded as a pre-existing `shared_Neff_guard`.
+- [x] Full outer alternating A/B completed at 2/16/20 threads with warmup and
+  median/p95. Low-thread kernel/outer gains did not survive formal thread
+  resources; high-kappa regressed at 20 threads.
+- [x] Reject residual-controlled two-step midpoint transfer for production;
+  retain standalone artifacts and do not retune its threshold.
+
+### Next experiment: fourth-order commutator-free Magnus block
+
+- [ ] Implement a standalone two-exponential fourth-order commutator-free
+  Magnus composition over four native intervals, using Gaussian-node operator
+  combinations for the existing 2x2 Cartesian transfer system.
+- [ ] Use a local two-vs-four native-step defect/commutator estimate as the
+  acceptance gate; if the gate fails, fall back exactly to production transfer.
+- [ ] First gate: threshold-zero bitwise fallback, named/edge/Sobol independent
+  reference/oracle checks, guard/failure/determinism semantics, and measured
+  reduction in transfer evaluations. No production edit.
+- [ ] Only if the first gate passes, run alternating full end-to-end median/p95
+  at 2/16/20 threads. Reject on any formal-regime regression or lack of stable
+  >5% total improvement.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

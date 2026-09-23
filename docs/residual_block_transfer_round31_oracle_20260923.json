@@ -1,0 +1,118 @@
+{
+  "candidate": "residual_controlled_two_step_transfer",
+  "commit": "fc26e3408a507cbe8b9b4c56df5199773739895c",
+  "production_unchanged": true,
+  "settings": {
+    "case": null,
+    "threshold": [
+      0.001
+    ],
+    "repeats": 30,
+    "threads": 2,
+    "phase_cap": 0.5,
+    "oracle": true,
+    "output": "docs/residual_block_transfer_round31_oracle_20260923.json"
+  },
+  "rows": [
+    {
+      "case": "default",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.0022718750573166913,
+      "accepted_blocks": 82979,
+      "fallback_steps": 36466,
+      "baseline": {
+        "dn_gw": 0.002263647415165795,
+        "dn_relative_to_oracle": 0.0036215205252589423,
+        "spectrum_max_dex_to_oracle": 0.0031615840297867237
+      },
+      "candidate": {
+        "dn_gw": 0.0022635661281871972,
+        "dn_relative_to_oracle": 0.003657300212322313,
+        "spectrum_max_dex_to_oracle": 0.00315696718304892
+      },
+      "candidate_minus_baseline_dn_relative": 3.5909734905387465e-05
+    },
+    {
+      "case": "highT",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.056637029118884845,
+      "accepted_blocks": 79482,
+      "fallback_steps": 35702,
+      "baseline": {
+        "dn_gw": 0.056433084271459516,
+        "dn_relative_to_oracle": 0.0036009100512181744,
+        "spectrum_max_dex_to_oracle": 0.003163686847468483
+      },
+      "candidate": {
+        "dn_gw": 0.056431056855272464,
+        "dn_relative_to_oracle": 0.0036367067061379814,
+        "spectrum_max_dex_to_oracle": 0.0031588496068053473
+      },
+      "candidate_minus_baseline_dn_relative": 3.592602129097369e-05
+    },
+    {
+      "case": "stiff",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.015039022441166882,
+      "accepted_blocks": 83222,
+      "fallback_steps": 36613,
+      "baseline": {
+        "dn_gw": 0.014984335009515638,
+        "dn_relative_to_oracle": 0.003636368777637152,
+        "spectrum_max_dex_to_oracle": 0.0031602663047429758
+      },
+      "candidate": {
+        "dn_gw": 0.014983796185505487,
+        "dn_relative_to_oracle": 0.0036721971708893898,
+        "spectrum_max_dex_to_oracle": 0.003154850742342674
+      },
+      "candidate_minus_baseline_dn_relative": 3.59591539971033e-05
+    },
+    {
+      "case": "high_kappa",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 0.22652152511764692,
+      "accepted_blocks": 80933,
+      "fallback_steps": 35968,
+      "baseline": {
+        "dn_gw": 0.22570645394993585,
+        "dn_relative_to_oracle": 0.003598206251206149,
+        "spectrum_max_dex_to_oracle": 0.0029350031385320108
+      },
+      "candidate": {
+        "dn_gw": 0.2256983582924867,
+        "dn_relative_to_oracle": 0.003633945271791321,
+        "spectrum_max_dex_to_oracle": 0.0029350195098380993
+      },
+      "candidate_minus_baseline_dn_relative": 3.586808133966736e-05
+    },
+    {
+      "case": "lowT",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "oracle_dn_gw": 5.3034326157770847e-08,
+      "accepted_blocks": 96653,
+      "fallback_steps": 40632,
+      "baseline": {
+        "dn_gw": 5.3114602833918166e-08,
+        "dn_relative_to_oracle": 0.0015136739158051254,
+        "spectrum_max_dex_to_oracle": 0.003164075402708022
+      },
+      "candidate": {
+        "dn_gw": 5.311293431785095e-08,
+        "dn_relative_to_oracle": 0.0014822128567497195,
+        "spectrum_max_dex_to_oracle": 0.0031586707659307933
+      },
+      "candidate_minus_baseline_dn_relative": 3.141350924585654e-05
+    }
+  ]
+}

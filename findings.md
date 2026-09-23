@@ -1850,3 +1850,45 @@ was restored; the A/B artifacts remain under
 - Decision: **REJECTED_FOR_PRODUCTION**. Next concrete experiment is a
   residual-controlled local phase/adiabatic transfer prototype with exact
   production fallback, not another outer predictor or grouped-layout retune.
+
+## Round 31 — residual-controlled two-step transfer (2026-09-23)
+
+- Fresh current-HEAD canonical profile at `fc26e3408a507cbe8b9b4c56df5199773739895c`
+  used `kink_split=true`, goal/PCHIP, fixed workqueue/BLAS budget and 25
+  repeats. Total medians were `3.866/3.478/5.816/5.529/5.774 ms` for
+  default/low-T/high-T/stiff/high-kappa; tensor propagation was the largest
+  stage at `29.2%–33.7%`, and high-T/stiff/high-kappa still used two calls.
+- The standalone candidate applies a two-native-step midpoint exponential only
+  when a local variation/phase defect proxy passes; otherwise it reproduces the
+  production `_phase_segment` path, including the exact kink split and tail
+  handoff. TDD first exposed the expected missing-module red state, then a
+  resource-initialization issue and two fallback-state mismatches; all were
+  fixed before measurement. At threshold `0`, the candidate is bitwise equal
+  with zero accepted blocks, confirming the fallback twin.
+- At threshold `1e-3`, named kernel medians were `0.619–0.683x` of baseline
+  and accepted roughly `75k–97k` blocks. Independent continuous reference
+  screens on five named cases plus eight edge/Sobol cases showed the candidate
+  changed production `DN_gw` by only `3.14e-5–3.60e-5` relative and did not
+  materially worsen the existing reference residual. `edge_tre_hi` was
+  explicitly recorded as the pre-existing `shared_Neff_guard` before the
+  candidate ran; it is not a regression.
+- Full outer, warm and alternating, 25 repeats at two threads had median
+  ratios `0.898/0.876/0.867/0.838/0.876` for default/low-T/high-T/stiff/
+  high-kappa; output/failure/convergence semantics matched, with max spectrum
+  differences about `1.88e-5 dex` and DN relative differences
+  `3.14e-5–3.60e-5`. Formal 16-thread ratios were
+  `0.972/0.975/0.921/0.990/0.991`; formal 20-thread ratios were
+  `1.000/0.969/0.981/0.982/1.021`. The high-kappa formal regression and lack
+  of stable multi-resource >5% end-to-end gain reject production promotion,
+  despite the low-thread kernel win.
+- Artifacts: `docs/residual_block_transfer_round31_kernel_20260923.json`,
+  `docs/residual_block_transfer_round31_oracle_20260923.json`,
+  `docs/residual_block_transfer_round31_oracle_extended_20260923.json`,
+  `docs/residual_block_transfer_round31_outer_20260923.json`,
+  `docs/residual_block_transfer_round31_outer_t16_20260923.json`, and
+  `docs/residual_block_transfer_round31_outer_t20_20260923.json`.
+- Decision: **REJECTED_FOR_PRODUCTION**. The next concrete experiment is a
+  fourth-order two-exponential commutator-free Magnus block over four native
+  intervals, with an independently computed local defect gate and exact
+  production fallback. This is a different integrator order/composition, not
+  a threshold or bucket-width retune.
