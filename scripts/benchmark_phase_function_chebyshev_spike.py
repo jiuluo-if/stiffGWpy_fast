@@ -11,8 +11,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
-import statistics
 import subprocess
 import sys
 from pathlib import Path
@@ -78,8 +76,6 @@ def _fit_mode(Nv, sigma, z, start, end, degree):
     rho_coeff = np.polynomial.chebyshev.chebfit(x, rho, degree)
     phase_coeff = np.polynomial.chebyshev.chebfit(x, phase, degree)
     rho_fit = np.polynomial.chebyshev.chebval(x, rho_coeff)
-    rho_prime_fit = np.polynomial.chebyshev.chebval(
-        x, np.polynomial.chebyshev.chebder(rho_coeff)) * scale
     rho_second_fit = np.polynomial.chebyshev.chebval(
         x, np.polynomial.chebyshev.chebder(rho_coeff, 2)) * scale * scale
     residual = rho_second_fit + omega2 * rho_fit - 1.0 / (rho_fit ** 3)
