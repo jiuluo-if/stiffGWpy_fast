@@ -1438,3 +1438,14 @@ the diagnostic artifacts are retained.
 - [ ] Next: direct residual-controlled phase-function integration over a full
   oscillatory chain, distinct from the rejected Chebyshev and boundary-WKB
   representations. No AI/learned model.
+
+- Round 62 completed at `40a07c9`: fresh totals/p95 were
+  `5.888/6.759`, `5.395/6.437`, `12.983/16.719`, `12.667/14.439`, and
+  `9.754/11.598 ms`; tensor medians were `2.580/3.062/6.068/6.622/4.676 ms`.
+- Direct Ermakov--Kummer phase integration stayed finite and step-stable, but
+  transfer error was `2.61--2.63` and cost `12.6--14.7x`; rejected by
+  correctness and Amdahl before production integration.
+- Production source remains unchanged. Round 61 CI run 229 had only
+  canonical failure; the Round 62 push will create the next CI run.
+- [ ] Next: local polynomial-coefficient macrostep transfer with an
+  independent defect bound and no global WKB amplitude transport. No AI.

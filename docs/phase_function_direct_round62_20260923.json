@@ -1,0 +1,76 @@
+{
+  "candidate": "direct_ermakov_kummer_phase_function_round62",
+  "commit": "40a07c92300f02939df68668dde3df179d973810",
+  "production_unchanged": true,
+  "settings": {
+    "case": null,
+    "output": "docs/phase_function_direct_round62_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "native_intervals": 299,
+      "finite": true,
+      "rho_min": 0.08244391549913402,
+      "candidate_vs_cartesian_relative_error": 2.6347302367459537,
+      "max_step_stability_relative_error": 4.3815803184304685e-09,
+      "candidate_seconds": 0.42708480000146665,
+      "reference_seconds": 0.03248659999735537,
+      "candidate_over_reference": 13.146491169781825,
+      "candidate_nfev": 77570,
+      "reference_nfev": 4622
+    },
+    {
+      "case": "highT",
+      "native_intervals": 299,
+      "finite": true,
+      "rho_min": 0.08198079302954553,
+      "candidate_vs_cartesian_relative_error": 2.621045496356251,
+      "max_step_stability_relative_error": 7.925743790060684e-09,
+      "candidate_seconds": 0.4458173999992141,
+      "reference_seconds": 0.0348134999985632,
+      "candidate_over_reference": 12.805877030968261,
+      "candidate_nfev": 78020,
+      "reference_nfev": 4646
+    },
+    {
+      "case": "stiff",
+      "native_intervals": 299,
+      "finite": true,
+      "rho_min": 0.08189475309992449,
+      "candidate_vs_cartesian_relative_error": 2.612618593522713,
+      "max_step_stability_relative_error": 8.786050044156072e-09,
+      "candidate_seconds": 0.4428924999992887,
+      "reference_seconds": 0.035132200002408354,
+      "candidate_over_reference": 12.606455046052565,
+      "candidate_nfev": 77177,
+      "reference_nfev": 4658
+    },
+    {
+      "case": "high_kappa",
+      "native_intervals": 299,
+      "finite": true,
+      "rho_min": 0.08217540739102693,
+      "candidate_vs_cartesian_relative_error": 2.632565203691658,
+      "max_step_stability_relative_error": 6.530114075834747e-09,
+      "candidate_seconds": 0.44931740000174614,
+      "reference_seconds": 0.030559999999240972,
+      "candidate_over_reference": 14.702794503040117,
+      "candidate_nfev": 77897,
+      "reference_nfev": 4646
+    },
+    {
+      "case": "lowT",
+      "native_intervals": 914,
+      "finite": true,
+      "rho_min": 0.0824604107452838,
+      "candidate_vs_cartesian_relative_error": 2.62688481684192,
+      "max_step_stability_relative_error": 2.491428669091135e-07,
+      "candidate_seconds": 1.182237899996835,
+      "reference_seconds": 0.09014739999838639,
+      "candidate_over_reference": 13.114498033420784,
+      "candidate_nfev": 200357,
+      "reference_nfev": 12422
+    }
+  ]
+}

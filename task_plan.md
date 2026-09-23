@@ -985,3 +985,16 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: direct residual-controlled phase-function integration over the
   full oscillatory chain, with an independent residual bound before timing.
   This is a deterministic mathematical prototype only; no AI/learned model.
+
+## Round 62 — direct Ermakov--Kummer phase function (2026-09-23)
+
+- [x] Re-fetched Round 61 HEAD and refreshed all five canonical profiles with
+  the fixed resources and `kink_split=true`; digests remained stable.
+- [x] Full oscillatory-window prototype was finite and step-stable, but its
+  independent Cartesian transfer error was `2.61--2.63` and its cost was
+  `12.6--14.7x`; rejected by correctness and Amdahl.
+- [x] Production source unchanged; prototype/test and evidence artifact are
+  ready to commit and push.
+- [ ] Next: analytically integrated local polynomial-coefficient macrostep
+  with an independent defect bound, without global WKB amplitude transport.
+  No AI/learned model.

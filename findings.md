@@ -2789,3 +2789,46 @@ completed with overall **failure**: `canonical` failed, while `static`,
 The run had no artifacts and the canonical job exited with code 1; its known
 baseline failures remain separate from the standalone Round 61 files. This
 was verified on the GitHub Actions run page before the Round 61 commit.
+
+## Round 62 result — direct Ermakov--Kummer phase-function screen (2026-09-23)
+
+Round 62 fetched the pushed Round 61 HEAD `40a07c92300f02939df68668dde3df179d973810`
+and refreshed the same 25-repeat canonical profile with `kink_split=true`.
+The total median/p95 values were default `5.888/6.759 ms`, low-T
+`5.395/6.437 ms`, high-T `12.983/16.719 ms`, stiff `12.667/14.439 ms`,
+and high-kappa `9.754/11.598 ms`; tensor medians were `2.580/3.062/6.068/
+6.622/4.676 ms` in the same order. Output digests remained stable.
+
+The selected deterministic math candidate integrated the Ermakov--Kummer
+amplitude equation directly over a complete real oscillatory window
+(`z=2..5`) and reconstructed the Cartesian transfer matrix. It was finite in
+all five regimes and stable when the maximum step was halved: stability
+errors were `4.4e-9--2.5e-7`. However, the independent Cartesian DOP853
+transfer error was `2.61--2.63` relative in every case, far above any
+production tolerance. The direct phase-function solve was also `12.6--14.7x`
+slower than the Cartesian reference, with `77,177--200,357` RHS evaluations
+versus `4,622--12,422`. The candidate is therefore
+**REJECTED_BY_CORRECTNESS_AND_AMDAHL** before production/full user-facing
+timing. The result identifies the missing issue as an uncertified WKB initial
+amplitude/discrete-q representation, not an ordinary step-size instability.
+Production source remains unchanged.
+
+Artifact: `docs/phase_function_direct_round62_20260923.json`; prototype and
+test: `scripts/benchmark_phase_function_direct_round62.py` and
+`tests/test_phase_function_direct_round62.py`.
+
+The next pool is ordered as: (1) a deterministic macrostep transfer based on
+an analytically integrated local polynomial coefficient with an independent
+defect bound, avoiding global WKB amplitude transport; (2) a full-chain
+phase-function method with boundary data obtained from an exact local
+transfer, only if a uniform residual certificate is available; (3) fresh
+LLVM/data-layout work only after a compiler/runtime change. Do not reopen raw
+Ermakov initialisation, Chebyshev fitting, boundary-WKB, composite WKB, raw
+Bessel, or exp/phase recurrence. No AI/learned model is used.
+
+## CI status at Round 62 (2026-09-23)
+
+Round 61 run `229` remained a failure: `canonical` failed while `static`,
+`package`, `cobaya`, and compatibility Python 3.9--3.13 passed. Round 62
+has not yet been pushed at the time of this entry; its CI status will be
+checked after the evidence commit.
