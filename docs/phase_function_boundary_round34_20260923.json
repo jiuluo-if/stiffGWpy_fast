@@ -1,0 +1,353 @@
+{
+  "candidate": "boundary_conditioned_kummer_phase",
+  "commit": "e40a2d0f5373843bfe3fc66a0173741be2346882",
+  "production_unchanged": true,
+  "settings": {
+    "case": null,
+    "mode_count": 4,
+    "degree": 12,
+    "output": "docs/phase_function_boundary_round34_20260923.json"
+  },
+  "cases": [
+    {
+      "candidate": "boundary_conditioned_kummer_phase",
+      "case": "default",
+      "production_unchanged": true,
+      "mode_count_requested": 4,
+      "usable_modes": 3,
+      "positive_modes": 3,
+      "rows": [
+        {
+          "status": "ok",
+          "nodes": 801,
+          "degree": 12,
+          "rho_min": 0.1216021389304473,
+          "rho_fit_min": 0.13626451976558038,
+          "rho_fit_relative_max": 0.16312308037957735,
+          "phase_fit_absolute_max": 0.13314429855557108,
+          "kummer_residual_max": 1.0133271283186083,
+          "cartesian_transfer_relative_error": 0.24798550768573752,
+          "window_z_length": 1.9999999999999996,
+          "window_N_length": 4.0,
+          "mode": 0,
+          "window": [
+            800,
+            1600
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 201,
+          "degree": 12,
+          "rho_min": 0.08789384880137137,
+          "rho_fit_min": 0.14253227835717122,
+          "rho_fit_relative_max": 0.9835226877481982,
+          "phase_fit_absolute_max": 0.5225338342021759,
+          "kummer_residual_max": 26.276000585428953,
+          "cartesian_transfer_relative_error": 0.8564338756587501,
+          "window_z_length": 1.999999941379059,
+          "window_N_length": 1.0,
+          "mode": 25,
+          "window": [
+            6466,
+            6666
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 402,
+          "degree": 12,
+          "rho_min": 0.10885028899619968,
+          "rho_fit_min": 0.14253687460970926,
+          "rho_fit_relative_max": 0.41797431524595224,
+          "phase_fit_absolute_max": 0.2761668688185157,
+          "kummer_residual_max": 2.3666159580372685,
+          "cartesian_transfer_relative_error": 0.7509913429846692,
+          "window_z_length": 1.9987870881589842,
+          "window_N_length": 2.0050000000000026,
+          "mode": 50,
+          "window": [
+            8564,
+            8965
+          ]
+        },
+        {
+          "mode": 75,
+          "status": "no_smooth_window"
+        }
+      ]
+    },
+    {
+      "candidate": "boundary_conditioned_kummer_phase",
+      "case": "highT",
+      "production_unchanged": true,
+      "mode_count_requested": 4,
+      "usable_modes": 3,
+      "positive_modes": 3,
+      "rows": [
+        {
+          "status": "ok",
+          "nodes": 801,
+          "degree": 12,
+          "rho_min": 0.12160213905613158,
+          "rho_fit_min": 0.13626452029230324,
+          "rho_fit_relative_max": 0.16312304074931736,
+          "phase_fit_absolute_max": 0.13314427859261624,
+          "kummer_residual_max": 1.013327007842131,
+          "cartesian_transfer_relative_error": 0.2479854793001255,
+          "window_z_length": 2.0,
+          "window_N_length": 4.0,
+          "mode": 0,
+          "window": [
+            800,
+            1600
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 201,
+          "degree": 12,
+          "rho_min": 0.08768984377789875,
+          "rho_fit_min": 0.14317108918188373,
+          "rho_fit_relative_max": 0.951426043993286,
+          "phase_fit_absolute_max": 0.5302450548467696,
+          "kummer_residual_max": 38.60195950125323,
+          "cartesian_transfer_relative_error": 1.4363357087186153,
+          "window_z_length": 1.9999999957532495,
+          "window_N_length": 1.0,
+          "mode": 25,
+          "window": [
+            5880,
+            6080
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 403,
+          "degree": 12,
+          "rho_min": 0.10874631039573243,
+          "rho_fit_min": 0.14141197300587888,
+          "rho_fit_relative_max": 0.4295893825201874,
+          "phase_fit_absolute_max": 0.27081257013185667,
+          "kummer_residual_max": 1.030421574202109,
+          "cartesian_transfer_relative_error": 0.424445098958071,
+          "window_z_length": 2.000922658947701,
+          "window_N_length": 2.010000000000005,
+          "mode": 50,
+          "window": [
+            8152,
+            8554
+          ]
+        },
+        {
+          "mode": 75,
+          "status": "no_smooth_window"
+        }
+      ]
+    },
+    {
+      "candidate": "boundary_conditioned_kummer_phase",
+      "case": "stiff",
+      "production_unchanged": true,
+      "mode_count_requested": 4,
+      "usable_modes": 3,
+      "positive_modes": 3,
+      "rows": [
+        {
+          "status": "ok",
+          "nodes": 801,
+          "degree": 12,
+          "rho_min": 0.12139834801372332,
+          "rho_fit_min": 0.13625955897587352,
+          "rho_fit_relative_max": 0.16292362681745293,
+          "phase_fit_absolute_max": 0.13220172284903065,
+          "kummer_residual_max": 1.610196854516202,
+          "cartesian_transfer_relative_error": 0.39249692389823526,
+          "window_z_length": 1.9999999999999987,
+          "window_N_length": 4.000000000000001,
+          "mode": 0,
+          "window": [
+            801,
+            1601
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 201,
+          "degree": 12,
+          "rho_min": 0.08765147825505297,
+          "rho_fit_min": 0.14337011463987348,
+          "rho_fit_relative_max": 0.9561335919632318,
+          "phase_fit_absolute_max": 0.5304563940474161,
+          "kummer_residual_max": 41.33072997993722,
+          "cartesian_transfer_relative_error": 1.57245155445344,
+          "window_z_length": 1.999999940830179,
+          "window_N_length": 1.0,
+          "mode": 25,
+          "window": [
+            6620,
+            6820
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 403,
+          "degree": 12,
+          "rho_min": 0.10862852466909316,
+          "rho_fit_min": 0.14066615456538897,
+          "rho_fit_relative_max": 0.43271823863697867,
+          "phase_fit_absolute_max": 0.26896396961535096,
+          "kummer_residual_max": 1.236020360253518,
+          "cartesian_transfer_relative_error": 0.3210888731707417,
+          "window_z_length": 2.0029662000704107,
+          "window_N_length": 2.009999999999998,
+          "mode": 50,
+          "window": [
+            8706,
+            9108
+          ]
+        },
+        {
+          "mode": 75,
+          "status": "no_smooth_window"
+        }
+      ]
+    },
+    {
+      "candidate": "boundary_conditioned_kummer_phase",
+      "case": "high_kappa",
+      "production_unchanged": true,
+      "mode_count_requested": 4,
+      "usable_modes": 3,
+      "positive_modes": 3,
+      "rows": [
+        {
+          "status": "ok",
+          "nodes": 801,
+          "degree": 12,
+          "rho_min": 0.1216021389304473,
+          "rho_fit_min": 0.13626451976558038,
+          "rho_fit_relative_max": 0.16312308037957735,
+          "phase_fit_absolute_max": 0.13314429855557108,
+          "kummer_residual_max": 1.0133271283186083,
+          "cartesian_transfer_relative_error": 0.24798550768573752,
+          "window_z_length": 1.9999999999999996,
+          "window_N_length": 4.0,
+          "mode": 0,
+          "window": [
+            800,
+            1600
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 201,
+          "degree": 12,
+          "rho_min": 0.08777495243557777,
+          "rho_fit_min": 0.14282702455965135,
+          "rho_fit_relative_max": 0.9706486212083195,
+          "phase_fit_absolute_max": 0.5285023441732744,
+          "kummer_residual_max": 33.063190777213094,
+          "cartesian_transfer_relative_error": 1.1687336230181917,
+          "window_z_length": 1.9999999991549728,
+          "window_N_length": 1.0,
+          "mode": 25,
+          "window": [
+            6188,
+            6388
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 252,
+          "degree": 12,
+          "rho_min": 0.10140538716362975,
+          "rho_fit_min": 0.14352256557432813,
+          "rho_fit_relative_max": 0.5422133984023353,
+          "phase_fit_absolute_max": 0.36268816204772936,
+          "kummer_residual_max": 25.45345886693485,
+          "cartesian_transfer_relative_error": 1.1594494441938814,
+          "window_z_length": 2.0031825749648817,
+          "window_N_length": 1.2549999999999955,
+          "mode": 50,
+          "window": [
+            8151,
+            8402
+          ]
+        },
+        {
+          "mode": 76,
+          "status": "no_smooth_window"
+        }
+      ]
+    },
+    {
+      "candidate": "boundary_conditioned_kummer_phase",
+      "case": "lowT",
+      "production_unchanged": true,
+      "mode_count_requested": 4,
+      "usable_modes": 3,
+      "positive_modes": 3,
+      "rows": [
+        {
+          "status": "ok",
+          "nodes": 801,
+          "degree": 12,
+          "rho_min": 0.1216021389304473,
+          "rho_fit_min": 0.13626451976558038,
+          "rho_fit_relative_max": 0.16312308037957735,
+          "phase_fit_absolute_max": 0.13314429855557108,
+          "kummer_residual_max": 1.0133271283186083,
+          "cartesian_transfer_relative_error": 0.24798550768573752,
+          "window_z_length": 1.9999999999999996,
+          "window_N_length": 4.0,
+          "mode": 0,
+          "window": [
+            800,
+            1600
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 201,
+          "degree": 12,
+          "rho_min": 0.08766148874545458,
+          "rho_fit_min": 0.14341678979890934,
+          "rho_fit_relative_max": 0.9561201626921153,
+          "phase_fit_absolute_max": 0.5309290986268005,
+          "kummer_residual_max": 41.921508001822716,
+          "cartesian_transfer_relative_error": 1.6026645152406322,
+          "window_z_length": 1.9996931202076222,
+          "window_N_length": 1.0,
+          "mode": 25,
+          "window": [
+            8389,
+            8589
+          ]
+        },
+        {
+          "status": "ok",
+          "nodes": 403,
+          "degree": 12,
+          "rho_min": 0.10919817037649487,
+          "rho_fit_min": 0.14102094141280766,
+          "rho_fit_relative_max": 0.4200635974530914,
+          "phase_fit_absolute_max": 0.2645537010920762,
+          "kummer_residual_max": 5.381746964207774,
+          "cartesian_transfer_relative_error": 0.4080781267019803,
+          "window_z_length": 1.9990449550471467,
+          "window_N_length": 2.009999999999998,
+          "mode": 50,
+          "window": [
+            10092,
+            10494
+          ]
+        },
+        {
+          "mode": 75,
+          "status": "no_smooth_window"
+        }
+      ]
+    }
+  ]
+}

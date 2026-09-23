@@ -183,6 +183,38 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   `z=2..2.2` scale; otherwise measure actual transfer reduction before any
   full end-to-end benchmark.
 
+## Round 34 execution state (2026-09-23)
+
+- [x] Fetch latest `fast_v0.2`, verify local/remote SHA `e40a2d0`, reread the
+  ledgers, pasted specification, and Round 33 artifact.
+- [ ] Add a TDD red/green standalone prototype that chooses the complex scalar
+  solution from a right-boundary WKB condition, rather than the arbitrary
+  independent-solution basis used by the rejected fixed-window fit.
+- [ ] Gate positivity, turning/kink isolation, Kummer residual, Cartesian/Prüfer
+  agreement, and useful-window length before any timing.
+- [ ] If the representation gate passes, measure transfer work and full
+  end-to-end performance; otherwise reject before production changes.
+- [ ] Record ACCEPT/REJECT and select the next distinct experiment immediately.
+
+### Round 34 outcome and next selection
+
+- [x] Fresh canonical profile at `e40a2d0` completed with fixed 2-thread
+  resources and `kink_split=true`: total medians `5.528/5.557/10.170/9.533/
+  10.319 ms` for default/lowT/highT/stiff/high-kappa; tensor medians
+  `2.336/2.754/4.767/5.010/5.003 ms`, with hard-case tensor shares near
+  one half and two propagation calls.
+- [x] Boundary-conditioned WKB prototype passed finite/positive solve checks
+  but failed the representation gate: residual `1.0–41.9`, Cartesian transfer
+  error `0.25–1.60`, and only `Δz≈2` windows. No runtime test or production
+  change is justified.
+- [x] Reject the right-boundary-WKB implementation; do not retune its degree,
+  window, or boundary tolerance.
+- [ ] Next experiment: standalone small-angle polynomial transfer twin. Keep
+  the exact production phase subdivision and step order, but replace only the
+  `sin/cos` evaluation for the certified `|omega*h|<=0.25` branch with fixed
+  Taylor polynomials; first require a local error gate, then kernel/full-outer
+  benchmark if the approximation is numerically viable.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

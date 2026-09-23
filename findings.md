@@ -1952,3 +1952,43 @@ was restored; the A/B artifacts remain under
   runtime or production test. It does not reject boundary-conditioned Kummer
   phase functions, which remain a materially different next prototype.
 - Artifact: `docs/phase_function_chebyshev_round33_20260923.json`.
+
+## Round 34 hypothesis — boundary-conditioned Kummer phase (2026-09-23)
+
+The Round 33 amplitude was formed from an arbitrary fundamental basis, so its
+Kummer solution inherited large oscillatory modulation even though the equation
+itself was positive. The next standalone hypothesis is materially different:
+construct a complex scalar solution by imposing an outgoing-WKB amplitude and
+derivative at the smooth right boundary, integrate that solution backward, and
+use its modulus as the Kummer amplitude. A valid result must show a long smooth
+interval, positive amplitude, small Kummer residual, and agreement with the
+Cartesian/Prüfer transfer reference. A short-window fit or a lower polynomial
+degree is not sufficient evidence and must be rejected.
+
+This follows the phase-function literature's boundary-conditioned special
+solution idea, but the prototype remains diagnostic and does not alter
+production code.
+
+## Round 34 result — boundary-conditioned Kummer phase (2026-09-23)
+
+Fresh canonical profile at `e40a2d0f5373843bfe3fc66a0173741be2346882` used
+fixed 2-thread/workqueue/BLAS resources, 25 repeats, goal/PCHIP and
+`kink_split=true`. Total medians were `5.528/5.557/10.170/9.533/10.319 ms`
+for default/low-T/high-T/stiff/high-kappa; tensor medians were
+`2.336/2.754/4.767/5.010/5.003 ms`, and hard cases used two propagations.
+Artifacts are `docs/profile_fast_breakdown_round34_20260923_*.json`.
+
+The right-boundary-WKB-conditioned complex solution stayed finite and positive
+for the usable modes, but degree-12 compression was not a phase function in
+the required numerical sense: Kummer residuals ranged from about `1.0` to
+`41.9`, Cartesian transfer relative errors from `0.25` to `1.60`, and the
+usable windows were only `Delta z≈2` (some `Delta N≈1`). The specific
+boundary-conditioned WKB implementation is **REJECTED_FOR_PRODUCTION** and
+was stopped before runtime; no degree/window/tolerance retuning is allowed.
+Artifact: `docs/phase_function_boundary_round34_20260923.json`.
+
+The next hypothesis is deliberately non-structural: a small-angle polynomial
+transfer twin that preserves the exact production phase subdivision and step
+sequence while replacing only `sin`/`cos` on the certified phase-cap branch.
+It targets the LLVM-confirmed transcendental cost without reopening rejected
+phase-function, recurrence, or grouped-layout experiments.
