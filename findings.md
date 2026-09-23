@@ -1919,3 +1919,20 @@ was restored; the A/B artifacts remain under
   Chebyshev representation feasibility spike with residual certification,
   explicitly avoiding the previously rejected raw Riccati-pole and
   first-order WKB-handoff implementations.
+
+## Round 33 — phase-function feasibility bootstrap (2026-09-23)
+
+- Fresh canonical profile after fetch at `00e2bfd5b27261363015a5f293e3a3ca118800ac`
+  used the same goal/PCHIP and fixed resources. Total/tensor medians were
+  `3.961/0.923` default, `3.389/1.005` low-T, `5.543/1.571` high-T,
+  `5.702/1.876` stiff, and `5.745/1.783` high-kappa ms; tensor shares were
+  `23.3%–32.9%` and hard cases still used two calls.
+- A read-only Kummer-equation feasibility screen used the real prepared
+  background, smooth post-horizon interval `z=2..5`, and WKB-initialized
+  positive phase amplitude. The solve stayed finite/positive for the sampled
+  modes in all five named regimes (`4/4` usable modes per regime; max rho
+  about `0.949`). This is only a mathematical feasibility signal, not a
+  correctness or speed result; the next standalone must fit the phase/amplitude
+  representation and certify its Kummer residual against Cartesian/Prüfer.
+- Next concrete experiment remains the residual-certified phase-function
+  Chebyshev representation spike. No production source has been changed.

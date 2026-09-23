@@ -151,6 +151,16 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   agreement, guards/failure/determinism, and measured reduction in real
   propagation evaluations. No production edit.
 
+### Round 33 bootstrap
+
+- [x] Fetch latest `fast_v0.2`, confirm local/remote SHA `00e2bfd`, and rerun
+  canonical five-case profile with Amdahl attribution.
+- [x] Run a read-only Kummer positivity feasibility screen on real smooth
+  background intervals; sampled modes stayed positive/finite in all named
+  regimes.
+- [ ] Implement the standalone Chebyshev phase-function residual prototype;
+  do not infer correctness from the positivity screen alone.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.
