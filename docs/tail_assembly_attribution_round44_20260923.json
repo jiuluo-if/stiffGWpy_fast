@@ -1,0 +1,73 @@
+{
+  "experiment": "round44_tail_assembly_factor_amdahl_screen",
+  "production_path_changed": false,
+  "commit": "873b02483d05cc0fa52180428cc1d74a6340da5d",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "settings": {
+    "cases": "default,lowT,highT,stiff,high_kappa",
+    "repeats": 30,
+    "threads": 2,
+    "out": "docs/tail_assembly_attribution_round44_20260923.json"
+  },
+  "records": [
+    {
+      "case": "default",
+      "repeats": 30,
+      "full_kernel_median_ms": 2.048700001068937,
+      "tail_baseline_median_ms": 0.15079999957379187,
+      "tail_candidate_median_ms": 0.09995000073104165,
+      "tail_candidate_over_baseline": 0.6627984152090963,
+      "tail_share_of_full_kernel": 0.07360765338756768,
+      "free_tail_upper_bound_fraction": 0.07360765338756768,
+      "bitwise_equal": false
+    },
+    {
+      "case": "lowT",
+      "repeats": 30,
+      "full_kernel_median_ms": 2.5287000007665483,
+      "tail_baseline_median_ms": 0.16659999982948648,
+      "tail_candidate_median_ms": 0.0898000007509836,
+      "tail_candidate_over_baseline": 0.539015611301879,
+      "tail_share_of_full_kernel": 0.06588365554592615,
+      "free_tail_upper_bound_fraction": 0.06588365554592615,
+      "bitwise_equal": false
+    },
+    {
+      "case": "highT",
+      "repeats": 30,
+      "full_kernel_median_ms": 1.94645000010496,
+      "tail_baseline_median_ms": 0.11514999914652435,
+      "tail_candidate_median_ms": 0.08474999958707485,
+      "tail_candidate_over_baseline": 0.7359965281392095,
+      "tail_share_of_full_kernel": 0.05915898129431273,
+      "free_tail_upper_bound_fraction": 0.05915898129431273,
+      "bitwise_equal": false
+    },
+    {
+      "case": "stiff",
+      "repeats": 30,
+      "full_kernel_median_ms": 2.455299999382987,
+      "tail_baseline_median_ms": 0.19749999955820385,
+      "tail_candidate_median_ms": 0.14104999991104705,
+      "tail_candidate_over_baseline": 0.7141772163370521,
+      "tail_share_of_full_kernel": 0.08043823549376258,
+      "free_tail_upper_bound_fraction": 0.08043823549376258,
+      "bitwise_equal": false
+    },
+    {
+      "case": "high_kappa",
+      "repeats": 30,
+      "full_kernel_median_ms": 2.4897000002965797,
+      "tail_baseline_median_ms": 0.19855000027746428,
+      "tail_candidate_median_ms": 0.13435000073513947,
+      "tail_candidate_over_baseline": 0.6766557569750273,
+      "tail_share_of_full_kernel": 0.07974856418597119,
+      "free_tail_upper_bound_fraction": 0.07974856418597119,
+      "bitwise_equal": false
+    }
+  ]
+}

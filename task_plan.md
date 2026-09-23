@@ -766,3 +766,14 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next round: fetch/profile, measure tail assembly attribution, and test
   only an exact-semantics common-factor reuse if Amdahl shows sufficient
   end-to-end headroom.
+
+## Round 44 — tail assembly Amdahl screen (2026-09-23)
+
+- [x] Re-fetched at `873b02483d05cc0fa52180428cc1d74a6340da5d` and refreshed
+  canonical median/p95 profiles.
+- [x] Measured real tail mode/slot work. It occupied only `5.92%–8.04%` of
+  full kernel time; the concrete factor-reuse candidate was non-bitwise and
+  could contribute only about `1.6%–3.7%` end-to-end even before integration
+  overhead. Rejected before full twin/outer.
+- [ ] Next round: fetch/profile, then choose a propagation-level numerical or
+  compiler method with enough Amdahl headroom to matter end to end.

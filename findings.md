@@ -2210,3 +2210,27 @@ Next selected direction is an exact-semantics tail-assembly factor reuse
 spike. It will first measure tail assembly's Amdahl share and only proceed if
 hoisting the common `ev_minus/fp_minus` work has enough end-to-end headroom;
 production remains unchanged until bitwise/outer gates pass.
+
+## Round 44 result — tail assembly common-factor Amdahl screen (2026-09-23)
+
+Fresh profiles at `873b02483d05cc0fa52180428cc1d74a6340da5d` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.374/2.330` default, `5.218/2.724` low-T,
+`9.320/4.357` high-T, `8.045/4.402` stiff and `8.182/4.434` high-kappa ms;
+the corresponding total p95 values were `6.387/6.518/11.243/9.636/9.709 ms`.
+Artifacts: `docs/profile_fast_breakdown_round44_20260923_*.json`.
+
+The real mode/slot tail workload was measured in a standalone Amdahl screen.
+Tail assembly occupied only `7.36%/6.59%/5.92%/8.04%/7.97%` of the full
+kernel median in named-case order. Reusing `ev_minus*fp_minus` reduced the
+tail-only median to `0.663/0.539/0.736/0.714/0.677` of baseline, but changes
+floating-point association and was not bitwise equal. Even a hypothetical
+free tail assembly could improve the full kernel by only `5.92%–8.04%`, while
+this concrete factor reuse has an estimated end-to-end ceiling of about
+`1.6%–3.7%`; it is **REJECTED_FOR_PRODUCTION** by Amdahl before full-kernel or
+outer implementation.
+Artifact: `docs/tail_assembly_attribution_round44_20260923.json`.
+
+Next selected direction is a new propagation-level method, not another tail
+or layout micro-optimization; it must reduce transfer evaluations or improve
+the actual tensor kernel enough to clear the end-to-end gate.
