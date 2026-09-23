@@ -895,3 +895,13 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] Rejected by Amdahl without a full kernel candidate; production unchanged.
 - [ ] Next: fresh LLVM/ASM audit for vector lanes or invariant loads after the
   current diagnostic additions. No AI/learned model.
+
+## Round 55 — fresh LLVM/ASM audit (2026-09-23)
+
+- [x] Re-fetched at `7e005f1` and refreshed the canonical profile.
+- [x] Recompiled the four hot functions; no new vector lane, fastmath, or
+  strict-equivalence bottleneck appeared. Existing solve-kernel div/mod is
+  already covered by the rejected counted-state experiment.
+- [x] Rejected as already covered without timing; production unchanged.
+- [ ] Next: tiny bounded analytic outer derivative/predictor screen with exact
+  final-spectrum correction. No AI/learned model.

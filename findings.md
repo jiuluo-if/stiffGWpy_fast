@@ -2543,3 +2543,29 @@ distinct outer predictor with a certified final-spectrum correction; (3)
 adaptive transfer representation only if it removes phase substeps rather
 than regrouping them. Select (1), because it is the lowest-cost way to find
 remaining strict-equivalence headroom. No AI/learned model is used.
+
+## Round 55 result — fresh LLVM/ASM strict-equivalence audit (2026-09-23)
+
+Fresh fetch/profile at `7e005f1937d5c66af91fc4bbafa214e1ede579d7` gave noisy
+total/tensor medians in ms: default `5.00/1.99`, lowT `4.67/2.23`, highT
+`6.41/1.43`, stiff `6.58/1.86`, and high-kappa `7.03/1.51`; hard cases
+continued to use two kernel calls.
+
+The fresh audit recompiled `scaled_step`, `_phase_substeps`, `_phase_segment`,
+and `solve_kernel` under the current Numba/LLVM build. `scaled_step` still has
+one `exp`, one `sin`, one `cos`, no integer div/rem, no fastmath, and no LLVM
+double vector lane. `solve_kernel` still exposes generic assembly integer
+div/mod and dynamic scheduling, but the prior counted-state experiment already
+tested that exact algebraic change and failed full-outer stability; no compiler
+or hardware change justifies reopening it. The audit candidate is
+**REJECTED_AS_ALREADY_COVERED** without timing. Production remains unchanged.
+Artifact: `docs/audit_fast_kernel_llvm_round55_20260923.json` plus the fresh
+profile `docs/profile_fast_breakdown_round55_20260923.json`.
+
+The next hypothesis pool is now: (1) a deterministic implicit-function outer
+predictor using a bounded analytic derivative of the scalar background map,
+with an exact final-spectrum correction; (2) adaptive transfer representation
+only if it demonstrably removes phase substeps; (3) another LLVM/data-layout
+probe only after a compiler/runtime change. Select (1) for a tiny derivative
+finite-difference/outer-work screen. This is mathematical only; no AI/learned
+model is used.
