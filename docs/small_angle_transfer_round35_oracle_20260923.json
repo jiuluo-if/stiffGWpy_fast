@@ -1,0 +1,96 @@
+{
+  "candidate": "small_angle_polynomial_transfer",
+  "commit": "27b9fc5db56b069945d3decfd17d8c0470cf79c0",
+  "production_unchanged": true,
+  "local_abs_error": 5.551115123125783e-17,
+  "settings": {
+    "case": null,
+    "threads": 2,
+    "repeats": 15,
+    "oracle": true,
+    "outer": false,
+    "output": "docs/small_angle_transfer_round35_oracle_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "threads": 2,
+      "oracle_dn_gw": 0.0022718750573166913,
+      "baseline": {
+        "dn_gw": 0.002263647415165795,
+        "dn_relative_to_oracle": 0.0036215205252589423,
+        "spectrum_max_dex_to_oracle": 0.0031615840297867237
+      },
+      "candidate": {
+        "dn_gw": 0.0022636474151827702,
+        "dn_relative_to_oracle": 0.00362152051778708,
+        "spectrum_max_dex_to_oracle": 0.0031615115574616937
+      },
+      "candidate_minus_baseline_dn_relative": 7.499019706179703e-12
+    },
+    {
+      "case": "highT",
+      "threads": 2,
+      "oracle_dn_gw": 0.056637029118884845,
+      "baseline": {
+        "dn_gw": 0.056433084271459516,
+        "dn_relative_to_oracle": 0.0036009100512181744,
+        "spectrum_max_dex_to_oracle": 0.003163686847468483
+      },
+      "candidate": {
+        "dn_gw": 0.056433084271475815,
+        "dn_relative_to_oracle": 0.0036009100509303863,
+        "spectrum_max_dex_to_oracle": 0.0031636540103718858
+      },
+      "candidate_minus_baseline_dn_relative": 2.888281225579119e-13
+    },
+    {
+      "case": "stiff",
+      "threads": 2,
+      "oracle_dn_gw": 0.015039022441166882,
+      "baseline": {
+        "dn_gw": 0.014984335009515638,
+        "dn_relative_to_oracle": 0.003636368777637152,
+        "spectrum_max_dex_to_oracle": 0.0031602663047429758
+      },
+      "candidate": {
+        "dn_gw": 0.014984335009692746,
+        "dn_relative_to_oracle": 0.0036363687658605664,
+        "spectrum_max_dex_to_oracle": 0.0031601907749170266
+      },
+      "candidate_minus_baseline_dn_relative": 1.1819565425549908e-11
+    },
+    {
+      "case": "high_kappa",
+      "threads": 2,
+      "oracle_dn_gw": 0.22652152511764692,
+      "baseline": {
+        "dn_gw": 0.22570645394993585,
+        "dn_relative_to_oracle": 0.003598206251206149,
+        "spectrum_max_dex_to_oracle": 0.0029350031385320108
+      },
+      "candidate": {
+        "dn_gw": 0.22570645394995062,
+        "dn_relative_to_oracle": 0.003598206251140963,
+        "spectrum_max_dex_to_oracle": 0.002935009349673834
+      },
+      "candidate_minus_baseline_dn_relative": 6.542110767816075e-14
+    },
+    {
+      "case": "lowT",
+      "threads": 2,
+      "oracle_dn_gw": 5.3034326157770847e-08,
+      "baseline": {
+        "dn_gw": 5.3114602833918166e-08,
+        "dn_relative_to_oracle": 0.0015136739158051254,
+        "spectrum_max_dex_to_oracle": 0.003164075402708022
+      },
+      "candidate": {
+        "dn_gw": 5.3114619430785813e-08,
+        "dn_relative_to_oracle": 0.0015139868615678055,
+        "spectrum_max_dex_to_oracle": 0.0031640333242251018
+      },
+      "candidate_minus_baseline_dn_relative": 3.1247278078253183e-07
+    }
+  ]
+}

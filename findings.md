@@ -1992,3 +1992,34 @@ transfer twin that preserves the exact production phase subdivision and step
 sequence while replacing only `sin`/`cos` on the certified phase-cap branch.
 It targets the LLVM-confirmed transcendental cost without reopening rejected
 phase-function, recurrence, or grouped-layout experiments.
+
+## Round 35 result — small-angle polynomial transfer (2026-09-23)
+
+Fresh current-HEAD profiles at `27b9fc5db56b069945d3decfd17d8c0470cf79c0`
+used fixed 2-thread resources, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.637/2.330` default, `5.479/2.887` low-T,
+`9.053/4.250` high-T, `8.478/4.633` stiff and `9.721/4.462` high-kappa ms;
+hard cases still executed two propagation calls. Artifacts are
+`docs/profile_fast_breakdown_round35_20260923_*.json`.
+
+The candidate preserved exact phase subdivision, assembly nodes, tail handoff,
+failure and convergence semantics, and replaced only the `sin`/`cos` formulas
+on the `|omega*h|<=0.25` branch with degree-10 Taylor forms. Local transfer
+absolute error was `5.55e-17`. Named and extended independent-reference
+screens passed; candidate spectrum errors to baseline were `2.1e-6–3.3e-6`
+dex and the largest extended DN relative difference was `6.44e-6`.
+
+The isolated 2-thread kernel improved, but full end-to-end did not satisfy the
+production gate. 2-thread ratios default/high-T/stiff/high-kappa/low-T were
+`0.976/0.966/1.000/0.923/0.969`; 16-thread ratios were
+`1.001/1.003/0.986/0.896/0.965`; 20-thread ratios were
+`1.013/1.045/0.962/0.969/0.946`. The implementation is
+**REJECTED_FOR_PRODUCTION**; no formal promotion or trigonometric retuning.
+Artifacts: `docs/small_angle_transfer_round35_{kernel,oracle,
+oracle_extended,outer,outer_t16,outer_t20}_20260923.json`.
+
+Next selected hypothesis is a separate range-reduced polynomial for the
+per-transfer `exp(z)` value, while retaining the production exponential for
+the phase-subdivision count. This isolates the other LLVM-confirmed
+transcendental cost and will be rejected early if range-reduction overhead
+outweighs the saved libm call.

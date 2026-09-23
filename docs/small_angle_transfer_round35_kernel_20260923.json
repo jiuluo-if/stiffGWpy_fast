@@ -1,0 +1,74 @@
+{
+  "candidate": "small_angle_polynomial_transfer",
+  "commit": "27b9fc5db56b069945d3decfd17d8c0470cf79c0",
+  "production_unchanged": true,
+  "local_abs_error": 5.551115123125783e-17,
+  "settings": {
+    "case": null,
+    "threads": 2,
+    "repeats": 25,
+    "output": "docs/small_angle_transfer_round35_kernel_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "threads": 2,
+      "repeats": 25,
+      "baseline_median_ms": 2.648300000146264,
+      "candidate_median_ms": 2.3734999995213,
+      "baseline_p95_ms": 2.95072000080836,
+      "candidate_p95_ms": 2.9505199996492593,
+      "candidate_over_baseline": 0.8962353205415599,
+      "digest_equal": false,
+      "max_abs_output_delta": 4.5230954980387364e-14
+    },
+    {
+      "case": "highT",
+      "threads": 2,
+      "repeats": 25,
+      "baseline_median_ms": 2.1701000005123205,
+      "candidate_median_ms": 2.014099998632446,
+      "baseline_p95_ms": 2.717399999164627,
+      "candidate_p95_ms": 2.555119999669841,
+      "candidate_over_baseline": 0.9281139109520087,
+      "digest_equal": false,
+      "max_abs_output_delta": 4.319992117905122e-14
+    },
+    {
+      "case": "stiff",
+      "threads": 2,
+      "repeats": 25,
+      "baseline_median_ms": 2.6698999990912853,
+      "candidate_median_ms": 2.501200000551762,
+      "baseline_p95_ms": 3.063420000034966,
+      "candidate_p95_ms": 2.865320000273641,
+      "candidate_over_baseline": 0.9368141134136331,
+      "digest_equal": false,
+      "max_abs_output_delta": 3.4308181299450095e-13
+    },
+    {
+      "case": "high_kappa",
+      "threads": 2,
+      "repeats": 25,
+      "baseline_median_ms": 2.227500001026783,
+      "candidate_median_ms": 2.1296000013535377,
+      "baseline_p95_ms": 2.7901800014660694,
+      "candidate_p95_ms": 2.5026399991475046,
+      "candidate_over_baseline": 0.9560493828829999,
+      "digest_equal": false,
+      "max_abs_output_delta": 3.8234825733042257e-14
+    },
+    {
+      "case": "lowT",
+      "threads": 2,
+      "repeats": 25,
+      "baseline_median_ms": 3.1195999999908963,
+      "candidate_median_ms": 2.848699999958626,
+      "baseline_p95_ms": 3.4284399993339316,
+      "candidate_p95_ms": 3.3404000001610257,
+      "candidate_over_baseline": 0.9131619438283559,
+      "digest_equal": false,
+      "max_abs_output_delta": 3.683051932403432e-14
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "candidate": "small_angle_polynomial_transfer",
+  "commit": "27b9fc5db56b069945d3decfd17d8c0470cf79c0",
+  "production_unchanged": true,
+  "local_abs_error": 5.551115123125783e-17,
+  "settings": {
+    "case": [
+      "cr0_blue",
+      "positive_tilt",
+      "negative_tilt",
+      "sobol_000",
+      "sobol_002",
+      "sobol_006",
+      "sobol_010",
+      "sobol_015",
+      "edge_r_hi",
+      "edge_kap_hi"
+    ],
+    "threads": 2,
+    "repeats": 15,
+    "oracle": true,
+    "outer": false,
+    "output": "docs/small_angle_transfer_round35_oracle_extended_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "cr0_blue",
+      "threads": 2,
+      "oracle_dn_gw": 0.057163951876004655,
+      "baseline": {
+        "dn_gw": 0.05697497266445078,
+        "dn_relative_to_oracle": 0.0033059157974906213,
+        "spectrum_max_dex_to_oracle": 0.0033537624098300967
+      },
+      "candidate": {
+        "dn_gw": 0.05697460566399915,
+        "dn_relative_to_oracle": 0.0033123359353499147,
+        "spectrum_max_dex_to_oracle": 0.003353724498293076
+      },
+      "candidate_minus_baseline_dn_relative": 6.441432693392988e-06
+    },
+    {
+      "case": "positive_tilt",
+      "threads": 2,
+      "oracle_dn_gw": 3.801230676597722,
+      "baseline": {
+        "dn_gw": 3.7886330880615424,
+        "dn_relative_to_oracle": 0.0033140815719858354,
+        "spectrum_max_dex_to_oracle": 0.00311026214828658
+      },
+      "candidate": {
+        "dn_gw": 3.7886086864160893,
+        "dn_relative_to_oracle": 0.00332050097862784,
+        "spectrum_max_dex_to_oracle": 0.0031102463617749265
+      },
+      "candidate_minus_baseline_dn_relative": 6.440751818917289e-06
+    },
+    {
+      "case": "negative_tilt",
+      "threads": 2,
+      "oracle_dn_gw": 0.0022718750573166913,
+      "baseline": {
+        "dn_gw": 0.002263647415165795,
+        "dn_relative_to_oracle": 0.0036215205252589423,
+        "spectrum_max_dex_to_oracle": 0.0031615840297867237
+      },
+      "candidate": {
+        "dn_gw": 0.0022636474151827702,
+        "dn_relative_to_oracle": 0.00362152051778708,
+        "spectrum_max_dex_to_oracle": 0.0031615115574616937
+      },
+      "candidate_minus_baseline_dn_relative": 7.499019706179703e-12
+    },
+    {
+      "case": "sobol_000",
+      "threads": 2,
+      "oracle_dn_gw": 1.3426053353951307e-07,
+      "baseline": {
+        "dn_gw": 1.3377473627465307e-07,
+        "dn_relative_to_oracle": 0.003618317699572019,
+        "spectrum_max_dex_to_oracle": 0.0034410636422528285
+      },
+      "candidate": {
+        "dn_gw": 1.3377473628040553e-07,
+        "dn_relative_to_oracle": 0.003618317656726476,
+        "spectrum_max_dex_to_oracle": 0.003441007399757723
+      },
+      "candidate_minus_baseline_dn_relative": 4.300113461475698e-11
+    },
+    {
+      "case": "sobol_002",
+      "threads": 2,
+      "oracle_dn_gw": 1.225789542898723,
+      "baseline": {
+        "dn_gw": 1.2213508155220698,
+        "dn_relative_to_oracle": 0.0036211170199385774,
+        "spectrum_max_dex_to_oracle": 0.0032558711892747283
+      },
+      "candidate": {
+        "dn_gw": 1.2213508155220734,
+        "dn_relative_to_oracle": 0.003621117019935679,
+        "spectrum_max_dex_to_oracle": 0.0032558179335815396
+      },
+      "candidate_minus_baseline_dn_relative": 2.9088396500409946e-15
+    },
+    {
+      "case": "sobol_006",
+      "threads": 2,
+      "oracle_dn_gw": 5.5933765711922675e-06,
+      "baseline": {
+        "dn_gw": 5.572227114581569e-06,
+        "dn_relative_to_oracle": 0.0037811608679496167,
+        "spectrum_max_dex_to_oracle": 0.003115137018657066
+      },
+      "candidate": {
+        "dn_gw": 5.572227126900331e-06,
+        "dn_relative_to_oracle": 0.003781158665565837,
+        "spectrum_max_dex_to_oracle": 0.0031150871077265663
+      },
+      "candidate_minus_baseline_dn_relative": 2.210742954599188e-09
+    },
+    {
+      "case": "sobol_010",
+      "threads": 2,
+      "oracle_dn_gw": 0.7230081057443292,
+      "baseline": {
+        "dn_gw": 0.7203624918080116,
+        "dn_relative_to_oracle": 0.0036591760386889974,
+        "spectrum_max_dex_to_oracle": 0.0036180096225901792
+      },
+      "candidate": {
+        "dn_gw": 0.7203624918081643,
+        "dn_relative_to_oracle": 0.0036591760384778577,
+        "spectrum_max_dex_to_oracle": 0.0036147444736442935
+      },
+      "candidate_minus_baseline_dn_relative": 2.1191506723623843e-13
+    },
+    {
+      "case": "sobol_015",
+      "threads": 2,
+      "oracle_dn_gw": 0.008527770422336085,
+      "baseline": {
+        "dn_gw": 0.00849962821241739,
+        "dn_relative_to_oracle": 0.00330006655021866,
+        "spectrum_max_dex_to_oracle": 0.0034310589332591235
+      },
+      "candidate": {
+        "dn_gw": 0.008499628212417365,
+        "dn_relative_to_oracle": 0.003300066550221508,
+        "spectrum_max_dex_to_oracle": 0.0034310130850983
+      },
+      "candidate_minus_baseline_dn_relative": 2.8573165857060533e-15
+    },
+    {
+      "case": "edge_r_hi",
+      "threads": 2,
+      "oracle_dn_gw": 0.013122664204990375,
+      "baseline": {
+        "dn_gw": 0.013074959525806104,
+        "dn_relative_to_oracle": 0.0036352891790166343,
+        "spectrum_max_dex_to_oracle": 0.0031605558627934016
+      },
+      "candidate": {
+        "dn_gw": 0.013074959525943963,
+        "dn_relative_to_oracle": 0.0036352891685112617,
+        "spectrum_max_dex_to_oracle": 0.003160481190613851
+      },
+      "candidate_minus_baseline_dn_relative": 1.0543701826669902e-11
+    },
+    {
+      "case": "edge_kap_hi",
+      "threads": 2,
+      "oracle_dn_gw": 0.17219612341825521,
+      "baseline": {
+        "dn_gw": 0.17157165555890025,
+        "dn_relative_to_oracle": 0.0036264919729822637,
+        "spectrum_max_dex_to_oracle": 0.0033136610691926194
+      },
+      "candidate": {
+        "dn_gw": 0.17157165555891538,
+        "dn_relative_to_oracle": 0.0036264919728944173,
+        "spectrum_max_dex_to_oracle": 0.003312066825225557
+      },
+      "candidate_minus_baseline_dn_relative": 8.816601239430693e-14
+    }
+  ]
+}

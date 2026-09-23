@@ -215,6 +215,27 @@ Write the failing predictor contract test, then implement a standalone one-pass 
   Taylor polynomials; first require a local error gate, then kernel/full-outer
   benchmark if the approximation is numerically viable.
 
+### Round 35 outcome and next selection
+
+- [x] Small-angle polynomial local error gate passed (`5.55e-17` absolute).
+- [x] Named and extended independent-oracle gates passed; candidate/baseline
+  spectrum differences were `2.1e-6–3.3e-6 dex`, with maximum DN relative
+  difference `6.44e-6` on the extended set. `edge_tre_hi` remained the known
+  baseline `shared_Neff_guard` before candidate propagation.
+- [x] Kernel 2-thread ratios were `0.896/0.928/0.937/0.956/0.913` for
+  default/highT/stiff/high-kappa/lowT, but full outer and formal resources did
+  not give a stable target-wide gain: 2-thread stiff was `1.000x`, 16-thread
+  default/highT were `1.001/1.003x`, and 20-thread default/highT were
+  `1.013/1.045x`.
+- [x] Reject the small-angle polynomial for production despite semantic and
+  oracle safety; preserve it as a non-strict diagnostic.
+- [ ] Next experiment: standalone range-reduced exponential approximation.
+  Preserve exact phase subdivision decisions using production `exp` for the
+  `n_sub` guard, and replace only the per-transfer `exp(z)` value with a
+  range-reduced fixed polynomial. Require local `exp`/transfer error and a
+  kernel gate before any outer timing; do not combine it with the rejected
+  trigonometric polynomial.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

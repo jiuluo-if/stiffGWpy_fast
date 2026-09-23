@@ -1,0 +1,28 @@
+{
+  "candidate": "small_angle_polynomial_transfer",
+  "commit": "27b9fc5db56b069945d3decfd17d8c0470cf79c0",
+  "production_unchanged": true,
+  "local_abs_error": 5.551115123125783e-17,
+  "settings": {
+    "case": [
+      "default"
+    ],
+    "threads": 2,
+    "repeats": 15,
+    "output": "docs/small_angle_transfer_round35_default_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "threads": 2,
+      "repeats": 15,
+      "baseline_median_ms": 3.087900000537047,
+      "candidate_median_ms": 2.7367999991838587,
+      "baseline_p95_ms": 3.5952099997302867,
+      "candidate_p95_ms": 3.3273300001383177,
+      "candidate_over_baseline": 0.8862981309977249,
+      "digest_equal": false,
+      "max_abs_output_delta": 4.5230954980387364e-14
+    }
+  ]
+}
