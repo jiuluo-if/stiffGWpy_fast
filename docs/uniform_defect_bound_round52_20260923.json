@@ -1,0 +1,110 @@
+{
+  "experiment": "round52_uniform_endpoint_defect_bound_screen",
+  "commit": "8e8b7102b277cdb9f5bc93e24f353c6cf8482407",
+  "production_unchanged": true,
+  "bound_safety_factor": 16.0,
+  "rows": [
+    {
+      "case": "default",
+      "threshold": 1e-08,
+      "accepted_blocks": 1409,
+      "fallback_steps": 1278,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27347956932321926
+    },
+    {
+      "case": "highT",
+      "threshold": 1e-08,
+      "accepted_blocks": 1310,
+      "fallback_steps": 1476,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.2733315618548239
+    },
+    {
+      "case": "stiff",
+      "threshold": 1e-08,
+      "accepted_blocks": 1408,
+      "fallback_steps": 1280,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27347752512305445
+    },
+    {
+      "case": "high_kappa",
+      "threshold": 1e-08,
+      "accepted_blocks": 1332,
+      "fallback_steps": 1432,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27345491964563995
+    },
+    {
+      "case": "lowT",
+      "threshold": 1e-08,
+      "accepted_blocks": 1551,
+      "fallback_steps": 994,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27349096279671425
+    },
+    {
+      "case": "default",
+      "threshold": 1e-06,
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27347956932321926
+    },
+    {
+      "case": "highT",
+      "threshold": 1e-06,
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.2733315618548239
+    },
+    {
+      "case": "stiff",
+      "threshold": 1e-06,
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27347752512305445
+    },
+    {
+      "case": "high_kappa",
+      "threshold": 1e-06,
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27345491964563995
+    },
+    {
+      "case": "lowT",
+      "threshold": 1e-06,
+      "accepted_blocks": 1920,
+      "fallback_steps": 256,
+      "max_bound": 2.6066423474643733e-06,
+      "max_actual_to_bound": 0.27349096279671425
+    }
+  ],
+  "timing": {
+    "1e-08": {
+      "repeats": 50,
+      "baseline_median_ms": 0.04959999932907522,
+      "baseline_p95_ms": 0.05615500049316323,
+      "bound_guard_median_ms": 0.07759999789413996,
+      "bound_guard_p95_ms": 0.08257500103354687,
+      "bound_guard_over_full_chain": 1.564516107738157,
+      "accepted_blocks": 0,
+      "fallback_steps": 2048
+    },
+    "1e-06": {
+      "repeats": 50,
+      "baseline_median_ms": 0.04940000144415535,
+      "baseline_p95_ms": 0.055285000598814804,
+      "bound_guard_median_ms": 0.07625000034749974,
+      "bound_guard_p95_ms": 0.08494500143569893,
+      "bound_guard_over_full_chain": 1.5435222291176893,
+      "accepted_blocks": 319,
+      "fallback_steps": 1729
+    }
+  }
+}

@@ -863,3 +863,16 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: test a cheap conservative endpoint defect-bound precomputation as
   a distinct standalone mathematical screen. No AI/learned model and no
   production modification before correctness and end-to-end headroom.
+
+## Round 52 — endpoint-only defect bound (2026-09-23)
+
+- [x] Re-fetched at `8e8b710` and refreshed the canonical profile under the
+  fixed resource contract.
+- [x] TDD and bound-dominance probes passed; the bound covered the Round 51
+  matrix defect with actual/bound <= `0.273`.
+- [x] Guarded transfer timing remained `1.54–1.56x` baseline and accepted too
+  few blocks, so the candidate was rejected by Amdahl before full kernel/outer.
+- [x] Production source unchanged; result/artifact recorded and pushed.
+- [ ] Next: tiny standalone scaled Riccati/WKB projective-normalization
+  feasibility screen. Do not promote without finite defect and real-work
+  reduction evidence.

@@ -2423,6 +2423,38 @@ from the rejected midpoint residual block, CF4 Magnus block, and boundary-WKB
 screens. Only a tiny mathematical accuracy screen will be attempted first.
 No AI/learned model is used.
 
+## Round 52 result — cheap endpoint defect-bound screen (2026-09-23)
+
+The latest HEAD `8e8b7102b277cdb9f5bc93e24f353c6cf8482407` was fetched and the
+canonical profile was refreshed. Total/tensor medians in ms were default
+`5.11/1.86`, lowT `4.86/2.16`, highT `7.04/1.46`, stiff `6.98/1.88`, and
+high-kappa `7.30/1.57`; hard cases still required two kernel calls.
+
+This was the single-variable follow-up to Round 51: replace the per-block
+matrix-product defect certificate with a conservative endpoint-only Magnus
+bound for the same log-mean two-interval transfer. The bound used the analytic
+linear-path commutator term, an exponential stability factor, and fixed safety
+factor `16`; it was not tuned to accept blocks. TDD passed three tests, and
+the bound dominated the embedded matrix defect on probes with maximum actual/
+bound ratio `0.273`.
+
+The timing gate rejected it: at threshold `1e-8`, the stress chain accepted
+zero of `2048` blocks and ran `1.565x` baseline (`0.0776/0.0496 ms`, p95
+`0.0826 ms`); at `1e-6`, it accepted only `319` blocks and still ran `1.544x`
+baseline (`0.0763/0.0494 ms`, p95 `0.0849 ms`). The extra endpoint exponentials
+and guard branch cost more than the saved transfer work. The candidate is
+**REJECTED_BY_AMDAHL** before full kernel/full outer; production remains
+unchanged. Artifact:
+`docs/uniform_defect_bound_round52_20260923.json`.
+
+The closed-form guard family is now exhausted at this granularity. The next
+pool is ordered as: (1) a genuinely different scaled Riccati/WKB adaptive
+representation with projective normalization and no per-step trigonometric
+reconstruction; (2) SIMD/data-layout batching only if fresh LLVM evidence shows
+actual vector lanes; (3) sensitivity-assisted outer correction. Select (1)
+for a tiny finite/defect screen, with no production changes and no AI/learned
+model.
+
 ## Round 51 result — uniform-integral two-interval defect screen (2026-09-23)
 
 After a fresh profile at `b929cb77b5458c4c5b1a15c21b102d08b1e12566`, the
