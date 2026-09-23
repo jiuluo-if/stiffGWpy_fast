@@ -1,0 +1,66 @@
+{
+  "candidate": "pair_dhammel_defect_correction_round64",
+  "commit": "c219a24eaf4df18392537d422fa4dc5cb3418c1c",
+  "production_unchanged": true,
+  "settings": {
+    "case": null,
+    "output": "docs/pair_defect_correction_round64_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "native_intervals": 3522,
+      "candidate_pair_maps": 1761,
+      "finite": true,
+      "candidate_power_relative_error": 0.00598330619425594,
+      "candidate_component_relative_error": 0.006146907425331873,
+      "midpoint_baseline_seconds": 4.1700001020217314e-05,
+      "candidate_seconds": 5.980000059935264e-05,
+      "candidate_over_midpoint": 1.4340527370817078
+    },
+    {
+      "case": "highT",
+      "native_intervals": 3350,
+      "candidate_pair_maps": 1675,
+      "finite": true,
+      "candidate_power_relative_error": 0.0075994959379634425,
+      "candidate_component_relative_error": 0.014485411122318933,
+      "midpoint_baseline_seconds": 2.7499998395796865e-05,
+      "candidate_seconds": 0.00013000000035390258,
+      "candidate_over_midpoint": 4.727273015905774
+    },
+    {
+      "case": "stiff",
+      "native_intervals": 3522,
+      "candidate_pair_maps": 1761,
+      "finite": true,
+      "candidate_power_relative_error": 0.001398772710036846,
+      "candidate_component_relative_error": 0.0008459440460847362,
+      "midpoint_baseline_seconds": 2.9200000426499173e-05,
+      "candidate_seconds": 3.18000020342879e-05,
+      "candidate_over_midpoint": 1.0890411496511216
+    },
+    {
+      "case": "high_kappa",
+      "native_intervals": 3436,
+      "candidate_pair_maps": 1718,
+      "finite": true,
+      "candidate_power_relative_error": 0.006347015174816683,
+      "candidate_component_relative_error": 0.01783010951786016,
+      "midpoint_baseline_seconds": 2.89999989036005e-05,
+      "candidate_seconds": 3.1699997634859756e-05,
+      "candidate_over_midpoint": 1.0931034080461306
+    },
+    {
+      "case": "lowT",
+      "native_intervals": 4480,
+      "candidate_pair_maps": 2240,
+      "finite": true,
+      "candidate_power_relative_error": 0.005704382838154344,
+      "candidate_component_relative_error": 0.00951114465585446,
+      "midpoint_baseline_seconds": 3.979999746661633e-05,
+      "candidate_seconds": 4.260000059730373e-05,
+      "candidate_over_midpoint": 1.070351841932553
+    }
+  ]
+}

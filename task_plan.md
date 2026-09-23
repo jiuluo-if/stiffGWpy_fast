@@ -1015,3 +1015,15 @@ Phase 3: Implementation and evidence-driven optimization
 
 - [x] Local full pytest was rerun under the CI resource contract: `217 passed,
   4 known baseline failures, 6 deselected`; new research tests passed.
+
+## Round 64 — pairwise Duhamel defect correction (2026-09-23)
+
+- [x] Re-fetched Round 63 HEAD and refreshed all five canonical profiles with
+  fixed resources and `kink_split=true`.
+- [x] Standalone map-count and finite gates passed, but independent power and
+  component errors were `1.40e-3--7.60e-3` / `8.46e-4--1.78e-2` and warmed
+  ratios were `1.07--4.73x`; rejected before full production integration.
+- [x] Production source unchanged; evidence, prototype, and test are ready
+  to commit and push.
+- [ ] Next: bounded deterministic outer predictor/corrector with a proof that
+  the full-spectrum correction removes the second propagation. No AI.

@@ -1464,3 +1464,13 @@ the diagnostic artifacts are retained.
 - Local CI-equivalent full pytest at Round 63: `217 passed, 4 failed,
   6 deselected`; all four failures match the documented baseline and all
   Round 61--63 tests passed. No unrelated fix was applied.
+
+- Round 64 completed at `c219a24`: fresh totals/p95 were
+  `5.592/7.602`, `5.998/7.514`, `12.464/14.307`, `13.216/14.735`, and
+  `12.130/15.461 ms`; tensor medians were `2.351/2.985/5.881/6.673/5.981 ms`.
+- Pairwise Duhamel correction halved map count but produced power error
+  `1.40e-3--7.60e-3`, component error `8.46e-4--1.78e-2`, and ratios
+  `1.07--4.73x`; rejected by correctness/performance. Production unchanged.
+- [ ] Next: bounded deterministic outer predictor/corrector, only if it can
+  eliminate the second propagation while preserving the full spectrum.
+  No AI.

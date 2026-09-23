@@ -2890,3 +2890,47 @@ existing shared-`N_eff` guard in the eval-frequency transition-refine case,
 and the existing default kink-split module-state expectation. All new Round
 61--63 tests passed, and no production source was changed to mask the known
 failures.
+
+## Round 64 result — pairwise Duhamel defect correction (2026-09-23)
+
+Round 64 re-fetched the pushed Round 63 verification HEAD
+`c219a24eaf4df18392537d422fa4dc5cb3418c1c` and refreshed the canonical
+25-repeat profile under the fixed resource contract and `kink_split=true`.
+The fresh total median/p95 values were default `5.592/7.602 ms`, low-T
+`5.998/7.514 ms`, high-T `12.464/14.307 ms`, stiff `13.216/14.735 ms`,
+and high-kappa `12.130/15.461 ms`; tensor medians were
+`2.351/2.985/5.881/6.673/5.981 ms` in the same order.
+
+The selected map retained the production constant-midpoint trigonometric
+transfer over a two-interval macrostep and applied one algebraic first-order
+Duhamel correction for the linear coefficient defect. It is mathematically
+different from Round 63's commutator-corrected generator because it does not
+evaluate a second matrix exponential. The actual paths were finite and map
+counts were halved (`3522/3350/3522/3436/4480` native intervals to
+`1761/1675/1761/1718/2240` pair maps), but independent DOP853 power errors
+were `1.40e-3--7.60e-3`, component errors were `8.46e-4--1.78e-2`, and
+fair warmed transfer ratios were `1.07--4.73x`. It was therefore
+**REJECTED_BY_CORRECTNESS_AND_PERFORMANCE** before full-kernel/full-outer
+timing. Production source remains unchanged.
+
+Artifact: `docs/pair_defect_correction_round64_20260923.json`; prototype and
+test: `scripts/benchmark_pair_defect_correction_round64.py` and
+`tests/test_pair_defect_correction_round64.py`.
+
+The next pool is ordered as: (1) a deterministic outer predictor/corrector
+that obtains a full-spectrum correction from one propagation only if a local
+derivative bound proves it can eliminate the second propagation; (2) a
+strictly bounded observable-aware reuse certificate, revisited only with a
+new pre-kernel computable invariant rather than the rejected output-difference
+proxy; (3) fresh LLVM/data-layout work only after a compiler/runtime change.
+Do not reopen pair macrostep maps, CF4, residual guards, Ermakov/WKB, or
+recurrence arithmetic. No AI/learned model is used.
+
+## CI status at Round 64 (2026-09-23)
+
+The latest pushed HEAD is `c219a24eaf4df18392537d422fa4dc5cb3418c1c`.
+GitHub Actions still shows no run newer than #229; #229 remains failed only
+in `canonical`, with `static`, `package`, `cobaya`, and compatibility jobs
+successful. Local full pytest remains `217 passed, 4 known baseline failures,
+6 deselected`; all Round 61--64 tests passed. The remote CI publication issue
+is not treated as a mathematical experiment result.
