@@ -2490,6 +2490,33 @@ first is selected because it is the only variant that can preserve the
 Round 51 work reduction while removing its measured bottleneck. No AI/learned
 model is used.
 
+## Round 56 result — safeguarded exact-map outer secant screen (2026-09-23)
+
+Fresh fetch/profile at `4b483ce9fcfabec7816bbb025007e89bca2817db` gave noisy
+total/tensor medians in ms: default `4.66/1.83`, lowT `4.19/2.09`, highT
+`6.37/1.42`, stiff `6.73/1.89`, and high-kappa `11.43/2.05`; hard cases
+continued to use two kernel calls.
+
+The candidate used two exact full-map evaluations and a bracketed secant
+prediction for the scalar fixed point, then evaluated the full production
+spectrum at the predicted `DN_eff`. TDD passed bracket, degenerate-slope, and
+determinism gates. The scalar residual at the predicted point was numerically
+near zero in all five named cases, but that did not certify the final spectrum:
+relative `DN` deviation from the converged production solve was
+`0.00518–0.00831`, and spectrum maximum deviation was `0.00334–0.00590 dex`.
+Each candidate used three exact map evaluations, so it also had no proven
+work reduction. The candidate is **REJECTED_BY_CORRECTNESS** before promotion;
+production remains unchanged. Artifact:
+`docs/safeguarded_outer_secant_round56_20260923.json`.
+
+The next pool is ordered as: (1) a predictor that uses the already computed
+outer map only to choose a trial point but always performs the original
+bracketed convergence sequence and final spectrum, which is unlikely to save
+work; (2) a numerical representation that removes phase substeps; (3) a fresh
+LLVM audit only after runtime/compiler change. Select (2), because Round 56
+confirms scalar outer prediction alone cannot satisfy the semantic gate. No
+AI/learned model is used.
+
 ## Round 53 result — scaled Riccati/log-amplitude screen (2026-09-23)
 
 Fresh fetch/profile at `2969196015ab63ee8490ac7a82317d371103f1c8` gave noisy

@@ -905,3 +905,14 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] Rejected as already covered without timing; production unchanged.
 - [ ] Next: tiny bounded analytic outer derivative/predictor screen with exact
   final-spectrum correction. No AI/learned model.
+
+## Round 56 — safeguarded exact-map outer secant (2026-09-23)
+
+- [x] Re-fetched at `4b483ce` and refreshed the canonical profile.
+- [x] TDD and exact-map finite/deterministic gates passed; scalar residuals were
+  near zero.
+- [x] Final-spectrum correctness failed (`0.00334–0.00590 dex`, DN relative
+  `0.00518–0.00831`) and three exact maps gave no work reduction. Rejected
+  before production; source unchanged.
+- [ ] Next: standalone representation that demonstrably removes phase
+  substeps. No AI/learned model.
