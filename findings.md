@@ -1936,3 +1936,19 @@ was restored; the A/B artifacts remain under
   representation and certify its Kummer residual against Cartesian/Prüfer.
 - Next concrete experiment remains the residual-certified phase-function
   Chebyshev representation spike. No production source has been changed.
+
+### Round 33 phase-function result
+
+- The standalone Kummer representation was corrected to use the positive
+  amplitude constructed from two independent scalar solutions, avoiding the
+  unstable WKB-initialized nonlinear Kummer IVP. The positivity gate then
+  passed `3/3` usable windows in every named regime.
+- The useful-window compression gate failed: degree-12 Chebyshev fits over
+  real `z=2..4` windows had residual maxima about `12.5–57.6`, relative rho
+  fit errors about `4.0–4.3`, and phase fit errors about `0.93–1.10`. A very
+  short `z=2..2.2` diagnostic window reached residual `4.1e-5`, but contains
+  too little propagation work to justify a speed path.
+- This rejects the specific fixed-window Chebyshev representation before any
+  runtime or production test. It does not reject boundary-conditioned Kummer
+  phase functions, which remain a materially different next prototype.
+- Artifact: `docs/phase_function_chebyshev_round33_20260923.json`.

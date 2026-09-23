@@ -161,6 +161,28 @@ Write the failing predictor contract test, then implement a standalone one-pass 
 - [ ] Implement the standalone Chebyshev phase-function residual prototype;
   do not infer correctness from the positivity screen alone.
 
+### Round 33 phase-function outcome
+
+- [x] Replaced the unstable WKB-initialized Kummer IVP with a positive
+  independent-solution construction and reran the named screen.
+- [x] Useful-window Chebyshev compression failed (`residual 12.5–57.6`),
+  while only a negligible short window passed; no runtime experiment was
+  justified.
+- [x] Reject fixed-window degree-12 phase representation; retain the next
+  boundary-conditioned Kummer solve as a separate hypothesis.
+
+### Next experiment: boundary-conditioned Kummer phase solve
+
+- [ ] Solve the positive Kummer boundary-value problem from both smooth-window
+  boundaries or a matched WKB tail, then fit the resulting nonoscillatory rho
+  and phase on blocks whose length is large enough to contain real transfer
+  work.
+- [ ] First gate: Kummer residual, positivity, turning-point/kink isolation,
+  independent Cartesian/Prüfer agreement, and threshold-zero exact fallback.
+- [ ] Reject before runtime if the certified blocks collapse to the short
+  `z=2..2.2` scale; otherwise measure actual transfer reduction before any
+  full end-to-end benchmark.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.
