@@ -1497,3 +1497,21 @@ the diagnostic artifacts are retained.
   warnings`; static, manifest, package-boundary, and wheel smoke checks also
   pass. Remote Actions is not yet showing the new run, so remote green remains
   unverified.
+
+## CI follow-up — Round 62 cross-platform diagnostic (2026-09-23)
+
+- [x] Retrieved the protected failure logs with the repository Actions
+  account: run #235 (`6efc945`) and run #236 (`7b373d2`) each had exactly one
+  canonical failure, `test_direct_phase_function_is_finite_and_stable_in_an_isolated_process`.
+- [x] Distinguished the failure from production behavior: Ubuntu rejected the
+  matrix-reconstruction norm stability metric, while the direct Ermakov state
+  remained finite and stable. The matrix norm is sensitive to endpoint matrix
+  inversion and BLAS platform differences.
+- [x] Changed only the standalone diagnostic gate to compare the endpoint
+  `(rho, rho_prime, theta)` state at full versus half max step; retained the
+  old matrix metric in the JSON artifact. No production source or numerical
+  contract changed.
+- [x] Focused test, full resource-capped canonical pytest (`224 passed, 6
+  deselected, 2 warnings`), Ruff, compileall, and diff check pass locally.
+- [ ] Push this repair and verify the next Ubuntu Actions run is green before
+  resuming the next mathematical optimization experiment. No AI/learned model.

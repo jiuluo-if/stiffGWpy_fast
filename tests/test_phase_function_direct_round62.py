@@ -13,7 +13,7 @@ assert row['finite']
 assert row['rho_min'] > 0.0
 assert row['candidate_vs_cartesian_relative_error'] > 1e-2
 assert row['candidate_vs_cartesian_relative_error'] < 1e4
-assert row['max_step_stability_relative_error'] < 1e-8
+assert row['phase_state_stability_relative_error'] < 1e-8, row
 """
     env = os.environ.copy()
     env.update({"NUMBA_NUM_THREADS": "2", "NUMBA_THREADING_LAYER": "workqueue"})

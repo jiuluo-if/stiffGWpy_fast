@@ -1057,3 +1057,16 @@ Phase 3: Implementation and evidence-driven optimization
   package boundary, and installed-wheel smoke; pushed as `6efc945`.
 - [ ] Recheck the GitHub Actions run for `6efc945`; until it appears, remote
   CI is pending rather than declared green.
+
+## CI follow-up — cross-platform phase probe (2026-09-23)
+
+- [x] Read the protected Ubuntu log for runs #235 and #236; both failed only
+  on the Round 62 standalone phase probe after all other jobs passed.
+- [x] Confirmed the failure mechanism: matrix inversion/BLAS sensitivity in
+  the diagnostic stability norm, not a production numerical or state failure.
+- [x] Updated the standalone test to gate direct endpoint-state stability,
+  preserving the matrix metric as diagnostic output and leaving production
+  untouched.
+- [x] Local focused/full canonical and static gates pass.
+- [ ] Push and confirm a green remote canonical run; then select the next
+  standalone math-only optimization direction from the ranked pool.

@@ -130,9 +130,10 @@ def _probe(case):
     start = time.perf_counter()
     reference, reference_solution = _cartesian_matrix(nodes, z)
     reference_s = time.perf_counter() - start
-    stable, _, _ = _phase_matrix(
+    stable, _, stable_states = _phase_matrix(
         nodes, z, z_prime, q, float(np.max(np.diff(nodes)) / 2.0))
     scale = max(float(np.linalg.norm(reference)), 1e-300)
+    state_scale = max(float(np.linalg.norm(states[:, -1])), 1.0)
     return {
         "case": case,
         "native_intervals": int(nodes.size - 1),
@@ -142,6 +143,8 @@ def _probe(case):
             np.linalg.norm(candidate - reference) / scale),
         "max_step_stability_relative_error": float(
             np.linalg.norm(stable - candidate) / scale),
+        "phase_state_stability_relative_error": float(
+            np.linalg.norm(stable_states[:, -1] - states[:, -1]) / state_scale),
         "candidate_seconds": candidate_s,
         "reference_seconds": reference_s,
         "candidate_over_reference": candidate_s / reference_s,

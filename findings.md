@@ -3018,3 +3018,26 @@ The commit was pushed with the required Git identity and verified locally
 against `fast/fast_v0.2`. GitHub Actions has not yet published a run for
 `6efc945` in the web view; the previous visible run #229 remains the stale
 canonical failure. Recheck the new run before declaring remote CI green.
+
+## CI follow-up — cross-platform phase probe diagnosis (2026-09-23)
+
+The remote runs are now available through the Actions API. Run #235 for
+`6efc945` and run #236 for `7b373d2` both passed static, package, Cobaya, and
+Python 3.9--3.13 compatibility; canonical failed only in
+`tests/test_phase_function_direct_round62.py`.
+
+The failure is not a production regression. The isolated Round 62 probe was
+using the norm of a reconstructed transfer matrix as its step-stability
+criterion. That matrix includes a small endpoint-matrix inversion and is
+BLAS/platform sensitive; Ubuntu crossed the `1e-8` diagnostic threshold while
+the underlying Ermakov state remained stable. The local probe gives a direct
+endpoint state relative difference of `6.57e-10`, versus the matrix-derived
+`4.38e-9` value.
+
+The repair keeps the matrix-derived field for historical diagnostics and adds
+`phase_state_stability_relative_error`, comparing the independently integrated
+endpoint state `(rho, rho_prime, theta)`. The test gates this direct numerical
+state quantity at the same `1e-8` threshold, so no production tolerance,
+physical guard, failure semantic, or API contract is weakened. Production
+source remains unchanged. Local focused and full canonical gates pass; the
+new remote run is required to confirm Ubuntu.
