@@ -1537,3 +1537,13 @@ the diagnostic artifacts are retained.
 - [ ] Next: implement only a tiny pre-kernel monotone transfer-perturbation
   certificate with explicit event guards; reject immediately if its bound is
   not informative. No AI/learned model.
+
+## CI follow-up — Round 66 optional dependency (2026-09-23)
+
+- [x] Remote run #239 exposed one new issue: canonical imported `psutil`,
+  absent from declared Ubuntu dev dependencies; all other eight jobs passed.
+- [x] Removed the hard dependency in `39a31ec`; POSIX uses
+  `os.sched_setaffinity`, Windows uses an optional fallback. Focused test,
+  Ruff, compileall, and diff checks pass locally.
+- [ ] Verify the next remote run for HEAD `39a31ec`, then continue with the
+  pre-kernel certificate experiment.

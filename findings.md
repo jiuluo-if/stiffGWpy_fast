@@ -3077,3 +3077,15 @@ event-sequence invariance with a conservative monotone bound on the full
 transfer perturbation; it must prove the same full-spectrum output before any
 reuse. If the bound is vacuous, retire the outer-reuse family and move to a
 new residual-certified transfer representation. No AI/learned model.
+
+## CI follow-up — optional benchmark dependency (2026-09-23)
+
+Run #239 for `b564213` passed every non-canonical job but canonical failed
+because the new standalone test imported `psutil`, which is not part of the
+project's declared `dev` dependencies on Ubuntu. This was a test/prototype
+packaging error, not a numerical failure. Commit `39a31ec` replaces the hard
+import with standard-library affinity on POSIX and an optional Windows
+fallback; production source and numerical semantics remain unchanged. The
+prototype was rerun at `39a31ec` under affinity `[0,1]`, workqueue=2, and
+BLAS=1 with the same result (`1.84e-15` endpoint error, `1.74x` tangent/direct
+cost). The next Actions run must confirm the dependency fix remotely.

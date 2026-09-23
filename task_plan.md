@@ -1088,3 +1088,11 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next concrete experiment: conservative pre-kernel monotone transfer
   perturbation certificate with the same event guards; otherwise retire outer
   reuse and select a new residual-certified transfer map.
+
+## CI follow-up — Round 66 optional dependency (2026-09-23)
+
+- [x] Read run #239 logs: canonical failed only because the new standalone
+  test imported undeclared `psutil`; all other jobs passed.
+- [x] Fixed in `39a31ec` with standard-library POSIX affinity and optional
+  Windows fallback; production unchanged.
+- [ ] Confirm remote green for `39a31ec` before the next mathematical spike.
