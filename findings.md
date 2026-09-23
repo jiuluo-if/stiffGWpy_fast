@@ -1801,3 +1801,52 @@ was restored; the A/B artifacts remain under
 - The new contracts `tests/test_phase_exp_hoist_strict_spike.py`, `tests/test_counted_assembly_spike.py`, and `tests/test_canonical_fast_specialized_spike.py` pass independently.
 - The scoped existing run `tests/test_fast_sgwb.py tests/test_resource_budget.py` produced 3 failures / 45 passes. Two failures are stale monkeypatch tests that define `solve_kernel` doubles with 19–23 positional parameters while the unchanged baseline call site passes 26 parameters. The third `test_eval_freqs_are_native_grid_nodes` aborts in the unchanged transition-refine path with the existing `shared_Neff_guard`.
 - No production source file was changed in this round, so these failures are recorded as baseline compatibility/guard issues and are not silently repaired within this performance-only task.
+
+## Autonomous continuation bootstrap — 2026-09-23
+
+- Fresh fetch completed before new work. Local `codex/fast_v0.2`, remote-tracking `fast/fast_v0.2`, and `HEAD` are all `1750772a1c70cb3f99edc054fd7841220bdf3601`; no tracked source changes are pending.
+- Production path is `stiffgwpy_fast.fast_sgwb.SGWB_iter_fast` -> `gen_fast`/frequency preparation -> `solve_kernel` -> frequency quadrature and guards. Canonical profiling must call `kink_split=True`, use goal grid plus PCHIP, fixed affinity/resources, alternating baseline/candidate measurements, and report median/p95.
+- Existing negative knowledge remains binding: repeated-exp hoist, counted assembly state, and canonical specialization all fail the formal full-outer stability gate; outer reuse and previous arithmetic/allocation micro-optimizations also lack stable end-to-end headroom.
+- The user-authorized continuation loop is now active. Next selection must begin with Amdahl headroom from a fresh canonical profile, then use a mathematically distinct standalone prototype rather than mechanically reopening Round 28 candidates.
+- Round 28 canonical medians remain the usable Amdahl baseline: total/tensor ms are default `6.36/3.26`, lowT `7.24/4.16`, highT `9.96/5.88`, stiff `10.29/6.53`, high-kappa `12.40/6.35`; tensor shares are `51.2%/57.5%/59.1%/63.5%/51.2%`. A candidate that cannot reduce this propagation work is screened out before implementation.
+- Fresh Round 29 profile at `1750772a1c70cb3f99edc054fd7841220bdf3601` used five named cases, `kink_split=true`, 25 repeats, affinity `[0,1]`, Numba 2/workqueue and BLAS-family budgets of 1. Total/tensor medians are default `5.984/3.144 ms`, lowT `6.202/3.670 ms`, highT `9.503/5.587 ms`, stiff `9.360/6.133 ms`, high-kappa `9.183/5.694 ms`; tensor shares are `52.5%/59.2%/58.8%/65.5%/62.0%`, with tensor p95 `3.713/4.407/6.218/6.987/6.093 ms` in the same case order. Hard cases still execute two propagation calls; average propagation steps/channel are about `8.19k/8.51k/8.14k/8.23k/8.04k`.
+
+## Literature scan — 2026-09-23
+
+- Bremer's phase-function work shows that a slowly varying nonoscillatory phase can make cost largely independent of oscillation magnitude, but the construction uses a nonlinear Kummer/Riccati equation and needs explicit treatment of turning points; this is mathematically distinct from merely reusing `exp(z)` or changing assembly state. Sources: SIAM adaptive spectral phase method and arXiv turning-point phase method.
+- Lorenz/Jahnke/Lubich's adiabatic midpoint and Magnus integrators support larger-than-period step sizes for time-varying high-frequency second-order systems, but their error analysis assumes a controlled adiabatic transformation. A safe prototype must measure the local residual/commutator and keep a hard fallback to the exact production transfer, not silently widen the step.
+- SIMD literature supports SoA/AoSoA and padding for ensembles of independent ODE trajectories, while Numba documents `prange` as parallel rather than a guarantee of cross-mode SIMD. This makes a batched multi-frequency kernel plausible, but only after measuring LLVM vectorization and guarding lane divergence; it is higher implementation cost than a one-mode phase prototype.
+- Initial hypothesis ordering: (H1) residual-controlled adiabatic/phase transfer with exact fallback, highest potential and information value; (H2) batched SoA/AoSoA propagation, potentially high throughput but likely lane-divergence risk; (H3) certified second-outer predictor/reuse, highest speed headroom but non-strict and already failed proxy-only gates, so requires an independent observable certificate before any implementation.
+- Historical audit narrows H1: raw `x/y` Riccati hit poles in all tested modes, fixed-step Prüfer RK4 had 0.97–2.37% amplitude error, WKB/adiabatic handoff candidates either regressed accuracy or runtime, and linear-z Magnus was already rejected as a method family. Therefore H1 is retained only as a future global phase-function study, not the next mechanical spike.
+- Next concrete experiment selected: H2 grouped SoA/AoSoA propagation prototype. It is mathematically strict (same Cartesian transfer per lane), changes only execution layout/order, and can be rejected cheaply if `j0`/tail divergence causes excess work or LLVM fails to vectorize. Before coding, measure the current `j0` distribution and bucket widths to set an honest work-overhead bound.
+- TDD contract for `tests/test_grouped_soa_spike.py` first failed on the absent module, then passed after adding the standalone implementation. The five-case 2-thread/30-repeat kernel A/B at bucket width 32 was bitwise equal for `Ogw/Oj/Opgw/handoff_eps`, but candidate/base medians were default `1.3143`, lowT `1.3500`, highT `1.3217`, stiff `1.3293`, high-kappa `1.3418`; p95 ratios were `1.2903/1.4086/1.3471/1.3558/1.3848`. Measured lockstep work overhead was only `5.15–5.57%`, so the extra `31–35%` runtime is implementation/layout overhead rather than arithmetic work; this is a strong early negative signal, but a full-outer confirmation is still required by the contract.
+- Full-outer 2-thread/25-repeat confirmation preserved spectrum, `DN_gw`, `g2`, `w2`, failure and convergence bitwise in all five cases, but candidate/base median ratios were default `1.2028`, lowT `1.2432`, highT `1.1864`, stiff `1.2323`, high-kappa `1.2080`; p95 ratios were `1.0974/1.0920/1.1171/1.3418/1.2220`. LLVM/ASM inspection found no `<N x double>` vector tokens in the grouped kernel despite loop-vectorization blocks (the visible vector loops are integer/layout machinery); LLVM had 16 exp, 7 sin and 7 cos references, with 258 assembly calls. Decision: `REJECTED_FOR_PRODUCTION`; no formal 16/20-thread gate or production change.
+- A read-only first-iteration capture exposed a materially different outer hypothesis: the first full propagation's `DN_gw` is about `0.434x` of the final self-consistent value in all five named cases (`0.00098309 -> 0.00226365` default, `0.0245086 -> 0.0564331` highT, `0.00650761 -> 0.0149843` stiff, `0.0980231 -> 0.225706` high-kappa, `2.30674e-8 -> 5.31146e-8` lowT). Sparse frequency subsets do not fix this: 16-node first-pass estimates remain near the first-pass value, with `42–59%` relative error to the final value. The stable factor suggests an initial-map fixed-point predictor may have headroom, but it must be tested on edge/Sobol and with an actual one-pass full solve; do not assume the factor is universal.
+- Fixed-gain one-pass predictor screen (`gain=2.30`, coarse count 32) failed the first named correctness gate before any performance promotion: default candidate `DN_gw=9.9067e-4` versus converged `2.26365e-3` (`56.2%` relative) and spectrum max difference `5.006e-3 dex`, although status and deterministic replay matched and the frequency grid was identical. Decision: reject this fixed-gain hypothesis; no gain tuning on the same sample.
+
+## Round 30 correction — predictor harness audit and final rejection (2026-09-23)
+
+- The first predictor result had a standalone harness defect, not a production
+  numerical finding: `_evaluate_once` used the PCHIP integral in `d log10(f)`
+  directly, while the production path multiplies the native integral by
+  `ln(10)` to obtain `d ln(f)`. A TDD regression test reproduced the mismatch;
+  the helper now uses the exact production vectorized PCHIP measure.
+- After correction, the fixed-point first iterate was set to the only
+  assumption justified by the data, `x1=x0+g(x0)` (`gain=1.0`). The corrected
+  five-case screen remained deterministic and status-equivalent, but failed
+  the spectrum gate in every named case: max differences were
+  `5.006e-3/5.905e-3/4.905e-3/3.342e-3/5.044e-3 dex` for
+  default/low-T/high-T/stiff/high-kappa, all above `1e-3 dex`.
+- Root cause of the persistent mismatch is production semantics, not a cache:
+  the fast outer loop may accept after one propagation and set the final
+  `DN_eff` without regenerating the already-returned spectrum/background at
+  that final value. The predictor's one full solve at `x1` therefore does not
+  reproduce the production output at `x0`; forcing it to solve at `x0` removes
+  the proposed work saving. The current output contract makes this predictor
+  unsuitable for promotion, so no gain tuning or second-order secant variant
+  will be reopened on this path.
+- Artifact: `docs/coarse_fixed_point_round30_20260923.json`. The prototype and
+  contract test remain standalone; production source is unchanged.
+- Decision: **REJECTED_FOR_PRODUCTION**. Next concrete experiment is a
+  residual-controlled local phase/adiabatic transfer prototype with exact
+  production fallback, not another outer predictor or grouped-layout retune.

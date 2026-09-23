@@ -27,6 +27,81 @@
 - [x] P3: LLVM/ASM hotspot audit and candidate decision (recompile-backed; specialized spike rejected for formal high-kappa regression)
 - [x] P4: final artifact verification and review complete; commit/push is the remaining delivery action (production source unchanged)
 
+## Autonomous continuation: Round 29+ — grouped SoA/AoSoA propagation feasibility
+
+### Acceptance criteria
+
+- Reuse the fresh canonical profile contract: `kink_split=True`, goal grid, PCHIP, fixed affinity/resources, alternating A/B measurements, median and p95.
+- Keep the production Cartesian transfer map, phase subdivision, tail handoff, assembly schedule, guards, failure reasons, output ordering, and deterministic semantics unchanged inside the standalone candidate.
+- Candidate must account for bucket-induced extra work. A bucket width is admissible only if its lockstep work overhead is measured and the full outer result is not slower after the expected SIMD benefit.
+- Kernel outputs must be bitwise equal on all five named cases before outer timing. Full outer must preserve spectra/DN/g2/w2/failure/convergence and deterministic replay; no production dispatch without formal 2/16/20-thread stability and edge/Sobol evidence.
+
+### Phases
+
+- [x] P5a: fresh Round 29 canonical profile, Amdahl analysis, literature scan, and j0/tail divergence screen
+- [x] P5b: TDD red/green standalone grouped SoA/AoSoA kernel with explicit scatter and work-overhead telemetry
+- [x] P5c: named-case bitwise gate and 2-thread full-outer gate; formal 16/20-thread expansion skipped after decisive regression
+- [x] P5d: REJECT grouped SoA/AoSoA; LLVM showed no vector double lanes; select a materially different next experiment
+
+### Next Step
+
+Select the next standalone experiment from the surviving candidate pool; do not retune bucket width or reopen the rejected grouped-lockstep implementation.
+
+## Autonomous continuation: Round 30 — coarse fixed-point predictor feasibility
+
+### Hypothesis
+
+The first outer map at the original `DN_eff` is a stable contraction across named
+regimes. A sparse 32-frequency Cartesian pre-solve may estimate the fixed-point
+`DN_eff` cheaply enough that one full solve at the extrapolated point replaces the
+current two full solves on hard cases.
+
+### Acceptance criteria
+
+- Standalone only; no production API or solver source changes.
+- Use the exact production Cartesian transfer, `kink_split=True`, goal-grid ordering,
+  PCHIP integration and existing physical guards. The only changed factor is the
+  coarse frequency pre-solve plus fixed-point extrapolation.
+- First screen: five named cases, candidate full outputs against the converged
+  production baseline with spectrum max difference `<=1e-3 dex`, `DN_gw` relative
+  difference `<=2e-4`, equal failure/convergence status, and deterministic replay.
+- If the first screen passes, expand to edge/Sobol plus independent Cartesian/Prüfer/WKB
+  checks and 2/16/20-thread median/p95 end-to-end accounting. If it fails, reject
+  immediately and retain the artifact; do not tune the factor on the same sample.
+- Report coarse-prepass and full-solve costs separately, then compare total candidate
+  end-to-end time against the two-solve production baseline.
+
+### Next Step
+
+Write the failing predictor contract test, then implement a standalone one-pass evaluator and coarse prepass; production remains untouched.
+
+### Round 30 outcome
+
+- [x] TDD caught and fixed the prototype's missing `ln(10)` conversion in the
+  PCHIP `d ln(f)` measure.
+- [x] Re-ran the corrected gain-1 first-iterate predictor across all five
+  named cases. Status/determinism gates passed, but spectrum max error was
+  `3.342e-3`–`5.905e-3 dex`, above the `1e-3 dex` gate in every case.
+- [x] Audited the residual mismatch to production's one-iteration output
+  contract: final scalar `DN_eff` can be updated without regenerating the
+  returned spectrum/background. A predictor full solve at the new scalar
+  cannot be contract-equivalent while saving the first propagation.
+- [x] Reject the predictor family for this output contract; do not tune gain or
+  reopen a secant variant on the same path.
+
+### Next experiment: residual-controlled local phase/adiabatic transfer
+
+- [ ] Build a standalone residual-controlled local phase/adiabatic transfer
+  twin around the existing Cartesian mode equation. It must estimate local
+  phase/commutator defect, use larger blocks only when the defect gate passes,
+  and fall back exactly to the production transfer otherwise.
+- [ ] First gate: named/edge/Sobol mode-level comparison to the independent
+  reference/oracle, physical guards and failure semantics; no production edit.
+- [ ] Only if it reduces actual propagation steps and passes the correctness
+  gate, run alternating full end-to-end median/p95 A/B at fixed resources.
+- [ ] Record ACCEPT/REJECT and select the following concrete candidate in this
+  ledger immediately.
+
 ### Baseline correction note
 
 The first fresh profiler invocation omitted `--kink-split`; its output is explicitly non-canonical and excluded from evidence. Re-run the same five cases with `kink_split=True` before selecting a candidate.

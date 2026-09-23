@@ -1,0 +1,33 @@
+{
+  "bucket_width": 32,
+  "candidate": "grouped_soa_cartesian_transfer",
+  "cases": [
+    {
+      "actual_work": 203057,
+      "baseline_median_s": 0.003137300000162213,
+      "baseline_p95_s": 0.0035022799995658707,
+      "bitwise_equal": true,
+      "bucket_count": 69,
+      "bucket_width": 32,
+      "candidate_median_s": 0.004170300000168936,
+      "candidate_p95_s": 0.0047485249996498165,
+      "case": "stiff",
+      "digest_Ogw_equal": true,
+      "digest_Oj_equal": true,
+      "digest_Opgw_equal": true,
+      "digest_handoff_eps_equal": true,
+      "first_divergence": null,
+      "j0_span": 11609,
+      "lockstep_work": 213548,
+      "max_bucket_lanes": 8,
+      "median_ratio": 1.3292640168148766,
+      "repeats": 30,
+      "tail_end_span": 11916,
+      "threads": 2,
+      "work_overhead": 1.051665295951383
+    }
+  ],
+  "commit": "1750772a1c70cb3f99edc054fd7841220bdf3601",
+  "production_unchanged": true,
+  "scope": "kernel"
+}
