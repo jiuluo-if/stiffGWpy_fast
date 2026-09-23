@@ -1449,3 +1449,14 @@ the diagnostic artifacts are retained.
   canonical failure; the Round 62 push will create the next CI run.
 - [ ] Next: local polynomial-coefficient macrostep transfer with an
   independent defect bound and no global WKB amplitude transport. No AI.
+
+- Round 63 completed at `e63fc9e`: fresh canonical total medians/p95 were
+  `5.601/6.562`, `6.150/8.198`, `9.389/11.472`, `12.872/14.588`, and
+  `12.704/15.391 ms`; tensor medians were `2.619/3.029/4.587/6.756/5.737 ms`.
+- Pairwise commutator Magnus halved the map count but had component error
+  `1.23e-3--5.34e-3`, power error `5.48e-6--1.46e-5`, and warmed ratios
+  `1.69--1.91x`; rejected by correctness and Amdahl. Production unchanged.
+- Round 62 push is confirmed at remote SHA `e63fc9e`; the new CI run was not
+  yet visible, while the latest visible run #229 had canonical failure only.
+- [ ] Next: defect-canceling local polynomial transfer reusing the production
+  trigonometric map, with an independent bound before timing. No AI.

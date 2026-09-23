@@ -998,3 +998,17 @@ Phase 3: Implementation and evidence-driven optimization
 - [ ] Next: analytically integrated local polynomial-coefficient macrostep
   with an independent defect bound, without global WKB amplitude transport.
   No AI/learned model.
+
+## Round 63 — pairwise commutator Magnus (2026-09-23)
+
+- [x] Re-fetched Round 62 HEAD and refreshed all five canonical profiles with
+  the fixed resources and `kink_split=true`; digests remained stable.
+- [x] Corrected the standalone closed-form map, then passed finite/map-count
+  gates; native map count was halved.
+- [x] Independent power/component errors were `5.48e-6--1.46e-5` /
+  `1.23e-3--5.34e-3`, and warmed ratios were `1.69--1.91x`; rejected by
+  correctness and Amdahl before full production integration.
+- [x] Production source unchanged; evidence and test are ready to commit and
+  push.
+- [ ] Next: defect-canceling local polynomial transfer reusing the production
+  trigonometric map, with an independent error bound before timing. No AI.

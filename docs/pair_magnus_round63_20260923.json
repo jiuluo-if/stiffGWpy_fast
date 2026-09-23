@@ -1,0 +1,66 @@
+{
+  "candidate": "pair_commutator_magnus_round63",
+  "commit": "e63fc9ed14006c44d85f849fc282590164e4d3ac",
+  "production_unchanged": true,
+  "settings": {
+    "case": null,
+    "output": "docs/pair_magnus_round63_20260923.json"
+  },
+  "cases": [
+    {
+      "case": "default",
+      "native_intervals": 3522,
+      "candidate_pair_maps": 1761,
+      "finite": true,
+      "candidate_power_relative_error": 1.2417924261900903e-05,
+      "candidate_component_relative_error": 0.002767545843407553,
+      "midpoint_baseline_seconds": 2.8599999495781958e-05,
+      "candidate_seconds": 5.3800002206116915e-05,
+      "candidate_over_midpoint": 1.8811189914199669
+    },
+    {
+      "case": "highT",
+      "native_intervals": 3350,
+      "candidate_pair_maps": 1675,
+      "finite": true,
+      "candidate_power_relative_error": 1.4632684104670232e-05,
+      "candidate_component_relative_error": 0.005337232610685475,
+      "midpoint_baseline_seconds": 2.7099998987978324e-05,
+      "candidate_seconds": 5.169999712961726e-05,
+      "candidate_over_midpoint": 1.907749042815522
+    },
+    {
+      "case": "stiff",
+      "native_intervals": 3522,
+      "candidate_pair_maps": 1761,
+      "finite": true,
+      "candidate_power_relative_error": 5.481507434038962e-06,
+      "candidate_component_relative_error": 0.001234552794258428,
+      "midpoint_baseline_seconds": 2.8899998142151162e-05,
+      "candidate_seconds": 5.369999780668877e-05,
+      "candidate_over_midpoint": 1.85813153144693
+    },
+    {
+      "case": "high_kappa",
+      "native_intervals": 3436,
+      "candidate_pair_maps": 1718,
+      "finite": true,
+      "candidate_power_relative_error": 8.556565655304227e-06,
+      "candidate_component_relative_error": 0.004299825554025389,
+      "midpoint_baseline_seconds": 2.8100002964492887e-05,
+      "candidate_seconds": 5.310000051395036e-05,
+      "candidate_over_midpoint": 1.8896795342351895
+    },
+    {
+      "case": "lowT",
+      "native_intervals": 4480,
+      "candidate_pair_maps": 2240,
+      "finite": true,
+      "candidate_power_relative_error": 1.3250578796284813e-06,
+      "candidate_component_relative_error": 0.001782977904955849,
+      "midpoint_baseline_seconds": 5.579999924520962e-05,
+      "candidate_seconds": 0.00010109999857377261,
+      "candidate_over_midpoint": 1.8118279559376869
+    }
+  ]
+}

@@ -2832,3 +2832,50 @@ Round 61 run `229` remained a failure: `canonical` failed while `static`,
 `package`, `cobaya`, and compatibility Python 3.9--3.13 passed. Round 62
 has not yet been pushed at the time of this entry; its CI status will be
 checked after the evidence commit.
+
+## Round 63 result — pairwise commutator Magnus screen (2026-09-23)
+
+Round 63 re-fetched the pushed Round 62 HEAD `e63fc9ed14006c44d85f849fc282590164e4d3ac`
+and refreshed the fixed-resource canonical profile with `kink_split=true`.
+The fresh total median/p95 values were default `5.601/6.562 ms`, low-T
+`6.150/8.198 ms`, high-T `9.389/11.472 ms`, stiff `12.872/14.588 ms`,
+and high-kappa `12.704/15.391 ms`; tensor medians were
+`2.619/3.029/4.587/6.756/5.737 ms` in the same order. Digests were stable.
+
+The selected local mathematical map combines two native intervals into one
+closed-form exponential of `Omega_1 + Omega_2`, where `Omega_2` is the exact
+linear-coefficient commutator term. This differs from the rejected four-step
+CF4/two-exponential and residual-guarded pair experiments: it uses one map,
+no per-pair oracle, and explicitly halves native map count. The corrected
+Numba standalone gate was finite across all five paths and retained exactly
+half the maps: `3522/3350/3522/3436/4480` native intervals became
+`1761/1675/1761/1718/2240` pair maps. Nevertheless, independent DOP853
+power errors were `5.48e-6--1.46e-5`, component errors were
+`1.23e-3--5.34e-3`, and warmed transfer ratios were `1.69--1.91x` of the
+production midpoint chain. It was therefore
+**REJECTED_BY_CORRECTNESS_AND_AMDAHL** before full-kernel/full-outer timing.
+Production source remains unchanged. An initial diagonal-term implementation
+bug was corrected before this final measurement and is not included in the
+verdict.
+
+Artifact: `docs/pair_magnus_round63_20260923.json`; prototype and test:
+`scripts/benchmark_pair_magnus_round63.py` and
+`tests/test_pair_magnus_round63.py`.
+
+The next pool is ordered as: (1) a two-interval local polynomial transfer
+with a defect-canceling correction that reuses the production trigonometric
+map and has a pre-timing independent bound; (2) a deterministic outer
+predictor that computes the full spectrum correction in the same propagation
+using a mathematically bounded local derivative, only if it reduces an actual
+outer call; (3) fresh LLVM/data-layout work only after a compiler/runtime
+change. Do not reopen the present commutator map, CF4, residual guards, raw
+Ermakov/WKB, or recurrence arithmetic. No AI/learned model is used.
+
+## CI status at Round 63 (2026-09-23)
+
+The Round 62 commit `e63fc9ed14006c44d85f849fc282590164e4d3ac` was pushed
+successfully. The GitHub Actions page had not yet published its new run when
+this entry was written; the latest visible run remained #229 for Round 60,
+which failed only in `canonical` while `static`, `package`, `cobaya`, and
+compatibility 3.9--3.13 passed. The new run must be checked again after
+GitHub schedules it.
