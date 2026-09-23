@@ -741,3 +741,16 @@ Phase 3: Implementation and evidence-driven optimization
   compiler/hardware evidence.
 - [ ] Next round: fetch/profile again, then select a distinct standalone method
   that can reduce real propagation work or expensive transfer evaluations.
+
+## Round 42 — sparse-frequency propagation screen (2026-09-23)
+
+- [x] Re-fetched at `7a39df3d2cc2b27d96749989521ad0bb57e06f75` and refreshed
+  the canonical profile before implementation.
+- [x] Amdahl retained propagation as the target (`43.5%–55.3%` tensor share).
+- [x] TDD and fixed-DN standalone screen completed. Propagating 39/76-77 modes
+  was materially faster, but scalar PCHIP reconstruction produced up to
+  `0.907 dex` spectrum error and failed the DN gate. No outer benchmark or
+  production change is allowed after this prerequisite failure.
+- [ ] Next round: fetch/profile, then test phase-aware complex-state
+  reconstruction as a distinct sparse-frequency representation; require named,
+  edge/Sobol and independent oracle gates before any runtime promotion.

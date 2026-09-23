@@ -2157,3 +2157,29 @@ Next selected direction is a fresh standalone candidate that must reduce real
 propagation work rather than retune lane layout; re-profile after fetch before
 implementation and do not reopen the rejected fixed-width lane route without
 new compiler or hardware evidence.
+
+## Round 42 result — sparse-frequency propagation with scalar spectrum reconstruction (2026-09-23)
+
+Fresh profiles at `7a39df3d2cc2b27d96749989521ad0bb57e06f75` used the fixed
+2-thread/workqueue/BLAS contract, 25 repeats, goal/PCHIP and `kink_split=true`.
+Total/tensor medians were `5.419/2.359` default, `5.131/2.786` low-T,
+`8.225/4.203` high-T, `8.193/4.534` stiff and `7.797/4.255` high-kappa ms;
+tensor shares were `43.5/54.3/51.1/55.3/54.6%`.
+Artifacts: `docs/profile_fast_breakdown_round42_20260923_*.json`.
+
+The standalone candidate propagated 39 of 76/77 goal frequencies (stride two,
+with both endpoints retained), then reconstructed the full output spectrum
+with PCHIP. It reduced fixed-DN propagation-plus-reconstruction medians to
+`0.722/0.744/0.644/0.661/0.635` of baseline, but the fixed-DN correctness
+gate failed immediately: maximum spectrum errors were `0.283/0.389/0.282/0.288/
+0.907 dex` and DN relative errors were `2.52e-3/5.18e-3/3.08e-3/2.76e-3/
+2.19e-3` in default/low-T/high-T/stiff/high-kappa order. It is therefore
+**REJECTED_FOR_PRODUCTION** before outer, independent-oracle, or formal-thread
+timing; no stride tuning is justified.
+Artifact: `docs/sparse_frequency_round42_20260923.json`.
+
+Next selected direction is a phase-aware sparse-frequency reconstruction
+prototype: interpolate the complex Cartesian transfer state before power and
+tail assembly, rather than fitting the already oscillatory power spectrum.
+This is a new representation hypothesis, not a retune of the rejected scalar
+PCHIP reconstruction; it must first pass fixed-DN named/edge/Sobol oracle gates.

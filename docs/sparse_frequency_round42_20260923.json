@@ -1,0 +1,124 @@
+{
+  "experiment": "round42_sparse_frequency_fixed_dn_screen",
+  "production_path_changed": false,
+  "commit": "7a39df3d2cc2b27d96749989521ad0bb57e06f75",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "settings": {
+    "cases": "default,lowT,highT,stiff,high_kappa",
+    "repeats": 25,
+    "threads": 2,
+    "stride": 2,
+    "out": "docs/sparse_frequency_round42_20260923.json"
+  },
+  "records": [
+    {
+      "case": "default",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "baseline_median_ms": 2.066700000796118,
+      "baseline_p95_ms": 2.6426400003401795,
+      "candidate_median_ms": 1.4917999997123843,
+      "candidate_p95_ms": 2.0617400012270073,
+      "candidate_over_baseline": 0.7218270668881429,
+      "spectrum_dex": {
+        "median": 0.0,
+        "p95": 0.26222183158716694,
+        "max": 0.28294076973448234
+      },
+      "dn_base": 1.2182619915169081e-08,
+      "dn_sparse": 1.2213318166709136e-08,
+      "dn_relative": 0.0025198398828671065,
+      "baseline_digest": "7647644fc23fffcf205a5a7a088c0d942b4cef8789a6b121c6d392a521d19eac",
+      "candidate_digest": "082335278ce5bfd38fc65efc67aca2b51101207a2baf803e2d688ed0b275a07a"
+    },
+    {
+      "case": "lowT",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "baseline_median_ms": 2.3819999987608753,
+      "baseline_p95_ms": 2.93902000048547,
+      "candidate_median_ms": 1.771299999745679,
+      "candidate_p95_ms": 2.238799999759067,
+      "candidate_over_baseline": 0.7436188080046665,
+      "spectrum_dex": {
+        "median": 0.0,
+        "p95": 0.19843356304004178,
+        "max": 0.38895521987871007
+      },
+      "dn_base": 2.858550381722741e-13,
+      "dn_sparse": 2.873365030529673e-13,
+      "dn_relative": 0.0051825739723376,
+      "baseline_digest": "6dbf15c037c134c59ee5fc7e2850143fd76341f2536344f421595aa547df0db9",
+      "candidate_digest": "b924371c60eb4eb402b898b45ec3fbd3f8203321e1b64e517ece3490c9d274fe"
+    },
+    {
+      "case": "highT",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "baseline_median_ms": 1.967599999261438,
+      "baseline_p95_ms": 2.49837999981537,
+      "candidate_median_ms": 1.2680999989242991,
+      "candidate_p95_ms": 1.8494199994165683,
+      "candidate_over_baseline": 0.6444907498476802,
+      "spectrum_dex": {
+        "median": 0.0,
+        "p95": 0.264827612543002,
+        "max": 0.28195321578173704
+      },
+      "dn_base": 3.0371462079908023e-07,
+      "dn_sparse": 3.046495041002705e-07,
+      "dn_relative": 0.0030781636350946133,
+      "baseline_digest": "578434e4645a5afadd05687e1149142e71281207b9e2399e0ab8ca775085789b",
+      "candidate_digest": "9795b1ab7e66ea836c1ef520e9735995768c6a1fa010f40233d30ff7b1d052ed"
+    },
+    {
+      "case": "stiff",
+      "stride": 2,
+      "full_modes": 76,
+      "propagated_modes": 39,
+      "baseline_median_ms": 2.1957000008114846,
+      "baseline_p95_ms": 3.1256399997801045,
+      "candidate_median_ms": 1.4515000002575107,
+      "candidate_p95_ms": 1.8396599996776786,
+      "candidate_over_baseline": 0.6610648083622839,
+      "spectrum_dex": {
+        "median": 0.0,
+        "p95": 0.2663741645294526,
+        "max": 0.28844420721335773
+      },
+      "dn_base": 8.064350343585649e-08,
+      "dn_sparse": 8.086587762694571e-08,
+      "dn_relative": 0.002757496656455399,
+      "baseline_digest": "94df862f27ec3cd78c7b51c52ba2f4b34fe3763baa6f3b384a0c62ae4e435223",
+      "candidate_digest": "537704dab6679048f8632e8aed7eed4ae4860fa4ce611332468e8f159b6c3d74"
+    },
+    {
+      "case": "high_kappa",
+      "stride": 2,
+      "full_modes": 77,
+      "propagated_modes": 39,
+      "baseline_median_ms": 2.0554000002448447,
+      "baseline_p95_ms": 2.5691399998322595,
+      "candidate_median_ms": 1.3061999998171814,
+      "candidate_p95_ms": 1.7231200010428436,
+      "candidate_over_baseline": 0.6354967401292125,
+      "spectrum_dex": {
+        "median": 0.0,
+        "p95": 0.27016029531130425,
+        "max": 0.9072026582593011
+      },
+      "dn_base": 1.214719183937613e-06,
+      "dn_sparse": 1.2173761424881597e-06,
+      "dn_relative": 0.0021873026998174365,
+      "baseline_digest": "c71c40b5bb19711993a35836592c56acaf4eea07b1cfa44d406302401be23f7a",
+      "candidate_digest": "ffafbad42057e2e6fb399fbb07cc7b5ad3b52040ebbac9021cbadc4233bf8baa"
+    }
+  ]
+}
