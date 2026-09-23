@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import statistics
 import subprocess
 import sys
@@ -20,14 +21,13 @@ import time
 from pathlib import Path
 
 try:
-    from scripts._resource_budget import apply_environment, limit_affinity, telemetry
+    from scripts._resource_budget import apply_environment, telemetry
 except ImportError:  # pragma: no cover
-    from _resource_budget import apply_environment, limit_affinity, telemetry
+    from _resource_budget import apply_environment, telemetry
 
 apply_environment()
 
 import numpy as np  # noqa: E402
-import psutil  # noqa: E402
 from numba import njit  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,6 +36,25 @@ sys.path.insert(0, str(ROOT))
 from scripts.benchmark_prufer_oracle import CASES  # noqa: E402
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
+
+
+def _pin_current_process(requested=2):
+    """Pin with the standard library; use optional psutil only on Windows."""
+    try:
+        available = sorted(os.sched_getaffinity(0))
+        selected = set(available[:min(int(requested), len(available))])
+        os.sched_setaffinity(0, selected)
+        return sorted(os.sched_getaffinity(0))
+    except (AttributeError, OSError):
+        try:
+            import psutil
+            process = psutil.Process()
+            available = list(process.cpu_affinity())
+            selected = available[:min(int(requested), len(available))]
+            process.cpu_affinity(selected)
+            return list(process.cpu_affinity())
+        except (ImportError, AttributeError, OSError):
+            return []
 
 
 @njit(cache=False, inline="always")
@@ -109,7 +128,7 @@ def _capture(case_name):
             return result
 
         FS.solve_kernel = solve
-        limit_affinity(psutil.Process(), 2)
+        _pin_current_process(2)
         FS.apply_accuracy_mode("fast")
         FS.set_threads(2)
         FS._OUTER_FULL_REUSE_SIGMA_TOL = 0.0
@@ -253,8 +272,7 @@ def main(argv=None):
     parser.add_argument("--case", action="append", choices=sorted(CASES))
     parser.add_argument("--output", required=True)
     args = parser.parse_args(argv)
-    process = psutil.Process()
-    limit_affinity(process, 2)
+    affinity = _pin_current_process(2)
     rows = []
     for case_name in args.case or ["default", "lowT", "highT", "stiff", "high_kappa"]:
         try:
@@ -267,13 +285,14 @@ def main(argv=None):
         "candidate": "event_aware_outer_tangent_endpoint_round66",
         "generated_commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-        "resources": telemetry(process, workers=1, threads=2),
+        "resources": telemetry(workers=1, threads=2),
         "production_unchanged": True,
         "rows": rows,
         "semantics": (
             "First-variation endpoint correction over the production midpoint "
             "transfer; discrete event changes fail closed."),
     }
+    payload["resources"]["affinity"] = affinity
     Path(args.output).write_text(json.dumps(payload, indent=2) + "\n",
                                  encoding="utf-8")
     print(json.dumps(payload, indent=2))
