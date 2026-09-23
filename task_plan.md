@@ -886,3 +886,12 @@ Phase 3: Implementation and evidence-driven optimization
   by Amdahl before full kernel/full outer. Production unchanged.
 - [ ] Next: screen an exact two-by-two block action with a precomputed schedule
   only if it removes actual phase substeps. No AI/learned model.
+
+## Round 54 — exact block schedule Amdahl screen (2026-09-23)
+
+- [x] Re-fetched at `6f14d18` and refreshed the canonical profile.
+- [x] Real sampled schedules retained all phase-map transcendental calls and
+  added matrix products; no actual propagation work was removed.
+- [x] Rejected by Amdahl without a full kernel candidate; production unchanged.
+- [ ] Next: fresh LLVM/ASM audit for vector lanes or invariant loads after the
+  current diagnostic additions. No AI/learned model.

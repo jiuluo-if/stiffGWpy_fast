@@ -2518,3 +2518,28 @@ schedule eliminates actual phase substeps rather than merely changing state
 coordinates; (2) a fresh LLVM vectorization/data-layout audit after the
 current Numba build; (3) sensitivity-assisted outer correction. Select (1)
 for a tiny operation-count screen, with no AI/learned model.
+
+## Round 54 result — exact block schedule Amdahl screen (2026-09-23)
+
+Fresh fetch/profile at `6f14d187b1547c58e746d4eee6a08d2329afa2ce` gave total/
+tensor medians in ms: default `5.04/1.90`, lowT `6.67/2.70`, highT
+`9.71/1.70`, stiff `8.62/2.06`, and high-kappa `8.30/1.70`; hard cases
+still had two kernel calls.
+
+The exact 2-by-2 composition hypothesis was screened against the actual
+phase-substep schedule rather than implemented. In the sampled named paths,
+`4096` phase maps were required per sample. An exact block schedule preserves
+all `4096` `exp/sin/cos/sqrt` evaluations and adds `2048` matrix products for
+two-native-interval groups; the toy 8-interval/3-substep probe likewise kept
+`24` transcendental maps and added `20` products. Exact composition can save
+neither the expensive coefficient functions nor real propagation steps, so
+the candidate is **REJECTED_BY_AMDAHL** without full-kernel timing. Production
+remains unchanged. Artifact:
+`docs/exact_block_schedule_round54_20260923.json`.
+
+The next pool is ordered as: (1) fresh LLVM/ASM audit for actual vector lanes
+or invariant loads after the current diagnostic additions; (2) a mathematically
+distinct outer predictor with a certified final-spectrum correction; (3)
+adaptive transfer representation only if it removes phase substeps rather
+than regrouping them. Select (1), because it is the lowest-cost way to find
+remaining strict-equivalence headroom. No AI/learned model is used.

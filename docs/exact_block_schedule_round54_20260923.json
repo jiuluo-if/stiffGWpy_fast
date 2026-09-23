@@ -1,0 +1,86 @@
+{
+  "experiment": "round54_exact_block_schedule_amdahl_screen",
+  "commit": "6f14d187b1547c58e746d4eee6a08d2329afa2ce",
+  "production_unchanged": true,
+  "operation_probe": {
+    "native_intervals": 8,
+    "substeps_per_native": 3,
+    "block_size": 2,
+    "baseline_transcendentals": 24,
+    "candidate_transcendentals": 24,
+    "candidate_extra_matrix_products": 20,
+    "candidate_extra_scalar_multiply_lower_bound": 80
+  },
+  "rows": [
+    {
+      "case": "default",
+      "sampled_modes": 16,
+      "native_intervals": 4096,
+      "phase_maps": 4096,
+      "max_phase_substeps": 1,
+      "block_size": 2,
+      "baseline_transcendentals": 4096,
+      "candidate_transcendentals": 4096,
+      "candidate_extra_matrix_products": 2048,
+      "candidate_extra_scalar_multiply_lower_bound": 8192,
+      "strict_equivalence": true,
+      "work_reduction": false
+    },
+    {
+      "case": "highT",
+      "sampled_modes": 16,
+      "native_intervals": 4096,
+      "phase_maps": 4096,
+      "max_phase_substeps": 1,
+      "block_size": 2,
+      "baseline_transcendentals": 4096,
+      "candidate_transcendentals": 4096,
+      "candidate_extra_matrix_products": 2048,
+      "candidate_extra_scalar_multiply_lower_bound": 8192,
+      "strict_equivalence": true,
+      "work_reduction": false
+    },
+    {
+      "case": "stiff",
+      "sampled_modes": 16,
+      "native_intervals": 4096,
+      "phase_maps": 4096,
+      "max_phase_substeps": 1,
+      "block_size": 2,
+      "baseline_transcendentals": 4096,
+      "candidate_transcendentals": 4096,
+      "candidate_extra_matrix_products": 2048,
+      "candidate_extra_scalar_multiply_lower_bound": 8192,
+      "strict_equivalence": true,
+      "work_reduction": false
+    },
+    {
+      "case": "high_kappa",
+      "sampled_modes": 16,
+      "native_intervals": 4096,
+      "phase_maps": 4096,
+      "max_phase_substeps": 1,
+      "block_size": 2,
+      "baseline_transcendentals": 4096,
+      "candidate_transcendentals": 4096,
+      "candidate_extra_matrix_products": 2048,
+      "candidate_extra_scalar_multiply_lower_bound": 8192,
+      "strict_equivalence": true,
+      "work_reduction": false
+    },
+    {
+      "case": "lowT",
+      "sampled_modes": 16,
+      "native_intervals": 4096,
+      "phase_maps": 4096,
+      "max_phase_substeps": 1,
+      "block_size": 2,
+      "baseline_transcendentals": 4096,
+      "candidate_transcendentals": 4096,
+      "candidate_extra_matrix_products": 2048,
+      "candidate_extra_scalar_multiply_lower_bound": 8192,
+      "strict_equivalence": true,
+      "work_reduction": false
+    }
+  ]
+}
