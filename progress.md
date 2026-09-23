@@ -1489,3 +1489,11 @@ the diagnostic artifacts are retained.
 - [ ] Next: pre-kernel interval certificate that handles discrete `j0`
   changes, or reject the outer-predictor family and move to a new certified
   transfer representation. No AI/learned model.
+
+- CI fix pushed as `6efc945`: stale kink-extended `solve_kernel` test mocks
+  were updated, and the existing fast-settings fixture is now autouse so
+  standalone spikes cannot leak `_KINK_SPLIT` into later tests.
+- Full local canonical equivalent now passes: `224 passed, 6 deselected, 2
+  warnings`; static, manifest, package-boundary, and wheel smoke checks also
+  pass. Remote Actions is not yet showing the new run, so remote green remains
+  unverified.

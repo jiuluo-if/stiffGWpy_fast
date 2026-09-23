@@ -1045,3 +1045,15 @@ Phase 3: Implementation and evidence-driven optimization
   certificate that explicitly handles `j0` changes; if it cannot certify the
   output without a response propagation, retire the outer-predictor family
   and select a new residual-certified transfer representation. No AI.
+
+## CI repair — canonical order dependence (2026-09-23)
+
+- [x] Reproduced the four historical canonical failures locally and traced
+  them to stale kink callback signatures plus process-global fast settings
+  leaking from standalone spike tests.
+- [x] Applied the minimal test-only repair: current optional kink parameters
+  in mocks and autouse settings restoration.
+- [x] Verified `224 passed, 6 deselected, 2 warnings`, static checks, manifest,
+  package boundary, and installed-wheel smoke; pushed as `6efc945`.
+- [ ] Recheck the GitHub Actions run for `6efc945`; until it appears, remote
+  CI is pending rather than declared green.

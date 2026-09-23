@@ -2989,3 +2989,32 @@ run newer than #229 for the pushed branch; run #229 is `Failure` because
 This is not evidence about Round 65 and remains an external CI publication
 issue. The local CI-equivalent full pytest result remains `217 passed, 4 known
 baseline failures, 6 deselected`; the new Round 65 tests passed.
+
+## CI fix — global test-state leakage and stale kernel mocks (2026-09-23)
+
+The repeated canonical failures were reproduced locally before the fix. Two
+tests replaced `solve_kernel` with callbacks that accepted the pre-kink
+19--23-argument form, while the formal kink path correctly passes the three
+additional optional arguments `kink_index`, `kink_fraction`, and `phi_re`.
+The other two failures were order-dependent: standalone spike tests called
+`apply_accuracy_mode('fast')`, which changed the process-global `_KINK_SPLIT`,
+and the old fixture restored settings only when a test explicitly requested
+it. This contaminated later transition-refine and module-state tests.
+
+The minimal fix in commit `6efc945bf21776c50d5bca7aea50b5abdc184d21` updates
+the three test callbacks to the current optional signature and makes the
+existing settings snapshot fixture `autouse=True`, restoring all fast global
+settings after every test. No production source, physical guard, tolerance,
+or numerical failure semantics changed.
+
+Verification after the fix: full local canonical equivalent `224 passed, 6
+deselected, 2 warnings`; Ruff, mypy, compileall, `git diff --check`, manifest
+validation, non-isolated sdist/wheel build, distribution boundary validation,
+and installed-wheel smoke all passed. The isolated Windows build still fails
+before project build due a temporary-path encoding `UnicodeDecodeError`; the
+workflow's Ubuntu package job is not affected by that local environment issue.
+
+The commit was pushed with the required Git identity and verified locally
+against `fast/fast_v0.2`. GitHub Actions has not yet published a run for
+`6efc945` in the web view; the previous visible run #229 remains the stale
+canonical failure. Recheck the new run before declaring remote CI green.
