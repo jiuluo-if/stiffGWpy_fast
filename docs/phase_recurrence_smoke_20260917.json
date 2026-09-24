@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence",
+  "production_path_changed": false,
+  "commit": "58af509ba5e15c28017ded9c4abceebc3594c5c2",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "repeats": 5,
+    "cases": [
+      "highT"
+    ]
+  },
+  "records": [
+    {
+      "case": "highT",
+      "n_freq": 76,
+      "repeats": 5,
+      "baseline_median_ms": 2.249300001494703,
+      "candidate_median_ms": 1.9894999986718176,
+      "baseline_p95_ms": 2.4223199998232303,
+      "candidate_p95_ms": 2.0576599992637057,
+      "candidate_over_baseline": 0.884497398012607,
+      "accuracy": {
+        "digest_equal": false,
+        "max_abs_output": 4.31999211799818e-14,
+        "spectrum_rel_p50": 1.9066290565095472e-11,
+        "spectrum_rel_p95": 3.1803439239009276e-06,
+        "spectrum_rel_max": 6.126994693809685e-06,
+        "DN_gw_relative": 2.9893636267805013e-13
+      }
+    }
+  ]
+}

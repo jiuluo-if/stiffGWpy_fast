@@ -1,0 +1,40 @@
+{
+  "experiment": "standalone_wkb_corrected_early_tail_handoff",
+  "production_path_changed": false,
+  "commit": "b0cdf549cb0d9b2026a3f51fa3bfa67b81f5e695",
+  "resources": {
+    "numba_threads": 2,
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "settings": {
+    "z_tail": [
+      5.0
+    ],
+    "cases": "default",
+    "repeats": 3,
+    "threads": 2,
+    "out": "docs/wkb_tail_handoff_smoke_z5_round13_20260917.json"
+  },
+  "records": [
+    {
+      "case": "default",
+      "z_tail": 5.0,
+      "repeats": 3,
+      "baseline_median_ms": 2.1159999996598344,
+      "candidate_median_ms": 1.8514000003051478,
+      "candidate_over_baseline": 0.87495274130566,
+      "spectrum_relative": {
+        "p50": 0.005060234664585207,
+        "p95": 0.006714016150760126,
+        "max": 0.0067730602023926756,
+        "n": 76
+      },
+      "DN_base": 1.2182619915169081e-08,
+      "DN_candidate": 1.211543984536408e-08,
+      "DN_relative": 0.005514418924073408,
+      "baseline_digest": "7647644fc23fffcf205a5a7a088c0d942b4cef8789a6b121c6d392a521d19eac",
+      "candidate_digest": "9a6a14f9c49887fd08d2678e34adc7fe12c1869db123486520bebf0676f3dffe"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_full_native_grid_oracle",
+  "production_path_changed": false,
+  "commit": "a1b0393358c1a6fccf5704217670b8d5e00ed659",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "points": [
+      "default"
+    ],
+    "threads": 2,
+    "rtol": 1e-10,
+    "freq_grid": "goal",
+    "frequency_quadrature": "pchip"
+  },
+  "records": [
+    {
+      "point": "default",
+      "n_freq": 76,
+      "dn_eff": 0.0022636474150855806,
+      "dn_gw": {
+        "production": 1.2182619915169081e-08,
+        "recurrence": 1.2182619915260564e-08,
+        "prufer": 0.002271875267120423,
+        "recurrence_vs_production_relative": 7.509293375557549e-12,
+        "production_vs_prufer_relative": 0.9999946376369815,
+        "recurrence_vs_prufer_relative": 0.9999946376369813
+      },
+      "spectrum_relative": {
+        "recurrence_vs_production": {
+          "p50": 1.1329437064090086e-10,
+          "p95": 2.2272186679295336e-06,
+          "max": 6.697368770120002e-06,
+          "n": 74
+        },
+        "production_vs_prufer": {
+          "p50": 0.004456745549575255,
+          "p95": 0.006721871746319849,
+          "max": 0.0073085423505095505,
+          "n": 76
+        },
+        "recurrence_vs_prufer": {
+          "p50": 0.004456745468689082,
+          "p95": 0.006722040118793534,
+          "max": 0.007308374257241599,
+          "n": 76
+        }
+      },
+      "oracle": {
+        "used_tail_fraction": 0.9210526315789473,
+        "quadrature_error": 3.125664172653026e-22,
+        "interpolation_error": 8.313099442303096e-11
+      },
+      "status": "ok"
+    }
+  ]
+}

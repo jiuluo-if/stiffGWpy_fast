@@ -1,0 +1,23 @@
+{
+  "commit": "9022f7e975ee385105291f2e7d5131bc80896d5c",
+  "experiment": "derived_param_cache_fast_path",
+  "production_path_changed": true,
+  "case": "highT",
+  "repeats": 50,
+  "threads": 2,
+  "outer": {
+    "uncached_median_ms": 11.229350000576233,
+    "cached_median_ms": 11.003650000930065,
+    "cached_over_uncached": 0.9799008847676326,
+    "uncached_p95_ms": 13.868704999913462,
+    "cached_p95_ms": 13.1517050014736,
+    "digest_equal": true,
+    "status_equal": true,
+    "spectrum_abs_dex_p50": 0.0,
+    "spectrum_abs_dex_p95": 0.0,
+    "spectrum_abs_dex_max": 0.0,
+    "dn_relative": 0.0,
+    "uncached_failure": null,
+    "cached_failure": null
+  }
+}

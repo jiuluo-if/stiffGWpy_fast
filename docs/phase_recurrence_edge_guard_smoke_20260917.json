@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_full_native_grid_oracle",
+  "production_path_changed": false,
+  "commit": "e85b43614d43ca2fa39ba03adbad9ffcdca6556a",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "points": [
+      "edge_tre_hi"
+    ],
+    "threads": 2,
+    "rtol": 1e-10,
+    "freq_grid": "goal",
+    "frequency_quadrature": "pchip"
+  },
+  "records": [
+    {
+      "point": "edge_tre_hi",
+      "status": "physical_guard",
+      "message": "fast preparation failed for case edge_tre_hi: shared_Neff_guard"
+    }
+  ]
+}

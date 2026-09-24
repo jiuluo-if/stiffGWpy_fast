@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "experiment": "standalone_phase_exp_recurrence_outer_matrix",
+  "production_path_changed": false,
+  "commit": "e85b43614d43ca2fa39ba03adbad9ffcdca6556a",
+  "resource": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "settings": {
+    "points": [
+      "default",
+      "edge_tre_hi"
+    ],
+    "threads": 2,
+    "frequency_quadrature": "pchip",
+    "freq_grid": "goal",
+    "kink_split": true
+  },
+  "summary": {
+    "total": 2,
+    "base_ok": 1,
+    "candidate_ok": 1,
+    "status_mismatch": 0,
+    "false_safe_count": 0,
+    "max_spectrum_delta_dex": 2.9075948315693267e-06,
+    "max_DN_rel": 7.51415492071168e-12
+  },
+  "rows": [
+    {
+      "point": "default",
+      "base_status": "ok",
+      "candidate_status": "ok",
+      "status_match": true,
+      "base_failure": null,
+      "candidate_failure": null,
+      "n_freq": 76,
+      "spectrum_delta_dex": {
+        "p50": 2.1392665416897216e-11,
+        "p95": 9.55406195934927e-07,
+        "max": 2.9075948315693267e-06,
+        "n": 76
+      },
+      "DN_rel": 7.51415492071168e-12,
+      "base_DN_gw": 0.0022636474150855806,
+      "candidate_DN_gw": 0.00226364741510259
+    },
+    {
+      "point": "edge_tre_hi",
+      "base_status": "physical_guard",
+      "candidate_status": "physical_guard",
+      "status_match": true,
+      "base_failure": "shared_Neff_guard",
+      "candidate_failure": "shared_Neff_guard"
+    }
+  ]
+}

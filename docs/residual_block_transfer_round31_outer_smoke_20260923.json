@@ -1,0 +1,42 @@
+{
+  "candidate": "residual_controlled_two_step_transfer",
+  "commit": "fc26e3408a507cbe8b9b4c56df5199773739895c",
+  "production_unchanged": true,
+  "settings": {
+    "case": [
+      "default"
+    ],
+    "threshold": [
+      0.001
+    ],
+    "repeats": 5,
+    "threads": 2,
+    "phase_cap": 0.5,
+    "oracle": false,
+    "outer": true,
+    "output": "docs/residual_block_transfer_round31_outer_smoke_20260923.json"
+  },
+  "rows": [
+    {
+      "case": "default",
+      "threshold": 0.001,
+      "phase_cap": 0.5,
+      "threads": 2,
+      "repeats": 5,
+      "baseline_median_ms": 6.660400000328082,
+      "candidate_median_ms": 5.934099999649334,
+      "candidate_over_baseline": 0.8909524952490885,
+      "baseline_p95_ms": 7.0142000000487315,
+      "candidate_p95_ms": 6.943319999481901,
+      "f_equal": true,
+      "spectrum_equal": false,
+      "DN_gw_equal": false,
+      "g2_equal": false,
+      "w2_equal": false,
+      "failure_equal": true,
+      "converged_equal": true,
+      "spectrum_max_dex": 1.8758459799705918e-05,
+      "DN_gw_relative": 3.590973491662238e-05
+    }
+  ]
+}
