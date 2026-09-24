@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import json
 import hashlib
 import io
+import json
 import math
 import os
 import platform
-import statistics
 import subprocess
 import sys
 import time
@@ -319,11 +318,11 @@ def env_meta() -> dict:
     weight_file = SAGE / "sagenetgw" / "models" / "best_gw_model_Transformer.pth"
     meta["sagenet_transformer_weights_sha256"] = (
         hashlib.sha256(weight_file.read_bytes()).hexdigest() if weight_file.is_file() else None)
+    import matplotlib as matplotlib_mod
     import numba
     import scipy
     import sklearn
     import torch as torch_mod
-    import matplotlib as matplotlib_mod
     meta.update(numpy=np.__version__, scipy=scipy.__version__, numba=numba.__version__,
                 torch=torch_mod.__version__, sklearn=sklearn.__version__,
                 matplotlib=matplotlib_mod.__version__)
@@ -357,7 +356,6 @@ def posterior_accuracy_check(result: dict, chain_store: dict, predictors: dict,
                              data: np.ndarray, points_per_engine: int) -> dict:
     """Compare all solvers with the independent reference at posterior draws."""
     checks = {}
-    likelihood = make_likelihood(data)
     for context_index, (context_name, context) in enumerate(CONTEXTS.items()):
         rng = np.random.default_rng(2026092401 + context_index)
         points = []
@@ -834,7 +832,7 @@ def write_report(result: dict) -> None:
     lines += ["- **观测解释边界**：低温情景 LVK 频段覆盖为 0%，不支持拟合优劣结论；本报告比较的是数值频谱相对本地参考的误差。",
               "- **科研使用判断**：fast 与 plain-grid 三个情景都达到本报告的链诊断参考；SageNet+ 基准与低温情景未达到，因此这份三方后验比较整体尚未全部通过科研生产验收。基准 SageNet+ 还存在不同链落入不同覆盖区域的问题。", "",
               "## 原始数据与复现", "",
-              f"- `results.json`：每种方法、情景的汇总、诊断量、逐参数点精度结果和环境信息。",
+              "- `results.json`：每种方法、情景的汇总、诊断量、逐参数点精度结果和环境信息。",
               f"- `{result['chain_file']}`：四条链全部保留样本、起点和逐链耗时；随报告一并归档。",
               "- `scripts/benchmark_mcmc_sagenet_compare.py`：采样、诊断、精度核验与绘图脚本。",
               f"- LVK 数据 SHA-256：`{result['environment']['lvk_data_sha256']}`；SageNet Transformer 权重 SHA-256：`{result['environment']['sagenet_transformer_weights_sha256']}`。",
