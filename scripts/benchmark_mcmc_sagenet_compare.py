@@ -392,28 +392,35 @@ def make_plots(result: dict, chain_store: dict, logf_oracle: np.ndarray) -> None
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LinearSegmentedColormap
 
     plt.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "DejaVu Sans"]
     plt.rcParams["axes.unicode_minus"] = False
 
-    colors = {"最初 plain-grid": "#7e57c2", "当前 fast": "#1976d2", "SageNet+ Transformer": "#ef6c00"}
-    fig, axes = plt.subplots(1, len(CONTEXTS), figsize=(15, 4.8), constrained_layout=True)
-    for ax, (context_name, _) in zip(axes, CONTEXTS.items()):
-        for i, engine in enumerate(ENGINES):
+    # Color-blind-friendly, high-contrast palette used consistently in all figures.
+    colors = {"最初 plain-grid": "#0072B2", "当前 fast": "#D55E00", "SageNet+ Transformer": "#009E73"}
+    markers = {"最初 plain-grid": "o", "当前 fast": "s", "SageNet+ Transformer": "^"}
+    line_styles = {"最初 plain-grid": "-", "当前 fast": "--", "SageNet+ Transformer": ":"}
+    fig, axes = plt.subplots(len(ENGINES), len(CONTEXTS), figsize=(15, 9),
+                             sharex=True, sharey=True, constrained_layout=True)
+    for row_index, engine in enumerate(ENGINES):
+        for col_index, context_name in enumerate(CONTEXTS):
+            ax = axes[row_index, col_index]
+            i = ENGINES.index(engine)
             samples = chain_store[f"{context_name}_{i}"].reshape(-1, 2)
             ax.hexbin(samples[:, 0], samples[:, 1], gridsize=32, mincnt=1,
-                      bins="log", cmap={"最初 plain-grid": "Purples", "当前 fast": "Blues",
-                                       "SageNet+ Transformer": "Oranges"}[engine],
-                      alpha=0.34, linewidths=0.0)
+                      bins="log", cmap=LinearSegmentedColormap.from_list(
+                          f"posterior_{i}", ["#FFFFFF", colors[engine]], N=256),
+                      alpha=0.95, linewidths=0.0)
             mean = np.mean(samples, axis=0)
-            ax.plot(mean[0], mean[1], marker="o", color=colors[engine], ms=5,
-                    label=engine if context_name == next(iter(CONTEXTS)) else None)
-        ax.set_title(context_name)
-        ax.set_xlabel(r"$\log_{10}(r)$")
-        ax.grid(alpha=0.2)
-    axes[0].set_ylabel(r"$n_t$")
-    axes[0].legend(fontsize=8, loc="best")
-    fig.suptitle("同一 LVK 数据下的 MCMC 后验分布（每种方法 3 条独立链）")
+            ax.plot(mean[0], mean[1], marker=markers[engine], color=colors[engine],
+                    markeredgecolor="#202020", markeredgewidth=0.8, ms=6,
+                    label=engine)
+            ax.set_title(context_name)
+            ax.set_xlabel(r"$\log_{10}(r)$")
+            ax.grid(alpha=0.2)
+            ax.set_ylabel(r"$n_t$" + (f"\n{engine}" if col_index == 0 else ""))
+    fig.suptitle("MCMC 后验分布：按方法分行、按参数情景分列（每格 3 条链）")
     fig.savefig(OUT / "mcmc_posterior.png", dpi=200)
     plt.close(fig)
 
@@ -449,7 +456,9 @@ def make_plots(result: dict, chain_store: dict, logf_oracle: np.ndarray) -> None
                 label="本地独立精度参照")
         for i, engine in enumerate(ENGINES):
             row = ref["engines"][engine]
-            ax.plot(freq, row["spectrum_log10"], color=colors[engine], lw=1.4,
+            ax.plot(freq, row["spectrum_log10"], color=colors[engine], lw=1.8,
+                    linestyle=line_styles[engine], marker=markers[engine], markevery=8,
+                    ms=4,
                     label=engine if context_name == next(iter(CONTEXTS)) else None)
         ax.set_title(context_name)
         ax.set_xlabel(r"频率 $\log_{10}(f/\mathrm{Hz})$")
@@ -525,7 +534,8 @@ def write_report(result: dict) -> None:
               "- 精度参照：本地连续-sigma 独立求解器（rtol=1e-7，z_tail=8）只在 MCMC 后验中心附近、三种方法共同覆盖的频段比较 48 个频率点；它不参加 MCMC。", "",
               "## 结果文件", "",
               "### 后验样本分布", "",
-              "横轴是 `log10(r)`，纵轴是斜率 `n_t`；同色区域越密表示链越常访问该参数组合。", "",
+              "横轴是 `log10(r)`，纵轴是斜率 `n_t`；颜色越深表示链越常访问该参数组合。图按方法分行、按情景分列，避免三种分布叠加后颜色混在一起。", "",
+              "三种方法使用固定高对比颜色：最初 plain-grid 为蓝色、当前 fast 为橙色、SageNet+ 为绿色；本次已用新配色重绘并替换旧图。", "",
               "![三种方法的 MCMC 后验样本分布](mcmc_posterior.png)", "",
               "### 速度与有效样本", "",
               "每步时间越低越快；有效样本/秒越高，表示同样时间内可用的独立信息越多。", "",
