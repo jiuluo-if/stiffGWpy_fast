@@ -1583,7 +1583,7 @@ the diagnostic artifacts are retained.
 - [x] Changed only the standalone spike tests to use a documented bounded
   forward-error gate (`rtol=5e-12`, `atol=1e-15`, `equal_nan=False`) while
   retaining exact kink metadata checks. Focused tests: `3 passed`; Ruff clean.
-- [ ] Push the CI repair and confirm a new all-job green Actions run.
+- [x] Pushed the cross-backend no-copy assertion repair at `c7d4766`; GitHub Actions run `35839494161` passed all nine jobs.
 
 ## Documentation freshness pass — 2026-09-24
 
@@ -1605,3 +1605,14 @@ the diagnostic artifacts are retained.
 - Remaining: audit all tracked Markdown/generator wording, verify README pairs,
   relative links and JSON, inspect the complete diff, then commit/push only the
   shared reviewed paths to `fast_v0.2`.
+
+## CI follow-up — MCMC benchmark Ruff repair (2026-09-24)
+
+- Latest failed Actions runs `36006258849`, `36006594124`, and `36006595813`
+  had only the `static` job fail. The reported issues were all in
+  `scripts/benchmark_mcmc_sagenet_compare.py`: import order, one unused import,
+  one unused local, a local import order, and an unnecessary f-string prefix.
+- Reordered imports, removed only unused bindings, and kept the report content
+  and benchmark logic unchanged. Local Ruff and Python compilation pass.
+- Pushed as `4c59d80`; Actions run `36007199461` passed canonical, static,
+  package, Cobaya, and Python 3.9–3.13 compatibility jobs.
