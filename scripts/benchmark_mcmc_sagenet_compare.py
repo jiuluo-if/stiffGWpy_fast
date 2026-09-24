@@ -476,18 +476,25 @@ def write_report(result: dict) -> None:
              f"代码版本：stiffGWpy `{result['environment']['stiffgwpy_sha']}`；SageNet `{result['environment']['sagenet_sha']}`。", "",
              "## 先看结果", "",
              "本报告把三种方法放进同一套随机游走 MCMC、同一份 LVK O1/O2/O3 数据和同一似然函数。每种方法、每个参数情景各跑 3 条独立链。",
+             "简单说，MCMC 会在参数范围里反复试组合：更符合观测的组合更容易留下；保留下来的组合形成后验样本，表示在当前数据和设定下哪些参数更受支持。",
              "速度按整条采样链计时；精度参照档只在采样后抽出的共同参数点运行，不参与链的计时或后验。", "",
-             "| 参数情景 | 方法 | 每步平均耗时（ms） | 有效样本/秒（较难参数） | 接受比例 | 最大 R-hat | log10(r) 后验均值 ± 标准差 | n_t 后验均值 ± 标准差 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
+             "| 参数情景 | 方法 | 每步耗时（越低越快，ms） | 每秒有效样本（越高越好） | 接受提议比例 | 最大 R-hat | log10(r) 样本中心 ± 散布 | n_t 样本中心 ± 散布 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
     for context_name in CONTEXTS:
         for engine in ENGINES:
             row = result["contexts"][context_name]["engines"][engine]
             mean, std = row["posterior_mean"], row["posterior_std"]
             lines.append(f"| {context_name} | {engine} | {row['milliseconds_per_step']:.3f} | {min(row['ess_per_second']):.2f} | {row['acceptance_median']:.1%} | {max(row['rhat_split']):.3f} | {mean[0]:.3f} ± {std[0]:.3f} | {mean[1]:.3f} ± {std[1]:.3f} |")
+    lines += ["", "### 先读懂表里的几个数", "",
+              "- **后验样本**：算法试走并保留下来的参数组合；越常出现，表示在当前数据和设定下越受支持。本次每条链保留 2,000 个组合；每个方法、每个情景合计 6,000 个。它们不是 6,000 份独立数据。",
+              "- **接受提议比例**：算法提出新参数组合后，实际移动到新组合的比例；它只描述采样过程，不表示模型准确率。",
+              "- **样本中心 ± 散布**：中心是保留参数值的平均数；散布（标准差）表示这些值分得宽还是窄。它反映在当前数据、模型和参数范围下的估计不确定性，不是算法精度误差；也不一定等同于严格的 68% 区间。",
+              "- **R-hat**：比较 3 条独立链走到的区域是否一致。越接近 1 越好；高于 1.05 通常提示链还没充分混合。本次都低于 1.05，但这只是基本检查，不保证所有区域都已采足。",
+              "- **有效样本数 ESS**：把彼此相近、重复的信息折算后，估计相当于多少个独立样本。表中每秒有效样本和后面的 ESS 都取两个参数中较小的那个，方便看较难采的参数。", ""]
     speedup = [result["contexts"][c]["engines"]["SageNet+ Transformer"]["milliseconds_per_step"] /
                result["contexts"][c]["engines"]["当前 fast"]["milliseconds_per_step"] for c in CONTEXTS]
     lines += ["", f"**简要结论：当前 fast 每一步约比 SageNet+ 快 {min(speedup):.1f}–{max(speedup):.1f} 倍；下面的谱误差表也显示当前 fast 在这三个情景都更接近本地精度参照。最初 plain-grid 同样纳入采样比较，速度与当前 fast 接近。**", ""]
-    lines += ["", "## 采样质量与精度", "",
-              "| 参数情景 | 方法 | 每个参数有效样本数 ESS | 最大 R-hat | LVK 频段覆盖比例 | p95 谱误差（dex） | 最大谱误差（dex） |", "|---|---|---:|---:|---:|---:|---:|"]
+    lines += ["", "## 采样是否稳定、频谱差多少", "",
+              "| 参数情景 | 方法 | 较低的 ESS（两个参数中较小值） | 最大 R-hat | 覆盖 LVK 观测频段 | 95%频点误差不超过（dex） | 最大频点误差（dex） |", "|---|---|---:|---:|---:|---:|---:|"]
     for context_name in CONTEXTS:
         ref = result["precision_reference"].get(context_name, {})
         for i, engine in enumerate(ENGINES):
@@ -497,7 +504,7 @@ def write_report(result: dict) -> None:
             coverage_txt = "未测" if coverage is None else f"{coverage:.1%}"
             p95 = prec.get("dex_p95")
             maxdex = prec.get("dex_max")
-            lines.append(f"| {context_name} | {engine} | {min(row['ess']):.0f} / 参数 | {max(row['rhat_split']):.3f} | {coverage_txt} | {'未测' if p95 is None else f'{p95:.3g}'} | {'未测' if maxdex is None else f'{maxdex:.3g}'} |")
+            lines.append(f"| {context_name} | {engine} | {min(row['ess']):.0f} | {max(row['rhat_split']):.3f} | {coverage_txt} | {'未测' if p95 is None else f'{p95:.3g}'} | {'未测' if maxdex is None else f'{maxdex:.3g}'} |")
     lines += ["", "**低重加热温度情景的 LVK 频段覆盖为 0%：三种方法的预测频率范围都没有覆盖观测频段，因此这个情景的后验主要由参数范围和采样规则决定，不能据此判断谁更符合数据。**",
               "", "失败提案按计算路径分别记账：", "",
               "| 参数情景 | 最初 plain-grid | 当前 fast | SageNet+ |", "|---|---|---|---|"]
@@ -508,8 +515,8 @@ def write_report(result: dict) -> None:
             return ", ".join(f"{labels.get(k, k)} {v} 次" for k, v in row["failure_counts"].items()) or "无"
         lines.append(f"| {context_name} | {describe_failures(failures['最初 plain-grid'])} | {describe_failures(failures['当前 fast'])} | {describe_failures(failures['SageNet+ Transformer'])} |")
     lines += ["", "这些次数表示提议点被拒绝，不是最终样本数；参数越界的提议不计入。物理一致性保护是模型边界检查，不等于数值故障。", "",
-              "图 1 是后验样本在两个被估参数上的位置；图 2 比较每步耗时和有效样本产出；图 3 将各方法的能谱与本地独立精度参照逐点叠画。",
-              "ESS 是链里大致相当于多少个独立样本；R-hat 越接近 1 越好。本次最大 R-hat 均低于 1.05，但每参数 ESS 约 80–115，后验均值仍适合看作本次计算的估计值。`dex` 是以 10 为底的对数误差，0.01 dex 约为 2% 的谱差，0.1 dex 约为 26%。", "",
+              "图 1 展示算法常采到哪些参数组合；图 2 比较耗时和有效样本产出；图 3 把三种算法的能谱与本地高精度参考叠在一起。",
+              "本次最大 R-hat 都低于 1.05；较低参数的 ESS 约为 80–115，说明链之间大体一致，但有效独立信息量仍有限，后验中心和散布应看作本次计算的估计。`dex` 是以 10 为底的对数差：0.01 dex 约相差 2%，0.1 dex 约相差 26%；数值越小越接近参考。", "",
               "## 比较了什么参数", "",
               "| 参数 | 通俗含义 | 本次设置 |", "|---|---|---|",
               "| `log10(r)` / `r` | 原初引力波强度相对标量扰动的比例；对数每增加 1，`r` 增大 10 倍 | MCMC 自由参数；`log10(r)` 在 -5 到 -1 均匀取值，即 `r` 为 1e-5 到 0.1 |",
