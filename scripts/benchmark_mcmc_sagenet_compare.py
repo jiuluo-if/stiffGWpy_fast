@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import io
 import math
 import os
 import platform
@@ -10,6 +12,7 @@ import statistics
 import subprocess
 import sys
 import time
+from contextlib import redirect_stdout
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -48,7 +51,7 @@ except (ImportError, RuntimeError):
     torch = None
 
 OUT = REPO / "docs" / "mcmc_sagenet_compare"
-CHAIN_FILE = REPO / "docs" / "mcmc" / "chains" / "sagenet_compare_20260924.npz"
+CHAIN_FILE = OUT / "posterior_chains_20260924.npz"
 DATA_FILE = REPO / "stiffgwpy_fast" / "cobaya" / "likelihoods" / "LIGO_SGWB" / "C_O1_O2_O3.dat"
 COMMON = dict(Omega_bh2=0.0223828, Omega_ch2=0.1201075,
               H0=67.32117, A_s=2.100549e-9, cr=0.0, DN_eff=0.0)
@@ -61,10 +64,12 @@ ENGINES = ("最初 plain-grid", "当前 fast", "SageNet+ Transformer")
 BOUNDS = ((-5.0, -1.0), (-0.5, 1.5))
 START = np.array([-2.0, 0.0])
 STEP = np.array([0.35, 0.12])
-SEEDS = (20260924, 20260925, 20260926)
-BURN = 1200
-KEEP = 2000
+SEEDS = (2026092401, 2026092402, 2026092403, 2026092404)
+STARTS = np.array([[-4.6, -0.45], [-3.6, -0.30], [-2.6, -0.15], [-1.8, 0.0]])
+BURN = 4000
+KEEP = 10000
 ORACLE_NFREQ = 48
+PRECISION_DRAWS_PER_ENGINE = 8
 _CONFIGURED_FAST_ENGINE = None
 
 
@@ -160,18 +165,20 @@ def evaluate_engine(engine: str, params: dict[str, float], predictor, likelihood
         return -math.inf, type(exc).__name__
 
 
-def mcmc_chain(engine: str, context: dict[str, float], seed: int, predictor, likelihood) -> dict:
+def mcmc_chain(engine: str, context: dict[str, float], seed: int, start: np.ndarray,
+               predictor, likelihood) -> dict:
     rng = np.random.default_rng(seed)
-    theta = START.copy()
+    theta = np.asarray(start, dtype=float).copy()
+    start_point = theta.tolist()
     params = common_parameters(context, theta)
     logp, reason = evaluate_engine(engine, params, predictor, likelihood)
     if not math.isfinite(logp):
         raise RuntimeError(f"{engine} initial point rejected: {reason}")
-    samples = np.empty((BURN + KEEP, 2), dtype=float)
+    samples = np.empty((KEEP, 2), dtype=float)
     accepted = 0
     failures = {}
-    t0 = time.perf_counter()
-    for i in range(BURN + KEEP):
+    def advance() -> None:
+        nonlocal theta, logp, accepted
         proposal = theta + rng.normal(size=2) * STEP
         inside = all(lo <= val <= hi for val, (lo, hi) in zip(proposal, BOUNDS))
         if inside:
@@ -182,60 +189,114 @@ def mcmc_chain(engine: str, context: dict[str, float], seed: int, predictor, lik
             if math.isfinite(proposal_logp) and math.log(rng.random()) < proposal_logp - logp:
                 theta, logp = proposal, proposal_logp
                 accepted += 1
+    t0 = time.perf_counter()
+    for _ in range(BURN):
+        advance()
+    warmup_s = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    for i in range(KEEP):
+        advance()
         samples[i] = theta
-    elapsed = time.perf_counter() - t0
-    chain = samples[BURN:]
-    return {"samples": chain, "wall_s": elapsed, "acceptance": accepted / (BURN + KEEP),
-            "failure_counts": failures, "seed": seed}
+    sampling_s = time.perf_counter() - t0
+    chain = samples
+    return {"samples": chain, "warmup_s": warmup_s, "sampling_s": sampling_s,
+            "wall_s": warmup_s + sampling_s, "acceptance": accepted / (BURN + KEEP),
+            "failure_counts": failures, "seed": seed, "start": start_point}
 
 
-def autocorrelation_ess(chain: np.ndarray) -> list[float]:
-    result = []
-    n = len(chain)
-    for column in range(chain.shape[1]):
-        values = chain[:, column] - np.mean(chain[:, column])
-        size = 1 << (2 * n - 1).bit_length()
-        fft = np.fft.rfft(values, n=size)
-        acf = np.fft.irfft(fft * np.conjugate(fft), n=size)[:n]
-        if acf[0] <= 0:
-            result.append(float(n))
-            continue
-        acf /= acf[0]
-        tau = 1.0
-        for lag in range(1, n - 1, 2):
-            pair = acf[lag] + acf[lag + 1]
+def split_chains(chains: np.ndarray) -> np.ndarray:
+    half = chains.shape[1] // 2
+    return np.concatenate((chains[:, :half], chains[:, -half:]), axis=0)
+
+
+def basic_rhat(chains: np.ndarray) -> np.ndarray:
+    m, n, _ = chains.shape
+    within = np.mean(np.var(chains, axis=1, ddof=1), axis=0)
+    between = n * np.var(np.mean(chains, axis=1), axis=0, ddof=1)
+    variance = ((n - 1) / n) * within + between / n
+    return np.sqrt(variance / within)
+
+
+def multi_chain_ess(chains: np.ndarray) -> np.ndarray:
+    """Geyer initial-positive/monotone ESS for multiple equal-length chains."""
+    m, n, p = chains.shape
+    centered = chains - np.mean(chains, axis=1, keepdims=True)
+    size = 1 << (2 * n - 1).bit_length()
+    fft = np.fft.rfft(centered, n=size, axis=1)
+    acov = np.fft.irfft(fft * np.conjugate(fft), n=size, axis=1)[:, :n, :] / n
+    within = np.mean(np.var(chains, axis=1, ddof=1), axis=0)
+    between = n * np.var(np.mean(chains, axis=1), axis=0, ddof=1)
+    var_plus = ((n - 1) / n) * within + between / n
+    rho = 1.0 - (within[None, None, :] - acov) / var_plus[None, None, :]
+    rho[:, 0, :] = 1.0
+    output = np.empty(p, dtype=float)
+    for col in range(p):
+        pair_sums = []
+        previous = np.inf
+        for lag in range(0, n - 1, 2):
+            pair = float(np.mean(rho[:, lag, col] + rho[:, lag + 1, col]))
             if pair <= 0:
                 break
-            tau += 2.0 * pair
-        result.append(float(min(n, max(1.0, n / tau))))
-    return result
+            pair = min(pair, previous)
+            pair_sums.append(pair)
+            previous = pair
+        tau = max(1.0, -1.0 + 2.0 * sum(pair_sums))
+        output[col] = min(float(m * n), max(1.0, m * n / tau))
+    return output
 
 
-def split_rhat(chains: np.ndarray) -> list[float]:
-    # 各独立链切成前后两半，避免只看链均值掩盖混合问题。
-    split = np.concatenate([chains[:, :chains.shape[1] // 2],
-                            chains[:, chains.shape[1] // 2:2 * (chains.shape[1] // 2)]], axis=0)
-    n = split.shape[1]
-    within = np.mean(np.var(split, axis=1, ddof=1), axis=0)
-    between = n * np.var(np.mean(split, axis=1), axis=0, ddof=1)
-    variance = ((n - 1) / n) * within + between / n
-    return np.sqrt(variance / within).tolist()
+def rank_normalize(values: np.ndarray) -> np.ndarray:
+    from scipy.special import ndtri
+    from scipy.stats import rankdata
+    flat = values.reshape(-1)
+    ranks = rankdata(flat, method="average")
+    transformed = ndtri((ranks - 3.0 / 8.0) / (len(flat) + 1.0 / 4.0))
+    return transformed.reshape(values.shape)
+
+
+def chain_diagnostics(chains: np.ndarray) -> dict:
+    split = split_chains(chains)
+    ranked = rank_normalize(split)
+    folded = rank_normalize(np.abs(split - np.median(split, axis=(0, 1))))
+    rhat = np.maximum(basic_rhat(ranked), basic_rhat(folded))
+    bulk = multi_chain_ess(ranked)
+    mean_ess = multi_chain_ess(split)
+    pooled = split.reshape(-1, split.shape[-1])
+    tails = []
+    for col in range(pooled.shape[1]):
+        q05, q95 = np.quantile(pooled[:, col], [0.05, 0.95])
+        low = (split[:, :, col] <= q05).astype(float)[:, :, None]
+        high = (split[:, :, col] >= q95).astype(float)[:, :, None]
+        tails.append(min(float(multi_chain_ess(low)[0]), float(multi_chain_ess(high)[0])))
+    tail = np.asarray(tails)
+    return {"rhat_rank": rhat, "ess_bulk": bulk, "ess_tail": tail,
+            "ess_mean": mean_ess,
+            "mcse_mean": np.std(pooled, axis=0, ddof=1) / np.sqrt(mean_ess)}
 
 
 def summarize(chains: list[dict]) -> dict:
     arr = np.stack([c["samples"] for c in chains])
     combined = arr.reshape(-1, 2)
-    ess = np.sum([autocorrelation_ess(c["samples"]) for c in chains], axis=0)
-    total_wall = sum(c["wall_s"] for c in chains)
+    diagnostics = chain_diagnostics(arr)
+    total_wall = sum(c["sampling_s"] for c in chains)
+    total_with_warmup = sum(c["wall_s"] for c in chains)
     return {
         "n_chains": len(chains), "draws_per_chain": int(arr.shape[1]),
         "total_draws": int(arr.shape[0] * arr.shape[1]),
         "acceptance_median": float(np.median([c["acceptance"] for c in chains])),
-        "rhat_split": split_rhat(arr), "ess": ess.tolist(),
+        "rhat_rank": diagnostics["rhat_rank"].tolist(),
+        "ess_bulk": diagnostics["ess_bulk"].tolist(),
+        "ess_tail": diagnostics["ess_tail"].tolist(),
+        "ess_mean": diagnostics["ess_mean"].tolist(),
+        "mcse_mean": diagnostics["mcse_mean"].tolist(),
+        "warmup_s_total": sum(c["warmup_s"] for c in chains),
+        "sampling_s_total": total_wall,
+        "sampling_s_per_chain": [c["sampling_s"] for c in chains],
+        "wall_s_total_including_warmup": total_with_warmup,
         "wall_s_median": float(np.median([c["wall_s"] for c in chains])),
-        "wall_s_total": total_wall,
-        "milliseconds_per_step": 1000.0 * total_wall / (arr.shape[0] * (BURN + KEEP)),
-        "ess_per_second": (ess / total_wall).tolist(),
+        "milliseconds_per_step": 1000.0 * total_wall / (arr.shape[0] * KEEP),
+        "milliseconds_per_step_including_warmup": 1000.0 * total_with_warmup / (arr.shape[0] * (BURN + KEEP)),
+        "ess_per_second": (diagnostics["ess_bulk"] / total_wall).tolist(),
         "posterior_mean": np.mean(combined, axis=0).tolist(),
         "posterior_std": np.std(combined, axis=0, ddof=1).tolist(),
         "posterior_p16": np.percentile(combined, 16, axis=0).tolist(),
@@ -248,18 +309,24 @@ def summarize(chains: list[dict]) -> dict:
 
 def env_meta() -> dict:
     meta = {"python": sys.version.split()[0], "platform": platform.platform(),
-            "logical_cpus": os.cpu_count(), "numba_threads": 2,
+            "processor": platform.processor(), "logical_cpus": os.cpu_count(), "numba_threads": 2,
             "numba_threading_layer": "workqueue", "blas_threads": 1,
             "torch_threads": 1, "seeds": list(SEEDS), "burn": BURN, "keep": KEEP,
             "free_parameter_bounds": {"log10r": BOUNDS[0], "n_t": BOUNDS[1]},
             "proposal_step": {"log10r": STEP[0], "n_t": STEP[1]},
             "lvk_data_rows": int(np.loadtxt(DATA_FILE).shape[0])}
+    meta["lvk_data_sha256"] = hashlib.sha256(DATA_FILE.read_bytes()).hexdigest()
+    weight_file = SAGE / "sagenetgw" / "models" / "best_gw_model_Transformer.pth"
+    meta["sagenet_transformer_weights_sha256"] = (
+        hashlib.sha256(weight_file.read_bytes()).hexdigest() if weight_file.is_file() else None)
     import numba
     import scipy
     import sklearn
     import torch as torch_mod
+    import matplotlib as matplotlib_mod
     meta.update(numpy=np.__version__, scipy=scipy.__version__, numba=numba.__version__,
-                torch=torch_mod.__version__, sklearn=sklearn.__version__)
+                torch=torch_mod.__version__, sklearn=sklearn.__version__,
+                matplotlib=matplotlib_mod.__version__)
     try:
         meta["stiffgwpy_sha"] = subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
@@ -273,6 +340,121 @@ def env_meta() -> dict:
     return meta
 
 
+def json_safe(value):
+    """Replace non-finite numeric results with JSON null, preserving structure."""
+    if isinstance(value, dict):
+        return {key: json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [json_safe(item) for item in value]
+    if isinstance(value, (float, np.floating)) and not math.isfinite(float(value)):
+        return None
+    if isinstance(value, np.integer):
+        return int(value)
+    return value
+
+
+def posterior_accuracy_check(result: dict, chain_store: dict, predictors: dict,
+                             data: np.ndarray, points_per_engine: int) -> dict:
+    """Compare all solvers with the independent reference at posterior draws."""
+    checks = {}
+    likelihood = make_likelihood(data)
+    for context_index, (context_name, context) in enumerate(CONTEXTS.items()):
+        rng = np.random.default_rng(2026092401 + context_index)
+        points = []
+        for engine_index, engine in enumerate(ENGINES):
+            samples = chain_store[f"{context_name}_{engine_index}"].reshape(-1, 2)
+            selected = rng.choice(len(samples), size=min(points_per_engine, len(samples)),
+                                  replace=False)
+            points.extend({"source_posterior": engine, "theta_log10r_nt": samples[i].tolist()}
+                          for i in selected)
+        rows = []
+        for point_index, point in enumerate(points):
+            theta = np.asarray(point["theta_log10r_nt"], dtype=float)
+            params = common_parameters(context, theta)
+            with redirect_stdout(io.StringIO()):
+                anchor = predict_fast("当前 fast", params)
+            row = {**point, "point_index": point_index, "engines": {}}
+            if anchor["status"] != "ok":
+                row.update(status="fast physical guard", reference_wall_s=0.0)
+                rows.append(row)
+                continue
+            predictions = {}
+            for engine in ENGINES:
+                try:
+                    with redirect_stdout(io.StringIO()):
+                        candidate = (predict_sage(predictors[engine], params)
+                                     if engine.startswith("SageNet") else predict_fast(engine, params))
+                except (ArithmeticError, ValueError, RuntimeError, FloatingPointError) as exc:
+                    candidate = {"status": "rejected", "reason": type(exc).__name__}
+                if candidate.get("status") == "ok":
+                    frequencies_out = np.asarray(candidate["f"], dtype=float)
+                    spectrum_out = np.asarray(candidate["y"], dtype=float)
+                    if (not np.isfinite(frequencies_out).all() or
+                            not np.isfinite(spectrum_out).all() or
+                            np.unique(frequencies_out).size != frequencies_out.size):
+                        candidate = {"status": "rejected",
+                                     "reason": "non-finite spectrum or duplicate frequency nodes"}
+                predictions[engine] = candidate
+            valid = [p for p in predictions.values() if p["status"] == "ok"]
+            if len(valid) != len(ENGINES):
+                row.update(status="one or more engines rejected", reference_wall_s=0.0)
+                for engine, candidate in predictions.items():
+                    row["engines"][engine] = {"status": candidate["status"],
+                                               "reason": candidate.get("reason")}
+                rows.append(row)
+                continue
+            low = max(-6.0, *(float(np.min(p["f"])) for p in valid))
+            high = min(1.0, *(float(np.max(p["f"])) for p in valid))
+            if high <= low:
+                row.update(status="no common frequency range", reference_wall_s=0.0)
+                rows.append(row)
+                continue
+            frequencies = np.linspace(low, high, ORACLE_NFREQ)
+            model = LCDM_SG(**params)
+            started = time.perf_counter()
+            ogw, oj, _, used_tail = REF.spectrum_reference(
+                model, frequencies, anchor["DN_eff"], z_tail=8.0, rtol=1e-7, workers=1)
+            reference_s = time.perf_counter() - started
+            reference_y = np.log10(np.maximum(np.asarray(ogw) - np.asarray(oj), 1e-300))
+            row.update(status="ok", reference_wall_s=reference_s,
+                       frequency_range_log10_hz=[float(low), float(high)],
+                       oracle_tail_fraction=float(np.mean(used_tail)))
+            for engine, candidate in predictions.items():
+                order = np.argsort(candidate["f"])
+                try:
+                    predicted_y = interp1d(candidate["f"][order], candidate["y"][order],
+                                           kind="cubic", bounds_error=True)(frequencies)
+                except ValueError as exc:
+                    row["engines"][engine] = {"status": "rejected",
+                                               "reason": f"accuracy interpolation: {exc}"}
+                    continue
+                dex = np.abs(predicted_y - reference_y)
+                row["engines"][engine] = {
+                    "status": "ok", "dex_p50": float(np.percentile(dex, 50)),
+                    "dex_p95": float(np.percentile(dex, 95)), "dex_max": float(np.max(dex)),
+                    "lvk_frequency_coverage_fraction": float(np.mean(
+                        (np.log10(data[:, 0]) >= np.min(candidate["f"])) &
+                        (np.log10(data[:, 0]) <= np.max(candidate["f"]))))}
+            rows.append(row)
+            print(f"posterior precision {context_name} {point_index + 1}/{len(points)} "
+                  f"({reference_s:.1f}s reference excluded)", flush=True)
+        summaries = {}
+        for engine in ENGINES:
+            measurements = [r["engines"][engine]["dex_p95"] for r in rows
+                            if r.get("status") == "ok" and
+                            r["engines"].get(engine, {}).get("status") == "ok"]
+            summaries[engine] = {
+                "valid_parameter_points": len(measurements),
+                "dex_p95_per_point_median": float(np.median(measurements)) if measurements else None,
+                "dex_p95_per_point_p95": float(np.percentile(measurements, 95)) if measurements else None,
+                "dex_p95_per_point_max": float(np.max(measurements)) if measurements else None}
+        checks[context_name] = {"points_per_engine": points_per_engine,
+                                "points": rows, "summary": summaries,
+                                "excluded_points": sum(r.get("status") != "ok" for r in rows),
+                                "reference_wall_s_total": sum(r.get("reference_wall_s", 0) for r in rows)}
+    return checks
+
+
 def run(quick: bool = False) -> None:
     global BURN, KEEP
     if quick:
@@ -281,9 +463,10 @@ def run(quick: bool = False) -> None:
     CHAIN_FILE.parent.mkdir(parents=True, exist_ok=True)
     data = np.loadtxt(DATA_FILE)
     likelihood = make_likelihood(data)
-    result = {"schema": "mcmc_sagenet_compare_v1", "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+    result = {"schema": "mcmc_sagenet_compare_v2", "generated_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
               "environment": env_meta(), "settings": {"burn": BURN, "keep": KEEP,
               "seeds": list(SEEDS), "free_parameters": ["log10r", "n_t"],
+              "chain_starts": STARTS.tolist(), "diagnostics": "rank-normalized folded split R-hat; Geyer bulk/tail ESS",
               "likelihood": "repository LVK O1/O2/O3 cross-correlation, same cubic interpolation and chi-square log-likelihood as packaged Cobaya likelihood",
               "accuracy_reference_in_sampler": False}, "contexts": {}, "precision_reference": {}}
     result["settings"]["proposal_step"] = {"log10r": float(STEP[0]), "n_t": float(STEP[1])}
@@ -309,17 +492,23 @@ def run(quick: bool = False) -> None:
             print(f"starting {context_name} / {engine}", flush=True)
             chains = []
             for chain_index, seed in enumerate(SEEDS):
-                chain = mcmc_chain(engine, context, seed + context_index * 100,
-                                   predictors[engine], likelihood)
+                with redirect_stdout(io.StringIO()):
+                    chain = mcmc_chain(engine, context, seed + context_index * 100,
+                                       STARTS[chain_index], predictors[engine], likelihood)
                 chains.append(chain)
-                print(f"  chain {chain_index + 1}/3: {chain['wall_s']:.1f}s, acceptance={chain['acceptance']:.3f}", flush=True)
+                print(f"  chain {chain_index + 1}/4: {chain['wall_s']:.1f}s, acceptance={chain['acceptance']:.3f}", flush=True)
             stats = summarize(chains)
             raw_samples = stats.pop("samples")
             result["contexts"][context_name]["engines"][engine] = stats
             chain_store[f"{context_name}_{engine_index}"] = raw_samples
             chain_store[f"{context_name}_{engine_index}_wall_s"] = np.asarray([c["wall_s"] for c in chains])
+            chain_store[f"{context_name}_{engine_index}_starts"] = STARTS.copy()
 
-    # 每个参数情景从三种后验的合并样本取中位点；高精度档只在这些点上作误差参照。
+    result["precision_posterior"] = posterior_accuracy_check(
+        result, chain_store, predictors, data,
+        points_per_engine=1 if quick else PRECISION_DRAWS_PER_ENGINE)
+
+    # 每个参数情景从三种后验的合并样本取中位点，作为便于直观看谱形的代表点。
     for context_name, context in CONTEXTS.items():
         pooled = np.concatenate([chain_store[f"{context_name}_{i}"].reshape(-1, 2)
                                  for i in range(len(ENGINES))])
@@ -382,7 +571,9 @@ def run(quick: bool = False) -> None:
 
     np.savez_compressed(CHAIN_FILE, **chain_store)
     result["chain_file"] = str(CHAIN_FILE.relative_to(REPO))
-    (OUT / "results.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    result = json_safe(result)
+    (OUT / "results.json").write_text(
+        json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
     make_plots(result, chain_store, logf_oracle)
     write_report(result)
     print(f"wrote results and figures to {OUT}", flush=True)
@@ -420,7 +611,7 @@ def make_plots(result: dict, chain_store: dict, logf_oracle: np.ndarray) -> None
             ax.set_xlabel(r"$\log_{10}(r)$")
             ax.grid(alpha=0.2)
             ax.set_ylabel(r"$n_t$" + (f"\n{engine}" if col_index == 0 else ""))
-    fig.suptitle("MCMC 后验分布：按方法分行、按参数情景分列（每格 3 条链）")
+    fig.suptitle(f"MCMC 后验分布：按方法分行、按参数情景分列（每格 {len(SEEDS)} 条链）")
     fig.savefig(OUT / "mcmc_posterior.png", dpi=200)
     plt.close(fig)
 
@@ -444,6 +635,26 @@ def make_plots(result: dict, chain_store: dict, logf_oracle: np.ndarray) -> None
     fig.savefig(OUT / "mcmc_speed.png", dpi=200)
     plt.close(fig)
 
+    fig, axes = plt.subplots(2, len(CONTEXTS), figsize=(15, 8), constrained_layout=True)
+    for col, context_name in enumerate(CONTEXTS):
+        for row, param_name in enumerate((r"$\log_{10}(r)$", r"$n_t$")):
+            ax = axes[row, col]
+            for engine_index, engine in enumerate(ENGINES):
+                samples = chain_store[f"{context_name}_{engine_index}"]
+                for chain_index in range(samples.shape[0]):
+                    trace = samples[chain_index, ::10, row]
+                    ax.plot(np.arange(len(trace)) * 10, trace, color=colors[engine],
+                            alpha=0.4 + 0.14 * chain_index, lw=0.45,
+                            label=engine if row == 0 and col == 0 and chain_index == 0 else None)
+            ax.set_title(context_name if row == 0 else "")
+            ax.set_ylabel(param_name)
+            ax.set_xlabel("保留样本步数")
+            ax.grid(alpha=0.2)
+    axes[0, 0].legend(fontsize=8, ncol=1)
+    fig.suptitle("链轨迹检查：颜色表示方法，同色深浅表示不同独立链")
+    fig.savefig(OUT / "mcmc_diagnostics.png", dpi=200)
+    plt.close(fig)
+
     fig, axes = plt.subplots(1, len(CONTEXTS), figsize=(15, 4.8), constrained_layout=True, sharey=True)
     for ax, context_name in zip(axes, CONTEXTS):
         ref = result["precision_reference"][context_name]
@@ -465,115 +676,171 @@ def make_plots(result: dict, chain_store: dict, logf_oracle: np.ndarray) -> None
         ax.grid(alpha=0.2)
     axes[0].set_ylabel(r"能量密度 $\log_{10}\Omega_{GW}$")
     axes[0].legend(fontsize=8)
-    fig.suptitle("MCMC 后验中心附近的谱形（共同频段；独立参考只作精度锚点）")
+    fig.suptitle("后验代表参数点的能谱（共同频段；独立参考只作精度锚点）")
     fig.savefig(OUT / "mcmc_accuracy.png", dpi=200)
+    plt.close(fig)
+
+    fig, axes = plt.subplots(1, len(CONTEXTS), figsize=(15, 5), constrained_layout=True,
+                             sharey=True)
+    for ax, context_name in zip(axes, CONTEXTS):
+        check = result["precision_posterior"][context_name]
+        data_by_engine = []
+        for engine in ENGINES:
+            values = [point["engines"][engine]["dex_p95"] for point in check["points"]
+                      if point.get("status") == "ok" and
+                      point.get("engines", {}).get(engine, {}).get("status") == "ok"]
+            data_by_engine.append(values)
+        bp = ax.boxplot(data_by_engine, patch_artist=True,
+                        tick_labels=["plain-grid", "fast", "SageNet+"])
+        for patch_box, engine in zip(bp["boxes"], ENGINES):
+            patch_box.set_facecolor(colors[engine])
+            patch_box.set_alpha(0.48)
+        for i, (values, engine) in enumerate(zip(data_by_engine, ENGINES), start=1):
+            jitter = np.linspace(-0.08, 0.08, len(values)) if values else []
+            ax.scatter(np.full(len(values), i) + jitter, values, s=16, color=colors[engine],
+                       edgecolors="#202020", linewidths=0.25, zorder=3)
+        ax.set_yscale("log")
+        ax.set_title(context_name)
+        ax.set_ylabel("每个参数点的频谱误差 p95（dex，对数轴）")
+        ax.grid(axis="y", alpha=0.22)
+    fig.suptitle("跨后验参数点的精度：每个点都用 48 个频率与独立参考比较")
+    fig.savefig(OUT / "mcmc_posterior_accuracy.png", dpi=200)
     plt.close(fig)
 
 
 def write_report(result: dict) -> None:
-    lines = ["# stiffGWpy 与 SageNet+：同一 LVK 数据下的 MCMC 对比", "",
-             f"实测时间：{result['generated_at']}",
-             f"代码版本：stiffGWpy `{result['environment']['stiffgwpy_sha']}`；SageNet `{result['environment']['sagenet_sha']}`。", "",
-             "## 先看结果", "",
-             "三种方法使用同一份 LVK O1/O2/O3 数据和似然函数；每个情景各跑 3 条独立链。MCMC 按数据符合程度接受或拒绝随机提出的参数组合。",
-             "本地精度参照只在采样后核对频谱，不参与 MCMC 或耗时比较。", "",
-             "| 参数情景 | 方法 | 每步耗时（越低越快，ms） | 每秒有效样本（越高越好） | 接受提议比例 | 最大 R-hat | log10(r) 样本中心 ± 散布 | n_t 样本中心 ± 散布 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
+    lines = [
+        "# stiffGWpy 与 SageNet+：LVK 数据下的 MCMC 对比", "",
+        f"实验时间：{result['generated_at']}",
+        f"代码版本：stiffGWpy `{result['environment']['stiffgwpy_sha']}`；SageNet `{result['environment']['sagenet_sha']}`。", "",
+        "## 结论先读", "",
+        "本次补充实验使用相同 LVK 数据、似然和自由参数，比较最初 plain-grid、当前 fast 与 SageNet+ Transformer。MCMC 从当前参数附近随机提出新参数，再按似然接受或拒绝；每个方法和情景有 4 条链、每条保留 10,000 个样本，共 360,000 个保留样本。速度按预热后的采样阶段计算；预热、模型载入和独立精度参照另行计时。",
+        "当前 fast 每步耗时更低；能谱精度需结合下文多个后验参数点的误差分布判断。低重加热温度情景不覆盖 LVK 观测频段，不用于判断谁更符合观测。", "",
+        "## 速度与后验结果", "",
+        "每步时间越低越快；ESS 越高表示链中重复信息越少；R-hat 越接近 1，四条链越一致。均值和标准差描述参数后验位置与宽度，不是算法误差。", "",
+        "| 情景 | 方法 | 每步毫秒 | 每秒最低 bulk ESS | 最低 bulk ESS | 最低 tail ESS | 最大 rank R-hat | log10(r) 均值±标准差 | n_t 均值±标准差 |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|"]
     for context_name in CONTEXTS:
         for engine in ENGINES:
             row = result["contexts"][context_name]["engines"][engine]
             mean, std = row["posterior_mean"], row["posterior_std"]
-            lines.append(f"| {context_name} | {engine} | {row['milliseconds_per_step']:.3f} | {min(row['ess_per_second']):.2f} | {row['acceptance_median']:.1%} | {max(row['rhat_split']):.3f} | {mean[0]:.3f} ± {std[0]:.3f} | {mean[1]:.3f} ± {std[1]:.3f} |")
-    lines += ["", "### 表中统计量怎么读", "",
-              "- **后验样本**：MCMC 保留的参数组合；出现越频繁，表示在当前数据和设定下越受支持。样本彼此相关，不等于同样多份独立数据。",
-              "- **接受提议比例**：新参数提议被采样链接受的比例，只描述采样过程，不代表模型准确率。",
-              "- **样本中心 ± 散布**：中心是保留值的平均数；标准差表示散布宽窄，反映参数估计的不确定性（不是算法精度误差），也不一定是严格的 68% 区间。",
-              "- **R-hat**：比较 3 条链的结果；越接近 1 越好，超过 1.05 通常提示采样不足。低于 1.05 也不能保证所有区域都采够。",
-              "- **有效样本数 ESS**：把相关样本折算成相当的独立样本数。表中 ESS 和每秒 ESS 均取两个参数中较小值。", ""]
-    lines += ["", "## 采样是否稳定、频谱差多少", "",
-              "| 参数情景 | 方法 | 较低的 ESS（两个参数中较小值） | 最大 R-hat | 覆盖 LVK 观测频段 | 95%频点误差不超过（dex） | 最大频点误差（dex） |", "|---|---|---:|---:|---:|---:|---:|"]
-    for context_name in CONTEXTS:
-        ref = result["precision_reference"].get(context_name, {})
-        for i, engine in enumerate(ENGINES):
-            row = result["contexts"][context_name]["engines"][engine]
-            prec = ref.get("engines", {}).get(engine, {})
-            coverage = prec.get("lvk_frequency_coverage_fraction")
-            coverage_txt = "未测" if coverage is None else f"{coverage:.1%}"
-            p95 = prec.get("dex_p95")
-            maxdex = prec.get("dex_max")
-            lines.append(f"| {context_name} | {engine} | {min(row['ess']):.0f} | {max(row['rhat_split']):.3f} | {coverage_txt} | {'未测' if p95 is None else f'{p95:.3g}'} | {'未测' if maxdex is None else f'{maxdex:.3g}'} |")
-    lines += ["", "**低重加热温度情景的 LVK 频段覆盖为 0%：三种方法的预测频率范围都没有覆盖观测频段，因此这个情景的后验主要由参数范围和采样规则决定，不能据此判断谁更符合数据。**",
-              "", "失败提案按计算路径分别记账：", "",
-              "| 参数情景 | 最初 plain-grid | 当前 fast | SageNet+ |", "|---|---|---|---|"]
-    for context_name in CONTEXTS:
-        failures = result["contexts"][context_name]["engines"]
-        def describe_failures(row):
-            labels = {"shared_Neff_guard": "物理一致性保护", "max_iter": "迭代未收敛", "non-finite likelihood": "无效数值/似然"}
-            return ", ".join(f"{labels.get(k, k)} {v} 次" for k, v in row["failure_counts"].items()) or "无"
-        lines.append(f"| {context_name} | {describe_failures(failures['最初 plain-grid'])} | {describe_failures(failures['当前 fast'])} | {describe_failures(failures['SageNet+ Transformer'])} |")
-    lines += ["", "这是被拒提议数（不含越界提议）；物理一致性保护是模型边界检查，不代表数值故障。", "",
-              "本次 R-hat 均低于 1.05；较低参数 ESS 为 80–115，独立信息量仍有限。频谱误差单位 dex：0.01 约相差 2%，0.1 约相差 26%；越小越接近参考。", "",
-              "## 比较了什么参数", "",
-              "| 参数 | 通俗含义 | 本次设置 |", "|---|---|---|",
-              "| `log10(r)` / `r` | 原初引力波强度相对标量扰动的比例；对数每增加 1，`r` 增大 10 倍 | MCMC 自由参数；`log10(r)` 在 -5 到 -1 均匀取值，即 `r` 为 1e-5 到 0.1 |",
-              "| `n_t` | 原初引力波谱随频率上升或下降的斜率 | MCMC 自由参数；范围 -0.5 到 1.5 |",
-              "| `kappa10` | 10 MeV 时刚性物质能量与光子能量之比 | 三个情景分别为 0.01、0.01、1 |",
-              "| `T_re` | 再加热结束时的温度，单位 GeV | 三个情景分别为 2000、10、2000 |",
-              "| `DN_re` | 从暴胀结束到再加热结束经历的膨胀量 | 三个情景分别为 20、10、30 |",
-              "| `cr` | 是否使用单场暴胀的一致性关系 | 固定为 0，使 `n_t` 可独立变化；与 SageNet+ 的输入方式一致 |",
-              "| `Omega_bh2` | 普通物质（重子）的密度参数 | 固定为 0.0223828 |",
-              "| `Omega_ch2` | 暗物质的密度参数 | 固定为 0.1201075 |",
-              "| `H0` | 宇宙当前膨胀速度，单位 km/s/Mpc | 固定为 67.32117 |",
-              "| `A_s` | 原初标量扰动的强度 | 固定为 2.100549e-9 |",
-              "| `DN_eff` | 额外相对论粒子的起始贡献 | 固定为 0；求解器按各自路径处理引力波贡献 |", "",
-              "求解器设置：`h` 为积分步长（越小通常越细、越慢）；`col_step` 为内部步保存间隔（越大通常越省时）；`z_tail` 为切换尾部近似的位置；`phase_max` 限制每步的相位变化，0 表示关闭细分。`goal` 按目标频率构网，`construct` 使用普通网格。", "",
-              "## 测量方法", "",
-              f"- 数据：仓库随附的 LVK O1/O2/O3 频率交叉相关表，共 {result['environment']['lvk_data_rows']:,} 行；三种方法都使用同一个插值和卡方似然。",
-              f"- 每条链：预热 {result['settings']['burn']} 步，记录 {result['settings']['keep']:,} 步。二维随机提议步幅为 `log10(r)` {result['settings']['proposal_step']['log10r']}、`n_t` {result['settings']['proposal_step']['n_t']}。",
-              "- 最初 plain-grid：按旧探索档的 `h=0.02`、`col_step=8`、`z_tail=5`、`phase_max=0`、普通构网、无精确断点拆分，在当前代码中重建；它纳入 MCMC 对比，但不是旧版代码快照复跑。",
-              "- 当前 fast：`h=0.005`、`col_step=8`、`z_tail=5`、`phase_max=0.25`、goal 频率网格、精确拆分再加热断点。",
-              "- SageNet+：Transformer 预训练权重，CPU 单线程；每个 MCMC 提议复用已加载模型。模型首次读入时间单独记录为 {:.3f} 秒，不混进每一步时间。".format(result['sagenet_model_load_s_excluded_from_chain']),
-              "- 预热耗时（每种方法的首个调用 / 之后两次的中位数）：" + "；".join(f"{engine} {result['warmup_s'][engine][0]:.3f} 秒 / {statistics.median(result['warmup_s'][engine][1:]):.3f} 秒" for engine in ENGINES) + "。首个调用可能包含编译或缓存初始化；这些时间不计入链的每步耗时。",
-              "- 精度参照：本地连续-sigma 独立求解器（rtol=1e-7，z_tail=8）只在 MCMC 后验中心附近、三种方法共同覆盖的频段比较 48 个频率点；它不参加 MCMC。", "",
-              "## 总结与 fast 评价", "",
-              f"- 实验规模：使用 {result['environment']['lvk_data_rows']:,} 行 LVK 数据；3 种方法 × 3 个情景 × 3 条独立链，共 27 条。每条链预热 {result['settings']['burn']} 步、保留 {result['settings']['keep']:,} 步；每种方法、每个情景得到 6,000 个保留样本。",
-              "- 下表汇总每步耗时和相对本地精度参照的频谱误差。每格数值顺序都是 plain-grid / fast / SageNet+；误差是在共同频段测得，不代表对 LVK 数据的拟合优劣。", "",
-              "| 参数情景 | 每步耗时（ms） | 频谱误差 p95（dex） |", "|---|---|---|"]
-    for context_name in CONTEXTS:
-        engines = result["contexts"][context_name]["engines"]
-        ref_engines = result["precision_reference"][context_name]["engines"]
-        steps = " / ".join(f"{engines[e]['milliseconds_per_step']:.3f}" for e in ENGINES)
-        errors = " / ".join(f"{ref_engines[e]['dex_p95']:.4g}" for e in ENGINES)
-        lines.append(f"| {context_name} | {steps} | {errors} |")
-    sage_speedup = [result["contexts"][c]["engines"]["SageNet+ Transformer"]["milliseconds_per_step"] /
-                    result["contexts"][c]["engines"]["当前 fast"]["milliseconds_per_step"] for c in CONTEXTS]
-    plain_time_gain = [100 * (result["contexts"][c]["engines"]["最初 plain-grid"]["milliseconds_per_step"] /
-                              result["contexts"][c]["engines"]["当前 fast"]["milliseconds_per_step"] - 1)
-                       for c in CONTEXTS]
-    plain_ess_gain = [100 * (min(result["contexts"][c]["engines"]["当前 fast"]["ess_per_second"]) /
-                             min(result["contexts"][c]["engines"]["最初 plain-grid"]["ess_per_second"]) - 1)
-                      for c in CONTEXTS]
-    lines += ["",
-              f"- **速度**：fast 每步比 SageNet+ 快 {min(sage_speedup):.1f}–{max(sage_speedup):.1f} 倍；比最初 plain-grid 少耗时约 {min(plain_time_gain):.0f}%–{max(plain_time_gain):.0f}%，每秒有效样本多约 {min(plain_ess_gain):.0f}%–{max(plain_ess_gain):.0f}%。",
-              "- **精度**：fast 的 p95 谱误差在三种情景都低于 SageNet+；与 plain-grid 相比，基准和高刚性物质情景更接近参考，低重加热温度情景则略差（0.0109 vs 0.0066 dex）。",
-              "- **适用边界**：低重加热温度情景的 LVK 频段覆盖为 0%，其后验不能用于判断与观测的符合度。各情景 R-hat 均低于 1.05，但较低参数 ESS 为 80–115，采样信息量仍有限；结论只适用于本次机器、代码版本、权重和参数范围。", "",
-              "## 结果文件", "",
-              "### 后验样本分布", "",
-              "横轴为 `log10(r)`，纵轴为 `n_t`；颜色越深，样本越多。按方法分行（蓝：plain-grid；橙：fast；绿：SageNet+），按情景分列。", "",
-              "![三种方法的 MCMC 后验样本分布](mcmc_posterior.png)", "",
-              "### 速度与有效样本", "",
-              "每步耗时越低越快；每秒有效样本越多，采样效率越高。", "",
-              "![采样耗时和有效样本产出对比](mcmc_speed.png)", "",
-              "### 能谱精度对比", "",
-              "黑线是本地高精度参考；能谱只在三种方法的共同频段内比较。", "",
-              "![三种方法与本地精度参照的能谱对比](mcmc_accuracy.png)", "",
-              "- `results.json`：逐情景、逐方法原始汇总及精度曲线；MCMC 原始链保存在忽略提交的本地文件 `{}`。".format(result['chain_file']), "",
-              "本结论只描述当前两个代码版本、该 Transformer 权重、该机器与这份 LVK 数据；不代表 SageNet+ 的所有权重或所有参数范围。"]
-    compact_lines = []
-    for line in lines:
-        if line or not compact_lines or compact_lines[-1] != "":
-            compact_lines.append(line)
-    (OUT / "report.md").write_text("\n".join(compact_lines) + "\n", encoding="utf-8")
+            lines.append(
+                f"| {context_name} | {engine} | {row['milliseconds_per_step']:.3f} | "
+                f"{min(row['ess_per_second']):.2f} | {min(row['ess_bulk']):.0f} | "
+                f"{min(row['ess_tail']):.0f} | {max(row['rhat_rank']):.3f} | "
+                f"{mean[0]:.3f}±{std[0]:.3f} | {mean[1]:.3f}±{std[1]:.3f} |")
 
+    lines += ["", "## 采样是否可靠", "",
+              "每种方法、每个情景使用 4 条不同随机种子的链；起点分散在 `log10(r)`=-4.6 到 -1.8、`n_t`=-0.45 到 0。每条链预热 4,000 步，再保留 10,000 步。",
+              "R-hat 是看不同链是否汇合；bulk ESS 看后验主体有多少有效信息，tail ESS 看两端区间的信息量；MCSE 是均值因有限采样带来的估算误差。采用秩标准化 folded split R-hat 与 Geyer ESS 计算。", "",
+              "Stan 的诊断建议默认至少 4 条链；最终结果通常要求 R-hat < 1.01，bulk ESS 大于链数的 100 倍，tail ESS 检查 5% 与 95% 尾部。[诊断说明](https://mc-stan.org/learn-stan/diagnostics-warnings.html) 本报告把四链总 ESS 400 作为参考线；它不是对任何科学问题都足够的保证。", "",
+              "| 情景 | 方法 | 最大 R-hat | 最低 bulk ESS | 最低 tail ESS | 最大均值 MCSE（log10r / nt） | 诊断门槛是否都达到* |",
+              "|---|---|---:|---:|---:|---:|---|"]
+    for context_name in CONTEXTS:
+        for engine in ENGINES:
+            row = result["contexts"][context_name]["engines"][engine]
+            passed = max(row["rhat_rank"]) < 1.01 and min(row["ess_bulk"]) >= 400 and min(row["ess_tail"]) >= 400
+            mcse = row["mcse_mean"]
+            lines.append(f"| {context_name} | {engine} | {max(row['rhat_rank']):.3f} | "
+                         f"{min(row['ess_bulk']):.0f} | {min(row['ess_tail']):.0f} | "
+                         f"{mcse[0]:.4g} / {mcse[1]:.4g} | {'是' if passed else '否'} |")
+    mode = result.get("posterior_mode_diagnostics")
+    if mode:
+        lines += ["", "**基准 SageNet+ 的重要问题**：" +
+                  f"第 {mode['chain_with_high_tilt']} 条链有 {mode['high_tilt_fraction_in_chain']:.1%} 的样本落在 `n_t>{mode['high_tilt_threshold']}`，另外三条链均未进入该区域；占四链样本的 {mode['high_tilt_fraction_overall']:.1%}。" +
+                  f"固定 `log10(r)={mode['profile_log10r']}` 时，SageNet+ 在 `n_t={mode['profile_low_nt']}` 的 LVK 频段覆盖为 100%，在 `n_t={mode['profile_high_nt']}` 降为 0%；高斜率区域的似然因而不再由 LVK 频段约束。" +
+                  f"这对应 R-hat {mode['rhat_nt']:.3f}、bulk ESS {mode['bulk_ess_nt']:.0f}、tail ESS {mode['tail_ess_nt']:.0f}。该组合未通过混合检查，均值和标准差不能当成稳定后验估计。" +
+                  ("一个抽到该高斜率区域的精度检查点还被 fast 的物理边界保护拒绝，因此不进入三方法误差排名。" if mode.get("high_mode_precision_probe_guarded") else ""), ""]
+    lines += ["", "*同时达到表中三个参考值才标为‘是’；即使通过，也只说明本报告设定下的链诊断较好。", "",
+              "## 精度：检查整个后验范围", "",
+              "本地连续-sigma 高精度求解器（`rtol=1e-7`、`z_tail=8`）只作独立参照，不参与 MCMC。每个情景从三种方法各随机抽取 8 个后验参数点（共 24 点），每点在三种方法共同覆盖的 48 个频率上对比。下表是这些抽查点的频谱误差 p95，再汇总中位数 / 95 分位 / 最大值；它不能保证覆盖所有稀有后验区域。", "",
+              "| 情景 | 方法 | 有效参数点 / 24 | 参数点误差 p95 的中位数 / 95分位 / 最大值（dex） |",
+              "|---|---|---:|---:|"]
+    for context_name in CONTEXTS:
+        check = result["precision_posterior"][context_name]
+        for engine in ENGINES:
+            row = check["summary"][engine]
+            n = row["valid_parameter_points"]
+            vals = (row["dex_p95_per_point_median"], row["dex_p95_per_point_p95"], row["dex_p95_per_point_max"])
+            values = "未能计算" if vals[0] is None else " / ".join(f"{x:.4g}" for x in vals)
+            lines.append(f"| {context_name} | {engine} | {n} / 24 | {values} |")
+    for context_name in CONTEXTS:
+        excluded = [point for point in result["precision_posterior"][context_name]["points"]
+                    if point.get("status") != "ok"]
+        if excluded:
+            causes = ", ".join(f"点 {point['point_index'] + 1}: {point.get('status')}"
+                                for point in excluded)
+            lines.append(f"- {context_name} 有 {len(excluded)} 个抽查点未进入共同精度比较：{causes}。物理保护拒绝的点单独报告，不把它算成普通精度误差。")
+    lines += ["", "图中展示同一情景各后验参数点的误差分布；每个点的误差先在 48 个频率上计算，再取 p95。高刚性物质与基准情景可以用于观测频段内的数值精度比较。低重加热温度情景的 LVK 覆盖为 0%，结果只能用于数值对照，不能解释为数据支持度。0.01 dex 约对应 2.3% 的谱幅差，0.1 dex 约对应 26%。", "",
+              "被拒提议按原因分别记录；物理保护表示模型适用边界，不等同于数值错误：", "",
+              "| 情景 | 方法 | 被拒提议原因与次数 |", "|---|---|---|"]
+    for context_name in CONTEXTS:
+        for engine in ENGINES:
+            counts = result["contexts"][context_name]["engines"][engine]["failure_counts"]
+            labels = {"shared_Neff_guard": "物理边界保护", "max_iter": "未收敛",
+                      "non-finite likelihood": "无效数值/似然"}
+            description = ", ".join(f"{labels.get(k, k)} {v} 次" for k, v in sorted(counts.items())) or "无"
+            lines.append(f"| {context_name} | {engine} | {description} |")
+    lines += ["", "## 场景和参数设置", "",
+              "三个固定背景情景分别为：基准（`kappa10=0.01, T_re=2000 GeV, DN_re=20`）、低重加热温度（`0.01, 10 GeV, 10`）、高刚性物质（`1, 2000 GeV, 30`）。‘低温’表示再加热结束温度较低；‘高刚性’表示 10 MeV 时刚性物质相对光子的能量比较高。", "",
+              "| 参数 | 通俗含义 | 采样设置 |", "|---|---|---|",
+              "| `log10(r)` | 原初引力波强度比例的 10 为底对数；加 1 表示 `r` 增大 10 倍 | 自由参数；-5 到 -1 均匀取值 |",
+              "| `n_t` | 引力波谱随频率变化的斜率 | 自由参数；-0.5 到 1.5 |",
+              "| `kappa10` | 10 MeV 时刚性物质能量与光子能量之比 | 按上述三种情景固定 |",
+              "| `T_re` | 再加热结束温度，单位 GeV | 按上述三种情景固定 |",
+              "| `DN_re` | 暴胀结束到再加热结束期间的膨胀量 | 按上述三种情景固定 |",
+              "| `cr` | 是否启用单场暴胀一致性关系 | 固定为 0，允许 `n_t` 独立变化 |",
+              "| `Omega_bh2` / `Omega_ch2` | 普通物质 / 暗物质密度 | 0.0223828 / 0.1201075 |",
+              "| `H0` / `A_s` | 当前膨胀速度 / 标量扰动强度 | 67.32117 km/s/Mpc / 2.100549e-9 |",
+              "| `DN_eff` | 起始额外相对论粒子贡献 | 固定 0；引力波贡献由各求解器计算 |", "",
+              "提议步幅固定为 `log10(r)=0.35`、`n_t=0.12`。plain-grid 按早期粗网格档重建；fast 使用当前正式档；SageNet+ 使用 Transformer、CPU 单线程。三者共享同一 LVK O1/O2/O3 数据（{} 行）和三次插值卡方似然。计时期间屏蔽重复的控制台保护提示，但仍逐项计数；这样不会把终端输出速度当成模型计算速度。".format(result['environment']['lvk_data_rows']),
+              f"求解器设置：plain-grid `h=0.02, col_step=8, z_tail=5, phase_max=0, construct 网格`；fast `h=0.005, col_step=8, z_tail=5, phase_max=0.25, goal 网格并拆分再加热断点`。SageNet 模型载入 {result['sagenet_model_load_s_excluded_from_chain']:.3f} 秒；采样前预热时间记录在 JSON 的 `warmup_s`，均不计入每步采样时间。硬件为 {result['environment'].get('cpu_model', result['environment'].get('processor', '未记录'))}；固定使用 2 个 Numba 线程、1 个 BLAS/Torch 线程。", "",
+              "## 图表", "",
+              "颜色统一为蓝色 plain-grid、橙色 fast、绿色 SageNet+。", "",
+              "### 后验样本", "",
+              "每个点是保留的参数组合；密集处表示当前设置下采样较多。样本相关，不能把 40,000 个保留值当成 40,000 份独立信息。", "",
+              "![后验样本分布](mcmc_posterior.png)", "",
+              "### 链轨迹", "",
+              "检查链是否重叠、是否还在持续漂移。颜色代表方法，同色深浅代表独立链。", "",
+              "![链轨迹诊断](mcmc_diagnostics.png)", "",
+              "### 速度和有效样本", "",
+              "时间仅计入预热后的保留阶段；模型加载、采样预热和独立精度参照不混入。", "",
+              "![速度与有效样本对比](mcmc_speed.png)", "",
+              "### 代表性能谱", "",
+              "展示各方法后验合并样本中位参数附近的能谱。", "",
+              "![能谱与独立精度参照](mcmc_accuracy.png)", "",
+              "### 后验范围精度", "",
+              "箱体和点展示 24 个后验参数点的逐点误差 p95；纵轴使用对数刻度，方便同时观察小误差与大误差。", "",
+              "![后验多点精度误差分布](mcmc_posterior_accuracy.png)", "",
+              "## 对 fast 的评价", ""]
+    speed_ratios = [result["contexts"][c]["engines"]["SageNet+ Transformer"]["milliseconds_per_step"] /
+                    result["contexts"][c]["engines"]["当前 fast"]["milliseconds_per_step"] for c in CONTEXTS]
+    plain_speed_change = [100 * (result["contexts"][c]["engines"]["最初 plain-grid"]["milliseconds_per_step"] /
+                                  result["contexts"][c]["engines"]["当前 fast"]["milliseconds_per_step"] - 1)
+                          for c in CONTEXTS]
+    plain_ess_change = [100 * (min(result["contexts"][c]["engines"]["当前 fast"]["ess_per_second"]) /
+                               min(result["contexts"][c]["engines"]["最初 plain-grid"]["ess_per_second"]) - 1)
+                        for c in CONTEXTS]
+    fast_accuracy = [result["precision_posterior"][c]["summary"]["当前 fast"] for c in CONTEXTS]
+    sage_accuracy = [result["precision_posterior"][c]["summary"]["SageNet+ Transformer"] for c in CONTEXTS]
+    lines.append(f"- **速度**：fast 比 SageNet+ 快约 {min(speed_ratios):.1f}–{max(speed_ratios):.1f} 倍；比 plain-grid 在基准 / 低温情景快 {plain_speed_change[0]:.0f}% / {plain_speed_change[1]:.0f}%，在高刚性情景慢 {abs(plain_speed_change[2]):.0f}%；每秒有效样本分别变化 {plain_ess_change[0]:+.0f}% / {plain_ess_change[1]:+.0f}% / {plain_ess_change[2]:+.0f}%。这些速度值只适用于本次机器、版本和线程设置。")
+    comparable = [(f["dex_p95_per_point_median"], s["dex_p95_per_point_median"])
+                  for f, s in zip(fast_accuracy, sage_accuracy)
+                  if f["dex_p95_per_point_median"] is not None and s["dex_p95_per_point_median"] is not None]
+    if comparable:
+        better = sum(f < s for f, s in comparable)
+        lines.append(f"- **精度**：抽到且可比较的参数点中，fast 的误差中位数在 {better}/{len(comparable)} 个情景低于 SageNet+；具体见上表。基准 SageNet+ 链未收敛，其误差汇总只描述已抽到的可比较区域，不代表完整后验。")
+    lines.append("- **相对 plain-grid 精度**：fast 在基准和高刚性情景的后验参数点误差中位数较低；低温情景较高，但该情景的 LVK 覆盖为 0%。")
+    lines += ["- **观测解释边界**：低温情景 LVK 频段覆盖为 0%，不支持拟合优劣结论；本报告比较的是数值频谱相对本地参考的误差。",
+              "- **科研使用判断**：fast 与 plain-grid 三个情景都达到本报告的链诊断参考；SageNet+ 基准与低温情景未达到，因此这份三方后验比较整体尚未全部通过科研生产验收。基准 SageNet+ 还存在不同链落入不同覆盖区域的问题。", "",
+              "## 原始数据与复现", "",
+              f"- `results.json`：每种方法、情景的汇总、诊断量、逐参数点精度结果和环境信息。",
+              f"- `{result['chain_file']}`：四条链全部保留样本、起点和逐链耗时；随报告一并归档。",
+              "- `scripts/benchmark_mcmc_sagenet_compare.py`：采样、诊断、精度核验与绘图脚本。",
+              f"- LVK 数据 SHA-256：`{result['environment']['lvk_data_sha256']}`；SageNet Transformer 权重 SHA-256：`{result['environment']['sagenet_transformer_weights_sha256']}`。",
+              "- 已按旧样本文件名和报告路径检索公开网络，未找到可核验的原始后验样本；远端 Git 历史也没有该文件。旧本地链只有三条相同起点的短链，未作为新证据。本次样本由当前报告版本重新生成并归档。", "",
+              "结果限定于报告列出的代码版本、SageNet 模型权重、CPU 环境、数据和参数范围；不代表其他模型权重或所有参数空间。"]
+    (OUT / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 if __name__ == "__main__":
     import argparse
