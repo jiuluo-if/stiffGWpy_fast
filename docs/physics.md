@@ -1,50 +1,54 @@
 # Physics model
 
-Status: current
-Date: 2026-09-03
-Code version: see manifest `commit`
+Status: current model description; parameter-space validation remains scoped
 
-`stiffgwpy_fast` models a flat LCDM cosmology with:
+Date: 2026-09-24
 
-* **radiation + massive neutrinos** (Fermi-Dirac distribution),
-* **relativistic particles** including extra radiation `Delta N_eff`,
-* **stiff matter** parameterised by `kappa10 = rho_stiff / rho_photon` at 10 MeV,
-* a **primordial tensor background** from inflation with amplitude `A_t = A_s * r`,
-  tilt `n_t`, and (optionally, `cr > 0`) the single-field consistency relation.
+Code version: see the run commit in each validation artifact. The validation
+manifest is dated 2026-09-17 and is not a current-HEAD certification.
 
-The time variable is `N = ln a`.  The key background quantity is
-`sigma(N) = d ln H / d N` (the equation-of-state-weighted factor that sources the
-tensor-mode equation) and the horizon position `f_hor(N) = log10(aH/(2 pi))`.
+`stiffgwpy_fast` models a flat LCDM cosmology with radiation, massive neutrinos
+(Fermi-Dirac distribution), extra relativistic species, stiff matter, and a
+primordial tensor background. The stiff component is parameterized by
+`kappa10 = rho_stiff / rho_photon` at 10 MeV. Tensor power is
+`P_t(k) = A_t (k / k_piv)**n_t`, where `A_t = A_s * r`; for `cr > 0` the
+single-field consistency relation determines the tensor tilt and reheating
+duration.
+
+The expansion variable is `N = ln(a)`. The background quantity
+`sigma(N) = d ln(H) / dN` sources the tensor-mode equation, and
+`f_hor(N) = log10(aH/(2 pi))` tracks horizon crossing.
 
 ## Tensor-mode equation
 
-Each frequency channel is evolved in the original variables
-(`z = ln(k/aH)`, plus the two tensor polarisation combinations `x, y`):
+For each frequency channel, the solver evolves `z = ln(k/aH)` and the two
+tensor combinations `x` and `y`:
 
+```text
+z' = 1.5 sigma - 1
+x' = -3 x + 1.5 sigma x - exp(z) y
+y' = -y + 1.5 sigma y + exp(z) x
 ```
-z'  = 1.5 sigma - 1
-x'  = -3 x + 1.5 sigma x - e^z y
-y'  = -y + 1.5 sigma y + e^z x
-```
 
-The source is the primordial spectrum
-`P_t(k) = A_t (k / k_piv)^{n_t}`.  Today's `Omega_GW(f)` is assembled from the
-`Ogw`, `Oj`, `Opgw` combinations of `(x, y, z)` at `N = N_inf` (today), and the
-integrated `Delta N_eff` is the bolometric frequency integral of `Ogw - Oj`.
+The present-day spectrum is assembled from `Ogw`, `Oj`, and `Opgw` at
+`N = N_inf`. The bolometric `Delta N_eff` contribution is integrated from
+`Ogw - Oj` over frequency.
 
-## `Delta N_eff` closure
+## Self-consistency and physical guards
 
-The SGWB contributes extra radiation, which changes the background, which
-changes the SGWB.  This is solved by an outer bisection on `Delta N_eff` until
-the successive relative change is below the outer tolerance (`1e-7` for
-`production`, `1e-6` for plain-grid).  A physical guard rejects points where
-the total `N_eff` exceeds `5` (too much radiation); that is a **physical**
-rejection, not a numerical failure.
+The SGWB contributes extra radiation, which changes the background and hence
+the SGWB. The single user-facing `fast` mode iterates this closure with the
+`1e-6` preset tolerance. The original LSODA path has its own default
+convergence settings; `engine='reference'` selects the independent
+continuous-sigma DOP853 pipeline. A shared guard rejects configurations whose
+total `N_eff` exceeds 5. This is an explicit physical rejection, not a
+numerical failure.
 
-## Reheating
+## Reheating transition
 
-The instantaneous-reheating kink in `sigma(N)` (matter-like
-`sigma = 1` for `N < N_re`, then radiation/neutrino/stiff evolution) is the
-hardest feature.  `production` treats it as an exact ODE breakpoint;
-the plain-grid profile smears it across the fixed grid, which is the dominant
-source of its bias.
+Instantaneous reheating creates a kink in `sigma(N)`: the matter-like
+reheating segment ends at `N_re`, after which the radiation/neutrino/stiff
+background evolves. The formal `fast` preset splits tensor transfer exactly
+at `N_re`, so a transfer step does not cross the discontinuity. Historical
+plain-grid experiments smeared this feature and remain useful only as dated
+validation evidence; they are not a current user-facing solver mode.

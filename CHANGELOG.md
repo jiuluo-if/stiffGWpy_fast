@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — 2026-09-24
+
+- Refreshed the bilingual project and documentation indexes to describe the
+  single user-facing `fast` profile, its latest fixed-resource runtime
+  profile, current MCMC comparison, and the commit-bound limits of older
+  validation artifacts. No solver behavior or numerical evidence was changed.
+
 ## Unreleased — 2026-09-12
 
 - Removed redundant work in the fast Python preparation layer with no change to

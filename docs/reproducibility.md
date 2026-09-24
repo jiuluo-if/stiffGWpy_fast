@@ -1,8 +1,8 @@
 # Reproducibility
 
-Status: current
-Date: 2026-09-03
-Code version: see manifest `commit`
+Status: current verification procedure; evidence dates are listed per artifact
+Date: 2026-09-24
+Code version: record the tested HEAD and environment with each run
 
 Validations are driven by committed scripts; every driver records git-commit +
 environment metadata (`python`/`numpy`/`numba`/`scipy`/platform).
@@ -22,10 +22,11 @@ python -m build --wheel                                             # wheel buil
 python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl         # installed-resource smoke
 ```
 
-The current regression suite passes 103 tests (6 slow LSODA gates are
-deselected by default; opt in with `-m slow`). The installed-wheel smoke test
-also checks that core, Cobaya, LIGO, and PTA package resources are available
-outside the source checkout.
+Test totals vary by commit and marker selection. The most recent recorded full
+GitHub CI matrix at solver commit `c7d4766` passed all nine jobs; later commits
+add MCMC benchmark/report artifacts, so rerun CI when verifying the exact
+current HEAD. The installed-wheel smoke test checks that core, Cobaya, LIGO,
+and PTA package resources are available outside the source checkout.
 
 For performance reproduction, keep compilation separate from execution:
 
@@ -35,7 +36,9 @@ python scripts/bench_fast.py --reps 15 --cases 0 1 --json docs/benchmark_candida
 python scripts/profile_fast_breakdown.py --help
 ```
 
-The canonical before/after numbers and the 1/2/4/8/16-thread results are in
+The 2026-09-23 fixed-resource 25-repeat full-path profile is summarized in
+`docs/benchmarks.md`; the detailed 2026-09-03 before/after numbers and its
+1/2/4/8/16-thread results are historical evidence in
 `docs/performance_comparison_20260903.md`. The maintained Ruff surface and the
 narrow configuration type gate are CI-enforced; legacy core lint debt remains
 tracked in `docs/engineering_audit.md` and is not represented as PASS.

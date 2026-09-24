@@ -1,68 +1,74 @@
-# Accuracy
+# Accuracy and evidence boundaries
 
-Status: current (honestly reported limits)
-Date: 2026-09-03
-Code version: see manifest `commit`
+Status: current summary of scoped evidence; no full parameter-space release certification
 
-The precision anchor is the independent continuous-sigma reference
-(`stiffgwpy_fast.reference`).  Accuracy is layered:
+Date: 2026-09-24
 
-1. **Level 1 — spectrum.** signal/transition-region `Omega_GW` relative error
-   and dex error.
-2. **Level 2 — integrated physics.** `Delta_Neff` (the bolometric `DN_gw` integral).
-3. **Level 3 — likelihood.** `Delta logL` from the spectrum on the likelihood bins.
-4. **Level 4 — inference.** posterior parameter shift / sigma.
+The formal fast profile is the single `goal-kink-hybrid` mode. The independent
+continuous-sigma DOP853 pipeline is the precision reference; LSODA is a
+regression/runtime path, not a truth oracle. Every numerical result below is
+bounded by the artifact's commit, reference convention, parameter points, and
+frequency grid.
 
-The two fast profiles vs the oracle (matched z8, 9 points):
+## Latest scoped oracle evidence
 
-| | plain-grid | transition-refine |
-|---|---|---|
-| spectrum rel (signal) median | 1.9e-2 | ~2.4e-4 |
-| spectrum rel (signal) max | 7.0e-2 | 7.1e-4 |
-| spectrum dex (signal) max | 8.2e-3 | 3.1e-4 |
-| integrated `DN_gw` rel median | 9.1e-3 | 4.3e-4 |
-| `Delta logL` (posterior bulk) | — | max 7.3e-3 |
-| posterior `log10 r` shift | — | -0.0011 sigma |
+The latest detailed accuracy audit is the dated
+[`fast_v02_audit_report.md`](fast_v02_audit_report.md), generated from its
+recorded 2026-09-12 evidence. It is not a full parameter-space certification or
+a fresh precision rerun at the current repository HEAD.
 
-## The honest limit on `Delta_Neff < 1e-4`
+| Comparison | Recorded result | Scope and interpretation |
+|---|---:|---|
+| PCHIP fast vs Oracle C WKB `DN_gw` | `1.07e-5`–`1.66e-4` | Four named points; below the `2e-4` gate on those points |
+| Fast vs reference, same native grid, reference `z_tail=8` | median `2.93e-4`, max `2.96e-4` | Six named points; includes the reference frozen-tail convention |
+| Fast vs reference, default point, reference `z_tail=10` | `4.96e-6` | One-point deep-tail attribution, not a parameter-space result |
+| Nested native-frequency refinement | relative change `7.4e-12`–`2.8e-9` | Six named points; supports grid convergence in that test |
 
-The integrated `DN_gw` relative error does **not** reach 1e-4 (median 4.3e-4).
-The cause is not a tuning knob: the reference itself carries a ~3e-4
-`z_tail`-frozen-tail sensitivity.  Measured at the default point
-(`reference.oracle_variants`, rtol=1e-8, signal-band subset):
+The same audit reports Simpson errors above the PCHIP results and records
+PCHIP as the formal default. Its `z_tail=8` reference difference is limited by
+the reference's own frozen-handoff tail sensitivity; the one-point `z_tail=10`
+comparison is an attribution check, not a substitute for broader validation.
 
-| oracle choice | `DN_gw` relative change |
-|---|---|
-| `z_tail` 7 → 8 | 4.2e-4 |
-| `z_tail` 8 → 10 | 3.0e-4 |
-| `z_tail` 14 (deep / no-tail) | *infeasible* (deep-subhorizon stiff) |
+## Latest runtime evidence is separate
 
-So production's residual is at the level of the oracle's own model choice, not a
-solver defect.  This is reported as an honest bound, never gated away.
+The 2026-09-23 Round 68 full-path profile used 25 repeats, two Numba
+`workqueue` threads, one BLAS thread, and CPU affinity `[0, 1]`. All six
+profiled cases converged; the default warm median/p95 was `7.189/7.916 ms`.
+This profile did not run a matched-resource LSODA comparison and did not add a
+new oracle accuracy sweep. It therefore establishes neither a speedup factor
+nor new accuracy coverage. Full per-case values and provenance are in
+[`benchmarks.md`](benchmarks.md).
 
-## Local error budget honesty
+## Likelihood and posterior evidence
 
-`estimate_local_error` distinguishes:
+The 2026-09-03 importance-sampling validation compares the fast spectrum with
+the continuous-sigma reference on 240 posterior-bulk points and 11 likelihood
+bins. It reports max per-bin dex error `3.10e-4`, max absolute `Delta logL`
+`7.30e-3`, ESS `4167`, and a `log10(r)` posterior shift of `-0.0011 sigma`.
+These are results of the recorded mock-data/importance-reweighting procedure,
+not an independent reference-engine MCMC chain; see
+[`mcmc_posterior/posterior_validation.md`](mcmc_posterior/posterior_validation.md).
 
-* `local-measured` — computed from this solve's telemetry
-  (WKB handoff, frequency-grid error, quadrature Richardson, cancellation,
-  self-consistency bracket);
-* `calibrated-at-fiducial` — a measured default-point anchor scaled to the
-  solve's settings (background model, transition, ODE phase, interpolation, tail);
-* `uncertified` — the model carries no solve telemetry, so the returned budget is
-  a conservative default, not a measurement.
+The separate 2026-09-24 LVK report runs four chains for each method and
+scenario. It contains convergence diagnostics and posterior-spectrum samples;
+SageNet+ does not meet the report's diagnostic references in two scenarios.
+The low-reheating scenario has 0% LVK-band coverage for all methods and cannot
+support a data-fit conclusion. See
+[`mcmc_sagenet_compare/report.md`](mcmc_sagenet_compare/report.md).
 
-The combined budget never claims to be a universal per-point error estimate when
-its dominant systematic terms are fiducial-calibrated; it reports
-`certification_status = certified-fiducial-calibrated` in that case.
+## Local error budget
 
-## Accepted preparation optimization: H2 endpoint cache
+`estimate_local_error` distinguishes telemetry measured during the solve,
+terms calibrated from a fiducial point, and uncertified defaults when no solve
+telemetry is attached. A `certification_status` of
+`certified-fiducial-calibrated` is limited to that calibration model; it does
+not imply a uniform error guarantee over all parameter values.
 
-The goal-grid builder now reuses only repeated scalar `H2` endpoint evaluations
-within one call. It does not cache across outer iterations, so the existing
-`DN_eff` self-consistency boundary is unchanged. A 50-repeat A/B over 13
-named/Sobol/edge points produced identical `f`, spectrum, `DN_gw`, `g2`, and
-`w2` digests; the measured spectrum and `DN_gw` deltas are p50/p95/max = 0/0/0.
-The independent Cartesian/Prüfer check remains below `2.0e-9` in `DN_gw` relative
-error on high-T, stiff, and high-kappa points. The high-kappa warm median improved
-by 6.54%; no new error-budget term is introduced.
+## Accepted execution optimization evidence
+
+The dated H2 endpoint-cache A/B recorded identical spectrum and background
+output digests over its 13 named/Sobol/edge points and 50 repeats. The measured
+high-kappa warm median improved by 6.54%; the low-T case regressed within the
+reported noise range. This supports that specific cache change and protocol,
+not a universal runtime improvement. Consult the linked artifact before
+reusing the result.

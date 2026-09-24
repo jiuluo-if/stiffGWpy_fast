@@ -193,11 +193,16 @@ class LCDM_SG(LCDM_SN):
         (the independent continuous-sigma precision path).  When
         ``engine='fast'`` and the fast solver
         fails (returns None or raises), ``fallback=True`` automatically reruns
-        the LSODA path.  ``tol`` is the outer Delta N_eff self-consistency
-        stopping criterion (default 1e-4); ``z_tail``, ``rtol`` and ``atol``
-        tune the reference LSODA path (analytic-tail threshold and ODE
-        tolerances).  ``freq_res`` scales the frequency-grid density
-        (audit-only; 1.0 = default grid).
+        the LSODA path. ``tol`` is the outer Delta N_eff self-consistency
+        stopping criterion. The named fast preset uses ``1e-6``; an explicit
+        non-default value overrides it. The ``1e-4`` signature default is
+        retained for LSODA and legacy manual-settings paths. ``z_tail`` can
+        override the selected fast preset and sets the LSODA/reference tail
+        threshold; ``rtol`` and ``atol`` tune reference/LSODA ODE tolerances.
+        ``freq_res`` scales frequency-grid density (audit-only; 1.0 = default).
+
+        中文说明：默认 ``fast`` 预设的 outer tolerance 为 ``1e-6``；显式传入
+        非默认 ``tol`` 会覆盖它。函数签名中的 ``1e-4`` 保留给 LSODA 和旧手动配置路径。
 
         Fast-path tuning (ignored by the LSODA path): when ``engine='fast'`` and
         ``accuracy_mode`` is omitted, the high-level API uses the combined ``fast``
