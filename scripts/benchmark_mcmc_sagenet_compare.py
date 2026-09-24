@@ -33,12 +33,12 @@ for _name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
 os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "True")
 sys.path[:0] = [str(REPO), str(SAGE)]
 
-import numpy as np
-from scipy.interpolate import interp1d
+import numpy as np  # noqa: E402
+from scipy.interpolate import interp1d  # noqa: E402
 
-from stiffgwpy_fast import LCDM_SG
-from stiffgwpy_fast import fast_sgwb as FS
-from stiffgwpy_fast import reference as REF
+from stiffgwpy_fast import LCDM_SG  # noqa: E402
+from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import reference as REF  # noqa: E402
 
 try:
     import torch
@@ -254,10 +254,10 @@ def env_meta() -> dict:
             "free_parameter_bounds": {"log10r": BOUNDS[0], "n_t": BOUNDS[1]},
             "proposal_step": {"log10r": STEP[0], "n_t": STEP[1]},
             "lvk_data_rows": int(np.loadtxt(DATA_FILE).shape[0])}
-    import scipy
     import numba
-    import torch as torch_mod
+    import scipy
     import sklearn
+    import torch as torch_mod
     meta.update(numpy=np.__version__, scipy=scipy.__version__, numba=numba.__version__,
                 torch=torch_mod.__version__, sklearn=sklearn.__version__)
     try:
