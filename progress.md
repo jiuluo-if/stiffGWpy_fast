@@ -1,5 +1,7 @@
 # Progress Log: stiffgwpy_fast 单一 fast 生产求解器
 
+> 本日志按 session 日期记录进展；历史条目中的“当前 HEAD”不代表今天的工作分支状态。当前状态以根 README、docs 索引和最新证据 artifact 为准。
+
 ## Session: 2026-09-12 (nested native-frequency quadrature + oracle tail attribution)
 
 ### Actions Taken

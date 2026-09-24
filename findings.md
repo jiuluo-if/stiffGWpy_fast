@@ -1,5 +1,7 @@
 # Findings & Decisions: fast 单档位重构
 
+> 本文件按研究轮次追加；各条中的“当前/latest/HEAD”仅指对应记录当时的代码和实验状态。当前项目与求解器摘要见根 `README.md`、`docs/README.md` 和 `docs/benchmarks.md`。
+
 ## Requirements
 
 - 当前分支 `codex/fast_v0.2`，远端 `fast` 指向 `https://github.com/jiuluo-if/stiffGWpy_fast.git`；重大 Phase 完成并 fresh verification 后提交、推送到远端同名分支。
