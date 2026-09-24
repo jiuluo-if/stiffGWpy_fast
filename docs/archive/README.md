@@ -6,8 +6,9 @@ This directory holds material retained for provenance after it stopped serving
 as a current report or active navigation target.
 
 - `baselines/baseline_54d65e3.md` is the 2026-09-11 two-thread snapshot. The
-  current validation status is described by `../fast_v02_audit_report.md` and
-  `../validation/validation_manifest.json`.
+  latest detailed accuracy audit is a dated 2026-09-12 record in
+  `../fast_v02_audit_report.md`; the `../validation/validation_manifest.json`
+  is dated 2026-09-17. Neither is a current-HEAD full-space certification.
 - `oracle_prufer/raw_logs/` is a local-only holding area for three 2026-09-11
   diagnostic captures moved out of the active `docs/` root. The repository's
   `*.log` ignore rule keeps these raw captures out of Git; later JSON records

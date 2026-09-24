@@ -4,13 +4,19 @@ Evidence generation HEAD: `a7b0ea9dae45c6a04c9a5760a2192cc21dc4a930`
 
 Date: 2026-09-12
 
+Status: dated accuracy-audit snapshot for the recorded evidence commit. The
+latest full-path runtime profile is the separate Round 68 record in
+[`benchmarks.md`](benchmarks.md); this report's runtime table is not the latest
+performance measurement, and its accuracy claims remain scoped to its listed
+artifacts and sample points.
+
 Authoritative manifest: [`validation_manifest.json`](validation/validation_manifest.json)
 
 ## Executive result
 
-The formal fast path is operational and stable on the audited sample, but is
-not certified against the requested release gates. The current production
-configuration remains `h=0.005`, `col_step=8`, `z_tail=5`, `phase_max=0.25`,
+The formal fast path was operational and stable on the audited sample, but was
+not certified against the requested release gates. The audited formal fast
+configuration was `h=0.005`, `col_step=8`, `z_tail=5`, `phase_max=0.25`,
 exact kink split, `freq_grid=goal`, and (as of this HEAD) the default
 `frequency_quadrature=pchip`.
 
@@ -70,7 +76,7 @@ attribution tool, not a per-point validation method: `z_tail=8` costs `94 s`,
   A,B,B,A warm runtime improves `5.4%` (default, 20 threads) and `8.2%`
   (default, 2 threads), with no regime regressing beyond the `2%` noise margin
   (`docs/fast_pyoverhead_ab_symmetric.json`);
-- outer reuse is retained for the current profile: four-case A/B has
+- outer reuse was retained for the audited fast profile: four-case A/B has
   `false_safe_count=0` under DN `2e-4` and spectrum-max `1e-3`, although the
   default spectrum max delta is near the latter budget at `9.03e-4`.
 

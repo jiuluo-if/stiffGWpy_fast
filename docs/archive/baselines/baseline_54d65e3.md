@@ -1,4 +1,4 @@
-# Current `fast_v0.2` baseline
+# Historical `fast_v0.2` baseline snapshot
 
 Evidence HEAD: `54d65e321727180d0f2ee7156fea07e378f38803`  
 Branch: `fast_v0.2`  
@@ -8,7 +8,7 @@ workers `1`, concurrent processes `1`.
 
 ## Solver configuration
 
-| item | current value |
+| item | value recorded at this snapshot |
 | --- | --- |
 | user mode | `fast` |
 | `h` | `0.005` |
@@ -34,7 +34,8 @@ shared_Neff_guard`, and `0 numerical failures`. The default point returned
 
 ## Accuracy and oracle status
 
-The latest full-grid tail study remains the provisional scientific reference:
+At the time of this snapshot, the latest full-grid tail study was the
+provisional scientific reference:
 default `z_tail=5/6/7/8/10` gave observed systematic relative uncertainty
 `3.6295e-3` and a non-monotone sequence. Stage C minimal low-T/high-T/stiff
 studies gave `4.9874e-4 / 4.1532e-3 / 1.7799e-3`, with high-T still

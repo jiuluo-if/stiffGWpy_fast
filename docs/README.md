@@ -4,7 +4,7 @@
 
 Status: current documentation map
 Date: 2026-09-24
-Code version: see `docs/validation/validation_manifest.json` → `commit`
+Code version: each evidence artifact records its own commit; the manifest is dated `2026-09-17` and is not current-HEAD certification.
 
 ## Research and experiment navigation
 
@@ -19,11 +19,11 @@ mistaking a smoke run or a candidate profile for a production result. Keep the
 recorded run paths intact: experiment output files and validation manifests
 refer to those paths.
 
-The README is the top-level user guide.  These documents give the substance
-behind the two user-facing fast profiles.  Every accuracy number is read back
-from `docs/validation/validation_manifest.json`, which is itself generated from
-the committed validation artifacts (`docs/paramsweep_*`, `docs/mcmc_posterior/`)
-by `scripts/build_two_mode_manifest.py` (a read-only replay — no physics re-run).
+The root README is the top-level user guide. There is one user-facing `fast`
+profile; historical `plain-grid` and `production` validation tiers are
+artifact-specific and are not current user modes. Accuracy numbers must be read
+with their experiment commit and scope: the manifest here is a read-only
+summary of older committed validation runs, not a current-HEAD certification.
 
 The independent reference truth used by the posterior mock is kept at
 `mcmc_posterior/oracle_truth.json`; it is required test data, not a temporary
@@ -32,15 +32,17 @@ benchmark output.
 | Document | Content | Status |
 |---|---|---|
 | `physics.md` | background + tensor-mode + `Delta N_eff` closure | current |
-| `numerical_method.md` | fast two-profile scheme, transition refine, tail, adaptive grid | current |
+| `numerical_method.md` | single fast profile, exact kink split, tail, goal grid | current |
 | `accuracy.md` | layered accuracy limits and dated validation evidence | see manifest and experiment catalogue |
 | `parameter_validation.md` | parameter schema and date-bound sweep records | see manifest and experiment catalogue |
 | `cobaya.md` | adapter options, mode mapping, `eval_freqs` | current |
 | `benchmarks.md` | current scoped audit plus date-bound benchmark records | see report scope |
-| `performance_comparison_20260903.md` | optimization before/after, breakdown, AB and gates | current |
+| `performance_comparison_20260903.md` | optimization before/after, breakdown, AB and gates | dated historical snapshot |
 | `reproducibility.md` | drivers, gates, environment metadata | current |
 | `experiment_catalog.md` | research themes, evidence status, raw experiment families | current |
 | `archive/` | superseded snapshots and local-only diagnostic logs | historical |
+| `mcmc_sagenet_compare/` | 2026-09-24 LVK MCMC speed, diagnostics, and posterior-spectrum comparison | dated experiment |
+| `mcmc_posterior/` | importance-sampling posterior validation against the continuous-sigma reference | dated validation |
 
 The 2026-09-11 `baseline_54d65e3.md` snapshot is retained at
 [`archive/baselines/baseline_54d65e3.md`](archive/baselines/baseline_54d65e3.md).

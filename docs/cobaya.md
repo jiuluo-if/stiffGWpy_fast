@@ -1,8 +1,8 @@
 # Cobaya adapter
 
-Status: current
-Date: 2026-09-03
-Code version: see manifest `commit`
+Status: current adapter contract; validation results remain artifact-bound
+Date: 2026-09-24
+Code version: see the run commit in each validation artifact
 
 `stiffgwpy_fast.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`.  It exposes the derived
 params `Delta_Neff_GW`, `Delta_Neff_total`, `log10hc_prim_fyr`, `f_end`,
@@ -22,13 +22,12 @@ accuracy_mode  ->  preset defaults  ->  explicit user overrides only
 ```
 
 In `stiffGW.yaml`, `h`/`col_step`/`z_tail`/`freq_res` default to `0` (a
-sentinel meaning "use the selected accuracy_mode").  This prevents the Cobaya
-default values from silently overriding the preset (the historical bug where a
-`z_tail: 7.0` YAML default masked the preset's `z_tail: 8.0`).  Setting any of
-them to a non-zero value is an explicit override.
+sentinel meaning "use the selected accuracy_mode"). This keeps adapter
+defaults from overriding the selected preset. The current `fast` preset uses
+`z_tail=5.0`; setting a non-zero value is an explicit override.
 
-The high-level fast solver defaults to the same `fast` path when `accuracy_mode`
-is omitted. Historical `production` and transition-refine names are deprecated
+The high-level fast solver defaults to the single `fast` path when
+`accuracy_mode` is omitted. Historical `production` and transition-refine names are deprecated
 compatibility aliases and are mapped to `fast`; direct validation scripts may
 still use internal presets. `accuracy_mode: null` is reserved for compatibility
 with callers that deliberately manage legacy module settings. The adapter passes resolved

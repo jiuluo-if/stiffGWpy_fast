@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Build the single source-of-truth two-profile validation manifest.
+"""Replay the committed, date-bound validation artifacts into a manifest.
 
-Reads the committed validation artifacts (the matched fast-vs-continuous-sigma
-reference points, the production Sobol sweep, the plain-grid corner suite, the
-axis-edge suite, the posterior validation) plus the convergence and parameter
-screens produced by ``scripts/validate_two_modes.py``, and emits
-``docs/validation/validation_manifest.json``.  No physics is re-run here; every
-number is read back from an artifact so the README and the manifest cannot drift.
+Reads committed matched-reference points, legacy plain-grid/production
+validation runs, axis-edge sweeps, posterior validation, and convergence
+screens, then emits ``docs/validation/validation_manifest.json``. No physics is
+re-run. The source artifact commits and dates define the evidence scope; the
+manifest's historical tiers do not define current user-facing solver modes or
+certify the current HEAD.
 
 Usage:
   python scripts/build_two_mode_manifest.py
@@ -62,7 +62,11 @@ def _agg(values):
 
 
 def _current_fast_audit():
-    """Summarize the current formal-fast evidence without rerunning physics."""
+    """Summarize the latest available formal-fast artifacts without rerunning physics.
+
+    Each input retains its own commit provenance; this replay does not make the
+    older measurements current-HEAD evidence.
+    """
     matrix = _load_json(D('benchmark_head_matrix.json'))
     stability = _load_json(D('benchmark_fast_stability_head.json'))
     nodes = _load_json(D('benchmark_node_counts_head.json'))
@@ -138,11 +142,11 @@ def _current_fast_audit():
         'profile': 'fast',
         'config': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
                        transition_refine=False, phase_max=0.25,
-                       freq_grid='goal', outer_tol=1e-4,
+                       freq_grid='goal', outer_tol=1e-6,
                        kink_split=True, frequency_quadrature='pchip'),
-        'definition': ('current formal fast path; this section is the active '
-                       'HEAD audit, while the legacy profiles below are retained '
-                       'for historical compatibility'),
+        'definition': ('formal fast path as described by the source artifacts; '
+                       'artifact commits define the evidence date and scope; '
+                       'legacy profiles below are historical validation tiers'),
         'source_commits': sorted({x.get('commit') for x in
                                   [matrix, stability, nodes, invariant, *same_grid]
                                   if x.get('commit')}),

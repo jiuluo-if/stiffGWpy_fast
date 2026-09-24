@@ -4,13 +4,13 @@
 
 状态：截至 2026-09-24 的研究主题和运行产物导航
 
-代码版本：当前结论以 `docs/validation/validation_manifest.json` 及每份运行数据记录的提交号为准。
+代码版本：每个实验文件均绑定自己的 commit；validation manifest 日期为 `2026-09-17`，较新的 profile 和报告需按各自运行提交号读取。
 
 本目录按科学问题归纳 `docs/` 中的实验材料。Markdown 报告说明假设、实验方案和决策；JSON/JSONL 文件保留测量值。某个候选方案在少量点上更快或数值相近，并不表示它已进入生产路径。
 
 ## 如何阅读证据
 
-1. 先看[`fast_v02_audit_report.md`](fast_v02_audit_report.md)和[`validation/validation_manifest.json`](validation/validation_manifest.json)，了解当前已验证的范围和明确列出的缺口。
+1. 先看[`benchmarks.md`](benchmarks.md)了解最新固定资源全流程耗时，再把[`fast_v02_audit_report.md`](fast_v02_audit_report.md)和[`validation/validation_manifest.json`](validation/validation_manifest.json)作为带日期的精度证据及其明确缺口阅读。
 2. 再读下表中的主题报告，确认假设、对照、否定结果，以及接受或拒绝方法的原因。
 3. 如需核验逐点数值、运行环境、代码提交、重复次数和重放信息，再查看对应的 JSON/JSONL 数据。
 4. `SMOKE`、`SPIKE` 和 `NOT VERIFIED` 表示探索性或未完成结果。失败、显式物理保护和被拒绝的候选方案也是研究证据；除非报告如此分类，不要将其记作求解器数值故障。
@@ -20,12 +20,12 @@
 | 主题 | 研究问题与归纳 | 报告和数据 |
 |---|---|---|
 | 物理模型与求解器契约 | 定义宇宙学模型、输出量、求解档位、精度限制和 Cobaya 适配器。此组文档说明接口和物理约定，不代表整个参数空间都已通过认证。 | [`physics.md`](physics.md)、[`numerical_method.md`](numerical_method.md)、[`accuracy.md`](accuracy.md)、[`cobaya.md`](cobaya.md)、[`reproducibility.md`](reproducibility.md) |
-| 参数空间验证与独立参照 | 将成功对比、物理保护和数值失败分开统计。400 点参数验证记录了 255 个成功点、145 个显式保护点和 0 个数值失败。各 matched-grid 扫描及 manifest 只支持其注明范围内、带日期的结论；生产路径的全参数空间认证仍为 `NOT VERIFIED`。 | [`parameter_validation.md`](parameter_validation.md)、[`parameter_validation/parameter_validation_report.md`](parameter_validation/parameter_validation_report.md)、[`paramsweep_plain/validation_summary.md`](paramsweep_plain/validation_summary.md)、[`paramsweep_z8/validation_summary.md`](paramsweep_z8/validation_summary.md)、[`paramsweep_z8b/validation_summary.md`](paramsweep_z8b/validation_summary.md)、[`parameter_validation/`](parameter_validation/)、[`paramsweep_plain/`](paramsweep_plain/)、[`paramsweep_z8/`](paramsweep_z8/)、[`paramsweep_z8b/`](paramsweep_z8b/)、[`paramsweep_ref/`](paramsweep_ref/)、[`validation/`](validation/) |
-| `DN_gw` 误差预算与频率求积 | 较早的 A/B 实验发现，SciPy PCHIP 精度更高，但开始时未达到预注册的耗时门槛。共享和向量化减少了 PCHIP 开销；之后以 WKB 为参照的误差分解指出频率求积是主要残差来源，后续的默认方案评估记录了切换到 PCHIP 的决策。当前审计给出测量范围和限制；早期报告保留完整决策过程。 | [`fast_true_error_assessment.md`](fast_true_error_assessment.md)、[`fast_residual_decomposition_assessment.md`](fast_residual_decomposition_assessment.md)、[`fast_quadrature_ab_assessment.md`](fast_quadrature_ab_assessment.md)、[`fast_quadrature_reuse_assessment.md`](fast_quadrature_reuse_assessment.md)、[`fast_quadrature_default_switch_assessment.md`](fast_quadrature_default_switch_assessment.md)、[`fast_v02_audit_report.md`](fast_v02_audit_report.md)、`quadrature_*`、`fast_quadrature_*` 和 `dn_*` JSON 数据 |
+| 参数空间验证与独立参照 | 将成功对比、物理保护和数值失败分开统计。已有 400 点 LHS 屏查记录 254 个成功点、146 个显式保护点和 0 个数值失败；240 点 Sobol 运行记录 212 个成功点和 28 个保护点。这些是带日期的抽样，不是当前 fast 档位的全参数空间认证。 | [`parameter_validation.md`](parameter_validation.md)、[`parameter_validation/parameter_validation_report.md`](parameter_validation/parameter_validation_report.md)、[`paramsweep_plain/validation_summary.md`](paramsweep_plain/validation_summary.md)、[`paramsweep_z8/validation_summary.md`](paramsweep_z8/validation_summary.md)、[`paramsweep_z8b/validation_summary.md`](paramsweep_z8b/validation_summary.md)、[`parameter_validation/`](parameter_validation/)、[`paramsweep_plain/`](paramsweep_plain/)、[`paramsweep_z8/`](paramsweep_z8/)、[`paramsweep_z8b/`](paramsweep_z8b/)、[`paramsweep_ref/`](paramsweep_ref/)、[`validation/`](validation/) |
+| `DN_gw` 误差预算与频率求积 | 较早的 A/B 实验发现，SciPy PCHIP 精度更高，但开始时未达到预注册的耗时门槛。共享和向量化减少了 PCHIP 开销；之后以 WKB 为参照的误差分解指出频率求积是主要残差来源，后续的默认方案评估记录了切换到 PCHIP 的决策。最新的详细精度审计日期为 2026-09-12，提供的是有限范围的历史证据。 | [`fast_true_error_assessment.md`](fast_true_error_assessment.md)、[`fast_residual_decomposition_assessment.md`](fast_residual_decomposition_assessment.md)、[`fast_quadrature_ab_assessment.md`](fast_quadrature_ab_assessment.md)、[`fast_quadrature_reuse_assessment.md`](fast_quadrature_reuse_assessment.md)、[`fast_quadrature_default_switch_assessment.md`](fast_quadrature_default_switch_assessment.md)、[`fast_v02_audit_report.md`](fast_v02_audit_report.md)、`quadrature_*`、`fast_quadrature_*` 和 `dn_*` JSON 数据 |
 | 独立参照与尾部交接 | Oracle C 的高阶 WKB 修正已在报告列出的对比范围内验证，并解释了冻结尾部造成的缺陷。Oracle B 的相位平均和有限窗口原型尚未推广，因为它们还不能提供独立真值参照。Prüfer 作为独立参考原型通过了已记录的筛查，但在更广泛认证完成前仍只用于参考。 | [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md)、[`oracle_b_phase_averaged_assessment.md`](oracle_b_phase_averaged_assessment.md)、[`oracle_b_phase_window_assessment.md`](oracle_b_phase_window_assessment.md)、[`oracle_prufer_assessment.md`](oracle_prufer_assessment.md)、`oracle_*`、`tail_*` 和 `wkb_*` JSON 数据 |
 | 数值方法候选方案 | 线性 z Magnus transfer-map 候选方案因运行时间高于 midpoint 基线且未达到实验门槛，被拒绝用于生产。其他 transfer、phase、Riccati、Bessel、Airy、稀疏频率和小角度记录均为具体候选方案的证据；阅读时须同时核对其状态和代码提交。 | [`transfer_map_phase_assessment.md`](transfer_map_phase_assessment.md)、`*transfer*`、`*phase*`、`*riccati*`、`*bessel*`、`*airy*`、`*frequency*` 和 `*small_angle*` JSON 数据 |
-| 性能与热点实验 | 基准文档区分预热耗时、冷启动/JIT 开销、线程缩放和精度门槛。`profile_fast_breakdown_*.json` 是最大的原始数据家族（本次 2026-09-24 清点到 217 条），表示不同轮次和参数区域的分阶段分析，不代表 217 个独立生产改进。`derived_param_*`、`phi_s2_*`、`fd_lookup_*`、`grouped_soa_*` 和 `outer_snapshot_*` 是缓存、工作区和内核候选方案的多轮实验；接受性能结论前要比较摘要/状态一致性和全部参数区域。 | [`benchmarks.md`](benchmarks.md)、[`performance_comparison_20260903.md`](performance_comparison_20260903.md)、[`baseline_54d65e3.md`](archive/baselines/baseline_54d65e3.md)、`benchmark_*`、`profile_*`、`derived_param_*`、`phi_s2_*`、`fast_phi_*`、`fd_lookup_*`、`grouped_soa_*`、`outer_snapshot_*` 和 `count_assembly_*` 数据 |
-| 后验与外部模型对比 | 2026-09-24 的报告在同一 LVK 数据下比较了三种 MCMC 方法。报告称，当前 fast 在测试场景中的单步速度约为 SageNet+ 的 3.2–4.9 倍；低再加热温度场景对三种方法的 LVK 频段覆盖均为 0%，因此不能据此比较数据拟合表现。后验验证目录中的重要性采样/参照一致性结果，不等同于已收敛的真实数据采样链。 | [`mcmc_sagenet_compare/report.md`](mcmc_sagenet_compare/report.md)、[`mcmc_posterior/posterior_validation.md`](mcmc_posterior/posterior_validation.md)、[`mcmc_sagenet_compare/`](mcmc_sagenet_compare/)、[`mcmc_posterior/`](mcmc_posterior/) |
+| 性能与热点实验 | 基准文档区分预热耗时、冷启动/JIT 开销、线程缩放和精度门槛。`profile_fast_breakdown_*.json` 是最大的原始数据家族（本次 2026-09-24 清点到 220 条），表示不同轮次和参数区域的分阶段分析，不代表 220 个独立生产改进。`derived_param_*`、`phi_s2_*`、`fd_lookup_*`、`grouped_soa_*` 和 `outer_snapshot_*` 是缓存、工作区和内核候选方案的多轮实验；接受性能结论前要比较摘要/状态一致性和全部参数区域。 | [`benchmarks.md`](benchmarks.md)、[`performance_comparison_20260903.md`](performance_comparison_20260903.md)、[`baseline_54d65e3.md`](archive/baselines/baseline_54d65e3.md)、`benchmark_*`、`profile_*`、`derived_param_*`、`phi_s2_*`、`fast_phi_*`、`fd_lookup_*`、`grouped_soa_*`、`outer_snapshot_*` 和 `count_assembly_*` 数据 |
+| 后验与外部模型对比 | 2026-09-24 的报告在同一 LVK 数据下比较三种 MCMC 方法。当前 fast 的采样单步约比 SageNet+ 快 2.9–4.9 倍；这衡量采样步骤耗时，不是独立求解器测速。低再加热温度场景对三种方法的 LVK 频段覆盖均为 0%，不能据此比较数据拟合表现。 | [`mcmc_sagenet_compare/report.md`](mcmc_sagenet_compare/report.md)、[`mcmc_posterior/posterior_validation.md`](mcmc_posterior/posterior_validation.md)、[`mcmc_sagenet_compare/`](mcmc_sagenet_compare/)、[`mcmc_posterior/`](mcmc_posterior/) |
 | 工程和测试覆盖 | 这组是维护审计，不是物理结果报告。工程审计仍被根 README、变更日志和复现指南引用，因此保留在当前文档树中。 | [`engineering_audit.md`](engineering_audit.md)、[`test_coverage_matrix.md`](test_coverage_matrix.md)、[`test_duplication_audit.md`](test_duplication_audit.md) |
 
 ## 原始运行数据家族
@@ -46,7 +46,7 @@
 - 三份日期为 2026-09-11 的 Prüfer 原始 `.log` 记录已从 `docs/` 根目录移至 `archive/oracle_prufer/raw_logs/`。它们被仓库通用的 `*.log` 规则忽略，且没有活动路径引用；后续 JSON 数据和评估报告是共享导航入口。由于这些记录来自较早提交且与后续 JSON 并非逐字节相同，仍在本机保留，不删除。新克隆不会包含这些本地日志，见[`archive/README.md`](archive/README.md)。
 - 未删除 2026-09-02/03 的参数验证或后验数据：当前验证/报告链仍引用这些数据。也没有仅因为轮次较新或日期较早而删除当前实验输出。
 
-## Markdown 文档清单
+## 版本控制内的 Markdown 文档清单
 
 以下清单覆盖当前 `docs/` 中的研究说明和配套文档；各主题的关联方式见上表。
 

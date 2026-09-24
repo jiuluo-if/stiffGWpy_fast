@@ -2,6 +2,8 @@
 
 > 生成日期：2026-09-03　git commit：`5125a5c`
 >
+> **历史快照**：以下 tier 名称、数值和验收矩阵仅描述本报告生成时的运行与代码；当前用户档位只有 `fast`。请结合 [`../parameter_validation.md`](../parameter_validation.md) 和实验目录查看后续状态。
+>
 > **本报告未重跑任何物理计算**：所有数字均回读自已提交的验证产物（见 §7 源文件），与认证运行完全一致，可仅凭仓库复现。配套机器可读文件：`docs/parameter_validation/validation_results.json`（逐点结构化）与`docs/parameter_validation/validation_results.csv`（逐点平表）。
 
 ## 0. 覆盖矩阵（引擎 / 层级 / oracle 对照）

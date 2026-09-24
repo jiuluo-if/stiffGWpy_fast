@@ -13,15 +13,17 @@ project.
 **LCDM + stiff matter + primordial stochastic gravitational-wave background (SGWB)**
 cosmology code, with one **user-facing fast profile**, an independent
 continuous-sigma high-accuracy reference pipeline
-(the precision oracle), and the original LSODA path kept only for regression and
-runtime benchmarking.
+(the precision oracle), and the original LSODA path available for regression,
+explicit fallback, and runtime benchmarking.
 
-> **Documentation rule.**  Accuracy claims are read back from
-> `docs/validation/validation_manifest.json`; current performance measurements
-> are maintained in `docs/benchmarks.md` and
-> `docs/performance_comparison_20260903.md`.  `docs/` holds the canonical
-> per-topic documents; superseded historical audits remain available in Git
-> history rather than in the active `docs/` tree.
+> **Documentation rule.** Dated accuracy and validation claims retain their
+> artifact and commit provenance; the manifest can describe an earlier scoped
+> run and is not automatically a current-HEAD certification. The current
+> solver configuration is defined by
+> `stiffgwpy_fast.fast_sgwb.ACCURACY_MODES['fast']`. The latest full-path
+> performance profile is summarized in `docs/benchmarks.md`. `docs/` keeps
+> current guidance alongside clearly dated evidence; use
+> `docs/experiment_catalog.md` to distinguish them.
 
 ---
 
@@ -79,19 +81,26 @@ The goal grid reserves nodes around the reheating feature and preserves
 analytic WKB envelope at `z_tail`; the local error budget is exposed through
 `stiffgwpy_fast.fast_sgwb.estimate_local_error`.
 
-Fresh HEAD evidence uses the formal `fast` path (`h=.005`, `col_step=8`,
-`z_tail=5`, `phase_max=.25`, exact kink split, goal grid). On the six-point
-A,B,B,A paired matrix at fixed 20-thread `workqueue`, the default warm
-median/p95 is `4.77/5.58 ms/point`; this does not yet meet the `<4 ms` target. On the
-same native 76-node grid, the independent reference comparison gives a
-`DN_gw` relative error of `2.94e-4`, which is a combined tail/transfer and
-frequency-quadrature residual; against the independent Oracle C WKB anchor the
-PCHIP quadrature residual alone is `1.07e-5`–`1.66e-4` at the four named
-points. PCHIP is therefore the single formal `fast` default, and `simpson`
-stays explicitly selectable for audits. `eval_freqs` is separated from
-integration support nodes, and its six-point DN invariant measured zero change.
-See `findings.md` and `progress.md` for exact artifacts and rejected
-candidates.
+The latest full-path profile was generated at solver commit `c7d4766` on
+2026-09-23 with 25 repeats, two Numba `workqueue` threads, one BLAS thread,
+and CPU affinity `[0, 1]`. Warm median/p95 times were `7.189/7.916 ms`
+(default), `7.116/7.782 ms` (low-T), `10.475/10.890 ms` (high-T),
+`10.260/10.936 ms` (stiff), and `9.929/11.062 ms` (high-kappa). All six
+profiled cases converged; each case's first sample is reported separately,
+but only the default sample is process-cold and includes JIT cost. The repository HEAD adds MCMC evidence after that
+profile; the solver source is unchanged from the profile commit. See
+[`docs/benchmarks.md`](docs/benchmarks.md) for provenance and limitations.
+
+The latest scoped accuracy audit remains dated 2026-09-12 and is bound to its
+recorded artifacts: PCHIP error against the Oracle C WKB anchor was
+`1.07e-5`–`1.66e-4` at four named points, while the six-point same-grid
+comparison with the `z_tail=8` reference had a `2.93e-4` median difference.
+These measurements are not full parameter-space certification. PCHIP is the
+single formal `fast` quadrature default; Simpson remains explicitly selectable
+for audits. `eval_freqs` is separated from integration support nodes; the
+recorded six-point DN invariant change was zero. The latest MCMC comparison
+and its limits are summarized in
+[`docs/mcmc_sagenet_compare/report.md`](docs/mcmc_sagenet_compare/report.md).
 
 ## Reference / oracle
 
@@ -226,16 +235,16 @@ oracle.
 
 ## Full parameter validation
 
-Parameter schema (11 physical params, ranges in `scripts/validate_two_modes.py`):
+Parameter schema (11 physical params, ranges in the validation artifacts):
 
 * **Single-parameter axis edges:** `docs/paramsweep_z8b/` (16 points on
   r/n_t/cr/T_re/DN_re/kappa10 axis edges + transition interiors).
-* **Param space (LHS, plain-grid screen):** 400 points,
+* **Param space (LHS, historical plain-grid screen):** 400 points,
   **254 success / 146 shared-`Delta_Neff` guard / 0 numerical failure**
-  (`docs/validation/param_sweep_plain.json`).  The 36% guard fraction is a
+  (`docs/validation/param_sweep_plain.json`, generated at `f87e969`). The 36% guard fraction is a
   physical rejection (total `N_eff > 5`), reported explicitly, never hidden.
-* **Param space (Sobol, production):** 240 points, **212 ok / 28 guard**
-  (`docs/paramsweep_ref/fast_sweep.jsonl`).
+* **Param space (Sobol, historical fast run):** 240 points, **212 ok / 28 guard**
+  (`docs/paramsweep_ref/fast_sweep.jsonl`); this is an artifact-bounded sample, not full certification.
 
 Rejections are categorised `PHYSICAL_INVALID` / `PHYSICAL_GUARD` /
 `NUMERICAL_FAILURE` / `FAST_ERROR` / `ORACLE_ERROR` (see the manifest and
@@ -244,41 +253,46 @@ rejection, not a numerical failure.
 
 ## Benchmark
 
-Current measurements are summarized below; cold JIT and warm runtime are kept
-separate.  See `docs/performance_comparison_20260903.md` for the full method
-comparison, stage breakdown, AB evidence, and thread scaling.
+The latest fixed-resource full-path measurements are below. Cold JIT and warm
+runtime are kept separate; see `docs/benchmarks.md` for the protocol and raw
+artifact links. `docs/performance_comparison_20260903.md` is an earlier dated
+comparison, not a current benchmark.
 
-| | runtime/point | vs LSODA |
+| Method | runtime/point | Scope / note |
 |---|---|---|
-| fast (goal-kink-hybrid) | 4.77 ms warm median; 5.58 ms p95; 0.222 s cold | interim result; `<4 ms` not yet met |
-| reference (oracle) | ≈360–383 s/point historical | anchor only |
+| fast (goal-kink-hybrid, default) | 7.189 ms warm median; 7.916 ms p95; 545 ms first sample including JIT | Round 68, two Numba threads; `<4 ms` not met |
+| reference (oracle) | 360–579 s/point in dated deep-tail studies | precision anchor; cost depends on tail setting |
 
-The speedup entries use the recent A-point LSODA measurement (`22.137 s`) and
-candidate warm median; older `0.37 s` / `3.7–4.1 s` / `~1000x` figures are
-pre-JIT historical measurements and are not current claims.
+The 2026-09-23 profile is not paired with an LSODA run under the same resource
+protocol, so no current speedup ratio is claimed. Older `0.37 s` /
+`3.7–4.1 s` / `~1000x` figures are pre-JIT historical measurements.
 
 ## MCMC validation
 
-Importance-sampling posterior validation (Layer C) from 9000 fast-production
-draws with a fixed seed: ESS **4167** (gate 2000 PASS), `log10 r` posterior shift
-**-0.0011 sigma** (gate <0.1 sigma PASS), per-bin dex max **3.1e-4**,
-`|Delta logL|` max **7.3e-3** (gate 0.1 PASS).  See
+The mock-data importance-sampling posterior validation (Layer C) uses 9000
+fast draws with a fixed seed: ESS **4167** (gate 2000 PASS), `log10 r`
+posterior shift **-0.0011 sigma** (gate <0.1 sigma PASS), per-bin dex max
+**3.1e-4**, and `|Delta logL|` max **7.3e-3** (gate 0.1 PASS). See
 `docs/mcmc_posterior/posterior_validation.md`.
 
-Honest limit: a full two-chain reference-engine MCMC was **not** run because a
-reference solve is ≈360 s/point on this host.  The former bounded real-Cobaya
-scaffold chains were unfinished adapter-plumbing outputs and have been removed
-from the working tree.  Posterior-shift conclusions therefore rest on
-importance reweighting, not on an independent reference chain.
+Separate from that mock-data validation, the 2026-09-24 LVK MCMC report runs
+four chains for plain-grid, current fast, and SageNet+ in three scenarios. The
+fast sampling step is about `2.9–4.9x` faster than SageNet+ in those scenarios;
+SageNet+ misses the report's chain diagnostic references in two scenarios.
+The low-reheating case has no LVK-band coverage for any method, so it cannot
+support a data-fit comparison. This report does not include an independent
+reference-engine MCMC chain; see
+[`docs/mcmc_sagenet_compare/report.md`](docs/mcmc_sagenet_compare/report.md).
 
 ## Limitations
 
-* The current same-grid default `DN_gw` error is `2.94e-4` with PCHIP (the
-  legacy Simpson option is `7.14e-4`); that residual is a combined tail and
-  frequency-quadrature term, so the branch has not yet met the final `<2e-4`
-  DN gate or the first `<=4 ms/point` speed target.
-* Fast execution is over 100x faster than the recent LSODA A-point runtime,
-  but this is an interim optimization result, not an accuracy certification.
+* In the 2026-09-12 six-point same-grid audit, the fast-to-reference `DN_gw`
+  difference was `2.93e-4` median at `z_tail=8`; that comparison includes the
+  reference's frozen-tail convention and is not a current-HEAD parameter-space
+  certification. The latest recorded warm default runtime is `7.189 ms`, above
+  the `4 ms` target.
+* The latest profile has no matched-resource LSODA comparison, so a current
+  speedup factor is not claimed.
 * MCMC validation rests on importance reweighting, not an independent
   reference chain (reference is ~360 s/point).
 * The oracle uses a frozen tail; a deep/no-tail certification (z_tail ≥ 14) is
@@ -301,8 +315,10 @@ python -m build --wheel                                            # wheel build
 python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl        # installed-resource smoke
 ```
 
-Every driver records git-commit + environment metadata.  The regression suite is
-103 passed (6 slow LSODA gates deselected by default; counts may change as tests evolve).
+Every driver records git-commit and environment metadata. Test totals depend on
+the checked-out commit and optional markers; use the current CI workflow and
+commands in `docs/reproducibility.md` for fresh verification. Older test counts
+are historical snapshots.
 
 ## Directory structure
 
@@ -314,9 +330,9 @@ stiffgwpy_fast/            pip package
   freq_adaptive.py    curvature-adaptive frequency grid
   exact_background.py continuous-sigma expansion integrals / kink-refined grid
   cobaya/             Cobaya theory adapter + likelihoods
-tests/                pytest suite (99 unit + 6 slow gates)
+tests/                pytest suite (default, slow, Cobaya, and compatibility gates)
 scripts/              validation drivers (validate_two_modes, build_two_mode_manifest, ...)
-docs/                 selected docs + compact validation artifacts; local chains/outputs are ignored
+docs/                 curated guidance, dated reports, validation artifacts, and experiment records; local chains remain ignored
 Git history           superseded historical audits / benchmarks
 ```
 

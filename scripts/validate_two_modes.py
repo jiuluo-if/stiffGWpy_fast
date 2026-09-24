@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Two-profile fast validation: convergence + parameter sweep + oracle anchor.
+"""Historical multi-tier validation: convergence + parameter sweep + oracle anchor.
 
-This is the physics-first certification driver for the two user-facing fast
-profiles (``fast`` = plain-grid / speed-first, ``production`` = transition-refine
-/ precision-first).  It never uses LSODA as a precision oracle; the precision
-anchor is the independent continuous-sigma reference pipeline
-(``stiffgwpy_fast.reference``) on matched frequency subsets.
+This driver reproduces recorded fast/plain-grid and production/transition-refine
+validation tiers. Those names describe the experiments and artifacts, not the
+current user-facing API, which exposes only ``fast``. It never uses LSODA as a
+precision oracle; the precision anchor is the independent continuous-sigma
+reference pipeline (``stiffgwpy_fast.reference``) on matched frequency subsets.
 
 Phases (choose one or more):
   --phase convergence    fast-vs-fast convergence of h/freq_res/z_tail/col_step/phase_max
@@ -169,7 +169,7 @@ def phase_convergence(outdir):
 
 
 def phase_param_sweep(outdir, n, seed, method='lhs'):
-    """Parameter-box sweep with fast plain-grid screen + production flag points."""
+    """Replay the historical plain-grid screen and production flag-point tier."""
     from scipy.stats import qmc
     # Schemas (min, max) on log-scaled / linear physical handles.
     # Full physical parameter schema (all parameters that actually enter the

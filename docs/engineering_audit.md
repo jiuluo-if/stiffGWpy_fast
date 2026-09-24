@@ -1,5 +1,10 @@
 # Engineering audit checklist
 
+Historical engineering audit: baseline review of `main` at the commit below.
+Its staged checklist and test counts describe that audit session; use the
+current CI workflow and [`reproducibility.md`](reproducibility.md) for today's
+verification procedure.
+
 Status: baseline review for `main` at commit `8499ed27d2b7a76002bf95072a7e8947ed1df775`.
 
 The working tree already contained the untracked oracle-240 validation artifact
@@ -9,7 +14,7 @@ builds succeed; the repository-wide Ruff check is not yet clean.  “未验证�
 that the repository contains a claim or mechanism, but this audit has not yet
 produced sufficient executable evidence for it.
 
-## Current staged evidence
+## Evidence recorded at audit time
 
 The first implementation stage has now landed locally: `FastSolverConfig` is a
 validated immutable per-call record; named fast modes resolve without mutating

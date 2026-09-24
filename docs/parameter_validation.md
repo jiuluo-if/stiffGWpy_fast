@@ -1,8 +1,8 @@
 # Full parameter validation
 
-Status: current
-Date: 2026-09-03
-Code version: see manifest `commit`
+Status: dated validation evidence; not a current-HEAD full-space certification
+Evidence dates: parameter sweeps 2026-09-03 through 2026-09-17
+Code version: see each source artifact's `commit`; validation manifest is dated 2026-09-17 (`083fdf5c`)
 
 ## Parameter schema
 
@@ -29,10 +29,14 @@ Physical constraints: `r > 0` (no tensor source otherwise), `N_inf` finite
 
 * **Axis edges:** `docs/paramsweep_z8b/` — 16 points on the
   `r`/`n_t`/`cr`/`T_re`/`DN_re`/`kappa10` axis edges + transition interiors.
-* **Sobol (production):** `docs/paramsweep_ref/fast_sweep.jsonl` — 240 points:
+* **Sobol (historical fast run):** `docs/paramsweep_ref/fast_sweep.jsonl` — 240 points:
   **212 ok / 28 explicit shared-`Delta_Neff` guard**.
-* **LHS (plain-grid screen):** `docs/validation/param_sweep_plain.json` —
-  400 points: **255 success / 145 guard / 0 numerical failure**.
+* **LHS (historical plain-grid screen):** `docs/validation/param_sweep_plain.json` —
+  400 points: **254 success / 146 guard / 0 numerical failure**; generated at
+  commit `f87e969c`.
+
+These runs describe their recorded solver settings and sampled points. They
+do not certify the current single `fast` preset over the full parameter space.
 
 ## Classification
 

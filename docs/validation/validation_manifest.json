@@ -968,11 +968,11 @@
       "transition_refine": false,
       "phase_max": 0.25,
       "freq_grid": "goal",
-      "outer_tol": 0.0001,
+      "outer_tol": 1e-06,
       "kink_split": true,
       "frequency_quadrature": "pchip"
     },
-    "definition": "current formal fast path; this section is the active HEAD audit, while the legacy profiles below are retained for historical compatibility",
+    "definition": "formal fast path as described by the source artifacts; artifact commits define the evidence date and scope; legacy profiles below are historical validation tiers",
     "source_commits": [
       "16ea185c84f50f081a6a1c17e9c47e2380d9d67a",
       "f87e969c96bff54bcdca8146f49d8b7a86ea501f"

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Consolidate the recorded fast-vs-reference validation artifacts into one
-parameter-validation matrix (machine- and human-readable).
+"""Consolidate dated fast-vs-reference runs into a historical validation matrix.
 
 No physics is re-run here: every number is read back from committed artifacts
-(Layer A/B/C singles and sweeps, plain-grid default anchor), so the outputs are
-reproducible from the repository alone and cannot drift from the certification
-runs that produced the underlying jsonl/json files.
+(Layer A/B/C singles and sweeps, plus the legacy plain-grid anchor). The tier
+names and results describe their recorded runs; they are not current user modes
+or a current-HEAD full-parameter-space certification.
 
 Run:  python scripts/build_validation_matrix.py
 Writes:
@@ -237,7 +236,7 @@ def plain_grid_anchor():
             "reason": "exploratory anchor; coarser grid below the 1e-3 physics gate" if eng == "fast_grid" else "",
             "DN_gw_rel": None, "fast_runtime_s": item.get("t_fast_med_ms", 0.0) / 1000.0,
             "DN_eff": None,
-            "notes": "current fast preset benchmark under commit %s; speed-only record; precision comes from independent reference artifacts" % ((meta or {}).get("commit", "unknown")),
+            "notes": "historical fast-grid speed-only benchmark under recorded commit %s; precision comes from separate independent-reference artifacts" % ((meta or {}).get("commit", "unknown")),
         }
         row.update({"r": 0.01, "n_t": None, "cr": 1, "T_re": 2000.0, "DN_re": None, "kappa10": 0.01})
         rows.append(row)
@@ -374,6 +373,8 @@ def _write_report(a_rows, b_rows, c_rows, c_report, pga, pga_meta, acc, payload,
     L.append("# parameter_validation_report — fast vs 连续-σ reference 参数空间验证矩阵")
     L.append("")
     L.append("> 生成日期：%s　git commit：`%s`" % (datetime.date.today().isoformat(), _head_short()))
+    L.append(">")
+    L.append("> **历史验证汇总**：tier 名称和读数对应各自原始实验，不表示当前用户档位；当前对外只有 `fast`。全参数空间认证仍须以最新、具备独立参照的验证结果为准。")
     L.append(">")
     L.append("> **本报告未重跑任何物理计算**：所有数字均回读自已提交的验证产物（见 §7 源文件），"
              "与认证运行完全一致，可仅凭仓库复现。配套机器可读文件："

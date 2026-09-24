@@ -1582,3 +1582,24 @@ the diagnostic artifacts are retained.
   forward-error gate (`rtol=5e-12`, `atol=1e-15`, `equal_nan=False`) while
   retaining exact kink metadata checks. Focused tests: `3 passed`; Ruff clean.
 - [ ] Push the CI repair and confirm a new all-job green Actions run.
+
+## Documentation freshness pass — 2026-09-24
+
+- Revalidated current fast mode from source: `USER_FAST_PROFILES=('fast',)`;
+  only the goal-kink-hybrid profile is user-facing. Fetched `fast_v0.2` and
+  confirmed current HEAD `3c33668` is the remote target; source code is
+  unchanged from the Round 68 solver profile commit `c7d4766`.
+- Refreshed English/Chinese root READMEs, package description, docs indexes,
+  experiment catalogue, benchmark summary, numerical-method/physics/accuracy/
+  validation/Cobaya/reproducibility descriptions, and archival status labels.
+- Corrected dated parameter-screen counts to the source JSON (254/146) and
+  MCMC per-step comparison range to the report table (2.9–4.9x). Preserved
+  original experiment measurements and commit provenance.
+- Updated historical validation generator descriptions and the manifest's
+  evidence-scope wording. The validation numbers themselves were not rerun.
+- Refreshed the local-only upstream comparison snapshot to HEAD `3c33668`,
+  corrected its ahead count to 287, and added `README_zh.md`; it remains outside
+  the shared commit scope.
+- Remaining: audit all tracked Markdown/generator wording, verify README pairs,
+  relative links and JSON, inspect the complete diff, then commit/push only the
+  shared reviewed paths to `fast_v0.2`.

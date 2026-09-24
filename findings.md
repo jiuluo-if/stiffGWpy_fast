@@ -12,7 +12,7 @@
 
 ## Research Findings
 
-- `README.md` 当前仍明确写着“两种 user-facing fast profiles”：`fast` plain-grid 与 `production` transition-refine；用户 API、Cobaya YAML、benchmark 脚本和 tests 仍暴露 `production`/`transition_refine`。
+- 初始审计发现的旧 README 描述把 plain-grid 与 production 写成两个用户档位；2026-09-24 文档刷新已更正为唯一用户档位 `fast`，并将旧 tier 限定为历史验证标签。相关验证脚本仍可重放这些历史 artifact。
 - 当前关键代码入口：`fast_sgwb.py` 的 `normalize_accuracy_mode`/`apply_accuracy_mode`/`resolve_config`/`_SGWB_iter_fast_impl`/`SGWB_iter_fast`；`stiff_SGWB.py` 的 `SGWB_iter`；`reference.py` 的 `run_reference`。
 - 当前仓库 HEAD 为 `b83aa89`，最近提交为“统一项目名称为 stiffgwpy_fast”；工作树在审计开始时无未提交代码改动，之后仅生成了计划文件。
 - 本轮 2026-09-10 已 `git fetch --prune fast fast_v0.2`；远端 `fast/fast_v0.2`、本地 `codex/fast_v0.2` 与 HEAD 均为 `767056d2ea2e4d25f06670f1fecc7c226d85cc9a`。
