@@ -4,10 +4,10 @@ Status: current adapter contract; validation results remain artifact-bound
 Date: 2026-09-24
 Code version: see the run commit in each validation artifact
 
-`stiffgwpy_fast.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`.  It exposes the derived
-params `Delta_Neff_GW`, `Delta_Neff_total`, `log10hc_prim_fyr`, `f_end`,
-`Delta_Neff_GW_error`, and provides `f`, `omGW_stiff`, `hubble`, `kappa_s`,
-`kappa_r` to the likelihoods.
+`stiffgwpy_fast.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`. It exposes the
+derived parameters `Delta_Neff_GW`, `Delta_Neff_total`, `log10hc_prim_fyr`,
+`f_end`, and `Delta_Neff_GW_error`; it supplies `f`, `omGW_stiff`, `hubble`,
+`kappa_s`, and `kappa_r` to likelihoods.
 
 ## Mode mapping
 
@@ -26,26 +26,27 @@ sentinel meaning "use the selected accuracy_mode"). This keeps adapter
 defaults from overriding the selected preset. The current `fast` preset uses
 `z_tail=5.0`; setting a non-zero value is an explicit override.
 
-The high-level fast solver defaults to the single `fast` path when
-`accuracy_mode` is omitted. Historical `production` and transition-refine names are deprecated
-compatibility aliases and are mapped to `fast`; direct validation scripts may
-still use internal presets. `accuracy_mode: null` is reserved for compatibility
-with callers that deliberately manage legacy module settings. The adapter passes resolved
-settings as a per-call immutable configuration, so selecting a mode does not
-mutate process-global solver defaults.
+When `accuracy_mode` is omitted, the high-level API selects the single `fast`
+path. Historical `production` and transition-refine names are deprecated
+aliases that map to `fast`; validation scripts may still select internal
+presets. Use `accuracy_mode: null` only when deliberately managing legacy
+module settings. The adapter passes the resolved settings as an immutable,
+per-call configuration, so mode selection does not change process-global
+defaults.
 
 ## `eval_freqs`
 
-Set `eval_freqs: [log10(f1), ...]` or `eval_freqs: /path/to/file` to force-add
-native solve nodes.  This is the path by which likelihood frequency bins reach
-the fast solver as native nodes (`SGWB_iter_fast(..., eval_freqs=...)`),
-removing interpolation error at steep spectral features.  By default (`null`)
-the solver uses its own grid and the likelihood interpolates over the returned
-spectrum (Layer C measured that interpolation per-bin dex error at ≤3.1e-4).
+Set `eval_freqs: [log10(f1), ...]` or `eval_freqs: /path/to/file` to add native
+solve nodes. This passes likelihood bins to the fast solver through
+`SGWB_iter_fast(..., eval_freqs=...)` and avoids interpolation error at steep
+spectral features. By default (`null`), the solver uses its own grid and the
+likelihood interpolates over the returned spectrum; Layer C measured a maximum
+per-bin dex interpolation error of `3.1e-4`.
 
 ## Telemetry
 
-`theory.engine_stats` exposes `fast_evals`, `fast_failures`,
+Each run exposes the following fields through `theory.engine_stats`:
+`fast_evals`, `fast_failures`,
 `fast_guard_rejections`, `fast_physical_rejections`, `lsoda_evals`,
 `lsoda_fallbacks`, `reference_evals`, `escalations`, `fallback_fraction`,
 `escalation_fraction`, `last_eval_status`, `eval_status_counts`
@@ -55,9 +56,10 @@ fallback/escalation fraction.
 
 ## Engine options
 
-`engine: fast | lsoda | reference`.  `fallback: True` reruns with LSODA on a
-numerical failure (tagged `LSODA_FALLBACK`); a deterministic `shared_Neff_guard`
-rejection is never retried.  `auto_escalate` with `likelihood_sigma`/`dlogl_tol`
+Choose `engine: fast | lsoda | reference`. `fallback: True` retries with LSODA
+after a numerical failure and tags the result `LSODA_FALLBACK`; it never retries
+a deterministic `shared_Neff_guard` rejection. `auto_escalate` with
+`likelihood_sigma`/`dlogl_tol`
 escalates when the estimated `|Delta logL|` exceeds the budget.
 
 The serial adapter only requires the `cobaya` extra. Install the separate

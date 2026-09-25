@@ -1,5 +1,10 @@
 # Fast quadrature: switching the default to PCHIP
 
+**Run-bound status:** this report records the default-switch decision and
+remaining gates at its cited run. Later runtime and accuracy context is
+summarized in [`benchmarks.md`](benchmarks.md) and [`accuracy.md`](accuracy.md);
+the dated measurements below remain unchanged.
+
 ## Motivation
 
 The residual decomposition (`docs/fast_residual_decomposition_assessment.md`)

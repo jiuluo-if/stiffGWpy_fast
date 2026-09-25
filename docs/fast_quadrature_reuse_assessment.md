@@ -99,15 +99,15 @@ strictly dominates its previous self, so this is a speed win under principle 12.
 `pchip`.**  The `< 10%` runtime budget is not robustly satisfied.  The default
 stays `simpson`; PCHIP remains the explicit accuracy path.
 
-## Next experiment
+## Proposed follow-up (completed below)
 
-Hypothesis: replacing the scipy PCHIP fit with a NumPy vectorized
+The pre-registered hypothesis was that replacing the SciPy PCHIP fit with a NumPy vectorized
 slope+segment-integral kernel (validated against scipy) and vectorizing the
 estimator's allocation loops removes the last duplicated implementation cost,
 so PCHIP lands within the runtime budget at both the 2-thread and the 16-thread
 production scale.
 
-Acceptance criteria (fixed before running):
+The acceptance criteria fixed before running were:
 
 - every vectorized integral agrees with the scipy PCHIP reference to `< 1e-12`
   relative (and the existing `test_pchip_frequency_quadrature_is_opt_in`

@@ -4,7 +4,7 @@
 
 Status: current map of research notes and run artifacts
 
-Date: 2026-09-24
+Date: 2026-09-25
 
 Code version: each artifact is commit-bound. The validation manifest is dated `2026-09-17`; newer profiles and reports are linked by their own run commit.
 

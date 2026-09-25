@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — 2026-09-25
+
+- Clarified the current `fast` profile and aligned packaging instructions with
+  the supported installation, verification, and release workflow. Expanded
+  the Chinese README to cover the same core usage and evidence limits as the
+  English guide. No solver behavior or numerical results changed.
+
 ## Unreleased — 2026-09-24
 
 - Refreshed the bilingual project and documentation indexes to describe the

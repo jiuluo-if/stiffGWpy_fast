@@ -1,5 +1,11 @@
 # True fast DN_gw error against the Oracle C WKB anchor
 
+**Historical scope:** this calibration records the then-current Simpson
+default. The later per-node decomposition revised the error attribution, and
+the formal default subsequently changed to PCHIP. Keep the measurements below
+bound to their run; see [`fast_residual_decomposition_assessment.md`](fast_residual_decomposition_assessment.md)
+and [`fast_v02_audit_report.md`](fast_v02_audit_report.md) for follow-up evidence.
+
 ## Motivation
 
 `fast` and the frozen-amplitude reference share the same `z_tail` frozen-tail
@@ -49,13 +55,13 @@ than the previously reported same-convention number and is not yet inside the
 `stiff` is the residual fast-vs-WKB difference (`4e-4..1.3e-3`); for `lowT`
 the error is dominated by a separate low-amplitude effect.
 
-## Next experiment
+## Proposed follow-up (completed)
 
-Decompose the fast-vs-WKB residual per frequency (tail vs deep-subhorizon
-stepping vs frequency quadrature) and, if the residual is tail-dominated,
-apply the Oracle C `1 + sin(2*theta_f)/omega_f` correction directly inside the
-fast tail assembly under acceptance criteria (`spectrum max < 1e-3`,
-`DN rel < 5e-4`, no new failure, determinism pass).
+The proposed experiment decomposed the fast-vs-WKB residual by frequency
+(tail, deep-subhorizon stepping, and frequency quadrature). That analysis is
+recorded in [`fast_residual_decomposition_assessment.md`](fast_residual_decomposition_assessment.md);
+it attributed the remaining error primarily to quadrature, so the conditional
+tail-correction change was not pursued.
 
 ## Artifacts
 

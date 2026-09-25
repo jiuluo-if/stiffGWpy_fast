@@ -1,5 +1,10 @@
 # Fast DN_gw error decomposition against the Oracle C anchor
 
+**Historical scope:** this four-point decomposition used Simpson as the
+default. The proposed PCHIP switch was later tested and accepted in
+[`fast_quadrature_default_switch_assessment.md`](fast_quadrature_default_switch_assessment.md);
+the measurements below describe the recorded pre-switch runs.
+
 ## Motivation
 
 `fast` and the frozen-amplitude reference share the same `z_tail` frozen-tail
@@ -67,13 +72,13 @@ dominant remaining accuracy term is the default Simpson frequency quadrature
 (`4.2e-04..1.3e-02`), with a secondary cancellation node at the low-frequency
 end of `lowT`.
 
-## Next experiment
+## Proposed follow-up (completed)
 
-Hypothesis: making PCHIP the default frequency quadrature (Numba-backed if
-the scipy call is too slow) cuts the true DN error by one to two orders of
-magnitude at a runtime cost below the accepted budget.
+The proposed experiment was to make PCHIP the default frequency quadrature,
+using a Numba-backed path if needed to meet the runtime budget. It was completed
+and accepted in [`fast_quadrature_default_switch_assessment.md`](fast_quadrature_default_switch_assessment.md).
 
-Acceptance criteria (fixed before running):
+The criteria fixed before running were:
 
 - true DN rel vs the Oracle C WKB anchor `< 2e-04` on default/highT/stiff;
 - `spectrum max` rel unchanged or better than the current default;

@@ -1,5 +1,11 @@
 # Fast frequency-quadrature A/B: Simpson versus PCHIP
 
+**Historical scope:** this initial A/B measured the SciPy PCHIP path before
+the later sharing/vectorization work. Its global-weight hypothesis was
+subsequently falsified; see [`fast_quadrature_reuse_assessment.md`](fast_quadrature_reuse_assessment.md)
+and [`fast_quadrature_default_switch_assessment.md`](fast_quadrature_default_switch_assessment.md)
+for the follow-up measurements and decision.
+
 ## Motivation
 
 `docs/fast_residual_decomposition_assessment.md` showed that fast's
@@ -51,12 +57,15 @@ method.  Resources: workers=1, Numba=2, BLAS=1; warmup=3, repeats=25.
 implementation is not yet fast enough to be the default.  No solver default is
 changed by this phase.
 
-## Next experiment
+## Proposed follow-up (later falsified)
 
-Hypothesis: precomputing the PCHIP integration weights (global vector plus
-per-interval matrix) and using them for both the DN integral and the local
-quadrature estimator removes the scipy overhead, so PCHIP can become the
-default within the runtime budget.
+The proposed hypothesis was to precompute PCHIP integration weights (a global
+vector and per-interval matrix) for both the DN integral and local quadrature
+estimator. The follow-up showed that PCHIP slopes depend nonlinearly on the node
+values, so fixed weights do not reproduce its integral; see
+[`fast_quadrature_reuse_assessment.md`](fast_quadrature_reuse_assessment.md).
+
+The acceptance criteria at proposal time were:
 
 Acceptance criteria (fixed before running):
 

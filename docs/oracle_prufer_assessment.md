@@ -78,18 +78,18 @@ certify the full production frequency grid.
 
 **Accepted as a standalone prototype; rejected for formal-kernel promotion.**
 
-The prototype satisfies the standalone screening signal on the accepted
+The prototype meets the standalone screening criteria on the accepted
 representative, boundary, and Sobol points, with sub-`1e-6` amplitude/power
 differences and matching physical guard behavior. It remains a reference-only
 prototype: the sampled frequencies are still sparse, the full production
 frequency grid has not been certified, and no formal-kernel integration is
 proposed.
 
-## Next experiment
+## Follow-up proposed at the screening stage
 
-Add a full-grid `DN_gw` comparison and a deterministic replay for the accepted
-edge/Sobol cases. Keep it reference-only until the full-grid comparison and
-its oracle uncertainty are documented.
+At the screening stage, the next step was a full-grid `DN_gw` comparison and a
+deterministic replay of the accepted edge/Sobol cases. That follow-up was
+completed; results are recorded below. The prototype remains reference-only.
 
 ## Full native-grid certification (2026-09-11)
 

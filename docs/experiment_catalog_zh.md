@@ -2,7 +2,7 @@
 
 [English catalogue](experiment_catalog.md) | 中文目录
 
-状态：截至 2026-09-24 的研究主题和运行产物导航
+状态：截至 2026-09-25 的研究主题和运行产物导航
 
 代码版本：每个实验文件均绑定自己的 commit；validation manifest 日期为 `2026-09-17`，较新的 profile 和报告需按各自运行提交号读取。
 

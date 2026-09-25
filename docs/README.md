@@ -3,7 +3,7 @@
 [中文说明](README_zh.md) | English
 
 Status: current documentation map
-Date: 2026-09-24
+Date: 2026-09-25
 Code version: each evidence artifact records its own commit; the manifest is dated `2026-09-17` and is not current-HEAD certification.
 
 ## Research and experiment navigation
@@ -19,14 +19,14 @@ mistaking a smoke run or a candidate profile for a production result. Keep the
 recorded run paths intact: experiment output files and validation manifests
 refer to those paths.
 
-The root README is the top-level user guide. There is one user-facing `fast`
-profile; historical `plain-grid` and `production` validation tiers are
-artifact-specific and are not current user modes. Accuracy numbers must be read
-with their experiment commit and scope: the manifest here is a read-only
-summary of older committed validation runs, not a current-HEAD certification.
+The root README is the top-level user guide. `fast` is the only user-facing
+profile; historical `plain-grid` and `production` results apply only to their
+recorded artifacts. Read accuracy values with each run's commit and scope: the
+manifest is a read-only summary of earlier validations, not a current-HEAD
+certification.
 
-The independent reference truth used by the posterior mock is kept at
-`mcmc_posterior/oracle_truth.json`; it is required test data, not a temporary
+The posterior mock's independent reference truth is stored in
+`mcmc_posterior/oracle_truth.json`. It is required test data, not a temporary
 benchmark output.
 
 | Document | Content | Status |
