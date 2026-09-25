@@ -337,6 +337,10 @@ docs/                 curated guidance, dated reports, validation artifacts, and
 Git history           superseded historical audits / benchmarks
 ```
 
+For folder-level developer guidance, see the [package map](stiffgwpy_fast/README.md),
+[script index](scripts/README.md), [test guide](tests/README.md), and the
+[Cobaya adapter guide](stiffgwpy_fast/cobaya/README.md).
+
 ## License
 
 GPL-3.0 (see `LICENSE.md`).

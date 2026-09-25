@@ -1,3 +1,12 @@
+"""Massive-neutrino thermodynamics and legacy LSODA tensor-mode helpers.
+
+The high-level `lsoda` engine uses these routines; the formal fast engine has
+its own Numba stepping implementation in `fast_sgwb.py`.
+
+中文：这里提供费米–狄拉克中微子热力学积分和旧版 LSODA 单频率张量积分辅助函数。正式 fast
+档位使用 `fast_sgwb.py` 中独立的 Numba 步进路径。
+"""
+
 import math
 
 import numpy as np

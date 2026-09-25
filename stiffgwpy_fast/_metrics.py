@@ -8,6 +8,9 @@ Error metrics follow the independent audit recommendations:
 * absolute error in dex (``dex_abs``);
 * plain relative error with a safe denominator (``rel_abs``), and a
   "signal region" mask so near-zero channels are reported separately.
+
+中文：`Omega_GW` 的线性相对误差先还原线性谱值；对数谱差单独用 dex 表示。近零通道通过
+`signal_mask` 分区，避免把接近零的分母误读成主信号区误差。
 """
 
 import numpy as np

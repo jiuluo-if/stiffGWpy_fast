@@ -1,29 +1,22 @@
 # -*- coding: utf-8 -*-
-"""reference.py -- physics-first high-accuracy reference pipeline.
+"""Independent, continuous-background reference for scoped precision checks.
 
-The original ``stiffgwpy_fast`` solves the tensor-mode equations on a fixed-step
-``sigma`` grid and treats ``fast`` as an approximation to the LSODA path.  This
-module builds an *independent* high-accuracy reference so that accuracy can be
-measured against a continuum answer rather than against LSODA.
+The reference evaluates ``sigma(N)`` and ``H(N)`` at arbitrary ``N``, integrates
+each tensor mode with adaptive DOP853, and applies a configurable deep-tail
+handoff with matching-error estimates. It differs numerically from both the
+fixed-step fast path and the legacy LSODA path; see ``docs/accuracy.md`` and
+``docs/oracle_c_wkb_assessment.md`` for its measured scope and tail limits.
 
-It differs from both the LSODA path and the fast path in three ways that target
-the two dominant *shared* error sources found in ``docs/audit_error_budget.md``:
+This pipeline is deliberately more expensive than ``fast`` and is intended for
+benchmark points, difficult cases, and convergence studies. It reports
+spectrum, quadrature, and ODE error estimates, but is not an exact mathematical
+truth source and does not run on the MCMC hot path.
 
-1. ``sigma(N)`` and ``H(N)`` are evaluated *exactly* at arbitrary ``N`` (using
-   the same physical branches and splines), so the fixed-step grid + cubic
-   spline through the instantaneous-reheating ``sigma`` kink (a ~0.73% bias at
-   ``h=0.01``) is removed.
-2. The tensor equations are integrated with a high-order adaptive solver
-   (``scipy.integrate.solve_ivp``, method ``DOP853``) with tight tolerances.
-3. The deep-subhorizon tail is handed off at a configurable ``z_tail`` with a
-   matching-error estimate (overlap-region comparison), instead of a single
-   frozen-amplitude anchor.
-
-The pipeline is intentionally slower than the fast path; it is meant for
-benchmark points, pathological points, and convergence certification.  It also
-returns explicit error estimates for the spectrum, the quadrature and the ODE.
-
-This module does NOT sit on the MCMC hot path.
+中文说明：reference 在任意 `N` 处计算连续背景，以自适应 DOP853 逐频率积分张量模，并使用
+可配置的深次视界尾部交接及匹配误差估计。它与固定步长 fast 和旧 LSODA 路径采用不同的
+数值方法；精度覆盖与尾部限制见 `docs/accuracy.md` 和
+`docs/oracle_c_wkb_assessment.md`。该流程耗时较高，用于基准点、困难参数和收敛研究，不是
+数学上的精确真值，也不进入 MCMC 热路径。
 """
 
 import math
@@ -542,6 +535,9 @@ def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11):
     Mirrors the fast/LSODA output contract so ``LCDM_SG`` and the Cobaya adapter
     can treat ``engine='reference'`` as a first-class engine (slow: intended for
     certification/benchmark points, not the MCMC thermal path).
+
+    中文：运行连续背景 reference，并将结果写回模型对象，使高层 API 和 Cobaya adapter 可以用
+    同一输出接口读取。该流程较慢，用于认证/基准点，不进入 MCMC 热路径。
     """
     ref = run_reference(m, dn_eff=None, freq_res=freq_res, z_tail=z_tail,
                         rtol=rtol, self_consistent=True)

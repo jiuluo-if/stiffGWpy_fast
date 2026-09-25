@@ -6,6 +6,10 @@
   the supported installation, verification, and release workflow. Expanded
   the Chinese README to cover the same core usage and evidence limits as the
   English guide. No solver behavior or numerical results changed.
+- Added paired developer README guides for the package, Cobaya adapter, scripts,
+  and tests. Updated core module docstrings/comments to describe current engine
+  roles, legacy-setting boundaries, and calibrated-error scope in both English
+  and Chinese. No runtime behavior or scientific data changed.
 
 ## Unreleased — 2026-09-24
 

@@ -1,5 +1,8 @@
-# This is a file module which contains classes and functions
-# which calculate the cosmological model of LCDM + stiff + constant N_eff
+"""LCDM plus stiff-matter cosmology and derived-parameter calculations.
+
+中文：定义基础 `LCDM_SN` 模型、宇宙学输入参数及其派生量，供 SGWB solver 和 Cobaya adapter
+共享。单位和参数含义也见根目录双语 README。
+"""
 
 import math
 import os
@@ -33,6 +36,9 @@ class LCDM_SN:
     
     They will be stored in the 'obj_name.cosmo_param' attribute as a dictionary
     and can be modified later on.
+
+    中文：模型参数保存在 `cosmo_param` 字典中。`derived_param` 根据当前参数计算共享的
+    膨胀率、物质组分和张量初始条件；改变物理参数后应重置上层求解状态。
   
     """
 

@@ -26,6 +26,9 @@ Per-run observability: the underlying ``LCDM_SG`` instance counts fast
 evaluations / fast failures / LSODA fallbacks and records the engine used on
 the last solve, so a run can report the fallback fraction (see
 :attr:`engine_stats`).
+
+中文说明：本适配器把 Cobaya 参数映射到 `LCDM_SG`，并向似然提供 SGWB 频谱及派生参数。
+正式运行默认使用唯一 `fast` 档位；`engine_stats` 可追踪数值故障、物理保护和显式 LSODA 回退。
 """
 
 import math
