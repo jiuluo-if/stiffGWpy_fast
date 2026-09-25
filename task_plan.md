@@ -1,5 +1,7 @@
 # Task Plan: stiffgwpy_fast 单一 fast 生产求解器
 
+> This is a cumulative, dated research plan and outcome ledger. “Next Step” entries record the state at that point; later result sections close them only when they say so. Historical checkboxes and status text are not a live release or CI summary.
+
 ## Goal
 
 在当前 `codex/fast_v0.2` 分支，将 `fast` 演进为唯一用户可见的科学生产路径，并以独立 reference、参数扫描和性能证据证明精度、速度与稳定性达到目标。
