@@ -72,10 +72,9 @@ because it is faster or numerically close on one case.
   `mcmc/chains/sagenet_compare_20260924.npz` (3 chains × 2,000 samples) differs
   from the report archive (4 × 10,000); neither the report nor benchmark script
   references it. Keep this recent independent run locally, but exclude it from
-  formal comparison claims until its settings and provenance are recorded. An
-  empty `mcmc_smoke2/chains/` directory has no files, history, or references;
-  local automated review rejected its removal, so it remains local and
-  untracked.
+  formal comparison claims until its settings and provenance are recorded. The
+  old empty `mcmc_smoke2/chains/` directory had no files, history, or references
+  and was removed during the final cleanup on 2026-09-25.
 
 ## Tracked Markdown inventory
 

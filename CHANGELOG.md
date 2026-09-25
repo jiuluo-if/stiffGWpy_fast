@@ -13,6 +13,9 @@
 - Added paired guides for the LVK/PTA likelihood packages and their nested data
   resources, and linked the likelihood index from the Cobaya package guide.
   Likelihood code/YAML edits are documentation-only; resource files are unchanged.
+- Removed a verified empty, unreferenced local MCMC smoke directory and recorded
+  the cleanup in both experiment catalogues. Recent local chain data with
+  incomplete provenance remains excluded from formal comparison claims.
 
 ## Unreleased — 2026-09-24
 
