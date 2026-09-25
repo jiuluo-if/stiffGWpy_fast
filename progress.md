@@ -1621,5 +1621,5 @@ the diagnostic artifacts are retained.
 
 - Refined 18 tracked guides and reports and pushed `5165ec76c6a63bb2af67764c7b39493da2e8b7c3` to `fast/fast_v0.2`.
 - Actions run `36084129180` completed successfully: canonical, static, package, Cobaya, and all Python 3.9–3.13 compatibility jobs passed.
-- The full prose review remains in progress. The local audit matrix tracks all 46 tracked Markdown files and the local-only comparison dossier; raw JSON/JSONL and numeric `.txt` evidence remains unchanged.
+- At this first-pass checkpoint, the full prose review was still underway. The local audit matrix tracks all 46 tracked Markdown files and the local-only comparison dossier; raw JSON/JSONL and numeric `.txt` evidence remains unchanged.
 - Existing uncommitted `findings.md` entries and local performance artifacts were not staged. The upstream comparison dossier was refreshed to HEAD `5165ec7` and remains local-only.
