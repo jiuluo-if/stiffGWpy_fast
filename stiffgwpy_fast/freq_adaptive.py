@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-"""freq_adaptive.py -- curvature-adaptive frequency sampling for Omega_GW.
+"""Frequency-grid builders for curvature-adaptive and goal-oriented sampling.
 
-The default empirical frequency grid under-samples the steep low-frequency tail
-and the spectral knee (a ~0.16 dex error at f ~ 1e-18 Hz on the default point).
-Rather than a hand-tuned uniform grid, this module refines the ``log10 f`` grid
-where the spectrum is locally curved, so that the pointwise interpolated
-``Omega_GW(f)`` stays under a target dex error while avoiding redundant solves
-in smooth regions.
+The adaptive builder refines ``log10(f)`` where an evaluated spectrum is
+curved; its ``evaluate`` callback is supplied by the calling engine, and
+already-solved nodes are reused. The formal fast profile uses the separate
+goal-oriented builder, which places native nodes around relevant features and
+can include requested ``eval_freqs``. See ``docs/numerical_method.md`` and
+``docs/accuracy.md`` for the current grid contract and scoped evidence.
 
-The refinement is engine-agnostic: ``evaluate`` (a callable mapping a batch of
-``log10 f`` values to ``log10 Omega_GW``) is supplied by the caller (the
-reference pipeline below, or the fast solver later).  New points are solved
-incrementally; existing ones are never re-solved.
+中文说明：本模块提供曲率自适应网格和面向目标的 fast 网格构造器。自适应流程由调用方传入
+频谱求值函数，并复用已求解节点；正式 fast 档位使用独立的 goal 网格，在关注的频谱特征附近
+布点，同时保留显式请求的 ``eval_freqs`` 原生节点。当前网格契约和有限范围的精度证据见
+``docs/numerical_method.md`` 与 ``docs/accuracy.md``。
 """
 
 import numpy as np
@@ -100,12 +100,15 @@ def adaptive_spectrum_reference(m, dn_eff, fmin, fmax, target_dex=1e-3,
 def grid_independent_freqs(m, freq_res=1.0):
     """A log-frequency grid built only from continuous background quantities.
 
-    ``construct_f`` reads ``m.f_hor`` (the *grid* array) so its sampling shifts
-    whenever the sigma-grid resolution changes, which pollutes the bolometric
-    integral (see docs/audit_reference.md §7.2).  This builder instead derives
-    ``fmax`` (horizon at inflation start), ``fmin`` (horizon today) and the
-    reheating feature directly from the continuous background, so the frequency
-    set is invariant to the sigma-grid resolution.
+    ``construct_f`` reads ``m.f_hor`` (the *grid* array), so its sampling can
+    shift when the sigma-grid resolution changes. This builder instead derives
+    ``fmax`` (horizon at inflation start), ``fmin`` (horizon today), and the
+    reheating feature directly from the continuous background. Its frequency
+    set is therefore invariant to sigma-grid resolution; see
+    ``docs/numerical_method.md`` and the scoped evidence in ``docs/accuracy.md``.
+
+    中文：本函数从连续背景计算频率端点和再加热特征，使同一物理参数下的频率集合不随
+    sigma 网格分辨率变化。端点缓存只在本次网格构造调用中有效，不跨外层 `DN_eff` 迭代复用。
     """
     import math as _m
 

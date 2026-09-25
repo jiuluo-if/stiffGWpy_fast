@@ -4,6 +4,9 @@ The numerical kernels still expose legacy module setters for compatibility,
 but a solver invocation should consume a snapshot rather than a mutable module
 namespace. Keeping this record dependency-light avoids importing the solver
 module from configuration code and makes it safe to pass through adapters.
+
+中文：`FastSolverConfig` 是单次求解的不可变配置快照。旧模块级 setter 只为兼容保留，
+不要将其当作并发调用间传递配置的方式。
 """
 
 from dataclasses import dataclass
@@ -13,7 +16,15 @@ from typing import Optional
 
 @dataclass(frozen=True)
 class FastSolverConfig:
-    """Validated per-call settings for the fast numerical kernels."""
+    """Validated per-call settings for the fast numerical kernels.
+
+    The bare constructor defaults preserve legacy manual settings; they are
+    not the formal ``fast`` preset. Use ``resolve_config('fast')`` to get that
+    preset as an immutable snapshot.
+
+    中文：创建时校验参数范围，之后不可修改。直接构造使用的是旧手动设置默认值，并非正式
+    ``fast`` 预设；需要具名档位时用 ``resolve_config('fast')`` 生成配置快照。
+    """
 
     h: float = 0.01
     col_step: int = 4

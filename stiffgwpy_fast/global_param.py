@@ -1,3 +1,9 @@
+"""Physical constants and baseline cosmological values shared by the model.
+
+中文：集中定义公式使用的常数和基准宇宙学量；这些模块级值属于数值模型，不是逐次求解配置。
+需要调参时应通过模型参数或 `FastSolverConfig`，不要临时改写本模块常量。
+"""
+
 import math
 
 import astropy.units as u

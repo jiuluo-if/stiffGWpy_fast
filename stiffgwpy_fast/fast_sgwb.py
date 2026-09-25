@@ -1,47 +1,27 @@
 # -*- coding: utf-8 -*-
-"""
-fast_sgwb.py -- experimental approximate fast solver for LCDM_SG.SGWB_iter().
+"""Numba-backed fast solver for the formal `LCDM_SG.SGWB_iter()` fast profile.
 
-The original SGWB_iter() solves the tensor-mode Boltzmann equations with
-scipy.integrate.solve_ivp (LSODA) per frequency channel and integrates the
-resulting spectrum with scipy.integrate.simpson, repeating both inside a
-bisection loop on Delta N_eff.  A typical call chain takes ~7-24 s.
+The user-facing fast preset combines fixed-step tensor propagation, an exact
+reheating-kink split, a goal-oriented frequency grid, and PCHIP bolometric
+integration. Historical accuracy modes remain available for validation
+compatibility; the independent continuous-sigma reference lives in
+`reference.py`. LSODA fallback is controlled by the high-level API and is never
+implicit when fallback is disabled.
 
-This module implements a *different, approximate* numerical scheme for the
-same physical equations and the same outer bisection target:
+The fast path is not bit-identical to LSODA. Accuracy and runtime statements
+are scoped to dated artifacts and protocols; see `docs/accuracy.md`,
+`docs/benchmarks.md`, and `docs/experiment_catalog.md`. Point-local error
+telemetry is not a uniform certification over parameter space.
 
-  * numba JIT kernels for the expansion history and the ODE stepping,
-  * a fixed-step analytic-rotation (Magnus-type) solver (h = 0.01) instead of
-    the adaptive LSODA solver,
-  * an analytic deep-subhorizon tail beyond z = 5 (the original code uses
-    such a tail as well),
-  * a precomputed Simpson weight matrix instead of per-column scipy calls,
-  * PCHIP refinement of the bolometric integrals onto the fine N grid,
-  * OpenMP parallelism over frequency channels.
+Numba compiles and caches kernels on first use. Separate cold/JIT startup from
+warm timing and record the thread/resource configuration with each benchmark.
 
-Because the ODE solver and the time-column integration scheme differ from the
-original, results are close but NOT bit-identical to SGWB_iter(): on the
-12-case spot validation the final Delta N_eff agrees to ~5e-5-8e-5 relative,
-the spectrum agrees to ~4e-4 dex (linear-Omega relative difference
-~8e-4-1e-3), while the full DN_gw(N) evolution can differ by up to ~1%-37%
-in the early near-zero region.  Treat it as an experimental fast solver;
-keep the LSODA path for cross-checks and fallback.
-
-Usage
------
-    from stiffgwpy_fast import LCDM_SG
-    from stiffgwpy_fast import fast_sgwb
-
-    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-    fast_sgwb.SGWB_iter_fast(m)     # fills the fast-path output attributes
-    # or, to keep a single API with automatic LSODA fallback:
-    m.SGWB_iter(engine='fast', fallback=True)
-
-Optional tuning (read before importing this module):
-    os.environ['FAST_THREADS']  = '8'    # OpenMP threads; default = numba default
-    os.environ['FAST_COL_STEP'] = '4'    # output-column stride (1-8, default 4)
-
-The module is deterministic; its numba kernels are cache-compiled on first use.
+中文说明：本模块实现唯一正式的用户可见 fast 求解档位，包含固定步长张量传播、精确再加热
+kink 拆分、goal 频率网格和默认 PCHIP 玻尔积分。旧精度档位只为验证兼容保留；独立连续
+`sigma(N)` reference 位于 `reference.py`。LSODA 回退由高层 API 显式控制，未启用时不会
+静默切换。fast 与 LSODA 的数值结果不保证逐位相同；精度、速度和局部误差遥测都须结合
+对应日期的实验协议阅读，局部预算也不代表全参数空间认证。Numba 首次编译成本应与预热后
+耗时分开记录。
 """
 import math
 import os as _os
@@ -65,7 +45,7 @@ __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
            'integrate_frequency_quadrature',
            'estimate_frequency_quadrature_local', 'pchip_integral_breakdown']
 
-# Default OpenMP threads: numba's own default (no more than the detected core
+# Default Numba worker threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
 # raised ValueError on machines with fewer than 32 cores -- and only call
 # set_num_threads() when FAST_THREADS is explicitly set.
@@ -80,6 +60,8 @@ if _fast_threads_env is not None:
                          % (_MAX_THREADS, _fast_threads_env))
     set_num_threads(_THREADS)
 
+# Legacy module-global default; the public `fast` preset sets col_step=8.
+# 这是旧模块全局默认值；正式 `fast` 预设使用 col_step=8。
 _COL_STEP = 4
 _fast_col_step_env = _os.environ.get('FAST_COL_STEP')
 if _fast_col_step_env is not None:
@@ -88,8 +70,9 @@ if _fast_col_step_env is not None:
         raise ValueError('FAST_COL_STEP must be an integer in [1, 8], got %r'
                          % _fast_col_step_env)
 
-# Fixed step size / Nv grid spacing.  Both the expansion grid and the Magnus
-# step use this h; 0.01 is the default.  Tunable for convergence studies.
+# Legacy fixed-step/Nv-grid setting. The public `fast` preset overrides it with
+# h=0.005; this module default remains for manual-settings compatibility.
+# 该值是旧模块手动设置的默认 h；正式 `fast` 预设会覆盖为 h=0.005。
 _FAST_H = 0.01
 _fast_h_env = _os.environ.get('FAST_H')
 if _fast_h_env is not None:
@@ -109,8 +92,9 @@ if _fast_ztail_env is not None:
                          % _fast_ztail_env)
 
 # Maximum phase increment per (sub-)step, dTheta = e^z * dh <= _PHASE_MAX,
-# used by the horizon-crossing adaptive step control in solve_kernel.  0.0
-# disables sub-stepping (pure fixed-step Magnus on the grid).
+# used by horizon-crossing step control. Zero disables sub-stepping. This is
+# the legacy module default; the public `fast` preset uses phase_max=0.25.
+# 零值表示旧模块设置下关闭相位子步进；正式 `fast` 预设使用 phase_max=0.25。
 _PHASE_MAX = 0.0
 _fast_phase_env = _os.environ.get('FAST_PHASE_MAX')
 if _fast_phase_env is not None:
@@ -119,9 +103,12 @@ if _fast_phase_env is not None:
         raise ValueError('FAST_PHASE_MAX must be in [0, 10], got %r'
                          % _fast_phase_env)
 
-# Default frequency-grid builder for SGWB_iter_fast (overridable per call via
-# the freq_grid argument; apply_accuracy_mode sets it from the preset).
+# Legacy module default frequency-grid builder. The public `fast` preset uses
+# `goal`; a per-call config or explicit `freq_grid` can select another builder.
+# 旧模块全局默认使用 construct 网格；正式 `fast` 预设使用 goal 网格。
 _FREQ_GRID = 'construct'
+# Legacy manual-settings default; the public `fast` preset enables exact kink splitting.
+# 旧手动设置默认关闭 kink 拆分；正式 `fast` 预设会启用精确拆分。
 _KINK_SPLIT = False
 
 MAX_ITER = 60            # cap on the outer bisection loop
@@ -137,9 +124,12 @@ _OUTER_FULL_REUSE_FHOR_TOL = 1.0e-4
 
 
 def set_threads(n):
-    """Set the number of OpenMP threads used by the frequency-parallel kernel.
+    """Set the Numba worker count used by the frequency-parallel kernel.
 
     `n` must be an integer in [1, numba's detected thread count].
+
+    中文：设置 Numba 并行内核的线程数，范围为 1 到 Numba 检测到的上限；这是兼容用的
+    模块级设置，正式高层调用优先使用逐次配置。
     """
     global _THREADS
     n = int(n)
@@ -156,7 +146,11 @@ def max_threads():
 
 
 def set_col_step(n):
-    """Set the output-column stride (1..8); 4 is a good speed/accuracy trade-off."""
+    """Set the legacy module output-column stride (1..8).
+
+    The legacy module default is 4; the public ``fast`` preset uses 8.
+    中文：此 setter 仅改旧模块级设置；正式 ``fast`` 预设使用 ``col_step=8``。
+    """
     global _COL_STEP
     n = int(n)
     if not 1 <= n <= 8:
@@ -165,7 +159,11 @@ def set_col_step(n):
 
 
 def set_h(h):
-    """Set the fixed step size / expansion-grid spacing (1e-4 .. 0.1); 0.01 default."""
+    """Set the legacy fixed step / expansion-grid spacing (``1e-4`` to ``0.1``).
+
+    The legacy module default is 0.01; the public ``fast`` preset uses 0.005.
+    中文：本 setter 修改旧模块级 ``h``；正式 ``fast`` 预设的步长为 0.005。
+    """
     global _FAST_H
     h = float(h)
     if not 1e-4 <= h <= 0.1:
@@ -174,7 +172,10 @@ def set_h(h):
 
 
 def set_z_tail(z):
-    """Set the analytic-tail threshold z_tail (2.0 .. 15.0); 5.0 default."""
+    """Set the legacy module analytic-tail threshold ``z_tail`` (2.0 to 15.0).
+
+    中文：修改旧模块级尾部交接阈值；正式 ``fast`` 预设固定使用 ``z_tail=5``，逐次配置可覆盖。
+    """
     global _Z_TAIL
     z = float(z)
     if not 2.0 <= z <= 15.0:
@@ -183,7 +184,12 @@ def set_z_tail(z):
 
 
 def set_phase_max(pm):
-    """Set the max phase increment per (sub-)step (0 disables sub-stepping)."""
+    """Set the legacy module maximum phase increment per sub-step.
+
+    Zero disables phase-based sub-stepping. The formal ``fast`` preset uses
+    ``phase_max=0.25``.
+    中文：修改旧模块设置；零值关闭相位子步进，正式 ``fast`` 预设使用 ``phase_max=0.25``。
+    """
     global _PHASE_MAX
     pm = float(pm)
     if not 0.0 <= pm <= 10.0:
@@ -192,7 +198,10 @@ def set_phase_max(pm):
 
 
 def set_freq_grid(name):
-    """Set the default frequency-grid builder."""
+    """Set the legacy module default frequency-grid builder.
+
+    中文：修改旧模块级网格构造方式；正式 ``fast`` 预设使用 ``goal``，具名配置按次生效。
+    """
     global _FREQ_GRID
     if name not in ('construct', 'grid_independent', 'adaptive', 'goal'):
         raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % name)
@@ -200,19 +209,19 @@ def set_freq_grid(name):
 
 
 def get_settings():
-    """Snapshot legacy module settings, including the selected grid builder."""
+    """Snapshot legacy module settings, including the selected grid builder.
+
+    中文：读取旧版模块级设置快照；具名正式配置应优先通过逐次调用配置对象传入。
+    """
     return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL,
                 phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
                 kink_split=_KINK_SPLIT)
 
 
-# Named accuracy presets (audit phase "three recommended modes").
-# Values come from the phase-2 convergence study: engine-vs-LSODA difference
-# at h=0.01 is ~1e-5 on Delta N_eff while the shared sigma-grid bias vs a
-# deep reference is ~0.73% (h=0.01) / ~0.33% (h=0.005); z_tail=7 reduces the
-# analytic-tail error to ~2e-5 and z_tail=10 to ~2.4e-7; col_step has <1e-9
-# effect on the final Delta N_eff (it only shapes early small-value curves);
-# freq_res=2.0 halves the low-frequency-tail undersampling error.
+# Named presets: `fast` is public; the other modes are retained for validation.
+# Their accuracy trade-offs are historical, artifact-bound measurements, not
+# guarantees for every current parameter point.
+# 档位表仅 `fast` 面向用户；其余档位是带历史证据的验证配置，须按各自产物范围解读。
 ACCURACY_MODES = {
     'debug': dict(h=0.005, col_step=1, z_tail=10.0, freq_res=2.0,
                   tol=1e-8, threads=8, transition_refine=True, phase_max=0.25),
@@ -245,6 +254,7 @@ ACCURACY_MODES = {
 USER_FAST_PROFILES = ('fast',)
 
 # Alias -> canonical mode name (accepts the human-facing names used in docs).
+# 历史别名在入口处统一规范化，避免下游配置解析分叉。
 FAST_PROFILE_ALIASES = {
     'plain_grid': 'fast',
     'plain-grid': 'fast',
@@ -256,6 +266,7 @@ FAST_PROFILE_ALIASES = {
 
 # Role per canonical mode: 'fast' = user-facing fast profile, 'validation' =
 # certification/benchmark variant (not a production tier).
+# 该角色只用于区分公开档位与内部验证/基准档，不代表额外的生产模式。
 MODE_ROLE = {
     'fast': 'fast',
     'ultra-fast': 'fast',       # alias of 'fast'
@@ -265,8 +276,9 @@ MODE_ROLE = {
     'reference': 'validation',
 }
 
-# The single user-facing fast profile；唯一用户可见档位。Historical production remains available
-# in ACCURACY_MODES for validation compatibility；仅作验证兼容，不列入用户档位。
+# The single user-facing profile. Historical modes remain in ACCURACY_MODES
+# for validation compatibility; they are not additional user-facing presets.
+# 对外只提供 `fast`；旧档位仅为验证兼容保留，不作为额外的用户档位。
 FAST_PROFILES = {
     'fast': dict(ACCURACY_MODES['fast'], profile='goal-kink-hybrid',
                  role='user_fast'),
@@ -278,6 +290,9 @@ def normalize_accuracy_mode(name):
 
     Accepts ``fast`` as the single formal user profile plus historical aliases
     and validation keys retained for compatibility. ``None`` is returned unchanged.
+
+    中文：把用户档位名或历史别名规范化为内部配置键。只有 `fast` 是正式用户档位；历史验证键
+    仍可用于重放相应实验。传入 `None` 时返回 `None`。
     """
     if name is None:
         return None
@@ -292,22 +307,32 @@ def normalize_accuracy_mode(name):
 
 
 def is_validation_mode(name):
-    """True if ``name`` is a validation/benchmark variant, not a user-facing fast profile."""
+    """Whether ``name`` is a validation/benchmark variant rather than a user profile.
+
+    中文：判断名称是否对应验证/基准档位，而非用户可见的 fast 档位。
+    """
     return MODE_ROLE.get(normalize_accuracy_mode(name), 'fast') == 'validation'
 
 
-# Calibrated error budgets per accuracy mode, from the physics-first benchmark
-# (see docs/audit_reference.md).  ``model_bias`` is the dominant *shared*
-# continuous-sigma-vs-fixed-grid bias (~1% at h=0.01) that a fast-vs-fast
-# convergence check cannot detect; ``ode``/``quadrature`` are engine + grid
-# convergence terms; ``tail`` is the analytic-tail error at the mode's z_tail;
-# ``spectrum_dex`` is the pointwise log10(Omega_GW) error (dominated by the
-# frequency-grid resolution of the spectral features).
+# Calibrated error-budget anchors from dated, fiducial-point studies; see
+# docs/accuracy.md and docs/fast_v02_audit_report.md. These terms are not a
+# uniform certification over the parameter space. ``model_bias`` represents
+# the shared continuous-sigma/fixed-grid term (about 1% for the historical
+# h=0.01 configuration); ``ode``/``quadrature`` are engine/grid terms, ``tail``
+# is tied to ``z_tail``, and ``spectrum_dex`` describes pointwise log-spectrum
+# error. Read the artifact scope before interpreting a budget value.
+# 误差预算取自有日期的具名点校准，并非全参数空间保证；历史 h=0.01 的连续/固定网格
+# model_bias 约为 1%。具体校准范围和结论见上面的文档链接。
 ERROR_BUDGET = {
     # model_bias is the continuous-sigma (reference.py) vs fixed-grid sigma bias
     # at the mode's h, taken from the measured h-convergence curve (default point):
     # h=0.02 -> +3.9%, h=0.01 -> +1.3%, h=0.005 -> +0.55%,
     # h=0.0025 -> +0.46%, h=0.00125 -> +0.22%, h~0 -> +0.10%.
+    # Compatibility note: ERROR_BUDGET['fast'].model_bias retains the original
+    # h=0.02 anchor; the current user-facing fast preset uses h=0.005. This table
+    # is a legacy broad budget, not a fresh calibration at the current preset.
+    # 兼容说明：`fast` 项仍保留原 h=0.02 的 3.9% 锚点；当前正式 fast 使用 h=0.005。该表是
+    # 历史预算，不代表当前预设重新校准后的偏差或认证结果。
     # 频率积分项按默认 PCHIP 积分核重新标定：相对 Oracle C WKB 锚点实测
     # 实测为 1.07e-5（default）、1.66e-4（lowT）、9.88e-6（highT）、1.15e-5（stiff）；
     # 同网格 reference 残差 2.94e-4 是尾部/传递与积分合并残差，不能全部
@@ -329,8 +354,9 @@ ERROR_BUDGET = {
 # Calibrated coefficient for the ODE/horizon-crossing phase-truncation error:
 # the constant-z Magnus sub-stepping leaves an O(phase_max^2) relative
 # amplitude/phase error per sub-step (validated by a phase_max Richardson
-# study, see docs/audit_reference.md); the coefficient is the relative
-# Delta N_eff error per phase_max^2 at the default point.
+# study; see the dated evidence in docs/fast_v02_audit_report.md); the coefficient
+# is the relative Delta N_eff error per phase_max^2 at the default point.
+# 中文：该系数来自默认点的 phase_max 收敛校准，只用于对应的经验误差估计，不是普适误差界。
 _ODE_PHASE_COEF = 0.0   # filled by calibrate_ode_phase_coef() from measurement
 
 
@@ -347,6 +373,9 @@ def apply_accuracy_mode(name):
     returned in the table so the caller can forward them to
     :func:`SGWB_iter_fast`.  Module settings are process-global, as documented
     for the setters.
+
+    中文：该兼容接口会调用旧 setter 并修改进程级模块状态；新代码优先使用
+    ``resolve_config`` 生成不可变的逐次调用配置。
     """
     name = normalize_accuracy_mode(name)
     cfg = dict(ACCURACY_MODES[name])
@@ -375,6 +404,9 @@ def resolve_config(name=None, base=None, **overrides):
     resolved from :data:`ACCURACY_MODES`; only keys with non-``None`` values in
     ``overrides`` replace it. Preset thread counts are clamped to the current
     Numba process budget, matching the historical preset behavior.
+
+    中文：按“具名预设 → 非 None 显式覆盖”生成不可变快照，不修改模块全局设置。`name=None`
+    仅为兼容而读取旧模块默认值；线程数会限制在当前 Numba 进程预算内。
     """
     valid_keys = {'h', 'col_step', 'z_tail', 'phase_max', 'freq_grid',
                   'threads', 'kink_split'}
@@ -405,15 +437,23 @@ def resolve_config(name=None, base=None, **overrides):
     return FastSolverConfig(**values)
 
 def estimate_error(name='production'):
-    """Return the calibrated error budget for the named accuracy mode.
+    """Return the stored calibrated budget for a named legacy accuracy mode.
 
-    The returned dict carries the per-stage relative errors used by the
-    production error gate (``DN_gw_error`` / ``spectrum_error`` /
-    ``quadrature_error`` / ``integration_error``).  The engine terms
-    (``ode``, ``quadrature``) are converged to ~1e-5; the physically dominant
-    ``model_bias`` is the continuous-sigma vs fixed-grid bias that a fast-only
-    convergence study cannot detect, so it is derived from the reference
-    benchmark rather than from a fast-vs-fast comparison.
+    The returned dict carries the per-stage relative-error anchors used by
+    compatibility and validation callers (``DN_gw_error`` / ``spectrum_error`` /
+    ``quadrature_error`` / ``integration_error``). The ``ode`` and ``quadrature``
+    entries are calibrated terms, not a universal convergence threshold. The
+    physically shared ``model_bias`` (continuous-sigma vs fixed-grid bias)
+    cannot be detected by fast-vs-fast convergence, so its anchor comes from an
+    independent reference benchmark. In particular, the ``fast`` model-bias
+    entry retains the original ``h=0.02`` anchor while today's public fast
+    preset uses ``h=0.005``. See ``docs/fast_v02_audit_report.md`` and
+    ``docs/accuracy.md`` for scoped measurements. These stored values are not a
+    fresh run result or a uniform per-parameter guarantee; use
+    ``estimate_local_error`` for the last solve's telemetry and read its status.
+
+    中文：返回旧档位/验证流程使用的经验误差预算，不是当前求解的实时误差结果，也不保证覆盖
+    全参数空间。查看最近一次求解的遥测请使用 ``estimate_local_error`` 并检查其认证状态。
     """
     name = normalize_accuracy_mode(name)
     if name not in ERROR_BUDGET:
@@ -433,8 +473,9 @@ def estimate_error(name='production'):
     )
 
 
-# Measured anchors for :func:`estimate_local_error` (default point, this
-# session; see docs/audit_reference.md and docs/reference/deep_oracle_default.json):
+# Historical measured anchors for :func:`estimate_local_error` (default point;
+# see docs/fast_v02_audit_report.md, docs/oracle_a_same_grid_z10_default.json,
+# and the current scope summary in docs/accuracy.md):
 #   * phase_max Richardson: |dDeltaN(pm 0.5 -> 0.125)| = 7.5e-6 relative,
 #     so the frozen-z Magnus phase-truncation error at pm=0.5 is ~8e-6 (pm^2 scaling).
 #   * kink-breakpoint (transition_refine) residual envelope: ~1e-4.
@@ -469,7 +510,8 @@ def estimate_local_error(m):
       (``handoff_eps``, ``freq_grid_error``, ``phase_max_used``, ``z_tail_used``,
       ``quadrature_error_local``, ``dn_bracket``, ``cancellation_ratio``);
     * ``'calibrated'`` -- measured anchors (default-point fast-vs-reference,
-      see docs/audit_reference.md) scaled to the solve's settings.
+      see the dated evidence in ``docs/fast_v02_audit_report.md``) scaled to the
+      solve's settings.
 
     Categories (physics meaning): ``background_model`` (continuous-sigma vs
     fixed-grid / present-day-anchor bias), ``sigma_transition`` (reheating-kink
@@ -478,11 +520,15 @@ def estimate_local_error(m):
     ``wkb_handoff`` (adiabaticity defect at the WKB handoff node, per-mode max
     and weighted aggregate), ``interpolation`` (PCHIP fine-grid, col_step),
     ``frequency_grid`` (sampling of the spectral features), ``quadrature``
-    (Simpson-rule integral error on the frequency grid), ``tail_approximation``
+    (selected frequency-quadrature error; PCHIP is the fast default and Simpson
+    remains selectable), ``tail_approximation``
     (frozen analytic tail beyond z_tail), ``floating_point`` (Ogw-Oj cancellation
     plus accumulation rounding), ``self_consistency`` (outer bisection bracket).
     The combined error is systematic (max of model/transition) plus the RSS of
     the remaining independent terms.
+
+    中文：本函数组合本次求解遥测与具名参考点的校准项。`certification_status` 会区分实测、
+    fiducial 校准和未认证默认值；校准值不能解释为当前参数点或整个参数空间的误差保证。
     """
     dn_gw = np.asarray(getattr(m, 'DN_gw', [0.0]))
     dn = abs(float(dn_gw[-1])) if dn_gw.size else 0.0
@@ -1157,12 +1203,15 @@ def build_Wmat(Nf, Xf, h, Wmat):
 
 
 def integrate_frequency_pchip(freqs, integrand):
-    """Integrate a spectrum on native log-frequency nodes with PCHIP.
+    """Reference PCHIP integral on native log-frequency nodes.
 
     The solver stores frequencies in descending order, while SciPy's
-    piecewise-polynomial representation requires ascending coordinates.  This
-    helper is an isolated candidate for the DN_gw error budget; it does not
-    change the formal Simpson path until a separate candidate passes validation.
+    piecewise-polynomial representation requires ascending coordinates. This
+    SciPy implementation is retained as a readable reference and test oracle;
+    the formal fast hot path uses the validated vectorized PCHIP kernel.
+
+    中文：求解器的频率节点按降序保存，而 SciPy 分段多项式要求升序。本函数保留为直观的
+    SciPy 对照实现和测试参照；正式 fast 热路径使用已验证的向量化 PCHIP 内核。
     """
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
@@ -1272,6 +1321,9 @@ def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
     ``log_pchip`` interpolates the logarithm of a positive integrand and
     integrates the exponentiated interpolant.  The Gauss and Chebyshev
     variants operate panel-by-panel on the shape-preserving PCHIP.
+
+    中文：此辅助函数集中提供 Simpson、PCHIP、Gauss 与 Chebyshev 积分选项；正式 fast 调用会
+    显式传入当前档位选定的方法。`log_pchip` 要求被积函数为正。
     """
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
@@ -2080,6 +2132,9 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     for the complete solve, preventing concurrent calls from restoring one
     another's thread setting. A ``FastSolverConfig(threads=None)`` call does
     not touch that process-wide state and can proceed without this lock.
+
+    中文：低层 fast 求解器接收隔离的配置快照；频率积分默认用 PCHIP，也可显式选 Simpson。
+    由于 Numba 线程数是进程级状态，需要时会在整个求解期间持锁，避免并发调用互相恢复线程设置。
     """
     if config is not None and not isinstance(config, FastSolverConfig):
         raise TypeError('config must be a FastSolverConfig')

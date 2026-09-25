@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-"""exact_background.py -- continuous-sigma expansion integrals for the fast path.
+"""Continuous-background primitives used while preparing the fast solver.
 
-The fixed-step fast solver builds ``F = integral(sigma dN)`` (and hence the
-rescaled ``Phi``/``S2`` amplitudes) from a cubic spline of ``sigma`` on a
-uniform grid.  That spline smooths the instantaneous-reheating ``sigma`` kink
-(``sigma=1`` -> ``4/3`` or ``2``), producing the ~1% ``model_bias`` documented in
-``docs/audit_reference.md``.
+This module evaluates ``sigma(N)`` and ``H^2(N)`` from the piecewise physical
+background, and constructs the corresponding ``Phi``/``S2`` arrays. Reheating
+boundaries are treated as explicit breakpoints so integration does not smooth
+across the instantaneous-reheating kink. The resulting arrays feed the existing
+Numba tensor-stepping kernel; this module does not replace that ODE stepper.
+See ``docs/accuracy.md`` for the measured, scope-limited accuracy evidence.
 
-This module recomputes ``F`` from the *continuous piecewise-exact* ``sigma``
-evaluator, treating the reheating boundary as an exact breakpoint, so the kink
-bias is removed.  The callers (``stiffgwpy_fast.fast_sgwb``) can then hand the exact
-``Phi``/``Phi_mid``/``S2``/``S2inv`` arrays to the existing numba stepping kernel
-without changing the ODE integration itself.
+中文说明：本模块在 fast 求解准备阶段计算连续背景的 ``sigma(N)``、``H^2(N)`` 及
+``Phi``/``S2`` 原语；积分会把再加热边界作为显式断点，不跨越瞬时再加热 kink 平滑插值。
+生成的数组仍交给现有 Numba 张量传播内核使用；这里不替换 ODE 步进算法。精度结论见
+``docs/accuracy.md``，须按其中的实验范围解读。
 """
 
 import math

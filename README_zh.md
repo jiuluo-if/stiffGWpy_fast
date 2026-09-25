@@ -116,4 +116,6 @@ python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 
 `stiffgwpy_fast/` 提供求解器、引擎分派和 Cobaya 适配器；`tests/` 包含默认、慢速、Cobaya 和兼容性测试；`scripts/` 提供验证、基准、manifest 和安装冒烟脚本；`docs/` 保存当前指南、带日期的报告、验证数据与实验记录。
 
+各目录的开发说明见[程序包模块索引](stiffgwpy_fast/README_zh.md)、[脚本目录](scripts/README_zh.md)、[测试目录](tests/README_zh.md)和[Cobaya 适配器](stiffgwpy_fast/cobaya/README_zh.md)。
+
 GPL-3.0，详见 [`LICENSE.md`](LICENSE.md)。

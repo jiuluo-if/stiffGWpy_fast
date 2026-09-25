@@ -1,5 +1,8 @@
-# This is a file module which contains classes and functions
-# which calculate the cosmological model of LCDM + stiff + primordial SGWB
+"""High-level LCDM + stiff-matter + primordial-SGWB model and engine dispatch.
+
+中文：本模块定义 `LCDM_SG` 和 `SGWB_iter()` 公共入口，在 fast、reference 与 LSODA 路径间
+分派，并记录每次求解的引擎和回退遥测。数值实现分别位于 `fast_sgwb.py` 与 `reference.py`。
+"""
 
 import math
 import multiprocessing as mp
@@ -17,6 +20,8 @@ from .LCDM_stiff_Neff import LCDM_SN
 
 MAX_ITER = 60            # cap on the outer bisection loop
 _DEFAULT_ACCURACY_MODE = object()
+# The sentinel distinguishes an omitted argument from explicit ``None``.
+# 对象哨兵用于区分“未传 accuracy_mode”与“显式传入 None”的兼容调用。
 
 
 def _mpi_world_size():
@@ -36,6 +41,9 @@ def _sgwb_pool_size():
     the reference path already parallelizes across ranks, and nested
     ``mp.Pool`` workers inside MPI ranks deadlock/oversubscribe.  This is a
     pure process-management knob; it does not change any numerical result.
+
+    中文：该变量只控制旧 LSODA 路径的频率进程数，不改变数值结果。MPI 下默认不启用嵌套
+    进程池，以免过度占用资源或发生死锁。
     """
     env = os.environ.get('SGWB_POOL_SIZE')
     if env is not None:
@@ -80,6 +88,9 @@ class LCDM_SG(LCDM_SN):
     if for some reason you would like to reuse this instance with a new set of 
     parameters, you MUST run 'obj_name.reset()' first to reset the status, and 
     then modify the 'obj_name.cosmo_param' dictionary with desired values.
+
+    中文：`LCDM_SG` 在基础宇宙学模型上提供 SGWB 迭代和引擎分派。构造参数可以来自 YAML、
+    字典或关键字；复用实例并更改参数前，先调用 `reset()`。
     
     """
     def __init__(self, *args,
@@ -89,6 +100,7 @@ class LCDM_SG(LCDM_SN):
         # calls.  Cobaya reuses one theory instance and resets the cosmology
         # for every point; clearing counters there would make the reported
         # fallback fraction meaningless.
+        # 中文：Cobaya 会复用 theory 实例；重置宇宙学参数时保留累计计数，避免回退比例被清零。
         self.fast_evals = 0
         self.fast_failures = 0
         self.lsoda_evals = 0
@@ -208,9 +220,10 @@ class LCDM_SG(LCDM_SN):
         ``accuracy_mode`` is omitted, the high-level API uses the combined ``fast``
         goal-kink-hybrid preset. Pass ``accuracy_mode=None`` explicitly for legacy manual module
         settings. ``accuracy_mode='fast'`` is the only formal user preset;
-        historical ``production``/``ultra-fast`` names are deprecated aliases
-        mapped to it. Explicit ``h``, ``col_step``, ``threads`` and non-default
-        ``z_tail``/``freq_res``/``tol`` override the fast preset.
+        historical ``production``/``transition_refine``/``ultra-fast`` names
+        are deprecated aliases mapped to it. Explicit ``h``, ``col_step`` and
+        ``threads`` plus non-default ``z_tail``/``freq_res``/``tol`` override
+        the fast preset.
         With ``accuracy_mode=None``, ``h``/``col_step``/``threads`` snapshot
         the legacy settings (env FAST_H/FAST_COL_STEP/FAST_THREADS) and
         ``z_tail``/``freq_res``/``tol`` are applied as passed. The preferred
