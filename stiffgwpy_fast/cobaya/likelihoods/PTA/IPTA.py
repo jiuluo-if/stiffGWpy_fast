@@ -1,3 +1,8 @@
+"""Cobaya IPTA likelihood using configured sample and frequency resources.
+
+中文：根据 PTA 频点上的原初 SGWB 谱和 SMBHB 背景，使用每个频点的样本分布计算 IPTA 似然。
+"""
+
 from cobaya.likelihood import Likelihood
 from cobaya.log import LoggedError, get_logger
 import numpy as np
@@ -9,9 +14,9 @@ from scipy.stats import gaussian_kde as kde
 class IPTA(Likelihood):
     
     def initialize(self):
-        """
-        Initializes the class (called from __init__, before other initializations).
-        Prepare any computation, importing any necessary code, files, etc.
+        """Load the sample array and frequency bins configured for IPTA.
+
+        中文：从 `IPTA.yaml` 指定的 `sample_file` 和 `freq_file` 读取样本与频率。
         """
         self.data = np.loadtxt(self.sample_file)
         self.freqs = np.loadtxt(self.freq_file)
@@ -21,20 +26,17 @@ class IPTA(Likelihood):
     
             
     def get_requirements(self):
-        """
-        return dictionary specifying quantities that are always needed and calculated by a theory code
+        """Request frequency, SGWB spectrum, and Hubble value from the theory.
+
+        中文：声明此似然需要 theory 提供 `f`、`omGW_stiff` 和 `hubble`。
         """
         return {'f': None, 'omGW_stiff': None, 'hubble': None}
     
     
     def logp(self, _derived=None, **params_values):
-        """
-        The default implementation of the Likelihood class does the calculation in this 'logp()' function, 
-        which is called by 'Likelihood.calculate()' to save the log likelihood into "state['logp']" 
-        (the latter may be more convenient if you also need to calculate some derived parameters).
-        
-        'logp()' can take a dictionary (as keyword arguments) of nuisance parameter values, 'params_values', 
-        (if there is any), and returns a log-likelihood.
+        """Return the IPTA log-likelihood for the current theory and nuisance parameters.
+
+        中文：取回频谱和 Hubble 值，转为递增频率顺序后传给独立的似然计算函数。
         """
         f_theory = self.provider.get_result('f'); f_theory = np.flip(f_theory)                  # log10(f/Hz)
         Ogw_theory = self.provider.get_result('omGW_stiff'); Ogw_theory = np.flip(Ogw_theory)   # log10(Omega_GW(f))
@@ -44,9 +46,10 @@ class IPTA(Likelihood):
 
     
     def log_likelihood(self, f_theory, Ogw_theory, H_0, **data_params):
-        """
-        where the calculation is actually done, independently of Cobaya
-        Here f_theory must be increasing.
+        """Evaluate the per-frequency PTA likelihood; ``f_theory`` must be increasing.
+
+        The prediction combines the primordial spectrum with the SMBHB power-law
+        nuisance component. 中文：在频率支持范围内构造总残差功率，并对各频点 KDE 的 log-PDF 求和。
         """
         yr = u.yr.to(u.s)                # s, one Julian year
         T_base = 1/self.freqs[0]         # s, baseline of the PTA data

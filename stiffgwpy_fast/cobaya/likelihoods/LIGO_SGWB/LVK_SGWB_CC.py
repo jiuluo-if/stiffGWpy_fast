@@ -1,3 +1,8 @@
+"""Cobaya likelihood for LVK stochastic-background cross-correlation data.
+
+中文：读取 YAML 指定的交叉相关数据，使用 theory 提供的频率和 SGWB 谱计算高斯似然。
+"""
+
 from cobaya.likelihood import Likelihood
 from cobaya.log import LoggedError, get_logger
 import numpy as np
@@ -8,12 +13,9 @@ from scipy import interpolate
 class LVK_SGWB_CC(Likelihood):
     
     def initialize(self):
-        """
-        Initializes the class (called from __init__, before other initializations).
-        Prepare any computation, importing any necessary code, files, etc.
+        """Load the cross-correlation table selected by ``CC_file``.
 
-        e.g. here we load some SGWB data file, with default CC_file set in the .yaml,
-        or overridden when running Cobaya.
+        中文：读取配置中的 `CC_file`；该选项默认指向随包提供的 LVK 数据表。
         """
         self.data = np.loadtxt(self.CC_file)
     
@@ -21,20 +23,18 @@ class LVK_SGWB_CC(Likelihood):
         pass
         
     def get_requirements(self):
-        """
-        return dictionary specifying quantities that are always needed and calculated by a theory code
+        """Request the theory frequency grid and SGWB spectrum.
+
+        中文：声明似然需要 theory 提供的频率 `f` 和 `omGW_stiff`。
         """
         return {'f': None, 'omGW_stiff': None,}
 
     
     def logp(self, _derived=None, **params_values):
-        """
-        The default implementation of the Likelihood class does the calculation in this 'logp()' function, 
-        which is called by 'Likelihood.calculate()' to save the log likelihood into "state['logp']" 
-        (the latter may be more convenient if you also need to calculate some derived parameters).
-        
-        'logp()' can take a dictionary (as keyword arguments) of nuisance parameter values, 'params_values', 
-        (if there is any), and returns a log-likelihood.
+        """Return the LVK log-likelihood for the current theory spectrum.
+
+        Cobaya supplies nuisance parameters through ``params_values``.
+        中文：取回 theory 频率和谱，并转为递增频率顺序后交给 `log_likelihood`。
         """
         f_theory = self.provider.get_result('f'); f_theory = np.flip(f_theory)
         Ogw_theory = self.provider.get_result('omGW_stiff'); Ogw_theory = np.flip(Ogw_theory)
@@ -46,9 +46,10 @@ class LVK_SGWB_CC(Likelihood):
 
     
     def log_likelihood(self, f_theory, Ogw_theory, **data_params):
-        """
-        where the calculation is actually done, independently of Cobaya
-        Here f_theory must be increasing.
+        """Interpolate the model on supported bins and return ``-chi2/2``.
+
+        ``f_theory`` must be increasing in ``log10(Hz)`` order. 中文：将模型谱转换为线性
+        ``Omega_GW``，按数据不确定度归一化残差并求和；不在模型频率支持内的 bin 保持零模型值。
         """
         f_LVK = np.log10(self.data[:,0])
         Cf_LVK = self.data[:,1]

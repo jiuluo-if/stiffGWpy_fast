@@ -1,3 +1,8 @@
+"""Cobaya NANOGrav likelihood using a packaged density grid.
+
+中文：读取随包提供的频率、``log10(rho)`` 网格和似然密度数组，计算 NANOGrav PTA 似然。
+"""
+
 from cobaya.likelihood import Likelihood
 from cobaya.log import LoggedError, get_logger
 import numpy as np
@@ -9,9 +14,9 @@ import astropy.units as u
 class NANOGrav(Likelihood):
     
     def initialize(self):
-        """
-        Initializes the class (called from __init__, before other initializations).
-        Prepare any computation, importing any necessary code, files, etc.
+        """Load the density grid, its ``log10(rho)`` axis, and frequencies.
+
+        中文：从 `NANOGrav.yaml` 指定的三个 `.npy` 资源读取预计算似然网格。
         """
         self.data = np.load(self.kde_file)                   # log-likelihood for each frequency bin
         self.log10rhogrid = np.load(self.log10rhogrid_file)  # log10(delay/s) = log10(sqrt(rho/s^2))
@@ -22,8 +27,9 @@ class NANOGrav(Likelihood):
     
             
     def get_requirements(self):
-        """
-        return dictionary specifying quantities that are always needed and calculated by a theory code
+        """Request frequency, SGWB spectrum, and Hubble value from the theory.
+
+        中文：声明此似然需要 theory 提供 `f`、`omGW_stiff` 和 `hubble`。
         """
         return {'f': None, 'omGW_stiff': None, 'hubble': None}
     

@@ -33,5 +33,6 @@ extra only when the run actually uses `mpi4py`.
   escalation telemetry.
 
 The package also contains the LVK and PTA likelihood adapters and their data
-resources. Use the reproducibility and package-verification instructions before
-publishing a wheel.
+resources. See the [likelihood and resource index](likelihoods/README.md) for
+the adapter-to-data mapping. Use the reproducibility and package-verification
+instructions before publishing a wheel.

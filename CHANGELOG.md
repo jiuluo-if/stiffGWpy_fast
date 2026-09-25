@@ -10,6 +10,9 @@
   and tests. Updated core module docstrings/comments to describe current engine
   roles, legacy-setting boundaries, and calibrated-error scope in both English
   and Chinese. No runtime behavior or scientific data changed.
+- Added paired guides for the LVK/PTA likelihood packages and their nested data
+  resources, and linked the likelihood index from the Cobaya package guide.
+  Likelihood code/YAML edits are documentation-only; resource files are unchanged.
 
 ## Unreleased — 2026-09-24
 
