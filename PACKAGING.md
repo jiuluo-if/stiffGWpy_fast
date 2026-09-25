@@ -1,8 +1,8 @@
 # stiffGWpy_fast 发布说明
 
-本项目按照 Python Packaging User Guide 的标准流程构建。`docs/`、测试文件、验证脚本、
-CI 配置和历史研究型配置不属于 PyPI 运行时发布内容；运行所需的 Python 模块、Cobaya
-适配器和必要数据文件会保留在 wheel 中。
+本项目使用 Python Packaging User Guide 所述流程构建。发布包包含运行所需的 Python
+模块、Cobaya 适配器和数据文件；`docs/`、测试、验证脚本、CI 配置及研究专用配置不属于
+运行时包内容。
 
 ## 用户安装
 
@@ -12,9 +12,11 @@ CI 配置和历史研究型配置不属于 PyPI 运行时发布内容；运行�
 python -m pip install stiffgwpy_fast
 ```
 
-默认调用 `LCDM_SG.SGWB_iter()` 使用 `fast` 引擎的 plain-grid 档位。需要更高精度时，
-显式使用 `accuracy_mode="production"`；需要独立精度锚点时使用
-`engine="reference"`；需要原始回归路径时使用 `engine="lsoda"`。
+调用 `LCDM_SG.SGWB_iter()` 时默认使用唯一正式的 `fast` 用户档位
+（goal-kink-hybrid）。旧的 `plain-grid`、`production` 和 `ultra-fast` 名称不代表其他
+正式档位；高层 API 会将这些兼容名称映射到 `fast`。需要独立精度参照时使用
+`engine="reference"`；需要原始回归路径时使用 `engine="lsoda"`。`production` 等内部
+验证配置不应描述为面向用户的精度档位。
 
 Cobaya 集成是可选依赖：
 
@@ -28,13 +30,14 @@ python -m pip install "stiffgwpy_fast[cobaya]"
 
 ```bash
 python -m pip install --upgrade build twine
-Remove-Item -Recurse -Force build, dist -ErrorAction SilentlyContinue
+python -c "import shutil; shutil.rmtree('build', ignore_errors=True); shutil.rmtree('dist', ignore_errors=True)"
 python -m build
 python scripts/verify_distribution.py dist
 ```
 
-校验脚本会确认同时生成 wheel 和 sdist，并确认 `docs/`、`tests/`、`scripts/`、`.github/`
-以及 `mcmc_compare.yaml` 没有进入发布归档。
+清理旧的 `build/` 与 `dist/` 后再构建，避免旧归档干扰检查。校验脚本要求目录中恰有一个
+wheel 和一个 sdist，并检查 `docs/`、`tests/`、`scripts/`、`.github/` 及
+`mcmc_compare.yaml` 未进入发布归档，同时确认 wheel 含有必要的包文件。
 
 ## TestPyPI 验证
 
@@ -45,20 +48,20 @@ python -m twine upload --repository testpypi dist/*
 python -m pip install --index-url https://test.pypi.org/simple/ --no-deps stiffgwpy_fast
 ```
 
-上传需要 TestPyPI API token。不要把 token 写入仓库或命令历史。
+上传需要 TestPyPI API token。不要把 token 写入仓库、命令历史或文档。
 
-仓库根目录的 `.pypirc` 属于本地凭据文件，已加入 `.gitignore`，只可用于本地发布，
-不能提交到 GitHub；发布完成后应继续保存在本机安全位置。
+仓库根目录的 `.pypirc` 是本地凭据文件，受 `.gitignore` 管理，只用于本机发布，不能提交
+到 GitHub。发布后仍应将其保存在安全位置。
 
 ## 正式 PyPI 发布
 
-确认 TestPyPI 安装和导入成功后，再执行：
+确认 TestPyPI 安装和导入成功后，再发布到 PyPI：
 
 ```bash
 python -m twine upload dist/*
 python -m pip install --upgrade stiffgwpy_fast
 ```
 
-每次正式发布前必须递增 `pyproject.toml` 的 `project.version`，并同步更新
-`CHANGELOG.md`、`README.md` 和 `README_zh.md`。当前项目发布邮箱为
-`2966684515@qq.com`；PyPI 登录使用 API token，不使用邮箱密码。
+每次正式发布前都要递增 `pyproject.toml` 中的 `project.version`，并同步更新
+`CHANGELOG.md`、`README.md` 和 `README_zh.md`。项目元数据中的联系邮箱为
+`2966684515@qq.com`；PyPI 上传使用 API token，不使用邮箱密码。

@@ -7,11 +7,11 @@ Date: 2026-09-24
 Code version: see the run commit in each validation artifact. The validation
 manifest is dated 2026-09-17 and is not a current-HEAD certification.
 
-`stiffgwpy_fast` models a flat LCDM cosmology with radiation, massive neutrinos
-(Fermi-Dirac distribution), extra relativistic species, stiff matter, and a
-primordial tensor background. The stiff component is parameterized by
+`stiffgwpy_fast` models a flat LCDM cosmology with radiation, Fermi-Dirac
+massive neutrinos, extra relativistic species, stiff matter, and a primordial
+tensor background. The stiff component is parameterized by
 `kappa10 = rho_stiff / rho_photon` at 10 MeV. Tensor power is
-`P_t(k) = A_t (k / k_piv)**n_t`, where `A_t = A_s * r`; for `cr > 0` the
+`P_t(k) = A_t (k / k_piv)**n_t`, with `A_t = A_s * r`. When `cr > 0`, the
 single-field consistency relation determines the tensor tilt and reheating
 duration.
 

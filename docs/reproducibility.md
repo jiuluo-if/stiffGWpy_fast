@@ -22,16 +22,17 @@ python -m build --wheel                                             # wheel buil
 python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl         # installed-resource smoke
 ```
 
-Test totals vary by commit and marker selection. The most recent recorded full
-GitHub CI matrix at solver commit `c7d4766` passed all nine jobs; later commits
-add MCMC benchmark/report artifacts, so rerun CI when verifying the exact
-current HEAD. The installed-wheel smoke test checks that core, Cobaya, LIGO,
-and PTA package resources are available outside the source checkout.
+Test totals vary by commit and marker selection. One recorded full GitHub CI
+matrix at commit `e3123a2` passed all nine jobs. Later commits require their
+own CI result; do not infer exact-HEAD status from this record. The
+installed-wheel smoke test checks that core, Cobaya, LIGO, and PTA package
+resources are available outside the source checkout.
 
-For performance reproduction, keep compilation separate from execution:
+For performance runs, separate compilation from timed execution. Set
+`FAST_THREADS` in the shell before running the benchmark:
 
-```bash
-set FAST_THREADS=4
+```powershell
+$env:FAST_THREADS = "4"
 python scripts/bench_fast.py --reps 15 --cases 0 1 --json docs/benchmark_candidate.json
 python scripts/profile_fast_breakdown.py --help
 ```

@@ -85,10 +85,11 @@ The latest full-path profile was generated at solver commit `c7d4766` on
 2026-09-23 with 25 repeats, two Numba `workqueue` threads, one BLAS thread,
 and CPU affinity `[0, 1]`. Warm median/p95 times were `7.189/7.916 ms`
 (default), `7.116/7.782 ms` (low-T), `10.475/10.890 ms` (high-T),
-`10.260/10.936 ms` (stiff), and `9.929/11.062 ms` (high-kappa). All six
-profiled cases converged; each case's first sample is reported separately,
-but only the default sample is process-cold and includes JIT cost. The repository HEAD adds MCMC evidence after that
-profile; the solver source is unchanged from the profile commit. See
+`10.260/10.936 ms` (stiff), `5.923/6.313 ms` (low-r), and
+`9.929/11.062 ms` (high-kappa). All six
+profiled cases converged. The first sample is reported for each case; only the
+default is process-cold and includes JIT cost. The current HEAD adds MCMC
+evidence but no solver changes after the profile commit. See
 [`docs/benchmarks.md`](docs/benchmarks.md) for provenance and limitations.
 
 The latest scoped accuracy audit remains dated 2026-09-12 and is bound to its
@@ -128,11 +129,11 @@ oracle A/B/C and reports `CONSISTENT` / `ORACLE-SENSITIVE`.
 ## Installation
 
 ```bash
-pip install stiffgwpy-fast          # 从 PyPI 安装最新版本
-pip install .                 # 安装运行依赖：numpy scipy astropy pyyaml numba
-pip install .[cobaya]         # 安装串行 Cobaya MCMC 接口
-pip install .[cobaya,mpi]     # 安装 Cobaya 和可选 mpi4py
-pip install .[dev]            # 安装 pytest、ruff、build、matplotlib
+pip install stiffgwpy-fast       # Install the latest PyPI release
+pip install .                    # Install the package and runtime dependencies
+pip install '.[cobaya]'          # Add the serial Cobaya interface
+pip install '.[cobaya,mpi]'      # Add Cobaya and optional mpi4py support
+pip install '.[dev]'             # Add pytest, ruff, build, and matplotlib
 ```
 
 Packaging and PyPI publishing instructions are in
@@ -159,26 +160,26 @@ research outputs are intentionally excluded from Git and from PyPI archives.
 from stiffgwpy_fast import LCDM_SG
 
 m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
-m.SGWB_iter()  # 默认使用唯一 fast goal-kink-hybrid preset
+m.SGWB_iter()  # Defaults to the sole fast goal-kink-hybrid preset
 print(m.DN_gw[-1])
 
-# 显式选择唯一正式 fast 档位
+# Select the sole formal fast profile explicitly
 m2 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m2.SGWB_iter(engine='fast', accuracy_mode='fast')
 
-# 显式选择原始 LSODA 回归路径
+# Select the original LSODA regression path
 m3 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
 m3.SGWB_iter(engine='lsoda')
 ```
 
 `accuracy_mode='fast'` is the only formal user-facing fast profile.
-`production`/`transition_refine` are deprecated compatibility aliases and are
-mapped to `fast` by the high-level API; direct validation code may retain its
-internal presets. Explicit `h`/`col_step`/`z_tail`/`freq_res`/`tol` override
-the selected preset. For the high-level API, `SGWB_iter()` defaults to the
-`fast` engine and its goal-kink-hybrid preset. Pass `accuracy_mode=None` only when you
-intentionally want a snapshot of the legacy manual module settings. Lower-level
-calls can pass an immutable `fast_sgwb.FastSolverConfig` per invocation.
+`production`, `transition_refine`, and `ultra-fast` are deprecated compatibility
+names mapped to `fast` by the high-level API; validation code may still use
+internal presets. Explicit `h`, `col_step`, `z_tail`, `freq_res`, and `tol`
+values override the preset. `SGWB_iter()` defaults to the `fast` engine and its
+goal-kink-hybrid settings. Pass `accuracy_mode=None` explicitly only to snapshot
+legacy module settings. Lower-level calls can pass an immutable
+`fast_sgwb.FastSolverConfig` for that invocation.
 
 ```python
 from stiffgwpy_fast import fast_sgwb
@@ -193,7 +194,7 @@ theory:
   stiffgwpy_fast.cobaya.stiffGW.stiffGW:
     engine: fast
     fallback: True
-    accuracy_mode: fast            # 唯一正式 fast 档位
+    accuracy_mode: fast            # Sole formal fast profile
     fast_threads: 8
 ```
 

@@ -1,7 +1,7 @@
 # Contributing
 
-Install the development dependencies with `pip install .[dev]`. The normal
-local gate is:
+Install the development dependencies with `pip install '.[dev]'`, then run the
+standard local checks:
 
 ```bash
 python scripts/validate_manifest.py
@@ -14,13 +14,12 @@ python scripts/verify_distribution.py dist
 python scripts/smoke_installed_wheel.py dist/stiffgwpy_fast-*.whl
 ```
 
-The independent continuous-sigma reference is the precision anchor. LSODA is
-for regression and runtime comparison only. Do not turn a `NOT VERIFIED` or
-`FAIL` artifact into a passing claim by changing documentation alone; update
-the executable validation and its provenance together.
+The independent continuous-sigma reference is the precision anchor; LSODA is
+for regression checks and runtime comparisons. A `NOT VERIFIED` or `FAIL`
+artifact must not be presented as passing based on a documentation change.
+Update and rerun the executable validation, and record its provenance.
 
-Generated build/cache files, local credentials, and unfinished research
-outputs are ignored. Keep PyPI tokens outside version control and inspect
-`git status --short` before every commit. This checkout's progress is pushed to
-the `fast` remote; do not push unrelated changes to `origin` without an
-explicit request.
+Build and cache files, local credentials, and unfinished research outputs are
+ignored. Keep PyPI tokens out of version control and check `git status --short`
+before each commit. Push this checkout to the `fast` remote; do not push
+unrelated changes to `origin` without an explicit request.
