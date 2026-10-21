@@ -23,6 +23,7 @@ kink 拆分、goal 频率网格和默认 PCHIP 玻尔积分。旧精度档位只
 对应日期的实验协议阅读，局部预算也不代表全参数空间认证。Numba 首次编译成本应与预热后
 耗时分开记录。
 """
+
 import math
 import os as _os
 from contextlib import nullcontext
@@ -37,13 +38,30 @@ from ._resources import package_path
 from .config import FastSolverConfig
 from .functions import int_FD
 
-__all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
-           'set_z_tail', 'get_settings', 'apply_accuracy_mode', 'ACCURACY_MODES',
-           'USER_FAST_PROFILES', 'FAST_PROFILES', 'normalize_accuracy_mode',
-           'is_validation_mode', 'MODE_ROLE', 'FastSolverConfig', 'get_config',
-           'resolve_config', 'max_threads', 'integrate_frequency_pchip',
-           'integrate_frequency_quadrature',
-           'estimate_frequency_quadrature_local', 'pchip_integral_breakdown']
+__all__ = [
+    "SGWB_iter_fast",
+    "gen_fast",
+    "set_threads",
+    "set_col_step",
+    "set_h",
+    "set_z_tail",
+    "get_settings",
+    "apply_accuracy_mode",
+    "ACCURACY_MODES",
+    "USER_FAST_PROFILES",
+    "FAST_PROFILES",
+    "normalize_accuracy_mode",
+    "is_validation_mode",
+    "MODE_ROLE",
+    "FastSolverConfig",
+    "get_config",
+    "resolve_config",
+    "max_threads",
+    "integrate_frequency_pchip",
+    "integrate_frequency_quadrature",
+    "estimate_frequency_quadrature_local",
+    "pchip_integral_breakdown",
+]
 
 # Default Numba worker threads: numba's own default (no more than the detected core
 # count).  We do NOT force a fixed number at import time -- that previously
@@ -52,66 +70,62 @@ __all__ = ['SGWB_iter_fast', 'gen_fast', 'set_threads', 'set_col_step', 'set_h',
 _MAX_THREADS = get_num_threads()
 _THREADS = _MAX_THREADS
 _NUMBA_CONFIG_LOCK = RLock()
-_fast_threads_env = _os.environ.get('FAST_THREADS')
+_fast_threads_env = _os.environ.get("FAST_THREADS")
 if _fast_threads_env is not None:
     _THREADS = int(_fast_threads_env)
     if not 1 <= _THREADS <= _MAX_THREADS:
-        raise ValueError('FAST_THREADS must be an integer in [1, %d], got %r'
-                         % (_MAX_THREADS, _fast_threads_env))
+        raise ValueError("FAST_THREADS must be an integer in [1, %d], got %r" % (_MAX_THREADS, _fast_threads_env))
     set_num_threads(_THREADS)
 
 # Legacy module-global default; the public `fast` preset sets col_step=8.
 # 这是旧模块全局默认值；正式 `fast` 预设使用 col_step=8。
 _COL_STEP = 4
-_fast_col_step_env = _os.environ.get('FAST_COL_STEP')
+_fast_col_step_env = _os.environ.get("FAST_COL_STEP")
 if _fast_col_step_env is not None:
     _COL_STEP = int(_fast_col_step_env)
     if not 1 <= _COL_STEP <= 8:
-        raise ValueError('FAST_COL_STEP must be an integer in [1, 8], got %r'
-                         % _fast_col_step_env)
+        raise ValueError("FAST_COL_STEP must be an integer in [1, 8], got %r" % _fast_col_step_env)
 
 # Legacy fixed-step/Nv-grid setting. The public `fast` preset overrides it with
 # h=0.005; this module default remains for manual-settings compatibility.
 # 该值是旧模块手动设置的默认 h；正式 `fast` 预设会覆盖为 h=0.005。
 _FAST_H = 0.01
-_fast_h_env = _os.environ.get('FAST_H')
+_fast_h_env = _os.environ.get("FAST_H")
 if _fast_h_env is not None:
     _FAST_H = float(_fast_h_env)
     if not 1e-4 <= _FAST_H <= 0.1:
-        raise ValueError('FAST_H must be in [1e-4, 0.1], got %r' % _fast_h_env)
+        raise ValueError("FAST_H must be in [1e-4, 0.1], got %r" % _fast_h_env)
 
 # Deep-subhorizon analytic-tail threshold (z = ln(k/aH) at which the numerical
 # stepping hands over to the analytic tail).  The original LSODA path uses the
 # same z_tail value when configured (see functions.solve_SGWB).
 _Z_TAIL = 5.0
-_fast_ztail_env = _os.environ.get('FAST_Z_TAIL')
+_fast_ztail_env = _os.environ.get("FAST_Z_TAIL")
 if _fast_ztail_env is not None:
     _Z_TAIL = float(_fast_ztail_env)
     if not 2.0 <= _Z_TAIL <= 15.0:
-        raise ValueError('FAST_Z_TAIL must be in [2.0, 15.0], got %r'
-                         % _fast_ztail_env)
+        raise ValueError("FAST_Z_TAIL must be in [2.0, 15.0], got %r" % _fast_ztail_env)
 
 # Maximum phase increment per (sub-)step, dTheta = e^z * dh <= _PHASE_MAX,
 # used by horizon-crossing step control. Zero disables sub-stepping. This is
 # the legacy module default; the public `fast` preset uses phase_max=0.25.
 # 零值表示旧模块设置下关闭相位子步进；正式 `fast` 预设使用 phase_max=0.25。
 _PHASE_MAX = 0.0
-_fast_phase_env = _os.environ.get('FAST_PHASE_MAX')
+_fast_phase_env = _os.environ.get("FAST_PHASE_MAX")
 if _fast_phase_env is not None:
     _PHASE_MAX = float(_fast_phase_env)
     if not 0.0 <= _PHASE_MAX <= 10.0:
-        raise ValueError('FAST_PHASE_MAX must be in [0, 10], got %r'
-                         % _fast_phase_env)
+        raise ValueError("FAST_PHASE_MAX must be in [0, 10], got %r" % _fast_phase_env)
 
 # Legacy module default frequency-grid builder. The public `fast` preset uses
 # `goal`; a per-call config or explicit `freq_grid` can select another builder.
 # 旧模块全局默认使用 construct 网格；正式 `fast` 预设使用 goal 网格。
-_FREQ_GRID = 'construct'
+_FREQ_GRID = "construct"
 # Legacy manual-settings default; the public `fast` preset enables exact kink splitting.
 # 旧手动设置默认关闭 kink 拆分；正式 `fast` 预设会启用精确拆分。
 _KINK_SPLIT = False
 
-MAX_ITER = 60            # cap on the outer bisection loop
+MAX_ITER = 60  # cap on the outer bisection loop
 ln10 = math.log(10.0)
 # 小幅外层更新时，节点背景变化低于此阈值可复用 exact primitive。
 _EXACT_PRIMITIVE_REUSE_TOL = 1.0e-4
@@ -134,8 +148,7 @@ def set_threads(n):
     global _THREADS
     n = int(n)
     if not 1 <= n <= _MAX_THREADS:
-        raise ValueError('thread count must be an integer in [1, %d], got %d'
-                         % (_MAX_THREADS, n))
+        raise ValueError("thread count must be an integer in [1, %d], got %d" % (_MAX_THREADS, n))
     _THREADS = n
     set_num_threads(_THREADS)
 
@@ -154,7 +167,7 @@ def set_col_step(n):
     global _COL_STEP
     n = int(n)
     if not 1 <= n <= 8:
-        raise ValueError('column stride must be an integer in [1, 8], got %d' % n)
+        raise ValueError("column stride must be an integer in [1, 8], got %d" % n)
     _COL_STEP = n
 
 
@@ -167,7 +180,7 @@ def set_h(h):
     global _FAST_H
     h = float(h)
     if not 1e-4 <= h <= 0.1:
-        raise ValueError('step size must be in [1e-4, 0.1], got %r' % h)
+        raise ValueError("step size must be in [1e-4, 0.1], got %r" % h)
     _FAST_H = h
 
 
@@ -179,7 +192,7 @@ def set_z_tail(z):
     global _Z_TAIL
     z = float(z)
     if not 2.0 <= z <= 15.0:
-        raise ValueError('z_tail must be in [2.0, 15.0], got %r' % z)
+        raise ValueError("z_tail must be in [2.0, 15.0], got %r" % z)
     _Z_TAIL = z
 
 
@@ -193,7 +206,7 @@ def set_phase_max(pm):
     global _PHASE_MAX
     pm = float(pm)
     if not 0.0 <= pm <= 10.0:
-        raise ValueError('phase_max must be in [0, 10], got %r' % pm)
+        raise ValueError("phase_max must be in [0, 10], got %r" % pm)
     _PHASE_MAX = pm
 
 
@@ -203,8 +216,8 @@ def set_freq_grid(name):
     中文：修改旧模块级网格构造方式；正式 ``fast`` 预设使用 ``goal``，具名配置按次生效。
     """
     global _FREQ_GRID
-    if name not in ('construct', 'grid_independent', 'adaptive', 'goal'):
-        raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % name)
+    if name not in ("construct", "grid_independent", "adaptive", "goal"):
+        raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal, got %r" % name)
     _FREQ_GRID = name
 
 
@@ -213,9 +226,15 @@ def get_settings():
 
     中文：读取旧版模块级设置快照；具名正式配置应优先通过逐次调用配置对象传入。
     """
-    return dict(threads=_THREADS, col_step=_COL_STEP, h=_FAST_H, z_tail=_Z_TAIL,
-                phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
-                kink_split=_KINK_SPLIT)
+    return dict(
+        threads=_THREADS,
+        col_step=_COL_STEP,
+        h=_FAST_H,
+        z_tail=_Z_TAIL,
+        phase_max=_PHASE_MAX,
+        freq_grid=_FREQ_GRID,
+        kink_split=_KINK_SPLIT,
+    )
 
 
 # Named presets: `fast` is public; the other modes are retained for validation.
@@ -223,27 +242,63 @@ def get_settings():
 # guarantees for every current parameter point.
 # 档位表仅 `fast` 面向用户；其余档位是带历史证据的验证配置，须按各自产物范围解读。
 ACCURACY_MODES = {
-    'debug': dict(h=0.005, col_step=1, z_tail=10.0, freq_res=2.0,
-                  tol=1e-8, threads=8, transition_refine=True, phase_max=0.25),
-    'fast': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
-                 tol=1e-6, threads=16, transition_refine=False,
-                 kink_split=True, phase_max=0.25, freq_grid='goal'),
+    "debug": dict(
+        h=0.005, col_step=1, z_tail=10.0, freq_res=2.0, tol=1e-8, threads=8, transition_refine=True, phase_max=0.25
+    ),
+    "fast": dict(
+        h=0.005,
+        col_step=8,
+        z_tail=5.0,
+        freq_res=1.0,
+        tol=1e-6,
+        threads=16,
+        transition_refine=False,
+        kink_split=True,
+        phase_max=0.25,
+        freq_grid="goal",
+    ),
     # Backward-compatible alias of 'fast' (identical settings).
-    'ultra-fast': dict(h=0.005, col_step=8, z_tail=5.0, freq_res=1.0,
-                       tol=1e-6, threads=16, transition_refine=False,
-                       kink_split=True, phase_max=0.25, freq_grid='goal'),
-    'reference': dict(h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0,
-                      tol=1e-8, threads=8, transition_refine=True, phase_max=0.1),
-    'production': dict(h=0.01, col_step=4, z_tail=8.0, freq_res=1.0,
-                       tol=1e-7, threads=8, transition_refine=True, phase_max=0.5,
-                       freq_grid='adaptive'),
+    "ultra-fast": dict(
+        h=0.005,
+        col_step=8,
+        z_tail=5.0,
+        freq_res=1.0,
+        tol=1e-6,
+        threads=16,
+        transition_refine=False,
+        kink_split=True,
+        phase_max=0.25,
+        freq_grid="goal",
+    ),
+    "reference": dict(
+        h=0.00125, col_step=1, z_tail=10.0, freq_res=2.0, tol=1e-8, threads=8, transition_refine=True, phase_max=0.1
+    ),
+    "production": dict(
+        h=0.01,
+        col_step=4,
+        z_tail=8.0,
+        freq_res=1.0,
+        tol=1e-7,
+        threads=8,
+        transition_refine=True,
+        phase_max=0.5,
+        freq_grid="adaptive",
+    ),
     # Deep-tail variant of production: the frozen-tail (WKB handoff) error at
     # z_tail=8 is ~2.5e-4 relative per mode vs the deep limit, so production
     # already keeps the tail term subdominant in the error budget; this mode
     # pushes it to ~3e-5 for the validation chain.
-    'deep': dict(h=0.01, col_step=4, z_tail=10.0, freq_res=1.0,
-                 tol=1e-7, threads=8, transition_refine=True, phase_max=0.25,
-                 freq_grid='adaptive'),
+    "deep": dict(
+        h=0.01,
+        col_step=4,
+        z_tail=10.0,
+        freq_res=1.0,
+        tol=1e-7,
+        threads=8,
+        transition_refine=True,
+        phase_max=0.25,
+        freq_grid="adaptive",
+    ),
 }
 
 # 档位说明：对外只提供一个组合后的 fast 档位；production/transition-refine
@@ -251,37 +306,36 @@ ACCURACY_MODES = {
 # 是同一内部求解器的验证或基准变体，可用于认证，但不作为第三、第四个生产档位，
 # 也不用于 MCMC 热路径；真正的精度锚点是连续 sigma 的
 # ``stiffgwpy_fast.reference`` 流程（engine='reference'）。
-USER_FAST_PROFILES = ('fast',)
+USER_FAST_PROFILES = ("fast",)
 
 # Alias -> canonical mode name (accepts the human-facing names used in docs).
 # 历史别名在入口处统一规范化，避免下游配置解析分叉。
 FAST_PROFILE_ALIASES = {
-    'plain_grid': 'fast',
-    'plain-grid': 'fast',
-    'plain': 'fast',
-    'transition_refine': 'production',
-    'transition-refine': 'production',
-    'tr': 'production',
+    "plain_grid": "fast",
+    "plain-grid": "fast",
+    "plain": "fast",
+    "transition_refine": "production",
+    "transition-refine": "production",
+    "tr": "production",
 }
 
 # Role per canonical mode: 'fast' = user-facing fast profile, 'validation' =
 # certification/benchmark variant (not a production tier).
 # 该角色只用于区分公开档位与内部验证/基准档，不代表额外的生产模式。
 MODE_ROLE = {
-    'fast': 'fast',
-    'ultra-fast': 'fast',       # alias of 'fast'
-    'production': 'validation',
-    'debug': 'validation',
-    'deep': 'validation',
-    'reference': 'validation',
+    "fast": "fast",
+    "ultra-fast": "fast",  # alias of 'fast'
+    "production": "validation",
+    "debug": "validation",
+    "deep": "validation",
+    "reference": "validation",
 }
 
 # The single user-facing profile. Historical modes remain in ACCURACY_MODES
 # for validation compatibility; they are not additional user-facing presets.
 # 对外只提供 `fast`；旧档位仅为验证兼容保留，不作为额外的用户档位。
 FAST_PROFILES = {
-    'fast': dict(ACCURACY_MODES['fast'], profile='goal-kink-hybrid',
-                 role='user_fast'),
+    "fast": dict(ACCURACY_MODES["fast"], profile="goal-kink-hybrid", role="user_fast"),
 }
 
 
@@ -300,9 +354,9 @@ def normalize_accuracy_mode(name):
     name = FAST_PROFILE_ALIASES.get(name, name)
     if name not in ACCURACY_MODES:
         raise ValueError(
-            'unknown accuracy mode %r; choose from %s '
-            '(user-facing fast profiles: %s)' % (name, sorted(ACCURACY_MODES),
-                                                 list(USER_FAST_PROFILES)))
+            "unknown accuracy mode %r; choose from %s "
+            "(user-facing fast profiles: %s)" % (name, sorted(ACCURACY_MODES), list(USER_FAST_PROFILES))
+        )
     return name
 
 
@@ -311,7 +365,7 @@ def is_validation_mode(name):
 
     中文：判断名称是否对应验证/基准档位，而非用户可见的 fast 档位。
     """
-    return MODE_ROLE.get(normalize_accuracy_mode(name), 'fast') == 'validation'
+    return MODE_ROLE.get(normalize_accuracy_mode(name), "fast") == "validation"
 
 
 # Calibrated error-budget anchors from dated, fiducial-point studies; see
@@ -337,18 +391,12 @@ ERROR_BUDGET = {
     # 实测为 1.07e-5（default）、1.66e-4（lowT）、9.88e-6（highT）、1.15e-5（stiff）；
     # 同网格 reference 残差 2.94e-4 是尾部/传递与积分合并残差，不能全部
     # 归给积分项，故这里取 2.0e-4 作为上限。
-    'fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=2.0e-4,
-                 tail=3.8e-3, spectrum_dex=0.20),
-    'ultra-fast': dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=2.0e-4,
-                       tail=3.8e-3, spectrum_dex=0.20),
-    'production': dict(model_bias=1.3e-2, ode=1.0e-5, quadrature=1.0e-4,
-                       tail=2.0e-5, spectrum_dex=0.07),
-    'deep': dict(model_bias=1.3e-2, ode=2.5e-6, quadrature=1.0e-4,
-                 tail=2.4e-7, spectrum_dex=0.02),
-    'debug': dict(model_bias=5.5e-3, ode=5.0e-6, quadrature=5.0e-5,
-                  tail=2.4e-7, spectrum_dex=0.02),
-    'reference': dict(model_bias=2.2e-3, ode=2.6e-7, quadrature=1.0e-5,
-                      tail=2.4e-7, spectrum_dex=0.002),
+    "fast": dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=2.0e-4, tail=3.8e-3, spectrum_dex=0.20),
+    "ultra-fast": dict(model_bias=3.9e-2, ode=4.0e-5, quadrature=2.0e-4, tail=3.8e-3, spectrum_dex=0.20),
+    "production": dict(model_bias=1.3e-2, ode=1.0e-5, quadrature=1.0e-4, tail=2.0e-5, spectrum_dex=0.07),
+    "deep": dict(model_bias=1.3e-2, ode=2.5e-6, quadrature=1.0e-4, tail=2.4e-7, spectrum_dex=0.02),
+    "debug": dict(model_bias=5.5e-3, ode=5.0e-6, quadrature=5.0e-5, tail=2.4e-7, spectrum_dex=0.02),
+    "reference": dict(model_bias=2.2e-3, ode=2.6e-7, quadrature=1.0e-5, tail=2.4e-7, spectrum_dex=0.002),
 }
 
 # Calibrated coefficient for the ODE/horizon-crossing phase-truncation error:
@@ -357,11 +405,7 @@ ERROR_BUDGET = {
 # study; see the dated evidence in docs/fast_v02_audit_report.md); the coefficient
 # is the relative Delta N_eff error per phase_max^2 at the default point.
 # 中文：该系数来自默认点的 phase_max 收敛校准，只用于对应的经验误差估计，不是普适误差界。
-_ODE_PHASE_COEF = 0.0   # filled by calibrate_ode_phase_coef() from measurement
-
-
-
-
+_ODE_PHASE_COEF = 0.0  # filled by calibrate_ode_phase_coef() from measurement
 
 
 def apply_accuracy_mode(name):
@@ -379,22 +423,28 @@ def apply_accuracy_mode(name):
     """
     name = normalize_accuracy_mode(name)
     cfg = dict(ACCURACY_MODES[name])
-    set_col_step(cfg['col_step'])
-    set_h(cfg['h'])
-    set_z_tail(cfg['z_tail'])
-    set_phase_max(cfg.get('phase_max', 0.0))
-    set_freq_grid(cfg.get('freq_grid', 'construct'))
-    set_threads(min(cfg['threads'], _MAX_THREADS))
+    set_col_step(cfg["col_step"])
+    set_h(cfg["h"])
+    set_z_tail(cfg["z_tail"])
+    set_phase_max(cfg.get("phase_max", 0.0))
+    set_freq_grid(cfg.get("freq_grid", "construct"))
+    set_threads(min(cfg["threads"], _MAX_THREADS))
     global _KINK_SPLIT
-    _KINK_SPLIT = bool(cfg.get('kink_split', False))
+    _KINK_SPLIT = bool(cfg.get("kink_split", False))
     return cfg
 
 
 def get_config():
     """Return an immutable snapshot of the legacy module settings."""
-    return FastSolverConfig(h=_FAST_H, col_step=_COL_STEP, z_tail=_Z_TAIL,
-                            phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
-                            threads=_THREADS, kink_split=_KINK_SPLIT)
+    return FastSolverConfig(
+        h=_FAST_H,
+        col_step=_COL_STEP,
+        z_tail=_Z_TAIL,
+        phase_max=_PHASE_MAX,
+        freq_grid=_FREQ_GRID,
+        threads=_THREADS,
+        kink_split=_KINK_SPLIT,
+    )
 
 
 def resolve_config(name=None, base=None, **overrides):
@@ -408,35 +458,51 @@ def resolve_config(name=None, base=None, **overrides):
     中文：按“具名预设 → 非 None 显式覆盖”生成不可变快照，不修改模块全局设置。`name=None`
     仅为兼容而读取旧模块默认值；线程数会限制在当前 Numba 进程预算内。
     """
-    valid_keys = {'h', 'col_step', 'z_tail', 'phase_max', 'freq_grid',
-                  'threads', 'kink_split'}
+    valid_keys = {"h", "col_step", "z_tail", "phase_max", "freq_grid", "threads", "kink_split"}
     unknown = sorted(set(overrides) - valid_keys)
     if unknown:
-        raise TypeError('unknown FastSolverConfig override(s): %s' % ', '.join(unknown))
+        raise TypeError("unknown FastSolverConfig override(s): %s" % ", ".join(unknown))
     if base is not None:
         if not isinstance(base, FastSolverConfig):
             raise TypeError("base must be a FastSolverConfig")
-        values = dict(h=base.h, col_step=base.col_step, z_tail=base.z_tail,
-                      phase_max=base.phase_max, freq_grid=base.freq_grid,
-                      threads=base.threads, kink_split=base.kink_split)
+        values = dict(
+            h=base.h,
+            col_step=base.col_step,
+            z_tail=base.z_tail,
+            phase_max=base.phase_max,
+            freq_grid=base.freq_grid,
+            threads=base.threads,
+            kink_split=base.kink_split,
+        )
     elif name is None:
-        values = dict(h=_FAST_H, col_step=_COL_STEP, z_tail=_Z_TAIL,
-                      phase_max=_PHASE_MAX, freq_grid=_FREQ_GRID,
-                      threads=_THREADS, kink_split=_KINK_SPLIT)
+        values = dict(
+            h=_FAST_H,
+            col_step=_COL_STEP,
+            z_tail=_Z_TAIL,
+            phase_max=_PHASE_MAX,
+            freq_grid=_FREQ_GRID,
+            threads=_THREADS,
+            kink_split=_KINK_SPLIT,
+        )
     else:
         canonical = normalize_accuracy_mode(name)
         preset = ACCURACY_MODES[canonical]
-        values = dict(h=preset['h'], col_step=preset['col_step'],
-                      z_tail=preset['z_tail'], phase_max=preset.get('phase_max', 0.0),
-                      freq_grid=preset.get('freq_grid', 'construct'),
-                      threads=min(int(preset['threads']), _MAX_THREADS),
-                      kink_split=bool(preset.get('kink_split', False)))
+        values = dict(
+            h=preset["h"],
+            col_step=preset["col_step"],
+            z_tail=preset["z_tail"],
+            phase_max=preset.get("phase_max", 0.0),
+            freq_grid=preset.get("freq_grid", "construct"),
+            threads=min(int(preset["threads"]), _MAX_THREADS),
+            kink_split=bool(preset.get("kink_split", False)),
+        )
     for key in values:
         if key in overrides and overrides[key] is not None:
             values[key] = overrides[key]
     return FastSolverConfig(**values)
 
-def estimate_error(name='production'):
+
+def estimate_error(name="production"):
     """Return the stored calibrated budget for a named legacy accuracy mode.
 
     The returned dict carries the per-stage relative-error anchors used by
@@ -457,19 +523,18 @@ def estimate_error(name='production'):
     """
     name = normalize_accuracy_mode(name)
     if name not in ERROR_BUDGET:
-        raise ValueError('unknown accuracy mode %r; choose from %s'
-                         % (name, sorted(ERROR_BUDGET)))
+        raise ValueError("unknown accuracy mode %r; choose from %s" % (name, sorted(ERROR_BUDGET)))
     b = ERROR_BUDGET[name]
-    integration = max(b['model_bias'], b['ode'], b['quadrature'], b['tail'])
+    integration = max(b["model_bias"], b["ode"], b["quadrature"], b["tail"])
     return dict(
         accuracy_mode=name,
         DN_gw_error=integration,
-        spectrum_error=b['spectrum_dex'],
-        quadrature_error=b['quadrature'],
+        spectrum_error=b["spectrum_dex"],
+        quadrature_error=b["quadrature"],
         integration_error=integration,
-        ODE_error=b['ode'],
-        tail_error=b['tail'],
-        model_bias_error=b['model_bias'],
+        ODE_error=b["ode"],
+        tail_error=b["tail"],
+        model_bias_error=b["model_bias"],
     )
 
 
@@ -484,18 +549,18 @@ def estimate_error(name='production'):
 #   * uniform grid_independent quadrature bias: 5.6e-4 at freq_res=1 (242 pt),
 #     ~0 at freq_res>=2; construct-grid bias ~1.6e-3 (246 pt).
 #   * col_step PCHIP interpolation: <1e-9 on Delta N_eff.
-_LOCAL_ODE_PM05 = 8.0e-6          # relative DN error at phase_max=0.5
-_LOCAL_ODE_NO_SUBSTEP = 1.0e-5    # h=0.01 fixed-step (calibrated engine term)
+_LOCAL_ODE_PM05 = 8.0e-6  # relative DN error at phase_max=0.5
+_LOCAL_ODE_NO_SUBSTEP = 1.0e-5  # h=0.01 fixed-step (calibrated engine term)
 _LOCAL_TRANSITION_REFINED = 1.0e-4
 _LOCAL_TRANSITION_PLAIN = 2.4e-3
 _LOCAL_TRANSITION_SIGMA_EXACT = 4.2e-3
-_LOCAL_TAIL_ANCHOR = 2.0e-5       # relative DN error at z_tail=8
-_LOCAL_TAIL_FLOOR = 2.4e-7        # z_tail=10 limit
-_LOCAL_GRID_UNIFORM_1 = 5.6e-4    # grid_independent freq_res=1 (242 pt)
-_LOCAL_GRID_UNIFORM_2 = 2.0e-5    # grid_independent freq_res>=2 (converged)
-_LOCAL_GRID_CONSTRUCT = 1.6e-3    # construct grid (246 pt)
-_LOCAL_INTERP = 1.0e-9            # col_step PCHIP interpolation on DN_eff
-_LOCAL_SELF_CONS_FLOOR = 1.0e-5   # bisection floor when bracket is not recorded
+_LOCAL_TAIL_ANCHOR = 2.0e-5  # relative DN error at z_tail=8
+_LOCAL_TAIL_FLOOR = 2.4e-7  # z_tail=10 limit
+_LOCAL_GRID_UNIFORM_1 = 5.6e-4  # grid_independent freq_res=1 (242 pt)
+_LOCAL_GRID_UNIFORM_2 = 2.0e-5  # grid_independent freq_res>=2 (converged)
+_LOCAL_GRID_CONSTRUCT = 1.6e-3  # construct grid (246 pt)
+_LOCAL_INTERP = 1.0e-9  # col_step PCHIP interpolation on DN_eff
+_LOCAL_SELF_CONS_FLOOR = 1.0e-5  # bisection floor when bracket is not recorded
 
 
 def estimate_local_error(m):
@@ -530,10 +595,10 @@ def estimate_local_error(m):
     中文：本函数组合本次求解遥测与具名参考点的校准项。`certification_status` 会区分实测、
     fiducial 校准和未认证默认值；校准值不能解释为当前参数点或整个参数空间的误差保证。
     """
-    dn_gw = np.asarray(getattr(m, 'DN_gw', [0.0]))
+    dn_gw = np.asarray(getattr(m, "DN_gw", [0.0]))
     dn = abs(float(dn_gw[-1])) if dn_gw.size else 0.0
     eps64 = np.finfo(float).eps
-    he = getattr(m, 'handoff_eps', None)
+    he = getattr(m, "handoff_eps", None)
     if he is None:
         handoff = np.array([0.0])
     else:
@@ -541,12 +606,12 @@ def estimate_local_error(m):
         handoff = handoff[handoff >= 0.0]
     eps_max = float(np.max(handoff)) if handoff.size else 0.0
     eps_mean = float(np.mean(handoff)) if handoff.size else 0.0
-    z_tail = float(getattr(m, 'z_tail_used', 8.0))
-    pm = float(getattr(m, 'phase_max_used', 0.0))
-    fg = getattr(m, 'freq_grid_used', 'construct')
-    tr = bool(getattr(m, 'transition_refine_used', False))
-    se = bool(getattr(m, 'sigma_exact_used', False))
-    nf = int(getattr(m, 'freq_grid_n', 0))
+    z_tail = float(getattr(m, "z_tail_used", 8.0))
+    pm = float(getattr(m, "phase_max_used", 0.0))
+    fg = getattr(m, "freq_grid_used", "construct")
+    tr = bool(getattr(m, "transition_refine_used", False))
+    se = bool(getattr(m, "sigma_exact_used", False))
+    nf = int(getattr(m, "freq_grid_n", 0))
 
     # 1. background/model error (present-day anchor + continuous-sigma bias)
     if se:
@@ -558,7 +623,7 @@ def estimate_local_error(m):
     # 2. sigma-transition error (reheating-kink grid-phase residual)
     transition = _LOCAL_TRANSITION_REFINED if tr else _LOCAL_TRANSITION_PLAIN
     # 3. ODE integration error: frozen-z Magnus phase truncation (local)
-    ode = _LOCAL_ODE_PM05*(pm/0.5)**2 if pm > 0.0 else _LOCAL_ODE_NO_SUBSTEP
+    ode = _LOCAL_ODE_PM05 * (pm / 0.5) ** 2 if pm > 0.0 else _LOCAL_ODE_NO_SUBSTEP
     # 4. horizon-crossing error: the crossing band carries the leading
     #    observable (phase-averaged amplitude) effect of the same truncation.
     horizon = ode
@@ -570,26 +635,26 @@ def estimate_local_error(m):
     # 6. interpolation error: col_step PCHIP fine-grid on Delta N_eff
     interp = _LOCAL_INTERP
     # 7. frequency-grid error: adaptive -> local criterion; else calibrated
-    if fg == 'adaptive':
-        freq_grid = max(float(getattr(m, 'freq_grid_error', 0.0)), 0.0)
-    elif fg == 'grid_independent':
-        fr = float(getattr(m, 'freq_res_used', 1.0) or 1.0)
+    if fg == "adaptive":
+        freq_grid = max(float(getattr(m, "freq_grid_error", 0.0)), 0.0)
+    elif fg == "grid_independent":
+        fr = float(getattr(m, "freq_res_used", 1.0) or 1.0)
         freq_grid = _LOCAL_GRID_UNIFORM_2 if fr >= 2.0 else _LOCAL_GRID_UNIFORM_1
     else:  # 'construct'
         freq_grid = _LOCAL_GRID_CONSTRUCT
     # 8. quadrature error: local Richardson estimate on the final grid
-    quadrature = max(float(getattr(m, 'quadrature_error_local', 0.0)), 0.0)
+    quadrature = max(float(getattr(m, "quadrature_error_local", 0.0)), 0.0)
     # 9. tail approximation error: calibrated anchor scaled by z_tail
-    tail = max(_LOCAL_TAIL_FLOOR, _LOCAL_TAIL_ANCHOR*math.exp(-(z_tail - 8.0)))
+    tail = max(_LOCAL_TAIL_FLOOR, _LOCAL_TAIL_ANCHOR * math.exp(-(z_tail - 8.0)))
     # 10. floating-point/cancellation error (local)
-    fp_err = float(getattr(m, 'floating_point_error', 0.0))
+    fp_err = float(getattr(m, "floating_point_error", 0.0))
     if fp_err <= 0.0:
-        fp_err = eps64*math.sqrt(max(nf, 1))
+        fp_err = eps64 * math.sqrt(max(nf, 1))
     # 11. self-consistency iteration error: converged successive difference
     #     (local; the outer criterion bounds |DN_gw_new - DN_gw_prev|).
-    dn_delta = float(getattr(m, 'dn_converged_delta', 0.0))
+    dn_delta = float(getattr(m, "dn_converged_delta", 0.0))
     if dn > 0.0 and dn_delta > 0.0:
-        self_consistency = max(dn_delta/dn, _LOCAL_SELF_CONS_FLOOR)
+        self_consistency = max(dn_delta / dn, _LOCAL_SELF_CONS_FLOOR)
     else:
         self_consistency = _LOCAL_SELF_CONS_FLOOR
 
@@ -599,58 +664,55 @@ def estimate_local_error(m):
     # universal / per-point error estimate; it is an empirical bound measured
     # at the reference point and scaled by the solve's settings.
     def _cert(kind, local):
-        return 'local-measured' if local else 'calibrated-at-fiducial'
+        return "local-measured" if local else "calibrated-at-fiducial"
 
     cats = dict(
-        background_model=dict(value=model, kind='calibrated',
-                              certification='calibrated-at-fiducial'),
-        sigma_transition=dict(value=transition, kind='calibrated',
-                              certification='calibrated-at-fiducial'),
-        ode_integration=dict(value=ode, kind='local',
-                             certification='calibrated-at-fiducial'),
-        horizon_crossing=dict(value=horizon, kind='local',
-                              certification='calibrated-at-fiducial'),
-        wkb_handoff=dict(value=wkb_max, aggregate=wkb_agg, kind='local',
-                         certification='local-measured'),
-        interpolation=dict(value=interp, kind='calibrated',
-                           certification='calibrated-at-fiducial'),
-        frequency_grid=dict(value=freq_grid,
-                            kind='local' if fg == 'adaptive' else 'calibrated',
-                            certification=_cert('local' if fg == 'adaptive' else 'calibrated',
-                                                fg == 'adaptive')),
-        quadrature=dict(value=quadrature, kind='local',
-                        certification='local-measured'),
-        tail_approximation=dict(value=tail, kind='calibrated',
-                                certification='calibrated-at-fiducial'),
-        floating_point=dict(value=fp_err,
-                            cancellation_ratio=float(getattr(m, 'cancellation_ratio', 0.0)),
-                            kind='local', certification='local-measured'),
-        self_consistency=dict(value=self_consistency, kind='local',
-                              certification='local-measured'),
+        background_model=dict(value=model, kind="calibrated", certification="calibrated-at-fiducial"),
+        sigma_transition=dict(value=transition, kind="calibrated", certification="calibrated-at-fiducial"),
+        ode_integration=dict(value=ode, kind="local", certification="calibrated-at-fiducial"),
+        horizon_crossing=dict(value=horizon, kind="local", certification="calibrated-at-fiducial"),
+        wkb_handoff=dict(value=wkb_max, aggregate=wkb_agg, kind="local", certification="local-measured"),
+        interpolation=dict(value=interp, kind="calibrated", certification="calibrated-at-fiducial"),
+        frequency_grid=dict(
+            value=freq_grid,
+            kind="local" if fg == "adaptive" else "calibrated",
+            certification=_cert("local" if fg == "adaptive" else "calibrated", fg == "adaptive"),
+        ),
+        quadrature=dict(value=quadrature, kind="local", certification="local-measured"),
+        tail_approximation=dict(value=tail, kind="calibrated", certification="calibrated-at-fiducial"),
+        floating_point=dict(
+            value=fp_err,
+            cancellation_ratio=float(getattr(m, "cancellation_ratio", 0.0)),
+            kind="local",
+            certification="local-measured",
+        ),
+        self_consistency=dict(value=self_consistency, kind="local", certification="local-measured"),
     )
     systematic = max(model, transition)
-    rss = math.sqrt(sum(float(cats[k]['value'])**2 for k in cats
-                        if k not in ('background_model', 'sigma_transition',
-                                     'wkb_handoff')))
+    rss = math.sqrt(
+        sum(
+            float(cats[k]["value"]) ** 2
+            for k in cats
+            if k not in ("background_model", "sigma_transition", "wkb_handoff")
+        )
+    )
     dn_gw_error = systematic + rss
-    local_terms = [k for k, c in cats.items() if c['kind'] == 'local']
-    calibrated_terms = [k for k, c in cats.items()
-                        if c['certification'] == 'calibrated-at-fiducial']
+    local_terms = [k for k, c in cats.items() if c["kind"] == "local"]
+    calibrated_terms = [k for k, c in cats.items() if c["certification"] == "calibrated-at-fiducial"]
     # Has this solve produced the telemetry needed to certify a per-point
     # budget at all?  Without it the numbers are defaults, not a measurement.
-    has_telemetry = (hasattr(m, 'z_tail_used') and hasattr(m, 'handoff_eps')
-                     and hasattr(m, 'freq_grid_used'))
+    has_telemetry = hasattr(m, "z_tail_used") and hasattr(m, "handoff_eps") and hasattr(m, "freq_grid_used")
     if not has_telemetry:
-        certification_status = 'uncertified'
+        certification_status = "uncertified"
     else:
         # The dominant systematic terms (background_model / sigma_transition)
         # are always fiducial-calibrated, so the budget is point-local only
         # in the random terms (RSS), never fully certified per point.
-        certification_status = 'certified-fiducial-calibrated'
+        certification_status = "certified-fiducial-calibrated"
     return dict(
         categories=cats,
         DN_gw_error=dn_gw_error,
-        Delta_Neff_abs_error=dn_gw_error*dn,
+        Delta_Neff_abs_error=dn_gw_error * dn,
         systematic_error=systematic,
         random_rss=rss,
         handoff_eps_max=wkb_max,
@@ -662,9 +724,9 @@ def estimate_local_error(m):
         certification_status=certification_status,
         local_terms=local_terms,
         calibrated_terms=calibrated_terms,
-        explicit_uncertainty='uncertainty is a mix of point-local and '
-                             'fiducial-calibrated terms; calibrated terms are '
-                             'NOT universal per-point error estimates',
+        explicit_uncertainty="uncertainty is a mix of point-local and "
+        "fiducial-calibrated terms; calibrated terms are "
+        "NOT universal per-point error estimates",
     )
 
 
@@ -678,18 +740,18 @@ def _build_fd_table():
     user cache so the next import is cheap.
     """
     try:
-        with package_path('stiffgwpy_fast', 'fd_table.npz') as pkg_file:
+        with package_path("stiffgwpy_fast", "fd_table.npz") as pkg_file:
             with np.load(pkg_file) as data:
-                nu, vals = data['nu'], data['vals']
+                nu, vals = data["nu"], data["vals"]
                 if nu.shape == (3001,) and vals.shape == (3001, 2):
                     return nu, vals
     except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
         pass
-    cache_file = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy_fast', 'fd_table.npz')
+    cache_file = _os.path.join(_os.path.expanduser("~"), ".cache", "stiffgwpy_fast", "fd_table.npz")
     if _os.path.exists(cache_file):
         try:
             with np.load(cache_file) as data:
-                nu, vals = data['nu'], data['vals']
+                nu, vals = data["nu"], data["vals"]
                 if nu.shape == (3001,) and vals.shape == (3001, 2):
                     return nu, vals
         except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
@@ -697,9 +759,9 @@ def _build_fd_table():
     nu = np.logspace(-1.0, 2.0, 3001)
     vals = np.array([int_FD(u) for u in nu])
     try:
-        cache_dir = _os.path.join(_os.path.expanduser('~'), '.cache', 'stiffgwpy_fast')
+        cache_dir = _os.path.join(_os.path.expanduser("~"), ".cache", "stiffgwpy_fast")
         _os.makedirs(cache_dir, exist_ok=True)
-        np.savez(_os.path.join(cache_dir, 'fd_table.npz'), nu=nu, vals=vals)
+        np.savez(_os.path.join(cache_dir, "fd_table.npz"), nu=nu, vals=vals)
     except OSError:
         pass
     return nu, vals
@@ -716,71 +778,112 @@ _TH_X = np.ascontiguousarray(gp.spl_rho.x)
 _TH_C_RHO = np.ascontiguousarray(gp.spl_rho.c)
 _TH_C_RHOP = np.ascontiguousarray(gp.spl_rhop.c)
 
+
 @njit(cache=True)
 def cubic_uniform(x, x0, dx, c):
     nseg = c.shape[1]
-    i = int((x - x0)/dx)
-    if i < 0: i = 0
-    if i > nseg-1: i = nseg-1
-    t = x - (x0 + i*dx)
-    return ((c[0,i]*t + c[1,i])*t + c[2,i])*t + c[3,i]
+    i = int((x - x0) / dx)
+    if i < 0:
+        i = 0
+    if i > nseg - 1:
+        i = nseg - 1
+    t = x - (x0 + i * dx)
+    return ((c[0, i] * t + c[1, i]) * t + c[2, i]) * t + c[3, i]
+
 
 @njit(cache=True)
 def cubic_any(x, breaks, c):
     n = len(breaks)
-    lo = 0; hi = n-1
+    lo = 0
+    hi = n - 1
     while hi - lo > 1:
-        mid = (lo + hi)//2
-        if breaks[mid] <= x: lo = mid
-        else: hi = mid
+        mid = (lo + hi) // 2
+        if breaks[mid] <= x:
+            lo = mid
+        else:
+            hi = mid
     nseg = c.shape[1]
-    if lo < 0: lo = 0
-    if lo > nseg-1: lo = nseg-1
+    if lo < 0:
+        lo = 0
+    if lo > nseg - 1:
+        lo = nseg - 1
     t = x - breaks[lo]
-    return ((c[0,lo]*t + c[1,lo])*t + c[2,lo])*t + c[3,lo]
+    return ((c[0, lo] * t + c[1, lo]) * t + c[2, lo]) * t + c[3, lo]
+
 
 # ================= gen_expansion in numba =================
 @njit(cache=True)
-def gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
-               Omega_mnuh2, Omega_ph2, Omega_nh2, nu_today, N_fin, N_max,
-               FD_X0, FD_DX, FD_C_RHO, FD_C_P, TH_X, TH_C_RHO, TH_C_RHOP,
-               Delta_f, ln10v):
+def gen_kernel(
+    Nv,
+    Sv,
+    f_hor,
+    index_re,
+    Omh2,
+    Osh2,
+    Oerh2,
+    Otrh2,
+    Otreh2,
+    OLh2,
+    Omega_mnuh2,
+    Omega_ph2,
+    Omega_nh2,
+    nu_today,
+    N_fin,
+    N_max,
+    FD_X0,
+    FD_DX,
+    FD_C_RHO,
+    FD_C_P,
+    TH_X,
+    TH_C_RHO,
+    TH_C_RHOP,
+    Delta_f,
+    ln10v,
+):
     n = len(Nv)
-    Nlast = Nv[n-1]
+    Nlast = Nv[n - 1]
     for i in range(index_re, n):
         eN = math.exp(Nlast - Nv[i])
-        e3N = eN*eN*eN
+        e3N = eN * eN * eN
         nu = nu_today / eN
         if nu > 100.0:
-            H2 = Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0/3.0*Omega_nh2 + Oerh2)*eN + Osh2*e3N + OLh2/e3N
-            Sv[i] = (Omh2 + Omega_mnuh2 + 4.0/3.0*(Omega_ph2 + 2.0/3.0*Omega_nh2 + Oerh2)*eN + 2.0*Osh2*e3N)/H2
+            H2 = Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
+            Sv[i] = (
+                Omh2 + Omega_mnuh2 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + 2.0 * Osh2 * e3N
+            ) / H2
         elif nu >= 0.1:
             lnnu = math.log10(nu)
             rho_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_RHO)
             p_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_P)
-            H2 = Omh2 + (Omega_ph2 + (2.0/3.0 + rho_nu/3.0)*Omega_nh2 + Oerh2)*eN + Osh2*e3N + OLh2/e3N
-            Sv[i] = (Omh2 + 4.0/3.0*(Omega_ph2 + 2.0/3.0*Omega_nh2 + Oerh2)*eN + (rho_nu + p_nu)*Omega_nh2/3.0*eN + 2.0*Osh2*e3N)/H2
+            H2 = Omh2 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2 + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
+            Sv[i] = (
+                Omh2
+                + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
+                + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN
+                + 2.0 * Osh2 * e3N
+            ) / H2
         elif Nv[i] > Nlast - N_fin:
-            H2 = Omh2 + Otrh2*eN + Osh2*e3N + OLh2/e3N
-            Sv[i] = (Omh2 + 4.0/3.0*Otrh2*eN + 2.0*Osh2*e3N)/H2
+            H2 = Omh2 + Otrh2 * eN + Osh2 * e3N + OLh2 / e3N
+            Sv[i] = (Omh2 + 4.0 / 3.0 * Otrh2 * eN + 2.0 * Osh2 * e3N) / H2
         elif Nv[i] >= Nlast - N_max:
             Nl = Nlast - Nv[i]
             rho_i = cubic_any(Nl, TH_X, TH_C_RHO)
             rhop_i = cubic_any(Nl, TH_X, TH_C_RHOP)
-            H2 = Omh2 + (Omega_ph2*rho_i + Oerh2)*eN + Osh2*e3N + OLh2/e3N
-            Sv[i] = (Omh2 + (Omega_ph2*rhop_i + 4.0/3.0*Oerh2)*eN + 2.0*Osh2*e3N)/H2
+            H2 = Omh2 + (Omega_ph2 * rho_i + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
+            Sv[i] = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
         else:
-            H2 = Omh2 + Otreh2*eN + Osh2*e3N + OLh2/e3N
-            Sv[i] = (Omh2 + 4.0/3.0*Otreh2*eN + 2.0*Osh2*e3N)/H2
-        f_hor[i] = -0.5*Nv[i] + 0.5*math.log(H2)
+            H2 = Omh2 + Otreh2 * eN + Osh2 * e3N + OLh2 / e3N
+            Sv[i] = (Omh2 + 4.0 / 3.0 * Otreh2 * eN + 2.0 * Osh2 * e3N) / H2
+        f_hor[i] = -0.5 * Nv[i] + 0.5 * math.log(H2)
     fv_re = f_hor[index_re]
     Nv_re = Nv[index_re]
     for i in range(index_re):
         Sv[i] = 1.0
-        f_hor[i] = fv_re - 0.5*(Nv[i] - Nv_re)
-    f0 = f_hor[n-1] + Delta_f
+        f_hor[i] = fv_re - 0.5 * (Nv[i] - Nv_re)
+    f0 = f_hor[n - 1] + Delta_f
     for i in range(n):
-        f_hor[i] = (f_hor[i] - f0)/ln10v
+        f_hor[i] = (f_hor[i] - f0) / ln10v
+
 
 def gen_fast(m, h=0.01, kink_split=False):
     """Generate the expansion grid, optionally inserting only ``N_re``.
@@ -792,38 +895,66 @@ def gen_fast(m, h=0.01, kink_split=False):
     """
     d = m.derived_param
     p = m.cosmo_param
-    Omh2 = d['Omega_mh2']; Osh2 = d['Omega_sh2']
-    Oerh2 = gp.Omega_ph2*7/8*(4/11)**(4/3)*p['DN_eff']
+    Omh2 = d["Omega_mh2"]
+    Osh2 = d["Omega_sh2"]
+    Oerh2 = gp.Omega_ph2 * 7 / 8 * (4 / 11) ** (4 / 3) * p["DN_eff"]
     Otrh2 = gp.Omega_orh2 + Oerh2
-    Otreh2 = gp.Omega_ph2*gp.rho_th[-1] + Oerh2
-    OLh2 = d['h']**2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2*2/3 - gp.Omega_ph2 - Oerh2 - Osh2
+    Otreh2 = gp.Omega_ph2 * gp.rho_th[-1] + Oerh2
+    OLh2 = d["h"] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 - gp.Omega_ph2 - Oerh2 - Osh2
     # Use the *continuous* present-day anchor N_inf (not the grid-quantised
     # floor(N_inf/h)*h) so the fast path is anchored identically to the
     # continuous-sigma reference.  The floor(N_inf/h)*h anchor attenuates the
     # analytic-tail amplitude by exp(N_inf - floor(N_inf/h)*h) ~ 0.996 -> a ~0.4%
     # systematic bias (grid-anchor error, not a numerical-order issue).
-    len_inf = math.floor(d['N_inf']/h)+1
-    Nv = np.arange(0, len_inf)*h
-    n_re_abs = d['N_inf'] - d['N_re']
-    nodes = [d['N_inf']]
+    len_inf = math.floor(d["N_inf"] / h) + 1
+    Nv = np.arange(0, len_inf) * h
+    n_re_abs = d["N_inf"] - d["N_re"]
+    nodes = [d["N_inf"]]
     if kink_split:
         nodes.append(n_re_abs)
     # 等距网格本身已严格递增，只需把尚未落格的额外节点并入一次 O(n) 归并；
     # 原先对全部 nv 个节点做 np.unique(np.sort(...)) 是 O(n log n) 的冗余工作。
     merged = np.concatenate((Nv, np.asarray(nodes, dtype=float)))
-    merged.sort(kind='stable')
+    merged.sort(kind="stable")
     keep = np.empty(merged.size, dtype=bool)
     keep[0] = True
     np.not_equal(merged[1:], merged[:-1], out=keep[1:])
     Nv = merged[keep]
     index_re = int(np.argmin(np.abs(Nv - n_re_abs)))
-    Sv = np.empty(len(Nv)); f_hor = np.empty(len(Nv))
-    Delta_f = math.log(2*math.pi/d['H_0'])
-    gen_kernel(Nv, Sv, f_hor, index_re, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
-               gp.Omega_mnuh2, gp.Omega_ph2, gp.Omega_nh2, gp.nu_today, gp.N_fin, gp.N_max,
-               _FD_X0, _FD_DX, _FD_C_RHO, _FD_C_P, _TH_X, _TH_C_RHO, _TH_C_RHOP,
-               Delta_f, ln10)
-    m.Nv = Nv; m.N = Nv - Nv[-1]; m.sigma = Sv; m.f_hor = f_hor
+    Sv = np.empty(len(Nv))
+    f_hor = np.empty(len(Nv))
+    Delta_f = math.log(2 * math.pi / d["H_0"])
+    gen_kernel(
+        Nv,
+        Sv,
+        f_hor,
+        index_re,
+        Omh2,
+        Osh2,
+        Oerh2,
+        Otrh2,
+        Otreh2,
+        OLh2,
+        gp.Omega_mnuh2,
+        gp.Omega_ph2,
+        gp.Omega_nh2,
+        gp.nu_today,
+        gp.N_fin,
+        gp.N_max,
+        _FD_X0,
+        _FD_DX,
+        _FD_C_RHO,
+        _FD_C_P,
+        _TH_X,
+        _TH_C_RHO,
+        _TH_C_RHOP,
+        Delta_f,
+        ln10,
+    )
+    m.Nv = Nv
+    m.N = Nv - Nv[-1]
+    m.sigma = Sv
+    m.f_hor = f_hor
     m.f_re = f_hor[index_re]
     return len_inf, index_re
 
@@ -838,11 +969,12 @@ def _correct_kink_background(m):
     from .exact_background import H2_vec
 
     d = m.derived_param
-    n_re = float(d['N_inf'] - d['N_re'])
-    index = int(np.searchsorted(m.Nv, n_re, side='right') - 1)
+    n_re = float(d["N_inf"] - d["N_re"])
+    index = int(np.searchsorted(m.Nv, n_re, side="right") - 1)
     if not 0 <= index < len(m.Nv) - 1:
         return -1, 0.0
-    left = float(m.Nv[index]); right = float(m.Nv[index + 1])
+    left = float(m.Nv[index])
+    right = float(m.Nv[index + 1])
     fraction = (n_re - left) / (right - left)
     if not 0.0 < fraction < 1.0:
         return -1, 0.0
@@ -850,86 +982,98 @@ def _correct_kink_background(m):
     # split interval that node is still on the matter-like side, so restore its
     # pre-transition sigma and anchor the pre-transition f_hor at exact N_re.
     m.sigma[index] = 1.0
-    H2_re, H2_last = H2_vec(np.array([n_re, m.Nv[-1]]), m,
-                            m.cosmo_param['DN_eff'])
+    H2_re, H2_last = H2_vec(np.array([n_re, m.Nv[-1]]), m, m.cosmo_param["DN_eff"])
     raw_re = -0.5 * n_re + 0.5 * math.log(float(H2_re))
     raw_last = -0.5 * float(m.Nv[-1]) + 0.5 * math.log(float(H2_last))
-    f_re = (raw_re - raw_last - math.log(2.0 * math.pi / d['H_0'])) / ln10
-    m.f_hor[:index + 1] = f_re - 0.5 * (m.Nv[:index + 1] - n_re) / ln10
+    f_re = (raw_re - raw_last - math.log(2.0 * math.pi / d["H_0"])) / ln10
+    m.f_hor[: index + 1] = f_re - 0.5 * (m.Nv[: index + 1] - n_re) / ln10
     m.f_re = f_re
     return index, fraction
 
+
 # ================= prep in numba (spline + primitive + phi/psi/s2 + j0s/z0s) =================
 @njit(cache=True)
-def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v,
-                Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus):
-    nv = len(Nv); nseg = nv - 1
+def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus):
+    nv = len(Nv)
+    nseg = nv - 1
     M = np.empty(nv)
-    inv_h2 = 1.0/(h*h)
-    M[1] = (Sv[0] - 2.0*Sv[1] + Sv[2])*inv_h2
-    M[nv-2] = (Sv[nv-3] - 2.0*Sv[nv-2] + Sv[nv-1])*inv_h2
+    inv_h2 = 1.0 / (h * h)
+    M[1] = (Sv[0] - 2.0 * Sv[1] + Sv[2]) * inv_h2
+    M[nv - 2] = (Sv[nv - 3] - 2.0 * Sv[nv - 2] + Sv[nv - 1]) * inv_h2
     m = nv - 4
-    aa = np.empty(m); bb = np.empty(m); cc = np.empty(m); dd = np.empty(m)
+    aa = np.empty(m)
+    bb = np.empty(m)
+    cc = np.empty(m)
+    dd = np.empty(m)
     for i in range(m):
         k = i + 2
-        aa[i] = 1.0; bb[i] = 4.0; cc[i] = 1.0
-        dd[i] = 6.0*(Sv[k-1] - 2.0*Sv[k] + Sv[k+1])*inv_h2
+        aa[i] = 1.0
+        bb[i] = 4.0
+        cc[i] = 1.0
+        dd[i] = 6.0 * (Sv[k - 1] - 2.0 * Sv[k] + Sv[k + 1]) * inv_h2
     dd[0] -= M[1]
-    dd[m-1] -= M[nv-2]
+    dd[m - 1] -= M[nv - 2]
     for i in range(1, m):
-        w = aa[i]/bb[i-1]
-        bb[i] -= w*cc[i-1]
-        dd[i] -= w*dd[i-1]
-    M[m+1] = dd[m-1]/bb[m-1]
-    for i in range(m-2, -1, -1):
-        M[i+2] = (dd[i] - cc[i]*M[i+3])/bb[i]
-    M[0] = 2.0*M[1] - M[2]
-    M[nv-1] = 2.0*M[nv-2] - M[nv-3]
+        w = aa[i] / bb[i - 1]
+        bb[i] -= w * cc[i - 1]
+        dd[i] -= w * dd[i - 1]
+    M[m + 1] = dd[m - 1] / bb[m - 1]
+    for i in range(m - 2, -1, -1):
+        M[i + 2] = (dd[i] - cc[i] * M[i + 3]) / bb[i]
+    M[0] = 2.0 * M[1] - M[2]
+    M[nv - 1] = 2.0 * M[nv - 2] - M[nv - 3]
     F = np.empty(nv)
     F[0] = 0.0
     for i in range(nseg):
-        Mi = M[i]; Mi1 = M[i+1]
-        a = (Mi1 - Mi)/(6.0*h)
-        b = Mi/2.0
-        c = (Sv[i+1] - Sv[i])/h - h*(2.0*Mi + Mi1)/6.0
+        Mi = M[i]
+        Mi1 = M[i + 1]
+        a = (Mi1 - Mi) / (6.0 * h)
+        b = Mi / 2.0
+        c = (Sv[i + 1] - Sv[i]) / h - h * (2.0 * Mi + Mi1) / 6.0
         d = Sv[i]
-        F[i+1] = F[i] + (a/4.0*h**4 + b/3.0*h**3 + c/2.0*h**2 + d*h)
+        F[i + 1] = F[i] + (a / 4.0 * h**4 + b / 3.0 * h**3 + c / 2.0 * h**2 + d * h)
     N0 = Nv[0]
     for i in range(nv):
-        Phi_grid[i] = 1.5*F[i] - Nv[i] + N0
-        Psi[i] = 3.0*F[i] - 4.0*Nv[i]
+        Phi_grid[i] = 1.5 * F[i] - Nv[i] + N0
+        Psi[i] = 3.0 * F[i] - 4.0 * Nv[i]
         S2[i] = math.exp(Psi[i])
-        S2inv[i] = math.exp(-0.5*Psi[i])
+        S2inv[i] = math.exp(-0.5 * Psi[i])
     for i in range(nv):
         if i < nseg:
-            seg = i; dx = 0.5*h
+            seg = i
+            dx = 0.5 * h
         else:
-            seg = nseg-1; dx = 1.5*h
-        Mi = M[seg]; Mi1 = M[seg+1]
-        a = (Mi1 - Mi)/(6.0*h)
-        b = Mi/2.0
-        c = (Sv[seg+1] - Sv[seg])/h - h*(2.0*Mi + Mi1)/6.0
+            seg = nseg - 1
+            dx = 1.5 * h
+        Mi = M[seg]
+        Mi1 = M[seg + 1]
+        a = (Mi1 - Mi) / (6.0 * h)
+        b = Mi / 2.0
+        c = (Sv[seg + 1] - Sv[seg]) / h - h * (2.0 * Mi + Mi1) / 6.0
         d = Sv[seg]
-        prim = F[seg] + (a/4.0*dx**4 + b/3.0*dx**3 + c/2.0*dx**2 + d*dx)
-        xm = Nv[i] + 0.5*h
-        Phi_mid[i] = 1.5*prim - xm + N0
+        prim = F[seg] + (a / 4.0 * dx**4 + b / 3.0 * dx**3 + c / 2.0 * dx**2 + d * dx)
+        xm = Nv[i] + 0.5 * h
+        Phi_mid[i] = 1.5 * prim - xm + N0
     for j in range(nv):
-        fp_minus[j] = math.exp(-f_hor[j]*ln10v)
+        fp_minus[j] = math.exp(-f_hor[j] * ln10v)
     Nf = len(freqs)
     for mm in range(Nf):
         freq3 = freqs[mm] + 3.0
-        lo = 0; hi = nv
+        lo = 0
+        hi = nv
         while lo < hi:
-            mid = (lo + hi)//2
+            mid = (lo + hi) // 2
             if f_hor[mid] >= freq3:
                 lo = mid + 1
             else:
                 hi = mid
         j0 = lo - 1
-        if j0 < 0: j0 = 0
-        if j0 > nv-1: j0 = nv-1
+        if j0 < 0:
+            j0 = 0
+        if j0 > nv - 1:
+            j0 = nv - 1
         j0s[mm] = j0
-        z0s[mm] = (freqs[mm] - f_hor[j0])*ln10v
+        z0s[mm] = (freqs[mm] - f_hor[j0]) * ln10v
 
 
 @njit(cache=True)
@@ -942,33 +1086,35 @@ def prep_frequency_kernel(f_hor, freqs, ln10v, j0s, z0s, fp_minus):
     with ``exact_phi_s2_grid`` instead of applying a uniform-grid spline.
     """
     for j in range(len(f_hor)):
-        fp_minus[j] = math.exp(-f_hor[j]*ln10v)
+        fp_minus[j] = math.exp(-f_hor[j] * ln10v)
     for mm in range(len(freqs)):
         freq3 = freqs[mm] + 3.0
-        lo = 0; hi = len(f_hor)
+        lo = 0
+        hi = len(f_hor)
         while lo < hi:
-            mid = (lo + hi)//2
+            mid = (lo + hi) // 2
             if f_hor[mid] >= freq3:
                 lo = mid + 1
             else:
                 hi = mid
         j0 = lo - 1
-        if j0 < 0: j0 = 0
-        if j0 > len(f_hor)-1: j0 = len(f_hor)-1
+        if j0 < 0:
+            j0 = 0
+        if j0 > len(f_hor) - 1:
+            j0 = len(f_hor) - 1
         j0s[mm] = j0
-        z0s[mm] = (freqs[mm] - f_hor[j0])*ln10v
+        z0s[mm] = (freqs[mm] - f_hor[j0]) * ln10v
 
 
 def _fast_frequency_workspace(m, nv, nf):
-    workspace = getattr(m, '_fast_frequency_workspace', None)
-    if (workspace is None or workspace['nv'] != nv
-            or workspace['nf'] != nf):
+    workspace = getattr(m, "_fast_frequency_workspace", None)
+    if workspace is None or workspace["nv"] != nv or workspace["nf"] != nf:
         workspace = {
-            'nv': nv,
-            'nf': nf,
-            'fp_minus': np.empty(nv, dtype=np.float64),
-            'j0s': np.empty(nf, dtype=np.int64),
-            'z0s': np.empty(nf, dtype=np.float64),
+            "nv": nv,
+            "nf": nf,
+            "fp_minus": np.empty(nv, dtype=np.float64),
+            "j0s": np.empty(nf, dtype=np.int64),
+            "z0s": np.empty(nf, dtype=np.float64),
         }
         m._fast_frequency_workspace = workspace
     return workspace
@@ -977,41 +1123,47 @@ def _fast_frequency_workspace(m, nv, nf):
 def prep_frequency_only(m, Nv, freqs):
     """Prepare frequency starts using model-local, overwritten work buffers."""
     workspace = _fast_frequency_workspace(m, len(Nv), len(freqs))
-    prep_frequency_kernel(m.f_hor, freqs, ln10, workspace['j0s'],
-                          workspace['z0s'], workspace['fp_minus'])
-    return (m.sigma, m.f_hor, workspace['j0s'], workspace['z0s'],
-            workspace['fp_minus'])
+    prep_frequency_kernel(m.f_hor, freqs, ln10, workspace["j0s"], workspace["z0s"], workspace["fp_minus"])
+    return (m.sigma, m.f_hor, workspace["j0s"], workspace["z0s"], workspace["fp_minus"])
 
 
 def prep_fast(m, Nv, freqs, h, variable_grid=False):
-    Sv = m.sigma; f_hor = m.f_hor
+    Sv = m.sigma
+    f_hor = m.f_hor
     nv = len(Nv)
-    Phi_grid = np.empty(nv); Phi_mid = np.empty(nv); Psi = np.empty(nv)
-    S2 = np.empty(nv); S2inv = np.empty(nv); fp_minus = np.empty(nv)
-    j0s = np.empty(len(freqs), dtype=np.int64); z0s = np.empty(len(freqs))
+    Phi_grid = np.empty(nv)
+    Phi_mid = np.empty(nv)
+    Psi = np.empty(nv)
+    S2 = np.empty(nv)
+    S2inv = np.empty(nv)
+    fp_minus = np.empty(nv)
+    j0s = np.empty(len(freqs), dtype=np.int64)
+    z0s = np.empty(len(freqs))
     if variable_grid:
         prep_frequency_kernel(f_hor, freqs, ln10, j0s, z0s, fp_minus)
     else:
         prep_kernel(Nv, Sv, f_hor, freqs, h, ln10, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus)
     return Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus
 
+
 # ================= stepping / assembly / kernel (from proto11) =================
 @njit(cache=True)
 def scaled_step(xh, yh, z_mid, h):
     w = math.exp(z_mid)
-    w2 = w*w
+    w2 = w * w
     if w2 >= 1.0:
         Om = math.sqrt(w2 - 1.0)
-        c = math.cos(Om*h); si = math.sin(Om*h)/Om
+        c = math.cos(Om * h)
+        si = math.sin(Om * h) / Om
     else:
         Om = math.sqrt(1.0 - w2)
-        x = Om*h
-        c = 1.0 + 0.5*x*x
-        si = h*(1.0 + x*x/6.0)
-    return (c-si)*xh - w*si*yh, w*si*xh + (c+si)*yh
+        x = Om * h
+        c = 1.0 + 0.5 * x * x
+        si = h * (1.0 + x * x / 6.0)
+    return (c - si) * xh - w * si * yh, w * si * xh + (c + si) * yh
 
 
-@njit(cache=True, inline='always')
+@njit(cache=True, inline="always")
 def _phase_substeps(h_step, z_mid, phase_max):
     """Return the minimum sub-step count for a bounded phase increment."""
     if phase_max <= 0.0 or z_mid <= 0.0:
@@ -1020,7 +1172,7 @@ def _phase_substeps(h_step, z_mid, phase_max):
     return n_sub if n_sub > 1 else 1
 
 
-@njit(cache=True, inline='always')
+@njit(cache=True, inline="always")
 def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
     """Advance one segment, optionally using a constant-z phase envelope."""
     z_mid = 0.5 * (z_start + z_end)
@@ -1035,7 +1187,7 @@ def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
     return xh, yh
 
 
-@njit(cache=True, inline='always')
+@njit(cache=True, inline="always")
 def _tail_match_gamma(sigma):
     """Return the physical high-frequency amplitude-match coefficient.
 
@@ -1054,47 +1206,77 @@ def _tail_match_gamma(sigma):
 @njit(cache=True)
 def assemble_main(Ogw, Oj, Opgw, m, slot, s2, xh, yh, zz, Pt):
     ss = math.sqrt(s2)
-    P = s2*(xh*xh + yh*yh)
-    Th = ss*yh*math.exp(-zz)
-    oj = ss*xh*Th/3.0*Pt
-    Oj[m,slot] = oj
-    Ogw[m,slot] = P/24.0*Pt + oj
-    Opgw[m,slot] = s2*(-5.0*xh*xh + 7.0*yh*yh)/72.0*Pt
+    P = s2 * (xh * xh + yh * yh)
+    Th = ss * yh * math.exp(-zz)
+    oj = ss * xh * Th / 3.0 * Pt
+    Oj[m, slot] = oj
+    Ogw[m, slot] = P / 24.0 * Pt + oj
+    Opgw[m, slot] = s2 * (-5.0 * xh * xh + 7.0 * yh * yh) / 72.0 * Pt
+
 
 @njit(cache=True)
 def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus):
-    Th = coeff*eNz*ev_minus[kk2]
-    xf = Th*fp_i*fp_minus[kk2]
-    oj = -Th*Th/3.0*Pt
-    Op = xf*xf/36.0*Pt
-    Oj[m,slot] = oj
-    Opgw[m,slot] = Op
-    Ogw[m,slot] = 3.0*Op + oj
+    Th = coeff * eNz * ev_minus[kk2]
+    xf = Th * fp_i * fp_minus[kk2]
+    oj = -Th * Th / 3.0 * Pt
+    Op = xf * xf / 36.0 * Pt
+    Oj[m, slot] = oj
+    Opgw[m, slot] = Op
+    Ogw[m, slot] = 3.0 * Op + oj
+
 
 @njit(parallel=True, cache=True)
-def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
-                 j0s, z0s, P_t, ev_minus, fp_minus, fp_freq,
-                 assemble, n_coarse, col_step, h, z_tail, Ogw, Oj, Opgw,
-                 h_arr=None, Sv=None, phase_max=0.0, handoff_eps=None,
-                 kink_index=-1, kink_fraction=0.0, phi_re=0.0):
+def solve_kernel(
+    Nv,
+    Phi_grid,
+    Phi_mid,
+    S2,
+    S2inv,
+    j0s,
+    z0s,
+    P_t,
+    ev_minus,
+    fp_minus,
+    fp_freq,
+    assemble,
+    n_coarse,
+    col_step,
+    h,
+    z_tail,
+    Ogw,
+    Oj,
+    Opgw,
+    h_arr=None,
+    Sv=None,
+    phase_max=0.0,
+    handoff_eps=None,
+    kink_index=-1,
+    kink_fraction=0.0,
+    phi_re=0.0,
+):
     nv = len(Nv)
     for m in prange(len(j0s)):
-        j0 = j0s[m]; z0 = z0s[m]
-        Pt = P_t[m]; fp_i = fp_freq[m]
+        j0 = j0s[m]
+        z0 = z0s[m]
+        Pt = P_t[m]
+        fp_i = fp_freq[m]
         Phi0 = Phi_grid[j0]
-        xh, yh = 0.0, math.exp(z0)*S2inv[j0]
+        xh, yh = 0.0, math.exp(z0) * S2inv[j0]
         k = j0
         zz = z0 + Phi_grid[k] - Phi0
-        lxh = 0.0; lyh = yh; last_z = zz
+        lxh = 0.0
+        lyh = yh
+        last_z = zz
         if k % col_step == 0:
             if assemble:
-                slot = k//col_step
-                if slot >= n_coarse-1: slot = n_coarse-1
+                slot = k // col_step
+                if slot >= n_coarse - 1:
+                    slot = n_coarse - 1
                 assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
-        elif k == nv-1:
-            assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
+        elif k == nv - 1:
+            assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
         if zz < z_tail:
-            while k < nv-1 and zz < z_tail:
+            while k < nv - 1 and zz < z_tail:
                 h_step = h_arr[k] if h_arr is not None else h
                 z_node = zz
                 z_mid_step = z0 + Phi_mid[k] - Phi0
@@ -1106,61 +1288,64 @@ def solve_kernel(Nv, Phi_grid, Phi_mid, S2, S2inv,
                     z_end = z0 + Phi_grid[k + 1] - Phi0
                     h_left = h_step * kink_fraction
                     h_right = h_step - h_left
-                    xh, yh = _phase_segment(xh, yh, z_node, z_break,
-                                             h_left, phase_max)
-                    xh, yh = _phase_segment(xh, yh, z_break, z_end,
-                                             h_right, phase_max)
+                    xh, yh = _phase_segment(xh, yh, z_node, z_break, h_left, phase_max)
+                    xh, yh = _phase_segment(xh, yh, z_break, z_end, h_right, phase_max)
                 else:
                     z_end = 2.0 * z_mid_step - z_node
-                    xh, yh = _phase_segment(xh, yh, z_node, z_end,
-                                             h_step, phase_max)
+                    xh, yh = _phase_segment(xh, yh, z_node, z_end, h_step, phase_max)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k % col_step == 0:
                     if assemble:
-                        slot = k//col_step
-                        if slot >= n_coarse-1: slot = n_coarse-1
+                        slot = k // col_step
+                        if slot >= n_coarse - 1:
+                            slot = n_coarse - 1
                         assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
-                elif k == nv-1:
-                    assemble_main(Ogw, Oj, Opgw, m, n_coarse-1, S2[k], xh, yh, zz, Pt)
+                elif k == nv - 1:
+                    assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
                 if zz < z_tail:
-                    lxh = xh; lyh = yh; last_z = zz
+                    lxh = xh
+                    lyh = yh
+                    last_z = zz
             if zz < z_tail:
-                kend = nv-1
+                kend = nv - 1
             else:
                 kend = k - 1
                 if kend < j0:
                     kend = j0
         else:
             kend = j0
-        if kend < nv-1:
+        if kend < nv - 1:
             s2k = S2[kend]
             e_z = math.exp(-last_z)
             if Sv is not None:
                 gamma = _tail_match_gamma(Sv[kend])
-                amp2 = (lxh*lxh + lyh*lyh*(1.0 + gamma*gamma*e_z*e_z)
-                        + 2.0*gamma*lxh*lyh*e_z)
+                amp2 = lxh * lxh + lyh * lyh * (1.0 + gamma * gamma * e_z * e_z) + 2.0 * gamma * lxh * lyh * e_z
             else:
-                amp2 = lxh*lxh + lyh*lyh
-            coeff = math.sqrt(0.5*s2k*amp2)
+                amp2 = lxh * lxh + lyh * lyh
+            coeff = math.sqrt(0.5 * s2k * amp2)
             eNz = math.exp(Nv[kend] - last_z)
             if handoff_eps is not None:
                 if Sv is not None:
-                    handoff_eps[m] = abs(1.5*Sv[kend] - 1.0)*e_z
+                    handoff_eps[m] = abs(1.5 * Sv[kend] - 1.0) * e_z
                 else:
                     handoff_eps[m] = 0.0
-            slot_start = kend//col_step
-            if slot_start >= n_coarse-1: slot_start = n_coarse-1
+            slot_start = kend // col_step
+            if slot_start >= n_coarse - 1:
+                slot_start = n_coarse - 1
             while slot_start < n_coarse:
-                kk2 = col_step*slot_start
-                if slot_start == n_coarse-1: kk2 = nv-1
-                if kk2 > kend: break
+                kk2 = col_step * slot_start
+                if slot_start == n_coarse - 1:
+                    kk2 = nv - 1
+                if kk2 > kend:
+                    break
                 slot_start += 1
             for slot in range(slot_start, n_coarse):
-                if not (assemble or slot == n_coarse-1):
+                if not (assemble or slot == n_coarse - 1):
                     continue
-                kk2 = col_step*slot
-                if slot == n_coarse-1: kk2 = nv-1
+                kk2 = col_step * slot
+                if slot == n_coarse - 1:
+                    kk2 = nv - 1
                 assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus)
 
 
@@ -1171,33 +1356,40 @@ def simpson_row(Xf, h, a, b, W):
     if m < 2:
         return
     if m == 2:
-        W[a] += 0.5*h[a]
-        W[a+1] += 0.5*h[a]
+        W[a] += 0.5 * h[a]
+        W[a + 1] += 0.5 * h[a]
         return
     s = a
     while s + 2 <= b:
-        h0 = h[s]; h1 = h[s+1]
-        hsum = h0+h1; r = h0/h1; t = hsum/6.0
-        W[s] += t*(2.0 - 1.0/r)
-        W[s+1] += t*hsum*hsum/(h0*h1)
-        W[s+2] += t*(2.0 - r)
+        h0 = h[s]
+        h1 = h[s + 1]
+        hsum = h0 + h1
+        r = h0 / h1
+        t = hsum / 6.0
+        W[s] += t * (2.0 - 1.0 / r)
+        W[s + 1] += t * hsum * hsum / (h0 * h1)
+        W[s + 2] += t * (2.0 - r)
         s += 2
     if (m % 2 == 0) and (m >= 4):
-        i3 = b-2; i2 = b-1; i1 = b
-        h0 = h[i3]; h1 = h[i2]
-        alpha = (2*h1*h1 + 3*h0*h1)/(6.0*(h0+h1))
-        beta = (h1*h1 + 3*h0*h1)/(6.0*h0)
-        eta = h1*h1*h1/(6.0*h0*(h0+h1))
+        i3 = b - 2
+        i2 = b - 1
+        i1 = b
+        h0 = h[i3]
+        h1 = h[i2]
+        alpha = (2 * h1 * h1 + 3 * h0 * h1) / (6.0 * (h0 + h1))
+        beta = (h1 * h1 + 3 * h0 * h1) / (6.0 * h0)
+        eta = h1 * h1 * h1 / (6.0 * h0 * (h0 + h1))
         W[i1] += alpha
         W[i2] += beta
         W[i3] -= eta
 
+
 @njit(cache=True)
 def build_Wmat(Nf, Xf, h, Wmat):
     for jh in range(Nf):
-        a = Nf-1-jh
+        a = Nf - 1 - jh
         W = np.zeros(Nf)
-        simpson_row(Xf, h, a, Nf-1, W)
+        simpson_row(Xf, h, a, Nf - 1, W)
         for p in range(Nf):
             Wmat[jh, p] = W[p]
 
@@ -1216,14 +1408,14 @@ def integrate_frequency_pchip(freqs, integrand):
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
     if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
-        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+        raise ValueError("freqs and integrand must be equal 1-D arrays with at least 2 points")
     if not np.isfinite(x).all() or not np.isfinite(y).all():
-        raise ValueError('freqs and integrand must be finite')
+        raise ValueError("freqs and integrand must be finite")
     order = np.argsort(x)
     xa = x[order]
     ya = y[order]
     if np.any(np.diff(xa) <= 0.0):
-        raise ValueError('freqs must contain unique nodes')
+        raise ValueError("freqs must contain unique nodes")
     return float(interpolate.PchipInterpolator(xa, ya).integrate(xa[0], xa[-1]))
 
 
@@ -1242,14 +1434,14 @@ def pchip_integral_breakdown(freqs, integrand):
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
     if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
-        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+        raise ValueError("freqs and integrand must be equal 1-D arrays with at least 2 points")
     if not np.isfinite(x).all() or not np.isfinite(y).all():
-        raise ValueError('freqs and integrand must be finite')
+        raise ValueError("freqs and integrand must be finite")
     order = np.argsort(x)
     xa = x[order]
     ya = y[order]
     if np.any(np.diff(xa) <= 0.0):
-        raise ValueError('freqs must contain unique nodes')
+        raise ValueError("freqs must contain unique nodes")
     spline = interpolate.PchipInterpolator(xa, ya)
     antiderivative = spline.antiderivative()
     local = antiderivative(xa[1:]) - antiderivative(xa[:-1])
@@ -1270,7 +1462,7 @@ def _pchip_slopes(x, y):
     w2 = hk[1:] + 2.0 * hk[:-1]
     # 零斜率会产生 inf/nan，但这些位置随后由 condition 覆盖，因此只在这里
     # 抑制 numpy 的除零/无效值告警，不改变任何已选中的数值。
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         whmean = (w1 / mk[:-1] + w2 / mk[1:]) / (w1 + w2)
         harmonic = 1.0 / whmean
     dk[1:-1] = np.where(condition, 0.0, harmonic)
@@ -1302,20 +1494,20 @@ def _pchip_integrals_vectorized(freqs, integrand):
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
     if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
-        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+        raise ValueError("freqs and integrand must be equal 1-D arrays with at least 2 points")
     if not np.isfinite(x).all() or not np.isfinite(y).all():
-        raise ValueError('freqs and integrand must be finite')
+        raise ValueError("freqs and integrand must be finite")
     order = np.argsort(x)
     xa = x[order]
     ya = y[order]
     if np.any(np.diff(xa) <= 0.0):
-        raise ValueError('freqs must contain unique nodes')
+        raise ValueError("freqs must contain unique nodes")
     hk = xa[1:] - xa[:-1]
     dk = _pchip_slopes(xa, ya)
     return hk * 0.5 * (ya[:-1] + ya[1:]) + hk * hk * (dk[:-1] - dk[1:]) / 12.0
 
 
-def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
+def integrate_frequency_quadrature(freqs, integrand, method="simpson"):
     """Integrate a native spectrum using one of the Q1 audit methods.
 
     ``log_pchip`` interpolates the logarithm of a positive integrand and
@@ -1328,20 +1520,20 @@ def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
     if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
-        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+        raise ValueError("freqs and integrand must be equal 1-D arrays with at least 2 points")
     if not np.isfinite(x).all() or not np.isfinite(y).all():
-        raise ValueError('freqs and integrand must be finite')
+        raise ValueError("freqs and integrand must be finite")
     order = np.argsort(x)
     xa = x[order]
     ya = y[order]
     if np.any(np.diff(xa) <= 0.0):
-        raise ValueError('freqs must contain unique nodes')
-    if method == 'simpson':
+        raise ValueError("freqs must contain unique nodes")
+    if method == "simpson":
         return float(integrate.simpson(ya, x=xa))
-    if method in ('pchip', 'log_pchip'):
-        if method == 'log_pchip':
+    if method in ("pchip", "log_pchip"):
+        if method == "log_pchip":
             if np.any(ya <= 0.0):
-                raise ValueError('log_pchip requires a positive integrand')
+                raise ValueError("log_pchip requires a positive integrand")
             spline = interpolate.PchipInterpolator(xa, np.log(ya))
             nodes, weights = np.polynomial.legendre.leggauss(8)
             total = 0.0
@@ -1351,13 +1543,13 @@ def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
                 total += half * np.dot(weights, np.exp(spline(mid + half * nodes)))
             return float(total)
         return float(interpolate.PchipInterpolator(xa, ya).integrate(xa[0], xa[-1]))
-    if method.startswith('gauss'):
+    if method.startswith("gauss"):
         try:
             order_g = int(method[5:])
         except ValueError as exc:
-            raise ValueError('unknown frequency quadrature method') from exc
+            raise ValueError("unknown frequency quadrature method") from exc
         if order_g not in (2, 3, 5):
-            raise ValueError('unknown frequency quadrature method')
+            raise ValueError("unknown frequency quadrature method")
         spline = interpolate.PchipInterpolator(xa, ya)
         nodes, weights = np.polynomial.legendre.leggauss(order_g)
         total = 0.0
@@ -1366,9 +1558,9 @@ def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
             half = 0.5 * (right - left)
             total += half * np.dot(weights, spline(mid + half * nodes))
         return float(total)
-    if method == 'natural_cubic':
+    if method == "natural_cubic":
         return float(interpolate.CubicSpline(xa, ya).integrate(xa[0], xa[-1]))
-    if method == 'chebyshev':
+    if method == "chebyshev":
         nodes = np.cos(np.pi * np.arange(8) / 7.0)
         total = 0.0
         spline = interpolate.PchipInterpolator(xa, ya)
@@ -1378,16 +1570,14 @@ def integrate_frequency_quadrature(freqs, integrand, method='simpson'):
             values = spline(mid + half * nodes)
             coeff = np.polynomial.chebyshev.chebfit(nodes, values, 7)
             anti = np.polynomial.chebyshev.chebint(coeff)
-            total += half * (
-                np.polynomial.chebyshev.chebval(1.0, anti) -
-                np.polynomial.chebyshev.chebval(-1.0, anti))
+            total += half * (np.polynomial.chebyshev.chebval(1.0, anti) - np.polynomial.chebyshev.chebval(-1.0, anti))
         return float(total)
-    raise ValueError('unknown frequency quadrature method')
+    raise ValueError("unknown frequency quadrature method")
 
 
-def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
-                                        allocation='weighted',
-                                        candidate_intervals=None):
+def estimate_frequency_quadrature_local(
+    freqs, integrand, method="pchip", allocation="weighted", candidate_intervals=None
+):
     """Return ``(error, candidate, Simpson)`` contributions per interval.
 
     The Simpson baseline is assembled from non-overlapping local panels so
@@ -1406,78 +1596,75 @@ def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
     reproduced from a fixed weight vector).  This avoids rebuilding the
     interpolant a second time in the hot PCHIP path.
     """
-    if allocation not in ('weighted', 'full_panel', 'panel_envelope'):
-        raise ValueError('unknown local quadrature allocation')
+    if allocation not in ("weighted", "full_panel", "panel_envelope"):
+        raise ValueError("unknown local quadrature allocation")
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
     if x.ndim != 1 or y.ndim != 1 or x.size != y.size or x.size < 2:
-        raise ValueError('freqs and integrand must be equal 1-D arrays with at least 2 points')
+        raise ValueError("freqs and integrand must be equal 1-D arrays with at least 2 points")
     if not np.isfinite(x).all() or not np.isfinite(y).all():
-        raise ValueError('freqs and integrand must be finite')
+        raise ValueError("freqs and integrand must be finite")
     order = np.argsort(x)
     xa = x[order]
     ya = y[order]
     if np.any(np.diff(xa) <= 0.0):
-        raise ValueError('freqs must contain unique nodes')
+        raise ValueError("freqs must contain unique nodes")
     candidate = np.empty(xa.size - 1, dtype=np.float64)
-    if method == 'simpson':
+    if method == "simpson":
         candidate[:] = 0.0
         candidate[:] = np.diff(xa) * 0.5 * (ya[:-1] + ya[1:])
     elif candidate_intervals is not None:
         supplied = np.asarray(candidate_intervals, dtype=np.float64)
         if supplied.shape != candidate.shape:
-            raise ValueError('candidate_intervals must match the interval count')
+            raise ValueError("candidate_intervals must match the interval count")
         if not np.isfinite(supplied).all():
-            raise ValueError('candidate_intervals must be finite')
+            raise ValueError("candidate_intervals must be finite")
         candidate[:] = supplied
     else:
         spline = None
         log_spline = None
-        if (method in ('pchip', 'log_pchip', 'natural_cubic', 'chebyshev')
-                or method.startswith('gauss')):
-            if method == 'log_pchip':
+        if method in ("pchip", "log_pchip", "natural_cubic", "chebyshev") or method.startswith("gauss"):
+            if method == "log_pchip":
                 if np.any(ya <= 0.0):
-                    raise ValueError('log_pchip requires a positive integrand')
+                    raise ValueError("log_pchip requires a positive integrand")
                 log_spline = interpolate.PchipInterpolator(xa, np.log(ya))
-            elif method == 'natural_cubic':
+            elif method == "natural_cubic":
                 spline = interpolate.CubicSpline(xa, ya)
             else:
                 spline = interpolate.PchipInterpolator(xa, ya)
-        if method.startswith('gauss'):
+        if method.startswith("gauss"):
             try:
                 order_g = int(method[5:])
             except ValueError as exc:
-                raise ValueError('unknown frequency quadrature method') from exc
+                raise ValueError("unknown frequency quadrature method") from exc
             if order_g not in (2, 3, 5):
-                raise ValueError('unknown frequency quadrature method')
+                raise ValueError("unknown frequency quadrature method")
             nodes, weights = np.polynomial.legendre.leggauss(order_g)
             for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
                 mid = 0.5 * (left + right)
                 half = 0.5 * (right - left)
                 candidate[i] = half * np.dot(weights, spline(mid + half * nodes))
-        elif method == 'log_pchip':
+        elif method == "log_pchip":
             nodes, weights = np.polynomial.legendre.leggauss(8)
             for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
                 mid = 0.5 * (left + right)
                 half = 0.5 * (right - left)
-                candidate[i] = half * np.dot(
-                    weights, np.exp(log_spline(mid + half * nodes)))
-        elif method == 'chebyshev':
+                candidate[i] = half * np.dot(weights, np.exp(log_spline(mid + half * nodes)))
+        elif method == "chebyshev":
             nodes = np.cos(np.pi * np.arange(8) / 7.0)
             for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
                 mid = 0.5 * (left + right)
                 half = 0.5 * (right - left)
-                coeff = np.polynomial.chebyshev.chebfit(
-                    nodes, spline(mid + half * nodes), 7)
+                coeff = np.polynomial.chebyshev.chebfit(nodes, spline(mid + half * nodes), 7)
                 anti = np.polynomial.chebyshev.chebint(coeff)
                 candidate[i] = half * (
-                    np.polynomial.chebyshev.chebval(1.0, anti) -
-                    np.polynomial.chebyshev.chebval(-1.0, anti))
-        elif method in ('pchip', 'natural_cubic'):
+                    np.polynomial.chebyshev.chebval(1.0, anti) - np.polynomial.chebyshev.chebval(-1.0, anti)
+                )
+        elif method in ("pchip", "natural_cubic"):
             for i, (left, right) in enumerate(zip(xa[:-1], xa[1:])):
                 candidate[i] = float(spline.integrate(left, right))
         else:
-            raise ValueError('unknown frequency quadrature method')
+            raise ValueError("unknown frequency quadrature method")
     # 非重叠三点 Simpson 面板。原实现逐面板调用 scipy.integrate.simpson，
     # 在 76 点 native 网格上要 37 次 Python/C 往返（约 0.68 ms/次）；下面把
     # 同一公式整体向量化（与逐面板结果逐位一致），并保留尾部单区间梯形项。
@@ -1492,13 +1679,13 @@ def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
         panels = (hsum / 6.0) * (
             ya[panel_starts] * (2.0 - 1.0 / ratio)
             + ya[panel_starts + 1] * (hsum * (hsum / (h0 * h1)))
-            + ya[panel_starts + 2] * (2.0 - ratio))
+            + ya[panel_starts + 2] * (2.0 - ratio)
+        )
         baseline_interval[panel_starts] = 0.5 * panels
         baseline_interval[panel_starts + 1] = 0.5 * panels
     if tail_start < candidate.size:
-        baseline_interval[tail_start] = 0.5 * (
-            xa[-1] - xa[-2]) * (ya[-2] + ya[-1])
-    if method == 'simpson':
+        baseline_interval[tail_start] = 0.5 * (xa[-1] - xa[-2]) * (ya[-2] + ya[-1])
+    if method == "simpson":
         candidate = baseline_interval.copy()
     local_error = np.zeros_like(candidate)
     # 与逐面板 Python 循环逐位等价的向量化分摊；零候选和的面板退化为
@@ -1506,9 +1693,9 @@ def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
     if panel_starts.size:
         panel_error = np.abs(
             (candidate[panel_starts] + candidate[panel_starts + 1])
-            - (baseline_interval[panel_starts]
-               + baseline_interval[panel_starts + 1]))
-        if allocation in ('full_panel', 'panel_envelope'):
+            - (baseline_interval[panel_starts] + baseline_interval[panel_starts + 1])
+        )
+        if allocation in ("full_panel", "panel_envelope"):
             local_error[panel_starts] = panel_error
             local_error[panel_starts + 1] = panel_error
         else:
@@ -1517,14 +1704,11 @@ def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
             share_sum = share0 + share1
             positive = share_sum > 0.0
             safe_sum = np.where(positive, share_sum, 1.0)
-            local_error[panel_starts] = np.where(
-                positive, panel_error * share0 / safe_sum, 0.5 * panel_error)
-            local_error[panel_starts + 1] = np.where(
-                positive, panel_error * share1 / safe_sum, 0.5 * panel_error)
+            local_error[panel_starts] = np.where(positive, panel_error * share0 / safe_sum, 0.5 * panel_error)
+            local_error[panel_starts + 1] = np.where(positive, panel_error * share1 / safe_sum, 0.5 * panel_error)
     if tail_start < candidate.size:
-        local_error[tail_start] = abs(
-            candidate[tail_start] - baseline_interval[tail_start])
-    if allocation == 'panel_envelope':
+        local_error[tail_start] = abs(candidate[tail_start] - baseline_interval[tail_start])
+    if allocation == "panel_envelope":
         panel_error = local_error.copy()
         for i in range(local_error.size):
             left = max(0, i - 2)
@@ -1532,72 +1716,96 @@ def estimate_frequency_quadrature_local(freqs, integrand, method='pchip',
             local_error[i] = np.max(panel_error[left:right])
     return local_error, candidate, baseline_interval
 
+
 @njit(parallel=True, cache=True)
 def int_SGWB_W(Nf, n_coarse, j_hi, Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10v):
     for c in prange(n_coarse):
         jh = j_hi[c]
         if jh < 0:
-            g2c[c] = 0.0; w2c[c] = 0.0
+            g2c[c] = 0.0
+            w2c[c] = 0.0
             continue
-        acc_g = 0.0; acc_w = 0.0
+        acc_g = 0.0
+        acc_w = 0.0
         for p in range(Nf):
-            jj = Nf-1-p
-            acc_g += Wmat[jh, p]*(Ogw[jj, c] - Oj[jj, c])
-            acc_w += Wmat[jh, p]*Opgw[jj, c]
-        g2c[c] = acc_g*ln10v
-        w2c[c] = acc_w*ln10v
+            jj = Nf - 1 - p
+            acc_g += Wmat[jh, p] * (Ogw[jj, c] - Oj[jj, c])
+            acc_w += Wmat[jh, p] * Opgw[jj, c]
+        g2c[c] = acc_g * ln10v
+        w2c[c] = acc_w * ln10v
+
 
 # ================= PCHIP in numba =================
 @njit(cache=True)
 def _edge_case(h0, h1, m0, m1):
-    d = ((2.0*h0 + h1)*m0 - h0*m1)/(h0 + h1)
+    d = ((2.0 * h0 + h1) * m0 - h0 * m1) / (h0 + h1)
+
     def sgn(v):
-        if v > 0.0: return 1.0
-        if v < 0.0: return -1.0
+        if v > 0.0:
+            return 1.0
+        if v < 0.0:
+            return -1.0
         return 0.0
+
     if sgn(d) != sgn(m0):
         return 0.0
-    if (sgn(m0) != sgn(m1)) and (abs(d) > 3.0*abs(m0)):
-        return 3.0*m0
+    if (sgn(m0) != sgn(m1)) and (abs(d) > 3.0 * abs(m0)):
+        return 3.0 * m0
     return d
+
 
 @njit(cache=True)
 def pchip_fine(idx_out, y, nv, out):
     nc = len(idx_out)
-    hk = np.empty(nc-1); mk = np.empty(nc-1)
-    for i in range(nc-1):
-        hk[i] = idx_out[i+1] - idx_out[i]
-        mk[i] = (y[i+1] - y[i])/hk[i]
+    hk = np.empty(nc - 1)
+    mk = np.empty(nc - 1)
+    for i in range(nc - 1):
+        hk[i] = idx_out[i + 1] - idx_out[i]
+        mk[i] = (y[i + 1] - y[i]) / hk[i]
     dk = np.empty(nc)
-    for i in range(1, nc-1):
-        s0 = 1.0 if mk[i-1] > 0.0 else (-1.0 if mk[i-1] < 0.0 else 0.0)
+    for i in range(1, nc - 1):
+        s0 = 1.0 if mk[i - 1] > 0.0 else (-1.0 if mk[i - 1] < 0.0 else 0.0)
         s1 = 1.0 if mk[i] > 0.0 else (-1.0 if mk[i] < 0.0 else 0.0)
-        if (s1 != s0) or (mk[i] == 0.0) or (mk[i-1] == 0.0):
+        if (s1 != s0) or (mk[i] == 0.0) or (mk[i - 1] == 0.0):
             dk[i] = 0.0
         else:
-            w1 = 2.0*hk[i] + hk[i-1]
-            w2 = hk[i] + 2.0*hk[i-1]
-            whmean = (w1/mk[i-1] + w2/mk[i])/(w1 + w2)
-            dk[i] = 1.0/whmean
+            w1 = 2.0 * hk[i] + hk[i - 1]
+            w2 = hk[i] + 2.0 * hk[i - 1]
+            whmean = (w1 / mk[i - 1] + w2 / mk[i]) / (w1 + w2)
+            dk[i] = 1.0 / whmean
     dk[0] = _edge_case(hk[0], hk[1], mk[0], mk[1])
-    dk[nc-1] = _edge_case(hk[nc-2], hk[nc-3], mk[nc-2], mk[nc-3])
+    dk[nc - 1] = _edge_case(hk[nc - 2], hk[nc - 3], mk[nc - 2], mk[nc - 3])
     c = 0
     for p in range(nv):
-        while (c+1 < nc-1) and (p >= idx_out[c+1]):
+        while (c + 1 < nc - 1) and (p >= idx_out[c + 1]):
             c += 1
-        x0 = idx_out[c]; x1 = idx_out[c+1]
+        x0 = idx_out[c]
+        x1 = idx_out[c + 1]
         hh = x1 - x0
         dx = p - x0
-        y0 = y[c]; y1 = y[c+1]; d0 = dk[c]; d1 = dk[c+1]
-        c0 = 2.0*(y0 - y1)/(hh*hh*hh) + (d0 + d1)/(hh*hh)
-        c1 = 3.0*(y1 - y0)/(hh*hh) - (2.0*d0 + d1)/hh
-        out[p] = ((c0*dx + c1)*dx + d0)*dx + y0
+        y0 = y[c]
+        y1 = y[c + 1]
+        d0 = dk[c]
+        d1 = dk[c + 1]
+        c0 = 2.0 * (y0 - y1) / (hh * hh * hh) + (d0 + d1) / (hh * hh)
+        c1 = 3.0 * (y1 - y0) / (hh * hh) - (2.0 * d0 + d1) / hh
+        out[p] = ((c0 * dx + c1) * dx + d0) * dx + y0
 
-def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, kink_split=None,
-                   freq_grid=None, config=None,
-                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None,
-                   frequency_quadrature='pchip'):
+
+def _SGWB_iter_fast_impl(
+    m,
+    tol=1e-4,
+    freq_res=1.0,
+    sigma_exact=False,
+    transition_refine=False,
+    kink_split=None,
+    freq_grid=None,
+    config=None,
+    freq_grid_target=3e-4,
+    freq_grid_max_points=1500,
+    eval_freqs=None,
+    frequency_quadrature="pchip",
+):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
     ``frequency_quadrature`` selects the bolometric frequency integral.  The
@@ -1650,22 +1858,22 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.
     m.fast_failure_reason = None
-    if m.cosmo_param['r'] <= 0:
-        m.fast_failure_reason = 'invalid_r'
-        print('Must set a positive r to calculate the inflationary GWs!')
+    if m.cosmo_param["r"] <= 0:
+        m.fast_failure_reason = "invalid_r"
+        print("Must set a positive r to calculate the inflationary GWs!")
         return None
-    if m.derived_param['N_inf'] is None:
-        m.fast_failure_reason = 'invalid_cutoff'
-        print('High-end cutoff frequency has not been set properly.')
+    if m.derived_param["N_inf"] is None:
+        m.fast_failure_reason = "invalid_cutoff"
+        print("High-end cutoff frequency has not been set properly.")
         return None
 
-    if getattr(m, 'SGWB_converge', False):
+    if getattr(m, "SGWB_converge", False):
         return m
 
     # The fast path does not produce the per-channel full-evolution outputs of
     # the original run_SGWB(); drop any leftovers from an earlier LSODA run so
     # stale data cannot be mixed with a fast-path result.
-    for stale in ('N_hc', 'Th', 'Oj', 'Ogw', 'Opgw'):
+    for stale in ("N_hc", "Th", "Oj", "Ogw", "Opgw"):
         if hasattr(m, stale):
             try:
                 delattr(m, stale)
@@ -1675,38 +1883,43 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     if config is None:
         config = get_config()
     elif not isinstance(config, FastSolverConfig):
-        raise TypeError('config must be a FastSolverConfig')
+        raise TypeError("config must be a FastSolverConfig")
     if kink_split is None:
         kink_split = bool(config.kink_split)
     col_step = config.col_step  # a mid-run compatibility setter must not
-    Omega_nu = gp.Omega_nh2/m.derived_param['h']**2    # change array layouts
+    Omega_nu = gp.Omega_nh2 / m.derived_param["h"] ** 2  # change array layouts
     # Resolve the frequency-grid builder: per-call argument wins, otherwise the
     # module default set by apply_accuracy_mode()/set_freq_grid().
     if freq_grid is None:
         freq_grid = config.freq_grid
-    if freq_grid not in ('construct', 'grid_independent', 'adaptive', 'goal'):
-        raise ValueError('freq_grid must be construct/grid_independent/adaptive/goal, got %r' % freq_grid)
-    valid_quadratures = ('simpson', 'pchip', 'log_pchip', 'gauss2',
-                         'gauss3', 'gauss5', 'natural_cubic', 'chebyshev')
+    if freq_grid not in ("construct", "grid_independent", "adaptive", "goal"):
+        raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal, got %r" % freq_grid)
+    valid_quadratures = ("simpson", "pchip", "log_pchip", "gauss2", "gauss3", "gauss5", "natural_cubic", "chebyshev")
     if frequency_quadrature not in valid_quadratures:
-        raise ValueError('unknown frequency quadrature method: %r' %
-                         (frequency_quadrature,))
-    DN_eff_orig = m.cosmo_param['DN_eff']
-    DN_gw_list = [0.0]; DN_gw_new = 0.0; DN_gw_min = 0.0; DN_gw_max = 10.0
+        raise ValueError("unknown frequency quadrature method: %r" % (frequency_quadrature,))
+    DN_eff_orig = m.cosmo_param["DN_eff"]
+    DN_gw_list = [0.0]
+    DN_gw_new = 0.0
+    DN_gw_min = 0.0
+    DN_gw_max = 10.0
     converged = False
     h = config.h
     z_tail = config.z_tail
     phase_max = config.phase_max
     if not 0.0 < tol < 1.0:
-        raise ValueError('outer tol must be in (0, 1), got %r' % tol)
-    freqs = None; Nf = 0; nv = 0; Nv = None
-    idx_out = None; n_coarse = 0
+        raise ValueError("outer tol must be in (0, 1), got %r" % tol)
+    freqs = None
+    Nf = 0
+    nv = 0
+    Nv = None
+    idx_out = None
+    n_coarse = 0
     ev_minus = P_t = fp_freq = Wmat = None
     integration_freqs = integration_indices = W_support_last = None
     pchip_breakdown = None
     Ogw = Oj = Opgw = None
     adaptive_grid = None
-    adaptive_done = freq_grid != 'adaptive'
+    adaptive_done = freq_grid != "adaptive"
     freq_grid_error = 0.0
     kink_index = -1
     kink_fraction = 0.0
@@ -1721,22 +1934,21 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     thread_before = get_num_threads()
     if config.threads is not None:
         if config.threads > _MAX_THREADS:
-            raise ValueError('thread count must be in [1, %d], got %d'
-                             % (_MAX_THREADS, config.threads))
+            raise ValueError("thread count must be in [1, %d], got %d" % (_MAX_THREADS, config.threads))
         if config.threads != thread_before:
             set_num_threads(config.threads)
     # Within one fast evaluation, all repeated derived-parameter reads are
     # keyed by the current DN_eff.  The cache is opt-in and is disabled
     # again in the existing solver finally block, preserving the public
     # property semantics outside this path.
-    derived_cache_was_enabled = getattr(
-        m, '_fast_derived_cache_enabled', False)
+    derived_cache_was_enabled = getattr(m, "_fast_derived_cache_enabled", False)
     m._fast_derived_cache_enabled = True
     m._fast_derived_cache_key = None
     try:
         for _iter in range(MAX_ITER):
             if transition_refine:
                 from .exact_background import build_kink_refined_grid
+
                 build_kink_refined_grid(m, h)
             elif kink_split:
                 gen_fast(m, h)
@@ -1744,74 +1956,79 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             else:
                 gen_fast(m, h, kink_split=kink_split)
             outer_background_stable = False
-            outer_full_reuse = bool(_OUTER_FULL_REUSE_ENABLED and kink_split
-                                    and not transition_refine
-                                    and freq_grid == 'goal')
+            outer_full_reuse = bool(
+                _OUTER_FULL_REUSE_ENABLED and kink_split and not transition_refine and freq_grid == "goal"
+            )
             if outer_full_reuse:
-                if (outer_sigma_prev is not None
-                        and outer_f_hor_prev is not None
-                        and outer_sigma_prev.shape == m.sigma.shape
-                        and outer_f_hor_prev.shape == m.f_hor.shape):
+                if (
+                    outer_sigma_prev is not None
+                    and outer_f_hor_prev is not None
+                    and outer_sigma_prev.shape == m.sigma.shape
+                    and outer_f_hor_prev.shape == m.f_hor.shape
+                ):
                     outer_background_stable = (
-                        float(np.max(np.abs(m.sigma - outer_sigma_prev)))
-                        <= _OUTER_FULL_REUSE_SIGMA_TOL
-                        and float(np.max(np.abs(m.f_hor - outer_f_hor_prev)))
-                        <= _OUTER_FULL_REUSE_FHOR_TOL)
-                _, outer_sigma_prev, outer_f_hor_prev = (
-                    _retain_outer_background_snapshot(
-                        m.Nv, m.sigma, m.f_hor))
+                        float(np.max(np.abs(m.sigma - outer_sigma_prev))) <= _OUTER_FULL_REUSE_SIGMA_TOL
+                        and float(np.max(np.abs(m.f_hor - outer_f_hor_prev))) <= _OUTER_FULL_REUSE_FHOR_TOL
+                    )
+                _, outer_sigma_prev, outer_f_hor_prev = _retain_outer_background_snapshot(m.Nv, m.sigma, m.f_hor)
             support_grid = None
-            if freq_grid == 'grid_independent':
+            if freq_grid == "grid_independent":
                 from .freq_adaptive import grid_independent_freqs
+
                 m.f = grid_independent_freqs(m, freq_res)[0]
                 support_grid = np.asarray(m.f, dtype=float)
-            elif freq_grid == 'adaptive':
+            elif freq_grid == "adaptive":
                 from .freq_adaptive import grid_independent_freqs
+
                 if adaptive_grid is None:
                     adaptive_grid = grid_independent_freqs(m, freq_res)[0]
                 m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
                 support_grid = np.asarray(m.f, dtype=float)
-            elif freq_grid == 'goal':
+            elif freq_grid == "goal":
                 from .freq_adaptive import goal_oriented_freqs
-                support_grid = goal_oriented_freqs(
-                    m, freq_res, seed_n=64, max_points=120, eval_freqs=None)
+
+                support_grid = goal_oriented_freqs(m, freq_res, seed_n=64, max_points=120, eval_freqs=None)
                 m.f = support_grid
             else:
                 m.construct_f(freq_res)
             if support_grid is None:
                 support_grid = np.asarray(m.f, dtype=float)
-            if eval_freqs is not None and freq_grid in ('goal', 'grid_independent', 'adaptive'):
+            if eval_freqs is not None and freq_grid in ("goal", "grid_independent", "adaptive"):
                 ef = np.asarray(eval_freqs, dtype=float)
                 fmin_g, fmax_g = float(np.min(m.f)), float(np.max(m.f))
                 ef = ef[(ef >= fmin_g) & (ef <= fmax_g)]
                 if ef.size:
-                    m.f = np.sort(np.concatenate(
-                        (np.asarray(m.f, dtype=float), ef)))[::-1]
+                    m.f = np.sort(np.concatenate((np.asarray(m.f, dtype=float), ef)))[::-1]
             freqs_new = m.f.astype(np.float64)
             nv_new = len(m.Nv)
             # Reuse grid-dependent quantities across bisection iterations when
             # the frequency/e-fold grids are unchanged (they drift only at the
             # 1e-13 level); this is bit-safe at the 1e-9 tolerance and saves ~10%.
-            grid_same = (not first and nv_new == nv and len(freqs_new) == Nf
-                         and np.max(np.abs(freqs_new - freqs)) < 1e-9
-                         and np.max(np.abs(m.Nv - Nv)) < 1e-9)
+            grid_same = (
+                not first
+                and nv_new == nv
+                and len(freqs_new) == Nf
+                and np.max(np.abs(freqs_new - freqs)) < 1e-9
+                and np.max(np.abs(m.Nv - Nv)) < 1e-9
+            )
             if not grid_same:
-                Nf = len(freqs_new); nv = nv_new
+                Nf = len(freqs_new)
+                nv = nv_new
                 freqs = freqs_new
                 Nv = m.Nv.astype(np.float64)
                 integration_freqs = np.asarray(support_grid, dtype=np.float64)
-                integration_indices = np.searchsorted(
-                    -freqs, -integration_freqs).astype(np.int64)
-                if (integration_indices.size != integration_freqs.size
-                        or not np.allclose(freqs[integration_indices], integration_freqs,
-                                           rtol=0.0, atol=1e-12)):
-                    raise RuntimeError('integration support grid is not native')
+                integration_indices = np.searchsorted(-freqs, -integration_freqs).astype(np.int64)
+                if integration_indices.size != integration_freqs.size or not np.allclose(
+                    freqs[integration_indices], integration_freqs, rtol=0.0, atol=1e-12
+                ):
+                    raise RuntimeError("integration support grid is not native")
                 ev_minus = np.exp(-Nv)
-                idx_out = np.unique(np.append(np.arange(0, nv, col_step), nv-1))
+                idx_out = np.unique(np.append(np.arange(0, nv, col_step), nv - 1))
                 n_coarse = len(idx_out)
-                P_t = m.derived_param['A_t']*np.power((10**freqs)/gp.f_piv, m.derived_param['nt'])
+                P_t = m.derived_param["A_t"] * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
                 fp_freq = np.power(10.0, freqs)
-                Xf = np.flip(freqs); hf = np.diff(Xf)
+                Xf = np.flip(freqs)
+                hf = np.diff(Xf)
                 Wmat = np.zeros((Nf, Nf))
                 build_Wmat(Nf, Xf, hf, Wmat)
                 Wmat = np.ascontiguousarray(Wmat)
@@ -1819,55 +2036,56 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 Xs = np.flip(integration_freqs)
                 Ws = np.zeros((Ns, Ns))
                 build_Wmat(Ns, Xs, np.diff(Xs), Ws)
-                W_support_last = Ws[Ns-1].copy()
+                W_support_last = Ws[Ns - 1].copy()
                 Ogw = Oj = Opgw = None
             first = False
             if kink_split:
                 # exact split 路径会覆盖均匀网格 primitive，因此这里只准备
                 # 频率起点和尾部匹配所需的因子。
                 Sv, f_hor, j0s, z0s, fp_minus = prep_frequency_only(m, Nv, freqs)
-                reuse_exact = (exact_primitive is not None
-                               and exact_Nv is not None
-                               and exact_sigma is not None
-                               and exact_f_hor is not None
-                               and exact_Nv.shape == Nv.shape
-                               and exact_sigma.shape == m.sigma.shape
-                               and exact_f_hor.shape == m.f_hor.shape
-                               and np.max(np.abs(Nv - exact_Nv)) <= 1.0e-12
-                               and np.max(np.abs(m.sigma - exact_sigma))
-                               <= _EXACT_PRIMITIVE_REUSE_TOL
-                               and np.max(np.abs(m.f_hor - exact_f_hor))
-                               <= _EXACT_PRIMITIVE_REUSE_TOL)
+                reuse_exact = (
+                    exact_primitive is not None
+                    and exact_Nv is not None
+                    and exact_sigma is not None
+                    and exact_f_hor is not None
+                    and exact_Nv.shape == Nv.shape
+                    and exact_sigma.shape == m.sigma.shape
+                    and exact_f_hor.shape == m.f_hor.shape
+                    and np.max(np.abs(Nv - exact_Nv)) <= 1.0e-12
+                    and np.max(np.abs(m.sigma - exact_sigma)) <= _EXACT_PRIMITIVE_REUSE_TOL
+                    and np.max(np.abs(m.f_hor - exact_f_hor)) <= _EXACT_PRIMITIVE_REUSE_TOL
+                )
                 if reuse_exact:
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 else:
                     from .exact_background import fast_phi_s2_split
-                    exact_primitive = fast_phi_s2_split(
-                        m, Nv, m.cosmo_param['DN_eff'], sigma_nodes=m.sigma)
-                    exact_Nv, exact_sigma, exact_f_hor = (
-                        _retain_outer_background_snapshot(
-                            Nv, m.sigma, m.f_hor))
+
+                    exact_primitive = fast_phi_s2_split(m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma)
+                    exact_Nv, exact_sigma, exact_f_hor = _retain_outer_background_snapshot(Nv, m.sigma, m.f_hor)
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 h_arr = None
             elif transition_refine:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                    m, Nv, freqs, h, variable_grid=True)
+                    m, Nv, freqs, h, variable_grid=True
+                )
                 from .exact_background import exact_phi_s2_grid
-                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
-                    m, Nv, m.cosmo_param['DN_eff'])
+
+                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(m, Nv, m.cosmo_param["DN_eff"])
             elif sigma_exact:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                    m, Nv, freqs, h, variable_grid=False)
+                    m, Nv, freqs, h, variable_grid=False
+                )
                 from .exact_background import exact_phi_s2
-                Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(
-                    m, Nv, m.cosmo_param['DN_eff'], h)
+
+                Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(m, Nv, m.cosmo_param["DN_eff"], h)
                 h_arr = np.diff(Nv)
                 kink_index = -1
                 kink_fraction = 0.0
                 phi_re = 0.0
             else:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                    m, Nv, freqs, h, variable_grid=False)
+                    m, Nv, freqs, h, variable_grid=False
+                )
                 h_arr = np.diff(Nv)
                 kink_index = -1
                 kink_fraction = 0.0
@@ -1883,7 +2101,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # solve_kernel 从每个频点越过地平线三数量级后的 j0 列开始写入，
                 # 更早的列不会被赋值，但后续 int_SGWB_W 会读取这些列，因此必须
                 # 清零。模仍在地平线外时这些贡献物理上为零；np.empty 可能把旧内存带入 g2/w2。
-                Ogw = np.zeros((Nf, n_coarse)); Oj = np.zeros((Nf, n_coarse)); Opgw = np.zeros((Nf, n_coarse))
+                Ogw = np.zeros((Nf, n_coarse))
+                Oj = np.zeros((Nf, n_coarse))
+                Opgw = np.zeros((Nf, n_coarse))
                 handoff_eps = np.full(Nf, -1.0)
                 _fresh_buffers = True
             # phase_max caps the per-(sub-)step phase increment dTheta = e^z dh
@@ -1896,10 +2116,31 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             # 首轮完整求解才能启用下面的稳定背景快捷路径；所有兼容路径继续保留
             # 历史上的首轮仅探测行为。
             assemble = 1 if outer_full_reuse else (0 if _iter == 0 else 1)
-            solve_args = (Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t,
-                          ev_minus, fp_minus, fp_freq, assemble, n_coarse, col_step,
-                          h, z_tail, Ogw, Oj, Opgw, h_arr, m.sigma,
-                          phase_max, handoff_eps)
+            solve_args = (
+                Nv,
+                Phi_grid,
+                Phi_mid,
+                S2,
+                S2inv,
+                j0s,
+                z0s,
+                P_t,
+                ev_minus,
+                fp_minus,
+                fp_freq,
+                assemble,
+                n_coarse,
+                col_step,
+                h,
+                z_tail,
+                Ogw,
+                Oj,
+                Opgw,
+                h_arr,
+                m.sigma,
+                phase_max,
+                handoff_eps,
+            )
             if kink_split:
                 solve_args += (kink_index, kink_fraction, phi_re)
             if not (outer_background_stable and _iter > 0):
@@ -1911,41 +2152,43 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                     Oj.fill(0.0)
                     Opgw.fill(0.0)
                 solve_kernel(*solve_args)
-            if frequency_quadrature == 'simpson':
-                g2_last = np.dot(
-                    W_support_last,
-                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
-            elif frequency_quadrature == 'pchip':
+            if frequency_quadrature == "simpson":
+                g2_last = (
+                    np.dot(W_support_last, (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
+                )
+            elif frequency_quadrature == "pchip":
                 # 单次 PCHIP 拟合同时给出全程积分与逐区间积分；收敛判定、
                 # 循环后的 g2c[-1] 与局部求积 estimator 复用同一次拟合。
                 # 热路径使用向量化封闭式积分核，参考实现仍是 scipy 拟合。
-                _pchip_integrand = (
-                    Ogw[integration_indices, -1] - Oj[integration_indices, -1])
+                _pchip_integrand = Ogw[integration_indices, -1] - Oj[integration_indices, -1]
                 if np.isfinite(_pchip_integrand).all():
-                    _pchip_local = _pchip_integrals_vectorized(
-                        integration_freqs, _pchip_integrand)
+                    _pchip_local = _pchip_integrals_vectorized(integration_freqs, _pchip_integrand)
                     pchip_breakdown = (float(np.sum(_pchip_local)), _pchip_local)
                     g2_last = pchip_breakdown[0] * ln10
                 else:
                     # 非有限输入会让向量化核 fail-loud；这里改为让 NaN 传播到
                     # 下方统一的 isfinite(DN_gw_new) guard，与 Simpson 路径保持
                     # 相同的非有限失败语义。
-                    g2_last = float('nan')
+                    g2_last = float("nan")
             else:
-                g2_last = (integrate_frequency_quadrature(
-                    integration_freqs,
-                    (Ogw[integration_indices, -1] - Oj[integration_indices, -1]),
-                    frequency_quadrature) * ln10)
+                g2_last = (
+                    integrate_frequency_quadrature(
+                        integration_freqs,
+                        (Ogw[integration_indices, -1] - Oj[integration_indices, -1]),
+                        frequency_quadrature,
+                    )
+                    * ln10
+                )
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
             if not math.isfinite(DN_gw_new):
-                m.fast_failure_reason = 'nonfinite'
-                print('SGWB_iter_fast: non-finite DN_gw_new, aborting.')
+                m.fast_failure_reason = "nonfinite"
+                print("SGWB_iter_fast: non-finite DN_gw_new, aborting.")
                 break
             if DN_eff_orig + DN_gw_new > 5:
-                m.fast_failure_reason = 'shared_Neff_guard'
-                print('SGWB_iter_fast: total N_eff too large, aborting.')
+                m.fast_failure_reason = "shared_Neff_guard"
+                print("SGWB_iter_fast: total N_eff too large, aborting.")
                 break
-            if freq_grid == 'adaptive' and not adaptive_done:
+            if freq_grid == "adaptive" and not adaptive_done:
                 # Quadrature-weighted frequency refinement: PCHIP second
                 # derivative of log10(Omega_GW) estimates the local interval
                 # interpolation error |y''| h^2 / 8; weighting by the local
@@ -1958,17 +2201,20 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 Om_cur = np.maximum(Ogw[:, -1] - Oj[:, -1], 1e-300)
                 lo_cur = np.log10(Om_cur)
                 srt = np.argsort(freqs)
-                x = freqs[srt]; y = lo_cur[srt]; Om = Om_cur[srt]
+                x = freqs[srt]
+                y = lo_cur[srt]
+                Om = Om_cur[srt]
                 from scipy.interpolate import PchipInterpolator
+
                 c2 = np.abs(np.asarray(PchipInterpolator(x, y).derivative(2)(x)))
                 hh = np.diff(x)
-                err_i = c2[:-1]*hh*hh/8.0
-                w_i = 0.5*(Om[:-1] + Om[1:])*hh
+                err_i = c2[:-1] * hh * hh / 8.0
+                w_i = 0.5 * (Om[:-1] + Om[1:]) * hh
                 wsum = float(np.sum(w_i))
-                frac_i = err_i*w_i/wsum if wsum > 0 else np.zeros_like(err_i)
+                frac_i = err_i * w_i / wsum if wsum > 0 else np.zeros_like(err_i)
                 freq_grid_error = float(np.max(frac_i)) if frac_i.size else 0.0
                 if freq_grid_error > freq_grid_target and adaptive_grid.size < freq_grid_max_points:
-                    mids = 0.5*(x[:-1] + x[1:])
+                    mids = 0.5 * (x[:-1] + x[1:])
                     add = mids[frac_i > freq_grid_target]
                     if add.size:
                         room = freq_grid_max_points - int(adaptive_grid.size)
@@ -1977,15 +2223,15 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                         else:
                             add = np.sort(add)
                             if add.size > room:
-                                add = add[np.linspace(0, add.size-1, room).astype(int)]
+                                add = add[np.linspace(0, add.size - 1, room).astype(int)]
                             adaptive_grid = np.unique(np.concatenate([adaptive_grid, add]))
                             continue
                 adaptive_done = True
-            if abs((gp.Neff0+DN_eff_orig+DN_gw_new)/(gp.Neff0+DN_eff_orig+DN_gw_list[-1]) - 1) < tol:
+            if abs((gp.Neff0 + DN_eff_orig + DN_gw_new) / (gp.Neff0 + DN_eff_orig + DN_gw_list[-1]) - 1) < tol:
                 if assemble == 0:
                     # 首轮探测只填充计算 DN_gw 所需的末列；即使探测已收敛，
                     # 仍需再做一次完整求解，补齐 m.g2/m.w2 所需的中间列。
-                    m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
+                    m.cosmo_param["DN_eff"] = DN_eff_orig + DN_gw_new
                     DN_gw_list.append(DN_gw_new)
                     continue
                 converged = True
@@ -1995,115 +2241,119 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             elif DN_gw_new < DN_gw_list[-1] < DN_gw_max and DN_gw_min <= DN_gw_list[-1]:
                 DN_gw_max = DN_gw_list[-1]
             if 0 < DN_gw_min <= DN_gw_max < 10:
-                DN_gw_new = (DN_gw_min + DN_gw_max)/2
-            m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
+                DN_gw_new = (DN_gw_min + DN_gw_max) / 2
+            m.cosmo_param["DN_eff"] = DN_eff_orig + DN_gw_new
             DN_gw_list.append(DN_gw_new)
         else:
-            m.fast_failure_reason = 'max_iter'
-            print('SGWB_iter_fast: did not converge within %d iterations.' % MAX_ITER)
+            m.fast_failure_reason = "max_iter"
+            print("SGWB_iter_fast: did not converge within %d iterations." % MAX_ITER)
     finally:
         if derived_cache_was_enabled:
             m._fast_derived_cache_enabled = True
         else:
             try:
-                delattr(m, '_fast_derived_cache_enabled')
+                delattr(m, "_fast_derived_cache_enabled")
             except AttributeError:
                 pass
             try:
-                delattr(m, '_fast_derived_cache_key')
-                delattr(m, '_fast_derived_cache')
+                delattr(m, "_fast_derived_cache_key")
+                delattr(m, "_fast_derived_cache")
             except AttributeError:
                 pass
         if config.threads is not None and config.threads != thread_before:
             set_num_threads(thread_before)
         if not converged:
-            m.cosmo_param['DN_eff'] = DN_eff_orig
+            m.cosmo_param["DN_eff"] = DN_eff_orig
             m.DN_eff_orig = None
             m.SGWB_converge = False
     if not converged:
         if m.fast_failure_reason is None:
-            m.fast_failure_reason = 'failed'
+            m.fast_failure_reason = "failed"
         return None
-    m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
+    m.cosmo_param["DN_eff"] = DN_eff_orig + DN_gw_new
     m.DN_eff_orig = DN_eff_orig
     m.SGWB_converge = True
-    m.hubble = math.log10(2*math.pi) + f_hor + (Nv[-1]-Nv)/gp.ln10
-    j_hi = np.searchsorted(j0s, idx_out, side='right') - 1
-    g2c = np.zeros(n_coarse); w2c = np.zeros(n_coarse)
+    m.hubble = math.log10(2 * math.pi) + f_hor + (Nv[-1] - Nv) / gp.ln10
+    j_hi = np.searchsorted(j0s, idx_out, side="right") - 1
+    g2c = np.zeros(n_coarse)
+    w2c = np.zeros(n_coarse)
     int_SGWB_W(Nf, n_coarse, j_hi.astype(np.int64), Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10)
-    if frequency_quadrature == 'simpson':
-        g2c[-1] = np.dot(
-            W_support_last,
-            (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
+    if frequency_quadrature == "simpson":
+        g2c[-1] = np.dot(W_support_last, (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
     elif pchip_breakdown is not None:
         g2c[-1] = pchip_breakdown[0] * ln10
     else:
-        g2c[-1] = (integrate_frequency_quadrature(
-            integration_freqs,
-            (Ogw[integration_indices, -1] - Oj[integration_indices, -1]),
-            frequency_quadrature) * ln10)
-    g2_fine = np.empty(nv); w2_fine = np.empty(nv)
+        g2c[-1] = (
+            integrate_frequency_quadrature(
+                integration_freqs, (Ogw[integration_indices, -1] - Oj[integration_indices, -1]), frequency_quadrature
+            )
+            * ln10
+        )
+    g2_fine = np.empty(nv)
+    w2_fine = np.empty(nv)
     pchip_fine(idx_out.astype(np.float64), g2c, nv, g2_fine)
     pchip_fine(idx_out.astype(np.float64), w2c, nv, w2_fine)
-    m.g2 = g2_fine; m.w2 = w2_fine
-    m.DN_gw = gp.Neff0 * np.multiply(g2_fine, np.exp(2*(f_hor-f_hor[-1])*gp.ln10 + 2*(Nv-Nv[-1]))) / Omega_nu
-    m.Ogw_today = Ogw[:, -1].copy(); m.Opgw_today = Opgw[:, -1].copy(); m.Oj_today = Oj[:, -1].copy()
+    m.g2 = g2_fine
+    m.w2 = w2_fine
+    m.DN_gw = gp.Neff0 * np.multiply(g2_fine, np.exp(2 * (f_hor - f_hor[-1]) * gp.ln10 + 2 * (Nv - Nv[-1]))) / Omega_nu
+    m.Ogw_today = Ogw[:, -1].copy()
+    m.Opgw_today = Opgw[:, -1].copy()
+    m.Oj_today = Oj[:, -1].copy()
     m.log10OmegaGW = np.log10(m.Ogw_today - m.Oj_today)
-    m.kappa_r = m.cosmo_param['DN_eff'] * 7/8*(4/11)**(4/3) * gp.z_ratio**4
+    m.kappa_r = m.cosmo_param["DN_eff"] * 7 / 8 * (4 / 11) ** (4 / 3) * gp.z_ratio**4
     # Local a-posteriori quadrature error: Richardson estimate from the
     # Simpson-vs-trapezoid difference on the final frequency grid,
     # |I_simp - I_trap|/15 (standard result for a smooth integrand).
     _Om = m.Ogw_today - m.Oj_today
     _support_Om = _Om[integration_indices]
     _support_rev = _support_Om[::-1]
-    _I_simp = float(np.dot(W_support_last, _support_rev))*ln10
+    _I_simp = float(np.dot(W_support_last, _support_rev)) * ln10
     _hf = np.diff(np.flip(integration_freqs))
     _wt = np.empty(integration_freqs.size)
     if integration_freqs.size == 2:
-        _wt[0] = 0.5*_hf[0]; _wt[1] = 0.5*_hf[0]
+        _wt[0] = 0.5 * _hf[0]
+        _wt[1] = 0.5 * _hf[0]
     else:
-        _wt[0] = 0.5*_hf[0]; _wt[-1] = 0.5*_hf[-1]
-        _wt[1:-1] = 0.5*(_hf[:-1] + _hf[1:])
-    _I_trap = float(np.dot(_wt, _support_rev))*ln10
-    if frequency_quadrature != 'simpson':
+        _wt[0] = 0.5 * _hf[0]
+        _wt[-1] = 0.5 * _hf[-1]
+        _wt[1:-1] = 0.5 * (_hf[:-1] + _hf[1:])
+    _I_trap = float(np.dot(_wt, _support_rev)) * ln10
+    if frequency_quadrature != "simpson":
         # The interval sum is deliberately conservative: cancellation between
         # local candidate and Simpson differences is not allowed to hide a
         # potentially large local quadrature contribution.
         # 区间误差按绝对贡献保守累加，避免局部候选项与 Simpson 差值相互抵消，
         # 掩盖可能较大的局部求积误差。
-        _local_err, _local_candidate, _local_baseline = (
-            estimate_frequency_quadrature_local(
-                integration_freqs, _support_Om, frequency_quadrature,
-                candidate_intervals=(None if pchip_breakdown is None
-                                     else pchip_breakdown[1])))
+        _local_err, _local_candidate, _local_baseline = estimate_frequency_quadrature_local(
+            integration_freqs,
+            _support_Om,
+            frequency_quadrature,
+            candidate_intervals=(None if pchip_breakdown is None else pchip_breakdown[1]),
+        )
         m.quadrature_error_local_by_interval = _local_err * ln10
         m.quadrature_error_estimator_method = frequency_quadrature
         _I_estimate = float(np.sum(_local_err)) * ln10
-        m.quadrature_error_estimator_max_rel = (
-            float(np.max(_local_err)) * ln10 /
-            max(abs(_I_simp), 1e-300))
+        m.quadrature_error_estimator_max_rel = float(np.max(_local_err)) * ln10 / max(abs(_I_simp), 1e-300)
     else:
-        m.quadrature_error_local_by_interval = np.zeros(
-            integration_freqs.size - 1, dtype=np.float64)
-        m.quadrature_error_estimator_method = 'simpson_trapezoid'
+        m.quadrature_error_local_by_interval = np.zeros(integration_freqs.size - 1, dtype=np.float64)
+        m.quadrature_error_estimator_method = "simpson_trapezoid"
         m.quadrature_error_estimator_max_rel = 0.0
         # Richardson's Simpson/trapezoid embedded pair is the cheap default
         # estimator; it remains unchanged for the formal fast path.
         # 正式 fast 路径继续使用轻量的 Simpson/梯形嵌入式估计器，误差取两者积分绝对差的 1/15。
         _I_estimate = abs(_I_simp - _I_trap) / 15.0
     m.estimated_DN_quadrature_error = gp.Neff0 * _I_estimate / Omega_nu
-    m.estimated_DN_quadrature_error_rel = (
-        _I_estimate / max(abs(_I_simp), 1e-300))
-    if frequency_quadrature != 'simpson':
+    m.estimated_DN_quadrature_error_rel = _I_estimate / max(abs(_I_simp), 1e-300)
+    if frequency_quadrature != "simpson":
         m.quadrature_error_local = m.estimated_DN_quadrature_error_rel
     else:
-        m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
+        m.quadrature_error_local = abs(_I_simp - _I_trap) / 15.0 / max(abs(_I_simp), 1e-300)
     # Local floating-point/cancellation: Ogw = Oj + remainder near the peak;
     # eps64 * max|Oj|/|Ogw-Oj| bounds the relative subtraction error.
     # 峰值附近 Ogw = Oj + remainder 会发生相减消去；该比值估计舍入误差相对于余项的放大。
-    _num = float(np.max(np.abs(m.Oj_today)/np.maximum(np.abs(_Om), 1e-300)))
+    _num = float(np.max(np.abs(m.Oj_today) / np.maximum(np.abs(_Om), 1e-300)))
     m.cancellation_ratio = _num
-    m.floating_point_error = 2.2e-16*_num + 2.2e-16*math.sqrt(Nf)
+    m.floating_point_error = 2.2e-16 * _num + 2.2e-16 * math.sqrt(Nf)
     # Physics telemetry for the Cobaya adapter / error budget:
     # handoff_eps = per-mode adiabaticity error at the WKB handoff node,
     # z_tail_used/phase_max_used = the frozen-tail threshold and the max
@@ -2131,11 +2381,20 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     return m
 
 
-def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
-                   transition_refine=False, kink_split=None,
-                   freq_grid=None, config=None,
-                   freq_grid_target=3e-4, freq_grid_max_points=1500, eval_freqs=None,
-                   frequency_quadrature='pchip'):
+def SGWB_iter_fast(
+    m,
+    tol=1e-4,
+    freq_res=1.0,
+    sigma_exact=False,
+    transition_refine=False,
+    kink_split=None,
+    freq_grid=None,
+    config=None,
+    freq_grid_target=3e-4,
+    freq_grid_max_points=1500,
+    eval_freqs=None,
+    frequency_quadrature="pchip",
+):
     """Run the fast solver with an isolated configuration snapshot.
 
     ``frequency_quadrature`` defaults to ``'pchip'`` (shape-preserving
@@ -2152,14 +2411,20 @@ def SGWB_iter_fast(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     由于 Numba 线程数是进程级状态，需要时会在整个求解期间持锁，避免并发调用互相恢复线程设置。
     """
     if config is not None and not isinstance(config, FastSolverConfig):
-        raise TypeError('config must be a FastSolverConfig')
-    lock = (_NUMBA_CONFIG_LOCK if config is None or config.threads is not None
-            else nullcontext())
+        raise TypeError("config must be a FastSolverConfig")
+    lock = _NUMBA_CONFIG_LOCK if config is None or config.threads is not None else nullcontext()
     with lock:
         return _SGWB_iter_fast_impl(
-            m, tol=tol, freq_res=freq_res, sigma_exact=sigma_exact,
-            transition_refine=transition_refine, kink_split=kink_split,
+            m,
+            tol=tol,
+            freq_res=freq_res,
+            sigma_exact=sigma_exact,
+            transition_refine=transition_refine,
+            kink_split=kink_split,
             freq_grid=freq_grid,
-            config=config, freq_grid_target=freq_grid_target,
-            freq_grid_max_points=freq_grid_max_points, eval_freqs=eval_freqs,
-            frequency_quadrature=frequency_quadrature)
+            config=config,
+            freq_grid_target=freq_grid_target,
+            freq_grid_max_points=freq_grid_max_points,
+            eval_freqs=eval_freqs,
+            frequency_quadrature=frequency_quadrature,
+        )
