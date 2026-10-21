@@ -3,24 +3,31 @@
 中文：读取随包提供的频率、``log10(rho)`` 网格和似然密度数组，计算 NANOGrav PTA 似然。
 """
 
-from cobaya.likelihood import Likelihood
-from cobaya.log import LoggedError, get_logger
-import numpy as np
-import os, math
-from scipy import interpolate
+import math
+
 import astropy.units as u
-#from scipy.stats import gaussian_kde as kde
+import numpy as np
+from cobaya.likelihood import Likelihood
+from scipy import interpolate
+
 
 class NANOGrav(Likelihood):
     
     def initialize(self):
-        """Load the density grid, its ``log10(rho)`` axis, and frequencies.
+        """Load the density grid and prefit its fixed per-frequency splines.
 
-        中文：从 `NANOGrav.yaml` 指定的三个 `.npy` 资源读取预计算似然网格。
+        中文：读取 `NANOGrav.yaml` 指定的资源，并预拟合各频点的似然密度样条。
         """
         self.data = np.load(self.kde_file)                   # log-likelihood for each frequency bin
         self.log10rhogrid = np.load(self.log10rhogrid_file)  # log10(delay/s) = log10(sqrt(rho/s^2))
         self.freqs = np.load(self.freq_file)                 # Hz, frequency bins of the PTA experiment
+        # These splines depend only on packaged likelihood data, not on theory parameters.
+        # 这些样条只依赖随包分发的似然数据，与 theory 参数无关。
+        self._density_splines = tuple(
+            interpolate.CubicSpline(self.log10rhogrid, self.data[0, i])
+            for i in range(self.Nfreqs))
+        self._log10rhogrid_min = float(np.min(self.log10rhogrid))
+        self._log10rhogrid_max = float(np.max(self.log10rhogrid))
     
     def close(self):
         pass
@@ -35,33 +42,29 @@ class NANOGrav(Likelihood):
     
     
     def logp(self, _derived=None, **params_values):
+        """Return the likelihood for the current theory and nuisance parameters.
+
+        中文：取回 theory 频率、SGWB 谱和 Hubble 值，转为递增频率顺序后计算 NANOGrav 似然。
         """
-        The default implementation of the Likelihood class does the calculation in this 'logp()' function, 
-        which is called by 'Likelihood.calculate()' to save the log-likelihood into "state['logp']" 
-        (the latter may be more convenient if you also need to calculate some derived parameters).
-        
-        'logp()' can take a dictionary (as keyword arguments) of nuisance parameter values, 'params_values', 
-        (if there is any), and returns a log-likelihood.
-        """
-        f_theory = self.provider.get_result('f'); f_theory = np.flip(f_theory)                  # log10(f/Hz)
-        Ogw_theory = self.provider.get_result('omGW_stiff'); Ogw_theory = np.flip(Ogw_theory)   # log10(Omega_GW(f))
-        H_0 = self.provider.get_result('hubble')                                                # s^{-1}
+        f_theory = np.flip(self.provider.get_result('f'))  # log10(f/Hz)
+        Ogw_theory = np.flip(self.provider.get_result('omGW_stiff'))  # log10(Omega_GW(f))
+        H_0 = self.provider.get_result('hubble')  # s^{-1}
         
         return self.log_likelihood(f_theory, Ogw_theory, H_0, **params_values)
 
     
     def log_likelihood(self, f_theory, Ogw_theory, H_0, **data_params):
-        """
-        where the calculation is actually done, independently of Cobaya
-        Here f_theory must be increasing.
+        """Evaluate the NANOGrav density grid; ``f_theory`` must be increasing.
+
+        中文：组合原初 SGWB 与 SMBHB 前景；超出数据网格的模型值按边界密度计算。
         """
         yr = u.yr.to(u.s)               # s, one Julian year
         T_base = 1/self.freqs[0]        # s, baseline of the PTA data
         
         Nf = self.Nfreqs                # Number of work frequencies, i = 1 - Nf
         work_freqs = self.freqs[:Nf]    # work frequencies in Hz
-        # Caveat: limiting frequency bins may lead to the survival of some stiff-amplified models 
-        # which would otherwise be ruled out by high-frequency data (i=Nf+1 - Ntot)
+        # Limiting frequency bins can retain stiff-amplified models that higher-frequency data would exclude.
+        # 限制工作频点可能保留本会被更高频数据排除的 stiff 放大模型（i=Nf+1-Ntot）。
         
         # Primordial SGWB
         rho_prim = np.zeros_like(work_freqs)
@@ -81,19 +84,15 @@ class NANOGrav(Likelihood):
         rho_BH = np.power(10., log10hc_BH*2) * np.power(work_freqs*yr, -gamma_BH) * yr**3 / (12*np.pi**2 * T_base)   # s^2
         
         log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))    # log10(delay/s) = log10(sqrt(rho/s^2))
-        #print(log10rho_Model)       
 
-
-        log10rhogrid_max = np.max(self.log10rhogrid); log10rhogrid_min = np.min(self.log10rhogrid)
-        
         logL = 0
         for i in range(Nf):
-            KDE_i = interpolate.CubicSpline(self.log10rhogrid, self.data[0,i])
-            if log10rho_Model[i]>log10rhogrid_max:
-                logL += KDE_i(log10rhogrid_max)
-            elif log10rho_Model[i]<log10rhogrid_min:
-                logL += KDE_i(log10rhogrid_min)
+            density_spline = self._density_splines[i]
+            if log10rho_Model[i]>self._log10rhogrid_max:
+                logL += density_spline(self._log10rhogrid_max)
+            elif log10rho_Model[i]<self._log10rhogrid_min:
+                logL += density_spline(self._log10rhogrid_min)
             else:
-                logL += KDE_i(log10rho_Model[i])
+                logL += density_spline(log10rho_Model[i])
 
         return logL

@@ -3,10 +3,8 @@
 中文：读取 YAML 指定的交叉相关数据，使用 theory 提供的频率和 SGWB 谱计算高斯似然。
 """
 
-from cobaya.likelihood import Likelihood
-from cobaya.log import LoggedError, get_logger
 import numpy as np
-import os
+from cobaya.likelihood import Likelihood
 from scipy import interpolate
 
 
@@ -36,12 +34,8 @@ class LVK_SGWB_CC(Likelihood):
         Cobaya supplies nuisance parameters through ``params_values``.
         中文：取回 theory 频率和谱，并转为递增频率顺序后交给 `log_likelihood`。
         """
-        f_theory = self.provider.get_result('f'); f_theory = np.flip(f_theory)
-        Ogw_theory = self.provider.get_result('omGW_stiff'); Ogw_theory = np.flip(Ogw_theory)
-        
-        #if _derived is not None:
-        #    _derived['N_eff'] = self.provider.get_param('Delta_Neff_GW') + 3.044
-        
+        f_theory = np.flip(self.provider.get_result('f'))
+        Ogw_theory = np.flip(self.provider.get_result('omGW_stiff'))
         return self.log_likelihood(f_theory, Ogw_theory, **params_values)
 
     
@@ -58,14 +52,11 @@ class LVK_SGWB_CC(Likelihood):
         Ogw_Model = np.zeros_like(Cf_LVK)
         if f_theory[-1]>=f_LVK[0]:   # Calculate theoretical Omega_GW ONLY for LIGO frequency bins in its range, i.e., <= f_end
             f_t = f_theory[(f_theory >= -5)]; Ogw_t = Ogw_theory[(f_theory >= -5)]
-            #print(f_t, Ogw_t)
             spec = interpolate.interp1d(f_t, Ogw_t, kind='cubic')
             
             cond = (f_LVK<=f_theory[-1])
             Ogw_Model[cond] = np.power(10., spec(f_LVK[cond]))  
             
-        #print(Ogw_Model)
-             
         chi2_array = np.square(np.divide((Cf_LVK-Ogw_Model), sigma_LVK))
         chi2 = sum(chi2_array)
         
