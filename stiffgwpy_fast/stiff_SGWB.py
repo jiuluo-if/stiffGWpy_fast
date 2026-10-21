@@ -117,14 +117,10 @@ class LCDM_SG(LCDM_SN):
 
 
     def reset(self):
-        #LCDM_SN.derived_param(self)
         if hasattr(self, 'DN_eff_orig') and (self.DN_eff_orig is not None):
             self.cosmo_param['DN_eff'] = self.DN_eff_orig
         self.DN_eff_orig = None
         self.SGWB_converge = False     # Whether the SGWB has been successfully computed
-
-
-    #@property
 
 
     def run_SGWB_single(self, freq, z_tail=5.0, rtol=1e-6, atol=None):
@@ -447,7 +443,6 @@ class LCDM_SG(LCDM_SN):
                         print('SGWB_iter: non-finite DN_gw_new, aborting.')
                         break
                     if self.DN_eff_orig + DN_gw_new > 5:
-                        #print('Total N_eff too large! Shorten the stiff era or lower the blue tilt n_t.')
                         break
 
                     # Break when the required convergence precision is met!
@@ -478,7 +473,6 @@ class LCDM_SG(LCDM_SN):
                 return None
 
 
-            #print(DN_gw_new, self.DN_gw, self.cosmo_param['DN_eff'])
             self.SGWB_converge = True
             self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # log10(H/s^-1), H = 2pi * f_hor / a
             self.DN_gw = Neff0 * np.multiply(self.g2, np.exp(2*(self.f_hor-self.f_hor[-1])*ln10+2*(self.Nv-self.Nv[-1]))) / Omega_nu
@@ -490,17 +484,6 @@ class LCDM_SG(LCDM_SN):
             self.Oj_today = np.array([self.Oj[i][-1] for i in range(len(self.f))])
             self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)  # log10(Omega_GW(f))
             # Ignoring the negative super-horizon contribution from Omega_j, for the moment...
-
-            # Interpolate on uniform-spaced frequency bins and output
-            #self.f_grid = np.arange(-18.5,6.5,.25)
-            #self.log10OmegaGW_grid = -40 * np.ones_like(self.f_grid)
-            #Ogw_spl = interpolate.CubicSpline(np.flip(self.f), np.flip(self.log10OmegaGW))
-            #cond = self.f<self.f[0]-.1
-            #Ogw_lin = interpolate.CubicSpline(np.flip(self.f[cond]), np.flip(self.log10OmegaGW[cond]), bc_type='natural')
-            #add_boundary_knots(Ogw_lin)
-            #self.log10OmegaGW_grid[self.f_grid<=self.f[0]] = Ogw_spl(self.f_grid[self.f_grid<=self.f[0]])
-            #self.log10OmegaGW_grid[self.f_grid>self.f[0]] = Ogw_lin(self.f_grid[self.f_grid>self.f[0]], nu=0)
-
 
             ###  Extra radiation (e.g., SGWB) parameterized as kappa_rad(T_i) for AlterBBN
 
@@ -588,8 +571,8 @@ class LCDM_SG(LCDM_SN):
         M_N_hc = -np.ones((len(self.f),len(self.Nv)))
         M_Ogw = np.zeros_like(M_N_hc); M_Opgw = np.zeros_like(M_N_hc); M_Oj = np.zeros_like(M_N_hc)
         for i in range(len(self.f)):
-            #cond = self.N_hc[i]>=self.Nv[self.find_index_hc(self.f[i]-3)]
             # Only count GW energy density when each mode is at least 3 decades inside the horizon
+            # 每个模式在视界内深入至少 3 个数量级后，才计入引力波能量密度。
             cond = self.N_hc[i]>=self.N_hc[i][0]
             M_N_hc[i, (mask := np.isin(self.Nv, self.N_hc[i][cond]))] = self.N_hc[i][cond]
             M_Ogw[i,mask] = self.Ogw[i][cond]; M_Opgw[i,mask] = self.Opgw[i][cond]; M_Oj[i,mask] = self.Oj[i][cond]
@@ -598,25 +581,17 @@ class LCDM_SG(LCDM_SN):
 
         # Do the integration!
         for i in range(len(self.Nv)):
-            #ind_int = (M_N_hc[i]>=0) & (self.f<=self.f[0]-3)    # indices of modes whose frequencies are at least 3 decades less than f_inf
             ind_int = (M_N_hc[i]>=0)
             f_int = np.flip(self.f[ind_int])                           # log10(f/Hz), increasing order
             Ogw_int = np.flip(M_Ogw[i,ind_int]); Opgw_int = np.flip(M_Opgw[i,ind_int]); Oj_int = np.flip(M_Oj[i,ind_int])
 
             if len(f_int)>=2:
-                # do not consider the negative super-horizon contribution from Omega_j, for the moment...
+                # Exclude the negative super-horizon Omega_j contribution from this integral for now.
+                # 暂不将超视界区域 Omega_j 的负贡献计入该积分。
                 self.g2[i] = integrate.simpson(Ogw_int-Oj_int, f_int) * ln10
-                #self.g2[i] = integrate.simpson(Ogw_int, f_int) * ln10
                 self.w2[i] = integrate.simpson(Opgw_int, f_int) * ln10
             else:
                 self.g2[i] = 0; self.w2[i] = 0
-
-            #fx = np.arange(f_int.min(), f_int.max(), .01)
-            #spline_gw = interpolate.InterpolatedUnivariateSpline(f_int, Ogw_int-Oj_int)
-            #spline_pgw = interpolate.InterpolatedUnivariateSpline(f_int, Opgw_int)   # Opgw can be negative
-            #self.g2[i] = integrate.simpson(spline_gw(fx), fx) * math.log(10)
-            #self.w2[i] = integrate.simpson(spline_pgw(fx), fx) * math.log(10)
-
 
 def add_boundary_knots(spline):
     """
