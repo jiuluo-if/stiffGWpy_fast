@@ -4,21 +4,47 @@ Status: current summary of the audited scope; results remain commit- and protoco
 
 Date: 2026-10-21
 
-Code version: the Round 68 solver profile below used
+Code version: the current solver profile below used
+`cdbdb387479e11cd87a38d76a0e58348ca13e70f`; the historical Round 68 run used
 `c7d4766f15c1cda4693d306597723de50abd4554`. The PTA cache comparison used
 source commit `c185df58938a05c208410a5cd47faafbc5d7fa2c`. Each run artifact
 records its own commit.
 
-## Latest fixed-resource full-path solver profile
+## Current fixed-resource full-path solver profile
+
+The 2026-10-21 profile ran the current `fast` preset with PCHIP, the goal
+frequency grid, exact kink split, and `phase_max=0.25`. It used 2 Numba
+threads on `workqueue`, CPU affinity `[0, 1]`, one BLAS/OMP/NumExpr thread, and
+one process. Each case ran in a fresh process for 26 calls; the first process
+call is reported separately and the warm statistics use the remaining 25.
+The JSON adds a warm-only summary because the profiler's original
+`median_s`/`p95_s` fields include all 26 records.
+
+| Case | First process call | Warm median | Warm p95 | Tensor median | Background median | Frequencies | Propagation calls |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| default | 6,370.5 ms | 6.790 ms | 8.002 ms | 3.456 ms | 0.605 ms | 76 | 1 |
+| high-T | 486.2 ms | 10.284 ms | 12.654 ms | 5.976 ms | 0.725 ms | 76 | 2 |
+| stiff | 316.1 ms | 10.095 ms | 11.734 ms | 6.434 ms | 0.655 ms | 76 | 2 |
+| high-kappa | 338.9 ms | 10.084 ms | 11.221 ms | 5.861 ms | 0.729 ms | 77 | 2 |
+
+The first process call includes process startup and any JIT compilation needed
+for that run; it is not included in the warm statistics. All 26 records in
+each case have identical digests for frequencies, spectrum, `DN_gw`, `g2`, and
+`w2`. These are local single-machine measurements, with no matched LSODA
+comparison, and do not establish a cross-machine speed ratio.
+
+Raw per-case records: [`default`](profile_fast_breakdown_cdbdb38_20261021_default.json),
+[`high-T`](profile_fast_breakdown_cdbdb38_20261021_highT.json),
+[`stiff`](profile_fast_breakdown_cdbdb38_20261021_stiff.json), and
+[`high-kappa`](profile_fast_breakdown_cdbdb38_20261021_high_kappa.json).
+
+## Historical Round 68 full-path profile
 
 The only user-facing fast profile uses `frequency_quadrature=pchip` with
 `h=0.005`, `col_step=8`, `z_tail=5`, `phase_max=0.25`, exact kink split, and
-the goal frequency grid. The newest full-path profile is the 2026-09-23 Round
-68 run at solver commit `c7d4766f15c1cda4693d306597723de50abd4554`; the
-profile remains a historical solver baseline. Later commits changed code in
-`stiffgwpy_fast/`, including removal of unused solver work and precomputation
-in the Cobaya likelihood adapters. No full-path solver profile has been
-recorded at the current HEAD.
+the goal frequency grid. The 2026-09-23 Round 68 run at solver commit
+`c7d4766f15c1cda4693d306597723de50abd4554` remains a matched historical
+baseline.
 
 Protocol: 25 repeats, Numba=2/workqueue, `FAST_THREADS=2`, one BLAS thread,
 one worker/process, Windows CPU affinity `[0, 1]`, Python 3.11.9, NumPy 2.4.4,
@@ -101,12 +127,12 @@ relative errors for PCHIP are `1.07e-5` (default), `1.66e-4` (low-T),
 
 The 2026-09-10 fixed-resource benchmark recorded `4.26 ms/point` warm median
 at 20 threads. It is a dated snapshot and is not directly comparable with the
-Round 68 profile above, which used two threads. The 2026-09-03 before/after
-report is also a historical comparison; its protocol and limitations are in
+two-thread Round 68 or 2026-10-21 profiles. The 2026-09-03 before/after report
+is also a historical comparison; its protocol and limitations are in
 [`performance_comparison_20260903.md`](performance_comparison_20260903.md).
 
 Later `profile_fast_breakdown_*` artifacts include diagnostics through
-2026-09-23. They use different thread/resource settings and profiling
+2026-10-21. Earlier runs use different thread/resource settings and profiling
 protocols, so they do not replace a like-for-like benchmark or establish a
 cross-version speed claim. The separate 2026-09-24 MCMC report measures
 sampling-step time and effective samples per second, not isolated solver

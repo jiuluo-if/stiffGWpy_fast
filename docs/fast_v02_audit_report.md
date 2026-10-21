@@ -5,8 +5,8 @@ Evidence generation HEAD: `a7b0ea9dae45c6a04c9a5760a2192cc21dc4a930`
 Date: 2026-09-12
 
 Status: dated accuracy-audit snapshot for the recorded evidence commit. The
-latest full-path runtime profile is the separate Round 68 record in
-[`benchmarks.md`](benchmarks.md); this report's runtime table is not the latest
+later 2026-09-23 Round 68 profile is provided as separate runtime context in
+[`benchmarks.md`](benchmarks.md); this report's runtime table is not a current
 performance measurement, and its accuracy claims remain scoped to its listed
 artifacts and sample points.
 

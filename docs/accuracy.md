@@ -29,16 +29,16 @@ PCHIP as the formal default. Its `z_tail=8` reference difference is limited by
 the reference's own frozen-handoff tail sensitivity; the one-point `z_tail=10`
 comparison is an attribution check, not a substitute for broader validation.
 
-## Latest full-path solver profile is separate
+## Current full-path solver profile is separate
 
-The latest full-path solver profile is the 2026-09-23 Round 68 run. It used 25
-repeats, two Numba `workqueue` threads, one BLAS thread, and CPU affinity
-`[0, 1]`. All six profiled cases converged. The default warm median/p95 was
-`7.189/7.916 ms`.
-This profile did not run a matched-resource LSODA comparison and did not add a
-new oracle accuracy sweep. It therefore establishes neither a speedup factor
-nor new accuracy coverage. Full per-case values and provenance are in
-[`benchmarks.md`](benchmarks.md).
+The latest current-HEAD profile is dated 2026-10-21 at code commit
+`cdbdb387479e11cd87a38d76a0e58348ca13e70f`. It covers default, high-T, stiff,
+and high-kappa with 25 warm repeats per case; the first process call is
+reported separately. The warm medians are `6.790`, `10.284`, `10.095`, and
+`10.084 ms`, respectively. This stage profile did not run a matched-resource
+LSODA comparison or a new oracle-accuracy sweep, so it adds no new precision
+coverage and establishes no LSODA speed ratio. Full per-case values and
+resource provenance are in [`benchmarks.md`](benchmarks.md).
 
 Later PTA likelihood-cache timings are adapter-level measurements, not
 full-path solver profiles or accuracy evidence; see
