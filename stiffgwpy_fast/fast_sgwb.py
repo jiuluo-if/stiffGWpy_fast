@@ -604,7 +604,7 @@ def estimate_local_error(m):
 
     * ``'local'`` -- computed a-posteriori from this solve's telemetry
       (``handoff_eps``, ``freq_grid_error``, ``phase_max_used``, ``z_tail_used``,
-      ``quadrature_error_local``, ``dn_bracket``, ``cancellation_ratio``);
+      ``quadrature_error_local``, ``dn_converged_delta``, ``cancellation_ratio``);
     * ``'calibrated'`` -- measured anchors (default-point fast-vs-reference,
       see the dated evidence in ``docs/fast_v02_audit_report.md``) scaled to the
       solve's settings.
@@ -619,12 +619,16 @@ def estimate_local_error(m):
     (selected frequency-quadrature error; PCHIP is the fast default and Simpson
     remains selectable), ``tail_approximation``
     (frozen analytic tail beyond z_tail), ``floating_point`` (Ogw-Oj cancellation
-    plus accumulation rounding), ``self_consistency`` (outer bisection bracket).
+    plus accumulation rounding), ``self_consistency`` (last-step change in
+    ``DN_gw``, expressed relative to its magnitude).
     The combined error is systematic (max of model/transition) plus the RSS of
     the remaining independent terms.
 
     中文：本函数组合本次求解遥测与具名参考点的校准项。`certification_status` 会区分实测、
     fiducial 校准和未认证默认值；校准值不能解释为当前参数点或整个参数空间的误差保证。
+    正式 `kink_split + goal` 路径缺少对应校准时，相关代理分项会列入 `uncertified_terms`。
+    `self_consistency` 使用相邻两次 `DN_gw` 差值除以当前幅值；信号很小时该相对值可能很大，
+    它表示迭代变化量，不是误差上界。
     """
     dn_gw = np.asarray(getattr(m, "DN_gw", [0.0]))
     dn = abs(float(dn_gw[-1])) if dn_gw.size else 0.0
