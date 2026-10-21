@@ -73,6 +73,31 @@ samples, hashes, and the benchmark script are in
 [`benchmark_kernel_assembly_stride_20261021.json`](benchmark_kernel_assembly_stride_20261021.json)
 and [`benchmark_kernel_assembly_stride.py`](../scripts/benchmark_kernel_assembly_stride.py).
 
+## Thread-safe backend concurrent-call A/B (2026-10-21)
+
+The wrapper serializes solver calls when Numba selects `workqueue`, which is
+not thread-safe for concurrent parallel calls. With an initialized TBB/OpenMP
+layer, explicit immutable solver configs can use independent thread masks and
+run concurrently. The benchmark compared two full-path calls (`default` and
+`highT`) in a two-thread Python pool, each solver using two Numba threads and
+four-CPU affinity `[0, 1, 2, 3]`. It alternated the previous serialized-lock
+policy against the backend-aware policy for 80 paired rounds on TBB.
+
+| Batch policy | Median wall time for both calls |
+|---|---:|
+| Serialized | 13.383 ms |
+| Concurrent TBB | 11.599 ms |
+
+The paired median wall-time change was −14.38% (bootstrap 95% interval
+−18.21% to −9.17%). All five output arrays matched bit-for-bit for both cases
+in every round, and both calls converged without failure. This is a local
+two-call throughput comparison, not a general MCMC speed ratio or a single-call
+latency result. It adds no oracle-accuracy coverage. Raw samples and source
+provenance are in
+[`benchmark_backend_concurrency_20261021.json`](benchmark_backend_concurrency_20261021.json);
+the reproduction script is
+[`benchmark_backend_concurrency.py`](../scripts/benchmark_backend_concurrency.py).
+
 ## Historical Round 68 full-path profile
 
 The only user-facing fast profile uses `frequency_quadrature=pchip` with
