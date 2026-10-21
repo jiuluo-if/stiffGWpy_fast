@@ -30,7 +30,7 @@ from contextlib import nullcontext
 from threading import RLock
 
 import numpy as np
-from numba import get_num_threads, njit, prange, set_num_threads
+from numba import get_num_threads, njit, prange, set_num_threads, threading_layer
 from scipy import integrate, interpolate
 
 from . import global_param as gp
@@ -72,6 +72,19 @@ __all__ = [
 _MAX_THREADS = get_num_threads()
 _THREADS = _MAX_THREADS
 _NUMBA_CONFIG_LOCK = RLock()
+
+
+def _numba_layer_is_threadsafe():
+    """Return whether the initialized Numba parallel backend supports concurrent calls.
+
+    中文：只有已初始化的 TBB/OpenMP 后端允许并发调用；未初始化时保守返回 False。
+    """
+    try:
+        return threading_layer() in ("tbb", "omp")
+    except ValueError:
+        return False
+
+
 _fast_threads_env = _os.environ.get("FAST_THREADS")
 if _fast_threads_env is not None:
     _THREADS = int(_fast_threads_env)
@@ -2424,18 +2437,18 @@ def SGWB_iter_fast(
     frequency integral, see `_SGWB_iter_fast_impl`); pass ``'simpson'`` to
     reproduce the pre-switch numbers.
 
-    Numba's thread-count setter is process-wide. Calls that use the legacy
-    snapshot or a configured thread count therefore hold a short-lived lock
-    for the complete solve, preventing concurrent calls from restoring one
-    another's thread setting. A ``FastSolverConfig(threads=None)`` call does
-    not touch that process-wide state and can proceed without this lock.
+    Numba's thread mask is local to the calling Python thread. The ``workqueue``
+    backend itself is not thread-safe, so calls are serialized until a
+    thread-safe backend (TBB or OpenMP) is initialized. Legacy calls without
+    an explicit config also hold the lock while consuming module-level settings.
 
     中文：低层 fast 求解器接收隔离的配置快照；频率积分默认用 PCHIP，也可显式选 Simpson。
-    由于 Numba 线程数是进程级状态，需要时会在整个求解期间持锁，避免并发调用互相恢复线程设置。
+    Numba 的线程掩码属于调用线程；workqueue 后端不支持并发并行调用，因此该后端下整个求解期间持锁。
+    线程层尚未初始化时也保守加锁；TBB/OpenMP 初始化后，显式配置调用可并行执行。
     """
     if config is not None and not isinstance(config, FastSolverConfig):
         raise TypeError("config must be a FastSolverConfig")
-    lock = _NUMBA_CONFIG_LOCK if config is None or config.threads is not None else nullcontext()
+    lock = _NUMBA_CONFIG_LOCK if config is None or not _numba_layer_is_threadsafe() else nullcontext()
     with lock:
         return _SGWB_iter_fast_impl(
             m,
