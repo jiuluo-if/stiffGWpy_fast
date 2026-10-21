@@ -85,11 +85,11 @@ policy against the backend-aware policy for 80 paired rounds on TBB.
 
 | Batch policy | Median wall time for both calls |
 |---|---:|
-| Serialized | 13.383 ms |
-| Concurrent TBB | 11.599 ms |
+| Serialized | 13.178 ms |
+| Concurrent TBB | 11.618 ms |
 
-The paired median wall-time change was −14.38% (bootstrap 95% interval
-−18.21% to −9.17%). All five output arrays matched bit-for-bit for both cases
+The paired median wall-time change was −14.93% (bootstrap 95% interval
+−18.17% to −9.79%). All five output arrays matched bit-for-bit for both cases
 in every round, and both calls converged without failure. This is a local
 two-call throughput comparison, not a general MCMC speed ratio or a single-call
 latency result. It adds no oracle-accuracy coverage. Raw samples and source

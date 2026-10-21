@@ -62,6 +62,11 @@ config = FS.resolve_config("fast", threads=args.threads)
 original_layer_check = FS._numba_layer_is_threadsafe
 
 
+def normalized_sha256(path):
+    contents = Path(path).read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(contents).hexdigest()
+
+
 def run_one(name):
     model = LCDM_SG(**CASES[name])
     result = FS.SGWB_iter_fast(model, config=config, kink_split=True)
@@ -110,8 +115,8 @@ def main():
         "run_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "candidate_code_commit": "9ad880624b9cd98f5caef3bcc11173df205725cc",
         "baseline_policy_commit": "8375477e805bc2ebdb7d171189fc56fb00cd0d26",
-        "solver_source_sha256": hashlib.sha256(Path(FS.__file__).read_bytes()).hexdigest(),
-        "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "solver_source_sha256": normalized_sha256(FS.__file__),
+        "script_sha256": normalized_sha256(__file__),
         "baseline_policy": "previous wrapper predicate; explicit thread config always takes the solve lock",
         "candidate_policy": "serialize workqueue/unknown backend; permit explicit configs on TBB/OpenMP",
         "cases": case_names,
