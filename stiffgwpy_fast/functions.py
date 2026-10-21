@@ -51,7 +51,7 @@ def _make_subhorizon_event(z_tail):
 
 def solve_SGWB(Nv, Sv, j0, z0, z_tail=5.0, rtol=1e-6, atol=None):
 
-    N_span = (Nv[j0], Nv[-1]); N = Nv[j0:]
+    N_span = (Nv[j0], Nv[-1])
     ini_state = [z0, 0, math.exp(z0)]
     param = (interpolate.InterpolatedUnivariateSpline(Nv, Sv),)
     if atol is None:
@@ -59,7 +59,6 @@ def solve_SGWB(Nv, Sv, j0, z0, z_tail=5.0, rtol=1e-6, atol=None):
 
     result = solve_ivp(tensor, N_span, ini_state,
                        method='LSODA',
-                       #t_eval=N,
                        dense_output=True,
                        events=[_make_subhorizon_event(z_tail)],
                        args=param,

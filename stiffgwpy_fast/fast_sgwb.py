@@ -1701,7 +1701,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         raise ValueError('outer tol must be in (0, 1), got %r' % tol)
     freqs = None; Nf = 0; nv = 0; Nv = None
     idx_out = None; n_coarse = 0
-    ev_minus = P_t = fp_freq = Wmat = W_last = None
+    ev_minus = P_t = fp_freq = Wmat = None
     integration_freqs = integration_indices = W_support_last = None
     pchip_breakdown = None
     Ogw = Oj = Opgw = None
@@ -1815,7 +1815,6 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 Wmat = np.zeros((Nf, Nf))
                 build_Wmat(Nf, Xf, hf, Wmat)
                 Wmat = np.ascontiguousarray(Wmat)
-                W_last = Wmat[Nf-1].copy()
                 Ns = integration_freqs.size
                 Xs = np.flip(integration_freqs)
                 Ws = np.zeros((Ns, Ns))
