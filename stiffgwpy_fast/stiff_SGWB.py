@@ -236,6 +236,9 @@ class LCDM_SG(LCDM_SN):
         # explicit-override flag first so an explicitly-passed z_tail/freq_res
         # wins over a named accuracy preset (and so a default-valued 5.0/1.0 is
         # not misread as an override, see test_modes).
+        # None 哨兵表示“引擎默认值”，会在进入引擎分支前解析为具体参数。先记录调用方是否
+        # 显式设置，确保显式传入的 z_tail/freq_res 优先于命名精度档位；默认的 5.0/1.0
+        # 不会被误判为显式覆盖（见 test_modes）。
         z_tail_explicit = z_tail is not None
         freq_res_explicit = freq_res is not None
         if z_tail is None:
@@ -245,6 +248,7 @@ class LCDM_SG(LCDM_SN):
         if engine == 'reference':
             # Independent continuous-sigma high-accuracy pipeline (slow; for
             # certification / benchmark points, not the MCMC thermal path).
+            # 独立的连续 sigma 高精度参考流程运行较慢，用于认证/基准点，不用于 MCMC 热路径。
             from .reference import apply_reference_to_model
             apply_reference_to_model(self, freq_res=freq_res, z_tail=z_tail,
                                      rtol=rtol)
@@ -330,10 +334,12 @@ class LCDM_SG(LCDM_SN):
             if result is None and reason == 'shared_Neff_guard':
                 # Both engines reject this deterministic non-physical point;
                 # retrying LSODA would only waste time and obscure telemetry.
+                # 两种引擎都会拒绝这个确定性非物理点；重试 LSODA 不会改变结果，只会增加耗时并掩盖遥测。
                 self.fast_guard_rejections = getattr(self, 'fast_guard_rejections', 0) + 1
             elif result is None and reason in ('invalid_r', 'invalid_cutoff'):
                 # Input/cutoff validation failures are also deterministic
                 # physical rejections, not recoverable numerical failures.
+                # 输入/截断验证失败同样是确定性的物理拒绝，不属于可恢复的数值失败。
                 self.fast_physical_rejections = getattr(
                     self, 'fast_physical_rejections', 0) + 1
             elif result is None and fallback and not fallback_attempted:
