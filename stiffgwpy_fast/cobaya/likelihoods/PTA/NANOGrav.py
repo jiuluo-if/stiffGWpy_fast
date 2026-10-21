@@ -18,11 +18,11 @@ class NANOGrav(Likelihood):
 
         中文：读取 `NANOGrav.yaml` 指定的资源，并预拟合各频点的似然密度样条。
         """
-        self.data = np.load(self.kde_file)                   # log-likelihood for each frequency bin
-        self.log10rhogrid = np.load(self.log10rhogrid_file)  # log10(delay/s) = log10(sqrt(rho/s^2))
-        self.freqs = np.load(self.freq_file)                 # Hz, frequency bins of the PTA experiment
+        self.data = np.load(self.kde_file)                   # Per-frequency log likelihood; 每个频点的对数似然密度。
+        self.log10rhogrid = np.load(self.log10rhogrid_file)  # log10(delay/s) = log10(sqrt(rho/s^2))；以秒为单位的时延网格。
+        self.freqs = np.load(self.freq_file)                 # PTA frequency bins in Hz; PTA 频点，单位为 Hz。
         # These splines depend only on packaged likelihood data, not on theory parameters.
-        # 这些样条只依赖随包分发的似然数据，与 theory 参数无关。
+        # 这些样条只依赖随包分发的似然数据，与理论预测值无关。
         self._density_splines = tuple(
             interpolate.CubicSpline(self.log10rhogrid, self.data[0, i])
             for i in range(self.Nfreqs))
@@ -58,15 +58,16 @@ class NANOGrav(Likelihood):
 
         中文：组合原初 SGWB 与 SMBHB 前景；超出数据网格的模型值按边界密度计算。
         """
-        yr = u.yr.to(u.s)               # s, one Julian year
-        T_base = 1/self.freqs[0]        # s, baseline of the PTA data
+        yr = u.yr.to(u.s)               # 一儒略年对应的秒数。
+        T_base = 1/self.freqs[0]        # PTA 数据基线长度，以秒表示。
         
-        Nf = self.Nfreqs                # Number of work frequencies, i = 1 - Nf
-        work_freqs = self.freqs[:Nf]    # work frequencies in Hz
+        Nf = self.Nfreqs                # 工作频点数，由 Nfreqs 配置。
+        work_freqs = self.freqs[:Nf]    # 参与似然计算的频点，单位为 Hz。
         # Limiting frequency bins can retain stiff-amplified models that higher-frequency data would exclude.
-        # 限制工作频点可能保留本会被更高频数据排除的 stiff 放大模型（i=Nf+1-Ntot）。
+        # 限制工作频点可能保留本会被更高频数据排除的刚性物质放大模型（i=Nf+1-Ntot）。
         
         # Primordial SGWB
+        # 原初随机引力波背景。
         rho_prim = np.zeros_like(work_freqs)
         if f_theory[-1] >= math.log10(work_freqs[0]):
             cond = (f_theory > -13) & (f_theory < -5)
@@ -74,12 +75,14 @@ class NANOGrav(Likelihood):
             spec_prim = interpolate.CubicSpline(f_t, Ogw_t)
 
             cond = (np.log10(work_freqs)<=f_t[-1])
-            # Calculate theoretical Omega_GW ONLY for PTA frequency bins in its range, i.e., <= f_end
+            # Calculate theoretical Omega_GW only within the PTA frequency range (<= f_end).
+            # 仅对理论频谱覆盖范围内的 PTA 频点计算 Omega_GW。
             Ogw_prim = spec_prim(np.log10(work_freqs[cond]))        
             rho_prim[cond] = np.divide(np.power(10., Ogw_prim) * H_0**2, 8*np.pi**4 * work_freqs[cond]**5 * T_base)  # s^2
 
         # SGWB from SMBHBs
-        log10hc_BH = data_params['A_BBH']      # log10(h_c) at f_yr
+        # 超大质量黑洞双星背景。
+        log10hc_BH = data_params['A_BBH']      # log10(h_c) at f_yr；一年频率处的特征应变对数。
         gamma_BH = data_params['gamma_BBH']
         rho_BH = np.power(10., log10hc_BH*2) * np.power(work_freqs*yr, -gamma_BH) * yr**3 / (12*np.pi**2 * T_base)   # s^2
         
