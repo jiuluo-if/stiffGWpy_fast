@@ -132,6 +132,7 @@ class LCDM_SG(LCDM_SN):
         P_t = self.Tensor_power(freq)            # Primordial tensor power spectrum
 
         j = self.find_index_hc(freq+3)           # solver begins at kc/aH <= 10^{-3}
+        # 起始节点选在 kc/aH<=10^-3，即模态仍处于超视界状态时。
         z0 = (freq-self.f_hor[j]) * ln10         # convert to ln(kc/aH)
 
         result = solve_SGWB(self.Nv, self.sigma, j, z0,
@@ -145,13 +146,16 @@ class LCDM_SG(LCDM_SN):
         Opgw_this = (-5*np.power(xf_this,2) + 7*np.power(yf_this,2))/72 * P_t
 
         # high-frequency, post-horizon-reentry regime
+        # 模态重新入视界后的高频区间改用时间平均的振幅延拓。
         if (N_this[-1]<self.Nv[-1]):
             N_hf = self.Nv[self.Nv > N_this[-1]]
             f_hf = self.f_hor[self.Nv > N_this[-1]]
 
             coeff = math.sqrt(0.5*(xf_this[-1]**2+yf_this[-1]**2))
             Th_hf = coeff * np.exp(-zf_this[-1] + N_this[-1] - N_hf)      # the rms T_h, time-averaged
+            # Th_hf 是时间平均后的 T_h 均方根振幅。
             xf_hf = np.multiply(Th_hf, np.power(10, freq-f_hf))           # the rms x_f, time-averaged
+            # xf_hf 是对应的时间平均 x_f 均方根振幅。
             Oj_hf = -np.power(Th_hf,2)/3 * P_t
             Opgw_hf = np.power(xf_hf,2)/36 * P_t
             Ogw_hf = Opgw_hf * 3 + Oj_hf
