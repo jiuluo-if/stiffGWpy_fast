@@ -82,11 +82,19 @@ When `auto_escalate=True`, this status forces a higher-accuracy solve before
 the likelihood gate accepts the fast result. The default fast path is unchanged
 when auto-escalation is disabled.
 
+The `self_consistency` term is the last-step change in `DN_gw` divided by the
+current `DN_gw` magnitude. At low signal amplitude this relative diagnostic can
+be large even when the absolute change is small; it is an iteration-change
+proxy, not an error bound.
+
 正式的 `kink_split=True`、`transition_refine=False` 路径以及
 `freq_grid='goal'` 尚无对应的历史误差预算校准样本。现有代理值仍供诊断，
 但相关分项会列在 `uncertified_terms` 中，状态为
 `uncertified-path-configuration`。启用 `auto_escalate=True` 后，求解会先升级精度，
 再由似然门限决定是否接受；关闭自动升级时，默认快速路径行为不变。
+
+`self_consistency` 表示最后两次 `DN_gw` 的差值相对于当前 `DN_gw` 幅值的比值。
+信号幅值很小时，即使绝对变化较小，该相对诊断值也可能很大；它表示迭代变化，不是误差上界。
 
 ## Accepted execution optimization evidence
 
