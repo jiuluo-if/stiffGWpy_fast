@@ -91,6 +91,7 @@ class _Background:
         self.N_re = d['N_re']
         # Continuous (non-quantised) reheating boundary: look-back N_re below
         # the present.  The fixed-step grid rounds this; we do not.
+        # 连续背景保留精确再加热边界；固定步长网格会量化该边界。
         self.N_re_abs = d['N_inf'] - d['N_re']
         self.N_fin = gp.N_fin
         self.N_max = gp.N_max
@@ -106,6 +107,7 @@ def _H2_and_sigma(bg, N):
     if N < bg.N_re_abs:
         # MD reheating branch: sigma = 1.  H2 is not used on this branch (the
         # horizon position uses the analytic MD extension in f_hor_abs).
+        # MD 再加热分支固定 sigma=1；该分支不使用 H2，视界位置由解析延拓计算。
         return 0.0, 1.0
     Nlast = bg.N_inf
     eN = math.exp(Nlast - N)
@@ -164,6 +166,7 @@ def f_hor_at(m, N, DN_eff):
     Delta_f = math.log(2.0 * math.pi / bg.H_0)
 
     # Reheating boundary raw value (continuous).
+    # 再加热边界处的未归一化视界频率，使用连续边界值。
     if bg.N_re_abs < Nlast:
         H2_re, _ = _H2_and_sigma(bg, bg.N_re_abs)
         raw_re = -0.5 * bg.N_re_abs + 0.5 * math.log(H2_re)
@@ -246,6 +249,7 @@ def f_hor_abs(bg, freq, N):
     """Internal f_hor used for locating the start; offset by log10(f)."""
     # Reuse the public evaluator through the module-level function is clumsy here
     # (it needs the model).  Instead compute raw f_hor(N) using `bg`.
+    # 公共函数需要原始模型对象；这里直接用已有背景闭包 bg 计算，避免重建背景。
     Nlast = bg.N_inf
     H2_last, _ = _H2_and_sigma(bg, Nlast)
     raw_last = -0.5 * Nlast + 0.5 * math.log(H2_last)
@@ -285,9 +289,12 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     # We integrate the ODE for z directly; only the *starting* z uses the
     # horizon position so that the initial condition (x=0, y=e^z) is the frozen
     # super-horizon mode.
+    # z=ln(2 pi f/(aH))=(log10(f)-f_hor)*ln(10)。ODE 直接演化 z；视界位置只用于
+    # 设定起点，使初值 x=0、y=e^z 对应冻结的超视界模态。
     Nstart = _find_start_N(bg, freq, z_start)
     fh_start = f_hor_abs(bg, freq, Nstart)
     # Initial z so that x=0, y=e^{z0} is the frozen super-horizon mode.
+    # 选择初始 z，使 x=0、y=e^z 表示冻结的超视界模态。
     z0 = (freq - fh_start) * ln10
 
     y0 = math.exp(z0)
@@ -303,6 +310,8 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     # tail is an O(epsilon) approximation, where epsilon = |d ln(omega)/dN| / omega
     # with omega = exp(z) and dN the integration variable.  sigma enters through
     # z' = 1.5*sigma - 1, so epsilon = |1.5*sigma - 1| / exp(z).
+    # 深亚视界交接处以 epsilon 衡量绝热性；冻结振幅尾部近似的误差阶为 O(epsilon)。
+    # omega=e^z，且 z'=1.5 sigma-1，因此 epsilon=|1.5 sigma-1|/e^z。
     eps_handoff = None
     matching_error_rel = None
     if used_tail:
@@ -311,9 +320,11 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
         _, sig = _H2_and_sigma(bg, t_event)
         eps_handoff = abs(1.5 * sig - 1.0) / math.exp(zf)
         # Leading-order WKB defect of the frozen-amplitude approximation.
+        # 将 epsilon 作为冻结振幅近似的首阶 WKB 匹配误差估计。
         matching_error_rel = eps_handoff
         coeff = math.sqrt(0.5 * (xf * xf + yf * yf))
         # Analytic deep-subhorizon tail from t_event to today.
+        # 从交接时刻延拓到今天的深亚视界解析尾部。
         N_tail = np.arange(t_event, bg.N_inf + 1e-12, 0.02)
         if N_tail[-1] < bg.N_inf:
             N_tail = np.append(N_tail, bg.N_inf)
@@ -331,6 +342,7 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
                     **_handoff_diagnostics(bg, t_event, zf, xf, yf))
 
     # Mode never reached the tail threshold before today.
+    # 到今天为止，该模态仍未达到解析尾部的交接阈值。
     zf, xf, yf = result.y[:, -1]
     Th = yf / math.exp(zf)
     Oj = xf * Th / 3.0 * P_t
@@ -401,6 +413,7 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     freqs = np.asarray(freqs, dtype=float)
     integrand = np.asarray(Ogw, dtype=float) - np.asarray(Oj, dtype=float)
     # Ascending log10 f.
+    # 插值与积分要求频率按 log10(f) 升序排列。
     order = np.argsort(freqs)
     x = freqs[order]
     y = integrand[order]
@@ -460,6 +473,7 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     else:
         # Grid-independent frequency set (built from continuous background, so
         # the sampling is invariant to the sigma-grid resolution).
+        # 频率采样由连续背景构造，不随 sigma 网格分辨率改变。
         from .freq_adaptive import grid_independent_freqs
         freqs = grid_independent_freqs(m, freq_res)[0]
         freqs = np.asarray(freqs, dtype=float)
@@ -509,6 +523,8 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     # Guard against non-positive Ogw - Oj in the (ill-defined) super-horizon low-f
     # tail: log10 is undefined there.  The spectrum only has a physical meaning
     # once the mode has re-entered the horizon.
+    # 超视界低频尾部的 Ogw-Oj 可能非正，无法取 log10；该谱量仅在模态重新入视界后
+    # 才有物理意义，因此这里仅为输出添加数值下限保护。
     integrand = Ogw - Oj
     logOmega = np.log10(np.maximum(integrand, 1e-40))
     return dict(
