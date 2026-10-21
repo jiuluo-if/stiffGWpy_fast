@@ -2440,7 +2440,7 @@ def SGWB_iter_fast(
     Numba's thread mask is local to the calling Python thread. The ``workqueue``
     backend itself is not thread-safe, so calls are serialized until a
     thread-safe backend (TBB or OpenMP) is initialized. Legacy calls without
-    an explicit config also hold the lock while consuming module-level settings.
+    an explicit config also remain serialized with one another.
 
     中文：低层 fast 求解器接收隔离的配置快照；频率积分默认用 PCHIP，也可显式选 Simpson。
     Numba 的线程掩码属于调用线程；workqueue 后端不支持并发并行调用，因此该后端下整个求解期间持锁。
