@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""对 fast/plain-grid 做可重复的阶段级计时，不改变求解器行为。"""
+"""Profile fast-solver stages without changing solver behavior.
+
+中文：对 fast 求解器的运行阶段做可重复计时，不改变生产求解路径。
+"""
 from __future__ import annotations
 
 import argparse
@@ -71,7 +74,7 @@ def run_once(case, kink_split=False):
         j0s = np.asarray(args[5])
         totals['j0_cv'].append(float(np.std(j0s) / max(np.mean(j0s), 1.0)))
         totals['j0_span'].append(float(np.max(j0s) - np.min(j0s)))
-        # 每通道相积分步数下界 nv-j0：用于解释不同 regime 的 kernel 成本
+        # nv-j0 是每通道潜在相积分步数的上界；zz 达到 z_tail 后循环会提前终止。
         nv_kernel = int(len(args[0]))
         totals['steps_per_channel'].append(float(np.mean(nv_kernel - j0s)))
         solve_args = args
