@@ -30,9 +30,6 @@ class NANOGrav(Likelihood):
         self._log10rhogrid_min = float(np.min(self.log10rhogrid))
         self._log10rhogrid_max = float(np.max(self.log10rhogrid))
 
-    def close(self):
-        pass
-
     def get_requirements(self):
         """Request frequency, SGWB spectrum, and Hubble value from the theory.
 

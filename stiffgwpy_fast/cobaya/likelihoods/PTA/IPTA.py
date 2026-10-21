@@ -26,9 +26,6 @@ class IPTA(Likelihood):
         self._log10rho_min = np.min(self.data, axis=0)
         self._kde_by_frequency = tuple(kde(self.data[:, i]) for i in range(self.Nfreqs))
 
-    def close(self):
-        pass
-
     def get_requirements(self):
         """Request frequency, SGWB spectrum, and Hubble value from the theory.
 
