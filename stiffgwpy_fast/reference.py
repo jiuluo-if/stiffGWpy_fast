@@ -161,6 +161,7 @@ def f_hor_at(m, N, DN_eff):
     bg = _Background(m, DN_eff)
     Nlast = bg.N_inf
     # Today's raw f_hor (normalisation anchor).
+    # 今天的未归一化 f_hor，作为视界频率的归一化锚点。
     H2_last, _ = _H2_and_sigma(bg, Nlast)
     raw_last = -0.5 * Nlast + 0.5 * math.log(H2_last)
     Delta_f = math.log(2.0 * math.pi / bg.H_0)
@@ -434,6 +435,7 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     val, abserr = _quad(f_quad)
     g2 = ln10v * val
     # Half-density interpolation error estimate: compare to a coarser PCHIP.
+    # 隔点抽样构造较粗的 PCHIP，并以两次积分之差估计插值误差。
     half = x[::2]
     if half.size >= 4 and half.size < x.size and np.all(np.diff(half) > 0):
         yh = y[::2]
@@ -616,7 +618,8 @@ def oracle_variants(m, freqs=None, dn_eff=None, z_tail_conservative=8.0,
     denom = max(abs(dA), 1e-300)
     delta_AB = abs(dB - dA) / denom
     delta_BC = abs(dC - dB) / max(abs(dB), 1e-300)
-    # B used a frozen tail on some fraction of modes?
+    # Fraction of modes in B that used the frozen-amplitude tail.
+    # B 方案中使用冻结振幅尾部近似的模态比例。
     used_tail_B = float(np.mean(np.asarray(B['used_tail'], dtype=bool))) \
         if len(np.asarray(B['used_tail'])) else 0.0
 
