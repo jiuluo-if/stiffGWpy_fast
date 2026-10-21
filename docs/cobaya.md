@@ -57,9 +57,15 @@ Each run exposes the following fields through `theory.engine_stats`:
 `fast_guard_rejections`, `fast_physical_rejections`, `lsoda_evals`,
 `lsoda_fallbacks`, `reference_evals`, `escalations`, `fallback_fraction`,
 `escalation_fraction`, `last_eval_status`, `eval_status_counts`
-(`FAST` / `FAST_ESCALATED` / `REFERENCE` / `LSODA` / `LSODA_FALLBACK`), and the
-estimated `|Delta logL|`.  `close()` logs the summary and warns above a 5%
+(`FAST`, `FAST_ESCALATED`, `FAST_ESCALATION_FAILED`, `FAST_FAILED`,
+`FAST_GUARD_REJECTED`, `FAST_PHYSICAL_REJECTED`, `REFERENCE`, `LSODA`,
+`LSODA_FALLBACK`, `LSODA_FALLBACK_FAILED`), and the estimated `|Delta logL|`.
+The derived `Delta_Neff_GW_error` is `NaN` when the selected engine does not
+provide an error estimate. `close()` logs the summary and warns above a 5%
 fallback/escalation fraction.
+
+遥测状态会区分快速求解失败、物理拒绝、保护条件拒绝及回退/升级失败。引擎没有提供误差估计时，
+派生参数 `Delta_Neff_GW_error` 为 `NaN`，不以零冒充已知误差。
 
 ## Engine options
 
