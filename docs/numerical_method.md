@@ -2,7 +2,7 @@
 
 Status: current user-facing solver contract
 
-Date: 2026-09-24
+Date: 2026-10-21
 
 Code version: current settings are defined by
 `stiffgwpy_fast.fast_sgwb.ACCURACY_MODES['fast']`; run evidence remains bound to
@@ -37,6 +37,19 @@ The goal grid reserves nodes around relevant spectral features and preserves
 `eval_freqs` as native solve nodes. Evaluation nodes are separate from the
 support nodes used for the bolometric integral, so adding likelihood bins does
 not change `DN_gw` through the integration grid.
+
+## Thread execution and concurrent calls
+
+The Numba thread mask belongs to the calling Python thread. The `workqueue`
+backend is not safe for concurrent parallel calls, so the solver serializes
+entries while it is active or before the threading layer is initialized.
+Explicit immutable configs may run concurrently after TBB or OpenMP is
+initialized. Calls that use the legacy module config (`config=None`) remain
+serialized; legacy setters and snapshots share the same lock.
+
+中文：Numba 线程掩码属于调用线程。`workqueue` 不支持并发进入并行内核，使用该后端或线程层
+尚未初始化时，求解器会串行调用。TBB/OpenMP 初始化后，显式不可变配置可以并发运行。读取旧模块
+设置的 `config=None` 调用仍串行；旧 setter 与配置快照也共用同一把锁。
 
 During tensor propagation, `phase_max` caps the phase advance near horizon
 crossing. At `z_tail`, the deep-subhorizon evolution is handed to an analytic
