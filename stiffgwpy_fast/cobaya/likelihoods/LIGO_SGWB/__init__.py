@@ -4,3 +4,5 @@
 """
 
 from .LVK_SGWB_CC import LVK_SGWB_CC
+
+__all__ = ['LVK_SGWB_CC']
