@@ -68,6 +68,12 @@ after a numerical failure and tags the result `LSODA_FALLBACK`; it never retries
 a deterministic `shared_Neff_guard` rejection. `auto_escalate` with
 `likelihood_sigma`/`dlogl_tol`
 escalates when the estimated `|Delta logL|` exceeds the budget.
+It also escalates when the fast error budget marks its solver-path calibration
+as unsupported. The retry resets the model to its original `DN_eff` before
+running the validation preset or independent reference engine.
+
+启用 `auto_escalate` 时，除似然误差超限外，若当前快速路径没有对应的误差校准，也会升级求解。
+升级前会将模型恢复到原始 `DN_eff`，再运行验证档或独立参考引擎。
 
 The serial adapter only requires the `cobaya` extra. Install the separate
 `mpi` extra when the execution environment actually needs `mpi4py`.

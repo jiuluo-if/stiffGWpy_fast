@@ -641,6 +641,7 @@ def estimate_local_error(m):
     pm = float(getattr(m, "phase_max_used", 0.0))
     fg = getattr(m, "freq_grid_used", "construct")
     tr = bool(getattr(m, "transition_refine_used", False))
+    ks = bool(getattr(m, "kink_split_used", False))
     se = bool(getattr(m, "sigma_exact_used", False))
     nf = int(getattr(m, "freq_grid_n", 0))
 
@@ -719,6 +720,18 @@ def estimate_local_error(m):
         ),
         self_consistency=dict(value=self_consistency, kind="local", certification="local-measured"),
     )
+    # The formal kink-split / goal-grid path has no matching calibration
+    # anchors in the historical error-budget experiments. Keep the existing
+    # proxy values for diagnostics, but do not present them as calibrated.
+    # 正式 kink-split / goal 网格路径没有对应的历史校准样本；保留代理数值供诊断，
+    # 但不将其标记为已校准误差。
+    uncertified_terms = []
+    if ks and not tr:
+        uncertified_terms.extend(("background_model", "sigma_transition"))
+    if fg == "goal":
+        uncertified_terms.append("frequency_grid")
+    for name in uncertified_terms:
+        cats[name]["certification"] = "uncertified-path-configuration"
     systematic = max(model, transition)
     rss = math.sqrt(
         sum(
@@ -735,6 +748,8 @@ def estimate_local_error(m):
     has_telemetry = hasattr(m, "z_tail_used") and hasattr(m, "handoff_eps") and hasattr(m, "freq_grid_used")
     if not has_telemetry:
         certification_status = "uncertified"
+    elif uncertified_terms:
+        certification_status = "uncertified-path-configuration"
     else:
         # The dominant systematic terms (background_model / sigma_transition)
         # are always fiducial-calibrated, so the budget is point-local only
@@ -755,6 +770,7 @@ def estimate_local_error(m):
         certification_status=certification_status,
         local_terms=local_terms,
         calibrated_terms=calibrated_terms,
+        uncertified_terms=uncertified_terms,
         explicit_uncertainty="uncertainty is a mix of point-local and "
         "fiducial-calibrated terms; calibrated terms are "
         "NOT universal per-point error estimates",

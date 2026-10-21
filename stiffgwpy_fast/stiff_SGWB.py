@@ -380,22 +380,30 @@ class LCDM_SG(LCDM_SN):
                     # estimated |Delta logL| from the local Delta N_eff error
                     # exceeds the requested budget (sigma = effective sigma of
                     # the likelihood on Delta N_eff; dlogl_tol = budget in
-                    # natural log-units).  Without a likelihood sigma, fall
-                    # back to the relative error_tol gate.
+                    # natural log-units). Unsupported solver-path calibration
+                    # also escalates: its proxy budget is not a certified gate.
+                    # 中文：若当前求解路径没有对应校准，自动升级；代理误差不能作为已认证门限。
+                    budget_status = (getattr(self, 'local_error_budget', None) or {}).get(
+                        'certification_status', 'uncertified')
+                    do_escalate = budget_status.startswith('uncertified')
                     if likelihood_sigma is not None:
                         abs_err = float(getattr(self, 'Delta_Neff_abs_error', 0.0) or 0.0)
                         dlogl = 0.5*(abs_err/float(likelihood_sigma))**2
                         self.dlogl_estimated = dlogl
-                        do_escalate = dlogl > (dlogl_tol if dlogl_tol is not None else 1e-3)
+                        do_escalate = do_escalate or (
+                            dlogl > (dlogl_tol if dlogl_tol is not None else 1e-3))
                     else:
                         tol_err = error_tol if error_tol is not None else 5e-3
-                        do_escalate = float(getattr(self, 'DN_gw_error', 0.0) or 0.0) > tol_err
+                        do_escalate = do_escalate or (
+                            float(getattr(self, 'DN_gw_error', 0.0) or 0.0) > tol_err)
                     if do_escalate:
-                        # The estimated error exceeds the requested budget.
-                        # Tighten the fast grid ('reference' mode) or run the
-                        # independent continuous-sigma reference pipeline.
+                        # The requested budget is exceeded or unsupported by a
+                        # matching calibration. Re-solve from the original
+                        # Delta N_eff with a validation preset or reference.
+                        # 中文：超出误差门限或缺少对应校准时，从原始 Delta N_eff 重新求解并升级精度。
                         self.escalated_from = accuracy_mode
                         self.escalations = getattr(self, 'escalations', 0) + 1
+                        self.reset()
                         if escalate_to_reference:
                             result = self.SGWB_iter(engine='reference')
                             self.DN_gw_error = 0.0

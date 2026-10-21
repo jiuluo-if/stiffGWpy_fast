@@ -73,6 +73,21 @@ telemetry is attached. A `certification_status` of
 `certified-fiducial-calibrated` is limited to that calibration model; it does
 not imply a uniform error guarantee over all parameter values.
 
+The formal `kink_split=True`, `transition_refine=False` path and the
+`freq_grid='goal'` grid do not have matching calibration anchors in the
+historical error-budget experiments. Their existing proxy values remain
+available for diagnostics, but the affected terms appear in
+`uncertified_terms` and the status is `uncertified-path-configuration`.
+When `auto_escalate=True`, this status forces a higher-accuracy solve before
+the likelihood gate accepts the fast result. The default fast path is unchanged
+when auto-escalation is disabled.
+
+正式的 `kink_split=True`、`transition_refine=False` 路径以及
+`freq_grid='goal'` 尚无对应的历史误差预算校准样本。现有代理值仍供诊断，
+但相关分项会列在 `uncertified_terms` 中，状态为
+`uncertified-path-configuration`。启用 `auto_escalate=True` 后，求解会先升级精度，
+再由似然门限决定是否接受；关闭自动升级时，默认快速路径行为不变。
+
 ## Accepted execution optimization evidence
 
 The dated H2 endpoint-cache A/B recorded identical spectrum and background
