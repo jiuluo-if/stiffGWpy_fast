@@ -2,18 +2,23 @@
 
 Status: current summary of the audited scope; results remain commit- and protocol-bound
 
-Date: 2026-09-24
+Date: 2026-10-21
 
-Code version: see `docs/validation/validation_manifest.json` → `commit` and each run artifact's `commit`
+Code version: the Round 68 solver profile below used
+`c7d4766f15c1cda4693d306597723de50abd4554`. The PTA cache comparison used
+source commit `77fe2b0e8e273f4fb487d46e37803619d68f27de`. Each run artifact
+records its own commit.
 
-## Latest fixed-resource full-path profile
+## Latest fixed-resource full-path solver profile
 
 The only user-facing fast profile uses `frequency_quadrature=pchip` with
 `h=0.005`, `col_step=8`, `z_tail=5`, `phase_max=0.25`, exact kink split, and
 the goal frequency grid. The newest full-path profile is the 2026-09-23 Round
 68 run at solver commit `c7d4766f15c1cda4693d306597723de50abd4554`; the
-current repository HEAD adds MCMC/reporting work but does not change
-`stiffgwpy_fast/` solver source after that commit.
+profile remains a historical solver baseline. Later commits changed code in
+`stiffgwpy_fast/`, including removal of unused solver work and precomputation
+in the Cobaya likelihood adapters. No full-path solver profile has been
+recorded at the current HEAD.
 
 Protocol: 25 repeats, Numba=2/workqueue, `FAST_THREADS=2`, one BLAS thread,
 one worker/process, Windows CPU affinity `[0, 1]`, Python 3.11.9, NumPy 2.4.4,
@@ -35,6 +40,30 @@ the kernels. All six rows report no failure reason. The raw run is
 stage profiles are `profile_fast_breakdown_round68_20260923_*.json`. This
 profile has no matched-resource LSODA measurement, so this page does not claim
 a current LSODA speedup ratio. The stable `<4 ms/point` target remains unmet.
+
+## Later PTA likelihood measurement
+
+Commit `0a03660702493caaf8f0bd4034187324e3617ce0` moved fixed IPTA KDE and
+NANOGrav spline preparation into each likelihood instance's `initialize()`
+hook. The benchmark script loads the pre-cache classes from commit `1f648a5`,
+initializes both implementations, then alternates 25 direct `log_likelihood`
+calls per implementation after one warm-up call. It records these medians:
+
+| Adapter | Before median | Cached median | Cached initialization | Serialized cache per instance |
+|---|---:|---:|---:|---:|
+| IPTA | 34.629 ms | 28.239 ms | 66.462 ms | 4,321,682 bytes |
+| NANOGrav | 5.734 ms | 0.304 ms | 8.915 ms | 5,601,185 bytes |
+
+All 25 timed outputs matched exactly between implementations. A separate
+10-case nuisance/theory sweep per adapter also matched exactly, with maximum
+absolute difference zero. The run records its environment and results in
+[`benchmark_pta_likelihood_cache_20261021.json`](benchmark_pta_likelihood_cache_20261021.json);
+reproduce it from the repository root with
+`python scripts/benchmark_pta_likelihood_cache.py`. By default, the script
+writes a new timestamped JSON file; `--output` selects a specific path.
+These local adapter timings exclude initialization from each evaluation and
+do not measure end-to-end Cobaya MCMC runtime or change the scope of the Round
+68 solver profile.
 
 ## Scoped accuracy audit (dated 2026-09-12)
 

@@ -1,0 +1,270 @@
+{
+  "date": "2026-10-21",
+  "started_at": "2026-10-21T17:41:21+08:00",
+  "baseline_commit": "1f648a50af9bb57ca929e967d85a9b888c92aba5",
+  "candidate_commit": "77fe2b0e8e273f4fb487d46e37803619d68f27de",
+  "protocol": {
+    "method": "alternating direct log_likelihood calls after per-instance initialize",
+    "warmup_calls_per_implementation": 1,
+    "repeats_per_implementation": 25,
+    "parameters": {
+      "A_BBH": -15.6,
+      "gamma_BBH": 4.7
+    },
+    "theory_frequency_count": 241
+  },
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "cpu_count": 32,
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "cobaya": "3.6.2",
+    "thread_environment": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null
+    }
+  },
+  "results": [
+    {
+      "adapter": "IPTA",
+      "repeats_per_implementation": 25,
+      "baseline_initialize_ms": 61.74409999994168,
+      "cached_initialize_ms": 66.4624000000913,
+      "baseline_median_ms": 34.628600000019105,
+      "cached_median_ms": 28.238699999974415,
+      "cached_over_baseline": 0.815473337067015,
+      "cache_pickle_bytes": 4321682,
+      "outputs_exact": true,
+      "max_abs_delta": 0.0,
+      "baseline_output": -711.3581382583901,
+      "cached_output": -711.3581382583901,
+      "differential_exact_matches": 10,
+      "differential_case_count": 10,
+      "differential_max_abs_delta": 0.0,
+      "differential_cases": [
+        {
+          "index": 0,
+          "parameters": {
+            "A_BBH": -18.0,
+            "gamma_BBH": 0.0
+          },
+          "baseline": -706.2721511293532,
+          "cached": -706.2721511293532,
+          "exact": true
+        },
+        {
+          "index": 1,
+          "parameters": {
+            "A_BBH": -18.0,
+            "gamma_BBH": 7.0
+          },
+          "baseline": -707.0163064263269,
+          "cached": -707.0163064263269,
+          "exact": true
+        },
+        {
+          "index": 2,
+          "parameters": {
+            "A_BBH": -17.2,
+            "gamma_BBH": 3.3
+          },
+          "baseline": -717.455949110343,
+          "cached": -717.455949110343,
+          "exact": true
+        },
+        {
+          "index": 3,
+          "parameters": {
+            "A_BBH": -16.5,
+            "gamma_BBH": 4.0
+          },
+          "baseline": -737.5553902209956,
+          "cached": -737.5553902209956,
+          "exact": true
+        },
+        {
+          "index": 4,
+          "parameters": {
+            "A_BBH": -15.6,
+            "gamma_BBH": 4.7
+          },
+          "baseline": -791.5197023491431,
+          "cached": -791.5197023491431,
+          "exact": true
+        },
+        {
+          "index": 5,
+          "parameters": {
+            "A_BBH": -15.0,
+            "gamma_BBH": 5.0
+          },
+          "baseline": -843.8853189132715,
+          "cached": -843.8853189132715,
+          "exact": true
+        },
+        {
+          "index": 6,
+          "parameters": {
+            "A_BBH": -14.0,
+            "gamma_BBH": 6.0
+          },
+          "baseline": -25.575369124115962,
+          "cached": -25.575369124115962,
+          "exact": true
+        },
+        {
+          "index": 7,
+          "parameters": {
+            "A_BBH": -12.5,
+            "gamma_BBH": 1.0
+          },
+          "baseline": -58.096092105233595,
+          "cached": -58.096092105233595,
+          "exact": true
+        },
+        {
+          "index": 8,
+          "parameters": {
+            "A_BBH": -11.5,
+            "gamma_BBH": 6.5
+          },
+          "baseline": -56.55791891116709,
+          "cached": -56.55791891116709,
+          "exact": true
+        },
+        {
+          "index": 9,
+          "parameters": {
+            "A_BBH": -11.0,
+            "gamma_BBH": 4.333333333333333
+          },
+          "baseline": -56.55791891116709,
+          "cached": -56.55791891116709,
+          "exact": true
+        }
+      ]
+    },
+    {
+      "adapter": "NANOGrav",
+      "repeats_per_implementation": 25,
+      "baseline_initialize_ms": 1.8737999999984822,
+      "cached_initialize_ms": 8.915299999898707,
+      "baseline_median_ms": 5.733600000098704,
+      "cached_median_ms": 0.3041999999595646,
+      "cached_over_baseline": 0.05305567182125153,
+      "cache_pickle_bytes": 5601185,
+      "outputs_exact": true,
+      "max_abs_delta": 0.0,
+      "baseline_output": -372.78117222851483,
+      "cached_output": -372.78117222851483,
+      "differential_exact_matches": 10,
+      "differential_case_count": 10,
+      "differential_max_abs_delta": 0.0,
+      "differential_cases": [
+        {
+          "index": 0,
+          "parameters": {
+            "A_BBH": -18.0,
+            "gamma_BBH": 0.0
+          },
+          "baseline": -371.31300460831636,
+          "cached": -371.31300460831636,
+          "exact": true
+        },
+        {
+          "index": 1,
+          "parameters": {
+            "A_BBH": -18.0,
+            "gamma_BBH": 7.0
+          },
+          "baseline": -369.1161079728859,
+          "cached": -369.1161079728859,
+          "exact": true
+        },
+        {
+          "index": 2,
+          "parameters": {
+            "A_BBH": -17.2,
+            "gamma_BBH": 3.3
+          },
+          "baseline": -366.8883598478652,
+          "cached": -366.8883598478652,
+          "exact": true
+        },
+        {
+          "index": 3,
+          "parameters": {
+            "A_BBH": -16.5,
+            "gamma_BBH": 4.0
+          },
+          "baseline": -338.4885657460181,
+          "cached": -338.4885657460181,
+          "exact": true
+        },
+        {
+          "index": 4,
+          "parameters": {
+            "A_BBH": -15.6,
+            "gamma_BBH": 4.7
+          },
+          "baseline": -338.2667153539389,
+          "cached": -338.2667153539389,
+          "exact": true
+        },
+        {
+          "index": 5,
+          "parameters": {
+            "A_BBH": -15.0,
+            "gamma_BBH": 5.0
+          },
+          "baseline": -269.5480476785928,
+          "cached": -269.5480476785928,
+          "exact": true
+        },
+        {
+          "index": 6,
+          "parameters": {
+            "A_BBH": -14.0,
+            "gamma_BBH": 6.0
+          },
+          "baseline": -333.331834671982,
+          "cached": -333.331834671982,
+          "exact": true
+        },
+        {
+          "index": 7,
+          "parameters": {
+            "A_BBH": -12.5,
+            "gamma_BBH": 1.0
+          },
+          "baseline": -504.61114744764,
+          "cached": -504.61114744764,
+          "exact": true
+        },
+        {
+          "index": 8,
+          "parameters": {
+            "A_BBH": -11.5,
+            "gamma_BBH": 6.5
+          },
+          "baseline": -504.61114744764,
+          "cached": -504.61114744764,
+          "exact": true
+        },
+        {
+          "index": 9,
+          "parameters": {
+            "A_BBH": -11.0,
+            "gamma_BBH": 4.333333333333333
+          },
+          "baseline": -504.61114744764,
+          "cached": -504.61114744764,
+          "exact": true
+        }
+      ]
+    }
+  ]
+}

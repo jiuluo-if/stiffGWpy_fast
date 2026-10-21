@@ -2,7 +2,7 @@
 
 Status: current summary of scoped evidence; no full parameter-space release certification
 
-Date: 2026-09-24
+Date: 2026-10-21
 
 The formal fast profile is the single `goal-kink-hybrid` mode. The independent
 continuous-sigma DOP853 pipeline is the precision reference; LSODA is a
@@ -29,14 +29,19 @@ PCHIP as the formal default. Its `z_tail=8` reference difference is limited by
 the reference's own frozen-handoff tail sensitivity; the one-point `z_tail=10`
 comparison is an attribution check, not a substitute for broader validation.
 
-## Latest runtime evidence is separate
+## Latest full-path solver profile is separate
 
-The 2026-09-23 Round 68 full-path profile used 25 repeats, two Numba
-`workqueue` threads, one BLAS thread, and CPU affinity `[0, 1]`. All six
-profiled cases converged; the default warm median/p95 was `7.189/7.916 ms`.
+The latest full-path solver profile is the 2026-09-23 Round 68 run. It used 25
+repeats, two Numba `workqueue` threads, one BLAS thread, and CPU affinity
+`[0, 1]`. All six profiled cases converged. The default warm median/p95 was
+`7.189/7.916 ms`.
 This profile did not run a matched-resource LSODA comparison and did not add a
 new oracle accuracy sweep. It therefore establishes neither a speedup factor
 nor new accuracy coverage. Full per-case values and provenance are in
+[`benchmarks.md`](benchmarks.md).
+
+Later PTA likelihood-cache timings are adapter-level measurements, not
+full-path solver profiles or accuracy evidence; see
 [`benchmarks.md`](benchmarks.md).
 
 ## Likelihood and posterior evidence
