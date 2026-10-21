@@ -3,7 +3,7 @@
 [中文说明](README_zh.md) | English
 
 Status: current documentation map
-Date: 2026-09-25
+Date: 2026-10-21
 Code version: each evidence artifact records its own commit; the manifest is dated `2026-09-17` and is not current-HEAD certification.
 
 ## Research and experiment navigation
