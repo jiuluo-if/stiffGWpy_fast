@@ -1,7 +1,7 @@
 # Cobaya adapter
 
 Status: current adapter contract; validation results remain artifact-bound
-Date: 2026-09-24
+Date: 2026-10-21
 Code version: see the run commit in each validation artifact
 
 `stiffgwpy_fast.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`. It exposes the
