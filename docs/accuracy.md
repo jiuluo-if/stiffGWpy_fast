@@ -31,7 +31,7 @@ comparison is an attribution check, not a substitute for broader validation.
 
 ## Current full-path solver profile is separate
 
-The latest current-HEAD profile is dated 2026-10-21 at code commit
+The 2026-10-21 full-path profile used solver source at commit
 `cdbdb387479e11cd87a38d76a0e58348ca13e70f`. It covers default, high-T, stiff,
 and high-kappa with 25 warm repeats per case; the first process call is
 reported separately. The warm medians are `6.790`, `10.284`, `10.095`, and
