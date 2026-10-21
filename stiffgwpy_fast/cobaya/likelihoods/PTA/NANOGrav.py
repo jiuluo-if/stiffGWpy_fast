@@ -64,7 +64,7 @@ class NANOGrav(Likelihood):
         Nf = self.Nfreqs                # 工作频点数，由 Nfreqs 配置。
         work_freqs = self.freqs[:Nf]    # 参与似然计算的频点，单位为 Hz。
         # Limiting frequency bins can retain stiff-amplified models that higher-frequency data would exclude.
-        # 限制工作频点可能保留本会被更高频数据排除的刚性物质放大模型（i=Nf+1-Ntot）。
+        # 限制工作频点可能保留本会被更高频数据排除的刚性物质放大模型。
         
         # Primordial SGWB
         # 原初随机引力波背景。
