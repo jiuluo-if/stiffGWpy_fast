@@ -1262,6 +1262,17 @@ def solve_kernel(
     kink_fraction=0.0,
     phi_re=0.0,
 ):
+    """Integrate independent modes and write their coarse output rows.
+
+    ``assemble`` selects full sampled-column output or the final column needed
+    for the outer convergence probe. Modes hand off to the analytic tail at
+    ``z_tail``; an interior reheating kink is split using its index, fraction,
+    and phase offset.
+
+    中文：逐模积分并写入对应的粗采样输出行。`assemble` 控制完整列输出，或仅写外层收敛探测
+    所需的末列；积分在 `z_tail` 处交给解析尾部。若再加热 kink 位于网格内部，则按索引、比例和
+    相位偏移精确拆分。
+    """
     nv = len(Nv)
     for m in prange(len(j0s)):
         j0 = j0s[m]
