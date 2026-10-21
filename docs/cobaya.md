@@ -70,10 +70,12 @@ a deterministic `shared_Neff_guard` rejection. `auto_escalate` with
 escalates when the estimated `|Delta logL|` exceeds the budget.
 It also escalates when the fast error budget marks its solver-path calibration
 as unsupported. The retry resets the model to its original `DN_eff` before
-running the validation preset or independent reference engine.
+running the validation preset or independent reference engine. A failed retry is
+reported as `FAST_ESCALATION_FAILED`; stale fast error-budget fields are cleared.
 
 启用 `auto_escalate` 时，除似然误差超限外，若当前快速路径没有对应的误差校准，也会升级求解。
 升级前会将模型恢复到原始 `DN_eff`，再运行验证档或独立参考引擎。
+重算失败时状态为 `FAST_ESCALATION_FAILED`，旧快速求解的误差字段会清除。
 
 The serial adapter only requires the `cobaya` extra. Install the separate
 `mpi` extra when the execution environment actually needs `mpi4py`.

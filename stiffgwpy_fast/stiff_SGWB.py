@@ -404,23 +404,24 @@ class LCDM_SG(LCDM_SN):
                         self.escalated_from = accuracy_mode
                         self.escalations = getattr(self, 'escalations', 0) + 1
                         self.reset()
+                        self.local_error_budget = None
+                        self.DN_gw_error = 0.0
+                        self.Delta_Neff_abs_error = 0.0
+                        self.spectrum_error = 0.0
+                        self.quadrature_error = 0.0
                         if escalate_to_reference:
                             result = self.SGWB_iter(engine='reference')
-                            self.DN_gw_error = 0.0
-                            self.spectrum_error = 0.0
-                            self.quadrature_error = 0.0
                         else:
                             result = self.SGWB_iter(engine='fast',
                                                     accuracy_mode='reference')
-                            if result is not None:
-                                try:
-                                    self.local_error_budget = fast_sgwb.estimate_local_error(self)
-                                    self.DN_gw_error = self.local_error_budget['DN_gw_error']
-                                    self.spectrum_error = self.local_error_budget['DN_gw_error']
-                                    self.quadrature_error = self.local_error_budget['categories']['quadrature']['value']
-                                except Exception:
-                                    pass
-                        _mark_eval_status(self, 'FAST_ESCALATED')
+                        status = ('FAST_ESCALATED' if result is not None
+                                  else 'FAST_ESCALATION_FAILED')
+                        if result is None:
+                            self.DN_gw_error = None
+                            self.Delta_Neff_abs_error = None
+                            self.spectrum_error = None
+                            self.quadrature_error = None
+                        _mark_eval_status(self, status)
             return result
         if engine != 'lsoda':
             raise ValueError("engine must be 'lsoda' or 'fast', got %r" % (engine,))
