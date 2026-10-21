@@ -10,7 +10,7 @@ Code version: the current solver profile below used
 source commit `c185df58938a05c208410a5cd47faafbc5d7fa2c`. Each run artifact
 records its own commit.
 
-## Current fixed-resource full-path solver profile
+## 2026-10-21 fixed-resource full-path solver profile
 
 The 2026-10-21 profile ran the current `fast` preset with PCHIP, the goal
 frequency grid, exact kink split, and `phase_max=0.25`. It used 2 Numba
