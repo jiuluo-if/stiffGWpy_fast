@@ -261,7 +261,9 @@ class stiffGW(Theory):
                                                   state['hubble'] / math.pi)
                                      - log10f_yr),
                 'f_end': np.power(10., m.f[0]),
-                'Delta_Neff_GW_error': getattr(m, 'DN_gw_error', 0.0),
+                'Delta_Neff_GW_error': (
+                    np.nan if getattr(m, 'DN_gw_error', None) is None
+                    else m.DN_gw_error),
             }
             if tuple(derived) != self.DERIVED_PARAMS:
                 raise RuntimeError('derived parameter contract drift: %s != %s'

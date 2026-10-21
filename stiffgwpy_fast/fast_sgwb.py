@@ -724,11 +724,6 @@ def estimate_local_error(m):
         ),
         self_consistency=dict(value=self_consistency, kind="local", certification="local-measured"),
     )
-    # The formal kink-split / goal-grid path has no matching calibration
-    # anchors in the historical error-budget experiments. Keep the existing
-    # proxy values for diagnostics, but do not present them as calibrated.
-    # 正式 kink-split / goal 网格路径没有对应的历史校准样本；保留代理数值供诊断，
-    # 但不将其标记为已校准误差。
     uncertified_terms = []
     if ks and not tr:
         uncertified_terms.extend(("background_model", "sigma_transition"))

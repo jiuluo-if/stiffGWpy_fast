@@ -121,6 +121,12 @@ class LCDM_SG(LCDM_SN):
             self.cosmo_param['DN_eff'] = self.DN_eff_orig
         self.DN_eff_orig = None
         self.SGWB_converge = False     # Whether the SGWB has been successfully computed
+        self.local_error_budget = None
+        self.DN_gw_error = None
+        self.Delta_Neff_abs_error = None
+        self.spectrum_error = None
+        self.quadrature_error = None
+        self.error_estimates = None
 
 
     def run_SGWB_single(self, freq, z_tail=5.0, rtol=1e-6, atol=None):
@@ -327,13 +333,15 @@ class LCDM_SG(LCDM_SN):
                 self.last_fast_error = repr(exc)
                 self.fast_failure_reason = 'exception'
                 if not fallback:
+                    _mark_eval_status(self, 'FAST_FAILED')
                     raise
                 print('SGWB_iter: fast engine failed (%s); falling back to LSODA.' % exc)
                 self.lsoda_fallbacks = getattr(self, 'lsoda_fallbacks', 0) + 1
                 fallback_attempted = True
                 self.reset()
                 result = self.SGWB_iter(engine='lsoda')
-                _mark_eval_status(self, 'LSODA_FALLBACK')
+                if result is not None:
+                    _mark_eval_status(self, 'LSODA_FALLBACK')
             reason = getattr(self, 'fast_failure_reason', None)
             if result is None and reason == 'shared_Neff_guard':
                 # Both engines reject this deterministic non-physical point;
@@ -355,10 +363,22 @@ class LCDM_SG(LCDM_SN):
                 fallback_attempted = True
                 self.reset()
                 result = self.SGWB_iter(engine='lsoda')
-                _mark_eval_status(self, 'LSODA_FALLBACK')
-            elif result is None and reason != 'shared_Neff_guard':
+                if result is not None:
+                    _mark_eval_status(self, 'LSODA_FALLBACK')
+            elif (result is None and reason != 'shared_Neff_guard'
+                  and not fallback_attempted):
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = self.last_fast_error or 'fast solver returned None'
+            if result is None:
+                if reason == 'shared_Neff_guard':
+                    status = 'FAST_GUARD_REJECTED'
+                elif reason in ('invalid_r', 'invalid_cutoff'):
+                    status = 'FAST_PHYSICAL_REJECTED'
+                elif fallback_attempted:
+                    status = 'LSODA_FALLBACK_FAILED'
+                else:
+                    status = 'FAST_FAILED'
+                _mark_eval_status(self, status)
             if result is not None:
                 # Local a-posteriori error budget (physics-first, per point):
                 # WKB handoff / frequency grid / quadrature / phase truncation
@@ -380,9 +400,6 @@ class LCDM_SG(LCDM_SN):
                     # estimated |Delta logL| from the local Delta N_eff error
                     # exceeds the requested budget (sigma = effective sigma of
                     # the likelihood on Delta N_eff; dlogl_tol = budget in
-                    # natural log-units). Unsupported solver-path calibration
-                    # also escalates: its proxy budget is not a certified gate.
-                    # 中文：若当前求解路径没有对应校准，自动升级；代理误差不能作为已认证门限。
                     budget_status = (getattr(self, 'local_error_budget', None) or {}).get(
                         'certification_status', 'uncertified')
                     do_escalate = budget_status.startswith('uncertified')
@@ -397,18 +414,9 @@ class LCDM_SG(LCDM_SN):
                         do_escalate = do_escalate or (
                             float(getattr(self, 'DN_gw_error', 0.0) or 0.0) > tol_err)
                     if do_escalate:
-                        # The requested budget is exceeded or unsupported by a
-                        # matching calibration. Re-solve from the original
-                        # Delta N_eff with a validation preset or reference.
-                        # 中文：超出误差门限或缺少对应校准时，从原始 Delta N_eff 重新求解并升级精度。
                         self.escalated_from = accuracy_mode
                         self.escalations = getattr(self, 'escalations', 0) + 1
                         self.reset()
-                        self.local_error_budget = None
-                        self.DN_gw_error = 0.0
-                        self.Delta_Neff_abs_error = 0.0
-                        self.spectrum_error = 0.0
-                        self.quadrature_error = 0.0
                         if escalate_to_reference:
                             result = self.SGWB_iter(engine='reference')
                         else:
@@ -416,11 +424,6 @@ class LCDM_SG(LCDM_SN):
                                                     accuracy_mode='reference')
                         status = ('FAST_ESCALATED' if result is not None
                                   else 'FAST_ESCALATION_FAILED')
-                        if result is None:
-                            self.DN_gw_error = None
-                            self.Delta_Neff_abs_error = None
-                            self.spectrum_error = None
-                            self.quadrature_error = None
                         _mark_eval_status(self, status)
             return result
         if engine != 'lsoda':
