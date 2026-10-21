@@ -230,12 +230,12 @@ class stiffGW(Theory):
         else:
             m.SGWB_iter(engine=self.engine, fallback=self.fallback, **sgwb_kwargs)
 
+        self.last_eval_status = getattr(m, 'last_eval_status', 'UNKNOWN')
         if not m.SGWB_converge:
             # logpost will be -inf; make sure any previous derived values are
             # not reused for this point.
             state.pop('derived', None)
             return False
-        self.last_eval_status = getattr(m, 'last_eval_status', 'UNKNOWN')
 
         state['f'] = m.f                                     # log10(f/Hz)
         state['omGW_stiff'] = m.log10OmegaGW                 # log10 Omega_GW(f)
