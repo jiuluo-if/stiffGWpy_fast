@@ -50,7 +50,9 @@ class LVK_SGWB_CC(Likelihood):
         sigma_LVK = self.data[:,2]
         
         Ogw_Model = np.zeros_like(Cf_LVK)
-        if f_theory[-1]>=f_LVK[0]:   # Calculate theoretical Omega_GW ONLY for LIGO frequency bins in its range, i.e., <= f_end
+        # Calculate theoretical Omega_GW only within the LIGO frequency range (<= f_end).
+        # 仅对理论频谱覆盖范围内的 LIGO 频点计算 Omega_GW。
+        if f_theory[-1]>=f_LVK[0]:
             f_t = f_theory[(f_theory >= -5)]; Ogw_t = Ogw_theory[(f_theory >= -5)]
             spec = interpolate.interp1d(f_t, Ogw_t, kind='cubic')
             
