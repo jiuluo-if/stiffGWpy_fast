@@ -44,6 +44,10 @@ Later PTA likelihood-cache timings are adapter-level measurements, not
 full-path solver profiles or accuracy evidence; see
 [`benchmarks.md`](benchmarks.md).
 
+The 2026-10-21 tensor sample-index change matched the baseline output arrays
+bit-for-bit in six benchmark regimes. This is an exact differential check, not
+new oracle-accuracy evidence or a full parameter-space certification.
+
 ## Likelihood and posterior evidence
 
 The 2026-09-03 importance-sampling validation compares the fast spectrum with
