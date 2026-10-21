@@ -165,8 +165,9 @@ def set_threads(n):
     n = int(n)
     if not 1 <= n <= _MAX_THREADS:
         raise ValueError("thread count must be an integer in [1, %d], got %d" % (_MAX_THREADS, n))
-    _THREADS = n
-    set_num_threads(_THREADS)
+    with _NUMBA_CONFIG_LOCK:
+        _THREADS = n
+        set_num_threads(_THREADS)
 
 
 def max_threads():
@@ -184,7 +185,8 @@ def set_col_step(n):
     n = int(n)
     if not 1 <= n <= 8:
         raise ValueError("column stride must be an integer in [1, 8], got %d" % n)
-    _COL_STEP = n
+    with _NUMBA_CONFIG_LOCK:
+        _COL_STEP = n
 
 
 def set_h(h):
@@ -197,7 +199,8 @@ def set_h(h):
     h = float(h)
     if not 1e-4 <= h <= 0.1:
         raise ValueError("step size must be in [1e-4, 0.1], got %r" % h)
-    _FAST_H = h
+    with _NUMBA_CONFIG_LOCK:
+        _FAST_H = h
 
 
 def set_z_tail(z):
@@ -209,7 +212,8 @@ def set_z_tail(z):
     z = float(z)
     if not 2.0 <= z <= 15.0:
         raise ValueError("z_tail must be in [2.0, 15.0], got %r" % z)
-    _Z_TAIL = z
+    with _NUMBA_CONFIG_LOCK:
+        _Z_TAIL = z
 
 
 def set_phase_max(pm):
@@ -223,7 +227,8 @@ def set_phase_max(pm):
     pm = float(pm)
     if not 0.0 <= pm <= 10.0:
         raise ValueError("phase_max must be in [0, 10], got %r" % pm)
-    _PHASE_MAX = pm
+    with _NUMBA_CONFIG_LOCK:
+        _PHASE_MAX = pm
 
 
 def set_freq_grid(name):
@@ -234,7 +239,8 @@ def set_freq_grid(name):
     global _FREQ_GRID
     if name not in ("construct", "grid_independent", "adaptive", "goal"):
         raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal, got %r" % name)
-    _FREQ_GRID = name
+    with _NUMBA_CONFIG_LOCK:
+        _FREQ_GRID = name
 
 
 def get_settings():
@@ -242,15 +248,16 @@ def get_settings():
 
     中文：读取旧版模块级设置快照；具名正式配置应优先通过逐次调用配置对象传入。
     """
-    return dict(
-        threads=_THREADS,
-        col_step=_COL_STEP,
-        h=_FAST_H,
-        z_tail=_Z_TAIL,
-        phase_max=_PHASE_MAX,
-        freq_grid=_FREQ_GRID,
-        kink_split=_KINK_SPLIT,
-    )
+    with _NUMBA_CONFIG_LOCK:
+        return dict(
+            threads=_THREADS,
+            col_step=_COL_STEP,
+            h=_FAST_H,
+            z_tail=_Z_TAIL,
+            phase_max=_PHASE_MAX,
+            freq_grid=_FREQ_GRID,
+            kink_split=_KINK_SPLIT,
+        )
 
 
 # Named presets: `fast` is public; the other modes are retained for validation.
@@ -444,28 +451,30 @@ def apply_accuracy_mode(name):
     """
     name = normalize_accuracy_mode(name)
     cfg = dict(ACCURACY_MODES[name])
-    set_col_step(cfg["col_step"])
-    set_h(cfg["h"])
-    set_z_tail(cfg["z_tail"])
-    set_phase_max(cfg.get("phase_max", 0.0))
-    set_freq_grid(cfg.get("freq_grid", "construct"))
-    set_threads(min(cfg["threads"], _MAX_THREADS))
-    global _KINK_SPLIT
-    _KINK_SPLIT = bool(cfg.get("kink_split", False))
-    return cfg
+    with _NUMBA_CONFIG_LOCK:
+        set_col_step(cfg["col_step"])
+        set_h(cfg["h"])
+        set_z_tail(cfg["z_tail"])
+        set_phase_max(cfg.get("phase_max", 0.0))
+        set_freq_grid(cfg.get("freq_grid", "construct"))
+        set_threads(min(cfg["threads"], _MAX_THREADS))
+        global _KINK_SPLIT
+        _KINK_SPLIT = bool(cfg.get("kink_split", False))
+        return cfg
 
 
 def get_config():
     """Return an immutable snapshot of the legacy module settings."""
-    return FastSolverConfig(
-        h=_FAST_H,
-        col_step=_COL_STEP,
-        z_tail=_Z_TAIL,
-        phase_max=_PHASE_MAX,
-        freq_grid=_FREQ_GRID,
-        threads=_THREADS,
-        kink_split=_KINK_SPLIT,
-    )
+    with _NUMBA_CONFIG_LOCK:
+        return FastSolverConfig(
+            h=_FAST_H,
+            col_step=_COL_STEP,
+            z_tail=_Z_TAIL,
+            phase_max=_PHASE_MAX,
+            freq_grid=_FREQ_GRID,
+            threads=_THREADS,
+            kink_split=_KINK_SPLIT,
+        )
 
 
 def resolve_config(name=None, base=None, **overrides):
@@ -496,14 +505,15 @@ def resolve_config(name=None, base=None, **overrides):
             kink_split=base.kink_split,
         )
     elif name is None:
+        config = get_config()
         values = dict(
-            h=_FAST_H,
-            col_step=_COL_STEP,
-            z_tail=_Z_TAIL,
-            phase_max=_PHASE_MAX,
-            freq_grid=_FREQ_GRID,
-            threads=_THREADS,
-            kink_split=_KINK_SPLIT,
+            h=config.h,
+            col_step=config.col_step,
+            z_tail=config.z_tail,
+            phase_max=config.phase_max,
+            freq_grid=config.freq_grid,
+            threads=config.threads,
+            kink_split=config.kink_split,
         )
     else:
         canonical = normalize_accuracy_mode(name)
