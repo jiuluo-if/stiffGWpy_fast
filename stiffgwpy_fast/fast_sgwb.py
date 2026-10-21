@@ -1271,6 +1271,9 @@ def solve_kernel(
         Phi0 = Phi_grid[j0]
         xh, yh = 0.0, math.exp(z0) * S2inv[j0]
         k = j0
+        # Track the next coarse sample instead of taking a modulo every step.
+        # 递增维护下一个粗采样列，避免每个积分步都执行取模。
+        next_assembly_k = (j0 // col_step + 1) * col_step
         zz = z0 + Phi_grid[k] - Phi0
         lxh = 0.0
         lyh = yh
@@ -1303,12 +1306,13 @@ def solve_kernel(
                     xh, yh = _phase_segment(xh, yh, z_node, z_end, h_step, phase_max)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
-                if k % col_step == 0:
+                if k == next_assembly_k:
                     if assemble:
                         slot = k // col_step
                         if slot >= n_coarse - 1:
                             slot = n_coarse - 1
                         assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
+                    next_assembly_k += col_step
                 elif k == nv - 1:
                     assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
                 if zz < z_tail:
