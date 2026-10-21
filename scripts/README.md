@@ -13,7 +13,7 @@ package imports and artifact paths resolve as documented.
 | `validate_*.py` | Replay fast/reference comparisons, parameter edges, sweeps, and mode checks |
 | `build_*.py` | Assemble validation matrices and manifests from existing artifacts |
 | `bench_*.py`, `benchmark_*.py` | Measure runtime, accuracy, or a named diagnostic hypothesis |
-| `profile_*.py` | Attribute end-to-end runtime to solver stages |
+| `profile_*.py` | Attribute solver-stage time or measure property/call overhead on a named path |
 | `smoke_*.py`, `verify_distribution.py` | Check installed-wheel resources and package boundaries |
 | `plot_*.py` | Render plots from saved validation or benchmark data |
 | `_resource_budget.py`, `_smoke_probe.py` | Shared support for thread limits and isolated smoke checks |

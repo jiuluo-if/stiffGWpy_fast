@@ -11,7 +11,7 @@
 | `validate_*.py` | 重放 fast/reference 对比、参数边缘、参数扫描和档位检查 |
 | `build_*.py` | 根据已有产物汇总验证矩阵和 manifest |
 | `bench_*.py`、`benchmark_*.py` | 测量运行时间、数值精度或指定诊断假设 |
-| `profile_*.py` | 将全流程耗时分解到求解器各阶段 |
+| `profile_*.py` | 分解求解器阶段耗时，或测量指定路径的属性/调用开销 |
 | `smoke_*.py`、`verify_distribution.py` | 检查安装后 wheel 的资源和打包边界 |
 | `plot_*.py` | 从已保存的验证或基准数据绘图 |
 | `_resource_budget.py`、`_smoke_probe.py` | 线程资源限制和隔离冒烟检查的共享工具 |
