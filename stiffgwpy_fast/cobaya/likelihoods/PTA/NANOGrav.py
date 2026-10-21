@@ -12,88 +12,91 @@ from scipy import interpolate
 
 
 class NANOGrav(Likelihood):
-    
     def initialize(self):
         """Load the density grid and prefit its fixed per-frequency splines.
 
         中文：读取 `NANOGrav.yaml` 指定的资源，并预拟合各频点的似然密度样条。
         """
-        self.data = np.load(self.kde_file)                   # Per-frequency log likelihood; 每个频点的对数似然密度。
-        self.log10rhogrid = np.load(self.log10rhogrid_file)  # log10(delay/s) = log10(sqrt(rho/s^2))；以秒为单位的时延网格。
-        self.freqs = np.load(self.freq_file)                 # PTA frequency bins in Hz; PTA 频点，单位为 Hz。
+        self.data = np.load(self.kde_file)  # Per-frequency log likelihood; 每个频点的对数似然密度。
+        self.log10rhogrid = np.load(
+            self.log10rhogrid_file
+        )  # log10(delay/s) = log10(sqrt(rho/s^2))；以秒为单位的时延网格。
+        self.freqs = np.load(self.freq_file)  # PTA frequency bins in Hz; PTA 频点，单位为 Hz。
         # These splines depend only on packaged likelihood data, not on theory parameters.
         # 这些样条只依赖随包分发的似然数据，与理论预测值无关。
         self._density_splines = tuple(
-            interpolate.CubicSpline(self.log10rhogrid, self.data[0, i])
-            for i in range(self.Nfreqs))
+            interpolate.CubicSpline(self.log10rhogrid, self.data[0, i]) for i in range(self.Nfreqs)
+        )
         self._log10rhogrid_min = float(np.min(self.log10rhogrid))
         self._log10rhogrid_max = float(np.max(self.log10rhogrid))
-    
+
     def close(self):
         pass
-    
-            
+
     def get_requirements(self):
         """Request frequency, SGWB spectrum, and Hubble value from the theory.
 
         中文：声明此似然需要 theory 提供 `f`、`omGW_stiff` 和 `hubble`。
         """
-        return {'f': None, 'omGW_stiff': None, 'hubble': None}
-    
-    
+        return {"f": None, "omGW_stiff": None, "hubble": None}
+
     def logp(self, _derived=None, **params_values):
         """Return the likelihood for the current theory and nuisance parameters.
 
         中文：取回 theory 频率、SGWB 谱和 Hubble 值，转为递增频率顺序后计算 NANOGrav 似然。
         """
-        f_theory = np.flip(self.provider.get_result('f'))  # log10(f/Hz)
-        Ogw_theory = np.flip(self.provider.get_result('omGW_stiff'))  # log10(Omega_GW(f))
-        H_0 = self.provider.get_result('hubble')  # s^{-1}
-        
+        f_theory = np.flip(self.provider.get_result("f"))  # log10(f/Hz)
+        Ogw_theory = np.flip(self.provider.get_result("omGW_stiff"))  # log10(Omega_GW(f))
+        H_0 = self.provider.get_result("hubble")  # s^{-1}
+
         return self.log_likelihood(f_theory, Ogw_theory, H_0, **params_values)
 
-    
     def log_likelihood(self, f_theory, Ogw_theory, H_0, **data_params):
         """Evaluate the NANOGrav density grid; ``f_theory`` must be increasing.
 
         中文：组合原初 SGWB 与 SMBHB 前景；超出数据网格的模型值按边界密度计算。
         """
-        yr = u.yr.to(u.s)               # 一儒略年对应的秒数。
-        T_base = 1/self.freqs[0]        # PTA 数据基线长度，以秒表示。
-        
-        Nf = self.Nfreqs                # 工作频点数，由 Nfreqs 配置。
-        work_freqs = self.freqs[:Nf]    # 参与似然计算的频点，单位为 Hz。
+        yr = u.yr.to(u.s)  # 一儒略年对应的秒数。
+        T_base = 1 / self.freqs[0]  # PTA 数据基线长度，以秒表示。
+
+        Nf = self.Nfreqs  # 工作频点数，由 Nfreqs 配置。
+        work_freqs = self.freqs[:Nf]  # 参与似然计算的频点，单位为 Hz。
         # Limiting frequency bins can retain stiff-amplified models that higher-frequency data would exclude.
         # 限制工作频点可能保留本会被更高频数据排除的刚性物质放大模型。
-        
+
         # Primordial SGWB
         # 原初随机引力波背景。
         rho_prim = np.zeros_like(work_freqs)
         if f_theory[-1] >= math.log10(work_freqs[0]):
             cond = (f_theory > -13) & (f_theory < -5)
-            f_t = f_theory[cond]; Ogw_t = Ogw_theory[cond]
+            f_t = f_theory[cond]
+            Ogw_t = Ogw_theory[cond]
             spec_prim = interpolate.CubicSpline(f_t, Ogw_t)
 
-            cond = (np.log10(work_freqs)<=f_t[-1])
+            cond = np.log10(work_freqs) <= f_t[-1]
             # Calculate theoretical Omega_GW only within the PTA frequency range (<= f_end).
             # 仅对理论频谱覆盖范围内的 PTA 频点计算 Omega_GW。
-            Ogw_prim = spec_prim(np.log10(work_freqs[cond]))        
-            rho_prim[cond] = np.divide(np.power(10., Ogw_prim) * H_0**2, 8*np.pi**4 * work_freqs[cond]**5 * T_base)  # s^2
+            Ogw_prim = spec_prim(np.log10(work_freqs[cond]))
+            rho_prim[cond] = np.divide(
+                np.power(10.0, Ogw_prim) * H_0**2, 8 * np.pi**4 * work_freqs[cond] ** 5 * T_base
+            )  # s^2
 
         # SGWB from SMBHBs
         # 超大质量黑洞双星背景。
-        log10hc_BH = data_params['A_BBH']      # log10(h_c) at f_yr；一年频率处的特征应变对数。
-        gamma_BH = data_params['gamma_BBH']
-        rho_BH = np.power(10., log10hc_BH*2) * np.power(work_freqs*yr, -gamma_BH) * yr**3 / (12*np.pi**2 * T_base)   # s^2
-        
-        log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))    # log10(delay/s) = log10(sqrt(rho/s^2))
+        log10hc_BH = data_params["A_BBH"]  # log10(h_c) at f_yr；一年频率处的特征应变对数。
+        gamma_BH = data_params["gamma_BBH"]
+        rho_BH = (
+            np.power(10.0, log10hc_BH * 2) * np.power(work_freqs * yr, -gamma_BH) * yr**3 / (12 * np.pi**2 * T_base)
+        )  # s^2
+
+        log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))  # log10(delay/s) = log10(sqrt(rho/s^2))
 
         logL = 0
         for i in range(Nf):
             density_spline = self._density_splines[i]
-            if log10rho_Model[i]>self._log10rhogrid_max:
+            if log10rho_Model[i] > self._log10rhogrid_max:
                 logL += density_spline(self._log10rhogrid_max)
-            elif log10rho_Model[i]<self._log10rhogrid_min:
+            elif log10rho_Model[i] < self._log10rhogrid_min:
                 logL += density_spline(self._log10rhogrid_min)
             else:
                 logL += density_spline(log10rho_Model[i])
