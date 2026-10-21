@@ -34,6 +34,13 @@ module settings. The adapter passes the resolved settings as an immutable,
 per-call configuration, so mode selection does not change process-global
 defaults.
 
+For concurrent evaluations within one process, `workqueue` parallel calls are
+serialized because that backend is not thread-safe. Before Numba initializes
+the backend, calls are serialized conservatively. Explicit per-call configs on
+initialized TBB/OpenMP backends can run concurrently; legacy calls without a
+config remain serialized. See the [backend throughput comparison](benchmarks.md).
+
+
 ## `eval_freqs`
 
 Set `eval_freqs: [log10(f1), ...]` or `eval_freqs: /path/to/file` to add native
