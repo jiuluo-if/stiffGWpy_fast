@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib
 import json
 import os
@@ -130,12 +131,16 @@ def _measure(adapter: str, module_path: str, source_path: str, class_name: str, 
         "cached_initialize_ms": cached_initialize_ms,
         "baseline_median_ms": 1e3 * baseline_median,
         "cached_median_ms": 1e3 * cached_median,
+        "baseline_samples_ms": [1e3 * value for value in baseline_times],
+        "cached_samples_ms": [1e3 * value for value in cached_times],
         "cached_over_baseline": cached_median / baseline_median,
         "cache_pickle_bytes": len(pickle.dumps(caches, protocol=pickle.HIGHEST_PROTOCOL)),
         "outputs_exact": baseline_values == cached_values,
         "max_abs_delta": max(abs(old - new) for old, new in zip(baseline_values, cached_values)),
         "baseline_output": baseline_values[0],
         "cached_output": cached_values[0],
+        "baseline_timed_outputs": baseline_values,
+        "cached_timed_outputs": cached_values,
         "differential_exact_matches": sum(case["exact"] for case in differential_cases),
         "differential_case_count": len(differential_cases),
         "differential_max_abs_delta": max(
@@ -179,6 +184,7 @@ def run() -> dict:
     return {
         "date": started_at.date().isoformat(),
         "started_at": started_at.isoformat(timespec="seconds"),
+        "benchmark_script_sha256": hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest(),
         "baseline_commit": BASELINE_COMMIT,
         "candidate_commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True

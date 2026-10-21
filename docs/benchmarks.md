@@ -6,7 +6,7 @@ Date: 2026-10-21
 
 Code version: the Round 68 solver profile below used
 `c7d4766f15c1cda4693d306597723de50abd4554`. The PTA cache comparison used
-source commit `77fe2b0e8e273f4fb487d46e37803619d68f27de`. Each run artifact
+source commit `c185df58938a05c208410a5cd47faafbc5d7fa2c`. Each run artifact
 records its own commit.
 
 ## Latest fixed-resource full-path solver profile
@@ -51,14 +51,15 @@ calls per implementation after one warm-up call. It records these medians:
 
 | Adapter | Before median | Cached median | Cached initialization | Serialized cache per instance |
 |---|---:|---:|---:|---:|
-| IPTA | 34.629 ms | 28.239 ms | 66.462 ms | 4,321,682 bytes |
-| NANOGrav | 5.734 ms | 0.304 ms | 8.915 ms | 5,601,185 bytes |
+| IPTA | 34.033 ms | 27.568 ms | 66.933 ms | 4,321,682 bytes |
+| NANOGrav | 4.574 ms | 0.203 ms | 7.198 ms | 5,601,185 bytes |
 
 All 25 timed outputs matched exactly between implementations. A separate
 10-case nuisance/theory sweep per adapter also matched exactly, with maximum
 absolute difference zero. The run records its environment and results in
 [`benchmark_pta_likelihood_cache_20261021.json`](benchmark_pta_likelihood_cache_20261021.json);
-reproduce it from the repository root with
+the JSON retains all timed samples and outputs so the medians and exactness
+checks can be recomputed. To reproduce it from the repository root, run
 `python scripts/benchmark_pta_likelihood_cache.py`. By default, the script
 writes a new timestamped JSON file; `--output` selects a specific path.
 These local adapter timings exclude initialization from each evaluation and
