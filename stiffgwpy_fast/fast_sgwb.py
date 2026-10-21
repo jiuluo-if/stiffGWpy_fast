@@ -1880,6 +1880,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # int_SGWB_W and physically equal 0 (modes still far outside
                 # the horizon); np.empty made the result depend on stale
                 # heap contents and could occasionally leak NaN into g2/w2.
+                # solve_kernel 从每个频点越过地平线三数量级后的 j0 列开始写入，
+                # 更早的列不会被赋值，但后续 int_SGWB_W 会读取这些列，因此必须
+                # 清零。模仍在地平线外时这些贡献物理上为零；np.empty 可能把旧内存带入 g2/w2。
                 Ogw = np.zeros((Nf, n_coarse)); Oj = np.zeros((Nf, n_coarse)); Opgw = np.zeros((Nf, n_coarse))
                 handoff_eps = np.full(Nf, -1.0)
                 _fresh_buffers = True
@@ -1887,6 +1890,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
             # (horizon-crossing adaptive step control); Sv supplies sigma at the
             # handoff node for the damping-corrected WKB amplitude, handoff_eps
             # receives the per-mode adiabaticity error |1.5*sigma-1|*e^{-z}.
+            # phase_max 限制每个积分子步的相位增量 dTheta=e^z dh，用于地平线穿越处的自适应步长。
+            # Sv 提供交接点的 sigma 以计算阻尼修正 WKB 振幅；handoff_eps 记录每个模的绝热误差
+            # |1.5*sigma-1|*e^{-z}。
             # 首轮完整求解才能启用下面的稳定背景快捷路径；所有兼容路径继续保留
             # 历史上的首轮仅探测行为。
             assemble = 1 if outer_full_reuse else (0 if _iter == 0 else 1)
@@ -1946,6 +1952,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
                 # integrand share 0.5(Om_i+Om_{i+1}) h_i / sum(w) makes the
                 # criterion sensitive to the Delta N_eff integral, not to
                 # weightless low-amplitude tail structure.
+                # 频率加密判据按对 Delta N_eff 积分的贡献加权：用 PCHIP 对 log10(Omega_GW)
+                # 的二阶导数估计区间插值误差，再乘以该区间的积分权重份额；这样低幅值尾部
+                # 不会仅因局部曲率较大而主导加密判定。
                 Om_cur = np.maximum(Ogw[:, -1] - Oj[:, -1], 1e-300)
                 lo_cur = np.log10(Om_cur)
                 srt = np.argsort(freqs)
@@ -2060,6 +2069,8 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         # The interval sum is deliberately conservative: cancellation between
         # local candidate and Simpson differences is not allowed to hide a
         # potentially large local quadrature contribution.
+        # 区间误差按绝对贡献保守累加，避免局部候选项与 Simpson 差值相互抵消，
+        # 掩盖可能较大的局部求积误差。
         _local_err, _local_candidate, _local_baseline = (
             estimate_frequency_quadrature_local(
                 integration_freqs, _support_Om, frequency_quadrature,
@@ -2078,6 +2089,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         m.quadrature_error_estimator_max_rel = 0.0
         # Richardson's Simpson/trapezoid embedded pair is the cheap default
         # estimator; it remains unchanged for the formal fast path.
+        # 正式 fast 路径继续使用轻量的 Simpson/梯形嵌入式估计器，误差取两者积分绝对差的 1/15。
         _I_estimate = abs(_I_simp - _I_trap) / 15.0
     m.estimated_DN_quadrature_error = gp.Neff0 * _I_estimate / Omega_nu
     m.estimated_DN_quadrature_error_rel = (
@@ -2088,6 +2100,7 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
         m.quadrature_error_local = abs(_I_simp - _I_trap)/15.0/max(abs(_I_simp), 1e-300)
     # Local floating-point/cancellation: Ogw = Oj + remainder near the peak;
     # eps64 * max|Oj|/|Ogw-Oj| bounds the relative subtraction error.
+    # 峰值附近 Ogw = Oj + remainder 会发生相减消去；该比值估计舍入误差相对于余项的放大。
     _num = float(np.max(np.abs(m.Oj_today)/np.maximum(np.abs(_Om), 1e-300)))
     m.cancellation_ratio = _num
     m.floating_point_error = 2.2e-16*_num + 2.2e-16*math.sqrt(Nf)
@@ -2097,6 +2110,9 @@ def _SGWB_iter_fast_impl(m, tol=1e-4, freq_res=1.0, sigma_exact=False,
     # phase increment that were actually used, freq_grid_* = the adaptive
     # frequency-grid status (used builder, final quadrature-weighted error
     # estimate, point count).
+    # 以下物理遥测供 Cobaya 适配器和误差预算读取：handoff_eps 是交接点的逐模绝热误差；
+    # z_tail_used 和 phase_max_used 记录实际使用的尾部阈值与相位步长上限；freq_grid_* 记录
+    # 网格构造器、最终加权误差估计和频点数。
     m.handoff_eps = np.asarray(handoff_eps)
     m.z_tail_used = z_tail
     m.phase_max_used = phase_max
