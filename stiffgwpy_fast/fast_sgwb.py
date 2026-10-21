@@ -67,6 +67,8 @@ __all__ = [
 # count).  We do NOT force a fixed number at import time -- that previously
 # raised ValueError on machines with fewer than 32 cores -- and only call
 # set_num_threads() when FAST_THREADS is explicitly set.
+# 默认使用 Numba 根据可用核心数选择线程；导入模块时不强行固定线程数，只有显式设置
+# FAST_THREADS 才调用 set_num_threads()，避免核心数不足时发生 ValueError。
 _MAX_THREADS = get_num_threads()
 _THREADS = _MAX_THREADS
 _NUMBA_CONFIG_LOCK = RLock()
@@ -99,6 +101,7 @@ if _fast_h_env is not None:
 # Deep-subhorizon analytic-tail threshold (z = ln(k/aH) at which the numerical
 # stepping hands over to the analytic tail).  The original LSODA path uses the
 # same z_tail value when configured (see functions.solve_SGWB).
+# z_tail 是数值积分切换到解析尾部时的深亚视界阈值；原始 LSODA 路径配置后也使用该值。
 _Z_TAIL = 5.0
 _fast_ztail_env = _os.environ.get("FAST_Z_TAIL")
 if _fast_ztail_env is not None:
@@ -385,12 +388,14 @@ ERROR_BUDGET = {
     # at the mode's h, taken from the measured h-convergence curve (default point):
     # h=0.02 -> +3.9%, h=0.01 -> +1.3%, h=0.005 -> +0.55%,
     # h=0.0025 -> +0.46%, h=0.00125 -> +0.22%, h~0 -> +0.10%.
+    # model_bias 表示 reference.py 连续 sigma 与固定 sigma 网格解在对应 h 下的相对偏差；
+    # 以上数值来自默认参数点的 h 收敛曲线。
     # Compatibility note: ERROR_BUDGET['fast'].model_bias retains the original
     # h=0.02 anchor; the current user-facing fast preset uses h=0.005. This table
     # is a legacy broad budget, not a fresh calibration at the current preset.
     # 兼容说明：`fast` 项仍保留原 h=0.02 的 3.9% 锚点；当前正式 fast 使用 h=0.005。该表是
     # 历史预算，不代表当前预设重新校准后的偏差或认证结果。
-    # 频率积分项按默认 PCHIP 积分核重新标定：相对 Oracle C WKB 锚点实测
+    # 频率积分项按默认 PCHIP 积分核重新标定：相对 Oracle C WKB 锚点
     # 实测为 1.07e-5（default）、1.66e-4（lowT）、9.88e-6（highT）、1.15e-5（stiff）；
     # 同网格 reference 残差 2.94e-4 是尾部/传递与积分合并残差，不能全部
     # 归给积分项，故这里取 2.0e-4 作为上限。
