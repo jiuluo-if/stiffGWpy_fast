@@ -484,18 +484,22 @@ class LCDM_SG(LCDM_SN):
             self.DN_gw = Neff0 * np.multiply(self.g2, np.exp(2*(self.f_hor-self.f_hor[-1])*ln10+2*(self.Nv-self.Nv[-1]))) / Omega_nu
             # Obtain the entire evolution of the DN_eff due to SGWB. It is actually rho_GW(N) / (rho_{gamma,0}*7/8*(4/11)**(4/3)).
             # Now self.DN_gw[-1] + self.DN_eff_orig = self.cosmo_param['DN_eff'].
+            # 沿 N 记录 SGWB 对有效中微子数的贡献；末端值与输入 DN_eff_orig 相加即为收敛后的 DN_eff。
 
             self.Ogw_today = np.array([self.Ogw[i][-1] for i in range(len(self.f))])
             self.Opgw_today = np.array([self.Opgw[i][-1] for i in range(len(self.f))])
             self.Oj_today = np.array([self.Oj[i][-1] for i in range(len(self.f))])
             self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)  # log10(Omega_GW(f))
             # Ignoring the negative super-horizon contribution from Omega_j, for the moment...
+            # 当前谱暂不扣除超视界阶段 Omega_j 的负贡献。
 
             ###  Extra radiation (e.g., SGWB) parameterized as kappa_rad(T_i) for AlterBBN
 
             self.kappa_r = self.cosmo_param['DN_eff']* 7/8*(4/11)**(4/3) * z_ratio**4
             # Using the final asymptotic value of Delta N_eff, since for all reasonable T_re (>~ 1 MeV),
             # Delta N_eff,GW has already (or almost) reached its asymptotic value by T_i=27e9 K for AlterBBN.
+            # 对合理的再加热温度（约高于 1 MeV），到 AlterBBN 的 T_i=27e9 K 时，
+            # SGWB 引起的 Delta N_eff 已基本达到渐近值，因此这里使用最终值。
 
         return self if self.SGWB_converge else None
 

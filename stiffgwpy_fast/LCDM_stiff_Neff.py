@@ -75,6 +75,8 @@ class LCDM_SN:
             # During one fast solve all cosmological inputs except DN_eff are
             # immutable; the outer loop changes only this self-consistency
             # variable.  The fast driver clears this cache at solve start.
+            # 单次 fast 求解期间，除 DN_eff 外的宇宙学输入不变；外层迭代只更新该自洽变量。
+            # 求解器会在每轮开始时清除此缓存。
             cache_key = self.cosmo_param['DN_eff']
             if (getattr(self, '_fast_derived_cache_key', None)
                     == cache_key):
@@ -100,18 +102,20 @@ class LCDM_SN:
             derived_dict['rho_re'] = spl_rho(derived_dict['N_re'])
         self.rhorad_re = (derived_dict['rho_re'] + 7/8*(4/11)**(4/3)*self.cosmo_param['DN_eff']) * (TCMB_GeV*math.exp(N_10))**4
         # rho_rad coefficient at T_re, including extra radiation, in GeV^4
+        # 再加热温度处的辐射密度系数，含额外辐射，单位为 GeV^4。
         self.rhostiff_re = self.cosmo_param['kappa10'] * 1e-8 * math.exp(2*(derived_dict['N_re']-N_10))   # rho_stiff coefficient at T_re, in GeV^4
-        #derived_dict['f_re'] = math.exp(derived_dict['N_re']-2*N_10)*1e9/(6*math.sqrt(5)*M_Pl*hbar) * math.sqrt(self.rhorad_re+self.rhostiff_re)
-        # Hz, frequency at the end of reheating
+        # 再加热温度处的刚性物质密度系数，单位为 GeV^4。
 
         derived_dict['N_inf'] = None
         if self.cosmo_param['cr'] > 0:
             if self.cosmo_param['r'] > 0:
                 derived_dict['V_inf'] = (1.5*derived_dict['A_t'])**.25 * math.pi**.5 * M_Pl
-                # ( GeV)^4, energy scale of single field, slow-roll inflaion
+                # ( GeV)^4, energy scale of single-field slow-roll inflation.
+                # 单场慢滚暴胀的能标，单位为 GeV^4。
 
                 Delta_N = (N_10-derived_dict['N_re'])*4/3 + math.log(M_Pl)*4/3 + math.log(45/2*derived_dict['A_t']/(self.rhorad_re+self.rhostiff_re))/3
                 # Lookback number of e-folds from the end of inflation to the end of reheating, a^{-3} matter-like evolution
+                # 假设暴胀结束至再加热结束期间按 a^{-3} 物质型演化，计算这段回望 e 折数。
 
                 if Delta_N >= 0:
                     derived_dict['N_inf'] = derived_dict['N_re'] + Delta_N
@@ -165,12 +169,14 @@ class LCDM_SN:
         if Nv[-1] != self.derived_param['N_inf']:
             Nv = np.append(Nv, self.derived_param['N_inf'])
         # Nv is equivalent to ln(a), its present-day value is set at Nv[-1] = N_inf.
+        # Nv 对应 ln(a)，并将今天的端点设为 Nv[-1]=N_inf。
         Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv proportional to f_H = aH/(2*pi)
 
 
         #####    Main loop: Calculating expansion history    #####
 
         index_re = int(np.argmin(np.abs(Nv - (self.derived_param['N_inf'] - self.derived_param['N_re']))))
+        # 再加热边界落在网格上最近的节点；连续边界位置由 N_inf-N_re 给出。
 
         for i in range(index_re, len(Nv), 1):
             eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 1/a and 1/a^3
@@ -199,8 +205,10 @@ class LCDM_SN:
         Sv[0:index_re] = 1
         fv[0:index_re] = fv[index_re] - 0.5*(Nv[0:index_re] - Nv[index_re])
         # reheating is assumed to be MD since the end of inflation
+        # 暴胀结束至再加热结束按 MD（物质主导）分支延拓，故 sigma=1。
 
         # Convert fv into physical units: here \tilde f_H = ln (f_H/Hz)
+        # 将 fv 转换为 ln(f_H/Hz)，最终再除以 ln(10) 输出 log10(f_H/Hz)。
         f0 = fv[-1]; Delta_f = math.log(2*math.pi/self.derived_param['H_0'])
         fv = fv - f0 - Delta_f
 
