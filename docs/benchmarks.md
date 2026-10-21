@@ -38,6 +38,41 @@ Raw per-case records: [`default`](profile_fast_breakdown_cdbdb38_20261021_defaul
 [`stiff`](profile_fast_breakdown_cdbdb38_20261021_stiff.json), and
 [`high-kappa`](profile_fast_breakdown_cdbdb38_20261021_high_kappa.json).
 
+## Tensor sample-index optimization A/B (2026-10-21)
+
+The kernel now tracks the next coarse output column and advances that index
+only when the integration reaches it. This removes a modulo operation from
+each inner integration step; transfer arithmetic and output-slot selection are
+unchanged. The baseline kernel was loaded from commit
+`68b17acf8e049bf17ed100422da0f2f3553f15e9`; the optimized implementation is
+commit `ae460e9a1aec46a902033ad287d5f424413c7972`.
+
+The full-path A/B alternated baseline and candidate 80 times in each of the
+six fast benchmark regimes, using two Numba `workqueue` threads, static
+chunks, and CPU affinity `[0, 1]`. All five output-array digests matched for
+every run, and convergence/failure states matched. Paired percentage changes
+are candidate relative to baseline; confidence intervals use 20,000 bootstrap
+resamples of paired round indices.
+
+| Case | Total paired median change | Bootstrap 95% interval |
+|---|---:|---:|
+| default | −2.52% | −4.79% to +1.73% |
+| high-T | −5.48% | −7.98% to −3.66% |
+| stiff | −6.97% | −8.65% to −4.78% |
+| high-kappa | −5.14% | −7.61% to −3.23% |
+| low-T | −7.89% | −9.10% to −5.04% |
+| low-r | −6.63% | −11.07% to −1.75% |
+| Round-wise geometric mean | −5.44% | −7.18% to −3.55% |
+
+The tensor stage's round-wise geometric-mean paired median improved by 9.29%
+(95% interval 7.51% to 10.30% faster). Additional five-repeat full-path
+comparisons at `col_step=1` and `col_step=4` also matched all output digests;
+those short compatibility checks are not speed claims. The six-regime A/B
+adds no oracle-accuracy points or broad parameter-space certification. Raw
+samples, hashes, and the benchmark script are in
+[`benchmark_kernel_assembly_stride_20261021.json`](benchmark_kernel_assembly_stride_20261021.json)
+and [`benchmark_kernel_assembly_stride.py`](../scripts/benchmark_kernel_assembly_stride.py).
+
 ## Historical Round 68 full-path profile
 
 The only user-facing fast profile uses `frequency_quadrature=pchip` with
