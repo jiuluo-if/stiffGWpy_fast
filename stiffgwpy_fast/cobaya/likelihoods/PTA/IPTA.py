@@ -3,23 +3,30 @@
 中文：根据 PTA 频点上的原初 SGWB 谱和 SMBHB 背景，使用每个频点的样本分布计算 IPTA 似然。
 """
 
-from cobaya.likelihood import Likelihood
-from cobaya.log import LoggedError, get_logger
-import numpy as np
-import os, math
+import math
+
 import astropy.units as u
+import numpy as np
+from cobaya.likelihood import Likelihood
 from scipy import interpolate
 from scipy.stats import gaussian_kde as kde
+
 
 class IPTA(Likelihood):
     
     def initialize(self):
-        """Load the sample array and frequency bins configured for IPTA.
+        """Load IPTA samples and prefit one KDE for each configured frequency.
 
-        中文：从 `IPTA.yaml` 指定的 `sample_file` 和 `freq_file` 读取样本与频率。
+        中文：读取 `IPTA.yaml` 指定的样本和频率，并预拟合每个频点的 KDE。
         """
         self.data = np.loadtxt(self.sample_file)
         self.freqs = np.loadtxt(self.freq_file)
+        # Per-bin bounds and KDEs depend only on these fixed samples.
+        # 每个频点的边界和 KDE 只依赖固定样本，不依赖 theory 输出。
+        self._log10rho_max = np.max(self.data, axis=0)
+        self._log10rho_min = np.min(self.data, axis=0)
+        self._kde_by_frequency = tuple(
+            kde(self.data[:, i]) for i in range(self.Nfreqs))
     
     def close(self):
         pass
@@ -38,9 +45,9 @@ class IPTA(Likelihood):
 
         中文：取回频谱和 Hubble 值，转为递增频率顺序后传给独立的似然计算函数。
         """
-        f_theory = self.provider.get_result('f'); f_theory = np.flip(f_theory)                  # log10(f/Hz)
-        Ogw_theory = self.provider.get_result('omGW_stiff'); Ogw_theory = np.flip(Ogw_theory)   # log10(Omega_GW(f))
-        H_0 = self.provider.get_result('hubble')                                                # s^{-1}
+        f_theory = np.flip(self.provider.get_result('f'))  # log10(f/Hz)
+        Ogw_theory = np.flip(self.provider.get_result('omGW_stiff'))  # log10(Omega_GW(f))
+        H_0 = self.provider.get_result('hubble')  # s^{-1}
         
         return self.log_likelihood(f_theory, Ogw_theory, H_0, **params_values)
 
@@ -56,8 +63,8 @@ class IPTA(Likelihood):
         
         Nf = self.Nfreqs                 # Number of work frequencies, i = 1 - Nf
         work_freqs = self.freqs[:Nf]     # work frequencies in Hz
-        # Caveat: limiting frequency bins may lead to the survival of some stiff-amplified models 
-        # which would otherwise be ruled out by high-frequency data (i=Nf+1 - Ntot)
+        # Limiting work frequencies can retain stiff models that higher-frequency data would exclude (i=Nf+1-Ntot).
+        # 限制工作频点可能保留本会被高频数据排除的 stiff 模型（i=Nf+1-Ntot）。
 
         # Primordial SGWB
         rho_prim = np.zeros_like(work_freqs)
@@ -77,20 +84,17 @@ class IPTA(Likelihood):
         rho_BH = np.power(10., log10hc_BH*2) * np.power(work_freqs*yr, -gamma_BH) * yr**3 / (12*np.pi**2 * T_base)   # s^2
         
         log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))    # log10(delay/s) = log10(sqrt(rho/s^2))
-        #print(log10rho_Model)      
-
-        
-        log10rho = self.data
-        log10rho_max = np.max(log10rho, axis=0); log10rho_min = np.min(log10rho, axis=0)
-        KDE = {i: kde(log10rho[:,i]) for i in range(Nf)}
+        log10rho_max = self._log10rho_max
+        log10rho_min = self._log10rho_min
+        kde_by_frequency = self._kde_by_frequency
         
         logL = 0
         for i in range(Nf):
             if log10rho_Model[i]>log10rho_max[i]:
-                logL += KDE[i].logpdf(log10rho_max[i])[0]
+                logL += kde_by_frequency[i].logpdf(log10rho_max[i])[0]
             elif log10rho_Model[i]<log10rho_min[i]:
-                logL += KDE[i].logpdf(log10rho_min[i])[0]
+                logL += kde_by_frequency[i].logpdf(log10rho_min[i])[0]
             else:
-                logL += KDE[i].logpdf(log10rho_Model[i])[0]
+                logL += kde_by_frequency[i].logpdf(log10rho_Model[i])[0]
         
         return logL
