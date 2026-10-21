@@ -14,9 +14,11 @@ from scipy import interpolate
 from ._resources import package_path
 from .functions import int_FD
 
-#######   Constants. Do not change.   #######
+#######   Shared constants; do not change during a solve.   #######
+#######   共享常数；求解过程中不要修改。   #######
 
-# Base
+# Base physical constants
+# 基本物理常数
 
 kB = const.k_B.to(u.eV/u.K).value          # eV K^-1
 hbar = const.hbar.to(u.eV*u.s).value       # eV s
@@ -27,7 +29,8 @@ parsec = u.parsec.to(u.cm)                 # cm
 yr = u.yr.to(u.s)                          # seconds in a Julian year
 ln10 = math.log(10)
 
-# Derived
+# Derived physical constants
+# 派生物理常数
 
 rc = math.pi**2/(15*(hbar*c)**3)           # eV^-3 cm^-3, radiation constant = pi^2/(15*hbar^3*c^3)
 m_Pl = math.sqrt(hbar*c**3/(GN*eV))*1e-9   # GeV/c^2, Planck mass = sqrt(hbar*c/G)
@@ -35,31 +38,37 @@ M_Pl = m_Pl/math.sqrt(8*math.pi)           # GeV/c^2, reduced Planck mass
 f_piv = 0.05 *c/(2*math.pi*1e6*parsec)     # s^-1, CMB pivot scale = 0.05 Mpc^-1
 
 
-#######   Cosmological Parameters   #######
+#######   Cosmological parameters   #######
+#######   宇宙学参数   #######
 
-# Base
+# Base parameters
+# 基础参数
 
 TCMB = 2.7255  # K (Planck18.Tcmb0; hardcoded to drop the astropy.cosmology import)
+# 采用 Planck 2018 的 CMB 温度常数，避免导入 astropy.cosmology。
 TCMB_GeV = 1e-9*kB*TCMB   # GeV
 
 m_nu = 60                 # meV, for a single massive neutrino eigenstate
+# 单个有质量中微子本征态的质量。
 
 Neff0 = 3.044
-#tau_n = 878.4             # s, neutron lifetime from PDG 2022
-
 # Derived
+# 派生参数
 
 Omega_ph2 = rc * (kB*TCMB)**4 * (8*math.pi*GN*eV/3) *(0.1*parsec)**2         # photons
 Omega_nh2 = Omega_ph2 * 7/8 * (4/11)**(4/3) * Neff0                          # relativistic SM neutrinos
 Omega_orh2 = Omega_ph2 + Omega_nh2                                           # SM radiation after e+e- annihilation
+# 分别表示光子、相对论标准模型中微子，以及电子-正电子湮灭后的标准模型辐射密度。
 
 Tnu = TCMB * (4/11)**(1/3)                # effective thermal temperature shared by all neutrinos today
+# 今天所有中微子共用的有效热温度。
 nu_today = m_nu*1e-3 / (kB*Tnu)
 [rho_nu0, p_nu0] = int_FD(nu_today)
 Omega_mnuh2 = Omega_nh2/3 * rho_nu0       # the massive neutrino eigenstate
 
 
-######      Thermal history from 20 keV ~ 10^6 GeV     ######
+######      Thermal history from 20 keV to 10^6 GeV     ######
+######      20 keV 至 10^6 GeV 的热史     ######
 
 with package_path('stiffgwpy_fast', 'th.dat') as _th_path:
     thdata = np.loadtxt(_th_path)
@@ -78,23 +87,29 @@ spl_T_N = interpolate.CubicSpline(np.log10(T_th), N_th)
 N_10 = spl_T_N(-2)
 a_10 = np.exp(-N_10)
 
-#####       AlterBBN      #########
+#####       AlterBBN initial conditions      #########
+#####       AlterBBN 初始条件      #########
 
 T_i = 27. * 8.617330637338339e-5   # Initial temperature at 27e9 K
+# AlterBBN 演化的初始温度，对应 27×10^9 K。
 N_i = spl_T_N(math.log10(T_i))
 z_ratio = TCMB_GeV/T_i*np.exp(N_i)  # T_CMB/(T_i*a_i)
 
 
-#####    Gravitational-wave data    #####
+#####    Gravitational-wave reference frequencies    #####
+#####    引力波参考频率    #####
 
 f_yr = 1/yr     # Hz, reference frequency used for PTA
 f_LIGO = 25     # Hz, reference frequency used by LIGO-Virgo
+# PTA 和 LIGO-Virgo 分析使用的参考频率。
 
 
-#####     BBN observational data, obsolete    #####
+#####     Obsolete observational limits    #####
+#####     已弃用的观测上限    #####
 
 Neff_A = (2.86 + 0.57)*Neff0/3      # 95% upper bound, BBN, Aver+ 2015 + Cooke+ 2014
 Neff_I = 3.58 + 0.40                # 95% upper bound, BBN, Izotov+ 2014 + Cooke+ 2014
+# 以下 Neff 观测约束不参与当前计算，保留为历史参数。
 
 Neff_l = 2.99 + 0.43                # 95% upper bound, CMB+BAO+Y_P(Aver+15), low-z acoustic scales + Silk damping scale
 Neff_lnp = 2.97 + 0.58              # same as above, CMB+BAO, without Y_P
