@@ -258,6 +258,7 @@ ACCURACY_MODES = {
         freq_grid="goal",
     ),
     # Backward-compatible alias of 'fast' (identical settings).
+    # 这是兼容旧配置的 `fast` 别名，参数完全相同。
     "ultra-fast": dict(
         h=0.005,
         col_step=8,
@@ -288,6 +289,8 @@ ACCURACY_MODES = {
     # z_tail=8 is ~2.5e-4 relative per mode vs the deep limit, so production
     # already keeps the tail term subdominant in the error budget; this mode
     # pushes it to ~3e-5 for the validation chain.
+    # production 配置在 z_tail=8 时的冻结尾部误差约为 2.5e-4；deep 将其降至约 3e-5，
+    # 用于验证链，不是额外的用户档位。
     "deep": dict(
         h=0.01,
         col_step=4,
@@ -324,7 +327,7 @@ FAST_PROFILE_ALIASES = {
 # 该角色只用于区分公开档位与内部验证/基准档，不代表额外的生产模式。
 MODE_ROLE = {
     "fast": "fast",
-    "ultra-fast": "fast",  # alias of 'fast'
+    "ultra-fast": "fast",  # alias of 'fast'; `fast` 的兼容别名。
     "production": "validation",
     "debug": "validation",
     "deep": "validation",
