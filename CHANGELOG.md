@@ -33,6 +33,10 @@
   radius 2.0, while still 6.3–11.4x slower than standard fast. A 500,000-node
   estimate cap bounds the configured refinement grid. The candidate remains
   validation-only; Oracle output directories are created automatically.
+- Derived config override keys from the dataclass and reused `replace()` for
+  immutable snapshots, removing repeated field-copy lists. Moved the
+  transition-refinement explanation into the public solver API docstring and
+  aligned its English and Chinese descriptions.
 - Batched `H2_vec` density-spline evaluations on the transition-refined path.
   The full-path A/B is bitwise identical and 3.86–4.09x faster on the two
   `DN_re` edge cases. The implementation retains scalar `math.exp` to avoid

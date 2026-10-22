@@ -27,6 +27,7 @@ kink 拆分、goal 频率网格和默认 PCHIP 玻尔积分。旧精度档位只
 import math
 import os as _os
 from contextlib import nullcontext
+from dataclasses import fields, replace
 from threading import RLock
 
 import numpy as np
@@ -38,6 +39,10 @@ from . import global_param as gp
 from ._resources import package_path
 from .config import FastSolverConfig
 from .functions import int_FD
+
+_FAST_SOLVER_CONFIG_KEYS = frozenset(
+    field.name for field in fields(FastSolverConfig) if field.init
+)
 
 __all__ = [
     "SGWB_iter_fast",
@@ -489,40 +494,16 @@ def resolve_config(name=None, base=None, **overrides):
     中文：按“具名预设 → 非 None 显式覆盖”生成不可变快照，不修改模块全局设置。`name=None`
     仅为兼容而读取旧模块默认值；线程数会限制在当前 Numba 进程预算内。
     """
-    valid_keys = {
-        "h", "col_step", "z_tail", "phase_max", "freq_grid", "threads", "kink_split",
-        "transition_refine_radius", "transition_refine_factor",
-    }
-    unknown = sorted(set(overrides) - valid_keys)
+    unknown = sorted(set(overrides) - _FAST_SOLVER_CONFIG_KEYS)
     if unknown:
         raise TypeError("unknown FastSolverConfig override(s): %s" % ", ".join(unknown))
+    explicit = {key: value for key, value in overrides.items() if value is not None}
     if base is not None:
         if not isinstance(base, FastSolverConfig):
             raise TypeError("base must be a FastSolverConfig")
-        values = dict(
-            h=base.h,
-            col_step=base.col_step,
-            z_tail=base.z_tail,
-            phase_max=base.phase_max,
-            freq_grid=base.freq_grid,
-            threads=base.threads,
-            kink_split=base.kink_split,
-            transition_refine_radius=base.transition_refine_radius,
-            transition_refine_factor=base.transition_refine_factor,
-        )
+        return replace(base, **explicit)
     elif name is None:
-        config = get_config()
-        values = dict(
-            h=config.h,
-            col_step=config.col_step,
-            z_tail=config.z_tail,
-            phase_max=config.phase_max,
-            freq_grid=config.freq_grid,
-            threads=config.threads,
-            kink_split=config.kink_split,
-            transition_refine_radius=config.transition_refine_radius,
-            transition_refine_factor=config.transition_refine_factor,
-        )
+        return replace(get_config(), **explicit)
     else:
         canonical = normalize_accuracy_mode(name)
         preset = ACCURACY_MODES[canonical]
@@ -537,10 +518,8 @@ def resolve_config(name=None, base=None, **overrides):
             transition_refine_radius=preset.get("transition_refine_radius", 2.0),
             transition_refine_factor=preset.get("transition_refine_factor", 8),
         )
-    for key in values:
-        if key in overrides and overrides[key] is not None:
-            values[key] = overrides[key]
-    return FastSolverConfig(**values)
+        values.update(explicit)
+        return FastSolverConfig(**values)
 
 
 def estimate_error(name="production"):
@@ -1977,16 +1956,6 @@ def _SGWB_iter_fast_impl(
     instead of the fixed-grid cubic spline, removing the ~1% continuous-sigma-vs-
     grid model bias (see ``stiffgwpy_fast.exact_background``).
 
-    ``transition_refine`` (the historical ``production`` / ``transition-refine`` profile)
-    treats the reheating transition as an ODE integration breakpoint: the
-    kink-aware grid from ``stiffgwpy_fast.exact_background.build_kink_refined_grid``
-    inserts ``N_re`` as an exact node and refines a configurable radius around
-    it by ``transition_refine_factor``. This keeps the kink inside a refined sub-step so it is
-    never crossed by a spline/grid, and (with ``phase_max > 0``) horizon
-    crossing uses phase-aware sub-stepping.  The formal ``fast`` profile instead
-    uses the exact uniform-grid kink split; this refined path remains validation
-    compatibility.
-
     ``freq_grid`` selects the frequency sampling: ``'goal'`` (the formal fast
     sparse grid with transition reserve and native ``eval_freqs``),
     ``'construct'`` (the model's
@@ -2570,9 +2539,16 @@ def SGWB_iter_fast(
     thread-safe backend (TBB or OpenMP) is initialized. Legacy calls without
     an explicit config also remain serialized with one another.
 
+    ``transition_refine=True`` selects the validation-only variable-grid path.
+    It inserts the reheating boundary as an exact node and uses ``h`` divided by
+    ``transition_refine_factor`` within the configured radius, measured in e-folds.
+    The formal ``fast`` profile instead uses the exact uniform-grid kink split.
+
     中文：低层 fast 求解器接收隔离的配置快照；频率积分默认用 PCHIP，也可显式选 Simpson。
     Numba 的线程掩码属于调用线程；workqueue 后端不支持并发并行调用，因此该后端下整个求解期间持锁。
     线程层尚未初始化时也保守加锁；TBB/OpenMP 初始化后，显式配置调用可并行执行。
+    ``transition_refine=True`` 选择仅用于验证的可变步长路径：将再加热边界插入为精确节点，
+    并在配置的半径（单位为 e-fold）内使用 ``h / transition_refine_factor`` 步长。正式 ``fast`` 档位仍使用精确均匀网格 kink 拆分。
     """
     if config is not None and not isinstance(config, FastSolverConfig):
         raise TypeError("config must be a FastSolverConfig")
