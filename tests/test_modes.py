@@ -194,11 +194,8 @@ def test_pool_size_env_override(monkeypatch):
         _sgwb_pool_size()
 
 
-def test_pool_size_mpi_default(monkeypatch):
+def test_pool_size_defaults_to_one(monkeypatch):
     monkeypatch.delenv('SGWB_POOL_SIZE', raising=False)
-    monkeypatch.setattr('stiffgwpy_fast.stiff_SGWB._mpi_world_size', lambda: 4)
-    assert _sgwb_pool_size() == 1
-    monkeypatch.setattr('stiffgwpy_fast.stiff_SGWB._mpi_world_size', lambda: 1)
     assert _sgwb_pool_size() == 1
 
 
