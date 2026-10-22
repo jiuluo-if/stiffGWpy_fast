@@ -584,6 +584,8 @@ def test_wrapper_wires_production_preset_and_local_budget():
     assert m.DN_gw_error > 0.0
     assert m.Delta_Neff_abs_error > 0.0
     assert m.error_estimates is not None
+    assert m.spectrum_error == m.error_estimates['spectrum_error']
+    assert m.spectrum_error == FS.estimate_error('fast')['spectrum_error']
     assert m.quadrature_error >= 0.0
 
 

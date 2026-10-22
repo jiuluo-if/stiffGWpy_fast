@@ -141,6 +141,7 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
     monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     m.SGWB_iter(engine='fast', accuracy_mode=None, tol=1e-7)
+    assert m.spectrum_error is None
     assert captured['tol'] == 1e-7
     assert captured['freq_res'] == 1.0
     assert FS.get_settings() == dict(threads=target_threads, col_step=4, h=0.01, z_tail=5.0,

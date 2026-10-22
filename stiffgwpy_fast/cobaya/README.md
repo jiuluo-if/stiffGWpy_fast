@@ -31,6 +31,9 @@ extra only when the run actually uses `mpi4py`.
   nodes do not enter the bolometric integration support grid.
 - `engine_stats` reports per-run engine, failure, guard, fallback, and
   escalation telemetry.
+- `DN_gw_error` is the combined relative error estimate for the integrated
+  energy density. `spectrum_error` is the selected accuracy mode's calibrated
+  log-spectrum error anchor; it is not a point-local spectrum measurement.
 
 The package also contains the LVK and PTA likelihood adapters and their data
 resources. See the [likelihood and resource index](likelihoods/README.md) for

@@ -390,11 +390,11 @@ class LCDM_SG(LCDM_SN):
                     self.DN_gw_error = self.local_error_budget['DN_gw_error']
                     self.Delta_Neff_abs_error = self.local_error_budget['Delta_Neff_abs_error']
                     self.quadrature_error = self.local_error_budget['categories']['quadrature']['value']
-                    self.spectrum_error = self.local_error_budget['DN_gw_error']
                 except Exception:
                     self.local_error_budget = None
                 if accuracy_mode is not None:
                     self.error_estimates = fast_sgwb.estimate_error(accuracy_mode)
+                    self.spectrum_error = self.error_estimates['spectrum_error']
                 _mark_eval_status(self, 'FAST')
                 if auto_escalate:
                     # Likelihood-aware accuracy gate: escalate when the
