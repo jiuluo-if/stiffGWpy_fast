@@ -88,7 +88,7 @@ a_10 = np.exp(-N_10)
 
 T_i = 27. * 8.617330637338339e-5   # AlterBBN 演化的初始温度，对应 27×10^9 K。
 N_i = spl_T_N(math.log10(T_i))
-z_ratio = TCMB_GeV/T_i*np.exp(N_i)  # T_CMB/(T_i*a_i)
+z_ratio = TCMB_GeV/T_i*np.exp(N_i)  # 温度比 T_CMB/(T_i*a_i)。
 
 
 #####    Gravitational-wave reference frequencies    #####

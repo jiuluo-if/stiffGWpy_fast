@@ -144,7 +144,7 @@ _FREQ_GRID = "construct"
 # 旧手动设置默认关闭 kink 拆分；正式 `fast` 预设会启用精确拆分。
 _KINK_SPLIT = False
 
-MAX_ITER = 60  # cap on the outer bisection loop
+MAX_ITER = 60  # 外层二分迭代上限。
 ln10 = math.log(10.0)
 # 小幅外层更新时，节点背景变化低于此阈值可复用 exact primitive。
 _EXACT_PRIMITIVE_REUSE_TOL = 1.0e-4
@@ -430,14 +430,6 @@ ERROR_BUDGET = {
     "reference": dict(model_bias=2.2e-3, ode=2.6e-7, quadrature=1.0e-5, tail=2.4e-7, spectrum_dex=0.002),
 }
 
-# Calibrated coefficient for the ODE/horizon-crossing phase-truncation error:
-# the constant-z Magnus sub-stepping leaves an O(phase_max^2) relative
-# amplitude/phase error per sub-step (validated by a phase_max Richardson
-# study; see the dated evidence in docs/fast_v02_audit_report.md); the coefficient
-# is the relative Delta N_eff error per phase_max^2 at the default point.
-# 中文：该系数来自默认点的 phase_max 收敛校准，只用于对应的经验误差估计，不是普适误差界。
-_ODE_PHASE_COEF = 0.0  # filled by calibrate_ode_phase_coef() from measurement
-
 
 def apply_accuracy_mode(name):
     """Apply a named accuracy preset to the module settings and return its table.
@@ -578,7 +570,7 @@ def estimate_error(name="production"):
 #   * col_step PCHIP interpolation: <1e-9 on Delta N_eff.
 #     col_step 的 PCHIP 插值对 Delta_Neff 的偏差小于 1e-9。
 _LOCAL_ODE_PM05 = 8.0e-6  # phase_max=0.5 时 Delta N_eff 的相对误差
-_LOCAL_ODE_NO_SUBSTEP = 1.0e-5  # h=0.01 fixed-step (calibrated engine term)
+_LOCAL_ODE_NO_SUBSTEP = 1.0e-5  # phase_max=0 时采用，按 h=0.01 固定步长校准。
 _LOCAL_TRANSITION_REFINED = 1.0e-4
 _LOCAL_TRANSITION_PLAIN = 2.4e-3
 _LOCAL_TRANSITION_SIGMA_EXACT = 4.2e-3
@@ -587,7 +579,7 @@ _LOCAL_TAIL_FLOOR = 2.4e-7  # z_tail=10 时的误差下限
 _LOCAL_GRID_UNIFORM_1 = 5.6e-4  # grid_independent、freq_res=1、242 个节点
 _LOCAL_GRID_UNIFORM_2 = 2.0e-5  # grid_independent、freq_res>=2 时的收敛值
 _LOCAL_GRID_CONSTRUCT = 1.6e-3  # construct 网格、246 个节点
-_LOCAL_INTERP = 1.0e-9  # col_step PCHIP interpolation on DN_eff
+_LOCAL_INTERP = 1.0e-9
 _LOCAL_SELF_CONS_FLOOR = 1.0e-5  # 未记录二分区间时采用的误差下限
 
 
@@ -2010,8 +2002,10 @@ def _SGWB_iter_fast_impl(
         raise TypeError("config must be a FastSolverConfig")
     if kink_split is None:
         kink_split = bool(config.kink_split)
-    col_step = config.col_step  # a mid-run compatibility setter must not
-    Omega_nu = gp.Omega_nh2 / m.derived_param["h"] ** 2  # change array layouts
+    # Pin per-call settings; mid-run compatibility setters must not alter layouts.
+    # 固定本次调用的配置，避免运行中途的兼容 setter 改变数组布局。
+    col_step = config.col_step
+    Omega_nu = gp.Omega_nh2 / m.derived_param["h"] ** 2
     # Resolve the frequency-grid builder: per-call argument wins, otherwise the
     # module default set by apply_accuracy_mode()/set_freq_grid().
     # 逐次传入的网格构造方式优先；未指定时使用模块级设置。

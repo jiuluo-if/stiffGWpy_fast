@@ -133,9 +133,9 @@ class LCDM_SG(LCDM_SN):
 
         P_t = self.Tensor_power(freq)            # 原初张量功率谱。
 
-        j = self.find_index_hc(freq+3)           # solver begins at kc/aH <= 10^{-3}
+        j = self.find_index_hc(freq+3)
         # 起始节点选在 kc/aH<=10^-3，即模态仍处于超视界状态时。
-        z0 = (freq-self.f_hor[j]) * ln10         # convert to ln(kc/aH)
+        z0 = (freq-self.f_hor[j]) * ln10         # 换算为 ln(kc/aH)。
 
         result = solve_SGWB(self.Nv, self.sigma, j, z0,
                             z_tail=z_tail, rtol=rtol, atol=atol)
@@ -154,9 +154,9 @@ class LCDM_SG(LCDM_SN):
             f_hf = self.f_hor[self.Nv > N_this[-1]]
 
             coeff = math.sqrt(0.5*(xf_this[-1]**2+yf_this[-1]**2))
-            Th_hf = coeff * np.exp(-zf_this[-1] + N_this[-1] - N_hf)      # the rms T_h, time-averaged
+            Th_hf = coeff * np.exp(-zf_this[-1] + N_this[-1] - N_hf)
             # Th_hf 是时间平均后的 T_h 均方根振幅。
-            xf_hf = np.multiply(Th_hf, np.power(10, freq-f_hf))           # the rms x_f, time-averaged
+            xf_hf = np.multiply(Th_hf, np.power(10, freq-f_hf))
             # xf_hf 是对应的时间平均 x_f 均方根振幅。
             Oj_hf = -np.power(Th_hf,2)/3 * P_t
             Opgw_hf = np.power(xf_hf,2)/36 * P_t
@@ -186,8 +186,8 @@ class LCDM_SG(LCDM_SN):
 
         # Each list entry below corresponds to one frequency channel.
         # 以下各列表的同一索引对应一个频率通道。
-        self.N_hc = [single_sol[0] for single_sol in res]  # Number of e-folds, starting at the horizon crossing for each frequency
-        self.Th = [single_sol[1] for single_sol in res]    # Tensor transfer function
+        self.N_hc = [single_sol[0] for single_sol in res]  # 各频率对应的视界穿越起点 e-fold 数。
+        self.Th = [single_sol[1] for single_sol in res]    # 张量传递函数。
         self.Oj = [single_sol[2] for single_sol in res]    # \dot T_h * T_h / 3H * P_t
         self.Ogw = [single_sol[3] for single_sol in res]   # dOmega_GW / dlnf
         self.Opgw = [single_sol[4] for single_sol in res]  # dOmega_pGW / dlnf
