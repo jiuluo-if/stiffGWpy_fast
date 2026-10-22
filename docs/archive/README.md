@@ -7,9 +7,11 @@ benchmark input. The README and experiment catalogue link to selected files
 for historical discovery; those links do not make them current evidence.
 
 - `baselines/baseline_54d65e3.md` is the 2026-09-11 two-thread snapshot. The
-  latest detailed accuracy audit is a dated 2026-09-12 record in
-  `../fast_v02_audit_report.md`; the `../validation/validation_manifest.json`
-  is dated 2026-09-17. Neither is a current-HEAD full-space certification.
+  four-regime accuracy baseline is the dated 2026-09-12 record in
+  `../fast_v02_audit_report.md`. Newer two-edge Oracle C evidence is summarized
+  in `../accuracy.md` and `../oracle_c_wkb_assessment.md`. The
+  `../validation/validation_manifest.json` is dated 2026-09-17. None is a
+  current-HEAD full-space certification.
 - `oracle_prufer/raw_logs/` is a local-only holding area for three 2026-09-11
   diagnostic captures moved out of the active `docs/` root. The repository's
   `*.log` ignore rule keeps these raw captures out of Git; later JSON records
