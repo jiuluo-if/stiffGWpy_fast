@@ -52,6 +52,7 @@ def _fundamental(z_value: float, q: float, n_value: float) -> np.ndarray:
     dj = float(jvp(order, argument, 1))
     dy = float(yvp(order, argument, 1))
     # x = exp(qN/2) u(w), y = -(x_N + x) / w, w = exp(z).
+    # 变量替换关系：x=e^(qN/2)u(w)，y=-(x_N+x)/w，且 w=e^z。
     xj = scale * j
     xy = scale * y
     xnj = scale * (0.5 * q * j + q * argument * dj)

@@ -31,8 +31,10 @@ def test_deep_subhorizon_wkb_frequency():
         return (1.5 * sig - 1.0, -xh - ez * yh, yh + ez * xh)
 
     # Start at z = 3 (already deep sub-horizon) and integrate a few e-folds.
+    # 从 z=3（已深度进入视界）开始，向后积分若干个 e-fold。
     N0 = None
     # z increases with N; bisection for z(N) = 3.
+    # z 随 N 增大；用二分法求 z(N)=3 的起点。
     N_inf = m.derived_param['N_inf']
     lo, hi = 0.0, N_inf
     if _z_of_N(m, freq, lo, dn) >= 3.0:
@@ -54,9 +56,11 @@ def test_deep_subhorizon_wkb_frequency():
     S = res.sol(Ns)
     z, xh, yh = S
     # Predicted accumulated phase (in cycles): integral e^z dN / 2pi.
+    # 理论累计相位（周期数）为积分 ∫e^z dN/(2π)。
     dN = Ns[1] - Ns[0]
     predicted_cycles = np.sum(np.exp(z)) * dN / (2.0 * math.pi)
     # Measured sign changes of the carrier oscillation (2 crossings per cycle).
+    # 通过载波振荡的符号变化估计周期数；每个周期有两次过零。
     signs = np.sign(xh)
     crossings = int(np.sum(signs[1:] != signs[:-1]))
     measured_cycles = crossings / 2.0
@@ -86,8 +90,9 @@ def test_superhorizon_mode_frozen_until_today():
     assert math.isfinite(sol['Ogw_today'])
     # Physical GW density is Ogw - Oj (the shear/j bookkeeping term is
     # negative at super-horizon, so Ogw itself need not be positive).
+    # 物理引力波密度为 Ogw-Oj；超视界时剪切记账项为负，因此 Ogw 本身不一定为正。
     assert sol['Ogw_today'] - sol['Oj_today'] > 0.0
-    assert sol['Oj_today'] < 0.0  # super-horizon negative Omega_j contribution
+    assert sol['Oj_today'] < 0.0  # 超视界阶段 Omega_j 的负贡献。
 
 
 @pytest.mark.slow
@@ -202,6 +207,7 @@ def test_rd_plateau_scaling_slope_equals_nt():
                                            rtol=1e-10, workers=1)
     lo = np.log10(Ogw - Oj)
     # Linear least-squares slope of log10(Omega) vs log10(f): Omega ~ f^{n_t}.
+    # 对 log10(Omega) 与 log10(f) 做线性最小二乘，斜率对应 Omega∝f^n_t。
     slope = np.polyfit(freqs, lo, 1)[0]
     assert abs(slope - (-0.4)) / 0.4 < 0.1
 

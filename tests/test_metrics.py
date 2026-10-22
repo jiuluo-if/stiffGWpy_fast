@@ -18,6 +18,7 @@ def test_rel_abs_guards_zero():
 
 def test_rel_linear_omega_matches_dex_conversion():
     # A 4e-4 dex difference corresponds to |10^d - 1| in the linear value.
+    # 4e-4 dex 的差值对应线性量上的相对差 |10^d-1|。
     dex = 4e-4
     rel = rel_linear_omega(np.array([-10.0]), np.array([-10.0 - dex]))
     assert abs(rel[0] - (10.0 ** dex - 1.0)) < 1e-12
