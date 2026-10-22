@@ -13,6 +13,7 @@ import statistics
 import sys
 import time
 from collections import defaultdict
+from dataclasses import asdict
 
 ROOT = os.environ.get('STIFFGWPY_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -31,7 +32,7 @@ except ImportError:
     psutil = None
 
 import numpy as np  # noqa: E402
-from numba import set_parallel_chunksize, threading_layer  # noqa: E402
+from numba import get_parallel_chunksize, set_parallel_chunksize, threading_layer  # noqa: E402
 
 from stiffgwpy_fast import exact_background as EB  # noqa: E402
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
@@ -200,6 +201,9 @@ def main():
                'threading_layer': threading_layer(),
                'freq_grid': FS.get_settings()['freq_grid'],
                'frequency_quadrature': 'pchip',
+               'configuration': asdict(FS.get_config()),
+               'outer_full_reuse_enabled': bool(FS._OUTER_FULL_REUSE_ENABLED),
+               'parallel_chunksize': get_parallel_chunksize(),
                'resources': telemetry(process, workers=1, threads=FS._THREADS),
                'reps': args.reps, 'records': records,
                'median_s': {}, 'p95_s': {}}
