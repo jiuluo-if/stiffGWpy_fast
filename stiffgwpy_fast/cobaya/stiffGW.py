@@ -21,6 +21,8 @@ The class exposes these derived parameters (must stay in sync with
 * ``Delta_Neff_total``  -- total Delta N_eff after the self-consistent loop
 * ``log10hc_prim_fyr``  -- log10 h_c of the primordial SGWB at f = 1/yr
 * ``f_end``             -- UV cutoff frequency (Hz) of the spectrum
+* ``Delta_Neff_GW_error`` -- estimated absolute error on ``Delta_Neff_GW``;
+  ``NaN`` when the selected engine provides no estimate
 
 Per-run observability: the underlying ``LCDM_SG`` instance counts fast
 evaluations / fast failures / LSODA fallbacks and records the engine used on
@@ -28,7 +30,8 @@ the last solve, so a run can report the fallback fraction (see
 :attr:`engine_stats`).
 
 中文说明：本适配器把 Cobaya 参数映射到 `LCDM_SG`，并向似然提供 SGWB 频谱及派生参数。
-正式运行默认使用唯一 `fast` 档位；`engine_stats` 可追踪数值故障、物理保护和显式 LSODA 回退。
+`Delta_Neff_GW_error` 表示引擎提供的绝对误差估计；没有估计值时为 `NaN`。正式运行默认使用唯一
+`fast` 档位；`engine_stats` 可追踪数值故障、物理保护和显式 LSODA 回退。
 """
 
 import math
