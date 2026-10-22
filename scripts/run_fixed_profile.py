@@ -18,7 +18,12 @@ def main() -> None:
     parser.add_argument('--threads', type=int, required=True)
     parser.add_argument('--affinity-count', type=int, default=2)
     parser.add_argument('--reps', type=int, default=7)
-    parser.add_argument('--case', choices=('A', 'B'), default='A')
+    parser.add_argument(
+        '--case',
+        choices=('A', 'B', 'default', 'highT', 'high_kappa', 'lowT', 'low_r', 'stiff'),
+        default='A',
+        help='profile case exposed by profile_fast_breakdown.py',
+    )
     parser.add_argument('--kink-split', action='store_true')
     parser.add_argument('--disable-outer-reuse', action='store_true')
     parser.add_argument('--json', default=None)
