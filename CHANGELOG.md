@@ -31,8 +31,9 @@
   configuration and both Oracle reproduction tools. A matched radius-0.25
   candidate passes the two `DN_re` edge gates and is 1.29x/1.42x faster than
   radius 2.0, while still 6.3–11.4x slower than standard fast. A 500,000-node
-  estimate cap bounds the configured refinement grid. The candidate remains
-  validation-only; Oracle output directories are created automatically.
+  estimate cap bounds the configured refinement grid; the maximum local
+  refinement factor is now 128 for safely coarser outer grids. The candidate
+  remains validation-only; Oracle output directories are created automatically.
 - Derived config override keys from the dataclass and reused `replace()` for
   immutable snapshots, removing repeated field-copy lists. Moved the
   transition-refinement explanation into the public solver API docstring and

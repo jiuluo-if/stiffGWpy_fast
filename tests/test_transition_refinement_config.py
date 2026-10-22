@@ -46,11 +46,21 @@ def test_transition_refine_controls_survive_base_config_resolution():
     [
         ({'transition_refine_radius': -0.1}, 'transition_refine_radius'),
         ({'transition_refine_factor': 0}, 'transition_refine_factor'),
+        ({'transition_refine_factor': 129}, 'transition_refine_factor'),
     ],
 )
 def test_transition_refine_config_rejects_invalid_controls(overrides, message):
     with pytest.raises(ValueError, match=message):
         FS.resolve_config('fast', **overrides)
+
+
+def test_transition_refine_factor_128_is_allowed_within_grid_budget():
+    config = FS.resolve_config(
+        'fast', h=0.04, transition_refine_radius=0.125,
+        transition_refine_factor=128,
+    )
+
+    assert config.transition_refine_factor == 128
 
 
 def test_transition_refine_config_bounds_combined_grid_size():
