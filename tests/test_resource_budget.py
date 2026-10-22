@@ -43,6 +43,25 @@ def test_default_environment_caps_blas_and_numba(monkeypatch):
     ]
 
 
+def test_environment_setup_is_noop_after_numba_import(monkeypatch):
+    import numba
+
+    from scripts._resource_budget import apply_environment
+
+    assert numba.get_num_threads() >= 1
+    names = (
+        'NUMBA_NUM_THREADS', 'NUMBA_THREADING_LAYER', 'FAST_THREADS',
+        'OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS',
+        'VECLIB_MAXIMUM_THREADS', 'NUMEXPR_NUM_THREADS',
+    )
+    for name in names:
+        monkeypatch.delenv(name, raising=False)
+
+    apply_environment()
+
+    assert all(name not in os.environ for name in names)
+
+
 def test_telemetry_records_resource_contract(monkeypatch):
     monkeypatch.setenv('OMP_NUM_THREADS', '1')
     payload = telemetry(workers=1, threads=2)
