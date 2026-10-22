@@ -51,7 +51,10 @@ ln10 = math.log(10.0)
 # ---------------------------------------------------------------------------
 
 def _fd_splines():
-    """Fermi-Dirac rho/p spline on log10(nu), from the shipped ``fd_table.npz``."""
+    """Fermi-Dirac rho/p spline on log10(nu), from the shipped ``fd_table.npz``.
+
+    中文：从随包数据表读取费米-狄拉克中微子密度和压强，并在 ``log10(nu)`` 上构造样条。
+    """
     with package_path('stiffgwpy_fast', 'fd_table.npz') as path:
         with np.load(path) as data:
             nu = data['nu']
@@ -66,7 +69,11 @@ _FD_NU, _FD_RHO_CS, _FD_P_CS = _fd_splines()
 
 
 class _Background:
-    """Holds the model-parameter closures needed to evaluate sigma/H exactly."""
+    """Store model-dependent densities and boundaries for exact background evaluation.
+
+    中文：保存连续背景计算所需的模型密度参数和演化边界，供任意 ``N`` 处求 ``H^2`` 与
+    ``sigma`` 使用。
+    """
 
     __slots__ = ('Omh2', 'Osh2', 'Oerh2', 'Otrh2', 'Otreh2', 'OLh2',
                  'N_inf', 'N_re', 'N_re_abs', 'N_fin', 'N_max',
@@ -104,7 +111,11 @@ class _Background:
 
 
 def _H2_and_sigma(bg, N):
-    """Exact H^2 (h^2 a^{-?} units) and sigma at absolute N."""
+    """Return exact ``H^2`` and ``sigma`` at absolute ``N``.
+
+    中文：返回绝对 e-fold 坐标 ``N`` 处的连续 ``H^2`` 和 ``sigma``。
+    再加热结束前的物质主导分支仅返回 ``sigma=1``，该分支的 ``H^2`` 未计算。
+    """
     if N < bg.N_re_abs:
         # MD reheating branch: sigma = 1.  H2 is not used on this branch (the
         # horizon position uses the analytic MD extension in f_hor_abs).
@@ -150,14 +161,20 @@ def _H2_and_sigma(bg, N):
 
 
 def background_at(m, N, DN_eff):
-    """Return ``(H2, sigma)`` at absolute ``N`` for the given ``DN_eff``."""
+    """Return ``(H2, sigma)`` at absolute ``N`` for the given ``DN_eff``.
+
+    中文：给定 ``DN_eff``，返回绝对 e-fold 坐标 ``N`` 处的 ``H^2`` 和连续 ``sigma``。
+    """
     N = float(N)
     bg = _Background(m, DN_eff)
     return _H2_and_sigma(bg, N)
 
 
 def f_hor_at(m, N, DN_eff):
-    """Exact ``log10(f_H/Hz)`` at absolute ``N`` (reheating kink handled exactly)."""
+    """Exact ``log10(f_H/Hz)`` at absolute ``N`` (reheating kink handled exactly).
+
+    中文：计算绝对坐标 ``N`` 处的 ``log10(f_H/Hz)``；再加热转折点按精确边界处理。
+    """
     N = float(N)
     bg = _Background(m, DN_eff)
     Nlast = bg.N_inf
@@ -207,7 +224,11 @@ def _make_tail_event(z_tail):
 
 
 def _handoff_diagnostics(bg, N, zf, xf, yf):
-    """Return phase/amplitude and local adiabaticity at a mode hand-off."""
+    """Return phase/amplitude and local adiabaticity at a mode hand-off.
+
+    中文：返回模态交接处的相位、振幅、频率，以及 ``omega'/omega^2`` 和
+    ``omega''/omega^3`` 两个绝热性诊断量。
+    """
     _, sigma = _H2_and_sigma(bg, N)
     omega = math.exp(zf)
     z_prime = 1.5 * sigma - 1.0
@@ -231,11 +252,14 @@ def _handoff_diagnostics(bg, N, zf, xf, yf):
 
 
 def _find_start_N(bg, freq, z_start):
-    """Smallest N in [0, N_inf] with z(N) >= z_start (z increasing in N)."""
+    """Find the smallest ``N`` in ``[0, N_inf]`` where increasing ``z(N) >= z_start``.
+
+    中文：利用单调递增的 ``z(N)`` 二分搜索最早满足 ``z >= z_start`` 的绝对坐标 ``N``。
+    """
     Nlast = bg.N_inf
     lo, hi = 0.0, Nlast
     def z_at(N):
-        fh = f_hor_abs(bg, freq, N)
+        fh = f_hor_abs(bg, N)
         return (freq - fh) * ln10
     if z_at(lo) >= z_start:
         return 0.0
@@ -248,11 +272,14 @@ def _find_start_N(bg, freq, z_start):
     return hi
 
 
-def f_hor_abs(bg, freq, N):
-    """Internal f_hor used for locating the start; offset by log10(f)."""
-    # Reuse the public evaluator through the module-level function is clumsy here
-    # (it needs the model).  Instead compute raw f_hor(N) using `bg`.
-    # 公共函数需要原始模型对象；这里直接用已有背景闭包 bg 计算，避免重建背景。
+def f_hor_abs(bg, N):
+    """Internal helper returning the horizon frequency ``log10(f_H/Hz)`` at ``N``.
+
+    中文：计算绝对坐标 ``N`` 处的视界频率 ``log10(f_H/Hz)``；目标模态频率由调用方与该值相减，
+    因此不属于本函数的输入。
+    """
+    # Reuse the existing background snapshot; f_hor_at would rebuild it.
+    # 直接复用已有背景快照；调用 f_hor_at 会重新构造背景对象。
     Nlast = bg.N_inf
     H2_last, _ = _H2_and_sigma(bg, Nlast)
     raw_last = -0.5 * Nlast + 0.5 * math.log(H2_last)
@@ -280,6 +307,11 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     adiabaticity ``eps_handoff`` with the leading-order WKB matching error
     ``matching_error_rel``).  ``eps_handoff = |1.5*sigma - 1| / exp(z)`` and the
     frozen-amplitude tail is an ``O(eps)`` approximation.
+
+    中文：用独立高精度流程求解单个频率。返回今天的 ``Ogw_today``、``Oj_today``、
+    ``Opgw_today``，以及是否使用解析尾部、交接时刻、ODE 步数、深次视界绝热性
+    ``eps_handoff`` 和 WKB 振幅匹配误差 ``matching_error_rel``。冻结振幅尾部是
+    ``O(eps)`` 近似，不代表精确解。
     """
     if atol is None:
         atol = [1e-12, 1e-22, 1e-22]
@@ -295,7 +327,7 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     # z=ln(2 pi f/(aH))=(log10(f)-f_hor)*ln(10)。ODE 直接演化 z；视界位置只用于
     # 设定起点，使初值 x=0、y=e^z 对应冻结的超视界模态。
     Nstart = _find_start_N(bg, freq, z_start)
-    fh_start = f_hor_abs(bg, freq, Nstart)
+    fh_start = f_hor_abs(bg, Nstart)
     # Initial z so that x=0, y=e^{z0} is the frozen super-horizon mode.
     # 选择初始 z，使 x=0、y=e^z 表示冻结的超视界模态。
     z0 = (freq - fh_start) * ln10
@@ -331,7 +363,7 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
         N_tail = np.arange(t_event, bg.N_inf + 1e-12, 0.02)
         if N_tail[-1] < bg.N_inf:
             N_tail = np.append(N_tail, bg.N_inf)
-        fh_tail = np.array([f_hor_abs(bg, freq, float(n)) for n in N_tail])
+        fh_tail = np.array([f_hor_abs(bg, float(n)) for n in N_tail])
         Th_hf = coeff * np.exp(-zf + t_event - N_tail)
         xf_hf = Th_hf * 10.0 ** (freq - fh_tail)
         Oj_hf = -Th_hf * Th_hf / 3.0 * P_t
@@ -373,7 +405,12 @@ def _sync_size():
 
 
 def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None):
-    """Solve every frequency and return today's spectrum arrays."""
+    """Solve every frequency and return today's spectrum arrays.
+
+    中文：逐个频率调用参考模态求解器，返回今天的 ``Ogw``、``Oj``、``Opgw`` 和尾部使用标记。
+    ``workers=None`` 时读取 ``SGWB_POOL_SIZE``（默认 1），线程数不超过 CPU 数；
+    MPI world size 大于 1 时强制串行，避免再嵌套线程池。
+    """
     freqs = np.asarray(freqs, dtype=float)
     n = freqs.size
     Ogw = np.empty(n)
@@ -410,9 +447,16 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     We interpolate with a shape-preserving PCHIP (avoids cubic overshoot on the
     sharp low-frequency tail), integrate with adaptive Gauss-Kronrod
     (``scipy.integrate.quad``), and estimate the *interpolation* error by
-    comparing against a half-density PCHIP.
+    comparing against a half-density PCHIP. Each quadrature is split at the
+    knots of its own interpolant; the coarse estimate therefore avoids
+    unnecessary splits at the fine-grid midpoints. The coarse grid includes the
+    final input node when an even point count would otherwise omit it.
 
     Returns ``(g2, quadrature_error, interpolation_error)``.
+
+    中文：对数频率坐标上用保形 PCHIP 插值，再用自适应 Gauss-Kronrod 积分；
+    插值误差由半密度 PCHIP 与全密度 PCHIP 的积分差估计。每次求积只在对应插值器的节点处分段，
+    粗网格计算不会再被细网格中点多余地切分；输入点数为偶数时会补入末端节点，确保覆盖完整区间。
     """
     freqs = np.asarray(freqs, dtype=float)
     integrand = np.asarray(Ogw, dtype=float) - np.asarray(Oj, dtype=float)
@@ -429,21 +473,24 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     def f_quad(ell):
         return float(spl(ell))
 
-    def _quad(func):
+    def _quad(func, breakpoints):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             return quad(func, float(x[0]), float(x[-1]), epsabs=0.0,
-                        epsrel=1e-10, limit=800, points=x)
+                        epsrel=1e-10, limit=800, points=breakpoints)
 
-    val, abserr = _quad(f_quad)
+    val, abserr = _quad(f_quad, x)
     g2 = ln10v * val
     # Half-density interpolation error estimate: compare to a coarser PCHIP.
     # 隔点抽样构造较粗的 PCHIP，并以两次积分之差估计插值误差。
     half = x[::2]
     if half.size >= 4 and half.size < x.size and np.all(np.diff(half) > 0):
         yh = y[::2]
+        if x.size % 2 == 0:
+            half = np.append(half, x[-1])
+            yh = np.append(yh, y[-1])
         spl_h = interpolate.PchipInterpolator(half, yh)
-        val_h, _ = _quad(lambda e: float(spl_h(e)))
+        val_h, _ = _quad(lambda e: float(spl_h(e)), half)
         interp_err = ln10v * abs(val - val_h)
     else:
         interp_err = None
@@ -470,6 +517,11 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     used.  The returned spectrum and the bolometric integral are computed on
     the chosen frequency set, so a coarse ``freq_subset`` also carries a
     frequency-grid error that is reported separately.
+
+    中文：显式提供 ``dn_eff`` 时，只在该背景上求解一次，用于隔离连续 ``sigma`` 和高阶 ODE
+    的误差；设为 ``None`` 且 ``self_consistent=True`` 时，会迭代求解 ``Delta N_eff``。
+    ``freq_subset`` 是 ``log10(f/Hz)`` 数组；未提供时使用由连续背景构造的频率网格。
+    频谱和玻尔积分使用同一频率集合，稀疏子集带来的频率网格误差会单独报告。
     """
     DN_eff_orig = m.cosmo_param['DN_eff']
     Omega_nu = gp.Omega_nh2 / m.derived_param['h'] ** 2
@@ -599,6 +651,10 @@ def oracle_variants(m, freqs=None, dn_eff=None, z_tail_conservative=8.0,
 
     Returns a dict of per-variant results plus ``delta_AB``/``delta_BC``
     (relative ``DN_gw`` difference) and a ``status`` flag.
+
+    中文：固定 ``dn_eff`` 做三组单次求解：保守尾部、加深尾部、加深尾部并收紧 ODE 容差。
+    返回 ``delta_AB`` 和 ``delta_BC`` 相对差，以及 ``CONSISTENT`` 或 ``ORACLE-SENSITIVE``
+    状态，用于判断参考结果本身的尾部/容差敏感性。
     """
     if freqs is None:
         from .freq_adaptive import grid_independent_freqs
@@ -648,6 +704,9 @@ def summarize_tail_convergence(records):
     requested tail is the reported central value; the largest change from it
     is the directly observed systematic bound.  The fitted exponential decay
     rate is diagnostic only and must not replace the observed bound.
+
+    中文：对冻结尾部扫描取最深 ``z_tail`` 对应的结果为中心值，并以其它扫描点相对中心值的
+    最大变化作为直接观测到的系统误差界。指数衰减拟合仅供诊断，不能代替该观测误差界。
     """
     rows = sorted((dict(row) for row in records), key=lambda row: float(row['z_tail']))
     if len(rows) < 3:

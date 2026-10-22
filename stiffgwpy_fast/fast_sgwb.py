@@ -720,8 +720,7 @@ def estimate_local_error(m):
     # universal / per-point error estimate; it is an empirical bound measured
     # at the reference point and scaled by the solve's settings.
     # 如实区分本次遥测实测项与基准点校准项；校准值按当前设置缩放，但不构成逐点或全参数空间误差保证。
-    def _cert(kind, local):
-        return "local-measured" if local else "calibrated-at-fiducial"
+    frequency_grid_is_local = fg == "adaptive"
 
     cats = dict(
         background_model=dict(value=model, kind="calibrated", certification="calibrated-at-fiducial"),
@@ -732,8 +731,12 @@ def estimate_local_error(m):
         interpolation=dict(value=interp, kind="calibrated", certification="calibrated-at-fiducial"),
         frequency_grid=dict(
             value=freq_grid,
-            kind="local" if fg == "adaptive" else "calibrated",
-            certification=_cert("local" if fg == "adaptive" else "calibrated", fg == "adaptive"),
+            kind="local" if frequency_grid_is_local else "calibrated",
+            certification=(
+                "local-measured"
+                if frequency_grid_is_local
+                else "calibrated-at-fiducial"
+            ),
         ),
         quadrature=dict(value=quadrature, kind="local", certification="local-measured"),
         tail_approximation=dict(value=tail, kind="calibrated", certification="calibrated-at-fiducial"),

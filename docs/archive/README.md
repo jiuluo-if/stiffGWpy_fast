@@ -15,7 +15,11 @@ for historical discovery; those links do not make them current evidence.
   `*.log` ignore rule keeps these raw captures out of Git; later JSON records
   and the assessment remain the shared, navigable evidence. A fresh clone will
   not contain the ignored raw logs.
-- `reference/head_20260910/` contains an older benchmark reference snapshot.
+- [`reference/head_20260910/benchmark_default.jsonl`](reference/head_20260910/benchmark_default.jsonl)
+  records a single default-point fast/reference comparison from source commit
+  `767056d`. No code or benchmark script consumes it. It is separate from the
+  later two-thread report in `baselines/baseline_54d65e3.md`, so retain it as
+  historical point-level evidence, not as a current performance baseline.
 
 Archived material is historical evidence. It must not be read as a current
 production claim without checking its recorded commit and protocol.

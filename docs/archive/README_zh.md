@@ -6,6 +6,9 @@
 
 - `baselines/baseline_54d65e3.md` 是 2026-09-11 的双线程快照。最新的详细精度审计是 2026-09-12 的带日期记录 `../fast_v02_audit_report.md`；`../validation/validation_manifest.json` 日期为 2026-09-17。两者都不代表当前 HEAD 已通过全参数空间认证。
 - `oracle_prufer/raw_logs/` 是仅保存在本机的归档目录，存放从 `docs/` 根目录移出的三份 2026-09-11 诊断记录。仓库的 `*.log` 忽略规则会阻止这些原始日志进入 Git；后续 JSON 记录和评估报告仍是共享、可导航的证据。新克隆不会包含这些被忽略的日志。
-- `reference/head_20260910/` 保存较早的基准参考快照。
+- [`reference/head_20260910/benchmark_default.jsonl`](reference/head_20260910/benchmark_default.jsonl)
+  记录了基于源码提交 `767056d` 的单个默认参数点 fast/reference 对比。
+  代码和基准脚本都不读取它。该记录不同于后续
+  `baselines/baseline_54d65e3.md` 双线程报告，因此作为历史单点证据保留，不能视为当前性能基线。
 
 归档材料只代表历史证据。除非核对其记录的代码提交和实验方案，否则不要将其视为当前生产结论。

@@ -84,7 +84,7 @@ def _prufer_rhs(N, state, bg):
 def solve_prufer(model, freq, dn_eff, z_tail, rtol=1e-10):
     bg = REF._Background(model, dn_eff)
     n_start = REF._find_start_N(bg, freq, -12.0)
-    z0 = (freq - REF.f_hor_abs(bg, freq, n_start)) * REF.ln10
+    z0 = (freq - REF.f_hor_abs(bg, n_start)) * REF.ln10
     result = solve_ivp(
         _prufer_rhs, (n_start, bg.N_inf), (z0, z0, 0.0),
         method='DOP853', rtol=rtol, atol=[1e-12, 1e-12, 1e-12],
@@ -109,7 +109,7 @@ def solve_prufer(model, freq, dn_eff, z_tail, rtol=1e-10):
     event_N = float(result.t_events[0][0])
     zf, log_amplitude, phase = result.y_events[0][0]
     amplitude = math.exp(float(log_amplitude))
-    f_today = REF.f_hor_abs(bg, freq, bg.N_inf)
+    f_today = REF.f_hor_abs(bg, bg.N_inf)
     today = _phase_averaged_today(
         _phase_averaged_power(amplitude), float(zf), event_N, bg.N_inf,
         f_today, freq, tensor_power)

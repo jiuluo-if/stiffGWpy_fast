@@ -78,7 +78,7 @@ def _pole_event(sign, ratio_limit):
 def audit_mode(model, freq, dn_eff, z_tail, ratio_limit, rtol):
     bg = REF._Background(model, dn_eff)
     n_start = REF._find_start_N(bg, freq, -12.0)
-    z0 = (freq - REF.f_hor_abs(bg, freq, n_start)) * REF.ln10
+    z0 = (freq - REF.f_hor_abs(bg, n_start)) * REF.ln10
     result = solve_ivp(
         _rhs,
         (n_start, bg.N_inf),

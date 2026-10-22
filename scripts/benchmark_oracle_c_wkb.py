@@ -60,7 +60,7 @@ def wkb_transfer_correction(theta_handoff, z_handoff):
 
 def _today_from_transfer(bg, freq, transfer_squared, tensor_power):
     x_squared = transfer_squared * 10.0 ** (
-        2.0 * (freq - REF.f_hor_abs(bg, freq, bg.N_inf)))
+        2.0 * (freq - REF.f_hor_abs(bg, bg.N_inf)))
     oj = -transfer_squared * tensor_power / 3.0
     opgw = x_squared * tensor_power / 36.0
     return {

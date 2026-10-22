@@ -50,7 +50,7 @@ def _event(level):
 def _initial_state(model, freq, dn_eff):
     bg = REF._Background(model, dn_eff)
     n_start = REF._find_start_N(bg, freq, -12.0)
-    z0 = (freq - REF.f_hor_abs(bg, freq, n_start)) * REF.ln10
+    z0 = (freq - REF.f_hor_abs(bg, n_start)) * REF.ln10
     return bg, n_start, z0
 
 
