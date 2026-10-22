@@ -31,13 +31,15 @@ PCHIP as the formal default. Its `z_tail=8` reference difference is limited by
 the reference's own frozen-handoff tail sensitivity; the one-point `z_tail=10`
 comparison is an attribution check, not a substitute for broader validation.
 
-## 2026-10-22 fresh `DN_re` edge probe
+## 2026-10-22 matched `DN_re` edge probe
 
-A current-HEAD full-grid comparison adds two reheating-parameter edges to the
-three previously sampled Oracle C points. Oracle WKB and deep-reference
-`DN_gw` agree within `2.4e-6` and `5.7e-6`, respectively. The formal fast
-profile is within `1.2e-5` on the earlier three points, but has relative
-differences of `2.74e-3` (`edge_dnre_lo`) and `2.50e-3` (`edge_dnre_hi`) on the
+A full-grid comparison adds two reheating-parameter edges to the three
+previously sampled Oracle C points. Its original edge anchors were generated
+from solver commit `5e6e78875cf9998fb64b72c6b216c32c7848abe8`; the matched fast
+comparison used `07293069a64c16d9efc7d7896590798b76d9591a`. Oracle WKB and
+deep-reference `DN_gw` agree within `2.4e-6` and `5.7e-6`, respectively. The
+formal fast profile is within `1.2e-5` on the earlier three points, but differs
+by `2.74e-3` (`edge_dnre_lo`) and `2.50e-3` (`edge_dnre_hi`) on the
 new edges. Those two results fail the scoped `2e-4` gate; this supersedes any
 interpretation that the gate has been verified across representative parameter
 edges. It remains a sampled probe, not a full parameter-space certification.
