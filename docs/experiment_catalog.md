@@ -61,6 +61,11 @@ the median by about a third but fails both accuracy gates. None is promoted. Pro
 matched Oracle residuals, and raw records are in
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and the linked
 `oracle_c_wkb_corner_20261022/transition_h*` directories.
+The wider `radius=0.25` run at factor 64 fails both edges; increasing to factor
+128 restores the same local spacing as the `h=0.02` pass but still fails at the
+low edge (`4.51e-4`). Its repeated `47.15/7.75 ms` medians are asymmetric. Both
+configurations are recorded as rejected candidates in the assessment report
+and raw-data family.
 
 ## Raw run families by location
 

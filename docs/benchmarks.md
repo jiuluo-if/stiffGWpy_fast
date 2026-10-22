@@ -288,6 +288,13 @@ enough: doubling its local step loses the accuracy gate. Per-run configurations,
 reference residuals, exact anchor checks, and samples are linked from
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md).
 
+The `h=0.04`, radius-`0.25`, factor-`128` comparison keeps the local step at
+`0.0003125` but has strongly different edge costs: repeated warm medians are
+`47.15 ms` and `7.75 ms` (two warmups and ten measured calls). Its low-edge
+error remains above the gate, while the high edge passes. Treat this as a
+rejected two-point candidate, not a general speed result; the exact samples
+and environment are in the linked raw JSON.
+
 ## Transition-refined `H2_vec` batching (2026-10-22)
 
 `H2_vec` used to call the SciPy density spline once per background node while
