@@ -14,12 +14,24 @@ import sys
 import time
 from collections import defaultdict
 
-import numpy as np
-from numba import set_parallel_chunksize, threading_layer
-
 ROOT = os.environ.get('STIFFGWPY_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
+
+try:
+    from scripts._resource_budget import apply_environment, telemetry
+except ImportError:
+    from _resource_budget import apply_environment, telemetry
+
+apply_environment()
+
+try:
+    import psutil
+except ImportError:
+    psutil = None
+
+import numpy as np  # noqa: E402
+from numba import set_parallel_chunksize, threading_layer  # noqa: E402
 
 from stiffgwpy_fast import exact_background as EB  # noqa: E402
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
@@ -106,7 +118,13 @@ def run_once(case, kink_split=False, tol=1e-4):
     try:
         model = LCDM_SG(**case)
         start = time.perf_counter()
-        result = FS.SGWB_iter_fast(model, kink_split=kink_split, tol=tol)
+        result = FS.SGWB_iter_fast(
+            model,
+            kink_split=kink_split,
+            tol=tol,
+            freq_grid='goal',
+            frequency_quadrature='pchip',
+        )
         totals['total'].append(time.perf_counter() - start)
         totals['outer_iteration'].append(len(getattr(model, 'DN_gw', [])))
         return result, totals, model
@@ -140,6 +158,7 @@ def main():
     args = parser.parse_args()
     preset = FS.apply_accuracy_mode('fast')
     tol = preset['tol'] if args.tol is None else args.tol
+    process = psutil.Process() if psutil is not None else None
     if args.disable_outer_reuse:
         FS._OUTER_FULL_REUSE_ENABLED = False
     # 保留基准命令显式指定的线程数，避免 preset 默认值遮蔽 scaling 点。
@@ -179,6 +198,9 @@ def main():
                'threads': FS._THREADS, 'case': CASES[args.case], 'case_id': args.case,
                'kink_split': args.kink_split, 'tol': tol,
                'threading_layer': threading_layer(),
+               'freq_grid': FS.get_settings()['freq_grid'],
+               'frequency_quadrature': 'pchip',
+               'resources': telemetry(process, workers=1, threads=FS._THREADS),
                'reps': args.reps, 'records': records,
                'median_s': {}, 'p95_s': {}}
     names = sorted(k for k in records[0] if k.endswith('_s'))
