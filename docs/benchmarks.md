@@ -243,10 +243,10 @@ The full-grid Oracle C follow-up found that the standard fast profile
 `h=0.0003125` brings the differences to `1.65e-4` and `1.63e-4`, below the
 scoped `2e-4` gate. The more accurate candidate is much slower:
 
-| Point | Standard median (`h=0.005`) | Fine-step median (`h=0.0003125`) | Fine-step vs WKB |
-|---|---:|---:|---:|
-| `edge_dnre_lo` | `5.69 ms` | `62.7 ms` | `1.65e-4` |
-| `edge_dnre_hi` | `4.53 ms` | `71.7 ms` | `1.63e-4` |
+| Point | Standard (`h=0.005`) | Fine uniform (`h=0.0003125`) | Transition-refine (`h=0.0025`) | Fine uniform vs WKB | Transition-refine vs WKB |
+|---|---:|---:|---:|---:|---:|
+| `edge_dnre_lo` | `5.69 ms` | `62.7 ms` | `46.5 ms` | `1.65e-4` | `1.08e-6` |
+| `edge_dnre_hi` | `4.53 ms` | `71.7 ms` | `73.7 ms` | `1.63e-4` | `1.59e-4` |
 
 Each configuration uses two warmup calls and ten timed calls, with a fresh
 model per solve, two Numba `workqueue` threads, and one BLAS thread. The
@@ -260,6 +260,12 @@ and reproduction commands are in
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
 [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
 
+The transition-refined candidate uses the vectorized H2 implementation and
+has errors of `3.97e-6` / `1.64e-4` versus deep `z=10`; it is about `8.2x` /
+`16.3x` slower than standard fast. It beats the uniform fine-step runtime on
+`edge_dnre_lo` only. Its matched Oracle records are in
+[`oracle_c_wkb_corner_20261022/transition_h00025/`](oracle_c_wkb_corner_20261022/transition_h00025/).
+
 ## Transition-refined `H2_vec` batching (2026-10-22)
 
 `H2_vec` used to call the SciPy density spline once per background node while
@@ -268,8 +274,8 @@ the old scalar results exactly and reduces full-solver latency on that path:
 
 | Point | Scalar-reference median | Batched median | Speedup | Output arrays |
 |---|---:|---:|---:|---|
-| `edge_dnre_lo` | `94.3 ms` | `19.4 ms` | `4.87x` | exact match |
-| `edge_dnre_hi` | `143.0 ms` | `31.4 ms` | `4.56x` | exact match |
+| `edge_dnre_lo` | `93.4 ms` | `22.8 ms` | `4.09x` | exact match |
+| `edge_dnre_hi` | `144.1 ms` | `37.3 ms` | `3.86x` | exact match |
 
 The A/B used two warmup calls and ten alternating measured calls per method,
 fresh models, two Numba `workqueue` threads, one BLAS thread, and unpinned CPU

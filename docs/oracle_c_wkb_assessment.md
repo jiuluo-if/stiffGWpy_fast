@@ -121,22 +121,41 @@ measurements used two warmup calls and ten timed fresh-model solves with two
 Numba `workqueue` threads and one BLAS thread. This candidate has not been
 promoted; optimizing its speed remains open.
 
+A second matched candidate uses the validation `transition-refine` path at
+`h=0.0025`, with the vectorized `H2_vec` implementation. It also passes the
+gate: fast-vs-deep errors are `3.97e-6` and `1.64e-4`; warm medians are `46.5`
+and `73.7 ms` (about `8.2x` and `16.3x` the standard fast timings). It is
+faster than the uniform fine-step candidate at `edge_dnre_lo`, but slightly
+slower at `edge_dnre_hi`; neither candidate meets the normal fast latency
+target, so the formal preset remains unchanged.
+
+The matched Oracle residuals for this candidate are `1.08e-6` and `1.59e-4`
+versus WKB-corrected `DN_gw`; the WKB/deep reference residuals are
+`2.89e-6` and `5.65e-6`. Both `DN_eff` and frequency grids are checked exactly
+before reporting these values.
+
 Raw Oracle C runs and five-point comparisons are in
 [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/). The matched
 fine-step anchors and comparison are in
 [`oracle_c_wkb_corner_20261022/step_h0003125/`](oracle_c_wkb_corner_20261022/step_h0003125/).
+The matched transition-refine anchors and comparison are in
+[`oracle_c_wkb_corner_20261022/transition_h00025/`](oracle_c_wkb_corner_20261022/transition_h00025/).
 The artifact metadata records source commit and resources for each run; the
 standard-step `DN_re` Oracle anchors were produced from commit
 `5e6e78875cf9998fb64b72c6b216c32c7848abe8`, and the fine-step anchors from
 `0729306f4d4d828f7c487a1d613b7588c4ee50f2`.
+The matched transition-refine anchors were regenerated together from commit
+`e12fb4aae5e574ecb5bd3f61b808a547cbc20700`.
 
-Reproduce the standard and matched fine-step reference anchors and comparisons:
+Reproduce the standard, fine-step, and transition-refined anchors and comparisons:
 
 ```powershell
 python scripts/benchmark_oracle_c_wkb.py --points edge_r_lo edge_kap_hi sobol_000 edge_dnre_lo edge_dnre_hi --out-dir docs/oracle_c_wkb_corner_20261022
 python scripts/benchmark_fast_true_error.py --points edge_r_lo edge_kap_hi sobol_000 edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/fast_true_error.json
 python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.0003125 --out-dir docs/oracle_c_wkb_corner_20261022/step_h0003125
 python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/step_h0003125 --h 0.0003125 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/step_h0003125/fast_true_error.json
+python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.0025 --transition-refine --out-dir docs/oracle_c_wkb_corner_20261022/transition_h00025
+python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h00025 --h 0.0025 --transition-refine --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h00025/fast_true_error.json
 ```
 
 ## Artifacts
