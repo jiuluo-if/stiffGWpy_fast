@@ -84,28 +84,59 @@ separate, higher-risk change and is not proposed here.
 
 ## 2026-10-22 edge and Sobol follow-up
 
-The full Oracle C comparison was extended to one low-`r` edge, one high-`kappa10`
-edge, and one fixed Sobol point using the same native frequency grid and fast
-self-consistent `DN_eff`. Each point had 65 or 66 modes that used and could be
-compared across both the `z=5` and `z=10` handoffs.
+The full Oracle C comparison covers two low/high parameter edges, one fixed
+Sobol point, and two `DN_re` edges. Each point uses its fast self-consistent
+`DN_eff` and native frequency grid; 62–66 modes can be compared across the
+`z=5` and `z=10` handoffs.
 
 | Point | Frequencies / compared tail modes | WKB-corrected `DN_gw` vs deep `z=10` | Maximum per-mode WKB/deep difference | Fast vs WKB-corrected `DN_gw` | Fast vs deep `DN_gw` |
 |---|---:|---:|---:|---:|---:|
 | `edge_r_lo` | `76 / 65` | `5.20e-6` | `8.77e-5` | `1.18e-5` | `6.62e-6` |
 | `edge_kap_hi` | `77 / 66` | `1.37e-5` | `8.56e-5` | `1.17e-5` | `2.54e-5` |
 | `sobol_000` | `76 / 65` | `3.10e-5` | `8.57e-5` | `1.24e-5` | `1.87e-5` |
+| `edge_dnre_lo` | `77 / 62` | `2.35e-6` | `8.07e-5` | `2.74e-3` | `2.74e-3` |
+| `edge_dnre_hi` | `76 / 65` | `5.66e-6` | `8.23e-5` | `2.49e-3` | `2.50e-3` |
 
-These three points extend the sampled Oracle C comparison, but they do not
-certify the full parameter space. Raw results and the matching fast/WKB
-comparison are in [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
-All four JSON artifacts record source commit `d7f10405493026d65a9e1fa902079c2555bc7afb`
-and the fixed two-thread reference environment.
+The WKB correction remains independently accurate against the deep handoff on
+both `DN_re` edges, but the formal fast result misses the `<2e-4` gate there by
+about 12–14x. The discrepancy is not explained by the WKB reference: its
+integrated residual is below `6e-6`, with maximum per-mode residual below
+`8.3e-5`. Changing the fast frequency quadrature does not bring either point
+inside the gate.
 
-Reproduce the reference anchors and then compare the current fast solver:
+A scoped configuration sweep associates the remaining discrepancy with fast
+background resolution. At the standard `h=0.005`, the two fast residuals are
+`2.74e-3` and `2.50e-3`; deeper tail handoff or smaller `phase_max` barely
+changes them. A matched re-run at `h=0.0003125` uses Oracle anchors generated
+from the same configuration and `DN_eff`; both the `DN_eff` and native grid
+are checked exactly by the comparison script. The fast results are within the
+`2e-4` gate, at `1.65e-4` and `1.63e-4` versus WKB and `1.68e-4` versus deep.
+The Oracle WKB/deep residuals are `2.89e-6` and `4.56e-6`, with per-mode
+maxima below `8.3e-5`.
+
+The accuracy improvement has a substantial latency cost: the `h=0.0003125`
+medians are `62.7` and `71.7 ms`, compared with `5.95` and `5.00 ms` for the
+standard `h=0.005` fast path (about `10.5x` and `14.3x` slower). Both
+measurements used two warmup calls and ten timed fresh-model solves with two
+Numba `workqueue` threads and one BLAS thread. This candidate has not been
+promoted; optimizing its speed remains open.
+
+Raw Oracle C runs and five-point comparisons are in
+[`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/). The matched
+fine-step anchors and comparison are in
+[`oracle_c_wkb_corner_20261022/step_h0003125/`](oracle_c_wkb_corner_20261022/step_h0003125/).
+The artifact metadata records source commit and resources for each run; the
+standard-step `DN_re` Oracle anchors were produced from commit
+`5e6e78875cf9998fb64b72c6b216c32c7848abe8`, and the fine-step anchors from
+`0729306f4d4d828f7c487a1d613b7588c4ee50f2`.
+
+Reproduce the standard and matched fine-step reference anchors and comparisons:
 
 ```powershell
-python scripts/benchmark_oracle_c_wkb.py --points edge_r_lo edge_kap_hi sobol_000 --out-dir docs/oracle_c_wkb_corner_20261022
-python scripts/benchmark_fast_true_error.py --points edge_r_lo edge_kap_hi sobol_000 --anchor-dir docs/oracle_c_wkb_corner_20261022 --out docs/oracle_c_wkb_corner_20261022/fast_true_error.json
+python scripts/benchmark_oracle_c_wkb.py --points edge_r_lo edge_kap_hi sobol_000 edge_dnre_lo edge_dnre_hi --out-dir docs/oracle_c_wkb_corner_20261022
+python scripts/benchmark_fast_true_error.py --points edge_r_lo edge_kap_hi sobol_000 edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/fast_true_error.json
+python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.0003125 --out-dir docs/oracle_c_wkb_corner_20261022/step_h0003125
+python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/step_h0003125 --h 0.0003125 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/step_h0003125/fast_true_error.json
 ```
 
 ## Artifacts

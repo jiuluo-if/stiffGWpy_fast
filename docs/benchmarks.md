@@ -234,3 +234,26 @@ runtime; its per-scenario speed ratios are about 2.9–4.9x and are reported in
 [`mcmc_sagenet_compare/report.md`](mcmc_sagenet_compare/report.md). Browse the
 solver artifacts by family in
 [`experiment_catalog.md`](experiment_catalog.md).
+
+## `DN_re` edge accuracy and latency (2026-10-22)
+
+The full-grid Oracle C follow-up found that the standard fast profile
+(`h=0.005`) differs from the WKB-corrected reference by `2.74e-3` and
+`2.49e-3` at `edge_dnre_lo` and `edge_dnre_hi`. A matched Oracle rerun at
+`h=0.0003125` brings the differences to `1.65e-4` and `1.63e-4`, below the
+scoped `2e-4` gate. The more accurate candidate is much slower:
+
+| Point | Standard median (`h=0.005`) | Fine-step median (`h=0.0003125`) | Fine-step vs WKB |
+|---|---:|---:|---:|
+| `edge_dnre_lo` | `5.95 ms` | `62.7 ms` | `1.65e-4` |
+| `edge_dnre_hi` | `5.00 ms` | `71.7 ms` | `1.63e-4` |
+
+Each configuration uses two warmup calls and ten timed calls, with a fresh
+model per solve, two Numba `workqueue` threads, and one BLAS thread. The
+comparison tool verifies exact agreement in `DN_eff` and the native frequency
+grid before calculating error; configurations with mismatched anchors fail
+closed. These results cover two points only, do not establish a general speed
+ratio, and have not changed the formal fast preset. Raw anchors, comparisons,
+and reproduction commands are in
+[`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
+[`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
