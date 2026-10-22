@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import statistics
 import sys
@@ -54,7 +55,7 @@ def _scalar_h2_reference(N, model, DN_eff):
     out = np.empty_like(N)
     for i in range(N.size):
         Ni = float(N[i])
-        eN = np.exp(N_inf - Ni)
+        eN = math.exp(N_inf - Ni)
         e3N = eN * eN * eN
         nu = gp.nu_today / eN
         if nu > 100.0:

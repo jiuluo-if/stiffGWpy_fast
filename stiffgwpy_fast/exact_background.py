@@ -117,7 +117,14 @@ def H2_vec(N, m, DN_eff):
         - gp.Omega_ph2 - Oerh2 - Osh2
     N_inf = d['N_inf']
     fd_rho, _ = _fd_from_ref()
-    eN = np.exp(N_inf - N)
+    # Preserve the legacy scalar ``math.exp`` result across platforms while
+    # batching the much more expensive spline evaluation below.
+    # 保留旧版逐点 ``math.exp`` 的跨平台结果，仅批量处理耗时更高的样条插值。
+    eN = np.fromiter(
+        (math.exp(N_inf - float(Ni)) for Ni in N),
+        dtype=float,
+        count=N.size,
+    )
     e3N = eN * eN * eN
     nu = gp.nu_today / eN
     out = np.empty_like(N)
