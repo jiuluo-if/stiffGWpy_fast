@@ -150,7 +150,7 @@ def _run_case(name, freqs, values):
     _, previous_calls = _count_previous_calls(freqs, values)
     _, candidate_calls = _count_candidate_calls(freqs, values)
 
-    # Warm both paths, then alternate order to reduce time-drift bias.
+    # 先预热两条路径，再交替运行以减小计时漂移偏差。
     for _ in range(3):
         previous_integrate_spectrum(freqs, values, zeros)
         reference.integrate_spectrum(freqs, values, zeros)

@@ -79,7 +79,7 @@ def _solve(profile, **override):
         elif k == 'phase_max':
             FS.set_phase_max(v)
         elif k == 'freq_res':
-            pass  # forwarded to SGWB_iter_fast below
+            pass  # 后续调用 SGWB_iter_fast 时传入。
         elif k == 'freq_grid':
             FS.set_freq_grid(v)
     m = LCDM_SG(**DEFAULT_POINT)
@@ -112,11 +112,10 @@ def phase_convergence(outdir):
                          runtime_s=secs, **kw))
 
     def _dn_eff(dn):
-        # Delta N_eff contribution is DN_gw (the model stores its own effective
-        # DN_eff after the loop; here we report the self-consistent DN_eff).
+        # DN_gw 是引力波对 Delta N_eff 的贡献；这里将自洽迭代后的值记作 DN_eff。
         return dn
 
-    # --- plain-grid sweeps (reference = ref_plain) ---
+    # --- plain-grid 参数扫描（参照值为 ref_plain）---
     for h in (0.04, 0.02, 0.01, 0.005):
         dn, dseff, nf, secs, _ = _solve('plain_grid', h=h)
         _rec('plain_grid', 'h', h, dn, nf, secs,
@@ -134,7 +133,7 @@ def phase_convergence(outdir):
         _rec('plain_grid', 'freq_res', fr, dn, nf, secs,
              rel_ref=abs(dn - ref_plain[0]) / max(abs(ref_plain[0]), 1e-300))
 
-    # --- production (transition-refine) sweeps (reference = ref_prod) ---
+    # --- production（transition-refine）参数扫描（参照值为 ref_prod）---
     for h in (0.02, 0.01, 0.005):
         dn, _, nf, secs, _ = _solve('production', h=h)
         _rec('production', 'h', h, dn, nf, secs,
@@ -171,21 +170,18 @@ def phase_convergence(outdir):
 def phase_param_sweep(outdir, n, seed, method='lhs'):
     """Replay the historical plain-grid screen and production flag-point tier."""
     from scipy.stats import qmc
-    # Schemas (min, max) on log-scaled / linear physical handles.
-    # Full physical parameter schema (all parameters that actually enter the
-    # background / tensor-source physics).  Ranges are the prior box used for
-    # the coverage screen; they are wide enough to exercise the extremes that
-    # gate on physics validity.
+    # 参数范围按对数或线性坐标定义，覆盖背景和张量源的全部物理参数。
+    # 该先验盒用于覆盖率筛查，范围足以触及物理有效性门限附近的区域。
     box = {
         'Omega_bh2': (0.01, 0.04),
         'Omega_ch2': (0.05, 0.25),
         'H0': (50.0, 90.0),
         'DN_eff': (0.0, 3.0),
-        'log10A_s': (-9.2, -8.2),        # A_s in [6.3e-10, 6.3e-9]
-        'log10r': (-4.0, -1.0),          # r in [1e-4, 1e-1]
+        'log10A_s': (-9.2, -8.2),        # A_s 范围为 [6.3e-10, 6.3e-9]
+        'log10r': (-4.0, -1.0),          # r 范围为 [1e-4, 1e-1]
         'n_t': (-0.5, 0.5),
         'cr': (0.0, 1.0),
-        'log10T_re': (-1.0, 7.0),        # T_re in [0.1, 1e7] GeV
+        'log10T_re': (-1.0, 7.0),        # T_re 范围为 [0.1, 1e7] GeV
         'DN_re': (0.0, 40.0),
         'log10kappa10': (-3.0, 3.0),
     }
@@ -211,7 +207,7 @@ def phase_param_sweep(outdir, n, seed, method='lhs'):
                       r=10 ** p['log10r'], n_t=p['n_t'], cr=p['cr'],
                       T_re=10 ** p['log10T_re'], DN_re=p['DN_re'],
                       kappa10=10 ** p['log10kappa10'])
-        # shared Delta Neff physical guard (same as the engine): total Neff > 5
+        # 与求解器一致的 Delta N_eff 物理保护：总 N_eff 大于 5。
         m = LCDM_SG(**kwargs)
         dn_gw = np.nan
         secs = np.nan
@@ -272,14 +268,12 @@ def phase_oracle_independence(outdir):
     os.makedirs(outdir, exist_ok=True)
     from stiffgwpy_fast import reference as REF
     m = LCDM_SG(**DEFAULT_POINT)
-    # signal-band frequency subset (re-entered modes; the ill-defined
-    # sub-horizon-today low-f tail carries no Delta Neff weight).
+    # 只取信号频带内已重新进入视界的模式；今天仍处于视界内的低频尾部不参与 Delta N_eff 积分。
     freqs = np.linspace(-4.0, 2.0, 12)
     dn = float(m.cosmo_param['DN_eff'])
-    # Keep rtol uniform (1e-8) so the tail term is isolated; the reference's
-    # own ODE/quadrature convergence is separately tiny (its reported
-    # quadrature_error ~1e-22 and interpolation_error ~1e-9 in the matched
-    # artifacts).  A deep z_tail (>= 14) is not attempted (stiff).
+    # rtol 固定为 1e-8，以单独观察尾部项；参照求解器自身的 ODE/求积误差更小
+    #（匹配产物中的 quadrature_error 约为 1e-22，interpolation_error 约为 1e-9）。
+    # z_tail >= 14 时方程过刚，不执行该深尾部计算。
     res = REF.oracle_variants(m, freqs=freqs, dn_eff=dn,
                               z_tail_conservative=8.0, z_tail_deep=10.0,
                               rtol_conservative=1e-8, rtol_deep=1e-8)

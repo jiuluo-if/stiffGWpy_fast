@@ -18,7 +18,7 @@ from .functions import solve_SGWB
 from .global_param import *
 from .LCDM_stiff_Neff import LCDM_SN
 
-MAX_ITER = 60            # cap on the outer bisection loop
+MAX_ITER = 60            # 外层自洽二分迭代上限。
 _DEFAULT_ACCURACY_MODE = object()
 # The sentinel distinguishes an omitted argument from explicit ``None``.
 # 对象哨兵用于区分“未传 accuracy_mode”与“显式传入 None”的兼容调用。
@@ -114,7 +114,7 @@ class LCDM_SG(LCDM_SN):
         if hasattr(self, 'DN_eff_orig') and (self.DN_eff_orig is not None):
             self.cosmo_param['DN_eff'] = self.DN_eff_orig
         self.DN_eff_orig = None
-        self.SGWB_converge = False     # Whether the SGWB has been successfully computed
+        self.SGWB_converge = False     # 标记 SGWB 求解是否成功收敛。
         self.local_error_budget = None
         self.DN_gw_error = None
         self.Delta_Neff_abs_error = None
@@ -131,7 +131,7 @@ class LCDM_SG(LCDM_SN):
         中文：在给定膨胀历史下，对单个频率的原初张量扰动方程进行积分。
         """
 
-        P_t = self.Tensor_power(freq)            # Primordial tensor power spectrum
+        P_t = self.Tensor_power(freq)            # 原初张量功率谱。
 
         j = self.find_index_hc(freq+3)           # solver begins at kc/aH <= 10^{-3}
         # 起始节点选在 kc/aH<=10^-3，即模态仍处于超视界状态时。
@@ -453,7 +453,7 @@ class LCDM_SG(LCDM_SN):
             DN_gw_min = 0; DN_gw_max = 10
             converged = False
             try:
-                for _iter in range(MAX_ITER):    # main iteration
+                for _iter in range(MAX_ITER):    # 外层自洽迭代。
                     self.gen_expansion()
                     self.construct_f(freq_res)
                     self.run_SGWB(z_tail=z_tail, rtol=rtol, atol=atol)
@@ -497,18 +497,16 @@ class LCDM_SG(LCDM_SN):
 
 
             self.SGWB_converge = True
-            self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # log10(H/s^-1), H = 2pi * f_hor / a
+            self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # log10(H/s^-1)，H = 2π f_hor/a。
             self.DN_gw = Neff0 * np.multiply(self.g2, np.exp(2*(self.f_hor-self.f_hor[-1])*ln10+2*(self.Nv-self.Nv[-1]))) / Omega_nu
-            # Obtain the entire evolution of the DN_eff due to SGWB. It is actually rho_GW(N) / (rho_{gamma,0}*7/8*(4/11)**(4/3)).
-            # Now self.DN_gw[-1] + self.DN_eff_orig = self.cosmo_param['DN_eff'].
-            # 沿 N 记录 SGWB 对有效中微子数的贡献；末端值与输入 DN_eff_orig 相加即为收敛后的 DN_eff。
+            # 记录 SGWB 对 DN_eff 的完整演化，即 rho_GW(N)/(rho_gamma,0*7/8*(4/11)^(4/3))。
+            # 末端满足 self.DN_gw[-1] + self.DN_eff_orig = self.cosmo_param['DN_eff']。
 
             self.Ogw_today = np.array([self.Ogw[i][-1] for i in range(len(self.f))])
             self.Opgw_today = np.array([self.Opgw[i][-1] for i in range(len(self.f))])
             self.Oj_today = np.array([self.Oj[i][-1] for i in range(len(self.f))])
             self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)  # log10(Omega_GW(f))
-            # Ignoring the negative super-horizon contribution from Omega_j, for the moment...
-            # 当前谱暂不扣除超视界阶段 Omega_j 的负贡献。
+            # 暂不扣除超视界阶段 Omega_j 的负贡献。
 
             # Extra radiation (e.g. SGWB) parameterized as kappa_rad(T_i) for AlterBBN.
             # 供 AlterBBN 使用的额外辐射参数化形式，例如 SGWB 的 kappa_rad(T_i)。
@@ -558,7 +556,7 @@ class LCDM_SG(LCDM_SN):
         if not 0.25 <= r <= 8.0:
             raise ValueError('freq_res must be in [0.25, 8.0], got %r' % freq_res)
         fmax = self.f_hor[0]; fmin = min(self.f_hor); fcmb = math.log10(f_piv)
-        if self.derived_param['nt']>0:            # Only count modes whose superhorizon power is less than unity
+        if self.derived_param['nt']>0:            # 只保留超视界功率小于 1 的模式。
             fmax = min(fmax, (-math.log10(self.derived_param['A_t']))/self.derived_param['nt']+math.log10(f_piv))
 
         f = fmax+np.zeros(1)
@@ -570,21 +568,21 @@ class LCDM_SG(LCDM_SN):
 
         if fmax >= self.f_re:
             f = f[np.logical_or(f>=self.f_re+.2, f>=fmax)]; f = f[f>=fmax-.4]
-            f = cat((f, np.arange(f[-1]-.5, self.f_re+1.5, -.5/r)), axis=None)          # before T_re, during reheating
-            f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1/r)), axis=None)          # approaching f_re
+            f = cat((f, np.arange(f[-1]-.5, self.f_re+1.5, -.5/r)), axis=None)          # 再加热期间，覆盖 T_re 之前的频率段。
+            f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1/r)), axis=None)          # 接近 f_re 的频率段。
             f = cat((f, np.arange(f[-1]-.05, self.f_re+.4, -.05/r)), axis=None)
-            f = cat((f, np.arange(f[-1]-.01, self.f_re-.22, -.01/r)), axis=None)        # through f_re
+            f = cat((f, np.arange(f[-1]-.01, self.f_re-.22, -.01/r)), axis=None)        # 穿过 f_re 的频率段。
             f = cat((f, np.arange(f[-1]-.022, self.f_re-.5, -.02/r)), axis=None)
-            f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05/r)), axis=None)         # away from f_re
+            f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05/r)), axis=None)         # 远离 f_re 后的频率段。
             f = cat((f, np.arange(f[-1]-.2, self.f_re-3, -.2/r)), axis=None)
 
         if self.rhostiff_re > self.rhorad_re:
-            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1/r)), axis=None)     # after T_re, before T_sr
-            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2/r)), axis=None)   # through T_sr (the ankle)
+            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1/r)), axis=None)     # 再加热后、刚性物质主导结束前的频率段。
+            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2/r)), axis=None)   # 穿过 T_sr 对应的谱踝部。
 
         f = f[f>=fcmb]
-        f = cat((f, np.arange(f[-1]-1, fcmb, -1/r)), axis=None)                         # RD, before z_eq
-        f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2/r)), axis=None); f = f[f>=fmin]     # through z_eq to the present
+        f = cat((f, np.arange(f[-1]-1, fcmb, -1/r)), axis=None)                         # 辐射主导期，从 z_eq 之前延伸至枢轴频率。
+        f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2/r)), axis=None); f = f[f>=fmin]     # 穿过 z_eq 并延伸至当前最低频率。
 
         self.f = f
 
@@ -597,8 +595,8 @@ class LCDM_SG(LCDM_SN):
         中文：沿频率积分 SGWB 谱，计算每个膨胀时刻的玻尔能量分数，并据此得到原初 SGWB 对
         ``Delta N_eff`` 的贡献。
         """
-        self.g2 = np.zeros_like(self.Nv)      # total Omega_gw
-        self.w2 = np.zeros_like(self.Nv)      # total Omega_pgw
+        self.g2 = np.zeros_like(self.Nv)      # 总 Omega_gw。
+        self.w2 = np.zeros_like(self.Nv)      # 总 Omega_pgw。
 
         # Patch the per-frequency solutions into matrices for integration over frequency.
         # 将逐频率求解结果写入矩阵，以便沿频率方向积分。
@@ -617,7 +615,7 @@ class LCDM_SG(LCDM_SN):
         # 对膨胀历史的每个节点积分频谱。
         for i in range(len(self.Nv)):
             ind_int = (M_N_hc[i]>=0)
-            f_int = np.flip(self.f[ind_int])                           # log10(f/Hz), increasing order
+            f_int = np.flip(self.f[ind_int])                           # log10(f/Hz)，按频率递增排列。
             Ogw_int = np.flip(M_Ogw[i,ind_int]); Opgw_int = np.flip(M_Opgw[i,ind_int]); Oj_int = np.flip(M_Oj[i,ind_int])
 
             if len(f_int)>=2:

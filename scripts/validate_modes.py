@@ -161,8 +161,7 @@ def main(argv=None):
     with open(out_path, 'a', encoding='utf-8') as fh:
         for pn, kw in points.items():
             for mn in modes:
-                # The reference-mode LSODA at h=0.00125 is ~8x pricier; when
-                # explicitly requested, run it only on the default point.
+                # h=0.00125 的 reference-mode LSODA 约慢 8 倍；显式请求时只对 default 点运行。
                 if (mn == 'reference' and args.include_reference_lsoda
                         and pn != 'default'):
                     continue

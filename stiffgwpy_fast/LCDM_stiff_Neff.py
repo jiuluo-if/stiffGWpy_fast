@@ -57,13 +57,13 @@ class LCDM_SN:
             self.cosmo_param = {'Omega_bh2': 0.0223828, 'Omega_ch2': 0.1201075, 'H0': 67.32117, 'DN_eff': 0.,
                                 'A_s': 2.100549e-9, 'r': 0., 'n_t': 0., 'cr': 0,
                                 'T_re': 1e12, 'DN_re': 0, 'kappa10': 0.,
-                               }    # default values: Planck 2018 Plik best fit, no consistency relation, no stiff matter
+                               }    # 默认采用 Planck 2018 Plik 最佳拟合值，不启用一致性关系和刚性物质。
             if len(kwargs) > 0:
                 for key in kwargs:
                     if key in self.cosmo_param:
                         self.cosmo_param[key] = kwargs[key]
 
-        self.DN_eff_GW = 0          # Relativistic degree of freedom that exists before the end of reheating
+        self.DN_eff_GW = 0          # 再加热结束前引力波贡献的相对论自由度。
 
 
     @property
@@ -83,15 +83,15 @@ class LCDM_SN:
                 return self._fast_derived_cache
         derived_dict = {
             'h': self.cosmo_param['H0']/100,
-            'H_0': self.cosmo_param['H0']/(10*parsec),     # s^-1
+            'H_0': self.cosmo_param['H0']/(10*parsec),     # 哈勃常数，单位 s^-1。
 
-            'Omega_mh2': self.cosmo_param['Omega_bh2'] + self.cosmo_param['Omega_ch2'],                  # baryons + CDM
-            'Omega_sh2': Omega_ph2 * self.cosmo_param['kappa10'] * (1e-2*a_10/TCMB_GeV)**4 * a_10**2,    # Omega_stiff*h^2 at the present
+            'Omega_mh2': self.cosmo_param['Omega_bh2'] + self.cosmo_param['Omega_ch2'],                  # 重子与冷暗物质的总密度参数。
+            'Omega_sh2': Omega_ph2 * self.cosmo_param['kappa10'] * (1e-2*a_10/TCMB_GeV)**4 * a_10**2,    # 当前时刻的 Omega_stiff*h^2。
 
             'A_t': self.cosmo_param['r'] * self.cosmo_param['A_s'],
             'nt': input_nt(self.cosmo_param),
 
-            'kappa_s': self.cosmo_param['kappa10'] * (1e-2/T_i)**4 * math.exp(6*(N_i-N_10))              # kappa_stiff(T_i) for AlterBBN
+            'kappa_s': self.cosmo_param['kappa10'] * (1e-2/T_i)**4 * math.exp(6*(N_i-N_10))              # AlterBBN 初始温度 T_i 处的 kappa_stiff。
         }
 
         if self.cosmo_param['T_re'] >= T_max:
@@ -101,20 +101,17 @@ class LCDM_SN:
             derived_dict['N_re'] = spl_T_N(math.log10(self.cosmo_param['T_re']))
             derived_dict['rho_re'] = spl_rho(derived_dict['N_re'])
         self.rhorad_re = (derived_dict['rho_re'] + 7/8*(4/11)**(4/3)*self.cosmo_param['DN_eff']) * (TCMB_GeV*math.exp(N_10))**4
-        # rho_rad coefficient at T_re, including extra radiation, in GeV^4
         # 再加热温度处的辐射密度系数，含额外辐射，单位为 GeV^4。
-        self.rhostiff_re = self.cosmo_param['kappa10'] * 1e-8 * math.exp(2*(derived_dict['N_re']-N_10))   # rho_stiff coefficient at T_re, in GeV^4
+        self.rhostiff_re = self.cosmo_param['kappa10'] * 1e-8 * math.exp(2*(derived_dict['N_re']-N_10))
         # 再加热温度处的刚性物质密度系数，单位为 GeV^4。
 
         derived_dict['N_inf'] = None
         if self.cosmo_param['cr'] > 0:
             if self.cosmo_param['r'] > 0:
                 derived_dict['V_inf'] = (1.5*derived_dict['A_t'])**.25 * math.pi**.5 * M_Pl
-                # ( GeV)^4, energy scale of single-field slow-roll inflation.
-                # 单场慢滚暴胀的能标，单位为 GeV^4。
+                # 单场慢滚暴胀的特征能标 V^(1/4)，单位 GeV。
 
                 Delta_N = (N_10-derived_dict['N_re'])*4/3 + math.log(M_Pl)*4/3 + math.log(45/2*derived_dict['A_t']/(self.rhorad_re+self.rhostiff_re))/3
-                # Lookback number of e-folds from the end of inflation to the end of reheating, a^{-3} matter-like evolution
                 # 假设暴胀结束至再加热结束期间按 a^{-3} 物质型演化，计算这段回望 e 折数。
 
                 if Delta_N >= 0:
@@ -162,11 +159,11 @@ class LCDM_SN:
 
         Omh2 = self.derived_param['Omega_mh2']; Osh2 = self.derived_param['Omega_sh2']
 
-        Oerh2 = Omega_ph2 * 7/8 * (4/11)**(4/3) * self.cosmo_param['DN_eff']         # Omega_{extra rad}*h^2
-        Otrh2 = Omega_orh2 + Oerh2                                                   # total radiation after e+e- annihilation
-        Otreh2 = Omega_ph2 * rho_th[-1] + Oerh2                                 # total radiation before any SM phase transition
+        Oerh2 = Omega_ph2 * 7/8 * (4/11)**(4/3) * self.cosmo_param['DN_eff']         # 额外辐射的 Omega*h^2。
+        Otrh2 = Omega_orh2 + Oerh2                                                   # 电子-正电子湮灭后的总辐射密度参数。
+        Otreh2 = Omega_ph2 * rho_th[-1] + Oerh2                                 # 标准模型相变前的总辐射密度参数。
 
-        OLh2 = self.derived_param['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2
+        OLh2 = self.derived_param['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2。
 
 
         # Construct output arrays / 构造输出数组。
@@ -176,7 +173,7 @@ class LCDM_SN:
             Nv = np.append(Nv, self.derived_param['N_inf'])
         # Nv is equivalent to ln(a), its present-day value is set at Nv[-1] = N_inf.
         # Nv 对应 ln(a)，并将今天的端点设为 Nv[-1]=N_inf。
-        Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv proportional to f_H = aH/(2*pi)
+        Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv 与视界频率 f_H=aH/(2π) 成比例。
 
 
         # Main loop: calculate the expansion history / 主循环：计算膨胀历史。
@@ -185,19 +182,19 @@ class LCDM_SN:
         # 再加热边界落在网格上最近的节点；连续边界位置由 N_inf-N_re 给出。
 
         for i in range(index_re, len(Nv), 1):
-            eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 1/a and 1/a^3
-            nu = nu_today / eN          #  (m_nu*c^2)/(kB*T_nu)
-            if (nu > 100):              #  massive neutrinos become highly non-relativistic
-                H2 = Omh2 + Omega_mnuh2 + (Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N    # h^2 * e^{3(N-N_end)} = h^2 * a^3
+            eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 分别对应 a^-1 和 a^-3。
+            nu = nu_today / eN          # (m_nu*c^2)/(kB*T_nu)。
+            if (nu > 100):              # 有质量中微子处于深度非相对论区。
+                H2 = Omh2 + Omega_mnuh2 + (Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N    # h^2*a^3 项。
                 Sv[i] = (Omh2 + Omega_mnuh2 + 4/3*(Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + 2*Osh2*e3N)/H2
             elif (nu <= 100) and (nu >= 0.1):
                 [rho_nu, p_nu] = int_FD(nu)
                 H2 = Omh2 + (Omega_ph2+(2/3+rho_nu/3)*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N
                 Sv[i] = (Omh2 + 4/3*(Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + (rho_nu+p_nu)*Omega_nh2/3*eN + 2*Osh2*e3N)/H2
-            elif (nu < 0.1) and (Nv[i] > Nv[-1]-N_fin):     # massive neutrinos become highly relativistic
+            elif (nu < 0.1) and (Nv[i] > Nv[-1]-N_fin):     # 有质量中微子处于深度相对论区。
                 H2 = Omh2 + Otrh2*eN + Osh2*e3N + OLh2/e3N
                 Sv[i] = (Omh2 + 4/3*Otrh2*eN + 2*Osh2*e3N)/H2
-            elif (Nv[i] <= Nv[-1]-N_fin) and (Nv[i] >= Nv[-1]-N_max):   # Use lookup table for thermal history, 20 keV ~- 10^6 GeV.
+            elif (Nv[i] <= Nv[-1]-N_fin) and (Nv[i] >= Nv[-1]-N_max):   # 在 20 keV 至 10^6 GeV 区间使用热史查找表。
                 rho_i = spl_rho(Nv[-1]-Nv[i])
                 rhop_i = spl_rhop(Nv[-1]-Nv[i])
                 H2 = Omh2 + (Omega_ph2*rho_i + Oerh2)*eN + Osh2*e3N + OLh2/e3N
@@ -206,7 +203,7 @@ class LCDM_SN:
                 H2 = Omh2 + Otreh2*eN + Osh2*e3N + OLh2/e3N
                 Sv[i] = (Omh2 + 4/3*Otreh2*eN + 2*Osh2*e3N)/H2
 
-            fv[i] = -0.5*Nv[i] + 0.5*math.log(H2)    #  N + ln H
+            fv[i] = -0.5*Nv[i] + 0.5*math.log(H2)    # 计算 N 与 ln(H) 的组合量。
 
         Sv[0:index_re] = 1
         fv[0:index_re] = fv[index_re] - 0.5*(Nv[0:index_re] - Nv[index_re])
@@ -223,7 +220,7 @@ class LCDM_SN:
         self.Nv = Nv
         self.N = Nv - Nv[-1]
         self.sigma = Sv
-        self.f_hor = fv / ln10       # log10(f_H/Hz)
+        self.f_hor = fv / ln10       # log10(f_H/Hz)。
         self.f_re = self.f_hor[index_re]
 
 
@@ -234,6 +231,6 @@ def input_nt(params):
     中文：读取张量谱指数 ``n_t``；可按暴胀一致性关系从模型参数推导，或使用用户显式提供的值。
     """
     if params['cr'] > 0:
-        return -params['r']/8        # consistency relation
+        return -params['r']/8        # 暴胀一致性关系。
     else:
         return params['n_t']

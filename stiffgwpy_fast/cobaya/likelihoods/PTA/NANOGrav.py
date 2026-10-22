@@ -42,9 +42,9 @@ class NANOGrav(Likelihood):
 
         中文：取回 theory 频率、SGWB 谱和 Hubble 值，转为递增频率顺序后计算 NANOGrav 似然。
         """
-        f_theory = np.flip(self.provider.get_result("f"))  # log10(f/Hz)
-        Ogw_theory = np.flip(self.provider.get_result("omGW_stiff"))  # log10(Omega_GW(f))
-        H_0 = self.provider.get_result("hubble")  # s^{-1}
+        f_theory = np.flip(self.provider.get_result("f"))  # log10(f/Hz)，频率对数。
+        Ogw_theory = np.flip(self.provider.get_result("omGW_stiff"))  # log10(Omega_GW(f))，能谱对数。
+        H_0 = self.provider.get_result("hubble")  # s^-1，哈勃常数。
 
         return self.log_likelihood(f_theory, Ogw_theory, H_0, **params_values)
 
@@ -86,7 +86,7 @@ class NANOGrav(Likelihood):
             np.power(10.0, log10hc_BH * 2) * np.power(work_freqs * yr, -gamma_BH) * yr**3 / (12 * np.pi**2 * T_base)
         )  # s^2
 
-        log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))  # log10(delay/s) = log10(sqrt(rho/s^2))
+        log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))  # log10(delay/s)，延迟按秒计。
 
         logL = 0
         for i in range(Nf):
