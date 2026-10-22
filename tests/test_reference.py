@@ -5,6 +5,7 @@ import math
 
 import numpy as np
 import pytest
+from scipy.interpolate import PchipInterpolator
 
 from stiffgwpy_fast import fast_sgwb as FS
 from stiffgwpy_fast import reference as REF
@@ -43,6 +44,17 @@ def test_background_matches_fast_grid_away_from_kink():
         assert abs(s_ref - m.sigma[i]) < 5e-3
 
 
+def test_f_hor_abs_matches_public_horizon_frequency():
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    dn_eff = m.cosmo_param['DN_eff']
+    background = REF._Background(m, dn_eff)
+
+    for N in (0.0, background.N_re_abs, background.N_inf):
+        assert REF.f_hor_abs(background, N) == pytest.approx(
+            REF.f_hor_at(m, N, dn_eff), abs=1e-14
+        )
+
+
 def test_integrate_spectrum_exponential():
     """integrate_spectrum reproduces a simple analytic integral."""
     freqs = np.linspace(-18.0, 6.0, 401)
@@ -56,6 +68,50 @@ def test_integrate_spectrum_exponential():
         (10.0 ** (-14.0 - 0.3 * b)) - (10.0 ** (-14.0 - 0.3 * a)))
     assert g2 == pytest.approx(exact, rel=1e-3)
     assert qerr >= 0.0
+
+
+def test_integrate_spectrum_interpolation_error_matches_spline_integrals():
+    freqs = np.linspace(-20.0, 7.0, 247)
+    spectrum = np.exp(-0.23 * (freqs + 4.0)) * (
+        1.0
+        + 0.17 * np.exp(-0.5 * ((freqs + 5.7) / 0.21) ** 2)
+        + 0.08 * np.exp(-0.5 * ((freqs - 0.6) / 0.48) ** 2)
+        + 0.012 * np.sin(3.7 * freqs)
+    )
+    _, _, interpolation_error = REF.integrate_spectrum(
+        freqs, spectrum, np.zeros_like(spectrum)
+    )
+
+    half = freqs[::2]
+    expected = math.log(10.0) * abs(
+        PchipInterpolator(freqs, spectrum).integrate(freqs[0], freqs[-1])
+        - PchipInterpolator(half, spectrum[::2]).integrate(freqs[0], freqs[-1])
+    )
+    assert interpolation_error == pytest.approx(expected, rel=1e-10, abs=1e-11)
+
+
+def test_integrate_spectrum_even_grid_includes_last_coarse_endpoint():
+    freqs = np.linspace(-22.0, 8.0, 240)
+    spectrum = np.exp(-0.18 * (freqs + 2.0)) * (
+        1.0
+        + 0.2 * np.exp(-0.5 * ((freqs + 8.0) / 0.3) ** 2)
+        + 0.05 * np.sin(2.1 * freqs)
+    )
+    _, _, interpolation_error = REF.integrate_spectrum(
+        freqs, spectrum, np.zeros_like(spectrum)
+    )
+
+    coarse_indices = np.arange(0, freqs.size, 2)
+    coarse_indices = np.append(coarse_indices, freqs.size - 1)
+    coarse_freqs = freqs[coarse_indices]
+    coarse_spectrum = spectrum[coarse_indices]
+    expected = math.log(10.0) * abs(
+        PchipInterpolator(freqs, spectrum).integrate(freqs[0], freqs[-1])
+        - PchipInterpolator(coarse_freqs, coarse_spectrum).integrate(
+            freqs[0], freqs[-1]
+        )
+    )
+    assert interpolation_error == pytest.approx(expected, rel=1e-10, abs=1e-11)
 
 
 def test_summarize_tail_convergence_reports_observed_bound():

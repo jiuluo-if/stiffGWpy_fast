@@ -49,7 +49,7 @@ def _phase_window_observable(z_handoff, event_N, x_handoff, y_handoff,
 def _start_state(model, freq, dn_eff, z_start):
     bg = REF._Background(model, dn_eff)
     n_start = REF._find_start_N(bg, freq, -12.0)
-    f_start = REF.f_hor_abs(bg, freq, n_start)
+    f_start = REF.f_hor_abs(bg, n_start)
     z0 = (freq - f_start) * REF.ln10
     y0 = math.exp(z0)
     result = solve_ivp(
@@ -83,7 +83,7 @@ def solve_window(model, freq, dn_eff, z_start=5.0, window=0.0):
         handoff_N, zf, xf, yf = start_N, z0, x0, y0
     p_t = model.derived_param['A_t'] \
         * (10.0 ** freq / REF.gp.f_piv) ** model.derived_param['nt']
-    f_today = REF.f_hor_abs(bg, freq, bg.N_inf)
+    f_today = REF.f_hor_abs(bg, bg.N_inf)
     result = _phase_window_observable(
         zf, handoff_N, xf, yf, bg.N_inf, f_today, freq, p_t)
     result.update({
