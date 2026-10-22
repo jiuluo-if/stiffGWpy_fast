@@ -235,7 +235,7 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
                     auto_escalate=True, error_tol=1e-6, escalate_to_reference=True)
     assert m.escalations == 1
     assert m.escalated_from == 'fast'
-    assert m.reference_evals >= 1
+    assert m.reference_evals == 1
     assert m.cosmo_param['DN_eff'] == pytest.approx(0.00227)
     assert m.last_eval_status == 'FAST_ESCALATED'
     assert m.eval_status_counts['FAST_ESCALATED'] == 1

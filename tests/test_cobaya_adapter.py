@@ -82,6 +82,9 @@ def test_reference_engine_sets_state(monkeypatch):
     assert np.allclose(state['omGW_stiff'], logO)
     assert state['derived']['Delta_Neff_GW'] == pytest.approx(2.27e-3, rel=1e-9)
     assert m.reference_evals == 1
+    assert m.last_engine == 'reference'
+    assert adapter.last_eval_status == 'REFERENCE'
+    assert m.eval_status_counts['REFERENCE'] == 1
 
 
 def test_qualified_module_import_resolves_class():
