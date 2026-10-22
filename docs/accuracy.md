@@ -2,7 +2,7 @@
 
 Status: current summary of scoped evidence; no full parameter-space release certification
 
-Date: 2026-10-21
+Date: 2026-10-22
 
 The formal fast profile is the single `goal-kink-hybrid` mode. The independent
 continuous-sigma DOP853 pipeline is the precision reference; LSODA is a
@@ -28,6 +28,26 @@ The same audit reports Simpson errors above the PCHIP results and records
 PCHIP as the formal default. Its `z_tail=8` reference difference is limited by
 the reference's own frozen-handoff tail sensitivity; the one-point `z_tail=10`
 comparison is an attribution check, not a substitute for broader validation.
+
+## 2026-10-22 fresh `DN_re` edge probe
+
+A current-HEAD full-grid comparison adds two reheating-parameter edges to the
+three previously sampled Oracle C points. Oracle WKB and deep-reference
+`DN_gw` agree within `2.4e-6` and `5.7e-6`, respectively. The formal fast
+profile is within `1.2e-5` on the earlier three points, but has relative
+differences of `2.74e-3` (`edge_dnre_lo`) and `2.50e-3` (`edge_dnre_hi`) on the
+new edges. Those two results fail the scoped `2e-4` gate; this supersedes any
+interpretation that the gate has been verified across representative parameter
+edges. It remains a sampled probe, not a full parameter-space certification.
+
+With Oracle anchors regenerated at the same `DN_eff` and native frequency
+grid, reducing `h` to `0.0003125` lowers the two errors to `1.65e-4` and
+`1.63e-4` versus WKB (both below the scoped gate). Warm median runtimes rise
+from `5.95`/`5.00 ms` at `h=0.005` to `62.7`/`71.7 ms`. The precision
+candidate is therefore not promoted; improving its latency remains open. Full
+grids, configuration, repeated timings, and reproduction commands are in
+[`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
+[`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
 
 ## Current full-path solver profile is separate
 
