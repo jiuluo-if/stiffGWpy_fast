@@ -69,6 +69,13 @@ about `1.34x/2.09x` slower than standard fast. Coarsening further to
 These candidates remain validation-only and are documented with their matched
 Oracle anchors in [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md).
 
+At `h=0.04`, widening the radius to `0.25` and increasing the factor to `128`
+restores the same `0.0003125` local step, but only the high `DN_re` edge passes:
+the low/high errors are `4.51e-4` and `1.38e-4`. Exact anchor checks pass, so
+the low-edge miss is not a grid mismatch. This candidate is rejected; its
+factor-64 comparison at the same radius fails both edges (`4.51e-4`/`2.95e-4`).
+Matched Oracle data are linked from the assessment report.
+
 ## Current full-path solver profile is separate
 
 The 2026-10-21 full-path profile used solver source at commit
