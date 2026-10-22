@@ -185,7 +185,7 @@ class LCDM_SN:
         Otrh2 = Omega_orh2 + Oerh2                                                   # 电子-正电子湮灭后的总辐射密度参数。
         Otreh2 = Omega_ph2 * rho_th[-1] + Oerh2                                 # 标准模型相变前的总辐射密度参数。
 
-        OLh2 = derived['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2。
+        OLh2 = derived['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # 暗能量密度参数 Omega_Lambda*h^2。
 
 
         # Construct output arrays / 构造输出数组。
@@ -205,7 +205,7 @@ class LCDM_SN:
 
         for i in range(index_re, len(Nv), 1):
             eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 分别对应 a^-1 和 a^-3。
-            nu = nu_today / eN          # (m_nu*c^2)/(kB*T_nu)。
+            nu = nu_today / eN          # 中微子质量与热能之比 (m_nu*c^2)/(kB*T_nu)。
             if (nu > 100):              # 有质量中微子处于深度非相对论区。
                 H2 = Omh2 + Omega_mnuh2 + (Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N    # h^2*a^3 项。
                 Sv[i] = (Omh2 + Omega_mnuh2 + 4/3*(Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + 2*Osh2*e3N)/H2
@@ -242,7 +242,7 @@ class LCDM_SN:
         self.Nv = Nv
         self.N = Nv - Nv[-1]
         self.sigma = Sv
-        self.f_hor = fv / ln10       # log10(f_H/Hz)。
+        self.f_hor = fv / ln10       # 以 Hz 为单位的视界频率 log10(f_H/Hz)。
         self.f_re = self.f_hor[index_re]
 
 

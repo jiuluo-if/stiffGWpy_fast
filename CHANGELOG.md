@@ -61,6 +61,9 @@
   unchanged. Clarified that the archived `baseline_54d65e3.md` links are for
   historical discovery, and documented the rejected 10-point `paramsweep_ref`
   summary as scoped evidence.
+- Removed an unused private phase-error coefficient and its stale reference to
+  a nonexistent calibration function. Clarified the remaining changed inline
+  comments in Chinese; numerical statements are unchanged.
 
 ## Unreleased — 2026-09-25
 
