@@ -54,10 +54,11 @@ because it is faster or numerically close on one case.
 
 ## Archived material and cleanup decisions
 
+- [`paramsweep_ref/validation_summary.json`](paramsweep_ref/validation_summary.json) is a 10-point summary generated from commit `f87e969` with `z_tail=7`, `rtol=1e-9`, and `freq_res=2`. Its signal and integrated `DN_gw` acceptance gates are false. No code or benchmark script consumes it; sibling JSONL files retain the pointwise inputs. Keep it as a compact record of this rejected/partial sweep, not as current certification.
 - [`archive/baselines/baseline_54d65e3.md`](archive/baselines/baseline_54d65e3.md)
-  is an earlier 2026-09-11 two-thread snapshot with no active in-repository
-  path references. It remains available as historical evidence and is no
-  longer presented as a current baseline.
+  is an earlier 2026-09-11 two-thread snapshot. No solver or benchmark script
+  consumes it; the README and catalog link to it only for historical discovery.
+  It remains evidence of that dated run and is not a current baseline.
 - Three Prüfer raw `.log` captures dated 2026-09-11 are kept locally under
   `archive/oracle_prufer/raw_logs/`. They are ignored by Git's repository-wide
   `*.log` rule and have no active path references; the later JSON artifacts

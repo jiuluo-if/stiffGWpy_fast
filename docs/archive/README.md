@@ -2,8 +2,9 @@
 
 [中文说明](README_zh.md) | English
 
-This directory holds material retained for provenance after it stopped serving
-as a current report or active navigation target.
+This directory holds historical evidence that is no longer a current report or
+benchmark input. The README and experiment catalogue link to selected files
+for historical discovery; those links do not make them current evidence.
 
 - `baselines/baseline_54d65e3.md` is the 2026-09-11 two-thread snapshot. The
   latest detailed accuracy audit is a dated 2026-09-12 record in

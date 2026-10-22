@@ -47,6 +47,7 @@ ln10 = math.log(10.0)
 
 # ---------------------------------------------------------------------------
 # Exact background evaluation (H^2 and sigma) at arbitrary N.
+# 任意 N 处的精确背景（H^2 与 sigma）。
 # ---------------------------------------------------------------------------
 
 def _fd_splines():
@@ -184,6 +185,7 @@ def f_hor_at(m, N, DN_eff):
 
 # ---------------------------------------------------------------------------
 # Tensor-mode ODE in the ORIGINAL variables (as in functions.tensor).
+# 使用原始变量求解张量模态常微分方程（对应 functions.tensor）。
 # ---------------------------------------------------------------------------
 
 def _tensor_orig(N, state, bg):
@@ -359,6 +361,7 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
 
 # ---------------------------------------------------------------------------
 # Spectrum and bolometric integral with error estimates.
+# 计算频谱、玻尔积分及其误差估计。
 # ---------------------------------------------------------------------------
 
 def _sync_size():

@@ -173,6 +173,7 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     """
     Nv = np.asarray(Nv, dtype=float)
     # Fine sub-grid (a few points per base step) plus its midpoints for Phi_mid.
+    # 在每个基础步内加密取点，并加入步中点以计算 Phi_mid。
     half = 0.5 * h
     frac = 0.125 * h      # fine sub-grid spacing for the F/Phi integral
     sub = np.concatenate([
@@ -187,9 +188,11 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     sig_left, sig_right = _sigma_node_limits(sub, m, DN_eff)
     # Cumulative integral F on the sub-grid (shape-preserving trapezoid; the kink
     # is a breakpoint, so sigma is smooth within each sub-interval).
+    # 在子网格上用保形梯形法累计积分 F；kink 作为断点，因此每个子区间内的 sigma 连续光滑。
     F = np.concatenate(([0.0], np.cumsum(0.5 * (sig_right[1:] + sig_left[:-1])
                                              * np.diff(sub))))
     # Interpolate F onto grid nodes and midpoints.
+    # 将 F 插值到基础网格节点和步中点。
     F_grid = np.interp(Nv, sub, F)
     F_mid = np.interp(Nv + half, sub, F)
     N0 = Nv[0]
@@ -217,12 +220,14 @@ def build_transition_grid(m, h):
     # Keep the continuous present-day anchor used by ``gen_fast``.  Rounding
     # the final node down to the nearest h-grid point would add a separate
     # grid-anchor bias to this Phase-A experiment.
+    # 保留 gen_fast 使用的连续当前时刻锚点；将末节点向下取整会在本实验中额外引入网格锚定偏差。
     present = N_inf
     Nv = np.unique(np.sort(np.concatenate((Nv, [N_re_abs, present]))))
     dn = m.cosmo_param['DN_eff']
     sigma = sigma_vec(Nv, m, dn)
     # Exact f_hor (log10 aH/(2pi)/Hz) with the MD extension for N < N_re_abs,
     # normalised to the grid's present node (same convention as gen_fast).
+    # 计算精确 f_hor；N < N_re_abs 时延拓物质主导分支，并按网格当前时刻节点归一化，与 gen_fast 一致。
     H2 = H2_vec(Nv, m, dn)
     raw = np.empty_like(Nv)
     raw_re = -0.5 * N_re_abs + 0.5 * math.log(float(H2_vec(np.array([N_re_abs]), m, dn)[0]))
@@ -292,6 +297,7 @@ def exact_phi_s2_grid(m, Nv, DN_eff):
     # Fine sub-grid (roughly half the local spacing) for the F integral, with the
     # kink as a breakpoint.  Use the *median* spacing so that a single inserted
     # kink node cannot collapse the step and blow up the sub-grid.
+    # 用局部步长约一半的子网格积分 F，并把 kink 设为断点；用中位步长避免单个插入节点压缩步长、撑大网格。
     h = float(np.median(np.abs(np.diff(Nv))))
     step = 0.5 * h
     sub = np.concatenate((np.arange(Nv[0], Nv[-1] + 1e-12, step), Nv))

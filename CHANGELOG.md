@@ -21,6 +21,12 @@
   serialized, while explicit-config TBB calls improved two-call batch median
   time 14.93% in the documented local comparison; this is not a single-call
   speedup claim.
+- Added Chinese explanations to standalone comment sections across the solver,
+  reference, grid, background, and Cobaya modules. The grouped-comment scan
+  found no remaining English-only blocks in the package, and the code ASTs are
+  unchanged. Clarified that the archived `baseline_54d65e3.md` links are for
+  historical discovery, and documented the rejected 10-point `paramsweep_ref`
+  summary as scoped evidence.
 
 ## Unreleased — 2026-09-25
 
