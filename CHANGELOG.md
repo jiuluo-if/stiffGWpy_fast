@@ -37,6 +37,9 @@
   immutable snapshots, removing repeated field-copy lists. Moved the
   transition-refinement explanation into the public solver API docstring and
   aligned its English and Chinese descriptions.
+- Replaced workstation-specific attachment paths in two historical plans with
+  portable provenance notes; their original plan content and outcome records
+  remain in the repository.
 - Batched `H2_vec` density-spline evaluations on the transition-refined path.
   The full-path A/B is bitwise identical and 3.86–4.09x faster on the two
   `DN_re` edge cases. The implementation retains scalar `math.exp` to avoid
