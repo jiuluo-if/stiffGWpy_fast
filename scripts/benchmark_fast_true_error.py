@@ -16,6 +16,7 @@ import argparse
 import json
 import os
 import sys
+import time
 
 try:
     from scripts._resource_budget import apply_environment, telemetry
@@ -45,9 +46,29 @@ def main(argv=None):
     parser.add_argument('--out', default='docs/fast_true_error.json')
     parser.add_argument('--quadrature', default='pchip',
                         help='fast frequency integral under audit')
+    parser.add_argument('--h', type=float, default=None,
+                        help='override the fast background-grid step')
+    parser.add_argument('--z-tail', type=float, default=None,
+                        help='override the numerical-to-analytic handoff depth')
+    parser.add_argument('--tol', type=float, default=None,
+                        help='override the fast preset outer convergence tolerance')
+    parser.add_argument('--freq-res', type=float, default=None,
+                        help='override the fast preset frequency-grid resolution')
+    parser.add_argument('--transition-refine', action='store_true',
+                        help='use the validation transition-refinement path')
+    parser.add_argument('--warmup', type=int, default=0,
+                        help='successful solver calls to discard per point')
+    parser.add_argument('--repeats', type=int, default=1,
+                        help='measured solver calls per point')
     args = parser.parse_args(argv)
+    if args.warmup < 0 or args.repeats < 1:
+        parser.error('--warmup must be >= 0 and --repeats must be >= 1')
 
-    FS.apply_accuracy_mode('fast')
+    preset = FS.apply_accuracy_mode('fast')
+    config = FS.resolve_config('fast', h=args.h, z_tail=args.z_tail,
+                               kink_split=not args.transition_refine)
+    tol = preset['tol'] if args.tol is None else args.tol
+    freq_res = preset['freq_res'] if args.freq_res is None else args.freq_res
     rows = []
     for point in args.points:
         anchor_path = os.path.join(
@@ -55,20 +76,56 @@ def main(argv=None):
         with open(anchor_path, encoding='utf-8') as handle:
             anchor = json.load(handle)
         summary = anchor['summary']
-        model = LCDM_SG(**CASES[point])
-        FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                          frequency_quadrature=args.quadrature)
-        fast_dn = float(np.asarray(model.DN_gw, dtype=float).reshape(-1)[-1])
-        fast_dn_eff = float(model.cosmo_param['DN_eff'])
+        results = []
+        runtimes = []
+        for call_index in range(args.warmup + args.repeats):
+            model = LCDM_SG(**CASES[point])
+            started = time.perf_counter()
+            FS.SGWB_iter_fast(model, kink_split=config.kink_split,
+                              transition_refine=args.transition_refine,
+                              config=config, tol=tol, freq_res=freq_res,
+                              freq_grid='goal',
+                              frequency_quadrature=args.quadrature)
+            elapsed = time.perf_counter() - started
+            if not model.SGWB_converge or not hasattr(model, 'DN_gw'):
+                reason = getattr(model, 'fast_failure_reason', None) or 'not converged'
+                raise RuntimeError('fast solver failed for %s: %s' % (point, reason))
+            results.append((
+                float(np.asarray(model.DN_gw, dtype=float).reshape(-1)[-1]),
+                float(model.cosmo_param['DN_eff']),
+            ))
+            if call_index >= args.warmup:
+                runtimes.append(elapsed)
+        fast_dn, fast_dn_eff = results[-1]
+        if any(result != results[-1] for result in results[:-1]):
+            raise RuntimeError('fast solver result changed across repeats for %s' % point)
+        anchor_dn_eff = float(anchor['DN_eff'])
+        if fast_dn_eff != anchor_dn_eff:
+            raise RuntimeError(
+                'fast/reference DN_eff mismatch for %s: %.17g != %.17g; '
+                'regenerate the Oracle C anchor with the same solver config'
+                % (point, fast_dn_eff, anchor_dn_eff))
+        anchor_freqs = np.asarray(anchor['frequencies'], dtype=float)
+        fast_freqs = np.sort(np.asarray(model.f, dtype=float))
+        if not np.array_equal(fast_freqs, anchor_freqs):
+            raise RuntimeError(
+                'fast/reference frequency grid mismatch for %s; '
+                'regenerate the Oracle C anchor with the same solver config'
+                % point)
         rows.append({
             'point': point,
             'fast_DN_gw': fast_dn,
             'fast_DN_eff': fast_dn_eff,
-            'reference_DN_eff': float(anchor['DN_eff']),
+            'reference_DN_eff': anchor_dn_eff,
             'DN_frozen_z5': summary['DN_frozen'],
             'DN_wkb_z5': summary['DN_wkb_corrected'],
             'DN_deep_z10': summary['DN_deep'],
             'anchor_n_freq': summary['n_freq'],
+            'fast_n_freq': int(fast_freqs.size),
+            'anchor_DN_eff_match': True,
+            'frequency_grid_exact_match': True,
+            'fast_runtime_s_median': float(np.median(runtimes)),
+            'fast_runtime_s_samples': runtimes,
             'fast_vs_frozen_z5_rel': _rel(fast_dn, summary['DN_frozen']),
             'fast_vs_wkb_z5_rel': _rel(fast_dn, summary['DN_wkb_corrected']),
             'fast_vs_deep_z10_rel': _rel(fast_dn, summary['DN_deep']),
@@ -78,6 +135,21 @@ def main(argv=None):
         'schema_version': 1,
         'generated_commit': os.popen('git rev-parse HEAD').read().strip(),
         'resources': telemetry(workers=1, threads=2),
+        'configuration': {
+            'profile': 'fast',
+            'path': ('transition-refine' if args.transition_refine else 'kink-split'),
+            'h': config.h,
+            'col_step': config.col_step,
+            'z_tail': config.z_tail,
+            'phase_max': config.phase_max,
+            'threads': config.threads,
+            'freq_grid': 'goal',
+            'freq_res': freq_res,
+            'tol': tol,
+            'frequency_quadrature': args.quadrature,
+            'warmup': args.warmup,
+            'repeats': args.repeats,
+        },
         'rows': rows,
         'semantics': ('fast self-consistent DN_gw versus the frozen and '
                       'Oracle C WKB-corrected reference DN_gw on the same '

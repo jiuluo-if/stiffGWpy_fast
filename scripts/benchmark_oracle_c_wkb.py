@@ -95,13 +95,29 @@ def main(argv=None):
     parser.add_argument('--out-dir', default='docs')
     parser.add_argument('--quadrature', default='pchip',
                         help='fast frequency integral under audit')
+    parser.add_argument('--h', type=float, default=None,
+                        help='override the fast background-grid step')
+    parser.add_argument('--z-tail', type=float, default=None,
+                        help='override the numerical-to-analytic handoff depth')
+    parser.add_argument('--tol', type=float, default=None,
+                        help='override the fast preset outer convergence tolerance')
+    parser.add_argument('--freq-res', type=float, default=None,
+                        help='override the fast preset frequency-grid resolution')
+    parser.add_argument('--transition-refine', action='store_true',
+                        help='use the validation transition-refinement path')
     args = parser.parse_args(argv)
 
-    FS.apply_accuracy_mode('fast')
+    preset = FS.apply_accuracy_mode('fast')
+    config = FS.resolve_config('fast', h=args.h, z_tail=args.z_tail,
+                               kink_split=not args.transition_refine)
+    tol = preset['tol'] if args.tol is None else args.tol
+    freq_res = preset['freq_res'] if args.freq_res is None else args.freq_res
     for point in args.points:
         model = LCDM_SG(**CASES[point])
         fast_result = FS.SGWB_iter_fast(
-            model, kink_split=True, freq_grid='goal',
+            model, kink_split=config.kink_split,
+            transition_refine=args.transition_refine,
+            config=config, tol=tol, freq_res=freq_res, freq_grid='goal',
             frequency_quadrature=args.quadrature)
         if fast_result is None:
             reason = getattr(model, 'fast_failure_reason', None) or 'unknown'
@@ -189,6 +205,20 @@ def main(argv=None):
             'frequencies': freqs.tolist(),
             'DN_eff': dn_eff,
             'resources': telemetry(workers=1, threads=2),
+            'configuration': {
+                'profile': 'fast',
+                'path': ('transition-refine' if args.transition_refine
+                         else 'kink-split'),
+                'h': config.h,
+                'col_step': config.col_step,
+                'z_tail': config.z_tail,
+                'phase_max': config.phase_max,
+                'threads': config.threads,
+                'freq_grid': 'goal',
+                'freq_res': freq_res,
+                'tol': tol,
+                'frequency_quadrature': args.quadrature,
+            },
             'rows': rows,
             'summary': {
                 'n_freq': int(freqs.size),
