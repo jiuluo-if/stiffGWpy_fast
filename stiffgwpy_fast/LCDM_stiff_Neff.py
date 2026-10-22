@@ -118,7 +118,8 @@ class LCDM_SN:
                     derived_dict['N_inf'] = derived_dict['N_re'] + Delta_N
                     self.cosmo_param['DN_re'] = Delta_N
                 else:
-                    print('V_inf smaller than rho(T_re)! Adjust relevant input parameters: r, T_re, kappa10.')
+                    print('Derived inflation-to-reheating interval is negative (Delta_N < 0). '
+                          'Adjust relevant input parameters: r, T_re, kappa10.')
             else:
                 print('r cannot be set to zero in a single-field, slow-roll inflation. Use positive r!')
         else:
