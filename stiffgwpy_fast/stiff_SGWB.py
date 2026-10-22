@@ -15,7 +15,7 @@ from numpy import concatenate as cat
 from scipy import integrate
 
 from .functions import solve_SGWB
-from .global_param import *
+from .global_param import Neff0, Omega_nh2, f_piv, ln10, z_ratio
 from .LCDM_stiff_Neff import LCDM_SN
 
 MAX_ITER = 60            # 外层自洽二分迭代上限。
@@ -520,7 +520,8 @@ class LCDM_SG(LCDM_SN):
         return self if self.SGWB_converge else None
 
     def Tensor_power(self, freq):
-        return self.derived_param['A_t'] * np.power((10**freq)/f_piv, self.derived_param['nt'])
+        derived = self.derived_param
+        return derived['A_t'] * np.power((10**freq)/f_piv, derived['nt'])
 
 
     def find_index_hc(self, freq):
