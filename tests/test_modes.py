@@ -70,7 +70,7 @@ def test_apply_accuracy_mode_sets_state(fast_settings):
         assert st['h'] == cfg['h']
         assert st['z_tail'] == cfg['z_tail']
         assert st['phase_max'] == cfg.get('phase_max', 0.0)
-        assert st['threads'] == min(cfg['threads'], FS._MAX_THREADS)
+        assert st['threads'] == min(cfg['threads'], FS.max_threads())
 
 
 def test_apply_accuracy_mode_unknown_raises(fast_settings):
@@ -131,7 +131,7 @@ def test_engine_fast_without_preset_keeps_module_state(monkeypatch,
         m.SGWB_converge = True
         return m
 
-    target_threads = min(4, FS._MAX_THREADS)
+    target_threads = min(4, FS.max_threads())
     FS.set_threads(target_threads)
     FS.set_col_step(4)
     FS.set_h(0.01)

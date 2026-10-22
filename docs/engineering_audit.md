@@ -145,3 +145,11 @@ Cobaya 专用 fixture 在缺少可选依赖时整体跳过，并通过公开的
 
 Claims not backed by a current artifact remain explicitly marked `未验证` until
 the corresponding command produces evidence.
+
+## Current follow-up to the historical checklist
+
+P4.5's private-thread-limit example is resolved for adapters and validation
+scripts:
+`fast_sgwb.max_threads()` is part of the declared module API, and the Cobaya
+adapter and validation scripts no longer read `_MAX_THREADS`. Tests use that
+accessor as well, so only `fast_sgwb.py` accesses its own private constant.

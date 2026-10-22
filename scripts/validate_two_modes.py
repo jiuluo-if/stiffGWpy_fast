@@ -56,7 +56,7 @@ def _env_meta():
 
 
 def _reset_settings():
-    FS.set_threads(min(4, FS._MAX_THREADS))
+    FS.set_threads(min(4, FS.max_threads()))
     FS.set_col_step(4)
     FS.set_h(0.01)
     FS.set_z_tail(8.0)

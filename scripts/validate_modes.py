@@ -113,7 +113,7 @@ def thread_scaling(point_kw):
              z_tail=cfg['z_tail'], freq_res=cfg['freq_res'], tol=cfg['tol'])
     out = []
     for th in (1, 2, 4, 8, 16):
-        if th > FS._MAX_THREADS:
+        if th > FS.max_threads():
             break
         FS.set_threads(th)
         times = []
@@ -125,7 +125,7 @@ def thread_scaling(point_kw):
             times.append(time.perf_counter() - t0)
         out.append({'threads': th, 't_s_median': float(np.median(times))})
     FS.set_threads(min(FS.ACCURACY_MODES['production']['threads'],
-                       FS._MAX_THREADS))
+                       FS.max_threads()))
     return out
 
 
