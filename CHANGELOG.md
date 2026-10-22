@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased — 2026-10-22
+
+- Routed Cobaya's reference engine through the model dispatcher so the reported
+  engine and evaluation status match the calculation; reference runs are now
+  counted once. The theory docstring also lists the absolute
+  `Delta_Neff_GW_error` estimate and its `NaN` unavailable value.
+- Exposed unsupported fast error-budget configurations and made
+  `auto_escalate` move to the validation/reference path when calibration is
+  missing. Failed retries clear stale error values and report a distinct
+  failure status. See [accuracy](docs/accuracy.md) and [Cobaya](docs/cobaya.md).
+- Cached fixed PTA likelihood preparation and replaced per-step tensor-output
+  modulo checks with a next-index counter. The documented local A/B records
+  show identical outputs; the 25-call direct likelihood medians changed from
+  34.033 to 27.568 ms (IPTA) and 4.574 to 0.203 ms (NANOGrav), while the
+  six-regime tensor sample-index full-path median improved 5.44% over 80 paired
+  rounds. See [benchmarks](docs/benchmarks.md); these results have the scope
+  limits stated there.
+- Added backend-aware solver call synchronization. Workqueue calls remain
+  serialized, while explicit-config TBB calls improved two-call batch median
+  time 14.93% in the documented local comparison; this is not a single-call
+  speedup claim.
+
 ## Unreleased — 2026-09-25
 
 - Clarified the current `fast` profile and aligned packaging instructions with

@@ -2,7 +2,7 @@
 
 Status: current summary of the audited scope; results remain commit- and protocol-bound
 
-Date: 2026-10-21
+Date: 2026-10-22
 
 Code version: the current solver profile below used
 `cdbdb387479e11cd87a38d76a0e58348ca13e70f`; the historical Round 68 run used
