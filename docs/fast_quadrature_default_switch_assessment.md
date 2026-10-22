@@ -94,17 +94,25 @@ to `2.0e-4` to match the measured PCHIP range, and `README.md`, `README_zh.md`,
 `CHANGELOG.md` and `docs/fast_v02_audit_report.md` were refreshed with the new
 default, runtime matrix and accuracy numbers.
 
-## Not yet met
+## Status of the remaining gates
 
-The `2e-4` gate is now met against the Oracle C WKB anchor at the four named
-points, but not against the independent same-grid reference (`2.93e-4` median,
-`2.76e-4`–`2.98e-4` over the edge/Sobol sample), because that residual also
-carries the frozen-tail/transfer systematic.  The runtime gate is still open:
-the default warm median is `4.93 ms` and high-T / stiff / high-kappa stay at
-`7.79 / 7.79 / 7.27 ms` on the 20-thread 25-repeat matrix.  Next: decompose the
-high-T/stiff/high-kappa runtime, and run a nested native-frequency quadrature
-experiment (real extra frequency solves on the top intervals) to decide whether
-the same-grid residual is quadrature- or transfer-dominated.
+At the decision run, the `2e-4` gate passed against the Oracle C WKB anchor at
+the four named points, but not against the independent same-grid reference.
+Later analysis attributes much of that difference to the reference's
+`z_tail=8` frozen-handoff defect; the parameter-space same-grid gate remains
+unverified. Nested native-frequency refinement was subsequently run and
+bounded the native-grid sensitivity on six named points, but that sensitivity
+bound does not certify absolute error. See [`accuracy.md`](accuracy.md) and
+[`fast_v02_audit_report.md`](fast_v02_audit_report.md) for the current scope.
+
+The 20-thread runtime values in this report are historical. The later
+2026-10-21 fixed-resource profile measured warm medians of `6.790 ms` for
+default, `10.284 ms` for high-T, `10.095 ms` for stiff, and `10.084 ms` for
+high-kappa at two threads. The stable `<4 ms` target therefore remains unmet;
+these profiles are local, configuration-bound results, not cross-machine speed
+ratios. See [`benchmarks.md`](benchmarks.md). The follow-up runtime attribution
+and nested-frequency experiment mentioned in the original plan have both been
+run and are summarized in those reports.
 
 ## Artifacts
 
