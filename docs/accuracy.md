@@ -78,7 +78,9 @@ At `h=0.02`, reducing the radius from `0.125` to `0.0625` retains the
 `0.0003125` local step and passes at `1.14e-4`/`8.30e-5`, with medians
 `6.49/8.74 ms`. It is the fastest passing transition-refine point measured so
 far, but remains slower than standard fast and is not promoted. Matched Oracle
-data are linked from the assessment report.
+data are linked from the assessment report. At radius `0.03125`, errors are
+`1.12e-4/8.29e-5` with `6.41/8.09 ms` medians; the small timing difference from
+radius `0.0625` is unpinned and not evidence of a stable speedup.
 
 ## Current full-path solver profile is separate
 

@@ -44,8 +44,9 @@
 - Added a matched Oracle sweep that keeps the local transition step fixed while
   coarsening the outer grid. Narrowing the passing `h=0.02/factor=64` window
   to radius `0.0625` reaches `1.14e-4/8.30e-5` error at `6.49/8.74 ms`;
-  `h=0.04/factor=64` is
-  faster but fails both gates. A wider `h=0.04/radius=0.25/factor=128` run
+  radius `0.03125` also passes but has no established stable timing gain.
+  `h=0.04/factor=64` is faster but fails both gates. A wider
+  `h=0.04/radius=0.25/factor=128` run
   passes only the high edge and has asymmetric repeated medians of
   `47.15/7.75 ms`; it is also rejected. No preset change.
 - Batched `H2_vec` density-spline evaluations on the transition-refined path.
