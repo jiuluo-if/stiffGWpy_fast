@@ -100,8 +100,14 @@ def main(argv=None):
     FS.apply_accuracy_mode('fast')
     for point in args.points:
         model = LCDM_SG(**CASES[point])
-        FS.SGWB_iter_fast(model, kink_split=True, freq_grid='goal',
-                          frequency_quadrature=args.quadrature)
+        fast_result = FS.SGWB_iter_fast(
+            model, kink_split=True, freq_grid='goal',
+            frequency_quadrature=args.quadrature)
+        if fast_result is None:
+            reason = getattr(model, 'fast_failure_reason', None) or 'unknown'
+            raise SystemExit(
+                f'Cannot evaluate Oracle C for {point}: '
+                f'fast solver did not produce a valid frequency grid ({reason}).')
         freqs = np.sort(np.asarray(model.f, dtype=float))
         if args.freq_count is not None:
             picks = np.linspace(0, freqs.size - 1, args.freq_count, dtype=int)
