@@ -10,12 +10,14 @@ regression/runtime path, not a truth oracle. Every numerical result below is
 bounded by the artifact's commit, reference convention, parameter points, and
 frequency grid.
 
-## Latest scoped oracle evidence
+## Earlier named-point baseline (2026-09-12)
 
-The latest detailed accuracy audit is the dated
-[`fast_v02_audit_report.md`](fast_v02_audit_report.md), generated from its
-recorded 2026-09-12 evidence. It is not a full parameter-space certification or
-a fresh precision rerun at the current repository HEAD.
+The four-regime quadrature audit below is a dated baseline from
+[`fast_v02_audit_report.md`](fast_v02_audit_report.md), not the latest Oracle C
+edge evidence or a full parameter-space certification. The newer two-edge
+`DN_re` results are recorded in the
+[matched Oracle C assessment](oracle_c_wkb_assessment.md) and the dated section
+below.
 
 | Comparison | Recorded result | Scope and interpretation |
 |---|---:|---|
