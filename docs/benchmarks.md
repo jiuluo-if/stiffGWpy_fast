@@ -4,21 +4,62 @@ Status: current summary of the audited scope; results remain commit- and protoco
 
 Date: 2026-10-22
 
-Code version: the current solver profile below used
-`cdbdb387479e11cd87a38d76a0e58348ca13e70f`; the historical Round 68 run used
+Code version: the corrected formal fast profile below used
+`ca8da38cfaa9f98b32a9b146cc6e96ea900c55b6`; the earlier stage profile used
+`cdbdb387479e11cd87a38d76a0e58348ca13e70f`. The historical Round 68 run used
 `c7d4766f15c1cda4693d306597723de50abd4554`. The PTA cache comparison used
 source commit `c185df58938a05c208410a5cd47faafbc5d7fa2c`. Each run artifact
 records its own commit.
 
-## 2026-10-21 fixed-resource full-path solver profile
+## 2026-10-22 corrected formal fast profile
 
-The 2026-10-21 profile ran the current `fast` preset with PCHIP, the goal
-frequency grid, exact kink split, and `phase_max=0.25`. It used 2 Numba
-threads on `workqueue`, CPU affinity `[0, 1]`, one BLAS/OMP/NumExpr thread, and
-one process. Each case ran in a fresh process for 26 calls; the first process
-call is reported separately and the warm statistics use the remaining 25.
-The JSON adds a warm-only summary because the profiler's original
-`median_s`/`p95_s` fields include all 26 records.
+Review of the profile driver found that it called the low-level solver without
+passing the selected preset's outer tolerance. The low-level API defaulted to
+`1e-4`, while the formal `fast` preset specifies `1e-6`. The driver now uses
+the selected preset tolerance unless `--tol` is explicitly supplied, and each
+record includes the tolerance, frequency grid, quadrature, Numba thread layer,
+and resource telemetry.
+
+This rerun uses the formal `fast` tolerance `1e-6`, PCHIP, the `goal` grid,
+exact kink split, `h=0.005`, `col_step=8`, `z_tail=5`, and `phase_max=0.25`.
+Outer full-solve reuse is enabled and the parallel chunksize is `0` (static
+scheduling). Each case ran in a fresh process for 26 calls, with the first
+process/JIT call reported separately and the remaining 25 used for warm
+statistics. Resources were fixed to 2 Numba `workqueue` threads, CPU affinity
+`[0, 1]`, one BLAS/OMP/NumExpr thread, and one process. The JSON records the
+complete solver configuration and these environment values.
+
+| Case | First process call | Warm median | Warm p95 | Tensor median | Frequencies | Propagation calls |
+|---|---:|---:|---:|---:|---:|---:|
+| default | 296.5 ms | 6.002 ms | 6.927 ms | 2.938 ms | 76 | 1 |
+| high-T | 291.4 ms | 9.069 ms | 9.718 ms | 5.144 ms | 76 | 2 |
+| stiff | 294.5 ms | 9.263 ms | 10.184 ms | 5.674 ms | 76 | 2 |
+| high-kappa | 299.5 ms | 9.130 ms | 10.054 ms | 5.162 ms | 77 | 2 |
+
+All 26 records per case have identical hashes for frequencies, spectrum,
+`DN_gw`, `g2`, and `w2`. This checks repeatability for each measured case; it
+does not add Oracle accuracy coverage or establish a cross-machine speed ratio.
+Raw records: [`default`](profile_fast_breakdown_ca8da38_20261022_default.json),
+[`high-T`](profile_fast_breakdown_ca8da38_20261022_highT.json),
+[`stiff`](profile_fast_breakdown_ca8da38_20261022_stiff.json), and
+[`high-kappa`](profile_fast_breakdown_ca8da38_20261022_high_kappa.json).
+
+Reproduce a case with the fixed-resource wrapper; repeat for each case name:
+
+```powershell
+python scripts/run_fixed_profile.py --threads 2 --affinity-count 2 --reps 26 --case default --kink-split --json docs/profile_fast_breakdown_ca8da38_20261022_default.json
+```
+
+## Earlier 2026-10-21 stage profile (historical low-level tolerance)
+
+The 2026-10-21 run used PCHIP, the goal frequency grid, exact kink split, and
+`phase_max=0.25`, with 2 Numba `workqueue` threads and CPU affinity `[0, 1]`.
+However, the driver called the low-level solver without an explicit `tol`, so
+it used `1e-4` rather than the formal preset's `1e-6`. Keep these values as a
+dated lower-tolerance stage profile; do not read them as formal `fast` preset
+runtime or compare them directly with the corrected profile above. Each case
+ran in a fresh process for 26 calls; the first process call is reported
+separately and the warm statistics use the remaining 25.
 
 | Case | First process call | Warm median | Warm p95 | Tensor median | Background median | Frequencies | Propagation calls |
 |---|---:|---:|---:|---:|---:|---:|---:|

@@ -88,14 +88,20 @@ smaller radius. Matched Oracle data are linked from the assessment report.
 
 ## Current full-path solver profile is separate
 
-The 2026-10-21 full-path profile used solver source at commit
-`cdbdb387479e11cd87a38d76a0e58348ca13e70f`. It covers default, high-T, stiff,
-and high-kappa with 25 warm repeats per case; the first process call is
-reported separately. The warm medians are `6.790`, `10.284`, `10.095`, and
-`10.084 ms`, respectively. This stage profile did not run a matched-resource
-LSODA comparison or a new oracle-accuracy sweep, so it adds no new precision
-coverage and establishes no LSODA speed ratio. Full per-case values and
-resource provenance are in [`benchmarks.md`](benchmarks.md).
+The corrected 2026-10-22 formal `fast` profile used solver source at commit
+`ca8da38cfaa9f98b32a9b146cc6e96ea900c55b6`, with the preset's `tol=1e-6`,
+PCHIP, goal grid, and exact kink split. It covers default, high-T, stiff, and
+high-kappa with 25 warm repeats per case; the first process call is reported
+separately. Warm medians are `6.002`, `9.069`, `9.263`, and `9.130 ms`. It is a
+runtime profile with repeatability digests, not a matched Oracle accuracy
+sweep or LSODA comparison, so it adds no precision coverage and establishes no
+LSODA speed ratio. Full per-case values and resource provenance are in
+[`benchmarks.md`](benchmarks.md).
+
+The earlier 2026-10-21 profile at commit
+`cdbdb387479e11cd87a38d76a0e58348ca13e70f` omitted the low-level solver's
+`tol` argument and therefore used `1e-4`, not the formal preset's `1e-6`. It
+remains a historical stage measurement, not the formal profile baseline.
 
 Later PTA likelihood-cache timings are adapter-level measurements, not
 full-path solver profiles or accuracy evidence; see
