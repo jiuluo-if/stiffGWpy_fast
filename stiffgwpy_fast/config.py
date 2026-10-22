@@ -20,10 +20,14 @@ class FastSolverConfig:
 
     The bare constructor defaults preserve legacy manual settings; they are
     not the formal ``fast`` preset. Use ``resolve_config('fast')`` to get that
-    preset as an immutable snapshot.
+    preset as an immutable snapshot. ``transition_refine_radius`` and
+    ``transition_refine_factor`` control only the optional validation path:
+    the radius is measured in e-folds on either side of reheating.
 
     中文：创建时校验参数范围，之后不可修改。直接构造使用的是旧手动设置默认值，并非正式
     ``fast`` 预设；需要具名档位时用 ``resolve_config('fast')`` 生成配置快照。
+    ``transition_refine_radius`` 和 ``transition_refine_factor`` 只控制可选的验证路径，
+    其中半径表示再加热转折点两侧的 e-fold 范围。
     """
 
     h: float = 0.01
@@ -33,15 +37,20 @@ class FastSolverConfig:
     freq_grid: str = "construct"
     threads: Optional[int] = None
     kink_split: bool = False
+    transition_refine_radius: float = 2.0
+    transition_refine_factor: int = 8
 
     def __post_init__(self) -> None:
         raw_col_step = self.col_step
         raw_threads = self.threads
+        raw_transition_refine_factor = self.transition_refine_factor
         h = float(self.h)
         z_tail = float(self.z_tail)
         phase_max = float(self.phase_max)
+        transition_refine_radius = float(self.transition_refine_radius)
         col_step = int(self.col_step)
         threads = None if self.threads is None else int(self.threads)
+        transition_refine_factor = int(self.transition_refine_factor)
         kink_split = bool(self.kink_split)
         if not isfinite(h) or not 1e-4 <= h <= 0.1:
             raise ValueError("h must be finite and in [1e-4, 0.1], got %r" % self.h)
@@ -53,6 +62,20 @@ class FastSolverConfig:
             raise ValueError("z_tail must be finite and in [2.0, 15.0], got %r" % self.z_tail)
         if not isfinite(phase_max) or not 0.0 <= phase_max <= 10.0:
             raise ValueError("phase_max must be finite and in [0, 10], got %r" % self.phase_max)
+        if (not isfinite(transition_refine_radius)
+                or not 0.0 <= transition_refine_radius <= 10.0):
+            raise ValueError(
+                "transition_refine_radius must be finite and in [0, 10], got %r"
+                % self.transition_refine_radius)
+        if (isinstance(raw_transition_refine_factor, bool)
+                or float(raw_transition_refine_factor) != transition_refine_factor):
+            raise ValueError(
+                "transition_refine_factor must be an integer in [1, 64], got %r"
+                % raw_transition_refine_factor)
+        if not 1 <= transition_refine_factor <= 64:
+            raise ValueError(
+                "transition_refine_factor must be an integer in [1, 64], got %r"
+                % self.transition_refine_factor)
         if self.freq_grid not in ("construct", "grid_independent", "adaptive", "goal"):
             raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal, got %r" % self.freq_grid)
         if (raw_threads is not None and
@@ -66,3 +89,5 @@ class FastSolverConfig:
         object.__setattr__(self, "col_step", col_step)
         object.__setattr__(self, "threads", threads)
         object.__setattr__(self, "kink_split", kink_split)
+        object.__setattr__(self, "transition_refine_radius", transition_refine_radius)
+        object.__setattr__(self, "transition_refine_factor", transition_refine_factor)

@@ -489,7 +489,10 @@ def resolve_config(name=None, base=None, **overrides):
     中文：按“具名预设 → 非 None 显式覆盖”生成不可变快照，不修改模块全局设置。`name=None`
     仅为兼容而读取旧模块默认值；线程数会限制在当前 Numba 进程预算内。
     """
-    valid_keys = {"h", "col_step", "z_tail", "phase_max", "freq_grid", "threads", "kink_split"}
+    valid_keys = {
+        "h", "col_step", "z_tail", "phase_max", "freq_grid", "threads", "kink_split",
+        "transition_refine_radius", "transition_refine_factor",
+    }
     unknown = sorted(set(overrides) - valid_keys)
     if unknown:
         raise TypeError("unknown FastSolverConfig override(s): %s" % ", ".join(unknown))
@@ -504,6 +507,8 @@ def resolve_config(name=None, base=None, **overrides):
             freq_grid=base.freq_grid,
             threads=base.threads,
             kink_split=base.kink_split,
+            transition_refine_radius=base.transition_refine_radius,
+            transition_refine_factor=base.transition_refine_factor,
         )
     elif name is None:
         config = get_config()
@@ -515,6 +520,8 @@ def resolve_config(name=None, base=None, **overrides):
             freq_grid=config.freq_grid,
             threads=config.threads,
             kink_split=config.kink_split,
+            transition_refine_radius=config.transition_refine_radius,
+            transition_refine_factor=config.transition_refine_factor,
         )
     else:
         canonical = normalize_accuracy_mode(name)
@@ -527,6 +534,8 @@ def resolve_config(name=None, base=None, **overrides):
             freq_grid=preset.get("freq_grid", "construct"),
             threads=min(int(preset["threads"]), _MAX_THREADS),
             kink_split=bool(preset.get("kink_split", False)),
+            transition_refine_radius=preset.get("transition_refine_radius", 2.0),
+            transition_refine_factor=preset.get("transition_refine_factor", 8),
         )
     for key in values:
         if key in overrides and overrides[key] is not None:
@@ -1971,7 +1980,8 @@ def _SGWB_iter_fast_impl(
     ``transition_refine`` (the historical ``production`` / ``transition-refine`` profile)
     treats the reheating transition as an ODE integration breakpoint: the
     kink-aware grid from ``stiffgwpy_fast.exact_background.build_kink_refined_grid``
-    keeps the instantaneous-reheating kink inside a refined sub-step so it is
+    inserts ``N_re`` as an exact node and refines a configurable radius around
+    it by ``transition_refine_factor``. This keeps the kink inside a refined sub-step so it is
     never crossed by a spline/grid, and (with ``phase_max > 0``) horizon
     crossing uses phase-aware sub-stepping.  The formal ``fast`` profile instead
     uses the exact uniform-grid kink split; this refined path remains validation
@@ -2096,7 +2106,12 @@ def _SGWB_iter_fast_impl(
             if transition_refine:
                 from .exact_background import build_kink_refined_grid
 
-                build_kink_refined_grid(m, h)
+                build_kink_refined_grid(
+                    m,
+                    h,
+                    refine_radius=config.transition_refine_radius,
+                    refine_factor=config.transition_refine_factor,
+                )
             elif kink_split:
                 gen_fast(m, h)
                 kink_index, kink_fraction = _correct_kink_background(m)

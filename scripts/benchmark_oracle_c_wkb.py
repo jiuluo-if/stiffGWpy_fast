@@ -105,11 +105,19 @@ def main(argv=None):
                         help='override the fast preset frequency-grid resolution')
     parser.add_argument('--transition-refine', action='store_true',
                         help='use the validation transition-refinement path')
+    parser.add_argument('--transition-refine-radius', type=float, default=None,
+                        help='refinement radius in e-folds around reheating')
+    parser.add_argument('--transition-refine-factor', type=int, default=None,
+                        help='number of substeps per background step near reheating')
     args = parser.parse_args(argv)
 
     preset = FS.apply_accuracy_mode('fast')
-    config = FS.resolve_config('fast', h=args.h, z_tail=args.z_tail,
-                               kink_split=not args.transition_refine)
+    config = FS.resolve_config(
+        'fast', h=args.h, z_tail=args.z_tail,
+        kink_split=not args.transition_refine,
+        transition_refine_radius=args.transition_refine_radius,
+        transition_refine_factor=args.transition_refine_factor)
+    os.makedirs(args.out_dir, exist_ok=True)
     tol = preset['tol'] if args.tol is None else args.tol
     freq_res = preset['freq_res'] if args.freq_res is None else args.freq_res
     for point in args.points:
@@ -212,6 +220,8 @@ def main(argv=None):
                 'h': config.h,
                 'col_step': config.col_step,
                 'z_tail': config.z_tail,
+                'transition_refine_radius': config.transition_refine_radius,
+                'transition_refine_factor': config.transition_refine_factor,
                 'phase_max': config.phase_max,
                 'threads': config.threads,
                 'freq_grid': 'goal',

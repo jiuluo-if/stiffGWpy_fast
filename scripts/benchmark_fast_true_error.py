@@ -56,6 +56,10 @@ def main(argv=None):
                         help='override the fast preset frequency-grid resolution')
     parser.add_argument('--transition-refine', action='store_true',
                         help='use the validation transition-refinement path')
+    parser.add_argument('--transition-refine-radius', type=float, default=None,
+                        help='refinement radius in e-folds around reheating')
+    parser.add_argument('--transition-refine-factor', type=int, default=None,
+                        help='number of substeps per background step near reheating')
     parser.add_argument('--warmup', type=int, default=0,
                         help='successful solver calls to discard per point')
     parser.add_argument('--repeats', type=int, default=1,
@@ -65,8 +69,11 @@ def main(argv=None):
         parser.error('--warmup must be >= 0 and --repeats must be >= 1')
 
     preset = FS.apply_accuracy_mode('fast')
-    config = FS.resolve_config('fast', h=args.h, z_tail=args.z_tail,
-                               kink_split=not args.transition_refine)
+    config = FS.resolve_config(
+        'fast', h=args.h, z_tail=args.z_tail,
+        kink_split=not args.transition_refine,
+        transition_refine_radius=args.transition_refine_radius,
+        transition_refine_factor=args.transition_refine_factor)
     tol = preset['tol'] if args.tol is None else args.tol
     freq_res = preset['freq_res'] if args.freq_res is None else args.freq_res
     rows = []
@@ -76,6 +83,24 @@ def main(argv=None):
         with open(anchor_path, encoding='utf-8') as handle:
             anchor = json.load(handle)
         summary = anchor['summary']
+        anchor_config = anchor.get('configuration', {})
+        expected_config = {
+            'path': 'transition-refine' if args.transition_refine else 'kink-split',
+            'h': config.h,
+            'transition_refine_radius': config.transition_refine_radius,
+            'transition_refine_factor': config.transition_refine_factor,
+        }
+        legacy_defaults = {
+            'transition_refine_radius': 2.0,
+            'transition_refine_factor': 8,
+        }
+        for key, expected in expected_config.items():
+            recorded = anchor_config.get(key, legacy_defaults.get(key))
+            if recorded != expected:
+                raise RuntimeError(
+                    'fast/reference %s mismatch for %s: %r != %r; '
+                    'regenerate the Oracle C anchor with the same solver config'
+                    % (key, point, expected, recorded))
         results = []
         runtimes = []
         for call_index in range(args.warmup + args.repeats):
@@ -141,6 +166,8 @@ def main(argv=None):
             'h': config.h,
             'col_step': config.col_step,
             'z_tail': config.z_tail,
+            'transition_refine_radius': config.transition_refine_radius,
+            'transition_refine_factor': config.transition_refine_factor,
             'phase_max': config.phase_max,
             'threads': config.threads,
             'freq_grid': 'goal',
