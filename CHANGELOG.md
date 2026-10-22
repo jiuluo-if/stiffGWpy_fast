@@ -77,8 +77,8 @@
   and test code. Explanatory comments now have Chinese context; conventional
   unit abbreviations and serialized field names remain unchanged.
 - Expanded the bilingual experiment catalogue to cover additional dated
-  accuracy, profile, grid, kernel, and outer-solve artifact families, with
-  explicit retention and interpretation rules.
+  oracle/tail, accuracy, profile, grid, kernel, and outer-solve artifact
+  families, with explicit retention and interpretation rules.
 - Linked the 2026-09-03 Numba parallel-kernel A/B and production output records
   to their report, and documented that the separate thread-scaling JSONs were
   removed by an earlier cleanup commit while their summary remains.
