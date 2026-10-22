@@ -49,7 +49,7 @@
 | 位置或文件名前缀 | 内容 | 处理方式 |
 |---|---|---|
 | `paramsweep_*`、`parameter_validation/`、`validation/` | 同网格、参数空间、收敛性和参照独立性记录 | 保留：被报告、manifest 或复现说明引用 |
-| `oracle_prufer_fullgrid*.json`、`oracle_prufer_*_sobol*.json` | Prüfer 完整本征频率网格对比及边界/Sobol 样本 | 保留：支撑“仅作参考”的认证边界 |
+| `oracle_a_*`、`oracle_b_*`、`oracle_prufer_*`、`oracle_tail_*`、`tail_*`、`wkb_*` | 同网格 Oracle A/B/C、Prüfer 参考对比、相位/尾部敏感性、WKB 修正和诊断子集 | 作为有限范围的独立参照与误差归属证据保留；Prüfer 仍仅作参考，任何产物都不代表全参数空间认证 |
 | `profile_fast_breakdown_*.json`、`benchmark_*.json` | 各轮性能、线程、稳定性和阶段耗时测量 | 作为带日期的运行数据保留；比较前核对对应报告和代码提交 |
 | 其他 `profile_*.json`、`*_round*.json`、`*_head*.json`、`*_candidate*.json`、`*_spike*.json` | 各轮 profile 和独立实现候选；包含被拒绝或仅作参考的方案 | 原始记录随对应报告保留；状态以报告为准，不能按文件名或日期推断 |
 | `ab_baseline_njit_*.json`、`ab_candidate_njit_*.json`、`production_ab_*.txt` | 2026-09-03 Numba 并行内核修改的基线/候选计时及 production 输出指纹；线程缩放仅保留在报告汇总中，原始 `scaling_njit_t*.json` 已由清理提交 `2619065` 移除 | 剩余原始记录随[`performance_comparison_20260903.md`](performance_comparison_20260903.md)保留；它们和报告汇总均不是当前性能基线 |
