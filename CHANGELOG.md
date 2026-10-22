@@ -5,7 +5,7 @@
 - Corrected the fixed-resource profile harness to use the formal `fast` preset
   tolerance by default and record the full solver configuration, Numba layer,
   and resource telemetry. The refreshed `tol=1e-6` profile reports warm
-  medians of `6.002/9.069/9.263/9.130 ms` for
+  medians of `5.987/10.049/9.179/9.458 ms` for
   default/high-T/stiff/high-kappa; the older
   `tol=1e-4` measurements are now labeled historical. See
   [benchmarks](docs/benchmarks.md) and [accuracy](docs/accuracy.md).
