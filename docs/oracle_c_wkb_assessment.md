@@ -115,8 +115,8 @@ The Oracle WKB/deep residuals are `2.89e-6` and `4.56e-6`, with per-mode
 maxima below `8.3e-5`.
 
 The accuracy improvement has a substantial latency cost: the `h=0.0003125`
-medians are `62.7` and `71.7 ms`, compared with `5.95` and `5.00 ms` for the
-standard `h=0.005` fast path (about `10.5x` and `14.3x` slower). Both
+medians are `62.7` and `71.7 ms`, compared with `5.69` and `4.53 ms` for the
+standard `h=0.005` fast path (about `11.0x` and `15.8x` slower). Both
 measurements used two warmup calls and ten timed fresh-model solves with two
 Numba `workqueue` threads and one BLAS thread. This candidate has not been
 promoted; optimizing its speed remains open.

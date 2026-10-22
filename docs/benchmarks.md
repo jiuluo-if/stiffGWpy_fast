@@ -245,15 +245,37 @@ scoped `2e-4` gate. The more accurate candidate is much slower:
 
 | Point | Standard median (`h=0.005`) | Fine-step median (`h=0.0003125`) | Fine-step vs WKB |
 |---|---:|---:|---:|
-| `edge_dnre_lo` | `5.95 ms` | `62.7 ms` | `1.65e-4` |
-| `edge_dnre_hi` | `5.00 ms` | `71.7 ms` | `1.63e-4` |
+| `edge_dnre_lo` | `5.69 ms` | `62.7 ms` | `1.65e-4` |
+| `edge_dnre_hi` | `4.53 ms` | `71.7 ms` | `1.63e-4` |
 
 Each configuration uses two warmup calls and ten timed calls, with a fresh
 model per solve, two Numba `workqueue` threads, and one BLAS thread. The
 comparison tool verifies exact agreement in `DN_eff` and the native frequency
 grid before calculating error; configurations with mismatched anchors fail
 closed. These results cover two points only, do not establish a general speed
-ratio, and have not changed the formal fast preset. Raw anchors, comparisons,
+ratio, and have not changed the formal fast preset. They were measured in
+separate invocations with the same declared thread budget, without CPU affinity
+pinned; use the raw samples when assessing host timing noise. Raw anchors, comparisons,
 and reproduction commands are in
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
 [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
+
+## Transition-refined `H2_vec` batching (2026-10-22)
+
+`H2_vec` used to call the SciPy density spline once per background node while
+building a transition-refined grid. Batching the same spline queries preserves
+the old scalar results exactly and reduces full-solver latency on that path:
+
+| Point | Scalar-reference median | Batched median | Speedup | Output arrays |
+|---|---:|---:|---:|---|
+| `edge_dnre_lo` | `94.3 ms` | `19.4 ms` | `4.87x` | exact match |
+| `edge_dnre_hi` | `143.0 ms` | `31.4 ms` | `4.56x` | exact match |
+
+The A/B used two warmup calls and ten alternating measured calls per method,
+fresh models, two Numba `workqueue` threads, one BLAS thread, and unpinned CPU
+affinity. It covers the validation `transition-refine` path (`h=0.005`, goal grid, PCHIP); it does not
+change the formal exact-kink fast path or add new Oracle accuracy coverage.
+The scalar implementation is retained in the benchmark script as the
+pre-vectorization reference. Raw samples and the reproduction driver are
+[`benchmark_h2_vectorization_20261022.json`](benchmark_h2_vectorization_20261022.json)
+and [`benchmark_h2_vectorization.py`](../scripts/benchmark_h2_vectorization.py).

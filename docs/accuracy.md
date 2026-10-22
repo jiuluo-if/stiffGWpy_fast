@@ -43,8 +43,8 @@ edges. It remains a sampled probe, not a full parameter-space certification.
 With Oracle anchors regenerated at the same `DN_eff` and native frequency
 grid, reducing `h` to `0.0003125` lowers the two errors to `1.65e-4` and
 `1.63e-4` versus WKB (both below the scoped gate). Warm median runtimes rise
-from `5.95`/`5.00 ms` at `h=0.005` to `62.7`/`71.7 ms`. The precision
-candidate is therefore not promoted; improving its latency remains open. Full
+from `5.69`/`4.53 ms` at `h=0.005` to `62.7`/`71.7 ms` (about `11.0x`/`15.8x`).
+The precision candidate is therefore not promoted; improving its latency remains open. Full
 grids, configuration, repeated timings, and reproduction commands are in
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
 [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
@@ -67,6 +67,11 @@ full-path solver profiles or accuracy evidence; see
 The 2026-10-21 tensor sample-index change matched the baseline output arrays
 bit-for-bit in six benchmark regimes. This is an exact differential check, not
 new oracle-accuracy evidence or a full parameter-space certification.
+
+The 2026-10-22 `H2_vec` batching A/B also matched every solver output array
+exactly on two `DN_re` edges, but it measured the validation `transition-refine`
+path. It improves runtime on that path and adds no Oracle accuracy points or
+evidence for the formal exact-kink profile.
 
 ## Likelihood and posterior evidence
 

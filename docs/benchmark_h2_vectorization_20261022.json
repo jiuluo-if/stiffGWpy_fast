@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "generated_commit": "1d0a7eb1633f62879af24876996e5ec1de9bf2d3",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threading_layer": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "configuration": {
+    "profile": "fast",
+    "path": "transition-refine",
+    "h": 0.005,
+    "col_step": 8,
+    "z_tail": 5.0,
+    "phase_max": 0.25,
+    "freq_grid": "goal",
+    "freq_res": 1.0,
+    "tol": 1e-06,
+    "frequency_quadrature": "pchip",
+    "warmup": 2,
+    "repeats": 10
+  },
+  "points": {
+    "edge_dnre_lo": {
+      "scalar_reference_runtime_s": [
+        0.09317510000073526,
+        0.09352699999908509,
+        0.09542570000121486,
+        0.09473640000032901,
+        0.09692709999944782,
+        0.09778860000005807,
+        0.09198590000050899,
+        0.09387679999963439,
+        0.09353980000014417,
+        0.09532880000006116
+      ],
+      "scalar_reference_median_s": 0.0943065999999817,
+      "vectorized_runtime_s": [
+        0.018659699999261647,
+        0.019381099999009166,
+        0.019538999998985673,
+        0.018086300000504707,
+        0.021133500000360073,
+        0.018986400000358117,
+        0.019579399999201996,
+        0.01932200000010198,
+        0.01957119999860879,
+        0.01873879999948258
+      ],
+      "vectorized_median_s": 0.019351549999555573,
+      "speedup": 4.873335727740028,
+      "nodes": 11317,
+      "DN_eff": 0.0029466342777128194,
+      "output_digest": "1d373f6eaf97ae825541afd2b1d7d0f2b89375ff3f3dd3cb55b9aa4ec9ae0fae",
+      "outputs_exact": true
+    },
+    "edge_dnre_hi": {
+      "scalar_reference_runtime_s": [
+        0.14526870000008785,
+        0.14200159999927564,
+        0.14665939999940747,
+        0.14310909999949217,
+        0.14231939999990573,
+        0.14074760000039532,
+        0.1428327999983594,
+        0.14168009999957576,
+        0.14372679999905813,
+        0.1441166999993584
+      ],
+      "scalar_reference_median_s": 0.1429709499989258,
+      "vectorized_runtime_s": [
+        0.03163660000063828,
+        0.031082299999980023,
+        0.031752299999425304,
+        0.03109960000074352,
+        0.030709100001331535,
+        0.030608199998823693,
+        0.03311819999908039,
+        0.03200970000034431,
+        0.0306908000002295,
+        0.0324810999991314
+      ],
+      "vectorized_median_s": 0.0313681000006909,
+      "speedup": 4.557845390564834,
+      "nodes": 19838,
+      "DN_eff": 0.002370821434559693,
+      "output_digest": "82e9e57e25253ccd5bee6102646c288cf682de8b2fc1f3b9987cadf2f5a31c35",
+      "outputs_exact": true
+    }
+  },
+  "semantics": "full transition-refined SGWB runtime A/B; the scalar reference preserves the pre-vectorization H2 loop and all solver output arrays must match exactly"
+}
