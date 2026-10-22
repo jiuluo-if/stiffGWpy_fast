@@ -40,6 +40,10 @@
 - Replaced workstation-specific attachment paths in two historical plans with
   portable provenance notes; their original plan content and outcome records
   remain in the repository.
+- Added a matched Oracle sweep that keeps the local transition step fixed while
+  coarsening the outer grid. The fastest passing point, `h=0.02/factor=64`,
+  reaches `1.16e-4/8.25e-5` error at `7.63/9.49 ms`; `h=0.04/factor=64` is
+  faster but fails both gates. No preset change.
 - Batched `H2_vec` density-spline evaluations on the transition-refined path.
   The full-path A/B is bitwise identical and 3.86–4.09x faster on the two
   `DN_re` edge cases. The implementation retains scalar `math.exp` to avoid

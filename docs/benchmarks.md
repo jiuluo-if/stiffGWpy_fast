@@ -274,6 +274,20 @@ about `6.3x`/`11.4x` slower than standard fast. The preset is unchanged. Raw
 Oracle and repeated fast timing records are in
 [`oracle_c_wkb_corner_20261022/transition_h00025_r025/`](oracle_c_wkb_corner_20261022/transition_h00025_r025/).
 
+| Base `h` | Refine radius/factor | Local step | Low/high error vs deep | Low/high median | Gate |
+|---:|---:|---:|---:|---:|---|
+| `0.0025` | `0.125 / 8` | `0.0003125` | `5.61e-6 / 1.62e-4` | `33.9 / 49.8 ms` | pass |
+| `0.005` | `0.125 / 16` | `0.0003125` | `1.85e-5 / 3.84e-6` | `19.0 / 26.7 ms` | pass |
+| `0.02` | `0.125 / 64` | `0.0003125` | `1.16e-4 / 8.25e-5` | `7.63 / 9.49 ms` | pass |
+| `0.04` | `0.125 / 64` | `0.000625` | `4.49e-4 / 3.17e-4` | `4.99 / 6.05 ms` | fail |
+
+The `h=0.02` point is the fastest passing candidate measured so far. It remains
+about `1.34x/2.09x` slower than standard fast, so no production promotion is
+made. The `h=0.04` result shows that matching only the window radius is not
+enough: doubling its local step loses the accuracy gate. Per-run configurations,
+reference residuals, exact anchor checks, and samples are linked from
+[`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md).
+
 ## Transition-refined `H2_vec` batching (2026-10-22)
 
 `H2_vec` used to call the SciPy density spline once per background node while

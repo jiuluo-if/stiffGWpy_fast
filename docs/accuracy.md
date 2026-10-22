@@ -60,6 +60,15 @@ about `1.29x`/`1.42x` faster than the radius-2.0 candidate, while still about
 validation-only. Its exact configuration and raw records are in
 [`oracle_c_wkb_corner_20261022/transition_h00025_r025/`](oracle_c_wkb_corner_20261022/transition_h00025_r025/).
 
+The radius `0.125` sweep holds the local step at `0.0003125` while increasing
+the outer step from `h=0.0025` to `0.02`. The `h=0.02/factor=64` candidate
+passes both tested edges at `1.16e-4` and `8.25e-5` versus deep `z=10`, with
+warm medians `7.63/9.49 ms`. This is the fastest passing point in the sweep,
+about `1.34x/2.09x` slower than standard fast. Coarsening further to
+`h=0.04/factor=64` reduces runtime but fails both edges (`4.49e-4/3.17e-4`).
+These candidates remain validation-only and are documented with their matched
+Oracle anchors in [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md).
+
 ## Current full-path solver profile is separate
 
 The 2026-10-21 full-path profile used solver source at commit
