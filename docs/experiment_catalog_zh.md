@@ -50,6 +50,8 @@
 |---|---|---|
 | `paramsweep_*`、`parameter_validation/`、`validation/` | 同网格、参数空间、收敛性和参照独立性记录 | 保留：被报告、manifest 或复现说明引用 |
 | `oracle_a_*`、`oracle_b_*`、`oracle_prufer_*`、`oracle_tail_*`、`tail_*`、`wkb_*` | 同网格 Oracle A/B/C、Prüfer 参考对比、相位/尾部敏感性、WKB 修正和诊断子集 | 作为有限范围的独立参照与误差归属证据保留；Prüfer 仍仅作参考，任何产物都不代表全参数空间认证 |
+| `phase_recurrence_oracle_20260917/` | 默认、高 `kappa`、高温、低温和 stiff 五个情景的 Oracle C WKB 记录，每个文件仅含 12 个抽样频率，生成源码为提交 `58af509` | 作为稀疏相位递推敏感性子集保留；它不是 native 全网格对比，也不构成全参数空间认证 |
+| `validation_h005_round_20260916/`、`validation_h0075_round_20260916/`、`validation_h0075_round_20260916b/` | 源码提交 `1bf840d` 下三组带日期的 10 点步长扫描；首轮 `h=0.0075` 的 10 点均为 `fast_exception`，完成的 `h=0.005` 与重跑 `h=0.0075` 均未通过信号、转折区和 `DN_gw` 验收门槛 | 作为被拒绝的历史证据保留；完成扫描的最大信号相对误差约 `6.78e-3`，最大 `DN_gw` 相对误差约 `3.60e-3`，不能代表当前精度 |
 | `profile_fast_breakdown_*.json`、`benchmark_*.json` | 各轮性能、线程、稳定性和阶段耗时测量 | 作为带日期的运行数据保留；比较前核对对应报告和代码提交 |
 | 其他 `profile_*.json`、`*_round*.json`、`*_head*.json`、`*_candidate*.json`、`*_spike*.json` | 各轮 profile 和独立实现候选；包含被拒绝或仅作参考的方案 | 原始记录随对应报告保留；状态以报告为准，不能按文件名或日期推断 |
 | `ab_baseline_njit_*.json`、`ab_candidate_njit_*.json`、`production_ab_*.txt` | 2026-09-03 Numba 并行内核修改的基线/候选计时及 production 输出指纹；线程缩放仅保留在报告汇总中，原始 `scaling_njit_t*.json` 已由清理提交 `2619065` 移除 | 剩余原始记录随[`performance_comparison_20260903.md`](performance_comparison_20260903.md)保留；它们和报告汇总均不是当前性能基线 |
