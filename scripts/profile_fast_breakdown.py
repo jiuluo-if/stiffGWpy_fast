@@ -15,7 +15,7 @@ import time
 from collections import defaultdict
 
 import numpy as np
-from numba import set_parallel_chunksize
+from numba import set_parallel_chunksize, threading_layer
 
 ROOT = os.environ.get('STIFFGWPY_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -51,7 +51,7 @@ def timed_call(totals, name, fn, *args, **kwargs):
     return result
 
 
-def run_once(case, kink_split=False):
+def run_once(case, kink_split=False, tol=1e-4):
     totals = defaultdict(list)
     original = {
         'gen_fast': FS.gen_fast,
@@ -106,7 +106,7 @@ def run_once(case, kink_split=False):
     try:
         model = LCDM_SG(**case)
         start = time.perf_counter()
-        result = FS.SGWB_iter_fast(model, kink_split=kink_split)
+        result = FS.SGWB_iter_fast(model, kink_split=kink_split, tol=tol)
         totals['total'].append(time.perf_counter() - start)
         totals['outer_iteration'].append(len(getattr(model, 'DN_gw', [])))
         return result, totals, model
@@ -133,10 +133,13 @@ def main():
     parser.add_argument('--case', choices=sorted(CASES), default='A')
     parser.add_argument('--kink-split', action='store_true',
                         help='profile the Phase-A exact-breakpoint variant')
+    parser.add_argument('--tol', type=float, default=None,
+                        help='outer convergence tolerance; defaults to the selected fast preset')
     parser.add_argument('--disable-outer-reuse', action='store_true',
                         help='仅用于 A/B：禁用 formal outer full-solve reuse')
     args = parser.parse_args()
-    FS.apply_accuracy_mode('fast')
+    preset = FS.apply_accuracy_mode('fast')
+    tol = preset['tol'] if args.tol is None else args.tol
     if args.disable_outer_reuse:
         FS._OUTER_FULL_REUSE_ENABLED = False
     # 保留基准命令显式指定的线程数，避免 preset 默认值遮蔽 scaling 点。
@@ -146,7 +149,7 @@ def main():
         set_parallel_chunksize(int(os.environ['FAST_CHUNKSIZE']))
     records = []
     for _ in range(args.reps):
-        _, totals, model = run_once(CASES[args.case], args.kink_split)
+        _, totals, model = run_once(CASES[args.case], args.kink_split, tol)
         def digest(name):
             arr = np.ascontiguousarray(np.asarray(getattr(model, name), dtype=np.float64))
             return hashlib.sha256(arr.tobytes()).hexdigest()
@@ -174,7 +177,8 @@ def main():
         records.append(row)
     summary = {'commit': os.popen('git rev-parse HEAD').read().strip(),
                'threads': FS._THREADS, 'case': CASES[args.case], 'case_id': args.case,
-               'kink_split': args.kink_split,
+               'kink_split': args.kink_split, 'tol': tol,
+               'threading_layer': threading_layer(),
                'reps': args.reps, 'records': records,
                'median_s': {}, 'p95_s': {}}
     names = sorted(k for k in records[0] if k.endswith('_s'))
