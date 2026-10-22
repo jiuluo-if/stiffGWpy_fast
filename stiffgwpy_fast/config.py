@@ -24,13 +24,14 @@ class FastSolverConfig:
     not the formal ``fast`` preset. Use ``resolve_config('fast')`` to get that
     preset as an immutable snapshot. ``transition_refine_radius`` and
     ``transition_refine_factor`` control only the optional validation path:
-    the radius is measured in e-folds on either side of reheating. Their
-    combination is bounded to an estimated 500,000 refined nodes per solve.
+    the radius is measured in e-folds on either side of reheating and the
+    factor is an integer in [1, 128]. Their combination is bounded to an
+    estimated 500,000 refined nodes per solve.
 
     中文：创建时校验参数范围，之后不可修改。直接构造使用的是旧手动设置默认值，并非正式
     ``fast`` 预设；需要具名档位时用 ``resolve_config('fast')`` 生成配置快照。
     ``transition_refine_radius`` 和 ``transition_refine_factor`` 只控制可选的验证路径，
-    其中半径表示再加热转折点两侧的 e-fold 范围；两者组合后最多估算生成 500,000 个细化节点。
+    其中半径表示再加热转折点两侧的 e-fold 范围、倍数为 [1, 128] 内的整数；两者组合后最多估算生成 500,000 个细化节点。
     """
 
     h: float = 0.01
@@ -73,11 +74,11 @@ class FastSolverConfig:
         if (isinstance(raw_transition_refine_factor, bool)
                 or float(raw_transition_refine_factor) != transition_refine_factor):
             raise ValueError(
-                "transition_refine_factor must be an integer in [1, 64], got %r"
+                "transition_refine_factor must be an integer in [1, 128], got %r"
                 % raw_transition_refine_factor)
-        if not 1 <= transition_refine_factor <= 64:
+        if not 1 <= transition_refine_factor <= 128:
             raise ValueError(
-                "transition_refine_factor must be an integer in [1, 64], got %r"
+                "transition_refine_factor must be an integer in [1, 128], got %r"
                 % self.transition_refine_factor)
         estimated_refine_nodes = ceil(
             2.0 * transition_refine_radius * transition_refine_factor / h
