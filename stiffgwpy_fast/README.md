@@ -43,6 +43,9 @@ constructor defaults preserve legacy settings and are not the formal preset;
 use `fast_sgwb.resolve_config('fast')` to obtain the named profile. Pass
 `accuracy_mode=None` only when deliberately using legacy module settings.
 Explicit parameter overrides apply only to the current call.
+The optional validation `transition-refine` path accepts a local radius and
+refinement factor through `FastSolverConfig`; their combined estimated grid is
+limited to 500,000 refined nodes per solve.
 
 ```python
 from stiffgwpy_fast import LCDM_SG
