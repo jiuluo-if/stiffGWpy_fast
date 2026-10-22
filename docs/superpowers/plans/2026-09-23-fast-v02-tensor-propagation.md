@@ -10,6 +10,16 @@
 
 **Spec:** `C:\Users\联想\.codex\attachments\d413dab6-fcb0-4898-ab67-4e2070a031ae\pasted-text-1.txt`
 
+> **Status: historical plan, not an active TODO list.** The checkboxes below are the original proposed gates and were not maintained as execution status.
+
+**Verified outcomes**
+
+- **P0 exact-exp hoist — not adopted.** Kernel outputs were bitwise equal, but full-path timings did not show a stable benefit across cases and thread counts. See [`phase_exp_hoist_strict_round28_outer_20260923.json`](../../phase_exp_hoist_strict_round28_outer_20260923.json) and the 16/20-thread records beside it.
+- **P1 counted assembly — later refined and adopted.** The monotonic `next_assembly_k` implementation was accepted in commit `ae460e9a1aec46a902033ad287d5f424413c7972`. Across six cases and 80 paired rounds, outputs were bitwise equal and the round-wise geometric-mean runtime fell `5.44%` (95% bootstrap interval: `3.55%`–`7.18%`). See [`benchmark_kernel_assembly_stride_20261021.json`](../../benchmark_kernel_assembly_stride_20261021.json) and [`benchmarks.md`](../../benchmarks.md).
+- **P2 compiler inspection — retained as dated diagnostics.** Round 28 and later LLVM/ASM audits record generated code; they are tied to their artifact commits and do not describe the current compiler output.
+
+The archived round-28 results remain dated evidence, not a current performance guarantee.
+
 ## Global Constraints
 
 - 工作基线必须是 `465196c82b1c938af7bfce125933a4dfda22f4a2`，目标远端分支为 `fast/fast_v0.2`。
