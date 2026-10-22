@@ -28,8 +28,8 @@ def test_set_threads_validates():
         with pytest.raises(ValueError):
             FS.set_threads(bad)
     with pytest.raises(ValueError):
-        FS.set_threads(FS._MAX_THREADS + 1)
-    FS.set_threads(FS._MAX_THREADS)
+        FS.set_threads(FS.max_threads() + 1)
+    FS.set_threads(FS.max_threads())
 
 
 def test_set_h_validates():
@@ -342,7 +342,7 @@ def test_kink_path_reuses_stable_exact_primitive(monkeypatch):
 def test_per_call_thread_config_is_restored_on_failure(monkeypatch, model):
     """A per-call thread override must not leak through a failed solve."""
     before = get_num_threads()
-    target = 1 if before != 1 else min(2, FS._MAX_THREADS)
+    target = 1 if before != 1 else min(2, FS.max_threads())
     config = FS.FastSolverConfig(threads=target)
 
     def bad_solve(Nv, Phi_grid, Phi_mid, S2, S2inv, j0s, z0s, P_t, ev_minus,

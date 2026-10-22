@@ -28,7 +28,7 @@ def test_fast_state_isolation_across_parameters_and_threads(fast_settings):
     m_a2 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     FS.set_threads(1)
     m_a1.SGWB_iter(engine='fast')
-    FS.set_threads(min(8, FS._MAX_THREADS))
+    FS.set_threads(min(8, FS.max_threads()))
     m_b.SGWB_iter(engine='fast')
     FS.set_threads(1)
     m_a2.SGWB_iter(engine='fast')
