@@ -64,6 +64,7 @@ class stiffGW(Theory):
     # Type annotations only: the default *values* live in stiffGW.yaml (the
     # same-name file Cobaya loads next to this module).  Declaring values here
     # AND in the yaml raises a duplicate-option error in Cobaya 3.6.
+    # 此处只声明类型；默认值统一放在同名 YAML 中，避免 Cobaya 3.6 因两处重复定义而报错。
     speed = 0.1
     engine: str
     fallback: bool
@@ -79,6 +80,8 @@ class stiffGW(Theory):
     # likelihood_sigma)^2 is compared against dlogl_tol (natural log-units).
     # The effective sigma is the likelihood's sensitivity to Delta N_eff
     # (e.g. ~0.25 for CMB/BAO-scale Neff constraints; set per likelihood).
+    # 似然感知升级以自然对数单位的 dlogl_tol 比较估计的 |Delta logL|；likelihood_sigma 表示该似然对
+    # Delta_Neff 的有效灵敏度，应按具体似然设置。
     likelihood_sigma: float
     dlogl_tol: float
     escalate_to_reference: bool
@@ -89,10 +92,12 @@ class stiffGW(Theory):
     # solve grid as native nodes so the likelihood does not inherit
     # interpolation error at steep spectral features.  A list of floats or a
     # path to a text file (one log10 f per line).
+    # 可选的原生求解频点（如似然频率 bin），用于陡峭谱特征处避免插值误差；可传浮点列表或每行一个 log10 f 的文本路径。
     eval_freqs: object
     # Canonical public names.  In particular, do not use the ambiguous
     # historical ``Delta_Neff`` alias: GW-only and total contributions are
     # distinct quantities and are kept explicit throughout the adapter.
+    # 使用规范的公开参数名；GW 单独贡献与总 Delta_Neff 含义不同，不应混用历史上的歧义别名。
     DERIVED_PARAMS = ('Delta_Neff_GW', 'Delta_Neff_total',
                       'log10hc_prim_fyr', 'f_end', 'Delta_Neff_GW_error')
 
@@ -112,6 +117,7 @@ class stiffGW(Theory):
         # Cobaya calls ``close`` when a run finishes.  Emit the accumulated
         # telemetry so numerical fallbacks are visible in MCMC logs rather
         # than silently disappearing behind a successful LSODA retry.
+        # Cobaya 结束运行时输出累计遥测，使 MCMC 日志可见数值失败与 LSODA 回退。
         stats = self.engine_stats
         if stats is not None:
             counts = stats['eval_status_counts']
@@ -146,6 +152,7 @@ class stiffGW(Theory):
 
     def get_can_provide_params(self):
         # Must be exactly the keys written into state['derived'] in calculate().
+        # 返回值必须与 calculate() 写入 state['derived'] 的键完全一致。
         return list(self.DERIVED_PARAMS)
 
     @property
@@ -193,6 +200,7 @@ class stiffGW(Theory):
         # This prevents the Cobaya default values from silently masking the
         # selected accuracy_mode (accuracy_mode -> preset defaults -> explicit
         # user overrides only).
+        # 这样 YAML 的默认参数不会覆盖选定档位；解析顺序是档位预设，再叠加用户显式覆盖。
         if self.h:
             sgwb_kwargs['h'] = self.h
         if self.col_step:
@@ -235,6 +243,7 @@ class stiffGW(Theory):
         if not m.SGWB_converge:
             # logpost will be -inf; make sure any previous derived values are
             # not reused for this point.
+            # 失败点的 log posterior 为负无穷；清除前一点的派生值，避免误用于当前参数点。
             state.pop('derived', None)
             return False
 
@@ -274,6 +283,7 @@ class stiffGW(Theory):
             # Cobaya may reuse the state dictionary between calls; never leave
             # derived values from a previous parameter point visible when the
             # caller did not request them.
+            # Cobaya 可能复用 state 字典；未请求派生量时也要清除前一点的值。
             state.pop('derived', None)
         return True
 

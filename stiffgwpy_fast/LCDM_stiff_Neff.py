@@ -130,6 +130,7 @@ class LCDM_SN:
         if fast_cache:
             # ``cr > 0`` may update DN_re while constructing N_inf; retain the
             # post-computation key so the next unchanged lookup is reusable.
+            # 构造 N_inf 时 `cr > 0` 可能更新 DN_re；缓存使用计算后的键值，供后续相同参数查询复用。
             cache_key = self.cosmo_param['DN_eff']
             self._fast_derived_cache_key = cache_key
             self._fast_derived_cache = derived_dict
@@ -152,7 +153,7 @@ class LCDM_SN:
         
         """
 
-        #####    Import cosmology    #####
+        # Import cosmological parameters / 读取宇宙学参数。
 
         Omh2 = self.derived_param['Omega_mh2']; Osh2 = self.derived_param['Omega_sh2']
 
@@ -163,7 +164,7 @@ class LCDM_SN:
         OLh2 = self.derived_param['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2
 
 
-        #####   Construct output arrays    #####
+        # Construct output arrays / 构造输出数组。
 
         len_inf = math.floor(self.derived_param['N_inf']*100)+1; Nv = np.arange(0, len_inf)*.01
         if Nv[-1] != self.derived_param['N_inf']:
@@ -173,7 +174,7 @@ class LCDM_SN:
         Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv proportional to f_H = aH/(2*pi)
 
 
-        #####    Main loop: Calculating expansion history    #####
+        # Main loop: calculate the expansion history / 主循环：计算膨胀历史。
 
         index_re = int(np.argmin(np.abs(Nv - (self.derived_param['N_inf'] - self.derived_param['N_re']))))
         # 再加热边界落在网格上最近的节点；连续边界位置由 N_inf-N_re 给出。
@@ -212,7 +213,7 @@ class LCDM_SN:
         f0 = fv[-1]; Delta_f = math.log(2*math.pi/self.derived_param['H_0'])
         fv = fv - f0 - Delta_f
 
-        #####    Output the expansion history and frequencies    ########
+        # Output the expansion history and frequencies / 写出膨胀历史与频率数组。
 
         self.Nv = Nv
         self.N = Nv - Nv[-1]

@@ -137,6 +137,7 @@ def grid_independent_freqs(m, freq_res=1.0):
 
     def f_hor_cont(N):
         # Continuous log10(aH/(2pi)/Hz) at absolute N (grid-independent).
+        # 在绝对 N 处计算连续的 log10(aH/(2pi)/Hz)，不依赖离散网格。
         N = float(N)
         H2 = h2_at(N)
         raw = -0.5 * N + 0.5 * _m.log(H2)
@@ -153,6 +154,8 @@ def grid_independent_freqs(m, freq_res=1.0):
     # comparable to the model's empirical grid at freq_res=1), capped at the
     # CMB pivot.  Chosen so freq_res=1 gives ~246 points (same order as
     # construct_f) while staying grid-independent.
+    # 构造按 log10 频率均匀分布的网格，密度由 freq_res 缩放并在 CMB pivot 截止；freq_res=1 时约 246 点，
+    # 与 construct_f 数量级相当，同时保持网格独立。
     n = max(2, int((fmax - fcmb) * freq_res * 10)) + int((fcmb - fmin) * freq_res * 5)
     logf = np.linspace(fmax, fmin, n + 1)
     return logf, fmin, fmax
