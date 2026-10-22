@@ -74,7 +74,11 @@ restores the same `0.0003125` local step, but only the high `DN_re` edge passes:
 the low/high errors are `4.51e-4` and `1.38e-4`. Exact anchor checks pass, so
 the low-edge miss is not a grid mismatch. This candidate is rejected; its
 factor-64 comparison at the same radius fails both edges (`4.51e-4`/`2.95e-4`).
-Matched Oracle data are linked from the assessment report.
+At `h=0.02`, reducing the radius from `0.125` to `0.0625` retains the
+`0.0003125` local step and passes at `1.14e-4`/`8.30e-5`, with medians
+`6.49/8.74 ms`. It is the fastest passing transition-refine point measured so
+far, but remains slower than standard fast and is not promoted. Matched Oracle
+data are linked from the assessment report.
 
 ## Current full-path solver profile is separate
 

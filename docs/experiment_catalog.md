@@ -66,6 +66,9 @@ The wider `radius=0.25` run at factor 64 fails both edges; increasing to factor
 low edge (`4.51e-4`). Its repeated `47.15/7.75 ms` medians are asymmetric. Both
 configurations are recorded as rejected candidates in the assessment report
 and raw-data family.
+Narrowing the passing `h=0.02/factor=64` window to radius `0.0625` improves the
+errors to `1.14e-4/8.30e-5` and medians to `6.49/8.74 ms`; this remains slower
+than standard fast and is not promoted.
 
 ## Raw run families by location
 

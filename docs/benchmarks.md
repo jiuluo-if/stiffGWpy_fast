@@ -295,6 +295,11 @@ error remains above the gate, while the high edge passes. Treat this as a
 rejected two-point candidate, not a general speed result; the exact samples
 and environment are in the linked raw JSON.
 
+At `h=0.02/factor=64`, reducing the radius from `0.125` to `0.0625` lowers the
+two-edge medians from `7.63/9.49 ms` to `6.49/8.74 ms` and passes both accuracy
+gates with slightly smaller errors. This is a matched two-point result for the
+validation path; the formal fast preset is still faster and unchanged.
+
 ## Transition-refined `H2_vec` batching (2026-10-22)
 
 `H2_vec` used to call the SciPy density spline once per background node while
