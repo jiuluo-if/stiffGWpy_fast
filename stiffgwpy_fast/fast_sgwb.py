@@ -464,7 +464,10 @@ def apply_accuracy_mode(name):
 
 
 def get_config():
-    """Return an immutable snapshot of the legacy module settings."""
+    """Return an immutable snapshot of the legacy module settings.
+
+    中文：读取旧式模块级配置，并返回不可变快照；不会修改全局设置。
+    """
     with _NUMBA_CONFIG_LOCK:
         return FastSolverConfig(
             h=_FAST_H,
@@ -811,6 +814,7 @@ def _build_fd_table():
     that is missing (e.g. an editable install without data files) we fall back
     to the user cache and finally to recomputation, saving the result to the
     user cache so the next import is cheap.
+    中文：优先读取随包 ``fd_table.npz``；缺失时依次尝试用户缓存和重新计算，并将重算表写入缓存供后续导入复用。
     """
     try:
         with package_path("stiffgwpy_fast", "fd_table.npz") as pkg_file:
@@ -965,6 +969,10 @@ def gen_fast(m, h=0.01, kink_split=False):
     kernel already supports arbitrary node coordinates, so inserting the one
     reheating node here keeps the hot background construction on the same
     Numba path as the plain grid instead of calling the slower Python helper.
+
+    中文：生成背景膨胀网格，并可选地精确插入再加热边界 ``N_re``。
+    ``kink_split`` 是 Phase A 验证开关；内核支持非均匀节点，插入转折点后仍使用原有 Numba
+    背景路径，无需调用较慢的 Python 网格辅助函数。
     """
     d = m.derived_param
     p = m.cosmo_param
@@ -1035,12 +1043,18 @@ def gen_fast(m, h=0.01, kink_split=False):
 
 
 def _retain_outer_background_snapshot(Nv, sigma, f_hor):
-    """Retain generation-owned arrays until the next background generation."""
+    """Retain generation-owned arrays until the next background generation.
+
+    中文：保留本轮背景生成的数组引用，供下一轮生成前检查外层迭代是否可复用背景；此处不复制数组。
+    """
     return Nv, sigma, f_hor
 
 
 def _correct_kink_background(m):
-    """Correct the nearest-grid-node convention for the internal kink split."""
+    """Correct the nearest-grid-node convention for the internal kink split.
+
+    中文：修正内部转折分段与最近网格节点约定之间的差异，并返回精确转折所在区间及其相对位置。
+    """
     from .exact_background import H2_vec
 
     d = m.derived_param
@@ -1161,6 +1175,9 @@ def prep_frequency_kernel(f_hor, freqs, ln10v, j0s, z0s, fp_minus):
     spacing.  Phase A inserts only the reheating breakpoint, so it uses this
     small independent preparation path and fills the background primitives
     with ``exact_phi_s2_grid`` instead of applying a uniform-grid spline.
+
+    中文：为非均匀 e-fold 网格准备频率起点。常规预处理假定网格等距；Phase A 只插入再加热转折点，
+    因此单独走此准备路径，并用 ``exact_phi_s2_grid`` 生成背景原函数。
     """
     for j in range(len(f_hor)):
         fp_minus[j] = math.exp(-f_hor[j] * ln10v)
@@ -1198,7 +1215,10 @@ def _fast_frequency_workspace(m, nv, nf):
 
 
 def prep_frequency_only(m, Nv, freqs):
-    """Prepare frequency starts using model-local, overwritten work buffers."""
+    """Prepare frequency starts using model-local, overwritten work buffers.
+
+    中文：使用模型实例内会被覆盖复用的工作缓冲区，准备频率求解起点。
+    """
     workspace = _fast_frequency_workspace(m, len(Nv), len(freqs))
     prep_frequency_kernel(m.f_hor, freqs, ln10, workspace["j0s"], workspace["z0s"], workspace["fp_minus"])
     return (m.sigma, m.f_hor, workspace["j0s"], workspace["z0s"], workspace["fp_minus"])
@@ -1242,7 +1262,10 @@ def scaled_step(xh, yh, z_mid, h):
 
 @njit(cache=True, inline="always")
 def _phase_substeps(h_step, z_mid, phase_max):
-    """Return the minimum sub-step count for a bounded phase increment."""
+    """Return the minimum sub-step count for a bounded phase increment.
+
+    中文：计算使单步相位增量不超过 ``phase_max`` 所需的最少子步数；未启用相位限制时返回 1。
+    """
     if phase_max <= 0.0 or z_mid <= 0.0:
         return 1
     n_sub = int(math.ceil(h_step * math.exp(z_mid) / phase_max))
@@ -1251,7 +1274,11 @@ def _phase_substeps(h_step, z_mid, phase_max):
 
 @njit(cache=True, inline="always")
 def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
-    """Advance one segment, optionally using a constant-z phase envelope."""
+    """Advance one segment, optionally using a constant-z phase envelope.
+
+    中文：推进一个积分区间；若相位增量超过上限，则按子步中点的 ``z`` 逐步推进。
+    未触发细分时直接使用区间中点 ``z`` 做单步更新。
+    """
     z_mid = 0.5 * (z_start + z_end)
     n_sub = _phase_substeps(h_step, z_mid, phase_max)
     if n_sub == 1:
@@ -1275,6 +1302,9 @@ def _tail_match_gamma(sigma):
     the damping-removed variable and leaves an O(exp(-z)) matching error.
     ``sigma`` remains an argument to keep the physical dependency explicit at
     the call site and to make the invariant easy to test.
+    中文：深次视界时 ``T ~ a^-1``；令 ``y=e^z T``、``x=T'`` 后，常振幅组合为
+    ``x + y/e^z``，其匹配系数为 1。旧的 ``(3-1.5*sigma)/2`` 系数适用于去阻尼变量，会留下
+    ``O(e^-z)`` 匹配误差。保留 ``sigma`` 参数是为了显式记录物理依赖并测试该不变量。
     """
     _ = sigma
     return 1.0
@@ -1523,6 +1553,10 @@ def pchip_integral_breakdown(freqs, integrand):
     DN integral and the local quadrature estimator is what removes the
     duplicated SciPy work in the PCHIP path.  Nodes are sorted ascending,
     matching :func:`estimate_frequency_quadrature_local`.
+
+    中文：对一条 PCHIP 拟合同时返回全区间积分和逐区间积分。PCHIP 的斜率依赖全部节点值，不能用固定权重
+    精确复现；本函数只拟合一次，再用原函数求出总积分与区间积分，供 DN 计算和局部误差估算共享，
+    避免重复调用 SciPy 插值。
     """
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
@@ -1542,7 +1576,10 @@ def pchip_integral_breakdown(freqs, integrand):
 
 
 def _pchip_slopes(x, y):
-    """Vectorized Fritsch-Carlson node slopes (same recurrence as SciPy)."""
+    """Vectorized Fritsch-Carlson node slopes (same recurrence as SciPy).
+
+    中文：按与 SciPy 相同的 Fritsch-Carlson 递推，向量化计算保形三次 Hermite 插值的节点斜率。
+    """
     n = x.size
     hk = x[1:] - x[:-1]
     mk = (y[1:] - y[:-1]) / hk
@@ -1565,7 +1602,10 @@ def _pchip_slopes(x, y):
 
 
 def _pchip_edge_slope(h0, h1, m0, m1):
-    """One-sided three-point estimate with the SciPy shape-preserving guards."""
+    """One-sided three-point estimate with the SciPy shape-preserving guards.
+
+    中文：使用单侧三点公式估算端点斜率，并应用 SciPy 的保形限制，避免端点过冲。
+    """
     d = ((2.0 * h0 + h1) * m0 - h0 * m1) / (h0 + h1)
     if np.sign(d) != np.sign(m0):
         return 0.0
@@ -1583,6 +1623,9 @@ def _pchip_integrals_vectorized(freqs, integrand):
     object entirely, which is the dominant remaining cost of the PCHIP path.
     ``pchip_integral_breakdown`` stays the SciPy reference; the two agree to
     ``< 1e-13`` relative, which is asserted by the test suite.
+    中文：使用 NumPy 逐区间计算 PCHIP 积分；每段闭式公式为
+    ``h/2*(y_i+y_{i+1}) + h^2*(m_i-m_{i+1})/12``。节点斜率沿用 SciPy 递推，不再创建
+    ``PchipInterpolator`` 对象；测试断言其结果与 SciPy 参考实现的相对差小于 ``1e-13``。
     """
     x = np.asarray(freqs, dtype=np.float64)
     y = np.asarray(integrand, dtype=np.float64)
@@ -1688,6 +1731,10 @@ def estimate_frequency_quadrature_local(
     (PCHIP is nonlinear in the node values, so its intervals cannot be
     reproduced from a fixed weight vector).  This avoids rebuilding the
     interpolant a second time in the hot PCHIP path.
+
+    中文：返回每个频率区间的求积误差、候选方法贡献和 Simpson 贡献。Simpson 基线按不重叠局部面板计算，
+    避免正负权重在全局相消后掩盖局部误差。候选区间贡献可由调用方传入，避免在 PCHIP 热路径中重复拟合。
+    ``allocation`` 可选择按候选贡献分摊、将面板误差完整计入区间，或再施加相邻面板包络。
     """
     if allocation not in ("weighted", "full_panel", "panel_envelope"):
         raise ValueError("unknown local quadrature allocation")
@@ -1947,6 +1994,11 @@ def _SGWB_iter_fast_impl(
     as native nodes (so point evaluations at steep spectral features, e.g.
     likelihood bins, do not inherit interpolation error).  Values outside the
     solved frequency range are ignored; the goal grid includes them directly.
+
+    中文：本函数是 fast 求解器的内部核心实现，使用固定步长方法执行 ``Delta N_eff`` 自洽迭代。
+    频率积分默认使用 PCHIP，也可显式选择 Simpson；``sigma_exact``、转折细化/分段和 ``freq_grid``
+    控制背景与采样策略。``tol`` 是外层自洽停止阈值，``freq_res`` 调整频率密度。成功时写入 fast 输出并返回模型；
+    失败时恢复输入的 ``DN_eff`` 状态并返回 ``None``。``eval_freqs`` 只把求解范围内的指定频率加为原生节点。
     """
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.

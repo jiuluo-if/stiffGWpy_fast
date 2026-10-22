@@ -63,9 +63,16 @@ Each run exposes the following fields through `theory.engine_stats`:
 The derived `Delta_Neff_GW_error` is `NaN` when the selected engine does not
 provide an error estimate. `close()` logs the summary and warns above a 5%
 fallback/escalation fraction.
+The `engine_stats` fields `DN_gw_error` and `spectrum_error` use different
+quantities: `DN_gw_error` is the combined relative estimate for integrated
+`Delta N_eff`, while `spectrum_error` is the selected accuracy mode's calibrated
+log-spectrum error anchor. `spectrum_error` is `None` when no accuracy mode is
+selected; it is not a point-local spectrum measurement.
 
 遥测状态会区分快速求解失败、物理拒绝、保护条件拒绝及回退/升级失败。引擎没有提供误差估计时，
 派生参数 `Delta_Neff_GW_error` 为 `NaN`，不以零冒充已知误差。
+`engine_stats` 中的 `DN_gw_error` 是积分 `Delta_Neff` 的组合相对误差估计；`spectrum_error` 是所选
+精度档位的频谱对数误差校准值。未选择精度档位时 `spectrum_error` 为 `None`，它不是当前参数点的频谱实测误差。
 
 ## Engine options
 

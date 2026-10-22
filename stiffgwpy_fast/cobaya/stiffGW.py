@@ -48,6 +48,9 @@ def _resolve_freqs_input(value):
 
     Accepts a sequence of floats or a path to a text file with one log10 f per
     line.  Returns ``None`` when unset so the caller can skip the kwarg.
+
+    中文：将 ``eval_freqs`` 解析为 ``log10(f/Hz)`` 数组；可传数值序列，或每行一个频率值的文本文件路径。
+    未设置时返回 ``None``，调用方据此不传该可选参数。
     """
     if value is None:
         return None
@@ -102,7 +105,10 @@ class stiffGW(Theory):
                       'log10hc_prim_fyr', 'f_end', 'Delta_Neff_GW_error')
 
     def initialize(self):
-        """Create the model object used for every parameter evaluation."""
+        """Create the model object used for every parameter evaluation.
+
+        中文：创建并保存后续每个参数点共用的模型实例。
+        """
         try:
             from ..stiff_SGWB import LCDM_SG
         except ImportError:  # imported as a top-level module by cobaya
@@ -157,7 +163,10 @@ class stiffGW(Theory):
 
     @property
     def engine_stats(self):
-        """Fast/fallback counters accumulated on the shared model instance."""
+        """Fast/fallback counters accumulated on the shared model instance.
+
+        中文：返回共享模型实例累计的 fast、回退、升级、失败状态与误差遥测。
+        """
         m = getattr(self, 'stiffGW_model', None)
         if m is None:
             return None
@@ -185,7 +194,11 @@ class stiffGW(Theory):
                     Delta_Neff_abs_error=getattr(m, 'Delta_Neff_abs_error', None))
 
     def calculate(self, state, want_derived=True, **params_values_dict):
-        """Evaluate the model; on failure return False (logpost -> -inf)."""
+        """Evaluate the model; on failure return False (logpost -> -inf).
+
+        中文：用当前采样参数计算宇宙学与 SGWB 结果；成功时写入派生参数，失败时返回 ``False``，
+        由 Cobaya 将该点的对数后验设为 ``-inf``。
+        """
         m = self.stiffGW_model
         m.reset()
         for key in m.cosmo_param:

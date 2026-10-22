@@ -19,27 +19,39 @@ __all__ = ['dex_abs', 'rel_abs', 'rel_linear_omega', 'signal_mask']
 
 
 def dex_abs(a_log10, b_log10):
-    """Absolute difference between two log10 quantities (dex units)."""
+    """Absolute difference between two log10 quantities (dex units).
+
+    中文：计算两个以 10 为底的对数值之差的绝对值，单位为 dex。
+    """
     a = np.asarray(a_log10, dtype=float)
     b = np.asarray(b_log10, dtype=float)
     return np.abs(a - b)
 
 
 def rel_abs(a, b):
-    """Elementwise relative difference ``|a - b| / |b|``, guarding ``b == 0``."""
+    """Elementwise relative difference ``|a - b| / |b|``, guarding ``b == 0``.
+
+    中文：逐元素计算 ``|a-b|/|b|``；当 ``b`` 为零时使用安全的正下限作为分母。
+    """
     a = np.asarray(a, dtype=float)
     b = np.asarray(b, dtype=float)
     return np.abs(a - b) / np.maximum(np.abs(b), 1e-300)
 
 
 def rel_linear_omega(a_log10, b_log10):
-    """Relative difference of *linear* Omega values: ``|10^a - 10^b| / 10^b``."""
+    """Relative difference of *linear* Omega values: ``|10^a - 10^b| / 10^b``.
+
+    中文：先将 ``log10(Omega)`` 还原为线性 ``Omega``，再计算相对差，避免直接对数值求相对误差。
+    """
     a = np.power(10.0, np.asarray(a_log10, dtype=float))
     b = np.power(10.0, np.asarray(b_log10, dtype=float))
     return np.abs(a - b) / np.maximum(b, 1e-300)
 
 
 def signal_mask(b_log10, floor_log10=-30.0):
-    """Mask of channels whose reference linear Omega is above ``floor_log10``."""
+    """Mask of channels whose reference linear Omega is above ``floor_log10``.
+
+    中文：标记参考谱 ``log10(Omega)`` 不低于 ``floor_log10`` 的通道，用于区分信号区和近零区。
+    """
     b = np.asarray(b_log10, dtype=float)
     return b >= floor_log10
