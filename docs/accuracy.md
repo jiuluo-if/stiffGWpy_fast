@@ -44,8 +44,11 @@ With Oracle anchors regenerated at the same `DN_eff` and native frequency
 grid, reducing `h` to `0.0003125` lowers the two errors to `1.65e-4` and
 `1.63e-4` versus WKB (both below the scoped gate). Warm median runtimes rise
 from `5.69`/`4.53 ms` at `h=0.005` to `62.7`/`71.7 ms` (about `11.0x`/`15.8x`).
-The precision candidate is therefore not promoted; improving its latency remains open. Full
-grids, configuration, repeated timings, and reproduction commands are in
+The matched `transition-refine`, `h=0.0025` candidate also passes these edges,
+at `3.97e-6` and `1.64e-4` versus deep `z=10`; its medians are `46.5`/`73.7 ms`
+(about `8.2x`/`16.3x` slower than standard fast). It is faster than uniform
+fine-step only on `edge_dnre_lo`. Neither candidate is promoted; improving
+latency remains open. Full grids, configuration, repeated timings, and reproduction commands are in
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
 [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
 

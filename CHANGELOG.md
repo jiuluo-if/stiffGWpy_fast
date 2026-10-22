@@ -23,12 +23,15 @@
   speedup claim.
 - Extended the Oracle C full-grid audit to two `DN_re` edges. The formal fast
   profile misses the scoped `2e-4` accuracy gate there; a matched fine-step
-  candidate passes but is 11.0–15.8x slower, so the production preset remains
-  unchanged. See [accuracy](docs/accuracy.md) and the [Oracle C report](docs/oracle_c_wkb_assessment.md).
+  candidate passes but is 11.0–15.8x slower. A matched transition-refined
+  candidate also passes at 8.2–16.3x latency. Both remain validation candidates;
+  the production preset is unchanged. See [accuracy](docs/accuracy.md) and the
+  [Oracle C report](docs/oracle_c_wkb_assessment.md).
 - Batched `H2_vec` density-spline evaluations on the transition-refined path.
-  The full-path A/B is bitwise identical and 4.56–4.87x faster on the two
-  `DN_re` edge cases; it does not change the formal exact-kink path. See
-  [benchmarks](docs/benchmarks.md).
+  The full-path A/B is bitwise identical and 3.86–4.09x faster on the two
+  `DN_re` edge cases. The implementation retains scalar `math.exp` to avoid
+  platform-level ULP differences; it does not change the formal exact-kink
+  path. See [benchmarks](docs/benchmarks.md).
 - Added Chinese explanations to standalone comment sections across the solver,
   reference, grid, background, and Cobaya modules. The grouped-comment scan
   found no remaining English-only blocks in the package, and the code ASTs are
