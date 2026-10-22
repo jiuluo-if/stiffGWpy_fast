@@ -6,14 +6,34 @@
 
 import math
 import os
-
 from pathlib import Path
 
 import numpy as np
 import yaml
 
 from .functions import int_FD
-from .global_param import *
+from .global_param import (
+    N_10,
+    M_Pl,
+    N_fin,
+    N_i,
+    N_max,
+    Omega_mnuh2,
+    Omega_nh2,
+    Omega_orh2,
+    Omega_ph2,
+    T_i,
+    T_max,
+    TCMB_GeV,
+    a_10,
+    ln10,
+    nu_today,
+    parsec,
+    rho_th,
+    spl_rho,
+    spl_rhop,
+    spl_T_N,
+)
 
 
 class LCDM_SN:
@@ -156,22 +176,23 @@ class LCDM_SN:
         
         """
 
-        # Import cosmological parameters / 读取宇宙学参数。
+        # 读取一次派生参数，供本次膨胀历史计算复用。
+        derived = self.derived_param
 
-        Omh2 = self.derived_param['Omega_mh2']; Osh2 = self.derived_param['Omega_sh2']
+        Omh2 = derived['Omega_mh2']; Osh2 = derived['Omega_sh2']
 
         Oerh2 = Omega_ph2 * 7/8 * (4/11)**(4/3) * self.cosmo_param['DN_eff']         # 额外辐射的 Omega*h^2。
         Otrh2 = Omega_orh2 + Oerh2                                                   # 电子-正电子湮灭后的总辐射密度参数。
         Otreh2 = Omega_ph2 * rho_th[-1] + Oerh2                                 # 标准模型相变前的总辐射密度参数。
 
-        OLh2 = self.derived_param['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2。
+        OLh2 = derived['h']**2 - Omh2 - Omega_mnuh2 - Omega_nh2*2/3 - Omega_ph2 - Oerh2 - Osh2     # Omega_Lambda*h^2。
 
 
         # Construct output arrays / 构造输出数组。
 
-        len_inf = math.floor(self.derived_param['N_inf']*100)+1; Nv = np.arange(0, len_inf)*.01
-        if Nv[-1] != self.derived_param['N_inf']:
-            Nv = np.append(Nv, self.derived_param['N_inf'])
+        len_inf = math.floor(derived['N_inf']*100)+1; Nv = np.arange(0, len_inf)*.01
+        if Nv[-1] != derived['N_inf']:
+            Nv = np.append(Nv, derived['N_inf'])
         # Nv is equivalent to ln(a), its present-day value is set at Nv[-1] = N_inf.
         # Nv 对应 ln(a)，并将今天的端点设为 Nv[-1]=N_inf。
         Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv 与视界频率 f_H=aH/(2π) 成比例。
@@ -179,7 +200,7 @@ class LCDM_SN:
 
         # Main loop: calculate the expansion history / 主循环：计算膨胀历史。
 
-        index_re = int(np.argmin(np.abs(Nv - (self.derived_param['N_inf'] - self.derived_param['N_re']))))
+        index_re = int(np.argmin(np.abs(Nv - (derived['N_inf'] - derived['N_re']))))
         # 再加热边界落在网格上最近的节点；连续边界位置由 N_inf-N_re 给出。
 
         for i in range(index_re, len(Nv), 1):
@@ -213,7 +234,7 @@ class LCDM_SN:
 
         # Convert fv into physical units: here \tilde f_H = ln (f_H/Hz)
         # 将 fv 转换为 ln(f_H/Hz)，最终再除以 ln(10) 输出 log10(f_H/Hz)。
-        f0 = fv[-1]; Delta_f = math.log(2*math.pi/self.derived_param['H_0'])
+        f0 = fv[-1]; Delta_f = math.log(2*math.pi/derived['H_0'])
         fv = fv - f0 - Delta_f
 
         # Output the expansion history and frequencies / 写出膨胀历史与频率数组。
