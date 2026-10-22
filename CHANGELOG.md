@@ -44,7 +44,8 @@
 - Added a matched Oracle sweep that keeps the local transition step fixed while
   coarsening the outer grid. Narrowing the passing `h=0.02/factor=64` window
   to radius `0.0625` reaches `1.14e-4/8.30e-5` error at `6.49/8.74 ms`;
-  radius `0.03125` also passes but has no established stable timing gain.
+  radii `0.03125`, `0.015625`, and `0.0078125` also pass. A fixed-affinity
+  paired timing found no stable speed winner between the two narrowest radii.
   `h=0.04/factor=64` is faster but fails both gates. A wider
   `h=0.04/radius=0.25/factor=128` run
   passes only the high edge and has asymmetric repeated medians of

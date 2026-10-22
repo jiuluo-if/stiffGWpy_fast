@@ -76,11 +76,11 @@ the low-edge miss is not a grid mismatch. This candidate is rejected; its
 factor-64 comparison at the same radius fails both edges (`4.51e-4`/`2.95e-4`).
 At `h=0.02`, reducing the radius from `0.125` to `0.0625` retains the
 `0.0003125` local step and passes at `1.14e-4`/`8.30e-5`, with medians
-`6.49/8.74 ms`. It is the fastest passing transition-refine point measured so
-far, but remains slower than standard fast and is not promoted. Matched Oracle
-data are linked from the assessment report. At radius `0.03125`, errors are
-`1.12e-4/8.29e-5` with `6.41/8.09 ms` medians; the small timing difference from
-radius `0.0625` is unpinned and not evidence of a stable speedup.
+`6.49/8.74 ms`. It remains slower than standard fast and is not promoted. At
+radius `0.015625`, errors are `1.12e-4/8.27e-5` with medians `6.15/7.98 ms`;
+at `0.0078125`, they are `1.10e-4/8.27e-5` with medians `6.31/7.94 ms`. A
+fixed-affinity paired comparison found no stable timing advantage for the
+smaller radius. Matched Oracle data are linked from the assessment report.
 
 ## Current full-path solver profile is separate
 
