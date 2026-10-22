@@ -17,7 +17,9 @@ def nested_thread_budget(workers: int = 1, threads: int = 2) -> int:
 
 
 def apply_environment(numba_threads: int = 2, fast_threads: int | None = None) -> None:
-    """在导入数值库前设置保守的线程环境。"""
+    """在导入 Numba 前设置保守线程环境；导入后不再改写进程配置。"""
+    if 'numba' in sys.modules:
+        return
     fast_value = numba_threads if fast_threads is None else fast_threads
     defaults = {
         'NUMBA_NUM_THREADS': str(numba_threads),

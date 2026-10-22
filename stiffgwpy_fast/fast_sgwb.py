@@ -30,6 +30,7 @@ from contextlib import nullcontext
 from threading import RLock
 
 import numpy as np
+from numba import config as numba_config
 from numba import get_num_threads, njit, prange, set_num_threads, threading_layer
 from scipy import integrate, interpolate
 
@@ -63,14 +64,11 @@ __all__ = [
     "pchip_integral_breakdown",
 ]
 
-# Default Numba worker threads: numba's own default (no more than the detected core
-# count).  We do NOT force a fixed number at import time -- that previously
-# raised ValueError on machines with fewer than 32 cores -- and only call
-# set_num_threads() when FAST_THREADS is explicitly set.
-# 默认使用 Numba 根据可用核心数选择线程；导入模块时不强行固定线程数，只有显式设置
-# FAST_THREADS 才调用 set_num_threads()，避免核心数不足时发生 ValueError。
-_MAX_THREADS = get_num_threads()
-_THREADS = _MAX_THREADS
+# Numba's configured pool limit can exceed the current thread mask if the host
+# lowered it before importing this module. Keep both values distinct.
+# 最大线程数取 Numba 的 NUMBA_NUM_THREADS 配置；宿主可能已先缩小当前线程掩码。
+_MAX_THREADS = numba_config.NUMBA_NUM_THREADS
+_THREADS = get_num_threads()
 _NUMBA_CONFIG_LOCK = RLock()
 
 
