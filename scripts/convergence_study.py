@@ -78,7 +78,7 @@ def env_meta():
     return meta
 
 
-# ---------------- engines on a common grid ----------------
+    # ---------------- engines on a common grid / 各引擎共用网格 ----------------
 
 def _outer_finalize(m, DN_gw_new, Omega_nu, DN_eff_orig, ln10v=ln10):
     m.cosmo_param['DN_eff'] = DN_eff_orig + DN_gw_new
@@ -136,7 +136,7 @@ def run_fast(kw, h, col_step, z_tail, freq_res, tol=1e-7):
     return m
 
 
-# ---------------- metrics ----------------
+    # ---------------- metrics / 误差指标 ----------------
 
 def _curve_stats(a, b):
     """Curve relative-error stats on the *signal region* only.
@@ -200,6 +200,7 @@ def metrics(ref, test):
         if a.shape != b.shape:
             # different expansion grids (h sweep): resample the test curve onto
             # the reference N grid before comparing.
+    # h 扫描会改变膨胀网格；比较前先将测试曲线重采样到参照 N 网格。
             if not a.size or not b.size:
                 out[name] = None
                 continue
@@ -215,7 +216,8 @@ def metrics(ref, test):
     if lo_r.shape != lo_t.shape:
         fr = np.asarray(ref.f, float)
         ft = np.asarray(test.f, float)
-        # np.interp requires an *ascending* xp; the f grid is built descending.
+    # np.interp requires an *ascending* xp; the f grid is built descending.
+    # np.interp 要求 xp 升序，而频率网格当前按降序构造。
         if ft.size > 1 and ft[0] > ft[-1]:
             ft = ft[::-1]
             lo_t = lo_t[::-1]
@@ -231,6 +233,7 @@ def estimate_order(hs, errs, window=3):
     pairs = [(math.log(hs[i]), math.log(max(errs[i], 1e-300)))
              for i in range(len(hs)-window, len(hs))]
     # linear fit slope of log(err) vs log(h)
+    # 对 log(err) 与 log(h) 做线性拟合，得到收敛阶斜率。
     x = np.array([p[0] for p in pairs])
     y = np.array([p[1] for p in pairs])
     if np.allclose(x, x[0]):
@@ -238,7 +241,7 @@ def estimate_order(hs, errs, window=3):
     return float(np.polyfit(x, y, 1)[0])
 
 
-# ---------------- CLI ----------------
+    # ---------------- CLI / 命令行参数 ----------------
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description='fast-solver convergence study')
@@ -267,7 +270,7 @@ def main(argv=None):
     FS.set_z_tail(5.0)
     FS.set_h(0.01)
 
-    # ---- h sweep ----
+    # ---- h sweep / 步长扫描 ----
     if args.h_sweep:
         h_lsoda = [h for h in H_LIST if h >= args.h_min_lsoda]
         t0 = time.perf_counter()
@@ -293,7 +296,7 @@ def main(argv=None):
             rec({'kind': 'vs_ref', 'engine': 'fast', 'h': h,
                  **{('m_' + k): v for k, v in metrics(m_ref, mf).items()}})
 
-    # ---- col_step sweep (fast only) ----
+    # ---- col_step sweep (fast only) / 仅 fast 档位的列步长扫描 ----
     if args.colstep:
         h0 = 0.01
         m0 = run_fast(kw, h=h0, col_step=1, z_tail=5.0, freq_res=1.0)
@@ -304,6 +307,7 @@ def main(argv=None):
                  **{('m_' + k): v for k, v in metrics(m0, mf).items()}})
 
     # ---- z_tail sweep (tail formula is shared with LSODA; fast-only) ----
+    # ---- 尾部深度扫描（与 LSODA 共用尾部公式，仅扫描 fast） ----
     if args.ztail:
         h0 = 0.01
         zdeep = ZTAIL_LIST[-1]
@@ -314,7 +318,7 @@ def main(argv=None):
             rec({'kind': 'ztail', 'z_tail': zt,
                  **{('m_' + k): v for k, v in metrics(mdeep, mf).items()}})
 
-    # ---- freq_res sweep ----
+    # ---- freq_res sweep / 频率分辨率扫描 ----
     if args.freq:
         h0 = 0.01
         mref = run_lsoda(kw, h=h0, z_tail=5.0, freq_res=2.0, rtol=args.rtol)

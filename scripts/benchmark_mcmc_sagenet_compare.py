@@ -587,6 +587,7 @@ def make_plots(result: dict, chain_store: dict, logf_oracle: np.ndarray) -> None
     plt.rcParams["axes.unicode_minus"] = False
 
     # Color-blind-friendly, high-contrast palette used consistently in all figures.
+    # 所有图表统一使用高对比度、色觉友好的配色。
     colors = {"最初 plain-grid": "#0072B2", "当前 fast": "#D55E00", "SageNet+ Transformer": "#009E73"}
     markers = {"最初 plain-grid": "o", "当前 fast": "s", "SageNet+ Transformer": "^"}
     line_styles = {"最初 plain-grid": "-", "当前 fast": "--", "SageNet+ Transformer": ":"}

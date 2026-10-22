@@ -112,7 +112,8 @@ def run(case, repeats, specialized):
             if args[11] == 0:
                 probe_args = list(args)
                 probe_args.pop(11)
-                # solve_probe omits the assemble flag but keeps all remaining args.
+    # solve_probe omits the assemble flag but keeps all remaining args.
+    # solve_probe 不接收 assemble 标志，其余参数与目标内核保持一致。
                 return solve_probe(*probe_args, **kwargs)
             return original(*args, **kwargs)
         FS.solve_kernel = wrapped

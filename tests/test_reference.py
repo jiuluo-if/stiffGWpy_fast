@@ -17,8 +17,10 @@ def test_background_analytic_limits_md_and_radiation():
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=0.0, DN_eff=0.0)
     n_re_abs = m.derived_param['N_inf'] - m.derived_param['N_re']
     # One e-fold before reheating ends (MD).
+    # 再加热结束前一个 e-fold，此时为物质主导阶段。
     _, s_md = REF.background_at(m, n_re_abs - 1.0, 0.0)
     # Just after reheating (radiation dominated, w=1/3 -> sigma = 1 + w = 4/3).
+    # 再加热结束后为辐射主导，w=1/3，因此 sigma=1+w=4/3。
     _, s_rad = REF.background_at(m, n_re_abs + 1.0, 0.0)
     assert s_md == pytest.approx(1.0, rel=1e-10)
     assert s_rad == pytest.approx(4.0 / 3.0, rel=2e-3)
@@ -62,6 +64,7 @@ def test_integrate_spectrum_exponential():
     Oj = np.zeros_like(Ogw)
     g2, qerr, ierr = REF.integrate_spectrum(freqs, Ogw, Oj)
     # Analytical: integral of 10^{-14-0.3 x} over x in [a,b], times ln10.
+    # 解析值为区间 [a,b] 上 10^(-14-0.3x) 的积分，再乘 ln(10)。
     a, b = freqs[0], freqs[-1]
     ln10 = math.log(10.0)
     exact = ln10 * (-1.0 / (0.3 * ln10)) * (
@@ -236,6 +239,7 @@ def test_reference_mode_vs_fast_mid_frequency():
     logf = -8.0
     # m.f / m.log10OmegaGW are stored descending; sort with a shared
     # argsort so the (f, log10Omega) pairing survives interpolation.
+    # m.f 和 m.log10OmegaGW 均按降序保存；用同一个 argsort 排序，保持插值时频率与谱值配对。
     o = np.argsort(np.asarray(m.f, dtype=float))
     lo_fast = np.interp(logf, np.asarray(m.f)[o],
                         np.asarray(m.log10OmegaGW)[o])

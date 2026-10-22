@@ -71,6 +71,7 @@ def fused_primitive(m, Nv, DN_eff, sigma_nodes=None):
     else:
         phi_re = 0.0
     # Reuse the midpoint buffer for the quarter-point interpolation.
+    # 四分点插值复用中点缓冲区。
     mid_sigma = 0.75 * nodes_left[:-1] + 0.25 * nodes_right[1:]
     F_mid = F_nodes[:-1] + h_arr * (
         nodes_left[:-1] + 4.0 * mid_sigma + 0.5 * edge_sum) / 12.0

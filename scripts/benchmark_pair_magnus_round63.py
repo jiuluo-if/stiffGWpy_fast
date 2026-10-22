@@ -66,6 +66,7 @@ def _pair_apply(x, y, z0, z2, h):
     a1, b1, c1 = -1.0, -w2, w2
     da, db, dc = a1 - a0, b1 - b0, c1 - c0
     # [A_mid, Delta] for traceless 2x2 matrices.
+    # 对无迹 2×2 矩阵，使用向量 [A_mid, Delta]。
     ca = bm * dc - db * cm
     cb = 2.0 * (am * db - bm * da)
     cc = 2.0 * (cm * da - am * dc)
@@ -140,6 +141,7 @@ def _probe(case):
     starts, ends, steps = _path(case)
     # Use the production local constant-midpoint map as a fast baseline for
     # operation count, and an independent DOP853 chain for correctness.
+    # 用生产局部常步长中点映射统计运算量，并用独立 DOP853 链验证正确性。
     reference = _reference(starts, ends, steps)
     _midpoint_chain(starts, ends, steps)
     _candidate(starts, ends, steps)

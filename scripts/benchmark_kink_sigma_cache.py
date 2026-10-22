@@ -49,6 +49,7 @@ def _cached_sigma_factory():
         array = np.asarray(N, dtype=float)
         # Only cache the fixed three-probe call in fast_phi_s2_split.  All
         # other sigma_vec calls retain the production implementation exactly.
+    # 仅缓存 fast_phi_s2_split 中固定的三探针调用；其余 sigma_vec 调用继续使用原生产实现。
         if array.shape == (3,):
             key = (id(model), float(dn_eff), array.tobytes())
             if key not in cache:

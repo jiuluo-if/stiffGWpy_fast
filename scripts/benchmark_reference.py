@@ -56,6 +56,7 @@ CASES = {
 
 # Representative log10(f/Hz) covering the low-f tail, the spectrum knee, the
 # stiff enhancement and the high-f cutoff.
+# 代表性 log10(f/Hz) 点覆盖低频尾部、频谱膝点、刚性增强区和高频截断。
 FREQ_SUBSET = [-18.4, -18.0, -17.5, -17.0, -16.5, -16.0, -15.5, -15.0,
                -14.5, -14.0, -13.0, -12.0, -11.0, -10.0, -9.0, -8.0,
                -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0,
@@ -89,6 +90,8 @@ def run_fast(kw, z_tail=None):
     # Forward the preset's continuous-sigma (kink breakpoint) path: production
     # mode is defined with transition_refine=True (see ACCURACY_MODES), and
     # running the plain spline-sigma path silently loses ~0.2% of Delta N_eff.
+# 显式使用预设的连续 sigma/kink 断点路径：production 档位要求
+# transition_refine=True；普通样条 sigma 路径会使 Delta N_eff 偏差约 0.2%。
     FS.SGWB_iter_fast(m, tol=cfg['tol'], transition_refine=cfg.get('transition_refine', False))
     dt = time.perf_counter() - t0
     return m, dt
@@ -156,7 +159,7 @@ def main(argv=None):
 
     subset = None if args.freq_full else np.array(FREQ_SUBSET)
 
-    # ---- fast production ----
+# ---- fast production / fast 生产路径 ----
     m_fast, dt_fast = run_fast(kw, z_tail=args.z_tail)
     dn_fast = float(m_fast.cosmo_param['DN_eff'])
     dn_gw_fast = float(m_fast.DN_gw[-1])
@@ -164,7 +167,8 @@ def main(argv=None):
     rec({'kind': 'fast', 'runtime_s': dt_fast, 'DN_eff': dn_fast,
          'DN_gw': dn_gw_fast, 'kappa_r': kappa_r_fast, 'n_freq': len(m_fast.f)})
 
-    # ---- reference (physics-first truth) at the fast-converged DN_eff ----
+# ---- reference (physics-first truth) at the fast-converged DN_eff ----
+# ---- 在 fast 收敛的 DN_eff 上运行独立物理参照 ----
     t0 = time.perf_counter()
     ref = REF.run_reference(_ref_model(kw),
                             dn_eff=dn_fast, freq_res=1.0, z_tail=args.z_tail, rtol=1e-11,
@@ -176,14 +180,15 @@ def main(argv=None):
          'interpolation_error': ref['interpolation_error'],
          'used_tail_frac': float(np.mean(ref['used_tail']))})
 
-    # Compare fast / production spectrum to the reference on the same freqs.
+# Compare fast / production spectrum to the reference on the same freqs.
+# 在相同频率点上比较 fast/production 频谱与参照结果。
     if subset is not None:
         lo_ref = ref['log10OmegaGW']
         lo_fast = _spectrum_on_subset(m_fast, subset)
         rec({'kind': 'spec_err', 'engine': 'fast',
              **{('m_' + k): v for k, v in _rex_stats(lo_ref, lo_fast).items()}})
 
-    # ---- reference ODE sensitivity (rtol) ----
+# ---- reference ODE sensitivity (rtol) / 参照 ODE 容差敏感性 ----
     if not args.no_ode_error:
         ref_lo = REF.run_reference(_ref_model(kw),
                                    dn_eff=dn_fast, freq_res=1.0, z_tail=args.z_tail,
@@ -195,7 +200,7 @@ def main(argv=None):
              'DN_gw_rel': (float(abs(ref['DN_gw'] - ref_lo['DN_gw']) /
                                  abs(ref['DN_gw'])) if ref['DN_gw'] != 0 else None)})
 
-    # ---- reference tail sensitivity (z_tail) ----
+# ---- reference tail sensitivity (z_tail) / 参照尾部深度敏感性 ----
     if not args.no_tail_error:
         ref_tail = REF.run_reference(_ref_model(kw),
                                      dn_eff=dn_fast, freq_res=1.0, z_tail=5.0,
@@ -207,7 +212,7 @@ def main(argv=None):
              'DN_gw_rel': (float(abs(ref['DN_gw'] - ref_tail['DN_gw']) /
                                  abs(ref['DN_gw'])) if ref['DN_gw'] != 0 else None)})
 
-    # ---- optional LSODA ----
+# ---- optional LSODA / 可选 LSODA 对照 ----
     if args.with_lsoda:
         m_ls, dt_ls = run_lsoda(kw)
         rec({'kind': 'lsoda', 'runtime_s': dt_ls, 'DN_eff': float(m_ls.cosmo_param['DN_eff']),

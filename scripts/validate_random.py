@@ -36,6 +36,7 @@ GATES = {
 }
 
 # (name, low, high, log_scale)
+# 参数名、下界、上界和是否按对数尺度采样。
 _RANGES = {
     'Omega_bh2': (0.018, 0.026, False),
     'Omega_ch2': (0.09, 0.15, False),

@@ -57,6 +57,7 @@ def test_log_prior_flat_and_truncated(ip):
 
 def test_is_ess_approaches_n_for_matched_proposal(ip, tmp_path):
     # draws from q == posterior: importance weights constant -> ESS ~ n
+    # 当提议分布 q 等于后验时，重要性权重恒定，因此 ESS 应接近样本数 n。
     rng = np.random.default_rng(3)
     n = 4000
     truth = {"truth_log10Om": np.zeros(11).tolist()}
@@ -65,6 +66,8 @@ def test_is_ess_approaches_n_for_matched_proposal(ip, tmp_path):
     # engine model: log10 Omega = log10r + 2 (truth vector is 0 at r=1e-2),
     # plus a small per-bin noise floor; q must over-cover n_t (weakly
     # constrained by the tilt) or IS variance collapses.
+    # 模型为 log10 Omega=log10r+2（r=1e-2 时真值向量为 0），并加入小幅逐 bin 噪声；
+    # n_t 受倾斜弱约束，提议分布 q 必须覆盖足够宽，否则重要性采样方差会发散。
     lo = np.zeros((n, 11))
     for i in range(n):
         lo[i] = (log10r[i] + 2.0) + rng.normal(0.0, 0.005, 11)
@@ -87,6 +90,7 @@ def test_is_ess_approaches_n_for_matched_proposal(ip, tmp_path):
 def test_reweighted_shift_recovers_injected_bias(ip):
     # pointwise Delta logL proportional to (x - x0) with known slope sigma^{-2}
     # must move the weighted mean by exactly the injected amount.
+    # 若逐点 Delta logL 与 (x-x0) 成比例且斜率为 sigma^-2，加权均值应移动已知注入量。
     rng = np.random.default_rng(7)
     n = 2000
     x = rng.normal(0.0, 1.0, n)
@@ -124,6 +128,7 @@ def test_oracle_truth_engine_neutral_source(cp):
     d = json.loads((REPO / "docs" / "mcmc_posterior" /
                     "oracle_truth.json").read_text(encoding="utf-8"))
     # the mock data vector must come from the reference (not fast) spectrum
+    # 模拟数据向量必须由 reference 频谱生成，不能使用 fast 频谱。
     lo_ref = np.asarray(d["ref"]["log10Om"], dtype=float)
     lo_fast = np.asarray(d["fast"]["log10Om"], dtype=float)
     assert np.isfinite(lo_ref).all() and np.isfinite(lo_fast).all()

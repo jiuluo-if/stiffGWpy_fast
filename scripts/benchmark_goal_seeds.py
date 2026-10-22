@@ -33,8 +33,9 @@ def main(threads=2):
     original = FA.goal_oriented_freqs
     kw = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     rows = []
-    # These seeds target the requested 76/80/90/110 neighborhood; the actual
-    # unique node count is recorded because reserves and native nodes vary.
+# These seeds target the requested 76/80/90/110 neighborhood; the actual
+# unique node count is recorded because reserves and native nodes vary.
+# 这些种子用于覆盖目标节点数 76/80/90/110 附近；预留节点和原生节点数量会变化，因此需记录实际去重节点数。
     for seed in (64, 68, 78, 98):
         def builder(*args, _seed=seed, **kwargs):
             kwargs['seed_n'] = _seed

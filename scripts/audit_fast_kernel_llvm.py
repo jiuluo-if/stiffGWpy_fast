@@ -55,6 +55,8 @@ def _inspect(fn, name: str) -> dict:
     # Numba's on-disk cache deliberately disables inspection for cache-loaded
     # code. Recompile the already-specialized signature in this process so the
     # returned LLVM/ASM is real rather than an empty placeholder.
+# Numba 会禁止直接检查磁盘缓存加载的代码；在当前进程内重新编译已特化的签名，
+# 才能取得真实的 LLVM/汇编输出，而非空占位内容。
     recompiled = False
     recompile_error = None
     try:

@@ -44,7 +44,8 @@ def run_case(name, repeats=5):
     }
     rows = []
     try:
-        # JIT and import warmup are excluded from the reported repeats.
+    # JIT and import warmup are excluded from the reported repeats.
+    # 报告的重复计时不包含 JIT 编译和导入预热。
         warm = LCDM_SG(**CASES[name])
         FS.SGWB_iter_fast(warm, kink_split=True)
 

@@ -58,7 +58,7 @@ def plot_h(rows, outdir):
     ref_dn = ref['DN_gw_last']
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.6))
-    # --- DN_gw[-1] ---
+    # --- DN_gw[-1] / 积分 DN_gw ---
     ax = axes[0]
     x = np.array(hs, float)
     ax.loglog(x, [abs(fast_dn[h]-ref_dn)/abs(ref_dn) for h in hs],
@@ -75,7 +75,7 @@ def plot_h(rows, outdir):
     ax.grid(True, which='both', alpha=0.3)
     ax.legend(fontsize=8)
 
-    # --- curve stats (signal region) ---
+    # --- curve stats (signal region) / 信号区域误差统计 ---
     ax = axes[1]
     for name, fmt in (('DN_gw', 'o-'), ('g2', 's--'), ('w2', '^:')):
         for engine, c in (('fast', 'C0'), ('lsoda', 'C1')):
@@ -89,7 +89,7 @@ def plot_h(rows, outdir):
     ax.grid(True, which='both', alpha=0.3)
     ax.legend(fontsize=7)
 
-    # --- spectrum ---
+    # --- spectrum / 频谱误差 ---
     ax = axes[2]
     for engine, c in (('fast', 'C0'), ('lsoda', 'C1')):
         hh = [h for h in hs if h in vs_ref.get(engine, {})]
@@ -111,6 +111,7 @@ def plot_h(rows, outdir):
     plt.close(fig)
 
     # convergence order (shared-grid path, finest 3 points)
+    # 收敛阶仅根据共用网格路径中最细的三个步长拟合。
     hhs = np.array(hs, float)
     o_fast = order(hhs, [abs(fast_dn[h]-ref_dn) for h in hs])
     o_lsoda = order([h for h in hs if h in lsoda_dn],

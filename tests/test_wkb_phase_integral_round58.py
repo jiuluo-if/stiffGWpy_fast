@@ -23,4 +23,5 @@ def test_wkb_transfer_has_independent_oracle_scale():
     oracle_power = oracle[0] ** 2 + oracle[1] ** 2
     # This is a feasibility contract, not the production acceptance gate;
     # the actual precision gate remains the project reference/oracle screen.
+    # 这里只检查原型可行性，不是生产验收门槛；正式精度门槛仍由项目 reference/oracle 筛查决定。
     assert abs(candidate_power - oracle_power) / oracle_power < 1.0e-2

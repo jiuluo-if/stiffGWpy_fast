@@ -47,6 +47,7 @@ CASES = [
 
 # Tolerance gates.  Measured values on the 12-case grid are roughly one order
 # of magnitude below these limits (see docs/audit_final_report.md).
+# 容差门槛。12 个案例网格上的实测值约比这些上限低一个数量级，详见 docs/audit_final_report.md。
 GATES = {
     'status_match': True,
     'DN_gw_last_rel': 1e-3,

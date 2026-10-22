@@ -49,7 +49,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from cobaya.likelihood import Likelihood  # noqa: E402
 from scipy import interpolate  # noqa: E402
 
-# re-use the (LSODA-era but engine-agnostic) chain statistics helpers
+# Reuse the chain statistics helpers from the LSODA-era comparison; they are engine-agnostic.
+# 复用 LSODA 对比脚本中的链统计函数；这些函数与求解引擎无关。
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import mcmc_compare as MC  # noqa: E402
 
@@ -60,6 +61,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #   PTA nHz band  -> tensor tilt n_t (f^{n_t} plateau),
 #   knee band     -> stiff/reheating transition region (fast-vs-ref worst),
 #   LVK band      -> amplitude in the f^{-2}-like tail (amplitude/r).
+# 选取能覆盖默认基准物理特征的频率：PTA 纳赫兹段约束张量倾斜，膝区覆盖刚性物质/再加热转折，
+# LVK 段约束近似 f^-2 的高频尾部及其振幅。
 PTA_BINS = [-8.6, -8.3, -8.0, -7.7]
 KNEE_BINS = [-2.0, -1.0, 0.0, 1.0]
 LVK_BINS = [1.40, 2.00, 2.60]
@@ -68,6 +71,7 @@ BINS = PTA_BINS + KNEE_BINS + LVK_BINS
 FIDUCIAL = dict(log10r=-2.0, n_t=0.0)
 
 # Fixed non-sampled physics of the mock experiment (default benchmark point).
+# 模拟实验中固定、不参与采样的物理参数，取默认基准点。
 FIXED = dict(cr=1.0, DN_re=0.0, T_re=2000.0, kappa10=1e-2)
 
 
@@ -101,7 +105,8 @@ class SGWB_mock(Likelihood):
     sigma_dex: float = 0.05
 
     def initialize(self):
-        # Direct instantiation (unit tests) has no options injected yet.
+    # Direct instantiation (unit tests) has no options injected yet.
+    # 单元测试直接构造实例时，尚未注入配置选项。
         if getattr(self, 'bins', None) is None:
             return
         self.log.debug('mock bins=%d sigma_dex=%.3f',
@@ -290,11 +295,14 @@ def phase_pointwise(args):
     ok = np.isfinite(mlpost)
     # burn-in: keep the last 60% (Cobaya already drops the burn-in chunk for
     # single chains only if the sampler converged; be explicit here).
+    # 丢弃前 40% 作为 burn-in，只保留后 60%。单链时 Cobaya 仅在收敛后自动丢弃，
+    # 因此这里显式处理。
     start = int(0.4 * ok.sum())
     pool = np.nonzero(ok)[0][start:]
     rng = np.random.default_rng(args.seed + 1)
     idx = rng.choice(pool, size=min(args.k, pool.size), replace=False)
     # Only evaluate bulk points (the posterior support that matters).
+    # 只评估后验主体区域内的点，这些点决定主要后验支撑范围。
     logpost = mlpost[idx]
     logpost = logpost - np.nanmax(logpost)
     keep = np.exp(logpost) > 0.001  # within ~6.9 log-likelihood of the mode
@@ -419,6 +427,7 @@ def phase_report(args):
         if merged is not None:
             stats = merged
     # ---- measured per-point Delta logL from the reference legs ----
+    # ---- 从参考链计算逐点 Delta logL ----
     pw = None
     pw_path = os.path.join(args.out, 'pointwise_reference.json')
     if os.path.exists(pw_path):
@@ -451,7 +460,8 @@ def phase_report(args):
         report['dex_max_fast_vs_ref'] = {
             'max': float(dex.max()), 'p95': float(np.percentile(dex, 95)),
             'n': int(dex.size)}
-        # importance-reweighted posterior shift, per sampled parameter
+    # importance-reweighted posterior shift, per sampled parameter
+    # 按每个采样参数计算重要性重加权后的后验偏移。
         points = [p for p in pw['points'] if p['status'] == 'ok' and 'dll' in p]
         w = np.exp(np.asarray([p['dll'] for p in points], dtype=float))
         w = w / w.sum()
@@ -464,7 +474,8 @@ def phase_report(args):
             if not fstd:
                 continue
             wmean = float(np.sum(w * x))
-            # plain (unweighted) subset mean, for comparison
+    # plain (unweighted) subset mean, for comparison
+    # 同一子集的未加权均值，作为对照。
             pmean = float(np.mean(x))
             shifts[name] = {'mean_fast_full': fmean,
                             'mean_subset': pmean,
@@ -475,6 +486,7 @@ def phase_report(args):
         report['ess_reweighted'] = ess_reweight
         # per-sigma strength error surface (reuse the same measured dll and
         # rescale to what the stronger mock would have produced)
+    # 每单位 sigma 的强度误差面：复用已测得的 Delta logL，并缩放到更强模拟信号的强度。
         report['error_surface'] = {}
         for sig in (0.10, 0.05, 0.02, 0.01):
             factor = (args.sigma_dex / sig) ** 2

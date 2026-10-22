@@ -34,13 +34,13 @@ TOL = 1e-4                                             # algorithm's own converg
 def main(seed=20260829, out_png=None):
     rng = np.random.default_rng(seed)
 
-    # ---- old method (original LSODA solver) ----
+    # ---- old method (original LSODA solver) / 旧版 LSODA 求解器 ----
     m_old = LCDM_SG(**PARAMS)
     m_old.SGWB_iter(engine='lsoda')
     if not m_old.SGWB_converge:
         raise RuntimeError('old method did not converge')
 
-    # ---- new method (fast numba/Magnus solver) ----
+    # ---- new method (fast numba/Magnus solver) / fast Numba-Magnus 求解器 ----
     m_new = LCDM_SG(**PARAMS)
     FS.SGWB_iter_fast(m_new)
     if not m_new.SGWB_converge:
@@ -59,7 +59,7 @@ def main(seed=20260829, out_png=None):
     rel_diff = np.abs(Om_old - Om_new) / np.maximum(Om_new, 1e-300)
     dex_diff = np.abs(log10Om_old - log10Om_new)
 
-    # ---- randomly pick 10 frequency channels ----
+    # ---- randomly pick 10 frequency channels / 随机抽取 10 个频率通道 ----
     idx = np.sort(rng.choice(len(f), size=10, replace=False))
 
     print('=' * 72)
@@ -87,7 +87,7 @@ def main(seed=20260829, out_png=None):
              int(frac_all * len(f)), len(f)))
     print('=' * 72)
 
-    # ---- figure: spectra overlay + residual ----
+    # ---- figure: spectra overlay + residual / 频谱叠加图与残差图 ----
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True,
                                    gridspec_kw={'height_ratios': [2.2, 1.4]})
     ax1.plot(f, log10Om_old, 'o-', ms=3, lw=1.2, color='#1f77b4', label='old: SGWB_iter (LSODA)')

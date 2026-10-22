@@ -56,6 +56,7 @@ def main():
     args = parser.parse_args()
 
     # Warm the two paths before collecting timing samples.
+    # 收集计时样本前先分别预热两条路径。
     solve(False, args.h, args.z_tail, args.phase_max, args.freq_grid)
     solve(True, args.h, args.z_tail, args.phase_max, args.freq_grid)
     rows = {}
@@ -80,6 +81,8 @@ def main():
         # converged DN_eff so only the transfer path is compared here.  The full
         # candidate frequency grid is the default; a sparse subset is retained
         # only as an explicitly labelled diagnostic because it changes DN_gw.
+    # 独立运行 reference，并使用候选已收敛的 DN_eff，以便只比较传递求解路径。默认使用完整频率网格；
+    # 稀疏子集会改变 DN_gw，因此仅作为明确标注的诊断选项保留。
         candidate = solve(name == 'kink_split', args.h, args.z_tail, args.phase_max,
                           args.freq_grid)[0]
         reference_freqs = (FREQ_SUBSET if args.subset_reference

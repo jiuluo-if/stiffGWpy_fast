@@ -25,6 +25,7 @@ def test_envelope_factor_matches_known_algebra():
     factors = envelope_factors(old, new)
     # The endpoint S2 ratio is exactly cancelled here by the inverse-S2
     # factor in the initial state, leaving only the horizon-start shift.
+    # 末端 S2 比值与初态中的逆 S2 因子在此精确抵消，剩下的只有视界起点偏移。
     expected = np.full(3, np.exp(0.2))
     np.testing.assert_allclose(factors[0], expected, rtol=0.0, atol=1e-14)
 

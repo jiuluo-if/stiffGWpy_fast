@@ -196,6 +196,8 @@ def main(argv=None):
     # reference, distributed over its two native intervals.  The previous
     # version compared PCHIP against the reference, which measured spectrum
     # interpolation/ODE differences rather than the PCHIP-Simpson estimator.
+    # Q2 实际值：正式 Simpson 面板相对独立 reference 的误差，分摊到两个原生子区间。
+    # 旧版比较 PCHIP 与 reference，会混入频谱插值/ODE 差异，而不是 PCHIP-Simpson 估计器误差。
     local_actual_error = _panel_error_distribution(
         fast_local_baseline, ref_local)
     local_scale = max(abs(ref_g2), 1e-300)

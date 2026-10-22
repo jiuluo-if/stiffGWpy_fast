@@ -25,7 +25,8 @@ def main():
     original = FS.solve_kernel
 
     def candidate(*args, **kwargs):
-        # validate_fast_vs_reference uses the non-kink production call shape.
+    # validate_fast_vs_reference uses the non-kink production call shape.
+    # validate_fast_vs_reference 使用的是生产非 kink 拆分调用形式。
         if len(args) == 23:
             args = args + (-1, 0.0, 0.0)
         return solve_kernel_phase_increment(*args, 32)

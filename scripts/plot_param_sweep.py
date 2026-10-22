@@ -146,7 +146,7 @@ def main(argv=None):
                              if r.get('iters_fast') is not None]),
     }
 
-    # ---- worst cases ----
+    # ---- worst cases / 误差最大的案例 ----
     worst_dn = sorted(ok, key=lambda r: r.get('DN_gw_last_rel') or -1,
                       reverse=True)[:20]
     worst_dex = sorted(ok, key=lambda r: r.get('dex_max') or -1, reverse=True)[:20]
@@ -162,7 +162,7 @@ def main(argv=None):
          'dex_max': r.get('dex_max'), 'lin_max': r.get('lin_max'),
          'params': r['params']} for r in worst_dex]
 
-    # ---- parameter correlations ----
+    # ---- parameter correlations / 参数与误差的相关性 ----
     err_log = np.log10(np.maximum(dn_rel, 1e-16))
     corr = {}
     for name, lo, hi, mode in PARAMS:
@@ -173,7 +173,7 @@ def main(argv=None):
     with open(os.path.join(args.out, 'summary.json'), 'w', encoding='utf-8') as fh:
         json.dump(summary, fh, ensure_ascii=False, indent=1)
 
-    # ---- error distribution figure ----
+    # ---- error distribution figure / 误差分布图 ----
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
     for ax, data, label, xlab in (
             (axes[0], dn_rel, 'DN_gw last rel.', 'log10 rel. err'),
@@ -197,7 +197,7 @@ def main(argv=None):
                 dpi=140)
     plt.close(fig)
 
-    # ---- parameter error maps ----
+    # ---- parameter error maps / 参数误差图 ----
     map_dir = os.path.join(args.out, 'parameter_error_map')
     os.makedirs(map_dir, exist_ok=True)
     for name, lo, hi, mode in PARAMS:

@@ -40,6 +40,7 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 # With the production d ln(f) measure restored below, the first fixed-point
 # iterate is the only fixed gain justified without an additional contraction
 # estimate: x_1 = x_0 + g(x_0).
+    # 恢复生产路径的 d ln(f) 测度后，若没有收缩率估计，只能采用固定点的首个迭代：x1=x0+g(x0)。
 FIXED_POINT_GAIN = 1.0
 
 
@@ -92,6 +93,7 @@ def _evaluate_once(model, dn_eff, coarse_count=None):
     integrand = Ogw[:, -1] - Oj[:, -1]
     # Match the production PCHIP path exactly: the native coordinate is
     # log10(f), while DN_gw integrates over d ln(f).
+    # 与生产 PCHIP 路径保持一致：原生坐标是 log10(f)，DN_gw 的积分测度则为 d ln(f)。
     g2 = float(np.sum(FS._pchip_integrals_vectorized(freqs, integrand)) * FS.ln10)
     omega_nu = gp.Omega_nh2 / model.derived_param["h"] ** 2
     dn_gw = float(gp.Neff0 * g2 / omega_nu)

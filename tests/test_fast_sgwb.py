@@ -370,6 +370,7 @@ def test_max_iterations_abort_and_restore(monkeypatch, model):
                    handoff_eps=None, kink_index=-1, kink_fraction=0.0,
                    phi_re=0.0):
         # Produce a random DN_gw_new in (0.05, 4.9) that never converges.
+        # 生成 (0.05, 4.9) 内的随机 DN_gw_new，保证迭代不收敛。
         Omega_nu = FS.gp.Omega_nh2 / model.derived_param['h'] ** 2
         span = np.log10(fp_freq.max()) - np.log10(fp_freq.min())
         val = rng.uniform(0.05, 4.9)
@@ -420,6 +421,7 @@ def test_no_nan_and_deterministic_under_memory_churn():
         first_dn = None
         for _ in range(3):
             # Scramble heap reuse so np.empty would return stale NaN pages.
+            # 扰动堆内存复用，使 np.empty 有机会返回含旧 NaN 的页面。
             junk = [np.empty((2000, 2000)) for _ in range(3)]
             for arr in junk:
                 arr.fill(np.nan)
@@ -439,7 +441,8 @@ def test_no_nan_and_deterministic_under_memory_churn():
         FS.set_h(0.01)
         FS.set_z_tail(5.0)
 
-# ============ physics-first regression / convergence / error budget ============
+    # ============ physics-first regression / convergence / error budget ============
+    # ============ 物理优先回归、收敛性与误差预算测试 ============
 
 _LOCAL_BUDGET_KEYS = (
     'background_model', 'sigma_transition', 'ode_integration',

@@ -144,6 +144,7 @@ def _primitive_ab(model, repeats):
     dn = model.cosmo_param['DN_eff']
     baseline = EB.fast_phi_s2_split
     # Compile and warm both paths before timing.
+    # 计时前先编译并预热两条路径。
     baseline(model, Nv, dn, sigma_nodes=sigma)
     numba_fast_phi_s2_split(model, Nv, dn, sigma_nodes=sigma)
     timings = {'baseline': [], 'candidate': []}

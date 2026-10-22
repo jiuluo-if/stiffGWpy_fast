@@ -59,6 +59,7 @@ def solve_kernel_wkb_tail(args, correction_enabled):
             while k < nv - 1 and zz < z_tail:
                 # This prototype uses the formal uniform kink-split grid;
                 # ``h_arr`` is intentionally None on that path.
+    # 该原型使用正式的均匀 kink 拆分网格，因此此路径有意令 ``h_arr`` 为 None。
                 h_step = h
                 z_node = z0 + Phi_grid[k] - Phi0
                 z_end = z0 + Phi_grid[k + 1] - Phi0

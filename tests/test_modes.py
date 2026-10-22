@@ -34,6 +34,7 @@ def test_accuracy_modes_valid(fast_settings):
     assert FS.ACCURACY_MODES['reference']['h'] < FS.ACCURACY_MODES['production']['h']
     assert FS.ACCURACY_MODES['production']['z_tail'] > FS.ACCURACY_MODES['ultra-fast']['z_tail']
     # The four canonical tiers requested by the audit; ultra-fast is an alias.
+    # 审计要求的四个标准精度档位；ultra-fast 是 fast 的别名。
     assert FS.ACCURACY_MODES['fast'] == FS.ACCURACY_MODES['ultra-fast']
     assert FS.ACCURACY_MODES['debug']['h'] <= FS.ACCURACY_MODES['fast']['h']
 
@@ -55,6 +56,7 @@ def test_error_budget_available(fast_settings):
         assert est['accuracy_mode'] == name
         # The integration error is the worst per-stage relative error, so it
         # dominates the engine terms and is reported as such.
+        # integration_error 取各阶段相对误差的最大值，因此会覆盖其他引擎误差项。
         assert est['integration_error'] >= max(est['ODE_error'],
                                                est['quadrature_error'],
                                                est['tail_error'])
@@ -228,6 +230,7 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     # error_tol=1e-6: any a-posteriori estimate above machine level triggers
     # the escalation mechanism (the fake model carries no solve telemetry).
+    # error_tol=1e-6 时，超过机器精度的后验估计都会触发升级；模拟模型不含求解遥测。
     with pytest.warns(DeprecationWarning):
         m.SGWB_iter(engine='fast', accuracy_mode='production',
                     auto_escalate=True, error_tol=1e-6, escalate_to_reference=True)

@@ -69,6 +69,9 @@
 - Added Chinese explanations to active validation and plotting scripts for
   parameter branches, oracle node matching, worker reuse, and failure classes.
   Runtime statements are unchanged.
+- A repository-wide grouped scan found no English-only substantive standalone
+  comment blocks across 231 tracked Python files. Comment-only edits preserve
+  runtime ASTs.
 
 ## Unreleased — 2026-09-25
 

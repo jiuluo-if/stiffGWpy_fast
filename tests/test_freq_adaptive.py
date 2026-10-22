@@ -24,11 +24,13 @@ def test_adaptive_refines_sharp_feature():
                                          target_dex=target, min_dlogf=1e-3,
                                          max_iter=12)
     # Interpolation error on a dense probe grid.
+    # 在密集探测网格上检查插值误差。
     xp = np.linspace(0.0, 1.0, 5000)
     spl = PchipInterpolator(logf, vals)
     err = np.max(np.abs(spl(xp) - _sharp(xp)))
     assert err < 2.0 * target
     # Points cluster around the feature (0.5), not in the flat outer regions.
+    # 新增节点应集中在特征点 0.5 附近，而不是平坦的两侧区域。
     density_mid = np.sum((logf > 0.4) & (logf < 0.6)) / 0.2
     density_edge = np.sum((logf > 0.0) & (logf < 0.2)) / 0.2
     assert density_mid > 2.0 * density_edge
@@ -42,6 +44,7 @@ def test_adaptive_is_cheap_on_smooth_function():
                                                 target_dex=1e-2, min_dlogf=1e-3)
     # A pure quadratic has constant second derivative; a handful of refinements
     # should suffice and it should not blow up to thousands of points.
+    # 二次函数的二阶导数恒定，少量细化即可；节点数不应膨胀到数千个。
     assert logf.size <= 4 * f0.size
 
 
@@ -57,6 +60,7 @@ def test_grid_independent_freqs_invariant_to_sigma_grid():
     assert gf.shape == gf2.shape
     assert np.allclose(gf, gf2, atol=0.0)
     # The independent grid is down to the CMB pivot and covers the UV cutoff.
+    # 独立频率网格应覆盖到 CMB 枢轴频率并延伸至紫外截止。
     assert gf[0] > gf[-1]
     assert gf.size > 100
 

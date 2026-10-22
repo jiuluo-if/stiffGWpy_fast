@@ -51,6 +51,7 @@ def _corrected_pair(x, y, z0, z2, h):
     db = -(w2 - w0)
     dc = w2 - w0
     # [A_mid, A_end-A_start] for A=[[-1,-w],[w,1]].
+    # 对 A=[[-1,-w],[w,1]]，该对向量为 [A_mid, A_end-A_start]。
     ca = wm * dc - db * wm
     cb = 2.0 * (-1.0 * db - (-wm) * da)
     cc = 2.0 * (wm * da - (-1.0) * dc)

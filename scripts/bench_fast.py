@@ -81,6 +81,8 @@ def run_case(name, kw, reps, kink_split=False):
     # Benchmark the documented fast/plain-grid preset explicitly.  The module
     # settings are process-global, so reset them before every case and honor
     # FAST_THREADS after applying the preset's own default thread value.
+    # 显式基准测试文档中的 fast/plain-grid 档位。模块设置是进程全局状态，
+    # 因此每个案例开始时都要重置，并在应用预设默认线程数后读取 FAST_THREADS。
     fast_sgwb.apply_accuracy_mode('fast')
     if os.environ.get('FAST_THREADS'):
         fast_sgwb.set_threads(int(os.environ['FAST_THREADS']))
@@ -116,6 +118,8 @@ def run_case(name, kw, reps, kink_split=False):
     # Exercise the public safety wrapper once so benchmark records include
     # numerical-failure observability (direct ``SGWB_iter_fast`` calls above
     # intentionally measure the fast kernel without fallback overhead).
+    # 另调用一次公开安全包装器，记录数值失败和回退情况；上面的直接调用用于测速，
+    # 刻意不计入 fallback 开销。
     mf_fb = LCDM_SG(**kw)
     mf_fb.SGWB_iter(engine='fast', fallback=True)
     rec['fast_evals'] = int(getattr(mf_fb, 'fast_evals', 0))

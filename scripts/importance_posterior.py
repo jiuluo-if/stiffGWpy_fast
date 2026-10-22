@@ -165,6 +165,7 @@ def phase_posterior(args):
             w[i] = 0.0
             continue
         # q = N(mu, sigma^2) density product
+        # q 是各参数独立正态分布密度的乘积。
         mu = np.array([args.mu_r, args.mu_nt])
         sig = np.array([args.sig_r, args.sig_nt])
         x = np.array([log10r[i], n_t[i]])
@@ -226,6 +227,7 @@ def phase_pointwise(args):
     if not os.path.exists(zpath):
         raise SystemExit('is_draws.npz missing: run --phase draw first')
     # posterior-bulk random selection weighted by the IS weights
+    # 按重要性采样权重从后验主体区域随机抽样。
     z = np.load(zpath)
     log10r = z['log10r']
     n_t = z['n_t']
@@ -291,9 +293,12 @@ def phase_report(args):
                                          np.asarray(p['lo_r'])))) for p in points])
     # IS posterior weights at these points (from the IS analysis)
     # shift via e^{dll} reweighting
+    # 读取这些点在重要性采样后验中的权重，并用 e^Delta-logL 重新加权计算偏移。
     w0 = np.ones(len(points))
     # Posterior-bulk draws were drawn ~posterior -> uniform weights approx;
     # use exact IS weights when available from is_draws by matching theta.
+    # 后验主体样本近似直接来自后验，默认可视为等权；若 is_draws 中存在匹配参数，
+    # 则使用精确的重要性采样权重。
     z = np.load(os.path.join(args.out, 'is_draws.npz'))
     keys = set(zip(np.round(z['log10r'], 9), np.round(z['n_t'], 9)))
     wgt = []

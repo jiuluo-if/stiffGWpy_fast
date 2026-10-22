@@ -53,7 +53,8 @@ def main():
     FS.set_threads(args.threads)
     rows = []
     for case in CASES:
-        # Warm both dispatch paths before alternating timed measurements.
+    # Warm both dispatch paths before alternating timed measurements.
+    # 交替计时前分别预热两个分派路径。
         timed(case, False)
         timed(case, True)
         base = []

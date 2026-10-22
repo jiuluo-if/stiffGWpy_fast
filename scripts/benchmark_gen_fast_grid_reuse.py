@@ -59,6 +59,7 @@ def make_cached_gen_fast(original):
         # The only changed node in the audited outer updates is the continuous
         # present-day anchor. Keep all other grid coordinates and the index
         # contract bit-for-bit unchanged.
+    # 本次外层更新只改变连续的现今锚点；其他网格坐标和索引契约必须逐位保持不变。
         m.Nv[-1] = d['N_inf']
         m.N = m.Nv - m.Nv[-1]
         index_re = cache['index_re']

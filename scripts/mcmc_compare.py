@@ -40,6 +40,7 @@ import numpy as np
 
 # ---------------------------------------------------------------------------
 # Pure analysis helpers (importable and unit-testable without cobaya)
+# 纯分析辅助函数：未安装 Cobaya 时也可导入并单独测试。
 # ---------------------------------------------------------------------------
 
 def split_sample_columns(sample_params):
@@ -147,6 +148,8 @@ def chain_stats(sample, sample_params):
             # Constant derived parameters carry no mixing information.  Do
             # not let a degenerate weighted ACF/Kish calculation report ESS=1
             # and block every certification run.
+    # 常量派生参数不包含混合信息。避免退化的加权 ACF/Kish 计算把 ESS 报为 1，
+    # 从而阻断本可通过的认证流程。
             ess = (float(col.size) if std <= max(1e-15, abs(mean) * 1e-12)
                    else effective_sample_size(col, wcol))
             stats[name] = {
@@ -285,6 +288,7 @@ def thin_idx(n, k):
 # ---------------------------------------------------------------------------
 # Cobaya-dependent parts (imported lazily so --help / unit tests work without
 # a cobaya installation)
+# Cobaya 相关代码延迟导入，使 --help 和单元测试无需安装 Cobaya 也能运行。
 # ---------------------------------------------------------------------------
 
 def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed,
@@ -320,6 +324,8 @@ def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed,
     # Always exercise the installable qualified class.  Keeping the legacy
     # short key (``stiffGW``) makes Cobaya resolve a module-relative class and
     # can skip ``stiffGW.yaml`` defaults (h/col_step/... become undefined).
+    # 始终测试可安装包中的限定类名。旧短名 ``stiffGW`` 会让 Cobaya 按模块相对路径解析，
+    # 可能跳过 ``stiffGW.yaml`` 默认值，导致 h/col_step 等配置缺失。
     th = theories.pop('stiffGW', None)
     if th is None:
         th = theories.pop('stiffgwpy_fast.cobaya.stiffGW.stiffGW', {})
@@ -330,6 +336,7 @@ def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed,
     th = info['theory']['stiffgwpy_fast.cobaya.stiffGW.stiffGW']
     # The class is importable from the installed package; a source-relative
     # python_path would mask failures in wheel/qualified-name resolution.
+    # 该类应能从安装后的包导入；源码相对路径会掩盖 wheel 或限定类名解析错误。
     th.pop('python_path', None)
     th['engine'] = engine
     th['fallback'] = bool(fallback)
@@ -355,6 +362,8 @@ def build_info(yaml_path, engine, accuracy_mode, fast_threads, samples, seed,
             # Cobaya uses scalar refs as deterministic starting points while
             # leaving the actual prior unchanged.  Derived parameters are not
             # sampled and therefore must not be included in this mapping.
+    # Cobaya 将标量 ref 用作确定性初值，不会改动真实先验；派生参数不参与采样，
+    # 因此不能放入此映射。
             if 'derived' in params[name] or 'value' in params[name]:
                 raise ValueError('initial-point parameter must be sampled/free: %s' % name)
             params[name]['ref'] = float(value)
@@ -373,6 +382,8 @@ def run_chain(info, label, out_dir, samples):
     # Cobaya keeps the initialized theory instances on the sampler model;
     # expose our telemetry when available.  Keep this best-effort so old
     # Cobaya releases still produce the normal chain record.
+    # Cobaya 会把已初始化的理论实例保存在 sampler model 上；若可用则导出遥测。
+    # 这里采用尽力读取方式，保证旧版 Cobaya 仍能正常写出链记录。
     model = getattr(sampler, 'model', None)
     theories = getattr(model, 'theory', {}) if model is not None else {}
     for theory in (theories.values() if hasattr(theories, 'values') else theories):
@@ -454,6 +465,7 @@ def compare_engines_at_points(yaml_path, fast_mode, fast_threads, points,
 
 # ---------------------------------------------------------------------------
 # CLI
+# 命令行入口。
 # ---------------------------------------------------------------------------
 
 def _git_sha():
@@ -557,6 +569,7 @@ def main(argv=None):
           % (engines['fast']['wall_s'], engines['fast']['per_sample_s']))
 
     # Chain-based posterior summaries.
+    # 基于 MCMC 链计算后验汇总。
     stats = {}
     for label, eng in engines.items():
         stats[label] = chain_stats(eng['sample'], eng['sample_params'])
@@ -567,6 +580,8 @@ def main(argv=None):
     # Per-point Delta logL on the fast chain (or lsoda chain if available).
     # A pilot may explicitly skip this expensive LSODA diagnostic; such a
     # record is never eligible for posterior certification.
+    # 逐点计算 fast 链（或可用时 LSODA 链）的 Delta logL。试跑可跳过耗时的 LSODA 诊断，
+    # 但此类记录不具备后验认证资格。
     if args.skip_pointwise:
         dl = {'n': 0, 'skipped': True}
         eval_meta = {'n_eval': 0, 'n_both_ok': 0,
@@ -646,6 +661,8 @@ def main(argv=None):
         # The comparison contract is intentionally explicit: both chains are
         # built from the same YAML/prior/initial-point policy, seed and MCMC
         # settings; only the theory engine knobs differ.
+    # 明确固定对比口径：两条链使用相同 YAML、先验、初值策略、随机种子和 MCMC 设置，
+    # 只改变理论引擎选项。
         'comparison_contract': {
             'same_yaml': True,
             'same_prior': True,
