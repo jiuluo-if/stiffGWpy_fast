@@ -16,9 +16,10 @@ because it is faster or numerically close on one case.
 ## How to read the evidence
 
 1. Use [`benchmarks.md`](benchmarks.md) for the latest fixed-resource runtime
-   profile, then read [`fast_v02_audit_report.md`](fast_v02_audit_report.md)
-   and [`validation/validation_manifest.json`](validation/validation_manifest.json)
-   as date-bound scoped accuracy evidence and explicit gaps.
+   profile and [`accuracy.md`](accuracy.md) for current scoped accuracy
+   evidence. Read [`fast_v02_audit_report.md`](fast_v02_audit_report.md) and
+   [`validation/validation_manifest.json`](validation/validation_manifest.json)
+   as date-bound baselines with explicit coverage gaps.
 2. Use the topic reports below for hypotheses, controls, negative findings,
    and the reason a method was accepted or rejected.
 3. Use the linked JSON/JSONL artifacts for pointwise values, environment,

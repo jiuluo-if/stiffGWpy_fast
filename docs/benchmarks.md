@@ -188,9 +188,12 @@ do not measure end-to-end Cobaya MCMC runtime or change the scope of the Round
 
 ## Scoped accuracy audit (dated 2026-09-12)
 
-The latest detailed PCHIP/oracle audit is summarized in
-[`fast_v02_audit_report.md`](fast_v02_audit_report.md), generated from its
-recorded 2026-09-12 evidence rather than re-run at the Round 68 commit:
+This four-regime PCHIP/oracle baseline is summarized in
+[`fast_v02_audit_report.md`](fast_v02_audit_report.md) and uses its recorded
+2026-09-12 evidence rather than a rerun at the Round 68 or later commits. The
+newer two-edge `DN_re` results are summarized in
+[`accuracy.md`](accuracy.md) and the
+[`Oracle C assessment`](oracle_c_wkb_assessment.md):
 
 | Measure | Observed | Scope / decision |
 |---|---:|---|

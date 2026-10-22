@@ -10,7 +10,7 @@
 
 ## 如何阅读证据
 
-1. 先看[`benchmarks.md`](benchmarks.md)了解最新固定资源全流程耗时，再把[`fast_v02_audit_report.md`](fast_v02_audit_report.md)和[`validation/validation_manifest.json`](validation/validation_manifest.json)作为带日期的精度证据及其明确缺口阅读。
+1. 先看[`benchmarks.md`](benchmarks.md)了解最新固定资源全流程耗时，并看[`accuracy.md`](accuracy.md)了解当前有限范围的精度证据。`fast_v02_audit_report.md` 和 `validation/validation_manifest.json` 是带日期的基线，阅读时需同时留意其覆盖缺口。
 2. 再读下表中的主题报告，确认假设、对照、否定结果，以及接受或拒绝方法的原因。
 3. 如需核验逐点数值、运行环境、代码提交、重复次数和重放信息，再查看对应的 JSON/JSONL 数据。
 4. `SMOKE`、`SPIKE` 和 `NOT VERIFIED` 表示探索性或未完成结果。失败、显式物理保护和被拒绝的候选方案也是研究证据；除非报告如此分类，不要将其记作求解器数值故障。

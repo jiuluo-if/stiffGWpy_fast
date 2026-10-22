@@ -64,6 +64,8 @@
 - Removed an unused private phase-error coefficient and its stale reference to
   a nonexistent calibration function. Clarified the remaining changed inline
   comments in Chinese; numerical statements are unchanged.
+- Clarified documentation navigation so the current accuracy summary is read
+  separately from the dated 2026-09-12 baseline and older validation manifest.
 
 ## Unreleased — 2026-09-25
 
