@@ -99,6 +99,8 @@ def main(argv=None):
     # labeled a shared guard failure when the independent LSODA result is
     # finite and beyond the physical N_eff guard; otherwise it remains an
     # explicitly unresolved numerical failure.
+    # 图表旁同时输出结构化失败分类。只有独立 LSODA 结果有限且越过物理 Neff 边界时，
+    # fast 拒绝才标为共享物理保护；其余情况仍标记为未解决的数值失败。
     failure_rows = []
     failure_classes = {}
     for r in recs:
@@ -186,9 +188,10 @@ def main(argv=None):
         ax.set_title(label)
         ax.legend()
     fig.tight_layout()
-    # Matplotlib/Pillow on Windows can reject a relative path containing
-    # mixed separators (OSError 22). Resolve output targets once so the
-    # report generator is reproducible from any working directory.
+    # Matplotlib/Pillow on Windows may reject mixed separators in relative paths
+    # (OSError 22). Resolve output targets once for reproducible report generation.
+    # Windows 上 Matplotlib/Pillow 可能拒绝混用分隔符的相对路径；统一转为绝对路径，
+    # 使报告生成不依赖当前工作目录。
     fig.savefig(os.path.abspath(os.path.join(args.out,
                                              'error_distribution.png')),
                 dpi=140)

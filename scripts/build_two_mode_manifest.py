@@ -278,7 +278,7 @@ def build():
                              "precision oracle"),
     }
 
-    # ---- fast plain-grid (fast / plain-grid profile) ----
+    # ---- fast plain-grid (fast / plain-grid profile; fast/plain-grid 档位) ----
     plain_summary = _load_json(D('paramsweep_plain', 'validation_summary.json'))
     plain_pts = _read_jsonl(D('paramsweep_plain', 'plain_points.jsonl'))
     pg_cfg = dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
@@ -323,7 +323,7 @@ def build():
         'status': ('NOT VERIFIED' if not plain_summary['acceptance']
                    ['signal_rel_lt_1e-3'] else 'VERIFIED'),
     }
-    # oracle independence + regime + convergence (read from replayable artifacts)
+    # 从可复跑的产物读取 oracle 独立性、参数区域和收敛性。
     oi = _load_optional_json(D('validation', 'oracle_independence.json'))
     if oi is not None:
         pg['oracle_independence'] = oi.get('oracle_tail_sensitivity', {})
@@ -337,7 +337,7 @@ def build():
     if regime is not None:
         pg['regime_plain_vs_prod'] = regime
 
-    # ---- fast transition-refine (production profile) ----
+    # ---- fast transition-refine (production profile; 转折细化生产档位) ----
     z8 = _load_json(D('paramsweep_z8', 'validation_summary.json'))
     z8_pts = _read_jsonl(D('paramsweep_z8', 'reference_points.jsonl'))
     z8b = _load_json(D('paramsweep_z8b', 'validation_summary.json'))
@@ -380,14 +380,14 @@ def build():
         pr['oracle_tail_caveat'] = pr_tail
     if conv is not None:
         pr['convergence'] = conv
-    # Honest acceptance from the matched oracle artifacts.
+    # 验收状态直接根据匹配的 oracle 产物计算，不放宽既定门槛。
     pg_ok = (plain_summary['acceptance']['signal_rel_lt_1e-3']
              and plain_summary['acceptance']['DN_gw_rel_lt_1e-4'])
     pr_ok = (z8['acceptance']['signal_rel_lt_1e-3']
              and z8['acceptance']['transition_rel_lt_1e-3'])
     pg['status'] = 'VERIFIED' if pg_ok else 'NOT VERIFIED'
     pr['status'] = ('PARTIALLY VERIFIED' if pr_ok else 'NOT VERIFIED')
-    # report the honest limits explicitly
+    # 明确报告当前证据仍未达到的验收项。
     pr['honest_limits'] = {
         'DN_gw_rel_lt_1e-4': z8['acceptance']['DN_gw_rel_lt_1e-4'],
         'note': ("integrated DN_gw relative < 1e-4 is NOT met (median 4.3e-4): "
@@ -411,7 +411,7 @@ def build():
     manifest['fast_plain_grid'] = pg
     manifest['fast_transition_refine'] = pr
     manifest['fast_current_audit'] = _current_fast_audit()
-    # posterior validation (Layer C) summary
+    # 后验验证（Layer C）汇总。
     irep = _load_optional_json(D('mcmc_posterior', 'is_report.json'))
     if irep is not None:
         manifest['posterior'] = irep

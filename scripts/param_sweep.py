@@ -47,6 +47,7 @@ N_LHS = 350
 N_EDGE = 200
 
 # name, lo, hi, mode ('lin' | 'log' | 'disc')
+# 参数名、下界、上界和采样方式（线性、对数或离散）。
 PARAMS = [
     ('Omega_bh2', 0.018, 0.026, 'lin'),
     ('Omega_ch2', 0.09, 0.15, 'lin'),
@@ -126,11 +127,13 @@ def extreme_params():
         p.update(j)
         out.append(p)
     # cr=1 corner grid over the stiff-relevant pair (r, T_re)
+    # 在 cr=1 分支对刚性物质相关的 (r, T_re) 做角点扫描。
     for r in (1e-4, 1e-3, 1e-2, 1e-1):
         for tre in (10.0, 1e2, 1e3, 1e4, 1e5, 1e6):
             p = dict(BASE, r=r, T_re=tre, cr=1.0)
             out.append(p)
     # cr=0 corner grid over (n_t, DN_re) at fixed stiff
+    # 固定刚性强度，在 cr=0 分支扫描 (n_t, DN_re) 角点。
     for nt in (-0.5, 0.0, 0.5):
         for dnre in (0.0, 5.0, 15.0, 30.0):
             p = dict(BASE, r=1e-2, cr=0.0, n_t=nt, DN_re=dnre, kappa10=1e-2)
@@ -188,6 +191,7 @@ def eval_point(pid, method, params):
                       tol=SWEEP_SETTINGS['outer_tol'])
         # run_fast always returns the model object; convergence is signalled
         # by SGWB_converge (the fast iteration may abort, e.g. N_eff > 5).
+        # run_fast 总会返回模型对象；必须检查 SGWB_converge。快速迭代可能因 Neff>5 等条件提前终止。
         fast = mf if getattr(mf, 'SGWB_converge', False) else None
     except Exception as exc:  # pragma: no cover - defensive
         rec['fast_error'] = '%s: %s' % (type(exc).__name__, exc)
@@ -276,6 +280,7 @@ def main(argv=None):
     if args.retry_failed:
         # Re-evaluate every point that previously failed (or never ran) so a
         # transient MemoryError / import hiccup is retried on the next call.
+        # 重跑此前失败或尚未运行的点，以便再次尝试瞬时内存不足或导入故障。
         todo = [p for p in points
                 if p['id'] not in prev or prev[p['id']].get('status') != 'ok']
     else:
@@ -288,6 +293,7 @@ def main(argv=None):
         return 0
     if not args.no_warmup:
         # Compile all numba kernels once in the parent so pool workers only load cache.
+        # 在父进程预编译 Numba 内核，避免每个进程池 worker 重复编译。
         FS.set_col_step(SWEEP_SETTINGS['col_step'])
         FS.set_z_tail(SWEEP_SETTINGS['z_tail'])
         FS.set_h(SWEEP_SETTINGS['h'])
@@ -301,6 +307,8 @@ def main(argv=None):
         # ProcessPoolExecutor workers are non-daemonic, so each can still spawn
         # the inner mp.Pool(4) used by run_SGWB (mp.Pool workers are daemonic
         # and would raise "daemonic processes are not allowed to have children").
+        # ProcessPoolExecutor worker 不是 daemonic，可继续创建 run_SGWB 使用的内部 mp.Pool(4)；
+        # 普通 mp.Pool worker 是 daemonic，不能再创建子进程。
         from concurrent.futures import ProcessPoolExecutor
         tasks = [(p['id'], p['method'], p['params']) for p in todo]
         with ProcessPoolExecutor(max_workers=args.workers) as pool:

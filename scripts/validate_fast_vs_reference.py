@@ -54,6 +54,7 @@ BASE = dict(Omega_bh2=0.0223828, Omega_ch2=0.1201075, H0=67.32117,
 
 # The GW physics is set by (r, n_t, cr, T_re, DN_re, kappa10); the LCDM
 # anchors stay at BASE so Sobol coverage concentrates on Omega_GW physics.
+# 引力波物理由上述参数控制；固定 BASE 中的 LCDM 参数，使 Sobol 样本集中覆盖 Omega_GW。
 SAMPLED = [
     ('r', 1e-6, 1e-1, 'log'),
     ('n_t', -0.5, 0.5, 'lin'),
@@ -72,9 +73,11 @@ SINGLE_POINTS = {
     'tiny_r': dict(r=1e-6, cr=1, T_re=2e3, kappa10=1e-2),
     'transition': dict(r=5e-3, cr=1, T_re=5e2, kappa10=1e-1),
     # cr=0 blue-tilt branch: fully radiative scaling, zero stiff plateau.
+    # cr=0 蓝倾斜分支：辐射主导标度，不存在刚性物质平台。
     'cr0_blue': dict(r=1e-2, cr=0, n_t=0.2, DN_re=5.0, T_re=1e3,
                      kappa10=1e-3),
     # near the shared-Neff guard but physical (extreme stiff-enhanced r).
+    # 接近共享 Neff 保护边界但仍属物理区域，取刚性增强后的较大 r。
     'extreme': dict(r=3e-2, cr=1, T_re=1e4, kappa10=1e-1),
 }
 
@@ -226,6 +229,7 @@ def reference_point(kw, z_tail=7.0, rtol=1e-9, freq_res=1.0,
     lo_ref = np.log10(np.maximum(Ogw - Oj, 1e-300))
     # Node alignment: fast grid == reference grid up to the 1e-13 background
     # drift of the self-consistency loop; nearest-node match is exact.
+    # 网格节点除自洽迭代造成的约 1e-13 背景漂移外一致；最近节点匹配为精确匹配。
     j = np.argmin(np.abs(f_fast[:, None] - G[None, :]), axis=1)
     f_match = f_fast
     lo_ref_m = lo_ref[j]

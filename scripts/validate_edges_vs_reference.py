@@ -49,6 +49,7 @@ FREQ_RES = 1.0
 
 # Parameter-axis edges (u ~ 0.02 / 0.98 of the Sobol physical box) and
 # transition-sensitive interiors; params subsets follow SINGLE_POINTS style.
+# 参数轴边界取 Sobol 物理范围的 u≈0.02/0.98，并加入转折敏感内部点；参数子集沿用 SINGLE_POINTS 约定。
 EDGE_POINTS = {
     "edge_r_lo":      dict(r=1.26e-6, cr=1, T_re=2e3, kappa10=1e-2),
     "edge_r_hi":      dict(r=7.94e-2, cr=1, T_re=2e3, kappa10=1e-2),
@@ -57,6 +58,8 @@ EDGE_POINTS = {
     # DN_re is only physically active on the free-tilt branch (cr=0): under
     # the consistency relation (cr=1) the model overwrites DN_re from (r,
     # T_re, kappa10), so DN_re-axis probes must run with cr=0, n_t=0.
+    # DN_re 仅在自由倾斜分支 cr=0 中独立起作用；cr=1 时它由 (r, T_re, kappa10) 推导覆盖，
+    # 因此 DN_re 轴探测固定使用 cr=0、n_t=0。
     "edge_dnre_lo":   dict(r=1e-2, cr=0, n_t=0.0, T_re=2e3, DN_re=0.6,
                            kappa10=1e-2),
     "edge_dnre_hi":   dict(r=1e-2, cr=0, n_t=0.0, T_re=2e3, DN_re=29.4,
