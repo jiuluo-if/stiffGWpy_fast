@@ -28,7 +28,7 @@ def int_FD(y):
 
     coeff_massless = 7*math.pi**4/120
 
-    rho = I_rho[0]/coeff_massless          # ratio to that of a massless fermion
+    rho = I_rho[0]/coeff_massless
     p = I_p[0]/coeff_massless
 
     return np.array((rho, p))
@@ -119,5 +119,5 @@ def jacobian(N, state, spline):
     return jac
 
 
-def subhorizon(N, state, spline):         # Deep-inside-the-Hubble threshold: k/aH = exp(5) ～ 150
+def subhorizon(N, state, spline):         # 深亚视界阈值：k/aH = exp(5)，约为 150
     return state[0]-5

@@ -591,18 +591,18 @@ def estimate_error(name="production"):
 #     grid_independent 网格的求积偏差在 freq_res=1/2 时约为 5.6e-4/接近零；construct 网格约为 1.6e-3。
 #   * col_step PCHIP interpolation: <1e-9 on Delta N_eff.
 #     col_step 的 PCHIP 插值对 Delta_Neff 的偏差小于 1e-9。
-_LOCAL_ODE_PM05 = 8.0e-6  # relative DN error at phase_max=0.5
+_LOCAL_ODE_PM05 = 8.0e-6  # phase_max=0.5 时 Delta N_eff 的相对误差
 _LOCAL_ODE_NO_SUBSTEP = 1.0e-5  # h=0.01 fixed-step (calibrated engine term)
 _LOCAL_TRANSITION_REFINED = 1.0e-4
 _LOCAL_TRANSITION_PLAIN = 2.4e-3
 _LOCAL_TRANSITION_SIGMA_EXACT = 4.2e-3
-_LOCAL_TAIL_ANCHOR = 2.0e-5  # relative DN error at z_tail=8
-_LOCAL_TAIL_FLOOR = 2.4e-7  # z_tail=10 limit
-_LOCAL_GRID_UNIFORM_1 = 5.6e-4  # grid_independent freq_res=1 (242 pt)
-_LOCAL_GRID_UNIFORM_2 = 2.0e-5  # grid_independent freq_res>=2 (converged)
-_LOCAL_GRID_CONSTRUCT = 1.6e-3  # construct grid (246 pt)
+_LOCAL_TAIL_ANCHOR = 2.0e-5  # z_tail=8 时 Delta N_eff 的相对误差
+_LOCAL_TAIL_FLOOR = 2.4e-7  # z_tail=10 时的误差下限
+_LOCAL_GRID_UNIFORM_1 = 5.6e-4  # grid_independent、freq_res=1、242 个节点
+_LOCAL_GRID_UNIFORM_2 = 2.0e-5  # grid_independent、freq_res>=2 时的收敛值
+_LOCAL_GRID_CONSTRUCT = 1.6e-3  # construct 网格、246 个节点
 _LOCAL_INTERP = 1.0e-9  # col_step PCHIP interpolation on DN_eff
-_LOCAL_SELF_CONS_FLOOR = 1.0e-5  # bisection floor when bracket is not recorded
+_LOCAL_SELF_CONS_FLOOR = 1.0e-5  # 未记录二分区间时采用的误差下限
 
 
 def estimate_local_error(m):
@@ -695,7 +695,7 @@ def estimate_local_error(m):
     elif fg == "grid_independent":
         fr = float(getattr(m, "freq_res_used", 1.0) or 1.0)
         freq_grid = _LOCAL_GRID_UNIFORM_2 if fr >= 2.0 else _LOCAL_GRID_UNIFORM_1
-    else:  # 'construct'
+    else:
         freq_grid = _LOCAL_GRID_CONSTRUCT
     # 8. Quadrature error: local Richardson estimate on the final grid.
     # 8. 求积误差：在最终网格上用 Richardson 方法局部估算。

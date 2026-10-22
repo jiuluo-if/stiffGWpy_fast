@@ -234,7 +234,7 @@ The 76/80/90/110-node sweep is non-monotonic, so these numbers are not a
 universal parameter-space certification. `reference` remains the precision
 oracle.
 
-## Full parameter validation
+## Parameter-space validation evidence
 
 Parameter schema (11 physical params, ranges in the validation artifacts):
 
