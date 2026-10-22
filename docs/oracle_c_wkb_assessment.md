@@ -82,6 +82,32 @@ tail, so the reported `~1e-5` residual is an upper bound on the corrected
 tail error.  Promoting the correction into the reference tail itself is a
 separate, higher-risk change and is not proposed here.
 
+## 2026-10-22 edge and Sobol follow-up
+
+The full Oracle C comparison was extended to one low-`r` edge, one high-`kappa10`
+edge, and one fixed Sobol point using the same native frequency grid and fast
+self-consistent `DN_eff`. Each point had 65 or 66 modes that used and could be
+compared across both the `z=5` and `z=10` handoffs.
+
+| Point | Frequencies / compared tail modes | WKB-corrected `DN_gw` vs deep `z=10` | Maximum per-mode WKB/deep difference | Fast vs WKB-corrected `DN_gw` | Fast vs deep `DN_gw` |
+|---|---:|---:|---:|---:|---:|
+| `edge_r_lo` | `76 / 65` | `5.20e-6` | `8.77e-5` | `1.18e-5` | `6.62e-6` |
+| `edge_kap_hi` | `77 / 66` | `1.37e-5` | `8.56e-5` | `1.17e-5` | `2.54e-5` |
+| `sobol_000` | `76 / 65` | `3.10e-5` | `8.57e-5` | `1.24e-5` | `1.87e-5` |
+
+These three points extend the sampled Oracle C comparison, but they do not
+certify the full parameter space. Raw results and the matching fast/WKB
+comparison are in [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
+All four JSON artifacts record source commit `d7f10405493026d65a9e1fa902079c2555bc7afb`
+and the fixed two-thread reference environment.
+
+Reproduce the reference anchors and then compare the current fast solver:
+
+```powershell
+python scripts/benchmark_oracle_c_wkb.py --points edge_r_lo edge_kap_hi sobol_000 --out-dir docs/oracle_c_wkb_corner_20261022
+python scripts/benchmark_fast_true_error.py --points edge_r_lo edge_kap_hi sobol_000 --anchor-dir docs/oracle_c_wkb_corner_20261022 --out docs/oracle_c_wkb_corner_20261022/fast_true_error.json
+```
+
 ## Artifacts
 
 - `docs/oracle_c_wkb_default.json`
