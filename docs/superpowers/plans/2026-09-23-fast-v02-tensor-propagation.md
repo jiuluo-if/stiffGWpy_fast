@@ -8,7 +8,8 @@
 
 **Tech Stack:** Python 3, NumPy, Numba/LLVM, pytest, PowerShell, Git.
 
-**Spec:** `C:\Users\联想\.codex\attachments\d413dab6-fcb0-4898-ab67-4e2070a031ae\pasted-text-1.txt`
+**Spec:** The original request was supplied as a local Codex attachment and is not bundled with this repository.
+中文：原始需求通过本机 Codex 附件提供，未随仓库分发。
 
 > **Status: historical plan, not an active TODO list.** The checkboxes below are the original proposed gates and were not maintained as execution status.
 
