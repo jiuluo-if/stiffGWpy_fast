@@ -66,6 +66,9 @@
   comments in Chinese; numerical statements are unchanged.
 - Clarified documentation navigation so the current accuracy summary is read
   separately from the dated 2026-09-12 baseline and older validation manifest.
+- Added Chinese explanations to active validation and plotting scripts for
+  parameter branches, oracle node matching, worker reuse, and failure classes.
+  Runtime statements are unchanged.
 
 ## Unreleased — 2026-09-25
 
