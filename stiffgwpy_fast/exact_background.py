@@ -102,7 +102,7 @@ def sigma_vec(N, m, DN_eff):
 
 
 def H2_vec(N, m, DN_eff):
-    """Vectorized exact ``H^2`` at an array of absolute ``N`` (mirrors sigma_vec).
+    """Vectorized exact ``H^2`` at an array of absolute ``N``.
 
     中文：对一组绝对坐标 ``N`` 向量化计算精确 ``H^2``，输入与 ``sigma_vec`` 相同。
     """
@@ -117,30 +117,42 @@ def H2_vec(N, m, DN_eff):
         - gp.Omega_ph2 - Oerh2 - Osh2
     N_inf = d['N_inf']
     fd_rho, _ = _fd_from_ref()
+    eN = np.exp(N_inf - N)
+    e3N = eN * eN * eN
+    nu = gp.nu_today / eN
     out = np.empty_like(N)
-    for i in range(N.size):
-        Ni = float(N[i])
-        eN = math.exp(N_inf - Ni)
-        e3N = eN * eN * eN
-        nu = gp.nu_today / eN
-        if nu > 100.0:
-            out[i] = (Omh2 + gp.Omega_mnuh2
-                      + (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2 + Oerh2) * eN
-                      + Osh2 * e3N + OLh2 / e3N)
-        elif nu >= 0.1:
-            lognu = math.log10(nu)
-            rho_nu = float(fd_rho(lognu))
-            out[i] = (Omh2
-                      + (gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2 + Oerh2) * eN
-                      + Osh2 * e3N + OLh2 / e3N)
-        elif Ni > N_inf - gp.N_fin:
-            out[i] = Omh2 + Otrh2 * eN + Osh2 * e3N + OLh2 / e3N
-        elif Ni >= N_inf - gp.N_max:
-            Nl = N_inf - Ni
-            out[i] = (Omh2 + (gp.Omega_ph2 * float(gp.spl_rho(Nl)) + Oerh2) * eN
-                      + Osh2 * e3N + OLh2 / e3N)
-        else:
-            out[i] = Omh2 + Otreh2 * eN + Osh2 * e3N + OLh2 / e3N
+    # Keep the scalar branch precedence explicit while evaluating each
+    # background regime as one array operation. The old per-node PCHIP call
+    # dominated variable-grid setup for dense transition-refined grids.
+    # 按原有分支优先级构造互斥掩码，并批量计算各背景区间；旧实现逐节点调用 PCHIP，
+    # 在密集的转折细化网格中成为主要耗时。
+    high_nu = nu > 100.0
+    if np.any(high_nu):
+        out[high_nu] = (Omh2 + gp.Omega_mnuh2
+                        + (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2 + Oerh2) * eN[high_nu]
+                        + Osh2 * e3N[high_nu] + OLh2 / e3N[high_nu])
+    thermal_nu = (~high_nu) & (nu >= 0.1)
+    if np.any(thermal_nu):
+        rho_nu = fd_rho(np.log10(nu[thermal_nu]))
+        out[thermal_nu] = (Omh2
+                           + (gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2 + Oerh2)
+                           * eN[thermal_nu]
+                           + Osh2 * e3N[thermal_nu] + OLh2 / e3N[thermal_nu])
+    relativistic = (~high_nu) & (~thermal_nu) & (N > N_inf - gp.N_fin)
+    if np.any(relativistic):
+        out[relativistic] = (Omh2 + Otrh2 * eN[relativistic]
+                             + Osh2 * e3N[relativistic] + OLh2 / e3N[relativistic])
+    thermal_grid = ((~high_nu) & (~thermal_nu) & (~relativistic)
+                    & (N >= N_inf - gp.N_max))
+    if np.any(thermal_grid):
+        Nl = N_inf - N[thermal_grid]
+        rho_nu = gp.spl_rho(Nl)
+        out[thermal_grid] = (Omh2 + (gp.Omega_ph2 * rho_nu + Oerh2) * eN[thermal_grid]
+                             + Osh2 * e3N[thermal_grid] + OLh2 / e3N[thermal_grid])
+    early = ~(high_nu | thermal_nu | relativistic | thermal_grid)
+    if np.any(early):
+        out[early] = (Omh2 + Otreh2 * eN[early]
+                      + Osh2 * e3N[early] + OLh2 / e3N[early])
     return out
 
 
