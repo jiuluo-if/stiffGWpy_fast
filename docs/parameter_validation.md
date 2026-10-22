@@ -1,4 +1,4 @@
-# Full parameter validation
+# Dated parameter-space validation evidence
 
 Status: dated validation evidence; not a current-HEAD full-space certification
 Evidence dates: parameter sweeps 2026-09-03 through 2026-09-17

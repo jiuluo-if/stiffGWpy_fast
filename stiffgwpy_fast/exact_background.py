@@ -188,7 +188,7 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     # Fine sub-grid (a few points per base step) plus its midpoints for Phi_mid.
     # 在每个基础步内加密取点，并加入步中点以计算 Phi_mid。
     half = 0.5 * h
-    frac = 0.125 * h      # fine sub-grid spacing for the F/Phi integral
+    frac = 0.125 * h
     sub = np.concatenate([
         np.arange(Nv[0], Nv[-1] + 1e-12, frac),
         np.arange(Nv[0] + half, Nv[-1] + 1e-12, h),

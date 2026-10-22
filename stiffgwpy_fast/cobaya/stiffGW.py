@@ -111,7 +111,7 @@ class stiffGW(Theory):
         """
         try:
             from ..stiff_SGWB import LCDM_SG
-        except ImportError:  # imported as a top-level module by cobaya
+        except ImportError:  # Cobaya 将适配器作为顶层模块导入时使用此路径。
             from stiffgwpy_fast.stiff_SGWB import LCDM_SG
         self.stiffGW_model = LCDM_SG()
         self.log.info("Initialized!")
@@ -260,9 +260,9 @@ class stiffGW(Theory):
             state.pop('derived', None)
             return False
 
-        state['f'] = m.f                                     # log10(f/Hz)
-        state['omGW_stiff'] = m.log10OmegaGW                 # log10 Omega_GW(f)
-        state['hubble'] = m.derived_param['H_0']             # s^-1
+        state['f'] = m.f                                     # log10(f/Hz)，频率对数
+        state['omGW_stiff'] = m.log10OmegaGW                 # log10 Omega_GW(f)，能谱对数
+        state['hubble'] = m.derived_param['H_0']             # s^-1，哈勃常数
         state['kappa_s'] = m.derived_param['kappa_s']
         state['kappa_r'] = m.kappa_r
         if want_derived:
