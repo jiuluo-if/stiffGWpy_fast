@@ -130,7 +130,7 @@ def test_float_robustness_extreme_params():
             assert r is not None
             lo = np.asarray(m.log10OmegaGW)
             assert np.all(np.isfinite(lo))
-            assert lo.min() > -320.0  # no underflow to -inf
+            assert lo.min() > -320.0  # 确认数值没有下溢为 -inf。
         # Huge stiff drives total N_eff > 5 -> deterministic physical rejection.
         m_bad = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e3)
         r = FS.SGWB_iter_fast(m_bad, tol=1e-7)

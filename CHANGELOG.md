@@ -73,6 +73,9 @@
 - A repository-wide grouped scan found no English-only substantive standalone
   comment blocks across 231 tracked Python files. Comment-only edits preserve
   runtime ASTs.
+- Reviewed the remaining inline comments across solver, likelihood, benchmark,
+  and test code. Explanatory comments now have Chinese context; conventional
+  unit abbreviations and serialized field names remain unchanged.
 - Expanded the bilingual experiment catalogue to cover additional dated
   accuracy, profile, grid, kernel, and outer-solve artifact families, with
   explicit retention and interpretation rules.

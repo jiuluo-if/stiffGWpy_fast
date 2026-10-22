@@ -39,7 +39,7 @@ def test_gen_fast_matches_original_expansion():
         worst_fhor = max(worst_fhor, float(np.abs(m2.f_hor - fh0).max()))
         checked += 1
     assert checked > 0
-    assert worst_sigma < 1e-10    # audit measured ~1.7e-11
+    assert worst_sigma < 1e-10    # 历史审计测得约 1.7e-11。
     # Both generators are now anchored at the continuous N_inf (present), so the
     # f_hor difference is float-accumulation noise (~1e-10), not a physics gap.
     assert worst_fhor < 1e-9
@@ -60,7 +60,7 @@ def test_simpson_row_matches_scipy():
             ref = simpson(y[a:], x=xf[a:])
             mine = np.dot(w[a:], y[a:])
             worst = max(worst, abs(mine - ref) / max(abs(ref), 1e-300))
-    assert worst < 1e-9           # audit measured ~1e-12
+    assert worst < 1e-9           # 历史审计测得约 1e-12。
 
 
 def test_pchip_fine_matches_scipy():
@@ -74,4 +74,4 @@ def test_pchip_fine_matches_scipy():
         FS.pchip_fine(idx.astype(np.float64), y, nv, out)
         ref = PchipInterpolator(idx, y)(np.arange(nv))
         worst = max(worst, float(np.abs(out - ref).max()))
-    assert worst < 1e-12          # audit measured ~5e-15
+    assert worst < 1e-12          # 历史审计测得约 5e-15。
