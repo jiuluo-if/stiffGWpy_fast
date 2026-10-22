@@ -82,8 +82,8 @@ def plain_point(kw, label, z_tail=Z_TAIL, rtol=RTOL, freq_res=FREQ_RES):
     rec = {'label': label, 'kind': 'single', 'params': dict(kw),
            'z_tail': z_tail, 'rtol': rtol, 'freq_res': freq_res,
            'mode': 'fast(plain-grid)', 'status': 'ok'}
-    cfg = FS.apply_accuracy_mode('fast')       # h=0.02, col_step=8, no refine
-    FS.set_z_tail(z_tail)                       # matched tail (isolate engine)
+    cfg = FS.apply_accuracy_mode('fast')       # h=0.02、col_step=8，不做转折细化。
+    FS.set_z_tail(z_tail)                       # 匹配尾部深度以隔离引擎差异。
     m = LCDM_SG(**kw)
     t0 = time.perf_counter()
     try:

@@ -96,7 +96,7 @@ def test_reweighted_shift_recovers_injected_bias(ip):
     x = rng.normal(0.0, 1.0, n)
     w0 = np.ones(n) / n
     bias = 0.3
-    dll = -(x - bias) ** 2 / 2 + x ** 2 / 2   # L_ref/L_fast ratio
+    dll = -(x - bias) ** 2 / 2 + x ** 2 / 2   # L_ref/L_fast 的对数比值。
     w1 = w0 * np.exp(dll)
     w1 /= w1.sum()
     mean1 = np.sum(w1 * x)

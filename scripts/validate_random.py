@@ -58,7 +58,7 @@ def sample_points(n, seed):
     for j in range(n):
         kw = {}
         for name, (lo, hi, log_scale) in _RANGES.items():
-            u = (j + rng.uniform()) / n       # stratified random in [0, 1)
+            u = (j + rng.uniform()) / n       # 在 [0,1) 区间分层随机抽样。
             u = min(max(u, 1e-6), 1.0 - 1e-6)
             val = 10 ** (np.log10(lo) + u * (np.log10(hi) - np.log10(lo))) if log_scale \
                 else lo + u * (hi - lo)

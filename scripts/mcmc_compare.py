@@ -420,7 +420,7 @@ def eval_minuslogpost_batch(model, rows, sample_params):
     for i, row in enumerate(rows):
         try:
             p = _point_dict(model, row, indices)
-            ml = -float(model.logpost(p))  # minuslogpost (inf when the point fails)
+            ml = -float(model.logpost(p))  # minuslogpost；评估失败时为 inf。
             if not np.isfinite(ml):
                 fails += 1
                 ml = float('inf')
@@ -451,7 +451,7 @@ def compare_engines_at_points(yaml_path, fast_mode, fast_threads, points,
     ml_f = results['fast']['minuslogpost']
     both_ok = np.isfinite(ml_l) & np.isfinite(ml_f)
     delta = np.full(len(idx), np.nan)
-    delta[both_ok] = ml_l[both_ok] - ml_f[both_ok]  # logL_fast - logL_lsoda
+    delta[both_ok] = ml_l[both_ok] - ml_f[both_ok]  # 等于 logL_fast-logL_lsoda，固定差值符号约定。
     meta = {
         'n_eval': int(len(idx)),
         'n_both_ok': int(both_ok.sum()),

@@ -188,9 +188,9 @@ class LCDM_SG(LCDM_SN):
         # 以下各列表的同一索引对应一个频率通道。
         self.N_hc = [single_sol[0] for single_sol in res]  # 各频率对应的视界穿越起点 e-fold 数。
         self.Th = [single_sol[1] for single_sol in res]    # 张量传递函数。
-        self.Oj = [single_sol[2] for single_sol in res]    # \dot T_h * T_h / 3H * P_t
-        self.Ogw = [single_sol[3] for single_sol in res]   # dOmega_GW / dlnf
-        self.Opgw = [single_sol[4] for single_sol in res]  # dOmega_pGW / dlnf
+        self.Oj = [single_sol[2] for single_sol in res]    # 张量剪切记账项：dot(T_h)*T_h/(3H)*P_t。
+        self.Ogw = [single_sol[3] for single_sol in res]   # 每对数频率的总引力波能量密度 dOmega_GW/dlnf。
+        self.Opgw = [single_sol[4] for single_sol in res]  # 每对数频率的相位平均能量密度 dOmega_pGW/dlnf。
 
 
     def SGWB_iter(self, engine='fast', fallback=False, tol=1e-4,
@@ -497,7 +497,7 @@ class LCDM_SG(LCDM_SN):
 
 
             self.SGWB_converge = True
-            self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # log10(H/s^-1)，H = 2π f_hor/a。
+            self.hubble = math.log10(2*math.pi) + self.f_hor + (self.Nv[-1]-self.Nv)/ln10       # 记录 log10(H/s^-1)，H=2π f_hor/a。
             self.DN_gw = Neff0 * np.multiply(self.g2, np.exp(2*(self.f_hor-self.f_hor[-1])*ln10+2*(self.Nv-self.Nv[-1]))) / Omega_nu
             # 记录 SGWB 对 DN_eff 的完整演化，即 rho_GW(N)/(rho_gamma,0*7/8*(4/11)^(4/3))。
             # 末端满足 self.DN_gw[-1] + self.DN_eff_orig = self.cosmo_param['DN_eff']。
@@ -505,7 +505,7 @@ class LCDM_SG(LCDM_SN):
             self.Ogw_today = np.array([self.Ogw[i][-1] for i in range(len(self.f))])
             self.Opgw_today = np.array([self.Opgw[i][-1] for i in range(len(self.f))])
             self.Oj_today = np.array([self.Oj[i][-1] for i in range(len(self.f))])
-            self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)  # log10(Omega_GW(f))
+            self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)  # log10(Omega_GW(f)) 以记录频谱。
             # 暂不扣除超视界阶段 Omega_j 的负贡献。
 
             # Extra radiation (e.g. SGWB) parameterized as kappa_rad(T_i) for AlterBBN.

@@ -60,7 +60,7 @@ def test_f_hor_abs_matches_public_horizon_frequency():
 def test_integrate_spectrum_exponential():
     """integrate_spectrum reproduces a simple analytic integral."""
     freqs = np.linspace(-18.0, 6.0, 401)
-    Ogw = 10.0 ** (-14.0 - 0.3 * freqs)   # smooth power law
+    Ogw = 10.0 ** (-14.0 - 0.3 * freqs)   # 平滑幂律谱。
     Oj = np.zeros_like(Ogw)
     g2, qerr, ierr = REF.integrate_spectrum(freqs, Ogw, Oj)
     # Analytical: integral of 10^{-14-0.3 x} over x in [a,b], times ln10.

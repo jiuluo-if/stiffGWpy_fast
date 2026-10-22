@@ -48,7 +48,7 @@ def load_records(out_dir):
             line = line.strip()
             if line:
                 r = json.loads(line)
-                recs[r['id']] = r   # last wins (append-only checkpoint + retries)
+                recs[r['id']] = r   # 最后记录优先，追加式检查点中的重试结果覆盖旧记录。
     return list(recs.values())
 
 

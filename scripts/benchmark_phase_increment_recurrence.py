@@ -107,7 +107,7 @@ def _actual_path_probe(case="default", mode=20, reanchor=32):
     hv = np.asarray(h_values, dtype=np.float64)
     x0 = 0.0
     y0 = math.exp(z0) * float(s2inv[j0])
-    base = _path(zv, hv, x0, y0, 1)  # reanchor every step is exact sin/cos baseline
+    base = _path(zv, hv, x0, y0, 1)  # 每步重新锚定的精确 sin/cos 基线。
     cand = _path(zv, hv, x0, y0, reanchor)
     bp = base[0] ** 2 + base[1] ** 2
     cp = cand[0] ** 2 + cand[1] ** 2

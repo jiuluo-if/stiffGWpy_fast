@@ -97,8 +97,8 @@ def _outer_finalize(m, DN_gw_new, Omega_nu, DN_eff_orig, ln10v=ln10):
 def run_lsoda(kw, h, z_tail=5.0, freq_res=1.0, rtol=1e-8, tol=1e-7):
     """LSODA integration on the same (Nv, Sv, f_hor) grid the fast solver uses."""
     m = LCDM_SG(**kw)
-    FS.gen_fast(m, h)          # grid at spacing h (same for both engines)
-    FS.set_z_tail(z_tail)      # module state only affects gen_fast; grid already built
+    FS.gen_fast(m, h)          # 以步长 h 建网格，供两引擎共用。
+    FS.set_z_tail(z_tail)      # 只影响后续 gen_fast；当前网格已生成。
     Omega_nu = gp.Omega_nh2/m.derived_param['h']**2
     DN_eff_orig = m.cosmo_param['DN_eff']
     DN_gw_list = [0.0]

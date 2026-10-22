@@ -94,7 +94,7 @@ def main():
     records = []
     for name in args.cases.split(','):
         case = CASES[name]
-        run_once(case, False)  # compile/warm-up
+        run_once(case, False)  # 编译与预热。
         run_once(case, True)
         baseline = [run_once(case, False) for _ in range(args.repeats)]
         candidate = [run_once(case, True) for _ in range(args.repeats)]

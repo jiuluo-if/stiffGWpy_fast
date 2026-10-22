@@ -23,12 +23,12 @@ import numpy as np
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 加入仓库根目录。
 from stiffgwpy_fast import fast_sgwb as FS
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
-PARAMS = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)   # baseline case A
-TOL = 1e-4                                             # algorithm's own convergence tolerance
+PARAMS = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)   # 基准案例 A。
+TOL = 1e-4                                             # 算法自身的收敛容差。
 
 
 def main(seed=20260829, out_png=None):

@@ -305,7 +305,7 @@ def phase_pointwise(args):
     # 只评估后验主体区域内的点，这些点决定主要后验支撑范围。
     logpost = mlpost[idx]
     logpost = logpost - np.nanmax(logpost)
-    keep = np.exp(logpost) > 0.001  # within ~6.9 log-likelihood of the mode
+    keep = np.exp(logpost) > 0.001  # 距后验峰值约不超过 6.9 个 log-likelihood 单位。
     idx = idx[keep]
     if idx.size < 8:
         raise SystemExit('too few bulk chain points (%d)' % idx.size)
@@ -334,7 +334,7 @@ def phase_pointwise(args):
         ll_ref = mock_loglike(lo_r, truth, sig)
         rec['ll_fast'] = ll_fast
         rec['ll_ref'] = ll_ref
-        rec['dll'] = ll_ref - ll_fast          # logL(ref) - logL(fast)
+        rec['dll'] = ll_ref - ll_fast          # logL(ref)-logL(fast)，正值表示 reference 似然更高。
         rec['dex_max_fast_vs_ref'] = float(
             np.max(np.abs(lo_f - lo_r)))
         out.append(rec)
@@ -412,7 +412,7 @@ def _bootstrap_shift(shifts, n=2000, seed=42):
 
 
 def phase_report(args):
-    _load_truth(args.out)  # verify the artifact exists (chain files checked below)
+    _load_truth(args.out)  # 先确认参考真值文件存在；链文件在下方检查。
     chain_jsons = sorted(f for f in os.listdir(args.out)
                          if f.startswith('fast_chain_s') and f.endswith('.json'))
     if not chain_jsons:
