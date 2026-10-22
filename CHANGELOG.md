@@ -73,6 +73,9 @@
 - A repository-wide grouped scan found no English-only substantive standalone
   comment blocks across 231 tracked Python files. Comment-only edits preserve
   runtime ASTs.
+- Expanded the bilingual experiment catalogue to cover additional dated
+  accuracy, profile, grid, kernel, and outer-solve artifact families, with
+  explicit retention and interpretation rules.
 
 ## Unreleased — 2026-09-25
 

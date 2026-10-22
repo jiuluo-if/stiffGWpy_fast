@@ -51,7 +51,10 @@
 | `paramsweep_*`、`parameter_validation/`、`validation/` | 同网格、参数空间、收敛性和参照独立性记录 | 保留：被报告、manifest 或复现说明引用 |
 | `oracle_prufer_fullgrid*.json`、`oracle_prufer_*_sobol*.json` | Prüfer 完整本征频率网格对比及边界/Sobol 样本 | 保留：支撑“仅作参考”的认证边界 |
 | `profile_fast_breakdown_*.json`、`benchmark_*.json` | 各轮性能、线程、稳定性和阶段耗时测量 | 作为带日期的运行数据保留；比较前核对对应报告和代码提交 |
+| 其他 `profile_*.json`、`*_round*.json`、`*_head*.json`、`*_candidate*.json`、`*_spike*.json` | 各轮 profile 和独立实现候选；包含被拒绝或仅作参考的方案 | 原始记录随对应报告保留；状态以报告为准，不能按文件名或日期推断 |
+| `fast_true_error_*`、`fast_residual_*`、`error_budget_probe_*`、`fast_quadrature_*`、`quadrature_*` | 带日期的 Oracle 误差归属、误差估计校准和求积对比 | 作为有限范围精度证据保留；当前解释以 `accuracy.md` 和关联评估报告为准 |
 | `derived_param_*.json`、`fd_lookup_*.json`、`grouped_soa_*.json`、`outer_snapshot_*.json` | 缓存、工作区、查表及外层求解候选方案 | 属于探索性结果；比较状态/摘要一致性和参数区域覆盖 |
+| `gen_fast_*`、`h2_*`、`outer_*`、`kernel_*`、`prep_*`、`probe_*`、`canonical_fast_*`、`fast_pyoverhead_*` | 网格、背景、外层求解、内核和 Python 开销的分轮候选实验 | 保留已接受和被拒绝的对照；引用计时前核对评估报告及资源元数据 |
 | `phi_s2_*`、`fast_phi_*`、`phase_*` | 相位和 `phi_s2` 实现候选方案，包括 smoke 运行 | 属于探索性结果；不能根据 smoke 结果推断已进入生产路径 |
 | `*transfer*`、`*wkb*`、`*riccati*`、`*bessel*`、`*airy*`、`*small_angle*`、`*frequency*` | 数值方法原型、参照研究和后续实验轮次 | 按每条记录的状态保留；被拒绝和仅作参考的结果也是研究过程的一部分 |
 | `mcmc_posterior/`、`mcmc_sagenet_compare/`、`mcmc/` | 后验验证、方法对比报告、图和本地采样链 | 保留当前报告与输入；大型/本地链数据仍遵循 `.gitignore`。正式对比链为 `mcmc_sagenet_compare/posterior_chains_20260924.npz`（每种方法/情景 4 × 10,000）；`mcmc/chains/sagenet_compare_20260924.npz` 是不同的 3 × 2,000 运行，不是重复副本。先留在本机，待补齐运行设置和来源后再决定是否纳入正式结论。 |
