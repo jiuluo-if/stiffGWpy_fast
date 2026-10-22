@@ -399,9 +399,11 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
 def _sync_size():
     try:
         from mpi4py import MPI
-        return int(MPI.COMM_WORLD.Get_size())
-    except Exception:
+    except ImportError:
         return 1
+    if not MPI.Is_initialized() or MPI.Is_finalized():
+        return 1
+    return int(MPI.COMM_WORLD.Get_size())
 
 
 def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None):

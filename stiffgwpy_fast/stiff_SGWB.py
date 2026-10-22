@@ -24,18 +24,6 @@ _DEFAULT_ACCURACY_MODE = object()
 # 对象哨兵用于区分“未传 accuracy_mode”与“显式传入 None”的兼容调用。
 
 
-def _mpi_world_size():
-    """MPI world size, or 1 when mpi4py is unavailable / not initialized.
-
-    中文：返回 MPI 通信域进程数；未安装或尚未初始化 mpi4py 时返回 1。
-    """
-    try:
-        from mpi4py import MPI
-        return int(MPI.COMM_WORLD.Get_size())
-    except Exception:
-        return 1
-
-
 def _sgwb_pool_size():
     """Number of frequency-parallel worker processes for ``run_SGWB``.
 
