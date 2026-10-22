@@ -299,6 +299,9 @@ At `h=0.02/factor=64`, reducing the radius from `0.125` to `0.0625` lowers the
 two-edge medians from `7.63/9.49 ms` to `6.49/8.74 ms` and passes both accuracy
 gates with slightly smaller errors. This is a matched two-point result for the
 validation path; the formal fast preset is still faster and unchanged.
+Reducing the radius again to `0.03125` changes the medians only slightly, to
+`6.41/8.09 ms`, in a separate unpinned run. Treat this as a candidate result,
+not a stable speedup over radius `0.0625`.
 
 ## Transition-refined `H2_vec` batching (2026-10-22)
 

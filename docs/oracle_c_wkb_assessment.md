@@ -187,6 +187,14 @@ remains about `1.14x`/`1.93x` slower than standard fast and is validation-only.
 The matched records are in
 [`oracle_c_wkb_corner_20261022/transition_h002_r00625_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r00625_f64/).
 
+Halving the radius again to `0.03125` also passes, with errors of
+`1.12e-4`/`8.29e-5`, WKB/deep residuals of `2.51e-6`/`5.59e-6`, and medians
+of `6.41`/`8.09 ms`. The change from radius `0.0625` is small (`1.01x`/`1.08x`
+by the separate-run medians); CPU affinity was not pinned, so these runs do
+not establish a stable speedup at this scale. This remains validation-only.
+The matched records are in
+[`oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/).
+
 The matched Oracle residuals for this candidate are `1.08e-6` and `1.59e-4`
 versus WKB-corrected `DN_gw`; the WKB/deep reference residuals are
 `2.89e-6` and `5.65e-6`. Both `DN_eff` and frequency grids are checked exactly
@@ -223,6 +231,9 @@ and was generated from `26fbde0e4135464e46a9b799492b34cce2f81fc3`.
 The narrower passing window is in
 [`oracle_c_wkb_corner_20261022/transition_h002_r00625_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r00625_f64/)
 and was generated from `2c30c90fec92c32ae45eced6ace918a0b58bec16`.
+The radius-`0.03125` comparison is in
+[`oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/)
+and was generated from `af176252976bf480e312a1b5d17c90588049030c`.
 
 Reproduce the standard, fine-step, and transition-refined anchors and comparisons:
 
@@ -247,6 +258,8 @@ python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 
 python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h004_r025_f128 --h 0.04 --transition-refine --transition-refine-radius 0.25 --transition-refine-factor 128 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h004_r025_f128/fast_true_error.json
 python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.02 --transition-refine --transition-refine-radius 0.0625 --transition-refine-factor 64 --out-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r00625_f64
 python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r00625_f64 --h 0.02 --transition-refine --transition-refine-radius 0.0625 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r00625_f64/fast_true_error.json
+python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.02 --transition-refine --transition-refine-radius 0.03125 --transition-refine-factor 64 --out-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r003125_f64
+python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r003125_f64 --h 0.02 --transition-refine --transition-refine-radius 0.03125 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/fast_true_error.json
 ```
 
 ## Artifacts

@@ -69,6 +69,9 @@ and raw-data family.
 Narrowing the passing `h=0.02/factor=64` window to radius `0.0625` improves the
 errors to `1.14e-4/8.30e-5` and medians to `6.49/8.74 ms`; this remains slower
 than standard fast and is not promoted.
+Halving the radius again to `0.03125` passes both gates at `1.12e-4/8.29e-5`,
+with `6.41/8.09 ms` medians. The unpinned separate-run timing difference is
+small; no stable gain over radius `0.0625` is established.
 
 ## Raw run families by location
 
