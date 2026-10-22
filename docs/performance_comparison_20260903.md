@@ -182,3 +182,15 @@ plain-grid matched-reference AB 后再决定。
 
 复现入口：`scripts/bench_fast.py`、`scripts/profile_fast_breakdown.py`，以及
 `docs/benchmark_current_fast_preset_20260903.json` 的历史 benchmark 快照（2026-09-03）。
+
+## 10. 支撑原始记录
+
+本报告对应的 baseline/candidate 分段计时和输出指纹保存在
+[`ab_baseline_njit_A.json`](ab_baseline_njit_A.json)、
+[`ab_baseline_njit_B.json`](ab_baseline_njit_B.json)、
+[`ab_candidate_njit_A.json`](ab_candidate_njit_A.json)、
+[`ab_candidate_njit_B.json`](ab_candidate_njit_B.json)；production 完整输出摘要在
+[`production_ab_baseline.txt`](production_ab_baseline.txt) 和
+[`production_ab_candidate.txt`](production_ab_candidate.txt)。线程缩放汇总保留在第 3.5 节；原始
+`scaling_njit_t*.json` 文件已由后续清理提交 `2619065` 移除，当前仓库不再包含逐线程样本。
+上述 A/B 文件和 production 摘要用于复核历史输出，均不代表当前 HEAD 的性能基线。
