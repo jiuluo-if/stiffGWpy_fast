@@ -266,6 +266,14 @@ has errors of `3.97e-6` / `1.64e-4` versus deep `z=10`; it is about `8.2x` /
 `edge_dnre_lo` only. Its matched Oracle records are in
 [`oracle_c_wkb_corner_20261022/transition_h00025/`](oracle_c_wkb_corner_20261022/transition_h00025/).
 
+Exposing the refinement radius and factor in `FastSolverConfig` made a smaller
+zone reproducible. At `h=0.0025`, radius `0.25`, and factor `8`, the matched
+edge errors are `5.17e-6`/`1.62e-4` versus deep `z=10`, with warm medians of
+`35.6`/`51.7 ms`. This is `1.29x`/`1.42x` faster than radius `2.0`, but remains
+about `6.3x`/`11.4x` slower than standard fast. The preset is unchanged. Raw
+Oracle and repeated fast timing records are in
+[`oracle_c_wkb_corner_20261022/transition_h00025_r025/`](oracle_c_wkb_corner_20261022/transition_h00025_r025/).
+
 ## Transition-refined `H2_vec` batching (2026-10-22)
 
 `H2_vec` used to call the SciPy density spline once per background node while

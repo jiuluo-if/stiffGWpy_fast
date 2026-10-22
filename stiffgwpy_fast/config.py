@@ -10,8 +10,10 @@ module from configuration code and makes it safe to pass through adapters.
 """
 
 from dataclasses import dataclass
-from math import isfinite
+from math import ceil, isfinite
 from typing import Optional
+
+_MAX_TRANSITION_REFINE_NODES = 500_000
 
 
 @dataclass(frozen=True)
@@ -22,12 +24,13 @@ class FastSolverConfig:
     not the formal ``fast`` preset. Use ``resolve_config('fast')`` to get that
     preset as an immutable snapshot. ``transition_refine_radius`` and
     ``transition_refine_factor`` control only the optional validation path:
-    the radius is measured in e-folds on either side of reheating.
+    the radius is measured in e-folds on either side of reheating. Their
+    combination is bounded to an estimated 500,000 refined nodes per solve.
 
     中文：创建时校验参数范围，之后不可修改。直接构造使用的是旧手动设置默认值，并非正式
     ``fast`` 预设；需要具名档位时用 ``resolve_config('fast')`` 生成配置快照。
     ``transition_refine_radius`` 和 ``transition_refine_factor`` 只控制可选的验证路径，
-    其中半径表示再加热转折点两侧的 e-fold 范围。
+    其中半径表示再加热转折点两侧的 e-fold 范围；两者组合后最多估算生成 500,000 个细化节点。
     """
 
     h: float = 0.01
@@ -76,6 +79,13 @@ class FastSolverConfig:
             raise ValueError(
                 "transition_refine_factor must be an integer in [1, 64], got %r"
                 % self.transition_refine_factor)
+        estimated_refine_nodes = ceil(
+            2.0 * transition_refine_radius * transition_refine_factor / h
+        ) + 1
+        if estimated_refine_nodes > _MAX_TRANSITION_REFINE_NODES:
+            raise ValueError(
+                "transition-refinement grid estimates %d nodes; maximum is %d"
+                % (estimated_refine_nodes, _MAX_TRANSITION_REFINE_NODES))
         if self.freq_grid not in ("construct", "grid_independent", "adaptive", "goal"):
             raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal, got %r" % self.freq_grid)
         if (raw_threads is not None and

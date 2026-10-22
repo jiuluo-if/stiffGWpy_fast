@@ -30,7 +30,7 @@
 
 ## 配置边界
 
-`LCDM_SG.SGWB_iter()` 默认选择正式 `fast` 档位。具名配置按次解析，`FastSolverConfig` 不可变。直接构造它会使用旧手动设置默认值，并非正式预设；需要具名档位时使用 `fast_sgwb.resolve_config('fast')`。只有明确要使用旧模块设置时才传入 `accuracy_mode=None`。显式参数覆盖只作用于当前调用。
+`LCDM_SG.SGWB_iter()` 默认选择正式 `fast` 档位。具名配置按次解析，`FastSolverConfig` 不可变。直接构造它会使用旧手动设置默认值，并非正式预设；需要具名档位时使用 `fast_sgwb.resolve_config('fast')`。只有明确要使用旧模块设置时才传入 `accuracy_mode=None`。显式参数覆盖只作用于当前调用。可选的验证用 `transition-refine` 路径支持通过 `FastSolverConfig` 设置局部半径和加密倍数；按两者估算的细化网格最多为每次求解 500,000 个节点。
 
 ```python
 from stiffgwpy_fast import LCDM_SG

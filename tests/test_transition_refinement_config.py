@@ -51,3 +51,11 @@ def test_transition_refine_controls_survive_base_config_resolution():
 def test_transition_refine_config_rejects_invalid_controls(overrides, message):
     with pytest.raises(ValueError, match=message):
         FS.resolve_config('fast', **overrides)
+
+
+def test_transition_refine_config_bounds_combined_grid_size():
+    with pytest.raises(ValueError, match='refinement grid'):
+        FS.resolve_config(
+            'fast', h=1e-4, transition_refine_radius=1.0,
+            transition_refine_factor=64,
+        )

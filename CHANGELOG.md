@@ -27,6 +27,12 @@
   candidate also passes at 8.2–16.3x latency. Both remain validation candidates;
   the production preset is unchanged. See [accuracy](docs/accuracy.md) and the
   [Oracle C report](docs/oracle_c_wkb_assessment.md).
+- Made transition-refinement radius and factor explicit in immutable solver
+  configuration and both Oracle reproduction tools. A matched radius-0.25
+  candidate passes the two `DN_re` edge gates and is 1.29x/1.42x faster than
+  radius 2.0, while still 6.3–11.4x slower than standard fast. A 500,000-node
+  estimate cap bounds the configured refinement grid. The candidate remains
+  validation-only; Oracle output directories are created automatically.
 - Batched `H2_vec` density-spline evaluations on the transition-refined path.
   The full-path A/B is bitwise identical and 3.86–4.09x faster on the two
   `DN_re` edge cases. The implementation retains scalar `math.exp` to avoid

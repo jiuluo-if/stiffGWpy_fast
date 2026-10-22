@@ -52,6 +52,14 @@ latency remains open. Full grids, configuration, repeated timings, and reproduct
 [`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md) and
 [`oracle_c_wkb_corner_20261022/`](oracle_c_wkb_corner_20261022/).
 
+Reducing the transition-refinement radius from `2.0` to `0.25` e-folds while
+keeping `h=0.0025` and factor `8` lowers the matched medians to `35.6`/`51.7 ms`
+and improves the two errors to `5.17e-6`/`1.62e-4` versus deep `z=10`. It is
+about `1.29x`/`1.42x` faster than the radius-2.0 candidate, while still about
+`6.3x`/`11.4x` slower than standard fast. This two-edge candidate remains
+validation-only. Its exact configuration and raw records are in
+[`oracle_c_wkb_corner_20261022/transition_h00025_r025/`](oracle_c_wkb_corner_20261022/transition_h00025_r025/).
+
 ## Current full-path solver profile is separate
 
 The 2026-10-21 full-path profile used solver source at commit
