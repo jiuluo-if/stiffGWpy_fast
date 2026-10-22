@@ -220,11 +220,9 @@ class stiffGW(Theory):
             sgwb_kwargs['threads'] = min(int(self.fast_threads),
                                          fast_sgwb.max_threads())
         if self.engine == 'reference':
-            # Independent continuous-sigma high-accuracy pipeline (slow; for
-            # certification/benchmark points, not for MCMC thermal path).
-            from ..reference import apply_reference_to_model
-            apply_reference_to_model(
-                m, freq_res=getattr(self, 'freq_res', 1.0) or 1.0,
+            m.SGWB_iter(
+                engine='reference',
+                freq_res=getattr(self, 'freq_res', 1.0) or 1.0,
                 z_tail=getattr(self, 'reference_z_tail', 5.0) or 5.0,
                 rtol=getattr(self, 'reference_rtol', 1e-11) or 1e-11)
         else:

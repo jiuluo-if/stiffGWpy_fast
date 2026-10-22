@@ -263,7 +263,6 @@ class LCDM_SG(LCDM_SN):
             apply_reference_to_model(self, freq_res=freq_res, z_tail=z_tail,
                                      rtol=rtol)
             self.last_engine = 'reference'
-            self.reference_evals = getattr(self, 'reference_evals', 0) + 1
             _mark_eval_status(self, 'REFERENCE')
             return self
         if engine == 'fast':
