@@ -303,6 +303,13 @@ Reducing the radius again to `0.03125` changes the medians only slightly, to
 `6.41/8.09 ms`, in a separate unpinned run. Treat this as a candidate result,
 not a stable speedup over radius `0.0625`.
 
+A same-process comparison pinned to CPUs `[0, 1]` alternated radii `0.015625`
+and `0.0078125` for 30 measured pairs per edge. Candidate/base median ratios
+were `0.989`/`0.979`, while bootstrap 95% intervals were
+`0.977–1.013`/`0.936–1.014`. Both intervals include `1`, so a stable speed gain
+is not established. Raw paired samples are in
+[`benchmark_transition_radius_paired_20261022.json`](benchmark_transition_radius_paired_20261022.json).
+
 ## Transition-refined `H2_vec` batching (2026-10-22)
 
 `H2_vec` used to call the SciPy density spline once per background node while

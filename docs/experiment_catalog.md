@@ -72,6 +72,9 @@ than standard fast and is not promoted.
 Halving the radius again to `0.03125` passes both gates at `1.12e-4/8.29e-5`,
 with `6.41/8.09 ms` medians. The unpinned separate-run timing difference is
 small; no stable gain over radius `0.0625` is established.
+The fixed-affinity paired comparison of radii `0.015625` and `0.0078125` also
+found no stable speed winner; see the raw paired record linked from the Oracle
+C assessment.
 
 ## Raw run families by location
 

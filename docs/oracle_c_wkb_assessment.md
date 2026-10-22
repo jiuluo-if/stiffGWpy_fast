@@ -195,6 +195,15 @@ not establish a stable speedup at this scale. This remains validation-only.
 The matched records are in
 [`oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/).
 
+Because separately launched timing medians for radii `0.015625` and
+`0.0078125` were close, a fixed-affinity paired run compared them in one
+process on CPUs `[0, 1]`, alternating order for 30 measured pairs per edge
+after two warmups. The median candidate/base ratios were `0.989` and `0.979`,
+but bootstrap 95% intervals for the median ratio were `0.977–1.013` and
+`0.936–1.014`; both include `1.0`. Thus the smaller radius has no established
+speed advantage over `0.015625`. Raw paired samples and resource metadata are
+in [`benchmark_transition_radius_paired_20261022.json`](benchmark_transition_radius_paired_20261022.json).
+
 The matched Oracle residuals for this candidate are `1.08e-6` and `1.59e-4`
 versus WKB-corrected `DN_gw`; the WKB/deep reference residuals are
 `2.89e-6` and `5.65e-6`. Both `DN_eff` and frequency grids are checked exactly
@@ -234,6 +243,10 @@ and was generated from `2c30c90fec92c32ae45eced6ace918a0b58bec16`.
 The radius-`0.03125` comparison is in
 [`oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/)
 and was generated from `af176252976bf480e312a1b5d17c90588049030c`.
+The `0.015625` and `0.0078125` candidates were both generated from
+`58e344363d4931deb780e1b2eaf883a96c3c4a97`; their matched directories are
+[`transition_h002_r0015625_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r0015625_f64/)
+and [`transition_h002_r00078125_f64/`](oracle_c_wkb_corner_20261022/transition_h002_r00078125_f64/).
 
 Reproduce the standard, fine-step, and transition-refined anchors and comparisons:
 
@@ -260,6 +273,10 @@ python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 
 python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r00625_f64 --h 0.02 --transition-refine --transition-refine-radius 0.0625 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r00625_f64/fast_true_error.json
 python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.02 --transition-refine --transition-refine-radius 0.03125 --transition-refine-factor 64 --out-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r003125_f64
 python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r003125_f64 --h 0.02 --transition-refine --transition-refine-radius 0.03125 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r003125_f64/fast_true_error.json
+python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.02 --transition-refine --transition-refine-radius 0.015625 --transition-refine-factor 64 --out-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r0015625_f64
+python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r0015625_f64 --h 0.02 --transition-refine --transition-refine-radius 0.015625 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r0015625_f64/fast_true_error.json
+python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.02 --transition-refine --transition-refine-radius 0.0078125 --transition-refine-factor 64 --out-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r00078125_f64
+python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r00078125_f64 --h 0.02 --transition-refine --transition-refine-radius 0.0078125 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r00078125_f64/fast_true_error.json
 ```
 
 ## Artifacts
