@@ -21,6 +21,14 @@
   serialized, while explicit-config TBB calls improved two-call batch median
   time 14.93% in the documented local comparison; this is not a single-call
   speedup claim.
+- Extended the Oracle C full-grid audit to two `DN_re` edges. The formal fast
+  profile misses the scoped `2e-4` accuracy gate there; a matched fine-step
+  candidate passes but is 11.0–15.8x slower, so the production preset remains
+  unchanged. See [accuracy](docs/accuracy.md) and the [Oracle C report](docs/oracle_c_wkb_assessment.md).
+- Batched `H2_vec` density-spline evaluations on the transition-refined path.
+  The full-path A/B is bitwise identical and 4.56–4.87x faster on the two
+  `DN_re` edge cases; it does not change the formal exact-kink path. See
+  [benchmarks](docs/benchmarks.md).
 - Added Chinese explanations to standalone comment sections across the solver,
   reference, grid, background, and Cobaya modules. The grouped-comment scan
   found no remaining English-only blocks in the package, and the code ASTs are
