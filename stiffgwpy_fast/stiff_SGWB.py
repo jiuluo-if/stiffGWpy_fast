@@ -186,7 +186,8 @@ class LCDM_SG(LCDM_SN):
             res_it = pool.imap(worker, self.f, chunksize=3)
             res = [y for y in res_it]
 
-        # Each element in the following lists is for a frequency channel
+        # Each list entry below corresponds to one frequency channel.
+        # 以下各列表的同一索引对应一个频率通道。
         self.N_hc = [single_sol[0] for single_sol in res]  # Number of e-folds, starting at the horizon crossing for each frequency
         self.Th = [single_sol[1] for single_sol in res]    # Tensor transfer function
         self.Oj = [single_sol[2] for single_sol in res]    # \dot T_h * T_h / 3H * P_t
@@ -383,6 +384,7 @@ class LCDM_SG(LCDM_SN):
                 # WKB handoff / frequency grid / quadrature / phase truncation
                 # / tail / cancellation / self-consistency, computed from this
                 # solve's telemetry (see fast_sgwb.estimate_local_error).
+                # 根据本次求解遥测估算 WKB 交接、频率网格、求积、相位截断、尾部、相消和自洽误差。
                 try:
                     self.local_error_budget = fast_sgwb.estimate_local_error(self)
                     self.DN_gw_error = self.local_error_budget['DN_gw_error']
@@ -399,6 +401,8 @@ class LCDM_SG(LCDM_SN):
                     # estimated |Delta logL| from the local Delta N_eff error
                     # exceeds the requested budget (sigma = effective sigma of
                     # the likelihood on Delta N_eff; dlogl_tol = budget in
+                    # 似然感知门限：当 Delta_Neff 误差导致的估计 |Delta logL| 超过预算时升级精度；
+                    # sigma 是似然对 Delta_Neff 的有效误差，dlogl_tol 是允许的对数似然变化。
                     budget_status = (getattr(self, 'local_error_budget', None) or {}).get(
                         'certification_status', 'uncertified')
                     do_escalate = budget_status.startswith('uncertified')
@@ -432,7 +436,6 @@ class LCDM_SG(LCDM_SN):
         self.last_engine = 'lsoda'
         _mark_eval_status(self, 'LSODA')
 
-        # Exclude some corner cases
         if self.cosmo_param['r'] <= 0:
             print('Must set a positive r to calculate the inflationary GWs!')
             return None
@@ -441,12 +444,12 @@ class LCDM_SG(LCDM_SN):
             print('High-end cutoff frequency has not been set properly.')
             return None
 
-        # Main calculation starts here!
         if self.SGWB_converge == False:
             Omega_nu = Omega_nh2/self.derived_param['h']**2
 
             self.DN_eff_orig = self.cosmo_param['DN_eff']
             # Record the original input value of DN_eff before entering the iterations
+            # 保存输入的 DN_eff，未收敛时用于恢复原始模型状态。
 
             self.DN_gw = [0]; DN_gw_new = 0
             DN_gw_min = 0; DN_gw_max = 10
@@ -466,13 +469,15 @@ class LCDM_SG(LCDM_SN):
                     if self.DN_eff_orig + DN_gw_new > 5:
                         break
 
-                    # Break when the required convergence precision is met!
+                    # Stop once the requested relative self-consistency tolerance is met.
+                    # 达到指定的相对自洽容差后停止迭代。
                     if abs((Neff0+self.DN_eff_orig+DN_gw_new)/(Neff0+self.DN_eff_orig+self.DN_gw[-1]) - 1) < tol:
                         self.cosmo_param['DN_eff'] = self.DN_eff_orig + DN_gw_new
                         converged = True
                         break
 
-                    # Use bisection method to find the next point to shoot
+                    # Use bisection to choose the next trial value when a bracket is available.
+                    # 已形成有效区间时用二分法选择下一次试算值。
                     if DN_gw_new > self.DN_gw[-1] > DN_gw_min and DN_gw_max >= self.DN_gw[-1]:
                         DN_gw_min = self.DN_gw[-1]
                     elif DN_gw_new < self.DN_gw[-1] < DN_gw_max and DN_gw_min <= self.DN_gw[-1]:
@@ -489,7 +494,6 @@ class LCDM_SG(LCDM_SN):
                 if not converged:
                     self.cosmo_param['DN_eff'] = self.DN_eff_orig
                     self.DN_eff_orig = None
-            # End of main iteration
             if not converged:
                 return None
 
@@ -508,7 +512,8 @@ class LCDM_SG(LCDM_SN):
             # Ignoring the negative super-horizon contribution from Omega_j, for the moment...
             # 当前谱暂不扣除超视界阶段 Omega_j 的负贡献。
 
-            ###  Extra radiation (e.g., SGWB) parameterized as kappa_rad(T_i) for AlterBBN
+            # Extra radiation (e.g. SGWB) parameterized as kappa_rad(T_i) for AlterBBN.
+            # 供 AlterBBN 使用的额外辐射参数化形式，例如 SGWB 的 kappa_rad(T_i)。
 
             self.kappa_r = self.cosmo_param['DN_eff']* 7/8*(4/11)**(4/3) * z_ratio**4
             # Using the final asymptotic value of Delta N_eff, since for all reasonable T_re (>~ 1 MeV),
@@ -517,10 +522,6 @@ class LCDM_SG(LCDM_SN):
             # SGWB 引起的 Delta N_eff 已基本达到渐近值，因此这里使用最终值。
 
         return self if self.SGWB_converge else None
-
-    # End of SGWB_iter
-
-
 
     def Tensor_power(self, freq):
         return self.derived_param['A_t'] * np.power((10**freq)/f_piv, self.derived_param['nt'])
@@ -592,7 +593,8 @@ class LCDM_SG(LCDM_SN):
         self.g2 = np.zeros_like(self.Nv)      # total Omega_gw
         self.w2 = np.zeros_like(self.Nv)      # total Omega_pgw
 
-        # Patch SGWB solutions into matrices for integration over f
+        # Patch the per-frequency solutions into matrices for integration over frequency.
+        # 将逐频率求解结果写入矩阵，以便沿频率方向积分。
         M_N_hc = -np.ones((len(self.f),len(self.Nv)))
         M_Ogw = np.zeros_like(M_N_hc); M_Opgw = np.zeros_like(M_N_hc); M_Oj = np.zeros_like(M_N_hc)
         for i in range(len(self.f)):
@@ -604,7 +606,8 @@ class LCDM_SG(LCDM_SN):
 
         M_N_hc = np.transpose(M_N_hc); M_Ogw = np.transpose(M_Ogw); M_Opgw = np.transpose(M_Opgw); M_Oj = np.transpose(M_Oj)
 
-        # Do the integration!
+        # Integrate the spectrum at each expansion-history node.
+        # 对膨胀历史的每个节点积分频谱。
         for i in range(len(self.Nv)):
             ind_int = (M_N_hc[i]>=0)
             f_int = np.flip(self.f[ind_int])                           # log10(f/Hz), increasing order
@@ -626,19 +629,22 @@ def add_boundary_knots(spline):
     and to maintain the first derivative from whatever boundary condition
     was selected. The spline is modified in place.
     """
-    # determine the slope at the left edge
+    # Determine the left-edge slope used for the extrapolation interval.
+    # 求出左端斜率，供外推区间使用。
     leftx = spline.x[0]
     lefty = spline(leftx)
     leftslope = spline(leftx, nu=1)
 
-    # add a new breakpoint just to the left and use the
-    # known slope to construct the PPoly coefficients.
+    # Add a breakpoint immediately to the left and use the known slope
+    # to construct the PPoly coefficients.
+    # 在左侧紧邻处添加断点，并用已知斜率构造 PPoly 系数。
     leftxnext = np.nextafter(leftx, leftx - 1)
     leftynext = lefty + leftslope*(leftxnext - leftx)
     leftcoeffs = np.array([0, 0, leftslope, leftynext])
     spline.extend(leftcoeffs[..., None], np.r_[leftxnext])
 
-    # repeat with additional knots to the right
+    # Repeat the construction at the right boundary.
+    # 在右端重复相同的构造过程。
     rightx = spline.x[-1]
     righty = spline(rightx)
     rightslope = spline(rightx,nu=1)

@@ -572,14 +572,22 @@ def estimate_error(name="production"):
 # Historical measured anchors for :func:`estimate_local_error` (default point;
 # see docs/fast_v02_audit_report.md, docs/oracle_a_same_grid_z10_default.json,
 # and the current scope summary in docs/accuracy.md):
+# 以下是 `estimate_local_error` 使用的历史具名点校准值；适用范围见上述报告，不代表当前参数点
+# 或全参数空间的误差保证：
 #   * phase_max Richardson: |dDeltaN(pm 0.5 -> 0.125)| = 7.5e-6 relative,
 #     so the frozen-z Magnus phase-truncation error at pm=0.5 is ~8e-6 (pm^2 scaling).
+#     phase_max 从 0.5 降至 0.125 时 Richardson 差值为 7.5e-6；据平方缩放，0.5 处截断误差约为 8e-6。
 #   * kink-breakpoint (transition_refine) residual envelope: ~1e-4.
+#     transition_refine 拆分 kink 后的残差包络约为 1e-4。
 #   * plain-grid sigma-kink residual: ~2.4e-3; sigma_exact residual at z8: ~4.2e-3.
+#     plain 网格的 sigma-kink 残差约为 2.4e-3；z_tail=8 时 sigma_exact 残差约为 4.2e-3。
 #   * frozen-tail aggregate: 2e-5 at z_tail=8, 2.4e-7 at z_tail=10 (z-decay e^-(z-8)).
+#     冻结尾部的聚合残差在 z_tail=8/10 时分别为 2e-5/2.4e-7，按 e^-(z-8) 衰减。
 #   * uniform grid_independent quadrature bias: 5.6e-4 at freq_res=1 (242 pt),
 #     ~0 at freq_res>=2; construct-grid bias ~1.6e-3 (246 pt).
+#     grid_independent 网格的求积偏差在 freq_res=1/2 时约为 5.6e-4/接近零；construct 网格约为 1.6e-3。
 #   * col_step PCHIP interpolation: <1e-9 on Delta N_eff.
+#     col_step 的 PCHIP 插值对 Delta_Neff 的偏差小于 1e-9。
 _LOCAL_ODE_PM05 = 8.0e-6  # relative DN error at phase_max=0.5
 _LOCAL_ODE_NO_SUBSTEP = 1.0e-5  # h=0.01 fixed-step (calibrated engine term)
 _LOCAL_TRANSITION_REFINED = 1.0e-4
@@ -649,28 +657,36 @@ def estimate_local_error(m):
     se = bool(getattr(m, "sigma_exact_used", False))
     nf = int(getattr(m, "freq_grid_n", 0))
 
-    # 1. background/model error (present-day anchor + continuous-sigma bias)
+    # 1. Background/model error (present-day anchor + continuous-sigma bias).
+    # 1. 背景/模型误差：包括当前时刻锚定和连续 sigma 偏差。
     if se:
         model = _LOCAL_TRANSITION_SIGMA_EXACT
     elif tr:
         model = _LOCAL_TRANSITION_REFINED
     else:
         model = _LOCAL_TRANSITION_PLAIN
-    # 2. sigma-transition error (reheating-kink grid-phase residual)
+    # 2. Sigma-transition error (reheating-kink grid-phase residual).
+    # 2. sigma 转换误差：再加热 kink 的网格相位残差。
     transition = _LOCAL_TRANSITION_REFINED if tr else _LOCAL_TRANSITION_PLAIN
-    # 3. ODE integration error: frozen-z Magnus phase truncation (local)
+    # 3. ODE integration error: frozen-z Magnus phase truncation (local).
+    # 3. ODE 积分误差：冻结 z 的 Magnus 相位截断误差（局部测量）。
     ode = _LOCAL_ODE_PM05 * (pm / 0.5) ** 2 if pm > 0.0 else _LOCAL_ODE_NO_SUBSTEP
     # 4. horizon-crossing error: the crossing band carries the leading
     #    observable (phase-averaged amplitude) effect of the same truncation.
+    # 4. 视界穿越误差：穿越频带承载相同截断误差对相位平均振幅的主要可观测影响。
     horizon = ode
     # 5. WKB handoff error: per-mode adiabaticity defect at the handoff node
     #    (local, verifiable per mode).  The aggregate Delta N_eff effect is
     #    reported under tail_approximation (the frozen-tail weight share).
+    # 5. WKB 交接误差：逐模式测量交接节点的绝热性偏差；对 Delta_Neff 的聚合影响计入冻结尾部权重。
     wkb_max = eps_max
     wkb_agg = eps_mean
-    # 6. interpolation error: col_step PCHIP fine-grid on Delta N_eff
+    # 6. Interpolation error: col_step PCHIP fine-grid on Delta N_eff.
+    # 6. 插值误差：由 col_step 控制的 PCHIP 细网格插值偏差。
     interp = _LOCAL_INTERP
-    # 7. frequency-grid error: adaptive -> local criterion; else calibrated
+    # 7. Frequency-grid error: adaptive uses local telemetry; other modes use
+    # proxy or calibration values and may be marked uncertified below.
+    # 7. 频率网格误差：adaptive 使用本次遥测；其它模式使用代理值或校准值，之后可能标记为未认证。
     if fg == "adaptive":
         freq_grid = max(float(getattr(m, "freq_grid_error", 0.0)), 0.0)
     elif fg == "grid_independent":
@@ -678,16 +694,20 @@ def estimate_local_error(m):
         freq_grid = _LOCAL_GRID_UNIFORM_2 if fr >= 2.0 else _LOCAL_GRID_UNIFORM_1
     else:  # 'construct'
         freq_grid = _LOCAL_GRID_CONSTRUCT
-    # 8. quadrature error: local Richardson estimate on the final grid
+    # 8. Quadrature error: local Richardson estimate on the final grid.
+    # 8. 求积误差：在最终网格上用 Richardson 方法局部估算。
     quadrature = max(float(getattr(m, "quadrature_error_local", 0.0)), 0.0)
-    # 9. tail approximation error: calibrated anchor scaled by z_tail
+    # 9. Tail approximation error: calibrated anchor scaled by z_tail.
+    # 9. 尾部近似误差：按 z_tail 缩放历史校准锚点。
     tail = max(_LOCAL_TAIL_FLOOR, _LOCAL_TAIL_ANCHOR * math.exp(-(z_tail - 8.0)))
-    # 10. floating-point/cancellation error (local)
+    # 10. Floating-point/cancellation error (local).
+    # 10. 浮点舍入/相消误差（局部测量）。
     fp_err = float(getattr(m, "floating_point_error", 0.0))
     if fp_err <= 0.0:
         fp_err = eps64 * math.sqrt(max(nf, 1))
     # 11. self-consistency iteration error: converged successive difference
     #     (local; the outer criterion bounds |DN_gw_new - DN_gw_prev|).
+    # 11. 自洽迭代误差：收敛后相邻两次结果的差值；外层容差限制 DN_gw 的更新量。
     dn_delta = float(getattr(m, "dn_converged_delta", 0.0))
     if dn > 0.0 and dn_delta > 0.0:
         self_consistency = max(dn_delta / dn, _LOCAL_SELF_CONS_FLOOR)
@@ -699,6 +719,7 @@ def estimate_local_error(m):
     # measurement* ('calibrated-at-fiducial').  A calibrated term is NOT a
     # universal / per-point error estimate; it is an empirical bound measured
     # at the reference point and scaled by the solve's settings.
+    # 如实区分本次遥测实测项与基准点校准项；校准值按当前设置缩放，但不构成逐点或全参数空间误差保证。
     def _cert(kind, local):
         return "local-measured" if local else "calibrated-at-fiducial"
 
@@ -744,6 +765,7 @@ def estimate_local_error(m):
     calibrated_terms = [k for k, c in cats.items() if c["certification"] == "calibrated-at-fiducial"]
     # Has this solve produced the telemetry needed to certify a per-point
     # budget at all?  Without it the numbers are defaults, not a measurement.
+    # 检查本次求解是否提供了评估预算所需的遥测；缺少时这些数值只是默认值，不是测量结果。
     has_telemetry = hasattr(m, "z_tail_used") and hasattr(m, "handoff_eps") and hasattr(m, "freq_grid_used")
     if not has_telemetry:
         certification_status = "uncertified"
@@ -753,6 +775,7 @@ def estimate_local_error(m):
         # The dominant systematic terms (background_model / sigma_transition)
         # are always fiducial-calibrated, so the budget is point-local only
         # in the random terms (RSS), never fully certified per point.
+        # 主导系统项始终来自基准点校准，因此预算只有随机项按当前点计算，不能视为当前点的完整认证。
         certification_status = "certified-fiducial-calibrated"
     return dict(
         categories=cats,
@@ -765,7 +788,8 @@ def estimate_local_error(m):
         z_tail_used=z_tail,
         phase_max_used=pm,
         freq_grid_used=fg,
-        # Honest certification metadata (see module docstring):
+        # Honest certification metadata (see module docstring).
+        # 以下字段标明误差分项的校准状态和适用范围。
         certification_status=certification_status,
         local_terms=local_terms,
         calibrated_terms=calibrated_terms,
@@ -776,7 +800,7 @@ def estimate_local_error(m):
     )
 
 
-# ================= module-level tables (once) =================
+# ================= module-level tables (once) / 模块级表（仅构建一次） =================
 def _build_fd_table():
     """Fermi-Dirac rho/p table, loaded from a cached copy when available.
 
@@ -857,7 +881,7 @@ def cubic_any(x, breaks, c):
     return ((c[0, lo] * t + c[1, lo]) * t + c[2, lo]) * t + c[3, lo]
 
 
-# ================= gen_expansion in numba =================
+# ================= expansion generation in Numba / Numba 膨胀史生成 =================
 @njit(cache=True)
 def gen_kernel(
     Nv,
@@ -952,6 +976,8 @@ def gen_fast(m, h=0.01, kink_split=False):
     # continuous-sigma reference.  The floor(N_inf/h)*h anchor attenuates the
     # analytic-tail amplitude by exp(N_inf - floor(N_inf/h)*h) ~ 0.996 -> a ~0.4%
     # systematic bias (grid-anchor error, not a numerical-order issue).
+    # 使用连续的当前时刻锚点 N_inf，使 fast 与连续 sigma 参考解对齐。向下取整到网格会把解析尾部振幅
+    # 缩小到约 0.996，造成约 0.4% 的网格锚定系统偏差；这不是数值阶数误差。
     len_inf = math.floor(d["N_inf"] / h) + 1
     Nv = np.arange(0, len_inf) * h
     n_re_abs = d["N_inf"] - d["N_re"]
@@ -1027,6 +1053,8 @@ def _correct_kink_background(m):
     # gen_kernel starts the post-reheating branch at the nearest node.  For a
     # split interval that node is still on the matter-like side, so restore its
     # pre-transition sigma and anchor the pre-transition f_hor at exact N_re.
+    # gen_kernel 从最近网格点开始再加热后分支；若该点仍在物质主导一侧，就恢复转换前的 sigma，
+    # 并用精确的 N_re 锚定转换前的 f_hor。
     m.sigma[index] = 1.0
     H2_re, H2_last = H2_vec(np.array([n_re, m.Nv[-1]]), m, m.cosmo_param["DN_eff"])
     raw_re = -0.5 * n_re + 0.5 * math.log(float(H2_re))
@@ -1037,7 +1065,7 @@ def _correct_kink_background(m):
     return index, fraction
 
 
-# ================= prep in numba (spline + primitive + phi/psi/s2 + j0s/z0s) =================
+# ================= Numba preparation / Numba 预处理（样条、原函数及频率初值） =================
 @njit(cache=True)
 def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus):
     nv = len(Nv)
@@ -1192,7 +1220,7 @@ def prep_fast(m, Nv, freqs, h, variable_grid=False):
     return Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus
 
 
-# ================= stepping / assembly / kernel (from proto11) =================
+# ================= stepping, assembly and kernel / 步进、组装与计算核 =================
 @njit(cache=True)
 def scaled_step(xh, yh, z_mid, h):
     w = math.exp(z_mid)
@@ -1344,6 +1372,7 @@ def solve_kernel(
                     # Split the unique interval containing N_re.  Phi_re is
                     # computed from the two background regimes, so neither
                     # transfer sub-step samples across the sigma kink.
+                    # 将包含 N_re 的区间在 kink 处分开；Phi_re 由两侧背景计算，两个子步都不会跨过 sigma 不连续点。
                     z_break = z0 + phi_re - Phi0
                     z_end = z0 + Phi_grid[k + 1] - Phi0
                     h_left = h_step * kink_fraction
@@ -1410,7 +1439,7 @@ def solve_kernel(
                 assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus)
 
 
-# ================= simpson weights (precomputed matrix) =================
+# ================= Simpson weights / Simpson 预计算权重 =================
 @njit(cache=True)
 def simpson_row(Xf, h, a, b, W):
     m = b - a + 1
@@ -1796,7 +1825,7 @@ def int_SGWB_W(Nf, n_coarse, j_hi, Wmat, Ogw, Oj, Opgw, g2c, w2c, ln10v):
         w2c[c] = acc_w * ln10v
 
 
-# ================= PCHIP in numba =================
+# ================= PCHIP in Numba / Numba 中的 PCHIP =================
 @njit(cache=True)
 def _edge_case(h0, h1, m0, m1):
     d = ((2.0 * h0 + h1) * m0 - h0 * m1) / (h0 + h1)
@@ -1918,6 +1947,7 @@ def _SGWB_iter_fast_impl(
     """
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.
+    # 供外层读取的失败原因，用于区分确定性物理拒绝和可恢复的数值失败。
     m.fast_failure_reason = None
     if m.cosmo_param["r"] <= 0:
         m.fast_failure_reason = "invalid_r"
@@ -1934,6 +1964,7 @@ def _SGWB_iter_fast_impl(
     # The fast path does not produce the per-channel full-evolution outputs of
     # the original run_SGWB(); drop any leftovers from an earlier LSODA run so
     # stale data cannot be mixed with a fast-path result.
+    # fast 路径不生成 run_SGWB() 的逐频率完整演化数组；清除旧 LSODA 结果，避免与本次输出混用。
     for stale in ("N_hc", "Th", "Oj", "Ogw", "Opgw"):
         if hasattr(m, stale):
             try:
@@ -1951,6 +1982,7 @@ def _SGWB_iter_fast_impl(
     Omega_nu = gp.Omega_nh2 / m.derived_param["h"] ** 2  # change array layouts
     # Resolve the frequency-grid builder: per-call argument wins, otherwise the
     # module default set by apply_accuracy_mode()/set_freq_grid().
+    # 逐次传入的网格构造方式优先；未指定时使用模块级设置。
     if freq_grid is None:
         freq_grid = config.freq_grid
     if freq_grid not in ("construct", "grid_independent", "adaptive", "goal"):
@@ -2002,6 +2034,7 @@ def _SGWB_iter_fast_impl(
     # keyed by the current DN_eff.  The cache is opt-in and is disabled
     # again in the existing solver finally block, preserving the public
     # property semantics outside this path.
+    # 单次 fast 求解内的派生参数缓存以当前 DN_eff 为键，并在 finally 中关闭；其它调用仍走原属性逻辑。
     derived_cache_was_enabled = getattr(m, "_fast_derived_cache_enabled", False)
     m._fast_derived_cache_enabled = True
     m._fast_derived_cache_key = None
@@ -2063,8 +2096,9 @@ def _SGWB_iter_fast_impl(
             freqs_new = m.f.astype(np.float64)
             nv_new = len(m.Nv)
             # Reuse grid-dependent quantities across bisection iterations when
-            # the frequency/e-fold grids are unchanged (they drift only at the
-            # 1e-13 level); this is bit-safe at the 1e-9 tolerance and saves ~10%.
+            # the frequency/e-fold grids remain within the 1e-9 elementwise
+            # threshold; this avoids rebuilding integration indices.
+            # 两个网格的最大逐元素差小于 1e-9 时复用网格相关数据，避免重建积分索引。
             grid_same = (
                 not first
                 and nv_new == nv
@@ -2365,6 +2399,7 @@ def _SGWB_iter_fast_impl(
     # Local a-posteriori quadrature error: Richardson estimate from the
     # Simpson-vs-trapezoid difference on the final frequency grid,
     # |I_simp - I_trap|/15 (standard result for a smooth integrand).
+    # 在最终频率网格上比较 Simpson 与梯形积分，并以差值除以 15 估算局部求积误差。
     _Om = m.Ogw_today - m.Oj_today
     _support_Om = _Om[integration_indices]
     _support_rev = _support_Om[::-1]
