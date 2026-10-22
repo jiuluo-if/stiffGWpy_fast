@@ -22,13 +22,19 @@ __all__ = ['adapt_refine_grid', 'adaptive_spectrum_reference',
 
 
 def _local_curvature(x, y):
-    """Second derivative of the PCHIP interpolant on the grid points."""
+    """Second derivative of the PCHIP interpolant on the grid points.
+
+    中文：在当前网格节点上计算 PCHIP 插值函数的二阶导数。
+    """
     spl = PchipInterpolator(x, y)
     return np.asarray(spl(x, 2))
 
 
 def _merge_cached(grid, values, new_grid, new_values):
-    """Merge (grid, values) with (new_grid, new_values), re-sorting."""
+    """Merge (grid, values) with (new_grid, new_values), re-sorting.
+
+    中文：合并已有和新增的频率节点及函数值，并按频率重新排序。
+    """
     g = np.concatenate((grid, new_grid))
     v = np.concatenate((values, new_values))
     order = np.argsort(g)
@@ -44,6 +50,10 @@ def adapt_refine_grid(logf_init, evaluate, target_dex=1e-3, min_dlogf=0.02,
 
     Returns ``(logf, logOmega, n_solves)`` (or a detail dict with
     ``local_error_max`` when ``return_detail`` is set).
+
+    中文：自适应细化 ``log10(f)`` 网格，使 PCHIP 插值误差不超过 ``target_dex``。
+    ``evaluate`` 将频率数组映射为 ``log10(Omega_GW)``；新中点逐步求解，已算节点从缓存读取。
+    默认返回 ``(logf, logOmega, n_solves)``；启用 ``return_detail`` 时还返回 ``local_error_max``。
     """
     logf = np.unique(np.asarray(logf_init, dtype=float))
     vals = None
@@ -80,7 +90,10 @@ def adapt_refine_grid(logf_init, evaluate, target_dex=1e-3, min_dlogf=0.02,
 def adaptive_spectrum_reference(m, dn_eff, fmin, fmax, target_dex=1e-3,
                                 z_tail=5.0, rtol=1e-11, workers=1,
                                 init_n=48, **kw):
-    """Curvature-adaptive Omega_GW spectrum using the high-accuracy reference."""
+    """Curvature-adaptive Omega_GW spectrum using the high-accuracy reference.
+
+    中文：调用高精度参考引擎，按频谱曲率自适应加密频率网格并计算 ``Omega_GW``。
+    """
     from . import reference as REF
 
     logf_init = np.linspace(fmin, fmax, init_n)
@@ -170,6 +183,10 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
     reserve around ``m.f_re`` protects the transition knee, and caller-supplied
     likelihood nodes are mandatory native points.  This builder only chooses
     coordinates; it never evaluates or interpolates the spectrum.
+
+    中文：围绕再加热频谱特征构造稀疏频率网格。MCMC 使用的宽范围种子网格保持较小；
+    ``m.f_re`` 附近保留固定局部节点以捕捉转折，调用方提供的似然频率必须作为原生节点保留。
+    本函数只生成频率坐标，不计算或插值频谱。
     """
     seed_n = max(2, int(seed_n))
     max_points = max(seed_n, int(max_points))

@@ -150,6 +150,11 @@ class LCDM_SN:
         N_re = ln (T_re/T_CMB), N_BBN < N_re < N_inf
 
         Run this function only when self.derived_param['N_inf'] is not None.
+
+        中文：生成含刚性物质和常数 ``Delta_Neff`` 的扩展 Lambda-CDM 膨胀历史；后者可模拟原初 SGWB 的影响。
+        ``N_re`` 和 ``N_inf`` 分别是再加热结束和暴胀结束时的回溯 e-fold 数，且
+        ``N_re = ln(T_re/T_CMB)``、``N_BBN < N_re < N_inf``。仅在
+        ``self.derived_param['N_inf']`` 已有值时调用。
         
         """
 
@@ -226,6 +231,7 @@ def input_nt(params):
     """
     Input the tensor spectral index. 
     Use the inflationary consistency relation or the provided n_t.    
+    中文：读取张量谱指数 ``n_t``；可按暴胀一致性关系从模型参数推导，或使用用户显式提供的值。
     """
     if params['cr'] > 0:
         return -params['r']/8        # consistency relation

@@ -35,7 +35,10 @@ def _fd_from_ref():
 
 
 def sigma_vec(N, m, DN_eff):
-    """Vectorized exact ``sigma`` at an array of absolute ``N`` values."""
+    """Vectorized exact ``sigma`` at an array of absolute ``N`` values.
+
+    中文：对一组绝对 e-fold 坐标 ``N`` 向量化计算连续背景的精确 ``sigma``。
+    """
     N = np.asarray(N, dtype=float)
     d = m.derived_param
     Omh2 = d['Omega_mh2']
@@ -99,7 +102,10 @@ def sigma_vec(N, m, DN_eff):
 
 
 def H2_vec(N, m, DN_eff):
-    """Vectorized exact ``H^2`` at an array of absolute ``N`` (mirrors sigma_vec)."""
+    """Vectorized exact ``H^2`` at an array of absolute ``N`` (mirrors sigma_vec).
+
+    中文：对一组绝对坐标 ``N`` 向量化计算精确 ``H^2``，输入与 ``sigma_vec`` 相同。
+    """
     N = np.asarray(N, dtype=float)
     d = m.derived_param
     Omh2 = d['Omega_mh2']
@@ -145,6 +151,9 @@ def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
     branch.  Simpson panels ending at that point must instead use the
     pre-transition limit, while panels starting there must use the post-
     transition limit.  Keeping both arrays makes the convention explicit.
+
+    中文：节点值按转变后的分支计算；若 Simpson 面板终止于再加热点，该面板需用转变前极限，
+    从该点开始的面板则用转变后极限。分别返回两组单侧极限，明确积分约定。
     """
     Nv = np.asarray(Nv, dtype=float)
     if sigma_nodes is None:
@@ -170,6 +179,10 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     ``F = integral sigma dN`` is evaluated on a fine sub-grid with the reheating
     boundary as an exact breakpoint, so the kink is not smoothed.  Returns the
     arrays expected by ``fast_sgwb.solve_kernel`` (which uses ``N0=0``).
+
+    中文：根据连续 ``sigma`` 计算 ``Phi``、中点 ``Phi``、``S2`` 和 ``S2inv``。在细网格上积分
+    ``F = ∫ sigma dN``，并将再加热边界作为精确分段点，避免平滑掉转折；返回值可直接传给
+    ``fast_sgwb.solve_kernel``（其坐标起点为 ``N0=0``）。
     """
     Nv = np.asarray(Nv, dtype=float)
     # Fine sub-grid (a few points per base step) plus its midpoints for Phi_mid.
@@ -211,6 +224,9 @@ def build_transition_grid(m, h):
     The kink becomes a grid node so that no Magnus step straddles the
     ``sigma`` jump (removing the O(h) frozen-midpoint phase error).  Returns
     ``(Nv, sigma, f_hor, index_re)`` and sets the model grid attributes.
+
+    中文：构造可变步长 ``N`` 网格，并确保再加热转折 ``N_re`` 精确落在网格节点上，避免 Magnus 步跨过
+    ``sigma`` 跳变及其 ``O(h)`` 冻结中点相位误差。返回 ``(Nv, sigma, f_hor, index_re)``，并写入模型网格属性。
     """
     d = m.derived_param
     N_inf = d['N_inf']
@@ -253,6 +269,9 @@ def build_kink_refined_grid(m, h, refine_radius=2.0, refine_factor=8):
     ``+/- refine_radius`` e-folds), with the kink as an exact node.
 
     Returns ``(Nv, sigma, f_hor, index_re)`` and sets the model grid attributes.
+
+    中文：在均匀步长 ``h`` 网格附近，对 ``N_re_abs`` 左右 ``refine_radius`` 范围用
+    ``h/refine_factor`` 加密，并将转折点设为精确节点。返回网格、背景量和转折索引，同时写入模型属性。
     """
     d = m.derived_param
     N_inf = d['N_inf']
@@ -290,7 +309,10 @@ def build_kink_refined_grid(m, h, refine_radius=2.0, refine_factor=8):
 
 
 def exact_phi_s2_grid(m, Nv, DN_eff):
-    """Exact ``Phi``/``midpoint-Phi``/``S2``/``S2inv``/``h_arr`` on a variable grid."""
+    """Exact ``Phi``/``midpoint-Phi``/``S2``/``S2inv``/``h_arr`` on a variable grid.
+
+    中文：在可变步长网格上精确计算节点和区间中点处的 ``Phi``，以及 ``S2``、``S2inv`` 和步长数组。
+    """
     Nv = np.asarray(Nv, dtype=float)
     d = m.derived_param
     N_re_abs = d['N_inf'] - d['N_re']
@@ -330,6 +352,9 @@ def exact_phi_s2_breakpoint(m, Nv, DN_eff):
     one side of the reheating kink.  The midpoint primitive uses half of the
     symmetric full-interval Simpson integral and avoids changing the transfer
     kernel's stepping logic.
+
+    中文：在已含精确 ``N_re`` 节点的分段网格上使用复合 Simpson 积分。除已有节点值外只计算区间中点；
+    每个 Simpson 区间都位于转折点同一侧。中点原函数取对称全区间 Simpson 积分的一半，无需改动传递核的步进逻辑。
     """
     Nv = np.asarray(Nv, dtype=float)
     h_arr = np.diff(Nv).astype(np.float64)
@@ -359,6 +384,9 @@ def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     both sides when the reheating boundary lies inside an interval; the
     resulting ``kink_index``, ``kink_fraction`` and ``Phi_re`` tell the ODE
     kernel to perform two transfer steps for that interval.
+
+    中文：保持原均匀网格布局，只将包含 ``N_re`` 的区间拆成左右两段分别积分。返回 ``kink_index``、
+    ``kink_fraction`` 和 ``Phi_re``，供 ODE 核在该网格区间内执行两次传递步。
     """
     Nv = np.asarray(Nv, dtype=float)
     h_arr = np.diff(Nv).astype(np.float64)
@@ -481,6 +509,10 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     Returned arrays are model-local work buffers and are overwritten by the
     next call for the same model.  The fast outer iteration consumes each
     primitive before requesting the next one, so this lifetime is intentional.
+
+    中文：构造精确跨越再加热转折的原函数。转折以外的中点和四分点通过相邻连续背景节点线性插值得到，
+    避免重复查询完整 ``sigma`` 样条；跨转折区间仍用单侧精确采样分段积分。返回数组是模型局部工作缓冲区，
+    同一模型下次调用会覆盖；fast 外层迭代在下一次申请前已消费当前结果。
     """
     Nv = np.asarray(Nv, dtype=np.float64)
     if Nv.size < 2:

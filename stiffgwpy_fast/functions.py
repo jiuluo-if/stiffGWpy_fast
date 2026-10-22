@@ -18,6 +18,8 @@ def int_FD(y):
     """
     Evaluate energy density and pressure for a massive neutrino in Fermi-Dirac dist. 
     x = pc/(kB*T), y = mc^2/(kB*T) = mc^2/(kB*T0)*a
+    中文：计算有质量中微子的费米-狄拉克能量密度和压强积分，并按无质量费米子的能量密度归一化。
+    其中 ``x = pc/(kB*T)``，``y = mc^2/(kB*T) = mc^2/(kB*T0)*a``。
     
     """
 
@@ -41,7 +43,10 @@ def integrand_p(x,y):
 
 
 def _make_subhorizon_event(z_tail):
-    """Factory for the deep-subhorizon terminal event (default z_tail = 5)."""
+    """Factory for the deep-subhorizon terminal event (default z_tail = 5).
+
+    中文：创建深次视界终止事件；当 ``z`` 向上穿过 ``z_tail`` 时停止积分，默认阈值为 5。
+    """
     def subhorizon(N, state, spline):
         return state[0] - z_tail
     subhorizon.terminal = True
@@ -73,6 +78,8 @@ def solve_SGWB(Nv, Sv, j0, z0, z_tail=5.0, rtol=1e-6, atol=None):
 def tensor(N, state, spline):
     r"""
     Dynamical system for tensor modes:
+
+    中文：以 ``N`` 为自变量，将张量模态方程写成 ``(z, x, y)`` 的一阶系统；``sigma`` 由背景样条提供。
     
     z = ln(2*pi*f/aH)
     x = \dot T_h / H

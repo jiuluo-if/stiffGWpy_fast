@@ -25,7 +25,10 @@ _DEFAULT_ACCURACY_MODE = object()
 
 
 def _mpi_world_size():
-    """MPI world size, or 1 when mpi4py is unavailable / not initialized."""
+    """MPI world size, or 1 when mpi4py is unavailable / not initialized.
+
+    中文：返回 MPI 通信域进程数；未安装或尚未初始化 mpi4py 时返回 1。
+    """
     try:
         from mpi4py import MPI
         return int(MPI.COMM_WORLD.Get_size())
@@ -55,7 +58,10 @@ def _sgwb_pool_size():
 
 
 def _mark_eval_status(m, label):
-    """Record the engine status of one evaluation for telemetry."""
+    """Record the engine status of one evaluation for telemetry.
+
+    中文：记录本次求解的引擎状态，并更新该状态的累计计数。
+    """
     counts = getattr(m, 'eval_status_counts', None)
     if counts is None:
         counts = {'FAST': 0, 'FAST_ESCALATED': 0, 'REFERENCE': 0,
@@ -133,6 +139,8 @@ class LCDM_SG(LCDM_SN):
         """
         Integrate the equation of motion of primordial tensor fluctuations 
         for a single frequency and given expansion history
+
+        中文：在给定膨胀历史下，对单个频率的原初张量扰动方程进行积分。
         """
 
         P_t = self.Tensor_power(freq)            # Primordial tensor power spectrum
@@ -179,6 +187,8 @@ class LCDM_SG(LCDM_SN):
         """
         Solve for selected frequencies and given expansion history
         using multiprocessing parallelism
+
+        中文：在给定膨胀历史下求解选定频率；可通过多进程并行处理不同频率。
         """
 
         with mp.Pool(processes=_sgwb_pool_size()) as pool:
@@ -531,6 +541,8 @@ class LCDM_SG(LCDM_SN):
         """
         Find the index in the number of e-folds array at which 
         the horizon size is closest to freq, i.e., freq ~ aH/2pi
+
+        中文：在 e-fold 数组中查找视界频率最接近 ``freq``（即 ``freq ≈ aH/(2π)``）的节点索引。
         """
         j = 0
         while freq <= self.f_hor[j] and j<len(self.N)-1:
@@ -549,6 +561,10 @@ class LCDM_SG(LCDM_SN):
         (0.25 .. 8.0; 1.0 reproduces the original grid).  It is an
         audit-only knob used to measure the frequency-grid error of the
         Delta N_eff integral; both the LSODA and the fast path consume it.
+
+        中文：构造张量传递函数所用的采样频率，并在转变附近加密。``freq_res`` 将网格密度缩放到
+        0.25–8.0 倍（1.0 对应原始网格）；它是审计参数，用于测量 ``Delta N_eff`` 的频率网格误差，
+        LSODA 与 fast 路径都会使用。
         """
         r = float(freq_res)
         if not 0.25 <= r <= 8.0:
@@ -589,6 +605,9 @@ class LCDM_SG(LCDM_SN):
         """
         Integrate the SGWB spectrum to obtain the bolometric energy fractions at each moment.
         This step is important since it calculates the Delta N_eff due to the primordial SGWB.
+
+        中文：沿频率积分 SGWB 谱，计算每个膨胀时刻的玻尔能量分数，并据此得到原初 SGWB 对
+        ``Delta N_eff`` 的贡献。
         """
         self.g2 = np.zeros_like(self.Nv)      # total Omega_gw
         self.w2 = np.zeros_like(self.Nv)      # total Omega_pgw
@@ -628,6 +647,9 @@ def add_boundary_knots(spline):
     Additional intervals are added to have zero 2nd and 3rd derivatives,
     and to maintain the first derivative from whatever boundary condition
     was selected. The spline is modified in place.
+
+    中文：在边界两侧加入极近的节点，并补充区间，使边界处二、三阶导数为零，同时保持所选边界条件
+    给出的一阶导数。该函数会原地修改样条对象。
     """
     # Determine the left-edge slope used for the extrapolation interval.
     # 求出左端斜率，供外推区间使用。
