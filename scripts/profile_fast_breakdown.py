@@ -212,6 +212,17 @@ def main():
         vals = [r[name] for r in records]
         summary['median_s'][name] = statistics.median(vals)
         summary['p95_s'][name] = p95(vals)
+    warm_records = records[1:]
+    summary['first_call_s'] = records[0]['total_s']
+    summary['warm_samples'] = len(warm_records)
+    summary['warm_median_s'] = {
+        name: statistics.median(r[name] for r in warm_records)
+        for name in names
+    }
+    summary['warm_p95_s'] = {
+        name: p95([r[name] for r in warm_records])
+        for name in names
+    }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     if args.json:
         with open(args.json, 'w', encoding='utf-8') as handle:
