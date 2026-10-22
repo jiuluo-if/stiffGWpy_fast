@@ -42,6 +42,14 @@ def _load_json(path):
         return json.load(fh)
 
 
+def _load_optional_json(path):
+    """Load an optional JSON artifact; propagate malformed or unreadable input."""
+    try:
+        return _load_json(path)
+    except FileNotFoundError:
+        return None
+
+
 def _read_jsonl(path):
     rows = []
     with open(path, 'r', encoding='utf-8') as fh:
@@ -276,15 +284,14 @@ def build():
     pg_cfg = dict(h=0.02, col_step=8, z_tail=5.0, freq_res=1.0,
                   transition_refine=False, phase_max=0.0, freq_grid='construct',
                   outer_tol=1e-6)
-    # my LHS screen
-    try:
-        lhs = _load_json(D('validation', 'param_sweep_plain.json'))
+    lhs = _load_optional_json(D('validation', 'param_sweep_plain.json'))
+    if lhs is None:
+        lhs_counts, lhs_rt = {}, {}
+    else:
         lhs_counts = lhs['status']
         lhs_rows = lhs['rows']
         lhs_ok = [r for r in lhs_rows if r['status'] == 'success']
         lhs_rt = _agg([r['runtime_s'] for r in lhs_ok])
-    except Exception:
-        lhs_counts, lhs_rt = {}, {}
     pg = {
         'profile': 'plain-grid',
         'config': pg_cfg,
@@ -317,22 +324,18 @@ def build():
                    ['signal_rel_lt_1e-3'] else 'VERIFIED'),
     }
     # oracle independence + regime + convergence (read from replayable artifacts)
-    try:
-        oi = _load_json(D('validation', 'oracle_independence.json'))
+    oi = _load_optional_json(D('validation', 'oracle_independence.json'))
+    if oi is not None:
         pg['oracle_independence'] = oi.get('oracle_tail_sensitivity', {})
         pr_tail = oi.get('conclusion')
-    except Exception:
+    else:
         pr_tail = None
-    try:
-        conv = _load_json(D('validation', 'convergence_two_modes.json'))
+    conv = _load_optional_json(D('validation', 'convergence_two_modes.json'))
+    if conv is not None:
         pg['convergence'] = conv
-    except Exception:
-        pass
-    try:
-        pg['regime_plain_vs_prod'] = _load_json(
-            D('validation', 'regime_plain_vs_prod.json'))
-    except Exception:
-        pass
+    regime = _load_optional_json(D('validation', 'regime_plain_vs_prod.json'))
+    if regime is not None:
+        pg['regime_plain_vs_prod'] = regime
 
     # ---- fast transition-refine (production profile) ----
     z8 = _load_json(D('paramsweep_z8', 'validation_summary.json'))
@@ -344,7 +347,7 @@ def build():
         ref_ok = [r for r in ref_sweep if r.get('status') == 'ok']
         ref_counts = {'total': len(ref_sweep), 'ok': len(ref_ok),
                       'guard': len(ref_sweep) - len(ref_ok)}
-    except Exception:
+    except FileNotFoundError:
         ref_counts = {}
     pr = {
         'profile': 'transition-refine',
@@ -375,10 +378,8 @@ def build():
     }
     if pr_tail:
         pr['oracle_tail_caveat'] = pr_tail
-    try:
+    if conv is not None:
         pr['convergence'] = conv
-    except Exception:
-        pass
     # Honest acceptance from the matched oracle artifacts.
     pg_ok = (plain_summary['acceptance']['signal_rel_lt_1e-3']
              and plain_summary['acceptance']['DN_gw_rel_lt_1e-4'])
@@ -411,11 +412,9 @@ def build():
     manifest['fast_transition_refine'] = pr
     manifest['fast_current_audit'] = _current_fast_audit()
     # posterior validation (Layer C) summary
-    try:
-        irep = _load_json(D('mcmc_posterior', 'is_report.json'))
+    irep = _load_optional_json(D('mcmc_posterior', 'is_report.json'))
+    if irep is not None:
         manifest['posterior'] = irep
-    except Exception:
-        pass
     return manifest
 
 
