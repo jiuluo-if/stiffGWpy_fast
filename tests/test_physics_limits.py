@@ -66,6 +66,16 @@ def test_deep_subhorizon_wkb_frequency():
     assert np.all(np.isfinite(z)) and z.max() > 3.9
 
 
+def test_negative_inflation_reheating_efolds_report_actual_condition(capsys):
+    """A negative inferred inflation interval should not claim a false energy comparison."""
+    model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e40)
+
+    assert model.derived_param['N_inf'] is None
+    output = capsys.readouterr().out
+    assert 'negative (Delta_N < 0)' in output
+    assert 'V_inf smaller than rho' not in output
+
+
 @pytest.mark.slow
 def test_superhorizon_mode_frozen_until_today():
     """A very-low-frequency mode should stay super-horizon to today (no tail)."""
