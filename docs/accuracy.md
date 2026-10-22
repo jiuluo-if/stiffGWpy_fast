@@ -89,10 +89,10 @@ smaller radius. Matched Oracle data are linked from the assessment report.
 ## Current full-path solver profile is separate
 
 The corrected 2026-10-22 formal `fast` profile used solver source at commit
-`ca8da38cfaa9f98b32a9b146cc6e96ea900c55b6`, with the preset's `tol=1e-6`,
+`6707572e73d576a0ccf294172579cedc26e5e394`, with the preset's `tol=1e-6`,
 PCHIP, goal grid, and exact kink split. It covers default, high-T, stiff, and
 high-kappa with 25 warm repeats per case; the first process call is reported
-separately. Warm medians are `6.002`, `9.069`, `9.263`, and `9.130 ms`. It is a
+separately. Warm medians are `5.987`, `10.049`, `9.179`, and `9.458 ms`. It is a
 runtime profile with repeatability digests, not a matched Oracle accuracy
 sweep or LSODA comparison, so it adds no precision coverage and establishes no
 LSODA speed ratio. Full per-case values and resource provenance are in

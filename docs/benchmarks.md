@@ -5,7 +5,7 @@ Status: current summary of the audited scope; results remain commit- and protoco
 Date: 2026-10-22
 
 Code version: the corrected formal fast profile below used
-`ca8da38cfaa9f98b32a9b146cc6e96ea900c55b6`; the earlier stage profile used
+`6707572e73d576a0ccf294172579cedc26e5e394`; the earlier stage profile used
 `cdbdb387479e11cd87a38d76a0e58348ca13e70f`. The historical Round 68 run used
 `c7d4766f15c1cda4693d306597723de50abd4554`. The PTA cache comparison used
 source commit `c185df58938a05c208410a5cd47faafbc5d7fa2c`. Each run artifact
@@ -25,29 +25,31 @@ exact kink split, `h=0.005`, `col_step=8`, `z_tail=5`, and `phase_max=0.25`.
 Outer full-solve reuse is enabled and the parallel chunksize is `0` (static
 scheduling). Each case ran in a fresh process for 26 calls, with the first
 process/JIT call reported separately and the remaining 25 used for warm
-statistics. Resources were fixed to 2 Numba `workqueue` threads, CPU affinity
-`[0, 1]`, one BLAS/OMP/NumExpr thread, and one process. The JSON records the
-complete solver configuration and these environment values.
+statistics. The raw JSON stores explicit warm-only median and p95 fields as
+well as the cold first-call duration. Resources were fixed to 2 Numba
+`workqueue` threads, CPU affinity `[0, 1]`, one BLAS/OMP/NumExpr thread, and
+one process. The JSON records the complete solver configuration and these
+environment values.
 
 | Case | First process call | Warm median | Warm p95 | Tensor median | Frequencies | Propagation calls |
 |---|---:|---:|---:|---:|---:|---:|
-| default | 296.5 ms | 6.002 ms | 6.927 ms | 2.938 ms | 76 | 1 |
-| high-T | 291.4 ms | 9.069 ms | 9.718 ms | 5.144 ms | 76 | 2 |
-| stiff | 294.5 ms | 9.263 ms | 10.184 ms | 5.674 ms | 76 | 2 |
-| high-kappa | 299.5 ms | 9.130 ms | 10.054 ms | 5.162 ms | 77 | 2 |
+| default | 292.5 ms | 5.987 ms | 6.882 ms | 2.905 ms | 76 | 1 |
+| high-T | 301.2 ms | 10.049 ms | 10.848 ms | 5.397 ms | 76 | 2 |
+| stiff | 306.2 ms | 9.179 ms | 9.819 ms | 5.653 ms | 76 | 2 |
+| high-kappa | 295.8 ms | 9.458 ms | 10.112 ms | 5.172 ms | 77 | 2 |
 
 All 26 records per case have identical hashes for frequencies, spectrum,
 `DN_gw`, `g2`, and `w2`. This checks repeatability for each measured case; it
 does not add Oracle accuracy coverage or establish a cross-machine speed ratio.
-Raw records: [`default`](profile_fast_breakdown_ca8da38_20261022_default.json),
-[`high-T`](profile_fast_breakdown_ca8da38_20261022_highT.json),
-[`stiff`](profile_fast_breakdown_ca8da38_20261022_stiff.json), and
-[`high-kappa`](profile_fast_breakdown_ca8da38_20261022_high_kappa.json).
+Raw records: [`default`](profile_fast_breakdown_6707572_20261022_default.json),
+[`high-T`](profile_fast_breakdown_6707572_20261022_highT.json),
+[`stiff`](profile_fast_breakdown_6707572_20261022_stiff.json), and
+[`high-kappa`](profile_fast_breakdown_6707572_20261022_high_kappa.json).
 
 Reproduce a case with the fixed-resource wrapper; repeat for each case name:
 
 ```powershell
-python scripts/run_fixed_profile.py --threads 2 --affinity-count 2 --reps 26 --case default --kink-split --json docs/profile_fast_breakdown_ca8da38_20261022_default.json
+python scripts/run_fixed_profile.py --threads 2 --affinity-count 2 --reps 26 --case default --kink-split --json docs/profile_fast_breakdown_6707572_20261022_default.json
 ```
 
 ## Earlier 2026-10-21 stage profile (historical low-level tolerance)
