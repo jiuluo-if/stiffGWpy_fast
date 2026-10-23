@@ -1,7 +1,7 @@
 # Cobaya adapter
 
 Status: current adapter contract; validation results remain artifact-bound
-Date: 2026-10-22
+Date: 2026-10-23
 Code version: see the run commit in each validation artifact
 
 `stiffgwpy_fast.cobaya.stiffGW.stiffGW` is a Cobaya `Theory`. It exposes the
@@ -89,6 +89,20 @@ reported as `FAST_ESCALATION_FAILED`; stale fast error-budget fields are cleared
 启用 `auto_escalate` 时，除似然误差超限外，若当前快速路径没有对应的误差校准，也会升级求解。
 升级前会将模型恢复到原始 `DN_eff`，再运行验证档或独立参考引擎。
 重算失败时状态为 `FAST_ESCALATION_FAILED`，旧快速求解的误差字段会清除。
+
+## LVK cross-correlation likelihood
+
+The LVK likelihood loads the selected cross-correlation table once and caches
+its fixed log-frequency and data columns in `initialize()`. During evaluation,
+it applies cubic interpolation only to bins inside the theory frequency
+support; bins outside remain zero model values. The chi-square reduction uses
+NumPy's float64 pairwise sum. The focused benchmark in
+[`benchmarks.md`](benchmarks.md) records this single-call comparison and its
+numerical difference; it is not a full MCMC timing result.
+
+LVK 交叉相关似然在 `initialize()` 中只读取一次数据表，并缓存固定的对数频率和数据列。每次计算只对
+理论频率范围内的 bin 做三次插值，范围外保留零模型值；卡方归约使用 NumPy float64 成对求和。
+[`benchmarks.md`](benchmarks.md) 记录了单次似然对比及数值差值，这不等于完整 MCMC 的耗时对比。
 
 The serial adapter only requires the `cobaya` extra. Install the separate
 `mpi` extra when the execution environment actually needs `mpi4py`.

@@ -2,6 +2,10 @@
 
 ## Unreleased — 2026-10-23
 
+- Cache fixed LVK frequency/data columns during likelihood initialization, use
+  NumPy's float64 pairwise chi-square reduction, and leave unsupported bins at
+  zero without querying the cubic interpolator out of range.
+
 - Reject non-boolean `kink_split` values so strings such as `"false"` cannot
   silently activate the exact-grid path.
 
