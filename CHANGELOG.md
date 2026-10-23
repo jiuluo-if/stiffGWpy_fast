@@ -2,6 +2,12 @@
 
 ## Unreleased — 2026-10-23
 
+- Corrected `bench_fast.py` to forward the selected fast preset's convergence
+  tolerance and frequency resolution, record its solver configuration, and
+  compute P95 with NumPy's linear percentile method. The script now describes
+  LSODA as a runtime baseline and distinguishes the unsplit grid from the
+  exact-kink path; older reports remain tied to their recorded settings.
+
 - Added a reproducible paired benchmark for the best passing sampled
   transition-refinement point. Matched Oracle C anchors show errors below
   `1e-4` on both tested `DN_re` edges; a fixed-affinity 30-pair A/B shows a

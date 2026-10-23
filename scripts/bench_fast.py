@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
-"""
-bench_fast.py -- reproducible performance comparison for stiffgwpy_fast.
+"""Compare one LSODA run with fast-solver timings on selected cases.
 
-Runs the original LSODA-based ``SGWB_iter()`` and the accelerated
-``fast_sgwb.SGWB_iter_fast()`` on the same parameter grid.  Per case it
-reports the cold (JIT/import) fast time, the warm distribution (min / median /
-p95 over ``--reps`` repeats) and the resulting speedups, plus environment and
-git-commit metadata.  ``--json`` emits a machine-readable record.
+The benchmark records one LSODA runtime, the first fast call (including JIT
+compilation when needed), warm fast-call samples, and LSODA-to-fast runtime
+ratios. Timed fast calls use the fast preset's grid and quadrature, with its
+tolerance and frequency resolution unless overridden by CLI options. By
+default they measure the unsplit grid; ``--kink-split`` adds the exact
+reheating breakpoint used by the formal fast preset. Safety-wrapper diagnostics
+use the formal fast preset's kink split and record that configuration
+separately. LSODA is a runtime/regression baseline here, not an accuracy
+reference. The reported 95th percentile uses NumPy's linear interpolation;
+increase ``--reps`` beyond its default of 3 for a more informative tail sample.
+
+中文说明：脚本在选定参数点上测量一次 LSODA 调用、fast 首次调用（包括可能发生的 JIT 编译）和多次预热
+fast 调用，并报告两者的运行时间比。计时调用使用 fast 档位的网格与求积方法，容差和频率分辨率可由命令行覆盖。
+默认测量不含转折点切分的网格；``--kink-split`` 会加入精确再加热转折点。安全包装器诊断使用正式 fast 档位的
+转折点切分，并在结果中单独记录该配置。LSODA 在此只作运行时间/回归基线，不作为精度参照。95 分位数按 NumPy
+默认线性插值计算；默认仅重复 3 次，增加 ``--reps`` 才能更可靠地观察尾部耗时。
 
 Usage:
     python scripts/bench_fast.py [--reps 5] [--cases 0 3] [--json out.jsonl]
@@ -52,6 +62,7 @@ def env_meta():
     meta = {
         'python': sys.version.split()[0],
         'platform': sys.platform,
+        'p95_method': 'numpy.percentile default linear',
         'resources': telemetry(
             threads=int(os.environ.get('FAST_THREADS', '2'))),
         'threads': fast_sgwb._THREADS,
@@ -74,19 +85,33 @@ def env_meta():
 
 
 def p95(values):
-    return sorted(values)[int(0.95 * (len(values) - 1))]
+    """Return the linearly interpolated 95th percentile.
+
+    中文：按 NumPy 默认线性插值方法计算 95 分位数。
+    """
+    return float(np.percentile(values, 95))
 
 
-def run_case(name, kw, reps, kink_split=False):
+def run_case(name, kw, reps, kink_split=False, tol=None, freq_res=None):
     # Benchmark the documented fast/plain-grid preset explicitly.  The module
     # settings are process-global, so reset them before every case and honor
     # FAST_THREADS after applying the preset's own default thread value.
     # 显式基准测试文档中的 fast/plain-grid 档位。模块设置是进程全局状态，
     # 因此每个案例开始时都要重置，并在应用预设默认线程数后读取 FAST_THREADS。
-    fast_sgwb.apply_accuracy_mode('fast')
+    preset = fast_sgwb.apply_accuracy_mode('fast')
+    tol = preset['tol'] if tol is None else tol
+    freq_res = preset['freq_res'] if freq_res is None else freq_res
     if os.environ.get('FAST_THREADS'):
         fast_sgwb.set_threads(int(os.environ['FAST_THREADS']))
-    rec = {'case': name, 'kw': {k: repr(v) for k, v in kw.items()}}
+    rec = {
+        'case': name,
+        'kw': {k: repr(v) for k, v in kw.items()},
+        'tol': tol,
+        'freq_res': freq_res,
+        'freq_grid': preset['freq_grid'],
+        'frequency_quadrature': 'pchip',
+        'kink_split': bool(kink_split),
+    }
     m = LCDM_SG(**kw)
     if m.derived_param['N_inf'] is None:
         rec['skip'] = 'N_inf None (invalid combo)'
@@ -97,7 +122,9 @@ def run_case(name, kw, reps, kink_split=False):
 
     mf = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    fast_sgwb.SGWB_iter_fast(mf, kink_split=kink_split)
+    fast_sgwb.SGWB_iter_fast(
+        mf, tol=tol, freq_res=freq_res, kink_split=kink_split,
+        freq_grid=preset['freq_grid'], frequency_quadrature='pchip')
     rec['t_fast_cold_s'] = time.perf_counter() - t0
 
     warm = []
@@ -105,7 +132,9 @@ def run_case(name, kw, reps, kink_split=False):
     for _ in range(reps):
         mf = LCDM_SG(**kw)
         t0 = time.perf_counter()
-        fast_sgwb.SGWB_iter_fast(mf, kink_split=kink_split)
+        fast_sgwb.SGWB_iter_fast(
+            mf, tol=tol, freq_res=freq_res, kink_split=kink_split,
+            freq_grid=preset['freq_grid'], frequency_quadrature='pchip')
         warm.append(time.perf_counter() - t0)
         last = mf
     rec['t_fast_warm_ms'] = [t * 1e3 for t in warm]
@@ -117,11 +146,21 @@ def run_case(name, kw, reps, kink_split=False):
     rec['speedup_p95'] = rec['t_orig'] / p95(warm)
     # Exercise the public safety wrapper once so benchmark records include
     # numerical-failure observability (direct ``SGWB_iter_fast`` calls above
-    # intentionally measure the fast kernel without fallback overhead).
+    # intentionally measure the fast kernel without fallback overhead). This
+    # diagnostic always uses the formal fast preset's exact kink split.
     # 另调用一次公开安全包装器，记录数值失败和回退情况；上面的直接调用用于测速，
-    # 刻意不计入 fallback 开销。
+    # 刻意不计入 fallback 开销。此诊断始终使用正式 fast 档位的精确转折点切分。
     mf_fb = LCDM_SG(**kw)
-    mf_fb.SGWB_iter(engine='fast', fallback=True)
+    mf_fb.SGWB_iter(engine='fast', fallback=True, tol=tol, freq_res=freq_res)
+    rec['diagnostic_config'] = {
+        'accuracy_mode': 'fast',
+        'tol': tol,
+        'freq_res': freq_res,
+        'freq_grid': preset['freq_grid'],
+        'frequency_quadrature': 'pchip',
+        'kink_split': True,
+        'fallback': True,
+    }
     rec['fast_evals'] = int(getattr(mf_fb, 'fast_evals', 0))
     rec['fast_failures'] = int(getattr(mf_fb, 'fast_failures', 0))
     rec['fast_guard_rejections'] = int(getattr(mf_fb, 'fast_guard_rejections', 0))
@@ -138,14 +177,21 @@ def run_case(name, kw, reps, kink_split=False):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='reproducible stiffgwpy_fast benchmark')
+    ap = argparse.ArgumentParser(
+        description='LSODA versus fast runtime benchmark / LSODA 与 fast 运行时间对比')
     ap.add_argument('--reps', type=int, default=3, help='warm fast repeats per case')
     ap.add_argument('--cases', nargs='+', type=int, default=None,
                     help='case indices (default: all 12)')
     ap.add_argument('--json', default=None, help='JSONL output path (optional)')
     ap.add_argument('--kink-split', action='store_true',
-                    help='Phase-A A/B variant: insert only the exact reheating breakpoint')
+                    help='include the exact reheating breakpoint / 加入精确再加热转折点')
+    ap.add_argument('--tol', type=float, default=None,
+                    help='fast outer convergence tolerance (default: fast preset) / fast 外层收敛容差')
+    ap.add_argument('--freq-res', type=float, default=None,
+                    help='fast frequency resolution (default: fast preset) / fast 频率分辨率')
     args = ap.parse_args(argv)
+    if args.reps < 1:
+        ap.error('--reps must be at least 1')
     names = list(CASES)
     which = args.cases if args.cases is not None else list(range(len(names)))
     rows = []
@@ -154,7 +200,8 @@ def main(argv=None):
            'spd min', 'spd med', 'p95 (ms)', 'fallback'))
     print('-' * 130)
     for i in which:
-        rec = run_case(names[i], CASES[names[i]], args.reps, args.kink_split)
+        rec = run_case(names[i], CASES[names[i]], args.reps, args.kink_split,
+                       args.tol, args.freq_res)
         rows.append(rec)
         if rec.get('skip'):
             print('%-34s %s' % (names[i], 'invalid combo'))
