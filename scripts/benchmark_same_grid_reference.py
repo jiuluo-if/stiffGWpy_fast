@@ -4,6 +4,8 @@
 The reference is evaluated on the exact native fast grid.  This isolates the
 frequency-integration error from the separate question of how the grid itself
 was selected.
+
+中文说明：参照解使用 fast 生成的原生频率节点，目的是分离频率求积误差与网格选取误差。
 """
 
 import argparse
@@ -69,7 +71,10 @@ def _rel(a, b):
 
 
 def _panel_error_distribution(baseline, reference):
-    """Distribute two-interval Simpson errors without cancellation."""
+    """Distribute two-interval Simpson errors without cancellation.
+
+    中文：按 Simpson 区间贡献的绝对值分摊面板误差，避免区间误差相消。
+    """
     baseline = np.asarray(baseline, dtype=float)
     reference = np.asarray(reference, dtype=float)
     actual = np.zeros_like(baseline)
@@ -87,7 +92,10 @@ def _panel_error_distribution(baseline, reference):
 
 
 def ensemble_local_error(error_vectors):
-    """Return the pointwise maximum of compatible local error vectors."""
+    """Return the pointwise maximum of compatible local error vectors.
+
+    中文：逐区间取多个同形状局部误差向量的最大值，形成保守包络。
+    """
     vectors = [np.asarray(vector, dtype=float) for vector in error_vectors]
     if not vectors:
         raise ValueError('at least one local error vector is required')
@@ -181,13 +189,14 @@ def main(argv=None):
     native_x = freqs[order]
     fast_y = fast_integrand[order]
     ref_y = ref_integrand[order]
-    local_errors = [FS.estimate_frequency_quadrature_local(
-        native_x, fast_y, method, allocation='panel_envelope')[0]
-                    for method in quadrature_methods]
-    fast_local_error, fast_local_candidate, fast_local_baseline = (
-        FS.estimate_frequency_quadrature_local(
-            native_x, fast_y, 'pchip', allocation='panel_envelope'))
-    fast_local_error = ensemble_local_error(local_errors)
+    local_estimates = {
+        method: FS.estimate_frequency_quadrature_local(
+            native_x, fast_y, method, allocation='panel_envelope')
+        for method in quadrature_methods
+    }
+    fast_local_error = ensemble_local_error(
+        [local_estimates[method][0] for method in quadrature_methods])
+    _, fast_local_candidate, fast_local_baseline = local_estimates['pchip']
     ref_spline = PchipInterpolator(native_x, ref_y)
     ref_local = np.asarray([
         ref_spline.integrate(left, right)
