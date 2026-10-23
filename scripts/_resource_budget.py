@@ -8,7 +8,10 @@ import sys
 
 
 def nested_thread_budget(workers: int = 1, threads: int = 2) -> int:
-    """Return safe inner threads for a possibly parallel outer sweep."""
+    """Return safe inner threads for a possibly parallel outer sweep.
+
+    中文：外层有多个 worker 时将内层线程数限制为 1，避免嵌套并行；否则保留请求值。
+    """
     workers = int(workers)
     threads = int(threads)
     if workers < 1 or threads < 1:
@@ -17,7 +20,10 @@ def nested_thread_budget(workers: int = 1, threads: int = 2) -> int:
 
 
 def apply_environment(numba_threads: int = 2, fast_threads: int | None = None) -> None:
-    """在导入 Numba 前设置保守线程环境；导入后不再改写进程配置。"""
+    """Set conservative thread defaults before importing Numba; preserve explicit values.
+
+    中文：在导入 Numba 前设置保守线程环境，保留调用方已有值；Numba 导入后不再改写进程配置。
+    """
     if 'numba' in sys.modules:
         return
     fast_value = numba_threads if fast_threads is None else fast_threads
@@ -50,13 +56,15 @@ def _affinity_errors() -> tuple[type[BaseException], ...]:
 def limit_affinity(process, requested: int | None = None) -> list[int]:
     """Best-effort affinity restriction; return selected CPU IDs or an empty list.
 
-    中文：尽力限制当前进程的 CPU affinity；设置失败时返回空列表，实际 affinity
-    可由 ``telemetry()`` 单独读取。
+    中文：尽力限制当前进程的 CPU affinity；读取结果为空或设置失败时返回空列表，实际 affinity
+    可由 ``telemetry()`` 单独读取。不会将空列表传给 setter，因为 psutil 用它恢复所有可用 CPU。
     """
     affinity_errors = _affinity_errors()
     try:
         available = list(process.cpu_affinity())
     except affinity_errors:
+        return []
+    if not available:
         return []
     count = len(available) if requested is None else max(1, int(requested))
     selected = available[:min(count, len(available))]
