@@ -1,4 +1,8 @@
-"""Compare a standalone Prüfer amplitude-phase oracle with Cartesian DOP853."""
+"""Compare a standalone Prüfer amplitude-phase oracle with Cartesian DOP853.
+
+中文说明：使用独立的 Prüfer 振幅/相位方程求解张量模，并与笛卡尔坐标下的 DOP853 结果对照；
+该实现仅用于参照验证，不作为正式求解路径。
+"""
 
 import argparse
 import json

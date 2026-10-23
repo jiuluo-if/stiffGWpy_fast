@@ -10,6 +10,11 @@ the same ``DN_eff``.
 The reference anchors are read from the committed ``docs/oracle_c_wkb_*.json``
 artifacts (same native grid, same ``DN_eff``); fast is re-solved at the
 current HEAD.  Reference-only diagnostic: no formal kernel is changed.
+
+中文说明：fast 与冻结振幅参照采用相同尾部约定，因此二者比较会抵消共同的尾部误差。
+Oracle C 通过解析 WKB 修正构造独立参照；本脚本在相同 ``DN_eff`` 和原生频率网格上，
+比较自洽 fast 的 ``DN_gw`` 与 WKB 修正参照的 ``DN_gw``。锚点来自已提交记录，fast 则在当前源码上重新求解。
+该脚本仅用于参照诊断，不会修改正式求解内核。
 """
 
 import argparse

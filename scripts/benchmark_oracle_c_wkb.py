@@ -20,6 +20,9 @@ against a deep numerical handoff (``z=10``, where the local adiabaticity
 3. ``deep(z10)``: handoff at z=10, frozen thereafter (numerical reference).
 
 Reference-only diagnostic: no formal kernel is changed.
+
+中文说明：脚本用 ``sin(2*theta_f)/omega_f`` 修正 ``z=5`` 的冻结振幅尾部，
+并在相同原生频率网格上与 ``z=10`` 的深层数值交接比较。它仅作参照诊断，不改正式求解内核。
 """
 
 import argparse
