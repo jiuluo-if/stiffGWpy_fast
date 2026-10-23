@@ -55,7 +55,9 @@ class FastSolverConfig:
         col_step = int(self.col_step)
         threads = None if self.threads is None else int(self.threads)
         transition_refine_factor = int(self.transition_refine_factor)
-        kink_split = bool(self.kink_split)
+        if not isinstance(self.kink_split, bool):
+            raise TypeError("kink_split must be a bool, got %r" % self.kink_split)
+        kink_split = self.kink_split
         if not isfinite(h) or not 1e-4 <= h <= 0.1:
             raise ValueError("h must be finite and in [1e-4, 0.1], got %r" % self.h)
         if isinstance(raw_col_step, bool) or float(raw_col_step) != col_step:

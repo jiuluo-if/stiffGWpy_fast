@@ -2,6 +2,9 @@
 
 ## Unreleased — 2026-10-23
 
+- Reject non-boolean `kink_split` values so strings such as `"false"` cannot
+  silently activate the exact-grid path.
+
 - Made benchmark CPU-affinity setup best-effort and kept resource telemetry
   passive before Numba execution. Failed pinning is no longer reported as a
   successful selected CPU set, an empty CPU set is never sent to psutil's

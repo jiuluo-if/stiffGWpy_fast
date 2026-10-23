@@ -2536,15 +2536,19 @@ def SGWB_iter_fast(
     It inserts the reheating boundary as an exact node and uses ``h`` divided by
     ``transition_refine_factor`` within the configured radius, measured in e-folds.
     The formal ``fast`` profile instead uses the exact uniform-grid kink split.
+    ``kink_split`` accepts ``True``, ``False``, or ``None`` (inherit from ``config``).
 
     中文：低层 fast 求解器接收隔离的配置快照；频率积分默认用 PCHIP，也可显式选 Simpson。
     Numba 的线程掩码属于调用线程；workqueue 后端不支持并发并行调用，因此该后端下整个求解期间持锁。
     线程层尚未初始化时也保守加锁；TBB/OpenMP 初始化后，显式配置调用可并行执行。
     ``transition_refine=True`` 选择仅用于验证的可变步长路径：将再加热边界插入为精确节点，
     并在配置的半径（单位为 e-fold）内使用 ``h / transition_refine_factor`` 步长。正式 ``fast`` 档位仍使用精确均匀网格 kink 拆分。
+    ``kink_split`` 只能为 ``True``、``False`` 或 ``None``（从 ``config`` 继承）。
     """
     if config is not None and not isinstance(config, FastSolverConfig):
         raise TypeError("config must be a FastSolverConfig")
+    if kink_split is not None and not isinstance(kink_split, bool):
+        raise TypeError("kink_split must be a bool or None, got %r" % kink_split)
     lock = _NUMBA_CONFIG_LOCK if config is None or not _numba_layer_is_threadsafe() else nullcontext()
     with lock:
         return _SGWB_iter_fast_impl(
