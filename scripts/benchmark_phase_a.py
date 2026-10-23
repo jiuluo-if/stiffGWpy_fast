@@ -60,10 +60,14 @@ def main():
     solve(False, args.h, args.z_tail, args.phase_max, args.freq_grid)
     solve(True, args.h, args.z_tail, args.phase_max, args.freq_grid)
     rows = {}
+    candidate_spectra = {}
     for name, flag in (('plain', False), ('kink_split', True)):
-        samples = [solve(flag, args.h, args.z_tail, args.phase_max, args.freq_grid)[1]
-                   for _ in range(args.reps)]
-        model, _ = solve(flag, args.h, args.z_tail, args.phase_max, args.freq_grid)
+        samples = []
+        for _ in range(args.reps):
+            model, elapsed = solve(flag, args.h, args.z_tail, args.phase_max, args.freq_grid)
+            samples.append(elapsed)
+        candidate_spectra[name] = (np.asarray(model.f, dtype=float).copy(),
+                                   np.asarray(model.log10OmegaGW).copy())
         rows[name] = {
             'warm_ms': [x * 1e3 for x in samples],
             'median_ms': statistics.median(samples) * 1e3,
@@ -81,35 +85,33 @@ def main():
         # converged DN_eff so only the transfer path is compared here.  The full
         # candidate frequency grid is the default; a sparse subset is retained
         # only as an explicitly labelled diagnostic because it changes DN_gw.
-    # 独立运行 reference，并使用候选已收敛的 DN_eff，以便只比较传递求解路径。默认使用完整频率网格；
-    # 稀疏子集会改变 DN_gw，因此仅作为明确标注的诊断选项保留。
-        candidate = solve(name == 'kink_split', args.h, args.z_tail, args.phase_max,
-                          args.freq_grid)[0]
+        # 独立运行 reference，并使用候选已收敛的 DN_eff，以便只比较传递求解路径。默认使用完整频率网格；
+        # 稀疏子集会改变 DN_gw，因此仅作为明确标注的诊断选项保留。
+        candidate_freqs, candidate_log10_omega = candidate_spectra[name]
         reference_freqs = (FREQ_SUBSET if args.subset_reference
-                           else np.asarray(candidate.f, dtype=float))
+                           else candidate_freqs)
         model = LCDM_SG(**CASE)
         ref = REF.run_reference(model, dn_eff=rows[name]['DN_eff'], freq_res=1.0,
                                 z_tail=args.z_tail, rtol=1e-11,
                                 freq_subset=reference_freqs, self_consistent=False)
-        candidate = solve(name == 'kink_split', args.h, args.z_tail, args.phase_max,
-                          args.freq_grid)[0]
         lo_ref = np.asarray(ref['log10OmegaGW'])
         if args.subset_reference:
-            lo_test = np.interp(reference_freqs, np.asarray(candidate.f)[::-1],
-                                np.asarray(candidate.log10OmegaGW)[::-1])
+            lo_test = np.interp(reference_freqs, candidate_freqs[::-1],
+                                candidate_log10_omega[::-1])
         else:
-            lo_test = np.asarray(candidate.log10OmegaGW)
+            lo_test = candidate_log10_omega
         mask = signal_mask(lo_ref)
         lin = rel_linear_omega(lo_ref[mask], lo_test[mask]) if mask.any() else np.array([0.0])
         all_rel = np.abs(10.0 ** lo_test - 10.0 ** lo_ref) / np.maximum(10.0 ** lo_ref, 1e-300)
+        spectrum_dex = dex_abs(lo_ref, lo_test)
         transition = np.abs(reference_freqs - rows[name]['f_re']) <= 0.5
         reference_dn[name] = {
             'reference_DN_gw': float(ref['DN_gw']),
             'DN_gw_rel': abs(rows[name]['DN_gw'] - float(ref['DN_gw'])) /
                          max(abs(float(ref['DN_gw'])), 1e-300),
-            'spectrum_dex_median': float(np.median(dex_abs(lo_ref, lo_test))),
-            'spectrum_dex_p95': float(np.percentile(dex_abs(lo_ref, lo_test), 95)),
-            'spectrum_dex_max': float(np.max(dex_abs(lo_ref, lo_test))),
+            'spectrum_dex_median': float(np.median(spectrum_dex)),
+            'spectrum_dex_p95': float(np.percentile(spectrum_dex, 95)),
+            'spectrum_dex_max': float(np.max(spectrum_dex)),
             'spectrum_rel_signal_median': float(np.median(lin)),
             'spectrum_rel_signal_max': float(np.max(lin)),
             'spectrum_rel_all_max': float(np.max(all_rel)),
