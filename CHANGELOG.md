@@ -2,6 +2,11 @@
 
 ## Unreleased — 2026-10-23
 
+- Recorded the LVK likelihood's six-case, 200-pair A/B on the packaged data;
+  overlapping cases show `1.90x`–`9.75x` lower per-call latency, with maximum
+  absolute log-likelihood change `1.21e-10`. The no-overlap case is scoped
+  separately; these are not full MCMC timings.
+
 - Cache fixed LVK frequency/data columns during likelihood initialization, use
   NumPy's float64 pairwise chi-square reduction, and leave unsupported bins at
   zero without querying the cubic interpolator out of range.

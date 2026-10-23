@@ -229,6 +229,39 @@ These local adapter timings exclude initialization from each evaluation and
 do not measure end-to-end Cobaya MCMC runtime or change the scope of the Round
 68 solver profile.
 
+## LVK cross-correlation likelihood hot path (2026-10-23)
+
+The LVK adapter now prepares its fixed 54,593-bin log-frequency/data columns
+once in `initialize()`, masks theory queries to the interpolation support, and
+uses NumPy's float64 pairwise chi-square reduction. The old Python reduction
+was compared against the optimized implementation using two warmups and 200
+alternating pairs for each of six deterministic synthetic spectra on the
+packaged LVK data table:
+
+| `log10(f_end / Hz)` | Old median (ms) | Optimized median (ms) | Old / optimized | Max `|Delta logL|` |
+|---:|---:|---:|---:|---:|
+| `1.00` | `2.514` | `0.100` | `25.2x` | `9.82e-11` |
+| `1.31` | `2.665` | `0.273` | `9.75x` | `9.82e-11` |
+| `1.80` | `2.853` | `0.379` | `7.52x` | `1.06e-10` |
+| `2.70` | `3.450` | `1.025` | `3.37x` | `5.46e-11` |
+| `3.40` | `5.381` | `2.814` | `1.91x` | `1.20e-10` |
+| `4.00` | `5.267` | `2.777` | `1.90x` | `1.09e-11` |
+
+The `f_end=1.00` case ends at 10 Hz, below the LVK table's first 20 Hz bin; its
+`25.2x` ratio measures the unsupported-bin reduction path only. For the five
+cases with at least one supported bin, the measured per-call ratios range from
+`1.90x` to `9.75x`.
+
+The maximum absolute log-likelihood change was `1.21e-10` over the six cases.
+Against `math.fsum`, the optimized reduction's maximum absolute summation error
+was `3.64e-12`, compared with `1.20e-10` for Python `sum`. A lower-support
+probe also confirms the old code raises when LVK bins fall below the theory
+grid, while the new path leaves those unsupported bins at zero. These are
+single-likelihood synthetic-spectrum measurements, not end-to-end Cobaya or
+MCMC speedups. Raw samples, data hash, environment, and the lower-support probe
+are in [`benchmark_lvk_likelihood_cache_20261023.json`](benchmark_lvk_likelihood_cache_20261023.json);
+reproduce with `python scripts/benchmark_lvk_likelihood_cache.py`.
+
 ## Scoped accuracy audit (dated 2026-09-12)
 
 This four-regime PCHIP/oracle baseline is summarized in
