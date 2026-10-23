@@ -36,6 +36,15 @@ full-grid relative residual includes near-zero channels and should be read with
 the dex residual; its PNG defaults to the `scripts/` directory unless an output
 path is supplied.
 
+`bench_fast.py` compares one LSODA runtime with cold and warm fast timings; it
+is a runtime/regression benchmark, not an accuracy comparison. Timed calls
+use the fast preset grid and quadrature, with preset tolerance and frequency
+resolution unless `--tol` or `--freq-res` overrides them. By default timing
+omits the exact reheating-kink split; `--kink-split` includes it. The separate
+safety-wrapper diagnostics use the formal fast kink-split path and record their
+configuration in JSON. Its P95 uses linear percentile interpolation, so the
+default three repeats are only a rough tail estimate.
+
 `benchmark_transition_frontier_ab.py` alternates formal fast and a matched
 transition-refinement configuration on the two `DN_re` edges. It records raw
 solver-call timings and per-variant output digests; it does not establish
