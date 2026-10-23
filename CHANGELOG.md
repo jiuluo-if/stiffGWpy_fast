@@ -2,6 +2,10 @@
 
 ## Unreleased — 2026-10-23
 
+- Refreshed both experiment catalogues with the 2026-10-23 transition-refinement
+  frontier, its mixed paired timing, and direct links to the matched Oracle and
+  timing records.
+
 - Corrected `bench_fast.py` to forward the selected fast preset's convergence
   tolerance and frequency resolution, record its solver configuration, and
   compute P95 with NumPy's linear percentile method. The script now describes
