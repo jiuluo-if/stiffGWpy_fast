@@ -11,9 +11,10 @@ from scipy import interpolate
 class LVK_SGWB_CC(Likelihood):
 
     def initialize(self):
-        """Load the cross-correlation table selected by ``CC_file``.
+        """Load the selected cross-correlation table and prepare fixed columns.
 
-        中文：读取配置中的 `CC_file`；该选项默认指向随包提供的 LVK 数据表。
+        中文：读取配置中的 `CC_file`，并缓存不随理论参数变化的对数频率、观测值和不确定度列。
+        该选项默认指向随包提供的 LVK 数据表。
         """
         self.data = np.loadtxt(self.CC_file)
         self.f_LVK = np.log10(self.data[:, 0])
@@ -45,8 +46,10 @@ class LVK_SGWB_CC(Likelihood):
     def log_likelihood(self, f_theory, Ogw_theory, **data_params):
         """Interpolate the model on supported bins and return ``-chi2/2``.
 
-        ``f_theory`` must be increasing in ``log10(Hz)`` order. 中文：将模型谱转换为线性
-        ``Omega_GW``，按数据不确定度归一化残差并求和；不在模型频率支持内的 bin 保持零模型值。
+        ``f_theory`` must be increasing in ``log10(Hz)`` order.
+
+        中文：将模型谱转换为线性 ``Omega_GW``，按数据不确定度归一化残差并求和；
+        不在模型频率支持内的 bin 保持零模型值。
         """
         f_LVK = self.f_LVK
         Cf_LVK = self.Cf_LVK
