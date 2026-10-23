@@ -2,7 +2,7 @@
 
 Status: current summary of the audited scope; results remain commit- and protocol-bound
 
-Date: 2026-10-22
+Date: 2026-10-23
 
 Code version: the corrected formal fast profile below used
 `6707572e73d576a0ccf294172579cedc26e5e394`; the earlier stage profile used
@@ -375,3 +375,30 @@ The scalar implementation is retained in the benchmark script as the
 pre-vectorization reference. Raw samples and the reproduction driver are
 [`benchmark_h2_vectorization_20261022.json`](benchmark_h2_vectorization_20261022.json)
 and [`benchmark_h2_vectorization.py`](../scripts/benchmark_h2_vectorization.py).
+
+## Paired transition-refinement frontier A/B (2026-10-23)
+
+The `h=0.0296875`, radius `0.015625`, factor `95` candidate was compared with
+formal fast in one process. Each variant received two warmups, then ran in
+alternating order for 30 measured pairs per edge with two `workqueue` threads,
+one BLAS thread, and the first two available CPUs. Timing covers only a solver
+call on a fresh model; model construction, process startup, and warmup/JIT are
+excluded. Output digests stayed stable within each variant.
+
+| Edge | Formal fast median | Candidate median | Paired median ratio | Bootstrap 95% interval | Candidate faster pairs |
+|---|---:|---:|---:|---:|---:|
+| `edge_dnre_lo` | 6.913 ms | 5.683 ms | 0.812 | 0.792–0.837 | 30/30 |
+| `edge_dnre_hi` | 6.042 ms | 7.038 ms | 1.177 | 1.158–1.200 | 0/30 |
+
+The candidate is faster on the low edge and slower on the high edge. Both
+per-edge intervals exclude `1`, so the result is a measured tradeoff, not a
+global speed gain. It remains validation-only. Raw per-call timings, paired
+ratios, digests, configuration, environment, bootstrap seed, and script hash
+are in
+[`benchmark_transition_frontier_ab_20261023.json`](benchmark_transition_frontier_ab_20261023.json);
+the driver is [`benchmark_transition_frontier_ab.py`](../scripts/benchmark_transition_frontier_ab.py).
+Re-run with:
+
+```powershell
+python scripts/benchmark_transition_frontier_ab.py --output docs/benchmark_transition_frontier_ab_20261023.json
+```

@@ -36,6 +36,11 @@ full-grid relative residual includes near-zero channels and should be read with
 the dex residual; its PNG defaults to the `scripts/` directory unless an output
 path is supplied.
 
+`benchmark_transition_frontier_ab.py` alternates formal fast and a matched
+transition-refinement configuration on the two `DN_re` edges. It records raw
+solver-call timings and per-variant output digests; it does not establish
+accuracy by itself. Read the matched Oracle C records separately.
+
 Many `benchmark_*_spike.py` files are historical, standalone candidate tests;
 they do not select or modify a production solver path. Read a script's CLI
 arguments (or run `--help` when available) and check its output path first.

@@ -279,6 +279,33 @@ python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 
 python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261022/transition_h002_r00078125_f64 --h 0.02 --transition-refine --transition-refine-radius 0.0078125 --transition-refine-factor 64 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261022/transition_h002_r00078125_f64/fast_true_error.json
 ```
 
+## 2026-10-23 finer outer-step point
+
+Keeping the local refinement step at `0.0003125` and radius at `0.015625`,
+`h=0.0296875/factor=95` passes both sampled edges. Fast-vs-deep errors are
+`8.59e-5` and `9.10e-5`; exact `DN_eff` and native-frequency-grid matches
+hold. The independent WKB/deep residuals are `2.88e-6` and `5.84e-6`.
+The tested `h=0.03/factor=96` neighbor fails the high edge at `2.49e-4`, so
+these points mark a local tested boundary, not a monotone or global guarantee.
+
+A fixed-affinity 30-pair comparison against formal fast shows a latency
+tradeoff: the candidate/formal-fast paired median ratio is `0.812`
+(`95% bootstrap interval 0.792–0.837`) on `edge_dnre_lo`, and `1.177`
+(`1.158–1.200`) on `edge_dnre_hi`. The sampled accuracy improves, but the
+candidate has no consistent speed gain and remains validation-only. Matched
+Oracle and true-error records are in
+[`oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/`](oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/).
+The raw A/B samples and replay script are linked from
+[`benchmarks.md`](benchmarks.md#paired-transition-refinement-frontier-ab-2026-10-23).
+
+Reproduce the matched candidate anchors, precision comparison, and timing A/B:
+
+```powershell
+python scripts/benchmark_oracle_c_wkb.py --points edge_dnre_lo edge_dnre_hi --h 0.0296875 --transition-refine --transition-refine-radius 0.015625 --transition-refine-factor 95 --out-dir docs/oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95
+python scripts/benchmark_fast_true_error.py --points edge_dnre_lo edge_dnre_hi --anchor-dir docs/oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95 --h 0.0296875 --transition-refine --transition-refine-radius 0.015625 --transition-refine-factor 95 --warmup 2 --repeats 10 --out docs/oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/fast_true_error.json
+python scripts/benchmark_transition_frontier_ab.py --output docs/benchmark_transition_frontier_ab_20261023.json
+```
+
 ## Artifacts
 
 - `docs/oracle_c_wkb_default.json`

@@ -79,6 +79,18 @@ The fixed-affinity paired comparison of radii `0.015625` and `0.0078125` also
 found no stable speed winner; see the raw paired record linked from the Oracle
 C assessment.
 
+## 2026-10-23 transition-refinement frontier
+
+The `h=0.0296875`, radius-`0.015625`, factor-`95` candidate passes both
+sampled `DN_re` edges below `1e-4`; the tested `h=0.03` neighbor fails the high
+edge. A 30-pair fixed-affinity comparison finds the candidate faster on the
+low edge and slower on the high edge, so it remains validation-only. Matched
+Oracle records, accuracy interpretation, and raw paired timings are in
+[`oracle_c_wkb_assessment.md`](oracle_c_wkb_assessment.md),
+[`accuracy.md`](accuracy.md), and
+[`benchmark_transition_frontier_ab_20261023.json`](benchmark_transition_frontier_ab_20261023.json);
+the replay driver is [`benchmark_transition_frontier_ab.py`](../scripts/benchmark_transition_frontier_ab.py).
+
 ## Raw run families by location
 
 | Location or filename family | What it contains | Handling |

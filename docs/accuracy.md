@@ -2,7 +2,7 @@
 
 Status: current summary of scoped evidence; no full parameter-space release certification
 
-Date: 2026-10-22
+Date: 2026-10-23
 
 The formal fast profile is the single `goal-kink-hybrid` mode. The independent
 continuous-sigma DOP853 pipeline is the precision reference; LSODA is a
@@ -172,3 +172,18 @@ high-kappa warm median improved by 6.54%; the low-T case regressed within the
 reported noise range. This supports that specific cache change and protocol,
 not a universal runtime improvement. Consult the linked artifact before
 reusing the result.
+
+## 2026-10-23 transition-refinement frontier
+
+At `h=0.0296875`, radius `0.015625`, and factor `95`, the candidate passes both
+sampled `DN_re` edges. Errors versus deep `z_tail=10` are `8.59e-5` and
+`9.10e-5`; the matched Oracle WKB/deep residuals are `2.88e-6` and `5.84e-6`.
+The tested `h=0.03` neighbor failed the high edge at `2.49e-4`. A fixed-affinity
+30-pair A/B found mixed timing: candidate/formal-fast paired median ratios are
+`0.812` (95% interval `0.792–0.837`) on the low edge and `1.177`
+(`1.158–1.200`) on the high edge. The sampled accuracy improves while latency
+trades between edges; this is not a general speedup or a full-space guarantee.
+The candidate remains validation-only. Matched records are in
+[`oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/`](oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/)
+and raw paired timings are in
+[`benchmark_transition_frontier_ab_20261023.json`](benchmark_transition_frontier_ab_20261023.json).

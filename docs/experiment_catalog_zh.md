@@ -46,6 +46,15 @@
 
 另将半径 `0.015625` 与 `0.0078125` 固定在 CPU `[0,1]` 上交错比较，每个边界测 30 组。更小半径的配对中位耗时比分别为 `0.989/0.979`，但 95% 区间都覆盖 `1.0`，因此没有证据证明它更快。原始样本见[配对计时记录](benchmark_transition_radius_paired_20261022.json)。
 
+## 2026-10-23 转折细化边界点
+
+`h=0.0296875`、半径 `0.015625`、倍数 `95` 的候选在抽查的两个 `DN_re` 边界上误差均低于 `1e-4`；
+相邻测试点 `h=0.03` 未通过高边界。固定资源的 30 组配对计时显示候选在低边界更快、高边界更慢，
+因此仍仅用于验证。匹配 Oracle 记录、精度解释和原始配对耗时见
+[Oracle C 报告](oracle_c_wkb_assessment.md)、[精度汇总](accuracy.md)和
+[配对计时数据](benchmark_transition_frontier_ab_20261023.json)；复跑脚本为
+[benchmark_transition_frontier_ab.py](../scripts/benchmark_transition_frontier_ab.py)。
+
 ## 原始运行数据家族
 
 | 位置或文件名前缀 | 内容 | 处理方式 |
