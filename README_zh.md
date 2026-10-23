@@ -33,13 +33,13 @@
 
 goal 网格在再加热特征附近保留节点，并将 `eval_freqs` 作为原生求解节点；`z_tail` 之后由解析 WKB 包络处理。局部误差预算见 `stiffgwpy_fast.fast_sgwb.estimate_local_error`。
 
-最新全流程 profile 于 2026-09-23 在 solver commit `c7d4766` 生成：25 次重复、2 个 Numba `workqueue` 线程、1 个 BLAS 线程、CPU affinity `[0, 1]`。预热 median/p95（毫秒）为 default `7.189/7.916`、low-T `7.116/7.782`、high-T `10.475/10.890`、stiff `10.260/10.936`、low-r `5.923/6.313`、high-kappa `9.929/11.062`；六个情景均收敛。只有 default 首样本是进程冷启动并包含 JIT。当前 HEAD 后续增加了 MCMC 证据，没有改动该 profile 提交之后的求解器源码。完整协议见 [`docs/benchmarks.md`](docs/benchmarks.md)。
+最新固定资源全流程 profile 于 2026-10-22 基于 solver commit `6707572` 生成，使用正式预设容差 `tol=1e-6`、2 个 Numba `workqueue` 线程、1 个 BLAS 线程、CPU affinity `[0, 1]`，每个情景测 25 条 warm 样本。预热 median/p95（毫秒）为 default `5.987/6.882`、high-T `10.049/10.848`、stiff `9.179/9.819`、high-kappa `9.458/10.112`。首条进程调用另行报告，其中 default 包含 JIT 成本；每个情景的 26 条记录输出哈希一致。该 profile 之后到当前 HEAD 的提交只改了文档，没有修改求解器。测量协议、原始数据和适用范围见 [`docs/benchmarks.md`](docs/benchmarks.md)。
 
 ## 精度参照与已知边界
 
 `reference.py` 独立实现连续 `sigma(N)`（kink 为精确断点）、逐频率自适应 `DOP853`，以及带误差估计的 PCHIP 和自适应 Gauss–Kronrod 求积。LSODA 不作为精度真值。参照流程在 `z_tail` 使用冻结解析尾部：默认点从 `z_tail=7` 到 8 的 `DN_gw` 相对变化为 `4.2e-4`，从 8 到 10 为 `3.0e-4`；`z_tail=14` 的无截断求解因深次视界刚性而不可行。因此参照本身有约 `3e-4` 的尾部敏感性，正式路径约 `4e-4` 的残差与之同量级。`reference.oracle_variants()` 运行 Oracle A/B/C 并报告 `CONSISTENT` 或 `ORACLE-SENSITIVE`。
 
-2026-09-12 的指定点审计中，四点 PCHIP 对 Oracle C WKB anchor 的误差为 `1.07e-5`–`1.66e-4`；六点 `z_tail=8` 同网格对照的 `DN_gw` 差值 median 为 `2.93e-4`。原生 76 点默认网格上，fast 对连续 `sigma` 参照的相对误差为 `2.94e-4`，Simpson 为 `7.14e-4`。76/80/90/110 点扫描并非单调；这些读数均不是全参数空间认证。完整范围见 [`docs/accuracy.md`](docs/accuracy.md)。
+2026-09-12 的同网格基线中，四点 PCHIP 对 Oracle C WKB anchor 的误差为 `1.07e-5`–`1.66e-4`；六点 `z_tail=8` 对照的 `DN_gw` 差值 median 为 `2.93e-4`。原生 76 点默认网格上，fast 对连续 `sigma` 参照的相对误差为 `2.94e-4`，Simpson 为 `7.14e-4`；76/80/90/110 点扫描并非单调。后续 Oracle C 检查发现，正式 fast 在两个 `DN_re` 边缘点未通过 `2e-4` 门槛；更细的转换区候选在这些抽样点通过，但尚未替代正式档位。所有结论只适用于对应抽样，不是全参数空间认证。详情见 [`docs/accuracy.md`](docs/accuracy.md)。
 
 ## 安装和 Python 用法
 
@@ -95,7 +95,7 @@ mock-data 重要性采样验证（Layer C）使用固定种子的 9,000 个 fast
 
 ## 性能边界与复现
 
-2026-09-23 profile 没有同资源 LSODA 对照，因此不报告当前速度比。default warm runtime 为 `7.189 ms`，高于 `4 ms` 目标。reference 在有日期的深尾研究中约需每点 `360–579 s`，具体取决于尾部设置；深尾无截断认证因方程刚性而不可行。
+2026-10-22 profile 没有同资源 LSODA 对照，因此不报告当前速度比。default warm runtime 为 `5.987 ms`，仍高于 `4 ms` 目标。reference 在有日期的深尾研究中约需每点 `360–579 s`，具体取决于尾部设置；深尾无截断认证因方程刚性而不可行。
 
 贡献和发布门槛见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，分阶段工程审计见 [`docs/engineering_audit.md`](docs/engineering_audit.md)。常用验证命令如下：
 
