@@ -17,9 +17,12 @@ WKB-corrected reference `DN_gw` at the same `DN_eff`.
 
 ## Protocol
 
-`scripts/benchmark_fast_true_error.py` re-solves fast at the current HEAD and
-reads the committed reference anchors from `docs/oracle_c_wkb_*.json` (same
-native grid, same `DN_eff`).  Resources: workers=1, Numba=2, BLAS=1.
+The recorded run re-solved fast and read the committed reference anchors from
+`docs/oracle_c_wkb_*.json` on the same native grid and at the same `DN_eff`.
+Its artifact, [`fast_true_error.json`](fast_true_error.json), records source
+commit `f87e969c96bff54bcdca8146f49d8b7a86ea501f` (2026-09-11). Resources:
+workers=1, Numba=2, BLAS=1. Re-running the driver against later source creates
+a new measurement; it does not update this historical table.
 
 ## Results
 

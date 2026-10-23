@@ -16,9 +16,12 @@ deep-subhorizon propagation.  This script separates them.
 
 ## Protocol
 
-`scripts/benchmark_fast_residual_decomposition.py` re-solves fast at the
-current HEAD and reuses the committed `docs/oracle_c_wkb_*.json` anchors on the
-same native grid.  For every point it reports
+The recorded run re-solved fast and reused the committed
+`docs/oracle_c_wkb_*.json` anchors on the same native grid. Its artifact,
+[`fast_residual_decomposition.json`](fast_residual_decomposition.json), records
+source commit `f87e969c96bff54bcdca8146f49d8b7a86ea501f` (2026-09-11). The
+driver can produce a new measurement from later source; it does not update
+this historical table. For every point the run reported
 
 1. `fast_vs_wkb_*_rel`: the DN difference at the *same* quadrature rule;
 2. `fast_simpson_vs_pchip_rel`: the quadrature-only difference of the fast

@@ -16,11 +16,14 @@ warm runtime it costs.
 
 ## Protocol
 
-`scripts/benchmark_fast_quadrature_ab.py` re-solves `SGWB_iter_fast` at the
-current HEAD for each named point and quadrature, on the same native grid and
-accuracy mode.  Timings alternate between the two quadratures inside every
-repeat, flipping the order on odd repeats, so machine drift cannot favour one
-method.  Resources: workers=1, Numba=2, BLAS=1; warmup=3, repeats=25.
+The recorded run re-solved `SGWB_iter_fast` for each named point and
+quadrature on the same native grid and accuracy mode. Its artifact,
+[`fast_quadrature_ab.json`](fast_quadrature_ab.json), records source commit
+`e3654698f13787b72d4b44ca74c69206fd779329` (2026-09-11). Timings alternated
+between quadratures inside every repeat, flipping order on odd repeats.
+Resources: workers=1, Numba=2, BLAS=1; warmup=3, repeats=25. Re-running the
+driver against later source creates a new measurement; it does not update this
+historical table.
 
 ## Results
 

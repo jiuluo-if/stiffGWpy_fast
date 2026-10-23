@@ -37,7 +37,7 @@ benchmark output.
 | `accuracy.md` | layered accuracy limits and dated validation evidence | see manifest and experiment catalogue |
 | `parameter_validation.md` | parameter schema and date-bound sweep records | see manifest and experiment catalogue |
 | `cobaya.md` | adapter options, mode mapping, `eval_freqs` | current |
-| `benchmarks.md` | current scoped audit plus date-bound benchmark records | see report scope |
+| `benchmarks.md` | fixed-resource full-path profile, scoped accuracy/runtime comparisons, and date-bound benchmark records | see report scope |
 | `performance_comparison_20260903.md` | optimization before/after, breakdown, AB and gates | dated historical snapshot |
 | `reproducibility.md` | drivers, gates, environment metadata | current |
 | `experiment_catalog.md` | research themes, evidence status, raw experiment families | current |
