@@ -2,8 +2,10 @@
 
 ## Unreleased — 2026-10-23
 
-- Made benchmark CPU-affinity setup and telemetry tolerate psutil process errors;
-  failed pinning is no longer reported as a successful selected CPU set.
+- Made benchmark CPU-affinity setup best-effort and kept resource telemetry
+  passive before Numba execution. Failed pinning is no longer reported as a
+  successful selected CPU set, and requested versus active thread settings are
+  recorded separately.
 
 - Refreshed both experiment catalogues with the 2026-10-23 transition-refinement
   frontier, its mixed paired timing, and direct links to the matched Oracle and

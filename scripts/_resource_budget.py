@@ -69,20 +69,37 @@ def limit_affinity(process, requested: int | None = None) -> list[int]:
 
 def telemetry(process=None, workers: int = 1, threads: int | None = None,
               concurrent_processes: int = 1) -> dict:
-    """返回可比较的资源、版本和提交信息。"""
+    """Return comparable resource metadata without selecting a Numba backend.
+
+    中文：收集可比较的资源、版本和提交信息；Numba 尚未初始化时只记录配置，不触发后端选择。
+    """
     try:
         import numpy as np
     except ImportError:
         np = None
     try:
         import numba
-        numba_threads = int(numba.get_num_threads())
-        threading_layer = numba.threading_layer()
         numba_version = numba.__version__
     except Exception:
         numba_threads = threads
-        threading_layer = os.environ.get('NUMBA_THREADING_LAYER')
+        numba_threads_configured = None
+        threading_layer = None
+        threading_layer_requested = os.environ.get('NUMBA_THREADING_LAYER')
         numba_version = None
+    else:
+        numba_threads_configured = int(numba.config.NUMBA_NUM_THREADS)
+        threading_layer_requested = (
+            os.environ.get('NUMBA_THREADING_LAYER') or numba.config.THREADING_LAYER)
+        try:
+            threading_layer = numba.threading_layer()
+        except ValueError:
+            numba_threads = None
+            threading_layer = None
+        else:
+            try:
+                numba_threads = int(numba.get_num_threads())
+            except Exception:
+                numba_threads = None
     affinity = []
     if process is not None:
         affinity_errors = _affinity_errors()
@@ -99,7 +116,9 @@ def telemetry(process=None, workers: int = 1, threads: int | None = None,
         'logical_cpu_count': os.cpu_count(),
         'affinity': affinity,
         'numba_threads': numba_threads,
+        'numba_threads_configured': numba_threads_configured,
         'numba_threading_layer': threading_layer,
+        'numba_threading_layer_requested': threading_layer_requested,
         'blas_threads': {
             name: os.environ.get(name)
             for name in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS',
