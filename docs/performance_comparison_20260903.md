@@ -193,4 +193,6 @@ plain-grid matched-reference AB 后再决定。
 [`production_ab_baseline.txt`](production_ab_baseline.txt) 和
 [`production_ab_candidate.txt`](production_ab_candidate.txt)。线程缩放汇总保留在第 3.5 节；原始
 `scaling_njit_t*.json` 文件已由后续清理提交 `2619065` 移除，当前仓库不再包含逐线程样本。
+两份 production 摘要逐字节相同；保留 baseline/candidate 两个文件名用于标明 A/B 角色，
+这只说明记录的输出摘要一致，不代表其余性能指标也相同。
 上述 A/B 文件和 production 摘要用于复核历史输出，均不代表当前 HEAD 的性能基线。

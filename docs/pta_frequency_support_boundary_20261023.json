@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "base_commit": "ccea67ba64be7a5ab23646a6b7903d928c220bf8",
+  "helper_sha256": "debcbae1f87b171da625e0aa92f7cf07ef8c33dc72b88a73b62efef6f935fcad",
+  "adapters": {
+    "IPTA": {
+      "frequency_resource": "EPTAdr2/freqs_dr2new.txt",
+      "configured_Nfreqs": 9,
+      "below_support_probe": {
+        "theory_log10_hz": [
+          -7.0,
+          -6.0
+        ],
+        "bins_below_first_knot": 9,
+        "nonzero_primordial_bins": 0
+      },
+      "no_in_band_knots_probe": {
+        "theory_log10_hz": [
+          -4.0,
+          -3.0
+        ],
+        "nonzero_primordial_bins": 0
+      },
+      "full_support_formula_probe": {
+        "all_queries_supported": true,
+        "matches_prior_formula_exactly": true,
+        "max_abs_delta": 0.0
+      }
+    },
+    "NANOGrav": {
+      "frequency_resource": "NANOGrav15yr/freqs.npy",
+      "configured_Nfreqs": 14,
+      "below_support_probe": {
+        "theory_log10_hz": [
+          -7.0,
+          -6.0
+        ],
+        "bins_below_first_knot": 14,
+        "nonzero_primordial_bins": 0
+      },
+      "no_in_band_knots_probe": {
+        "theory_log10_hz": [
+          -4.0,
+          -3.0
+        ],
+        "nonzero_primordial_bins": 0
+      },
+      "full_support_formula_probe": {
+        "all_queries_supported": true,
+        "matches_prior_formula_exactly": true,
+        "max_abs_delta": 0.0
+      }
+    }
+  },
+  "synthetic_single_knot_probe": {
+    "theory_log10_hz": [
+      -8.0
+    ],
+    "supported_query_count": 1,
+    "matches_previous_vector_formula_exactly": true
+  }
+}

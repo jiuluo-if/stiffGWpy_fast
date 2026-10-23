@@ -81,15 +81,16 @@ The goal grid reserves nodes around the reheating feature and preserves
 analytic WKB envelope at `z_tail`; the local error budget is exposed through
 `stiffgwpy_fast.fast_sgwb.estimate_local_error`.
 
-The latest fixed-resource full-path profile was generated on 2026-10-22 from
-solver commit `6707572`. It uses the formal `tol=1e-6` preset, two Numba
-`workqueue` threads, one BLAS thread, CPU affinity `[0, 1]`, and 25 warm
-repeats per case. Warm median/p95 times were `5.987/6.882 ms` (default),
-`10.049/10.848 ms` (high-T), `9.179/9.819 ms` (stiff), and
-`9.458/10.112 ms` (high-kappa). The first process call is reported separately;
-it includes JIT cost for the default case. All 26 output records per case had
-matching hashes. Later commits through the current HEAD changed documentation,
-not solver code. See [`docs/benchmarks.md`](docs/benchmarks.md) for the protocol,
+The latest fixed-resource full-path profile was generated on 2026-10-23 at
+base HEAD `ccea67b`, before the exact `w²=1` boundary correction below. It uses
+the formal `tol=1e-6` preset, two Numba `workqueue` threads, one BLAS-family
+thread, CPU affinity `[0, 1]`, and 25 warm repeats per case. Warm median/p95
+times were `5.984/6.796 ms` (default), `6.106/7.384 ms` (low-T),
+`9.346/10.133 ms` (high-T), `9.970/10.695 ms` (stiff), and
+`9.529/10.596 ms` (high-kappa). First process calls were measured separately;
+all five output digests stayed identical across each case's 26 calls. The
+boundary correction was checked directly but has not been followed by a new
+full profile. See [`docs/benchmarks.md`](docs/benchmarks.md) for the protocol,
 raw records, and limits.
 
 The accuracy evidence is scoped to named points and selected parameter edges,
@@ -263,10 +264,10 @@ comparison, not a current benchmark.
 
 | Method | runtime/point | Scope / note |
 |---|---|---|
-| fast (goal-kink-hybrid, default) | 5.987 ms warm median; 6.882 ms p95; 292.5 ms first process call including JIT | 2026-10-22 profile, two Numba threads; `<4 ms` not met |
+| fast (goal-kink-hybrid, default) | 5.984 ms warm median; 6.796 ms p95; 402.3 ms first process call including JIT | 2026-10-23 base-HEAD profile, two Numba threads; `<4 ms` not met |
 | reference (oracle) | 360–579 s/point in dated deep-tail studies | precision anchor; cost depends on tail setting |
 
-The 2026-10-22 profile is not paired with an LSODA run under the same resource
+The 2026-10-23 profile is not paired with an LSODA run under the same resource
 protocol, so no current speedup ratio is claimed. Older `0.37 s` /
 `3.7–4.1 s` / `~1000x` figures are pre-JIT historical measurements.
 
@@ -292,7 +293,7 @@ reference-engine MCMC chain; see
 * In the 2026-09-12 six-point same-grid audit, the fast-to-reference `DN_gw`
   difference was `2.93e-4` median at `z_tail=8`; that comparison includes the
   reference's frozen-tail convention and is not a current-HEAD parameter-space
-  certification. The latest recorded warm default runtime is `5.987 ms`, above
+  certification. The latest recorded warm default runtime is `5.984 ms`, above
   the `4 ms` target.
 * The latest profile has no matched-resource LSODA comparison, so a current
   speedup factor is not claimed.

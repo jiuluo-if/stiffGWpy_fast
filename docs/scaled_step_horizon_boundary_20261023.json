@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "source_commit_base": "ccea67ba64be7a5ab23646a6b7903d928c220bf8",
+  "source_file": "stiffgwpy_fast/fast_sgwb.py",
+  "source_file_sha256": "99a9c380180bbca42436195e914d35007053aabbe66de73cab1d525999cb02b5",
+  "follow_up_source_file_sha256": "7c90355642ee02b305bfa533c9ce63fc178ba72e219c9fcefcee46ef0284a8f9",
+  "comparison": "current worktree fix versus commit-bound pre-fix formal-fast profiles",
+  "formal_fast_config": {
+    "tol": 1e-06,
+    "kink_split": true,
+    "freq_grid": "goal",
+    "frequency_quadrature": "pchip",
+    "numba_threads": 2,
+    "threading_layer": "workqueue",
+    "affinity": [
+      0,
+      1
+    ]
+  },
+  "direct_boundary_probe": {
+    "z_mid": 0.0,
+    "h": 0.005,
+    "before": "ZeroDivisionError from sin(0)/0",
+    "after": "finite exact zero-frequency limit in scaled_step and _phase_segment"
+  },
+  "follow_up_explicit_limit_probe": {
+    "implementation": "w2 == 1.0 assigns c=1.0 and si=h directly",
+    "current_source_direct_result": [
+      0.99,
+      1.0099999999999998
+    ],
+    "analytic_result": [
+      0.99,
+      1.0099999999999998
+    ],
+    "exact_match": true,
+    "nearby_z": [
+      -1e-12,
+      1e-12
+    ],
+    "nearby_values_finite": true,
+    "scope_note": "The five-case digests below cover the preceding algebraically equivalent series-limit implementation; they were not rerun after this explicit-branch rewrite."
+  },
+  "timing_used_for_claim": false,
+  "cases": [
+    {
+      "case": "default",
+      "converged": true,
+      "DN_eff": 0.0022636474150855806,
+      "DN_gw_last": 0.0022636474150855806,
+      "frequency_count": 76,
+      "digests": {
+        "f": "e20f49fc6b48ed114060fcad852f03da3a56690ccefa0b9ae590d83098990e3b",
+        "log10OmegaGW": "904bd41db15d9206d955eab8d072ad66cfef6d24f2f72bb0a0e16b7a17d03f00",
+        "DN_gw": "2e5cf9bd0c023cae0118a5a83192bbdd6581159a9c0ad0ede881f18fc16c67cc",
+        "g2": "1e5f4ed6a18dd809a0f49822b28563cd208a154d41bd913dc4320ce89f730a7b",
+        "w2": "5442dd13fbdc8569206978b773228c3973f01a0506b8f753277ac7f529b87e7c"
+      },
+      "finite_counts": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 13764,
+        "g2": 13764,
+        "w2": 13764
+      },
+      "sizes": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 13764,
+        "g2": 13764,
+        "w2": 13764
+      },
+      "output_digests_match_before_fix": {
+        "digest_f": true,
+        "digest_spectrum": true,
+        "digest_DN_gw": true,
+        "digest_g2": true,
+        "digest_w2": true
+      }
+    },
+    {
+      "case": "lowT",
+      "converged": true,
+      "DN_eff": 5.3114602833937826e-08,
+      "DN_gw_last": 5.3114602833937826e-08,
+      "frequency_count": 76,
+      "digests": {
+        "f": "3c89ce2571358651e611f189a6eb2812d52eafe515e255e9d590a523d0bd5a80",
+        "log10OmegaGW": "50f8033d88cfc1927206314219bb6e60727c3673817f36d61802b38837232d2c",
+        "DN_gw": "5cb2de565ca4c66245a0f8f8bbd77d1225ecc5364ca649ef3d1671e13eddbfa0",
+        "g2": "5609abec0f4973b3876a037102bcfa70b909e445b9149f88bad1a1c2c80499cd",
+        "w2": "47f22eedb9b63608f0c15ce287b231aebb3fcd6f65cf41f9c5dfe7a404c4fdc5"
+      },
+      "finite_counts": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 14841,
+        "g2": 14841,
+        "w2": 14841
+      },
+      "sizes": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 14841,
+        "g2": 14841,
+        "w2": 14841
+      },
+      "output_digests_match_before_fix": {
+        "digest_f": true,
+        "digest_spectrum": true,
+        "digest_DN_gw": true,
+        "digest_g2": true,
+        "digest_w2": true
+      }
+    },
+    {
+      "case": "highT",
+      "converged": true,
+      "DN_eff": 0.05643308427141758,
+      "DN_gw_last": 0.05643308427141758,
+      "frequency_count": 76,
+      "digests": {
+        "f": "4152d0e0362eafbc9af058c595f0429b23062a28824810375e87f1a261e346e7",
+        "log10OmegaGW": "cce0defb8cb36661d16cb6a254e0494ac337aa38e61a367730efb173abeebc62",
+        "DN_gw": "5d864508c96ed892666f834a0be79cf25a2ed92f6a76c24eb9f235afe006b13a",
+        "g2": "1b7684817b5d8290470a9d9109a1249c0fe0e445280b9f3374d8c589ddd3df88",
+        "w2": "ea41e9fdd277144c92a166e518b9c503e520c716edb27e1f8c4a567e9a69e190"
+      },
+      "finite_counts": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 13442,
+        "g2": 13442,
+        "w2": 13442
+      },
+      "sizes": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 13442,
+        "g2": 13442,
+        "w2": 13442
+      },
+      "output_digests_match_before_fix": {
+        "digest_f": true,
+        "digest_spectrum": true,
+        "digest_DN_gw": true,
+        "digest_g2": true,
+        "digest_w2": true
+      }
+    },
+    {
+      "case": "stiff",
+      "converged": true,
+      "DN_eff": 0.014984335009443728,
+      "DN_gw_last": 0.014984335009443728,
+      "frequency_count": 76,
+      "digests": {
+        "f": "3da2da1357c4f777d46e613a423be4ac2a3d32d185ebf531df760730e88277c3",
+        "log10OmegaGW": "ea4acdb22e890c8c38cbd3aa7d5a0d28de9bb2d5c8c0f2e96c01758e574b89a5",
+        "DN_gw": "0cc970e131c6aba3fde8e659cff0f9129d8142bf70db94ffb5be6efc5ccad611",
+        "g2": "321c7585faa8c390e92f361d6151ed3602be37ead1445a17891cecc41f319973",
+        "w2": "0f3ad8069281422ae8e606504272837d7fbaa46fb24a7e16b484ecae29d3bf7a"
+      },
+      "finite_counts": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 13918,
+        "g2": 13918,
+        "w2": 13918
+      },
+      "sizes": {
+        "f": 76,
+        "log10OmegaGW": 76,
+        "DN_gw": 13918,
+        "g2": 13918,
+        "w2": 13918
+      },
+      "output_digests_match_before_fix": {
+        "digest_f": true,
+        "digest_spectrum": true,
+        "digest_DN_gw": true,
+        "digest_g2": true,
+        "digest_w2": true
+      }
+    },
+    {
+      "case": "high_kappa",
+      "converged": true,
+      "DN_eff": 0.22570645394976807,
+      "DN_gw_last": 0.22570645394976807,
+      "frequency_count": 77,
+      "digests": {
+        "f": "c0ee2a105a41b0520baae6daa0ec66f7ad1a133e35e899b392a42c2789168ab5",
+        "log10OmegaGW": "2dfbbfa1d3d98efd3b27c87cc649c8b5d5783798f1ab8daf57826d3db9cb6b98",
+        "DN_gw": "7e80866e2e2e1d6fa7027a272e81100583be0c6cab13f8febfc6be7c039ddf9d",
+        "g2": "a6aedb3330e00e0d0ab8b92c5a4ac666728cb17921702062213ec025ed401e21",
+        "w2": "5b210fd6c0f1cfbb5b483ba8389c70af66ab9c36e22521919aefda63fa6a7884"
+      },
+      "finite_counts": {
+        "f": 77,
+        "log10OmegaGW": 77,
+        "DN_gw": 13457,
+        "g2": 13457,
+        "w2": 13457
+      },
+      "sizes": {
+        "f": 77,
+        "log10OmegaGW": 77,
+        "DN_gw": 13457,
+        "g2": 13457,
+        "w2": 13457
+      },
+      "output_digests_match_before_fix": {
+        "digest_f": true,
+        "digest_spectrum": true,
+        "digest_DN_gw": true,
+        "digest_g2": true,
+        "digest_w2": true
+      }
+    }
+  ]
+}

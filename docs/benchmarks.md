@@ -9,7 +9,9 @@ Code version: the corrected formal fast profile below used
 `cdbdb387479e11cd87a38d76a0e58348ca13e70f`. The historical Round 68 run used
 `c7d4766f15c1cda4693d306597723de50abd4554`. The PTA cache comparison used
 source commit `c185df58938a05c208410a5cd47faafbc5d7fa2c`. Each run artifact
-records its own commit.
+records its own commit. The 2026-10-23 formal-fast repeatability profile
+below is bound to `ccea67ba64be7a5ab23646a6b7903d928c220bf8`; it predates the
+exact horizon-boundary correction documented in [`accuracy.md`](accuracy.md).
 
 ## 2026-10-22 corrected formal fast profile
 
@@ -50,6 +52,58 @@ Reproduce a case with the fixed-resource wrapper; repeat for each case name:
 
 ```powershell
 python scripts/run_fixed_profile.py --threads 2 --affinity-count 2 --reps 26 --case default --kink-split --json docs/profile_fast_breakdown_6707572_20261022_default.json
+```
+
+## 2026-10-23 base-HEAD formal-fast profile
+
+This repeatability profile was run at base HEAD
+`ccea67ba64be7a5ab23646a6b7903d928c220bf8`, after the LVK adapter and
+documentation updates but before the exact horizon-boundary correction. It
+uses the formal `fast` preset with
+`tol=1e-6`, `kink_split=True`, goal grid, PCHIP, `h=0.005`, `col_step=8`,
+`z_tail=5`, and `phase_max=0.25`. Each of five cases ran in a fresh process for
+26 calls: the first call is reported separately and the remaining 25 are used
+for warm statistics. Resources were fixed to two Numba `workqueue` threads,
+CPU affinity `[0, 1]`, one BLAS-family thread, and one process. All five output
+digests (`f`, `log10OmegaGW`, `DN_gw`, `g2`, and `w2`) remained identical across
+all 26 records in each case.
+
+| Case | First call | Warm median | Warm p95 | Tensor median | Frequencies | Propagation calls |
+|---|---:|---:|---:|---:|---:|---:|
+| default | 402.3 ms | 5.984 ms | 6.796 ms | 2.920 ms | 76 | 1 |
+| low-T | 305.5 ms | 6.106 ms | 7.384 ms | 3.437 ms | 76 | 1 |
+| high-T | 289.9 ms | 9.346 ms | 10.133 ms | 5.072 ms | 76 | 2 |
+| stiff | 292.9 ms | 9.970 ms | 10.695 ms | 5.803 ms | 76 | 2 |
+| high-kappa | 289.2 ms | 9.529 ms | 10.596 ms | 5.238 ms | 77 | 2 |
+
+The `tensor_solve_kernel` stage accounts for about 49% of default runtime and
+54%–58% in the three slow cases, making it the main target for further
+performance review. This is a current-source timing profile, not an A/B speed
+claim and not new Oracle accuracy coverage. The five commit-bound records are
+[`default`](profile_fast_breakdown_ccea67b_20261023_default.json),
+[`low-T`](profile_fast_breakdown_ccea67b_20261023_lowT.json),
+[`high-T`](profile_fast_breakdown_ccea67b_20261023_highT.json),
+[`stiff`](profile_fast_breakdown_ccea67b_20261023_stiff.json), and
+[`high-kappa`](profile_fast_breakdown_ccea67b_20261023_high_kappa.json).
+
+Reproduce the five cases with the same environment:
+
+Run from source commit `ccea67ba64be7a5ab23646a6b7903d928c220bf8` to reproduce
+these commit-bound records; a later checkout produces a new record with its own
+source commit.
+
+```powershell
+$env:NUMBA_NUM_THREADS = '2'
+$env:NUMBA_THREADING_LAYER = 'workqueue'
+$env:FAST_THREADS = '2'
+$env:OMP_NUM_THREADS = '1'
+$env:OPENBLAS_NUM_THREADS = '1'
+$env:MKL_NUM_THREADS = '1'
+$env:VECLIB_MAXIMUM_THREADS = '1'
+$env:NUMEXPR_NUM_THREADS = '1'
+foreach ($case in @('default', 'lowT', 'highT', 'stiff', 'high_kappa')) {
+    python scripts/run_fixed_profile.py --threads 2 --affinity-count 2 --reps 26 --case $case --kink-split --json "docs/profile_fast_breakdown_ccea67b_20261023_$case.json"
+}
 ```
 
 ## Earlier 2026-10-21 stage profile (historical low-level tolerance)
@@ -141,6 +195,41 @@ provenance are in
 the reproduction script is
 [`benchmark_backend_concurrency.py`](../scripts/benchmark_backend_concurrency.py).
 
+## TBB dynamic chunk-size screen (2026-10-22)
+
+The screen compared TBB `parallel_chunksize` values `0`, `1`, `2`, `4`, and `8`
+on default, high-T, stiff, and high-kappa cases. Each variant ran in a fresh
+process for 13 calls: the first JIT call was separated, and 12 warm calls were
+used for the medians below. The formal workqueue reference uses the same
+two-thread CPU affinity and solver configuration, with 25 warm calls. The
+solver package has no source-file differences between screen commit `9d1d127`
+and reference commit `6707572`. The runs were not paired, so small percentage
+differences are exploratory and do not establish stable speed gains.
+
+Chunk size `0` selects static scheduling; positive values request dynamic
+scheduling, which requires Numba's TBB backend
+([Numba scheduling docs](https://numba.readthedocs.io/en/stable/user/parallel.html)).
+The probe JSON files did not record the selected chunk size, so the consolidated
+artifact restores it from each original filename suffix and the
+`FAST_CHUNKSIZE` setting used by the profile driver.
+
+Warm median total runtime in milliseconds:
+
+| Case | Workqueue static (`c=0`) | TBB `c=0` | TBB `c=1` | TBB `c=2` | TBB `c=4` | TBB `c=8` |
+|---|---:|---:|---:|---:|---:|---:|
+| default | 5.987 | 6.679 | 6.998 | 6.636 | 6.844 | 6.879 |
+| high-T | 10.049 | 10.260 | 9.997 | 9.986 | 9.729 | 10.016 |
+| stiff | 9.179 | 10.092 | 10.446 | 9.873 | 10.119 | 10.215 |
+| high-kappa | 9.458 | 10.857 | 9.700 | 9.921 | 9.881 | 10.025 |
+
+Every TBB variant retained the same five output digests as the workqueue
+reference across all repeats. The best TBB chunk differs by case, and the
+small high-T timing wins are unpaired; no global chunk-size or backend change
+was selected. The raw per-call total/tensor timings, output digests,
+configuration, environment, and reference artifact names are consolidated in
+[`benchmark_tbb_chunksize_screen_20261022.json`](benchmark_tbb_chunksize_screen_20261022.json).
+The older per-case local JSON copies were removed after this consolidation.
+
 ## Reference-spectrum quadrature breakpoints (2026-10-22)
 
 The interpolation-error estimate integrates a full-grid PCHIP and a
@@ -228,6 +317,20 @@ writes a new timestamped JSON file; `--output` selects a specific path.
 These local adapter timings exclude initialization from each evaluation and
 do not measure end-to-end Cobaya MCMC runtime or change the scope of the Round
 68 solver profile.
+
+## PTA theory-frequency support boundary (2026-10-23)
+
+The IPTA and NANOGrav adapters interpolate primordial power only between
+available theory knots. Bins outside that support contribute zero primordial
+residual power; the separate SMBHB contribution remains in the likelihood. A
+direct probe using the configured packaged frequencies found that a theory
+interval of `[-7, -6]` leaves all 9 IPTA bins and all 14 NANOGrav bins below
+the first knot. The helper returns zero primordial power for those bins and
+also avoids constructing a spline when the physical-band knot set is empty.
+Supported multi-knot probes match the previous formula exactly; a one-knot
+exact-match probe also matches the previous vector formula. These are support
+and formula checks, not an end-to-end MCMC or speed claim. Details are in
+[`pta_frequency_support_boundary_20261023.json`](pta_frequency_support_boundary_20261023.json).
 
 ## LVK cross-correlation likelihood hot path (2026-10-23)
 

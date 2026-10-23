@@ -30,3 +30,17 @@ def test_riccati_chart_switch_round_trip_is_finite():
     assert np.isfinite(x) and np.isfinite(y)
     assert abs(x - 1.0e-12) < 1e-24
     assert abs(y - 1.0) < 1e-14
+
+
+def test_scaled_step_zero_frequency_boundary_has_finite_limit():
+    from stiffgwpy_fast.fast_sgwb import _phase_segment, scaled_step
+
+    x0, y0, h = 0.37, -0.81, 0.005
+    expected = ((1.0 - h) * x0 - h * y0, h * x0 + (1.0 + h) * y0)
+
+    direct = scaled_step(x0, y0, z_mid=0.0, h=h)
+    segmented = _phase_segment(x0, y0, z_start=-0.1, z_end=0.1, h_step=h, phase_max=0.0)
+
+    assert np.all(np.isfinite(direct))
+    np.testing.assert_allclose(direct, expected, rtol=0.0, atol=1e-15)
+    np.testing.assert_allclose(segmented, expected, rtol=0.0, atol=1e-15)

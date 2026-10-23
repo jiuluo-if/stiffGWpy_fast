@@ -3,13 +3,12 @@
 中文：根据 PTA 频点上的原初 SGWB 谱和 SMBHB 背景，使用每个频点的样本分布计算 IPTA 似然。
 """
 
-import math
-
 import astropy.units as u
 import numpy as np
 from cobaya.likelihood import Likelihood
-from scipy import interpolate
 from scipy.stats import gaussian_kde as kde
+
+from ._spectrum import primordial_rho
 
 
 class IPTA(Likelihood):
@@ -60,20 +59,7 @@ class IPTA(Likelihood):
 
         # Primordial SGWB
         # 原初随机引力波背景。
-        rho_prim = np.zeros_like(work_freqs)
-        if f_theory[-1] >= math.log10(work_freqs[0]):
-            cond = (f_theory > -13) & (f_theory < -5)
-            f_t = f_theory[cond]
-            Ogw_t = Ogw_theory[cond]
-            spec_prim = interpolate.CubicSpline(f_t, Ogw_t)
-
-            cond = np.log10(work_freqs) <= f_t[-1]
-            # Calculate theoretical Omega_GW only within the PTA frequency range (<= f_end).
-            # 仅对理论频谱覆盖范围内的 PTA 频点计算 Omega_GW。
-            Ogw_prim = spec_prim(np.log10(work_freqs[cond]))
-            rho_prim[cond] = np.divide(
-                np.power(10.0, Ogw_prim) * H_0**2, 8 * np.pi**4 * work_freqs[cond] ** 5 * T_base
-            )  # s^2
+        rho_prim = primordial_rho(f_theory, Ogw_theory, work_freqs, H_0, T_base)
 
         # SGWB from SMBHBs
         # 超大质量黑洞双星背景。
@@ -81,7 +67,7 @@ class IPTA(Likelihood):
         gamma_BH = data_params["gamma_BBH"]
         rho_BH = (
             np.power(10.0, log10hc_BH * 2) * np.power(work_freqs * yr, -gamma_BH) * yr**3 / (12 * np.pi**2 * T_base)
-        )  # s^2
+        )
 
         log10rho_Model = np.log10(np.sqrt(rho_prim + rho_BH))  # log10(delay/s)，延迟按秒计。
         log10rho_max = self._log10rho_max

@@ -6,7 +6,7 @@ Status: current map of research notes and run artifacts
 
 Last full inventory: 2026-10-22
 
-Focused refresh: 2026-10-23 (Prüfer provenance, transition-refinement frontier, and LVK likelihood cache)
+Focused refresh: 2026-10-23 (formal-fast profile, Prüfer provenance, transition-refinement frontier, and LVK likelihood cache)
 
 Code version: each artifact is commit-bound. The validation manifest is dated `2026-09-17`; newer profiles and reports are linked by their own run commit.
 
@@ -43,6 +43,37 @@ because it is faster or numerically close on one case.
 | Posterior and external-model comparison | The 2026-09-24 report compares three MCMC methods on shared LVK data. Current-fast sampling steps are about 2.9–4.9 times faster than SageNet+ across the three reported scenarios. The low-reheating case covers 0% of the LVK band for every method and cannot support a data-fit comparison. This is a sampling-step benchmark, not isolated solver runtime. The report's canonical chain archive contains four chains × 10,000 retained samples; a separate ignored local file under `mcmc/chains/` contains three chains × 2,000 samples and is an earlier, unreferenced run retained pending provenance review. | [`mcmc_sagenet_compare/report.md`](mcmc_sagenet_compare/report.md), [`mcmc_posterior/posterior_validation.md`](mcmc_posterior/posterior_validation.md), [`mcmc_sagenet_compare/`](mcmc_sagenet_compare/), [`mcmc_posterior/`](mcmc_posterior/) |
 | Engineering, tests, and historical plans | These are maintenance records, not physics-result reports. The engineering audit remains cross-linked from the root README, changelog, and reproducibility guide. The 2026-09-10 DN/runtime plan is a historical plan whose same-grid accuracy and `<4 ms` runtime gates remain open in the current evidence. The 2026-09-23 tensor-propagation plan is also historical: its exact-exp candidate was not adopted, while the later `next_assembly_k` implementation and measured outcome are recorded in the 2026-10-21 benchmark. | [`engineering_audit.md`](engineering_audit.md), [`test_coverage_matrix.md`](test_coverage_matrix.md), [`test_duplication_audit.md`](test_duplication_audit.md), [`superpowers/plans/2026-09-10-fast-v02-dn-gw.md`](superpowers/plans/2026-09-10-fast-v02-dn-gw.md), [`superpowers/plans/2026-09-23-fast-v02-tensor-propagation.md`](superpowers/plans/2026-09-23-fast-v02-tensor-propagation.md), [`accuracy.md`](accuracy.md), [`benchmark_kernel_assembly_stride_20261021.json`](benchmark_kernel_assembly_stride_20261021.json) |
 
+## 2026-10-22 TBB chunk-size scheduling screen
+
+The TBB screen covered five chunk sizes across four cases. Output digests match
+the formal workqueue reference, but the fastest chunk differs by case and the
+small timing differences are unpaired; no global scheduling change was
+selected. The 20 preliminary JSON files were consolidated into one traceable
+summary. See [`benchmarks.md`](benchmarks.md#tbb-dynamic-chunk-size-screen-2026-10-22)
+and [`benchmark_tbb_chunksize_screen_20261022.json`](benchmark_tbb_chunksize_screen_20261022.json).
+
+## 2026-10-23 base-HEAD formal-fast profile
+
+A five-regime profile at base HEAD `ccea67b`, before the exact horizon-boundary
+correction, reports warm medians of `5.984/6.106/9.346/9.970/9.529 ms` for
+default, low-T, high-T, stiff, and high-kappa. Every case retained identical
+output digests across 26 calls. The tensor propagation stage accounts for
+about 49% of default runtime and 54%–58% in the three slow cases. This is a
+dated base-HEAD profile, not an A/B speed claim or new accuracy evidence; the
+full protocol and raw records are in the
+[benchmark report](benchmarks.md#2026-10-23-base-head-formal-fast-profile).
+
+## 2026-10-23 PTA theory-frequency support boundary
+
+IPTA and NANOGrav avoid spline construction on an empty theory-knot set and
+avoid extrapolating below the first supported knot. With configured packaged
+frequencies and theory interval `[-7, -6]`, all 9 IPTA bins and 14 NANOGrav
+bins fall below support and receive zero primordial power; the SMBHB component
+remains active. Full-support and exact single-knot helper probes match the
+prior formula exactly. See the
+[benchmark note](benchmarks.md#pta-theory-frequency-support-boundary-2026-10-23)
+and [source-bound probe record](pta_frequency_support_boundary_20261023.json).
+
 ## 2026-10-22 transition-refined `H2_vec` optimization
 
 The transition-refined path called the SciPy density spline once per grid
@@ -77,7 +108,8 @@ with `6.41/8.09 ms` medians. The unpinned separate-run timing difference is
 small; no stable gain over radius `0.0625` is established.
 The fixed-affinity paired comparison of radii `0.015625` and `0.0078125` also
 found no stable speed winner; see the raw paired record linked from the Oracle
-C assessment.
+C assessment and the
+[paired timing data](benchmark_transition_radius_paired_20261022.json).
 
 ## 2026-10-23 transition-refinement frontier
 

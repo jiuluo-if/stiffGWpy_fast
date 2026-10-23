@@ -477,8 +477,8 @@ default 点的 DN_gw 残差由 **oracle 的 frozen-tail 约定**主导，而不�
 ## Fresh current-HEAD native tail A/B and production handoff test (2026-09-16)
 
 - 在同一当前 SHA、完整 76/77 native goal nodes、固定 affinity、Numba=20、
-  workqueue、BLAS=1、workers=1 下，重新比较 production `z_tail=5/6/7`；三份
-  benchmark artifact 为 `docs/benchmark_head_matrix_ztail5_round_20260916.json`、
+  workqueue、BLAS=1、workers=1 下，重新比较 production `z_tail=5/6/7`；`z_tail=5`
+  使用 canonical artifact `docs/benchmark_head_matrix.json`，`z_tail=6/7` 分别为
   `docs/benchmark_head_matrix_ztail6_round_20260916.json`、
   `docs/benchmark_head_matrix_ztail7_round_20260916.json`。
 - production `DN_gw` 从 z=5 到 z=7 的相对变化仅约
@@ -3122,6 +3122,34 @@ outer-reuse certificate construction; no full-outer benchmark was justified.
 The next ranked direction is a new residual-certified transfer
 representation, beginning with a tiny production-independent phase-space
 residual screen. No AI/learned model is involved.
+
+## Round 68 — resumed HEAD and fresh profile (2026-09-23)
+
+After the explicit resume, `fast/fast_v0.2`, local `HEAD`, and the current
+working branch were rechecked at `c7d4766f15c1cda4693d306597723de50abd4554`.
+The formerly running Actions run #244 is complete with all nine jobs green.
+No tracked worktree changes were present at resume.
+
+A new 25-repeat fixed-resource full-path profile (`kink_split=true`,
+goal/PCHIP, Numba=2/workqueue, affinity `[0,1]`, BLAS family=1) gives warm
+median/p95 ms: default `7.189/7.916`, low-T `7.116/7.782`, high-T
+`10.475/10.890`, stiff `10.260/10.936`, high-kappa `9.929/11.062`.
+All converge without a failure reason; frequency counts are 76 except
+high-kappa 77. The fresh stage profiler confirms one tensor solve on
+default/low-T and two on high-T/stiff/high-kappa. A first profiler pass also
+showed an explicit cold first-call outlier (`~227--239 ms`), so its stage
+percentiles must exclude that JIT warmup; raw files are
+`docs/benchmark_head_matrix_round68_20260923.json` and
+`docs/profile_fast_breakdown_round68_20260923_<case>.json`.
+
+The new run is slower than Round66 medians by about `0.2--0.7 ms`; this is
+resource/runtime drift to account for in same-session alternating A/B, not
+evidence of a code regression (production solver code did not change). The
+main opportunity remains tensor propagation: the hard-case two-call tensor
+median is roughly `4.1--5.4 ms` in warm profiler records, against `8.1--10.3
+ms` total wall time after excluding the cold first call. The measured
+end-to-end ceiling of a free tensor kernel is therefore material; Python
+setup-only directions remain lower-ranked.
 
 ## CI follow-up — cross-backend no-copy spike assertion (2026-09-23)
 

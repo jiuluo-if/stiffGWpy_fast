@@ -33,7 +33,7 @@
 
 goal 网格在再加热特征附近保留节点，并将 `eval_freqs` 作为原生求解节点；`z_tail` 之后由解析 WKB 包络处理。局部误差预算见 `stiffgwpy_fast.fast_sgwb.estimate_local_error`。
 
-最新固定资源全流程 profile 于 2026-10-22 基于 solver commit `6707572` 生成，使用正式预设容差 `tol=1e-6`、2 个 Numba `workqueue` 线程、1 个 BLAS 线程、CPU affinity `[0, 1]`，每个情景测 25 条 warm 样本。预热 median/p95（毫秒）为 default `5.987/6.882`、high-T `10.049/10.848`、stiff `9.179/9.819`、high-kappa `9.458/10.112`。首条进程调用另行报告，其中 default 包含 JIT 成本；每个情景的 26 条记录输出哈希一致。该 profile 之后到当前 HEAD 的提交只改了文档，没有修改求解器。测量协议、原始数据和适用范围见 [`docs/benchmarks.md`](docs/benchmarks.md)。
+最新固定资源全流程 profile 于 2026-10-23 在基线 HEAD `ccea67b` 上生成，早于下文所述 `w²=1` 精确边界修复。运行使用正式预设容差 `tol=1e-6`、2 个 Numba `workqueue` 线程、1 个 BLAS 系列线程、CPU affinity `[0, 1]`，每个情景包含 25 条 warm 样本。预热 median/p95（毫秒）为 default `5.984/6.796`、low-T `6.106/7.384`、high-T `9.346/10.133`、stiff `9.970/10.695`、high-kappa `9.529/10.596`。首条进程调用单独测量；每个情景的 26 条记录输出摘要均一致。边界修复已做直接计算核验，但之后没有重跑完整 profile。测量协议、原始数据和适用范围见 [`docs/benchmarks.md`](docs/benchmarks.md)。
 
 ## 精度参照与已知边界
 
@@ -95,7 +95,7 @@ mock-data 重要性采样验证（Layer C）使用固定种子的 9,000 个 fast
 
 ## 性能边界与复现
 
-2026-10-22 profile 没有同资源 LSODA 对照，因此不报告当前速度比。default warm runtime 为 `5.987 ms`，仍高于 `4 ms` 目标。reference 在有日期的深尾研究中约需每点 `360–579 s`，具体取决于尾部设置；深尾无截断认证因方程刚性而不可行。
+2026-10-23 profile 没有同资源 LSODA 对照，因此不报告当前速度比。default warm runtime 为 `5.984 ms`，仍高于 `4 ms` 目标。reference 在有日期的深尾研究中约需每点 `360–579 s`，具体取决于尾部设置；深尾无截断认证因方程刚性而不可行。
 
 贡献和发布门槛见 [`CONTRIBUTING.md`](CONTRIBUTING.md)，分阶段工程审计见 [`docs/engineering_audit.md`](docs/engineering_audit.md)。常用验证命令如下：
 

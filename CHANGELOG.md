@@ -2,10 +2,26 @@
 
 ## Unreleased — 2026-10-23
 
+- Handle the exact `w²=1` horizon-crossing boundary with the finite zero-frequency
+  limit instead of evaluating `sin(0)/0` in the oscillatory branch. The direct
+  compiled probe matches the explicit `c=1`, `si=h` limit. The five-case digest
+  comparison covers the preceding algebraically equivalent series-limit branch;
+  those full cases were not rerun after the explicit-branch rewrite ([record](docs/scaled_step_horizon_boundary_20261023.json)).
+
+- Share the IPTA/NANOGrav primordial-spectrum conversion and limit cubic-spline
+  evaluation to the theory knots. Unsupported PTA frequencies no longer trigger
+  spline extrapolation, and empty or single-point support no longer causes a
+  spline-construction failure; the SMBHB contribution is still included
+  ([support probe](docs/pta_frequency_support_boundary_20261023.json)).
+
 - Recorded the LVK likelihood's six-case, 200-pair A/B on the packaged data;
   overlapping cases show `1.90x`–`9.75x` lower per-call latency, with maximum
   absolute log-likelihood change `1.21e-10`. The no-overlap case is scoped
   separately; these are not full MCMC timings.
+
+- Recorded the exploratory TBB chunk-size screen with exact output-digest
+  agreement and no consistent cross-case speed gain. Consolidated its 20
+  local probe files into one documented artifact.
 
 - Cache fixed LVK frequency/data columns during likelihood initialization, use
   NumPy's float64 pairwise chi-square reduction, and leave unsupported bins at
