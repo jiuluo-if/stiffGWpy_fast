@@ -81,26 +81,28 @@ The goal grid reserves nodes around the reheating feature and preserves
 analytic WKB envelope at `z_tail`; the local error budget is exposed through
 `stiffgwpy_fast.fast_sgwb.estimate_local_error`.
 
-The latest full-path profile was generated at solver commit `c7d4766` on
-2026-09-23 with 25 repeats, two Numba `workqueue` threads, one BLAS thread,
-and CPU affinity `[0, 1]`. Warm median/p95 times were `7.189/7.916 ms`
-(default), `7.116/7.782 ms` (low-T), `10.475/10.890 ms` (high-T),
-`10.260/10.936 ms` (stiff), `5.923/6.313 ms` (low-r), and
-`9.929/11.062 ms` (high-kappa). All six
-profiled cases converged. The first sample is reported for each case; only the
-default is process-cold and includes JIT cost. The current HEAD adds MCMC
-evidence but no solver changes after the profile commit. See
-[`docs/benchmarks.md`](docs/benchmarks.md) for provenance and limitations.
+The latest fixed-resource full-path profile was generated on 2026-10-22 from
+solver commit `6707572`. It uses the formal `tol=1e-6` preset, two Numba
+`workqueue` threads, one BLAS thread, CPU affinity `[0, 1]`, and 25 warm
+repeats per case. Warm median/p95 times were `5.987/6.882 ms` (default),
+`10.049/10.848 ms` (high-T), `9.179/9.819 ms` (stiff), and
+`9.458/10.112 ms` (high-kappa). The first process call is reported separately;
+it includes JIT cost for the default case. All 26 output records per case had
+matching hashes. Later commits through the current HEAD changed documentation,
+not solver code. See [`docs/benchmarks.md`](docs/benchmarks.md) for the protocol,
+raw records, and limits.
 
-The latest scoped accuracy audit remains dated 2026-09-12 and is bound to its
-recorded artifacts: PCHIP error against the Oracle C WKB anchor was
-`1.07e-5`–`1.66e-4` at four named points, while the six-point same-grid
-comparison with the `z_tail=8` reference had a `2.93e-4` median difference.
-These measurements are not full parameter-space certification. PCHIP is the
-single formal `fast` quadrature default; Simpson remains explicitly selectable
-for audits. `eval_freqs` is separated from integration support nodes; the
-recorded six-point DN invariant change was zero. The latest MCMC comparison
-and its limits are summarized in
+The accuracy evidence is scoped to named points and selected parameter edges,
+not a full parameter-space certification. The 2026-09-12 same-grid baseline
+recorded PCHIP error of `1.07e-5`–`1.66e-4` against the Oracle C WKB anchor at
+four points and a `2.93e-4` median difference against the `z_tail=8` reference
+at six points. Later Oracle C checks found that the formal fast profile misses
+the `2e-4` gate at two `DN_re` edges; fine transition-refined candidates pass
+those sampled edges but have not replaced the formal profile. See
+[`docs/accuracy.md`](docs/accuracy.md) for the evidence and scope. PCHIP is the
+formal `fast` quadrature default; Simpson remains selectable for audits, and
+`eval_freqs` remains separate from integration support nodes. The MCMC
+comparison and its limits are summarized in
 [`docs/mcmc_sagenet_compare/report.md`](docs/mcmc_sagenet_compare/report.md).
 
 ## Reference / oracle
@@ -261,10 +263,10 @@ comparison, not a current benchmark.
 
 | Method | runtime/point | Scope / note |
 |---|---|---|
-| fast (goal-kink-hybrid, default) | 7.189 ms warm median; 7.916 ms p95; 545 ms first sample including JIT | Round 68, two Numba threads; `<4 ms` not met |
+| fast (goal-kink-hybrid, default) | 5.987 ms warm median; 6.882 ms p95; 292.5 ms first process call including JIT | 2026-10-22 profile, two Numba threads; `<4 ms` not met |
 | reference (oracle) | 360–579 s/point in dated deep-tail studies | precision anchor; cost depends on tail setting |
 
-The 2026-09-23 profile is not paired with an LSODA run under the same resource
+The 2026-10-22 profile is not paired with an LSODA run under the same resource
 protocol, so no current speedup ratio is claimed. Older `0.37 s` /
 `3.7–4.1 s` / `~1000x` figures are pre-JIT historical measurements.
 
@@ -290,7 +292,7 @@ reference-engine MCMC chain; see
 * In the 2026-09-12 six-point same-grid audit, the fast-to-reference `DN_gw`
   difference was `2.93e-4` median at `z_tail=8`; that comparison includes the
   reference's frozen-tail convention and is not a current-HEAD parameter-space
-  certification. The latest recorded warm default runtime is `7.189 ms`, above
+  certification. The latest recorded warm default runtime is `5.987 ms`, above
   the `4 ms` target.
 * The latest profile has no matched-resource LSODA comparison, so a current
   speedup factor is not claimed.

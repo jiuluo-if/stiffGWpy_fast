@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased — 2026-10-22
+## Unreleased — 2026-10-23
+
+- Updated the English and Chinese root READMEs to use the corrected
+  `tol=1e-6` performance profile and to distinguish the 2026-09-12 accuracy
+  baseline from later sampled `DN_re` edge checks. The documentation index now
+  points readers to the matching protocol and evidence scope.
 
 - Corrected the fixed-resource profile harness to use the formal `fast` preset
   tolerance by default and record the full solver configuration, Numba layer,
