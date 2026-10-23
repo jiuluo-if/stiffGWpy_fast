@@ -18,6 +18,24 @@ package imports and artifact paths resolve as documented.
 | `plot_*.py` | Render plots from saved validation or benchmark data |
 | `_resource_budget.py`, `_smoke_probe.py` | Shared support for thread limits and isolated smoke checks |
 
+`validate_fast.py`, `validate_random.py`, and `convergence_study.py` select
+signal-region channels from the reference spectrum (`log10(Omega_GW) >= -30`).
+Their linear relative-error helper uses the candidate spectrum as denominator.
+
+`benchmark_phase_a.py` compares the plain fixed grid with exact reheating-kink
+splitting for one built-in parameter case. Its spectrum-relative metrics use
+the shared helper with the candidate spectrum as denominator. The default
+reference grid uses all candidate frequencies; `--subset-reference` is a
+historical sparse-grid diagnostic that can change the reference `DN_gw` value.
+This script is a scoped comparison, not a parameter-space accuracy certification.
+
+`check_random_freq.py` compares both engines at one fixed parameter point and
+marks ten seeded frequency channels while reporting whole-grid residuals. Those
+channels are a visualization sample, not ten independent parameter cases. Its
+full-grid relative residual includes near-zero channels and should be read with
+the dex residual; its PNG defaults to the `scripts/` directory unless an output
+path is supplied.
+
 Many `benchmark_*_spike.py` files are historical, standalone candidate tests;
 they do not select or modify a production solver path. Read a script's CLI
 arguments (or run `--help` when available) and check its output path first.
