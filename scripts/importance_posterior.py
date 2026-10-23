@@ -56,10 +56,9 @@ def out_dir(args):
 def load_truth(out):
     p = os.path.join(out, 'mock_truth.json')
     if not os.path.exists(p):
-        p = os.path.join(out, 'mock_truth.json')
-    if not os.path.exists(p):
         raise SystemExit('mock_truth.json not found under %s' % out)
-    return json.load(open(p, encoding='utf-8'))
+    with open(p, encoding='utf-8') as handle:
+        return json.load(handle)
 
 
 def _model_kw(log10r, n_t):
@@ -149,10 +148,10 @@ def phase_draw(args):
 def phase_posterior(args):
     """Weighted posterior stats + ESS from the IS draws."""
     truth = load_truth(args.out)
-    z = np.load(os.path.join(args.out, 'is_draws.npz'))
-    log10r = z['log10r']
-    n_t = z['n_t']
-    lo = z['log10Om']
+    with np.load(os.path.join(args.out, 'is_draws.npz')) as z:
+        log10r = z['log10r']
+        n_t = z['n_t']
+        lo = z['log10Om']
     n = len(log10r)
     w = np.empty(n)
     for i in range(n):
@@ -228,10 +227,10 @@ def phase_pointwise(args):
         raise SystemExit('is_draws.npz missing: run --phase draw first')
     # posterior-bulk random selection weighted by the IS weights
     # 按重要性采样权重从后验主体区域随机抽样。
-    z = np.load(zpath)
-    log10r = z['log10r']
-    n_t = z['n_t']
-    lo = z['log10Om']
+    with np.load(zpath) as z:
+        log10r = z['log10r']
+        n_t = z['n_t']
+        lo = z['log10Om']
     n = len(log10r)
     w = np.empty(n)
     mu = np.array([args.mu_r, args.mu_nt])
@@ -281,10 +280,12 @@ def _boot(x, n=2000, seed=11):
 
 def phase_report(args):
     truth = load_truth(args.out)
-    post = json.load(open(os.path.join(args.out, 'is_posterior.json'),
-                          encoding='utf-8'))
-    pw = json.load(open(os.path.join(args.out, 'is_pointwise.json'),
-                        encoding='utf-8'))
+    with open(os.path.join(args.out, 'is_posterior.json'),
+              encoding='utf-8') as handle:
+        post = json.load(handle)
+    with open(os.path.join(args.out, 'is_pointwise.json'),
+              encoding='utf-8') as handle:
+        pw = json.load(handle)
     points = [p for p in pw['points'] if p['status'] == 'ok']
     sig = pw['sigma_dex']
     dll = np.asarray([loglike(p['lo_r'], truth, sig) -
@@ -299,8 +300,8 @@ def phase_report(args):
     # use exact IS weights when available from is_draws by matching theta.
     # 后验主体样本近似直接来自后验，默认可视为等权；若 is_draws 中存在匹配参数，
     # 则使用精确的重要性采样权重。
-    z = np.load(os.path.join(args.out, 'is_draws.npz'))
-    keys = set(zip(np.round(z['log10r'], 9), np.round(z['n_t'], 9)))
+    with np.load(os.path.join(args.out, 'is_draws.npz')) as z:
+        keys = set(zip(np.round(z['log10r'], 9), np.round(z['n_t'], 9)))
     wgt = []
     for p in points:
         k = (round(p['log10r'], 9), round(p['n_t'], 9))

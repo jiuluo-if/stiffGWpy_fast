@@ -126,11 +126,11 @@ def run_point(idx, kw):
     lo_new = np.asarray(mf2.log10OmegaGW, float)
     if lo_old.size == lo_new.size:
         rec['log10OmegaGW_maxabs'] = float(dex_abs(lo_old, lo_new).max())
-        # Define the signal region from the LSODA reference spectrum.
-        # 按 LSODA 参照谱划定信号区。
-        mask = signal_mask(lo_old)
+        reference_signal_mask = signal_mask(lo_old)
         rec['OmegaGW_rel_linear_max'] = (
-            float(rel_linear_omega(lo_old[mask], lo_new[mask]).max()) if mask.any() else 0.0)
+            float(rel_linear_omega(lo_old[reference_signal_mask],
+                                   lo_new[reference_signal_mask]).max())
+            if reference_signal_mask.any() else 0.0)
     else:
         rec['log10OmegaGW_maxabs'] = None
         rec['OmegaGW_rel_linear_max'] = None

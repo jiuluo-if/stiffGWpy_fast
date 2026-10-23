@@ -82,10 +82,8 @@ class stiffGW(Theory):
     # Likelihood-aware escalation: |Delta logL| = 0.5*(Delta_Neff_abs_error /
     # likelihood_sigma)^2 is compared against dlogl_tol (natural log-units).
     # The effective sigma is the likelihood's sensitivity to Delta N_eff
-    # (e.g. ~0.25 for CMB/BAO-scale Neff constraints; set per likelihood).
     # 似然感知升级按 |Delta logL| = 0.5*(Delta_Neff_abs_error / likelihood_sigma)^2
-    # 估算自然对数似然变化，并与 dlogl_tol 比较；likelihood_sigma 表示似然对 Delta_Neff 的有效灵敏度，
-    # 例如 CMB/BAO 的 Neff 约束可约取 0.25，但必须按具体似然设置。
+    # 估算自然对数似然变化，并与 dlogl_tol 比较；likelihood_sigma 表示具体似然对 Delta_Neff 的有效灵敏度。
     likelihood_sigma: float
     dlogl_tol: float
     escalate_to_reference: bool
@@ -227,8 +225,6 @@ class stiffGW(Theory):
             sgwb_kwargs['freq_res'] = self.freq_res
         eval_freqs = getattr(self, 'eval_freqs', None)
         if eval_freqs is not None:
-            # This run option is fixed across samples; parse it once and reuse the nodes.
-            # 该运行选项在各采样点间固定；只解析一次并复用频率节点。
             if not hasattr(self, '_eval_freqs_cache'):
                 self._eval_freqs_cache = _resolve_freqs_input(eval_freqs)
             sgwb_kwargs['eval_freqs'] = self._eval_freqs_cache

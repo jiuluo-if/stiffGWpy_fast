@@ -83,7 +83,8 @@ def out_dir(args):
 def oracle_truth(bins):
     """Reference (DOP853 oracle) log10 Omega_GW at the bins, engine-neutral."""
     p = os.path.join(REPO, 'docs', 'mcmc_posterior', 'oracle_truth.json')
-    d = json.load(open(p, encoding='utf-8'))
+    with open(p, encoding='utf-8') as handle:
+        d = json.load(handle)
     order = np.argsort(np.asarray(d['G'], dtype=float))
     G = np.asarray(d['G'], dtype=float)[order]
     lo = np.asarray(d['ref']['log10Om'], dtype=float)[order]
@@ -150,7 +151,8 @@ def _load_truth(out):
     p = os.path.join(out, 'mock_truth.json')
     if not os.path.exists(p):
         raise SystemExit('mock_truth.json missing: run --phase truth first')
-    return json.load(open(p, encoding='utf-8'))
+    with open(p, encoding='utf-8') as handle:
+        return json.load(handle)
 
 
 def model_kwargs(log10r, n_t, truth=None):
@@ -286,9 +288,9 @@ def phase_pointwise(args):
     chain_path = os.path.join(args.out, 'fast_chain.npz')
     if not os.path.exists(chain_path):
         raise SystemExit('fast chain missing: run --phase chain first')
-    z = np.load(chain_path)
-    sample = z['sample']
-    sample_params = list(z['sample_params'])
+    with np.load(chain_path) as z:
+        sample = z['sample']
+        sample_params = list(z['sample_params'])
     params, specials = MC.split_sample_columns(sample_params)
     ind = MC.param_indices(sample_params)
     mlpost = sample[:, specials['minuslogpost']].astype(float)
@@ -358,14 +360,16 @@ def _merge_chain_stats(out, chain_jsons):
         all_x = {}
         first = None
         for jn in chain_jsons:
-            cj = json.load(open(os.path.join(out, jn), encoding='utf-8'))
+            with open(os.path.join(out, jn), encoding='utf-8') as handle:
+                cj = json.load(handle)
             if first is None:
                 first = cj
-            z = np.load(os.path.join(out, jn.replace('.json', '.npz')))
-            sp = list(z['sample_params'])
+            chain_path = os.path.join(out, jn.replace('.json', '.npz'))
+            with np.load(chain_path) as z:
+                sp = list(z['sample_params'])
+                samp = z['sample']
             params, specials = MC.split_sample_columns(sp)
             ind = MC.param_indices(sp)
-            samp = z['sample']
             w = samp[:, specials['weight']].astype(float)
             ml = samp[:, specials['minuslogpost']].astype(float)
             ok = np.isfinite(ml) & (w > 0)
@@ -420,7 +424,8 @@ def phase_report(args):
     chain_path = os.path.join(args.out, chain_jsons[0])
     if not os.path.exists(chain_path):
         raise SystemExit('fast chain missing: run --phase chain first')
-    chain = json.load(open(chain_path, encoding='utf-8'))
+    with open(chain_path, encoding='utf-8') as handle:
+        chain = json.load(handle)
     stats = chain['stats']
     if len(chain_jsons) > 1:
         merged = _merge_chain_stats(args.out, chain_jsons)
@@ -431,10 +436,12 @@ def phase_report(args):
     pw = None
     pw_path = os.path.join(args.out, 'pointwise_reference.json')
     if os.path.exists(pw_path):
-        pw = json.load(open(pw_path, encoding='utf-8'))
-    n_total = sum(int(json.load(open(os.path.join(args.out, jn),
-                                    encoding='utf-8'))['samples'])
-                  for jn in chain_jsons)
+        with open(pw_path, encoding='utf-8') as handle:
+            pw = json.load(handle)
+    n_total = 0
+    for jn in chain_jsons:
+        with open(os.path.join(args.out, jn), encoding='utf-8') as handle:
+            n_total += int(json.load(handle)['samples'])
     report = {'sigma_dex': args.sigma_dex, 'n_chains': len(chain_jsons),
               'fast_chain': {'samples': n_total,
                              'wall_s': chain['wall_s'],

@@ -36,8 +36,7 @@ from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 PARAMS = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)   # 基准案例 A。
-REL_DIFF_TOL = 1e-4                                    # Relative-error reporting threshold.
-# 相对谱差报告阈值；不是求解器的自洽收敛容差。
+REL_DIFF_REPORT_THRESHOLD = 1e-4
 
 
 def main(seed=20260829, out_png=None):
@@ -90,9 +89,9 @@ def main(seed=20260829, out_png=None):
 
     stats(dex_diff, '|dlog10OmegaGW| (dex)')
     stats(rel_diff, 'relative diff in OmegaGW')
-    frac10 = float((rel_diff[idx] < REL_DIFF_TOL).mean())
-    frac_all = float((rel_diff < REL_DIFF_TOL).mean())
-    threshold = '%.0e' % REL_DIFF_TOL
+    frac10 = float((rel_diff[idx] < REL_DIFF_REPORT_THRESHOLD).mean())
+    frac_all = float((rel_diff < REL_DIFF_REPORT_THRESHOLD).mean())
+    threshold = '%.0e' % REL_DIFF_REPORT_THRESHOLD
     print('%-34s  at 10 random: %d/10 < %s  |  full grid: %d/%d < %s'
           % ('channels within %s' % threshold, int(round(frac10 * 10)),
              threshold, int(frac_all * len(f)), len(f), threshold))
@@ -115,7 +114,7 @@ def main(seed=20260829, out_png=None):
     ax2.semilogy(f, rel_diff, '-', color='#7f7f7f', lw=0.9, label='|dOm|/Om (full grid)')
     ax2.semilogy(f[idx], rel_diff[idx], 'o', ms=7, mfc='none', mec='#d62728', mew=1.6,
                  label='10 random frequencies')
-    ax2.axhline(REL_DIFF_TOL, color='#2ca02c', ls='--', lw=1.2,
+    ax2.axhline(REL_DIFF_REPORT_THRESHOLD, color='#2ca02c', ls='--', lw=1.2,
                 label='relative-error threshold %s' % threshold)
     ax2.set_ylabel('rel. diff  $|\\Omega_{\\mathrm{old}}-\\Omega_{\\mathrm{new}}|/\\Omega_{\\mathrm{new}}$')
     ax2.set_xlabel(r'$\log_{10}(f/\mathrm{Hz})$')

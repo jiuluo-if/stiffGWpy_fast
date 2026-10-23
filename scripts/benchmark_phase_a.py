@@ -66,8 +66,8 @@ def main():
         for _ in range(args.reps):
             model, elapsed = solve(flag, args.h, args.z_tail, args.phase_max, args.freq_grid)
             samples.append(elapsed)
-        candidate_spectra[name] = (np.asarray(model.f, dtype=float).copy(),
-                                   np.asarray(model.log10OmegaGW).copy())
+        candidate_spectra[name] = (np.asarray(model.f, dtype=float),
+                                   np.asarray(model.log10OmegaGW))
         rows[name] = {
             'warm_ms': [x * 1e3 for x in samples],
             'median_ms': statistics.median(samples) * 1e3,

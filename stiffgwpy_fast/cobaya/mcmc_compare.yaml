@@ -1,8 +1,3 @@
-# Reduced run-info for engine comparison MCMC (fast vs LSODA).
-# Likelihoods use only the data files shipped inside this repository
-# (no AlterBBN / external bbn_codes, no mpi4py requirement).
-# The stiffGW theory engine is overridden at run time by
-# scripts/mcmc_compare.py (engine / accuracy_mode / threads / h / ...).
 # fast 与 LSODA 引擎对比 MCMC 使用的精简 run-info。
 # 似然只读取本仓库提供的数据文件，不依赖 AlterBBN、外部 bbn_codes 或 mpi4py。
 # 引擎、accuracy_mode、线程数和 h 等 stiffGW 参数由 scripts/mcmc_compare.py 在运行时覆盖。
@@ -103,10 +98,6 @@ params:
     value: 'lambda log10kappa10: np.power(10.,log10kappa10)'
     latex: \kappa_{10}
 
-  # Explicitly repeat the nuisance priors from PTA/NANOGrav.yaml. Keeping
-  # them in the shared run-info makes an optional deterministic initial-point
-  # override safe: Cobaya will not replace the likelihood-owned definition
-  # with a ref-only (derived) parameter.
   # 显式重复 NANOGrav 似然中的 nuisance 先验，并放入共享 run-info。
   # 这样可安全覆盖确定性初值，避免 Cobaya 将似然侧定义替换为仅含 ref 的派生参数。
   A_BBH:
