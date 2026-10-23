@@ -800,7 +800,7 @@ def _build_fd_table():
                 nu, vals = data["nu"], data["vals"]
                 if nu.shape == (3001,) and vals.shape == (3001, 2):
                     return nu, vals
-    except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
+    except (OSError, ValueError, KeyError):
         pass
     cache_file = _os.path.join(_os.path.expanduser("~"), ".cache", "stiffgwpy_fast", "fd_table.npz")
     if _os.path.exists(cache_file):
@@ -809,7 +809,7 @@ def _build_fd_table():
                 nu, vals = data["nu"], data["vals"]
                 if nu.shape == (3001,) and vals.shape == (3001, 2):
                     return nu, vals
-        except (IOError, OSError, ValueError, KeyError, FileNotFoundError):
+        except (OSError, ValueError, KeyError):
             pass
     nu = np.logspace(-1.0, 2.0, 3001)
     vals = np.array([int_FD(u) for u in nu])

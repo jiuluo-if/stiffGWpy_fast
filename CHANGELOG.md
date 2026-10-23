@@ -6,6 +6,10 @@
   `tol=1e-6` performance profile and to distinguish the 2026-09-12 accuracy
   baseline from later sampled `DN_re` edge checks. The documentation index now
   points readers to the matching protocol and evidence scope.
+- Reduced repeated work in the Phase A benchmark by reusing measured candidate
+  spectra and cached dex differences; simplified duplicate exception types in
+  the packaged Fermi-Dirac cache loader. Solver results and error definitions
+  are unchanged.
 
 - Corrected the fixed-resource profile harness to use the formal `fast` preset
   tolerance by default and record the full solver configuration, Numba layer,
