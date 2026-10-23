@@ -35,19 +35,25 @@ def apply_environment(numba_threads: int = 2, fast_threads: int | None = None) -
         os.environ.setdefault(name, value)
 
 
+def _affinity_errors() -> tuple[type[BaseException], ...]:
+    """Return optional psutil affinity errors alongside built-in errors.
+
+    中文：合并 psutil 可选异常与 Python 内置异常，统一处理 affinity 的查询和设置。
+    """
+    try:
+        import psutil
+    except ImportError:
+        return AttributeError, OSError
+    return AttributeError, OSError, psutil.Error
+
+
 def limit_affinity(process, requested: int | None = None) -> list[int]:
     """Best-effort affinity restriction; return selected CPU IDs or an empty list.
 
     中文：尽力限制当前进程的 CPU affinity；设置失败时返回空列表，实际 affinity
     可由 ``telemetry()`` 单独读取。
     """
-    try:
-        import psutil
-    except ImportError:
-        psutil_errors = ()
-    else:
-        psutil_errors = (psutil.Error,)
-    affinity_errors = (AttributeError, OSError) + psutil_errors
+    affinity_errors = _affinity_errors()
     try:
         available = list(process.cpu_affinity())
     except affinity_errors:
@@ -79,9 +85,10 @@ def telemetry(process=None, workers: int = 1, threads: int | None = None,
         numba_version = None
     affinity = []
     if process is not None:
+        affinity_errors = _affinity_errors()
         try:
             affinity = list(process.cpu_affinity())
-        except (AttributeError, OSError):
+        except affinity_errors:
             pass
     try:
         import scipy
