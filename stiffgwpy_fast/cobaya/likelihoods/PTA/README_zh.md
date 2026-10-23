@@ -10,3 +10,5 @@
 | `NANOGrav` | `NANOGrav15yr/density_mock.npy`、`NANOGrav15yr/log10rhogrid.npy`、`NANOGrav15yr/freqs.npy` | 将理论谱与 SMBHB 分量合并后，插值随包提供的逐频点似然网格。 |
 
 `Nfreqs` 指定适配器使用的频点数。这些文件作为包内资源读取；应以 YAML 路径为准，不要假设当前工作目录是仓库根目录。另见[似然包索引](../README_zh.md)和[`docs/cobaya.md`](../../../../docs/cobaya.md)。
+
+原初谱只在理论频率节点覆盖范围内插值；超出该范围的 PTA 频点将原初残差功率记为零，但仍会计算 SMBHB nuisance 分量。

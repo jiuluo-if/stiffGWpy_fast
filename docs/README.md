@@ -20,8 +20,8 @@ recorded run paths intact: experiment output files and validation manifests
 refer to those paths.
 
 The root README is the top-level user guide. Its current performance summary
-uses the 2026-10-22 formal `tol=1e-6` profile; `benchmarks.md` has the full
-protocol and raw records. `fast` is the only user-facing profile; historical
+uses the 2026-10-23 base-HEAD formal `tol=1e-6` profile; `benchmarks.md` has the
+full protocol and raw records. `fast` is the only user-facing profile; historical
 `plain-grid` and `production` results apply only to their recorded artifacts.
 Read accuracy values with each run's commit and scope: the manifest is a
 read-only summary of earlier validations, not a current-HEAD certification.

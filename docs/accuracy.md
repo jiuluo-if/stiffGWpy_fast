@@ -4,6 +4,23 @@ Status: current summary of scoped evidence; no full parameter-space release cert
 
 Date: 2026-10-23
 
+## Exact horizon-crossing step boundary (2026-10-23)
+
+In `scaled_step`, `w² = exp(2 z_mid)` equals one at the horizon-crossing
+boundary. The oscillatory formula `sin(Ωh)/Ω` is undefined there because
+`Ω=0`; the continuous limit is finite (`cos=1`, `sin(Ωh)/Ω=h`). Route equality
+through the branch that evaluates this limit directly. A compiled direct probe
+and the `_phase_segment` path now return finite values matching the limit
+exactly. After selecting the formal `fast` preset explicitly, default, low-T,
+high-T, stiff, and high-kappa retain all five output digests from the preceding
+profile. The direct boundary values and five-case digest comparison are
+recorded in [the boundary-fix result](scaled_step_horizon_boundary_20261023.json).
+Those five-case digests were recorded for the preceding algebraically equivalent
+series-limit implementation. The exact boundary is now written explicitly as
+`c=1`, `si=h`; the artifact records the current source hash and a fresh direct
+compiled probe. The five full cases were not rerun after this expression rewrite.
+This edge correction adds no new Oracle coverage or general accuracy claim.
+
 The formal fast profile is the single `goal-kink-hybrid` mode. The independent
 continuous-sigma DOP853 pipeline is the precision reference; LSODA is a
 regression/runtime path, not a truth oracle. Every numerical result below is

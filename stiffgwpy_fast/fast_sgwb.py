@@ -1225,10 +1225,13 @@ def prep_fast(m, Nv, freqs, h, variable_grid=False):
 def scaled_step(xh, yh, z_mid, h):
     w = math.exp(z_mid)
     w2 = w * w
-    if w2 >= 1.0:
+    if w2 > 1.0:
         Om = math.sqrt(w2 - 1.0)
         c = math.cos(Om * h)
         si = math.sin(Om * h) / Om
+    elif w2 == 1.0:
+        c = 1.0
+        si = h
     else:
         Om = math.sqrt(1.0 - w2)
         x = Om * h

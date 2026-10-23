@@ -15,3 +15,7 @@ options and default resource paths are defined in `IPTA.yaml` and
 packaged resources; use the YAML paths rather than assuming a repository-root
 working directory. See the [likelihood index](../README.md) and
 [`docs/cobaya.md`](../../../../docs/cobaya.md).
+
+The primordial spectrum is interpolated only between available theory-frequency
+knots. PTA bins outside that support receive zero primordial residual power;
+the SMBHB nuisance contribution is still evaluated.
