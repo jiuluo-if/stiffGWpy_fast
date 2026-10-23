@@ -10,7 +10,8 @@
   tolerance and frequency resolution, record its solver configuration, and
   compute P95 with NumPy's linear percentile method. The script now describes
   LSODA as a runtime baseline and distinguishes the unsplit grid from the
-  exact-kink path; older reports remain tied to their recorded settings.
+  exact-kink path. Existing result files remain historical and are not
+  retroactively recalculated.
 
 - Added a reproducible paired benchmark for the best passing sampled
   transition-refinement point. Matched Oracle C anchors show errors below
