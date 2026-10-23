@@ -36,17 +36,28 @@ def apply_environment(numba_threads: int = 2, fast_threads: int | None = None) -
 
 
 def limit_affinity(process, requested: int | None = None) -> list[int]:
-    """限制当前进程 affinity；不可用时返回空列表而不改变求解。"""
+    """Best-effort affinity restriction; return selected CPU IDs or an empty list.
+
+    中文：尽力限制当前进程的 CPU affinity；设置失败时返回空列表，实际 affinity
+    可由 ``telemetry()`` 单独读取。
+    """
+    try:
+        import psutil
+    except ImportError:
+        psutil_errors = ()
+    else:
+        psutil_errors = (psutil.Error,)
+    affinity_errors = (AttributeError, OSError) + psutil_errors
     try:
         available = list(process.cpu_affinity())
-    except (AttributeError, OSError):
+    except affinity_errors:
         return []
     count = len(available) if requested is None else max(1, int(requested))
     selected = available[:min(count, len(available))]
     try:
         process.cpu_affinity(selected)
-    except (AttributeError, OSError):
-        return available
+    except affinity_errors:
+        return []
     return selected
 
 
