@@ -50,6 +50,14 @@ transition-refinement configuration on the two `DN_re` edges. It records raw
 solver-call timings and per-variant output digests; it does not establish
 accuracy by itself. Read the matched Oracle C records separately.
 
+`benchmark_lvk_likelihood_cache.py` requires the Cobaya extra and compares the
+previous LVK likelihood calculation with the cached-data/NumPy-reduction path
+on the packaged 54,593-bin table. It records raw per-call samples, likelihood
+differences, and a lower-support regression probe; it does not measure full
+Cobaya or MCMC runtime.
+By default it writes a timestamped JSON file under `docs/`; `--json` selects an
+explicit output path.
+
 Many `benchmark_*_spike.py` files are historical, standalone candidate tests;
 they do not select or modify a production solver path. Read a script's CLI
 arguments (or run `--help` when available) and check its output path first.

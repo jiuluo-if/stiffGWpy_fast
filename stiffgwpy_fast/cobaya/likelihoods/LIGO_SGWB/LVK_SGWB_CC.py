@@ -9,17 +9,20 @@ from scipy import interpolate
 
 
 class LVK_SGWB_CC(Likelihood):
-    
+
     def initialize(self):
         """Load the cross-correlation table selected by ``CC_file``.
 
         中文：读取配置中的 `CC_file`；该选项默认指向随包提供的 LVK 数据表。
         """
         self.data = np.loadtxt(self.CC_file)
-    
+        self.f_LVK = np.log10(self.data[:, 0])
+        self.Cf_LVK = self.data[:, 1]
+        self.sigma_LVK = self.data[:, 2]
+
     def close(self):
         pass
-        
+
     def get_requirements(self):
         """Request the theory frequency grid and SGWB spectrum.
 
@@ -27,7 +30,7 @@ class LVK_SGWB_CC(Likelihood):
         """
         return {'f': None, 'omGW_stiff': None,}
 
-    
+
     def logp(self, _derived=None, **params_values):
         """Return the LVK log-likelihood for the current theory spectrum.
 
@@ -38,28 +41,30 @@ class LVK_SGWB_CC(Likelihood):
         Ogw_theory = np.flip(self.provider.get_result('omGW_stiff'))
         return self.log_likelihood(f_theory, Ogw_theory, **params_values)
 
-    
+
     def log_likelihood(self, f_theory, Ogw_theory, **data_params):
         """Interpolate the model on supported bins and return ``-chi2/2``.
 
         ``f_theory`` must be increasing in ``log10(Hz)`` order. 中文：将模型谱转换为线性
         ``Omega_GW``，按数据不确定度归一化残差并求和；不在模型频率支持内的 bin 保持零模型值。
         """
-        f_LVK = np.log10(self.data[:,0])
-        Cf_LVK = self.data[:,1]
-        sigma_LVK = self.data[:,2]
-        
+        f_LVK = self.f_LVK
+        Cf_LVK = self.Cf_LVK
+        sigma_LVK = self.sigma_LVK
+
         Ogw_Model = np.zeros_like(Cf_LVK)
         # Calculate theoretical Omega_GW only within the LIGO frequency range (<= f_end).
         # 仅对理论频谱覆盖范围内的 LIGO 频点计算 Omega_GW。
         if f_theory[-1]>=f_LVK[0]:
-            f_t = f_theory[(f_theory >= -5)]; Ogw_t = Ogw_theory[(f_theory >= -5)]
+            theory_support = f_theory >= -5
+            f_t = f_theory[theory_support]
+            Ogw_t = Ogw_theory[theory_support]
             spec = interpolate.interp1d(f_t, Ogw_t, kind='cubic')
-            
-            cond = (f_LVK<=f_theory[-1])
-            Ogw_Model[cond] = np.power(10., spec(f_LVK[cond]))  
-            
-        chi2_array = np.square(np.divide((Cf_LVK-Ogw_Model), sigma_LVK))
-        chi2 = sum(chi2_array)
-        
+
+            cond = (f_LVK >= f_t[0]) & (f_LVK <= f_t[-1])
+            Ogw_Model[cond] = np.power(10., spec(f_LVK[cond]))
+
+        chi2 = np.sum(
+            np.square((Cf_LVK - Ogw_Model) / sigma_LVK), dtype=np.float64)
+
         return -chi2 / 2

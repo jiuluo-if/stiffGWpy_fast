@@ -36,6 +36,10 @@ PNG 默认写入 `scripts/`，也可通过输出路径参数指定其他位置�
 `benchmark_transition_frontier_ab.py` 在两个 `DN_re` 边界上交替运行正式 fast 与匹配的转折细化配置，
 记录每次求解耗时及各配置内部的输出摘要。它本身不认证精度；精度需查看匹配的 Oracle C 记录。
 
+`benchmark_lvk_likelihood_cache.py` 需要安装 Cobaya extra；它使用随包的 54,593 行 LVK 数据，对比旧似然计算与缓存数据/NumPy 归约路径。
+它保留逐次耗时、似然差值和低频支持边界检查；测量范围是单次似然调用，不代表完整 Cobaya 或 MCMC 耗时。
+默认在 `docs/` 下生成带时间戳的 JSON；`--json` 可指定输出路径。
+
 许多 `benchmark_*_spike.py` 是历史独立候选方案测试；它们不会选择或修改生产求解路径。运行前先看脚本的 `--help` 和输出路径。保留带日期的实验产物；新实验应使用新文件名，除非确实要替换原文件。
 
 SageNet 对比脚本还需要单独的 SageNet 代码仓库和运行环境；本项目的 extras 不会安装 SageNet。
