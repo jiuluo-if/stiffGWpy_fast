@@ -1,26 +1,29 @@
 # -*- coding: utf-8 -*-
-"""benchmark_reference.py -- physics-first benchmark: fast vs production vs reference.
+"""Compare the legacy transition-refine path with the independent reference.
 
-Unlike ``scripts/bench_fast.py`` (which reports speedup and fast-vs-LSODA), this
-script benchmarks against the *independent high-accuracy reference* in
-``stiffgwpy_fast.reference``.  That reference uses a continuous ``sigma(N)``
-evaluator (no fixed-step grid through the reheating kink) and a high-order
-adaptive ODE (DOP853), so it exposes the two *shared* errors the old
-fast-vs-LSODA framing hid.
+This diagnostic calls ``FS.apply_accuracy_mode('production')``, a deprecated
+alias for the validation-only transition-refine path. Its output retains the
+historical ``kind='fast'`` record label; it does not compare the current formal
+``fast`` preset with a separate production calculation. The reference path in
+``stiffgwpy_fast.reference`` evaluates continuous ``sigma(N)`` and integrates
+each tensor mode with SciPy's adaptive DOP853 solver. It provides an
+independent comparison for the candidate's converged ``Delta N_eff``.
 
-On a representative log-frequency subset it reports:
+On a representative log-frequency subset, the script reports the spectrum's
+dex difference, the reference bolometric ``Delta N_eff`` difference, reference
+ODE-tolerance sensitivity, tail-depth sensitivity, quadrature/interpolation
+error estimates, and runtime. The reference uses tight tolerances and no
+frequency parallelism, so it runs on a subset by default. ``--freq-full`` uses
+the full model grid; ``--with-lsoda`` also reruns LSODA on the full grid.
 
-* Omega_GW dex error for fast and production vs reference;
-* Delta N_eff relative difference vs the reference bolometric integral;
-* an ODE error estimate (reference sensitivity to rtol);
-* a tail error estimate (reference sensitivity to z_tail);
-* a quadrature / interpolation error estimate from the reference integral;
-* runtime for each configuration.
-
-The reference is intentionally slow (no frequency parallelism, tight
-tolerances), so it runs on a frequency subset by default.  ``--freq-full``
-runs it on the full model grid (much slower).  ``--with-lsoda`` additionally
-re-runs the original LSODA path on the full grid for the fast-vs-LSODA column.
+中文说明：该诊断通过已弃用的 ``production`` 别名运行仅用于验证的
+``transition_refine`` 路径；输出沿用历史 ``kind='fast'`` 标签，并未分别运行当前正式
+``fast`` 档位和 production 配置。独立参照位于 ``stiffgwpy_fast.reference``：它在连续的
+``sigma(N)`` 上计算背景，并使用 SciPy 自适应 DOP853 求解张量模，再与候选收敛后的
+``Delta N_eff`` 对照。默认只选取部分频率点，因为参照计算容差较紧且不并行处理频率。
+``--freq-full`` 使用完整模型频率网格；``--with-lsoda`` 还会在完整网格上运行 LSODA。
+报告包含频谱 dex 差、玻尔兹曼积分 ``Delta N_eff`` 差异、参照 ODE 容差与尾部深度敏感性、
+求积/插值误差估计和运行时间。
 """
 
 import argparse
@@ -87,11 +90,10 @@ def run_fast(kw, z_tail=None):
         FS.set_z_tail(z_tail)
     m = LCDM_SG(**kw)
     t0 = time.perf_counter()
-    # Forward the preset's continuous-sigma (kink breakpoint) path: production
-    # mode is defined with transition_refine=True (see ACCURACY_MODES), and
-    # running the plain spline-sigma path silently loses ~0.2% of Delta N_eff.
-# 显式使用预设的连续 sigma/kink 断点路径：production 档位要求
-# transition_refine=True；普通样条 sigma 路径会使 Delta N_eff 偏差约 0.2%。
+    # Preserve the selected validation preset's exact reheating-breakpoint path.
+    # The legacy production alias sets transition_refine=True in ACCURACY_MODES.
+    # 保留所选验证预设的精确再加热转折点路径；兼容旧配置的 production 别名会将
+    # ACCURACY_MODES 中的 transition_refine 设为 True。
     FS.SGWB_iter_fast(m, tol=cfg['tol'], transition_refine=cfg.get('transition_refine', False))
     dt = time.perf_counter() - t0
     return m, dt
@@ -133,7 +135,7 @@ def _rex_stats(lo_ref, lo_test):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='physics-first fast/production/reference benchmark')
+    ap = argparse.ArgumentParser(description='legacy transition-refine/reference benchmark')
     ap.add_argument('--point', default='default', choices=sorted(CASES))
     ap.add_argument('--out', default=None)
     ap.add_argument('--freq-full', action='store_true')
@@ -143,8 +145,9 @@ def main(argv=None):
     ap.add_argument('--no-tail-error', action='store_true',
                     help='skip the extra reference tail-sensitivity run')
     ap.add_argument('--z-tail', type=float, default=7.0,
-                    help='reference z_tail for the primary run (default 7.0 = '
-                         'matched to fast production mode)')
+                    help='reference z_tail for the primary run (default 7.0; '
+                         'matched to legacy transition-refine validation preset) / '
+                         '主参照计算的尾部深度（默认 7.0，与旧版 transition-refine 验证预设一致）')
     args = ap.parse_args(argv)
 
     kw = CASES[args.point]
@@ -159,7 +162,7 @@ def main(argv=None):
 
     subset = None if args.freq_full else np.array(FREQ_SUBSET)
 
-# ---- fast production / fast 生产路径 ----
+    # ---- legacy transition-refine path / 旧版 transition-refine 验证路径 ----
     m_fast, dt_fast = run_fast(kw, z_tail=args.z_tail)
     dn_fast = float(m_fast.cosmo_param['DN_eff'])
     dn_gw_fast = float(m_fast.DN_gw[-1])
@@ -167,8 +170,8 @@ def main(argv=None):
     rec({'kind': 'fast', 'runtime_s': dt_fast, 'DN_eff': dn_fast,
          'DN_gw': dn_gw_fast, 'kappa_r': kappa_r_fast, 'n_freq': len(m_fast.f)})
 
-# ---- reference (physics-first truth) at the fast-converged DN_eff ----
-# ---- 在 fast 收敛的 DN_eff 上运行独立物理参照 ----
+    # ---- independent reference at the candidate-converged DN_eff ----
+    # ---- 在候选配置收敛的 DN_eff 上运行独立物理参照 ----
     t0 = time.perf_counter()
     ref = REF.run_reference(_ref_model(kw),
                             dn_eff=dn_fast, freq_res=1.0, z_tail=args.z_tail, rtol=1e-11,
@@ -180,15 +183,15 @@ def main(argv=None):
          'interpolation_error': ref['interpolation_error'],
          'used_tail_frac': float(np.mean(ref['used_tail']))})
 
-# Compare fast / production spectrum to the reference on the same freqs.
-# 在相同频率点上比较 fast/production 频谱与参照结果。
+    # Compare the candidate spectrum with the reference at matching frequencies.
+    # 在相同频率点上比较候选频谱与参照结果。
     if subset is not None:
         lo_ref = ref['log10OmegaGW']
         lo_fast = _spectrum_on_subset(m_fast, subset)
         rec({'kind': 'spec_err', 'engine': 'fast',
              **{('m_' + k): v for k, v in _rex_stats(lo_ref, lo_fast).items()}})
 
-# ---- reference ODE sensitivity (rtol) / 参照 ODE 容差敏感性 ----
+    # ---- reference ODE sensitivity (rtol) / 参照 ODE 容差敏感性 ----
     if not args.no_ode_error:
         ref_lo = REF.run_reference(_ref_model(kw),
                                    dn_eff=dn_fast, freq_res=1.0, z_tail=args.z_tail,
@@ -200,7 +203,7 @@ def main(argv=None):
              'DN_gw_rel': (float(abs(ref['DN_gw'] - ref_lo['DN_gw']) /
                                  abs(ref['DN_gw'])) if ref['DN_gw'] != 0 else None)})
 
-# ---- reference tail sensitivity (z_tail) / 参照尾部深度敏感性 ----
+    # ---- reference tail sensitivity (z_tail) / 参照尾部深度敏感性 ----
     if not args.no_tail_error:
         ref_tail = REF.run_reference(_ref_model(kw),
                                      dn_eff=dn_fast, freq_res=1.0, z_tail=5.0,
@@ -212,7 +215,7 @@ def main(argv=None):
              'DN_gw_rel': (float(abs(ref['DN_gw'] - ref_tail['DN_gw']) /
                                  abs(ref['DN_gw'])) if ref['DN_gw'] != 0 else None)})
 
-# ---- optional LSODA / 可选 LSODA 对照 ----
+    # ---- optional LSODA / 可选 LSODA 对照 ----
     if args.with_lsoda:
         m_ls, dt_ls = run_lsoda(kw)
         rec({'kind': 'lsoda', 'runtime_s': dt_ls, 'DN_eff': float(m_ls.cosmo_param['DN_eff']),
