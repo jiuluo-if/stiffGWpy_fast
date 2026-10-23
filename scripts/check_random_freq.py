@@ -8,7 +8,14 @@ frequency channels are drawn at random (seeded, reproducible) from the shared
 frequency grid. The two energy-spectrum curves log10OmegaGW(f) are plotted on
 the same axes, the 10 sampled frequencies are marked, and the agreement
 (|dlog10OmegaGW| and relative difference in OmegaGW) is quantified both at the
-10 random frequencies and over the whole spectrum.
+10 random frequencies and over the whole spectrum. Full-grid relative errors
+include near-zero channels and should be read alongside the dex differences.
+The PNG defaults to ``scripts/random10_freq_spectra.png``; pass an output path
+to save it elsewhere.
+
+中文说明：脚本只比较一个固定参数点；随机抽取的 10 个频点用于展示，并非 10 个参数案例。
+全网格相对误差包含近零频点，应结合 dex 差一起解读。PNG 默认写入 ``scripts/random10_freq_spectra.png``；
+可通过输出路径参数将图片保存到其他位置。
 
 Usage:
     python check_random_freq.py [seed] [output.png]
@@ -25,10 +32,12 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # 加入仓库根目录。
 from stiffgwpy_fast import fast_sgwb as FS
+from stiffgwpy_fast._metrics import dex_abs, rel_linear_omega
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 PARAMS = dict(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)   # 基准案例 A。
-TOL = 1e-4                                             # 算法自身的收敛容差。
+REL_DIFF_TOL = 1e-4                                    # Relative-error reporting threshold.
+# 相对谱差报告阈值；不是求解器的自洽收敛容差。
 
 
 def main(seed=20260829, out_png=None):
@@ -54,13 +63,13 @@ def main(seed=20260829, out_png=None):
 
     log10Om_old = np.asarray(m_old.log10OmegaGW, float)
     log10Om_new = np.asarray(m_new.log10OmegaGW, float)
-    Om_old = np.power(10.0, log10Om_old)
-    Om_new = np.power(10.0, log10Om_new)
-    rel_diff = np.abs(Om_old - Om_new) / np.maximum(Om_new, 1e-300)
-    dex_diff = np.abs(log10Om_old - log10Om_new)
+    rel_diff = rel_linear_omega(log10Om_old, log10Om_new)
+    dex_diff = dex_abs(log10Om_old, log10Om_new)
 
     # ---- randomly pick 10 frequency channels / 随机抽取 10 个频率通道 ----
     idx = np.sort(rng.choice(len(f), size=10, replace=False))
+    Om_old_sample = np.power(10.0, log10Om_old[idx])
+    Om_new_sample = np.power(10.0, log10Om_new[idx])
 
     print('=' * 72)
     print('Random 10-frequency spot check  (params: %s)' % PARAMS)
@@ -71,7 +80,8 @@ def main(seed=20260829, out_png=None):
           'OmGW_old', 'OmGW_new', '|dlog10Om|', 'rel diff'))
     for k, i in enumerate(idx):
         print('%-6d %-14.4f %-16.4e %-16.4e %-12.3e %-12.3e'
-              % (k + 1, f[i], Om_old[i], Om_new[i], dex_diff[i], rel_diff[i]))
+              % (k + 1, f[i], Om_old_sample[k], Om_new_sample[k],
+                 dex_diff[i], rel_diff[i]))
     print('-' * 72)
 
     def stats(d, name):
@@ -80,11 +90,12 @@ def main(seed=20260829, out_png=None):
 
     stats(dex_diff, '|dlog10OmegaGW| (dex)')
     stats(rel_diff, 'relative diff in OmegaGW')
-    frac10 = float((rel_diff[idx] < TOL).mean())
-    frac_all = float((rel_diff < TOL).mean())
-    print('%-34s  at 10 random: %d/10 < 1e-4  |  full grid: %d/%d < 1e-4'
-          % ('channels within 1e-4 tolerance', int(round(frac10 * 10)),
-             int(frac_all * len(f)), len(f)))
+    frac10 = float((rel_diff[idx] < REL_DIFF_TOL).mean())
+    frac_all = float((rel_diff < REL_DIFF_TOL).mean())
+    threshold = '%.0e' % REL_DIFF_TOL
+    print('%-34s  at 10 random: %d/10 < %s  |  full grid: %d/%d < %s'
+          % ('channels within %s' % threshold, int(round(frac10 * 10)),
+             threshold, int(frac_all * len(f)), len(f), threshold))
     print('=' * 72)
 
     # ---- figure: spectra overlay + residual / 频谱叠加图与残差图 ----
@@ -104,8 +115,8 @@ def main(seed=20260829, out_png=None):
     ax2.semilogy(f, rel_diff, '-', color='#7f7f7f', lw=0.9, label='|dOm|/Om (full grid)')
     ax2.semilogy(f[idx], rel_diff[idx], 'o', ms=7, mfc='none', mec='#d62728', mew=1.6,
                  label='10 random frequencies')
-    ax2.axhline(TOL, color='#2ca02c', ls='--', lw=1.2,
-                label='algorithm tolerance 1e-4')
+    ax2.axhline(REL_DIFF_TOL, color='#2ca02c', ls='--', lw=1.2,
+                label='relative-error threshold %s' % threshold)
     ax2.set_ylabel('rel. diff  $|\\Omega_{\\mathrm{old}}-\\Omega_{\\mathrm{new}}|/\\Omega_{\\mathrm{new}}$')
     ax2.set_xlabel(r'$\log_{10}(f/\mathrm{Hz})$')
     ax2.legend(loc='best', fontsize=9)

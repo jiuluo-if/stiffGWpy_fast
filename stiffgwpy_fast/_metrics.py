@@ -9,11 +9,13 @@ Error metrics follow the independent audit recommendations:
 * plain relative error with a safe denominator (``rel_abs``), and a
   "signal region" mask so near-zero channels are reported separately.
 
-中文：`Omega_GW` 的线性相对误差先还原线性谱值；对数谱差单独用 dex 表示。近零通道通过
-`signal_mask` 分区，避免把接近零的分母误读成主信号区误差。
+中文：`Omega_GW` 的线性相对误差由对数谱差通过 ``expm1`` 稳定计算；dex 绝对差单独统计。
+近零通道通过 ``signal_mask`` 分区，避免将近零谱值作为信号区相对误差的分母。
 """
 
 import numpy as np
+
+_LN10 = np.log(10.0)
 
 __all__ = ['dex_abs', 'rel_abs', 'rel_linear_omega', 'signal_mask']
 
@@ -39,13 +41,15 @@ def rel_abs(a, b):
 
 
 def rel_linear_omega(a_log10, b_log10):
-    """Relative difference of *linear* Omega values: ``|10^a - 10^b| / 10^b``.
+    """Relative difference of linear Omega, using ``10**b`` as denominator.
 
-    中文：先将 ``log10(Omega)`` 还原为线性 ``Omega``，再计算相对差，避免直接对数值求相对误差。
+    The equivalent log-domain form avoids subtracting nearly equal linear values.
+
+    中文：以候选值 ``10**b`` 为分母，在对数差上用 ``expm1`` 计算，避免线性谱相减时的消减误差。
     """
-    a = np.power(10.0, np.asarray(a_log10, dtype=float))
-    b = np.power(10.0, np.asarray(b_log10, dtype=float))
-    return np.abs(a - b) / np.maximum(b, 1e-300)
+    a = np.asarray(a_log10, dtype=float)
+    b = np.asarray(b_log10, dtype=float)
+    return np.abs(np.expm1((a - b) * _LN10))
 
 
 def signal_mask(b_log10, floor_log10=-30.0):

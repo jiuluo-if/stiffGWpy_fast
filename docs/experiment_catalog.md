@@ -4,7 +4,9 @@
 
 Status: current map of research notes and run artifacts
 
-Date: 2026-10-22
+Last full inventory: 2026-10-22
+
+Focused provenance refresh: 2026-10-23 (local Prüfer raw logs)
 
 Code version: each artifact is commit-bound. The validation manifest is dated `2026-09-17`; newer profiles and reports are linked by their own run commit.
 
@@ -107,12 +109,13 @@ C assessment.
   code or benchmark script consumes it. Keep it as dated point-level evidence,
   not as a replacement for the later two-thread snapshot or a current baseline.
 - Three Prüfer raw `.log` captures dated 2026-09-11 are kept locally under
-  `archive/oracle_prufer/raw_logs/`. They are ignored by Git's repository-wide
-  `*.log` rule and have no active path references; the later JSON artifacts
+  `archive/oracle_prufer/raw_logs/`. Their leading JSON records identify source
+  commit `91598e7`. They are ignored by Git's repository-wide `*.log` rule and
+  have no active code or benchmark-script consumers; the later JSON artifacts
   and assessment are the shared, navigable records. The logs are retained
-  locally because they were generated from an earlier commit and are not
-  byte-for-byte substitutes for the later JSON. A fresh clone will not
-  contain these local-only logs; see [`archive/README.md`](archive/README.md).
+  locally because they are from an earlier commit and are not byte-for-byte
+  substitutes for the later JSON. A fresh clone will not contain these
+  local-only logs; see [`archive/README.md`](archive/README.md).
 - No dated parameter-validation or posterior data were deleted: the oldest
   2026-09-02/03 records are still cited by the current validation/report
   chain. No current-round experiment output was discarded by age alone.

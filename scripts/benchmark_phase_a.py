@@ -101,8 +101,8 @@ def main():
         else:
             lo_test = candidate_log10_omega
         mask = signal_mask(lo_ref)
-        lin = rel_linear_omega(lo_ref[mask], lo_test[mask]) if mask.any() else np.array([0.0])
-        all_rel = np.abs(10.0 ** lo_test - 10.0 ** lo_ref) / np.maximum(10.0 ** lo_ref, 1e-300)
+        all_rel = rel_linear_omega(lo_ref, lo_test)
+        signal_rel = all_rel[mask] if mask.any() else np.array([0.0])
         spectrum_dex = dex_abs(lo_ref, lo_test)
         transition = np.abs(reference_freqs - rows[name]['f_re']) <= 0.5
         reference_dn[name] = {
@@ -112,8 +112,8 @@ def main():
             'spectrum_dex_median': float(np.median(spectrum_dex)),
             'spectrum_dex_p95': float(np.percentile(spectrum_dex, 95)),
             'spectrum_dex_max': float(np.max(spectrum_dex)),
-            'spectrum_rel_signal_median': float(np.median(lin)),
-            'spectrum_rel_signal_max': float(np.max(lin)),
+            'spectrum_rel_signal_median': float(np.median(signal_rel)),
+            'spectrum_rel_signal_max': float(np.max(signal_rel)),
             'spectrum_rel_all_max': float(np.max(all_rel)),
             'transition_rel_max': float(np.max(all_rel[transition])) if transition.any() else None,
         }

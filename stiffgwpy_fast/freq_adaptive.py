@@ -212,8 +212,12 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
 
     mandatory = np.unique(np.concatenate((feature, eval)))
     if mandatory.size >= max_points:
-        # Preserve every caller node；保留调用方节点，仅在 unusually large likelihood node set
-        # consumes the budget 时减少可选 feature reserve。
+        # Keep caller nodes; trim the feature reserve only when caller nodes fit
+        # below max_points but the combined set exceeds the budget.
+        # 保留调用方节点；仅当调用方节点未超上限、但与特征保留点合并后超预算时，才缩减特征点。
+        # If caller nodes alone reach the limit, retain the full feature reserve too;
+        # max_points is a soft limit when mandatory nodes consume the budget.
+        # 若调用方节点本身达到上限，仍保留完整特征点；强制节点占满预算时，max_points 为软上限。
         selected = np.unique(np.concatenate((eval, feature)))
         if selected.size > max_points and eval.size < max_points:
             selected = np.unique(np.concatenate((eval, feature[:max_points - eval.size])))

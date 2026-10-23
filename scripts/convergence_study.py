@@ -174,7 +174,7 @@ def _curve_stats(a, b):
 
 def _spectrum_stats(lo_ref, lo_test):
     dex = dex_abs(lo_ref, lo_test)
-    mask = signal_mask(lo_test)
+    mask = signal_mask(lo_ref)
     lin = rel_linear_omega(lo_ref[mask], lo_test[mask]) if mask.any() else np.array([0.0])
     out = {'dex_max': float(dex.max())}
     for p in PERCENTILES:

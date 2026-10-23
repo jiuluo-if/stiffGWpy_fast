@@ -123,7 +123,9 @@ def run_case(idx, kw):
     rec['len_log10OmegaGW'] = (int(lo_old.size), int(lo_new.size))
     if lo_old.size == lo_new.size:
         rec['log10OmegaGW_maxabs'] = float(dex_abs(lo_old, lo_new).max())
-        mask = signal_mask(lo_new)
+        # Define the signal region from the LSODA reference spectrum.
+        # 按 LSODA 参照谱划定信号区。
+        mask = signal_mask(lo_old)
         rec['n_signal'] = int(mask.sum())
         rec['OmegaGW_rel_linear_max'] = (
             float(rel_linear_omega(lo_old[mask], lo_new[mask]).max()) if mask.any() else 0.0)

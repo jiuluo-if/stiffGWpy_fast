@@ -8,8 +8,23 @@
   points readers to the matching protocol and evidence scope.
 - Reduced repeated work in the Phase A benchmark by reusing measured candidate
   spectra and cached dex differences; simplified duplicate exception types in
-  the packaged Fermi-Dirac cache loader. Solver results and error definitions
-  are unchanged.
+  the packaged Fermi-Dirac cache loader. The Phase A report now uses the shared
+  linear-spectrum relative-error convention for signal, full-grid, and
+  transition metrics; the Cobaya adapter also caches parsed `eval_freqs` across
+  samples to avoid repeated file reads. Solver outputs are unchanged.
+- Aligned the signal masks in the fixed, randomized, and resolution-convergence
+  validation scripts with the shared metric contract: the reference spectrum
+  selects signal channels, while the candidate spectrum remains the relative-
+  error denominator. This can change which near-threshold channels enter the
+  reported signal metric; numerical solver outputs are unchanged.
+- Reworked the shared linear-spectrum relative-error helper to evaluate the
+  equivalent log-difference form with `expm1`. This avoids cancellation for
+  small spectral differences and false zero errors when both linear spectra
+  underflow, while preserving the candidate-denominator definition. The random
+  frequency diagnostic now reuses the shared relative and dex helpers and only
+  materializes linear Omega values for its ten printed sample channels. Its
+  reporting threshold is now clearly distinguished from solver convergence,
+  and its default plot location and near-zero metric scope are documented.
 
 - Corrected the fixed-resource profile harness to use the formal `fast` preset
   tolerance by default and record the full solver configuration, Numba layer,

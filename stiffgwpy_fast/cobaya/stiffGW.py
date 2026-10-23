@@ -83,8 +83,9 @@ class stiffGW(Theory):
     # likelihood_sigma)^2 is compared against dlogl_tol (natural log-units).
     # The effective sigma is the likelihood's sensitivity to Delta N_eff
     # (e.g. ~0.25 for CMB/BAO-scale Neff constraints; set per likelihood).
-    # 似然感知升级以自然对数单位的 dlogl_tol 比较估计的 |Delta logL|；likelihood_sigma 表示该似然对
-    # Delta_Neff 的有效灵敏度，应按具体似然设置。
+    # 似然感知升级按 |Delta logL| = 0.5*(Delta_Neff_abs_error / likelihood_sigma)^2
+    # 估算自然对数似然变化，并与 dlogl_tol 比较；likelihood_sigma 表示似然对 Delta_Neff 的有效灵敏度，
+    # 例如 CMB/BAO 的 Neff 约束可约取 0.25，但必须按具体似然设置。
     likelihood_sigma: float
     dlogl_tol: float
     escalate_to_reference: bool
@@ -95,7 +96,8 @@ class stiffGW(Theory):
     # solve grid as native nodes so the likelihood does not inherit
     # interpolation error at steep spectral features.  A list of floats or a
     # path to a text file (one log10 f per line).
-    # 可选的原生求解频点（如似然频率 bin），用于陡峭谱特征处避免插值误差；可传浮点列表或每行一个 log10 f 的文本路径。
+    # 可选的原生求解频点（如似然频率 bin），会强制加入 fast 求解网格，避免陡峭谱特征处的插值误差；
+    # 可传 log10(f/Hz) 浮点列表，或每行一个频率值的文本文件路径。
     eval_freqs: object
     # Canonical public names.  In particular, do not use the ambiguous
     # historical ``Delta_Neff`` alias: GW-only and total contributions are
@@ -213,7 +215,8 @@ class stiffGW(Theory):
         # This prevents the Cobaya default values from silently masking the
         # selected accuracy_mode (accuracy_mode -> preset defaults -> explicit
         # user overrides only).
-        # 这样 YAML 的默认参数不会覆盖选定档位；解析顺序是档位预设，再叠加用户显式覆盖。
+        # YAML 中的 0 表示沿用 accuracy_mode 预设；只有显式非零值才覆盖预设。
+        # 解析顺序为档位、档位默认值、用户显式覆盖，避免 Cobaya 的默认 0 掩盖所选档位。
         if self.h:
             sgwb_kwargs['h'] = self.h
         if self.col_step:
@@ -222,8 +225,13 @@ class stiffGW(Theory):
             sgwb_kwargs['z_tail'] = self.z_tail
         if self.freq_res:
             sgwb_kwargs['freq_res'] = self.freq_res
-        if getattr(self, 'eval_freqs', None) is not None:
-            sgwb_kwargs['eval_freqs'] = _resolve_freqs_input(self.eval_freqs)
+        eval_freqs = getattr(self, 'eval_freqs', None)
+        if eval_freqs is not None:
+            # This run option is fixed across samples; parse it once and reuse the nodes.
+            # 该运行选项在各采样点间固定；只解析一次并复用频率节点。
+            if not hasattr(self, '_eval_freqs_cache'):
+                self._eval_freqs_cache = _resolve_freqs_input(eval_freqs)
+            sgwb_kwargs['eval_freqs'] = self._eval_freqs_cache
         if self.auto_escalate:
             sgwb_kwargs['auto_escalate'] = True
             if getattr(self, 'escalate_to_reference', False):

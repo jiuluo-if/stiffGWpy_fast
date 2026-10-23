@@ -13,10 +13,11 @@ for historical discovery; those links do not make them current evidence.
   `../validation/validation_manifest.json` is dated 2026-09-17. None is a
   current-HEAD full-space certification.
 - `oracle_prufer/raw_logs/` is a local-only holding area for three 2026-09-11
-  diagnostic captures moved out of the active `docs/` root. The repository's
-  `*.log` ignore rule keeps these raw captures out of Git; later JSON records
-  and the assessment remain the shared, navigable evidence. A fresh clone will
-  not contain the ignored raw logs.
+  diagnostic captures moved out of the active `docs/` root. Their leading JSON
+  records identify source commit `91598e7`. The repository's `*.log` ignore
+  rule keeps these raw captures out of Git; later JSON records and the
+  assessment remain the shared, navigable evidence. A fresh clone will not
+  contain the ignored raw logs.
 - [`reference/head_20260910/benchmark_default.jsonl`](reference/head_20260910/benchmark_default.jsonl)
   records a single default-point fast/reference comparison from source commit
   `767056d`. No code or benchmark script consumes it. It is separate from the
