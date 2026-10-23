@@ -42,6 +42,8 @@ def test_gen_fast_matches_original_expansion():
     assert worst_sigma < 1e-10    # 历史审计测得约 1.7e-11。
     # Both generators are now anchored at the continuous N_inf (present), so the
     # f_hor difference is float-accumulation noise (~1e-10), not a physics gap.
+    # 两种生成器均以连续的当前时刻 N_inf 为锚点，因此 f_hor 的差异约为 1e-10，
+    # 属于浮点累积误差，不代表物理结果不一致。
     assert worst_fhor < 1e-9
 
 
