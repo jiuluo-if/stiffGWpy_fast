@@ -2,6 +2,12 @@
 
 ## Unreleased — 2026-10-23
 
+- Added a reproducible paired benchmark for the best passing sampled
+  transition-refinement point. Matched Oracle C anchors show errors below
+  `1e-4` on both tested `DN_re` edges; a fixed-affinity 30-pair A/B shows a
+  latency tradeoff between edges. The candidate remains validation-only; see
+  the accuracy, Oracle C, and benchmark records.
+
 - Updated the English and Chinese root READMEs to use the corrected
   `tol=1e-6` performance profile and to distinguish the 2026-09-12 accuracy
   baseline from later sampled `DN_re` edge checks. The documentation index now
