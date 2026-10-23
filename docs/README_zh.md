@@ -25,7 +25,7 @@
 | `accuracy.md` | 分层精度边界和有日期的验证证据 | 以 manifest 和实验目录为准 |
 | `parameter_validation.md` | 参数定义和带日期的扫描结果 | 以 manifest 和实验目录为准 |
 | `cobaya.md` | 适配器选项、模式映射和 `eval_freqs` | 当前 |
-| `benchmarks.md` | 当前固定资源全流程 profile 和带日期的性能对比 | 以报告范围为准 |
+| `benchmarks.md` | 固定资源全流程 profile、有范围限定的精度/耗时对比和带日期的基准记录 | 以报告范围为准 |
 | `performance_comparison_20260903.md` | 优化前后对比、耗时分解、A/B 和门槛 | 带日期的历史快照 |
 | `reproducibility.md` | 驱动脚本、验收门槛和环境元数据 | 当前 |
 | `experiment_catalog_zh.md` | 研究主题、证据状态和原始实验数据家族 | 当前 |
