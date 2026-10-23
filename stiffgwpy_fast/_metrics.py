@@ -41,11 +41,13 @@ def rel_abs(a, b):
 
 
 def rel_linear_omega(a_log10, b_log10):
-    """Relative difference of linear Omega, using ``10**b`` as denominator.
+    """Relative difference ``|10**a - 10**b| / 10**b``.
 
+    ``a_log10`` is the reference spectrum and ``b_log10`` is the candidate.
     The equivalent log-domain form avoids subtracting nearly equal linear values.
 
-    中文：以候选值 ``10**b`` 为分母，在对数差上用 ``expm1`` 计算，避免线性谱相减时的消减误差。
+    中文：``a_log10`` 为参照谱，``b_log10`` 为候选谱；以候选谱为分母，并在对数差上用
+    ``expm1`` 计算，避免线性谱相减时的消减误差。
     """
     a = np.asarray(a_log10, dtype=float)
     b = np.asarray(b_log10, dtype=float)

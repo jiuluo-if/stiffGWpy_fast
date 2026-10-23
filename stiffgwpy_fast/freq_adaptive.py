@@ -183,10 +183,15 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
     reserve around ``m.f_re`` protects the transition knee, and caller-supplied
     likelihood nodes are mandatory native points.  This builder only chooses
     coordinates; it never evaluates or interpolates the spectrum.
+    ``max_points`` is a soft limit when caller nodes alone meet or exceed the
+    budget; in that case, preserve those nodes and the full feature reserve.
+    When caller nodes are below the limit but the combined set exceeds it,
+    trim the feature reserve to fit.
 
     中文：围绕再加热频谱特征构造稀疏频率网格。MCMC 使用的宽范围种子网格保持较小；
     ``m.f_re`` 附近保留固定局部节点以捕捉转折，调用方提供的似然频率必须作为原生节点保留。
-    本函数只生成频率坐标，不计算或插值频谱。
+    本函数只生成频率坐标，不计算或插值频谱。若调用方节点本身达到或超过 ``max_points``，该参数作为软上限，
+    保留调用方节点及完整特征点；若调用方节点未达到上限但合并后超限，则缩减特征点以满足预算。
     """
     seed_n = max(2, int(seed_n))
     max_points = max(seed_n, int(max_points))
@@ -212,12 +217,6 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
 
     mandatory = np.unique(np.concatenate((feature, eval)))
     if mandatory.size >= max_points:
-        # Keep caller nodes; trim the feature reserve only when caller nodes fit
-        # below max_points but the combined set exceeds the budget.
-        # 保留调用方节点；仅当调用方节点未超上限、但与特征保留点合并后超预算时，才缩减特征点。
-        # If caller nodes alone reach the limit, retain the full feature reserve too;
-        # max_points is a soft limit when mandatory nodes consume the budget.
-        # 若调用方节点本身达到上限，仍保留完整特征点；强制节点占满预算时，max_points 为软上限。
         selected = np.unique(np.concatenate((eval, feature)))
         if selected.size > max_points and eval.size < max_points:
             selected = np.unique(np.concatenate((eval, feature[:max_points - eval.size])))

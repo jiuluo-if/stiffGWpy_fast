@@ -16,11 +16,11 @@ from scipy.integrate import quad, solve_ivp
 
 def int_FD(y):
     """
-    Evaluate energy density and pressure for a massive neutrino in Fermi-Dirac dist. 
+    Evaluate energy density and pressure for a massive neutrino in Fermi-Dirac dist.
     x = pc/(kB*T), y = mc^2/(kB*T) = mc^2/(kB*T0)*a
     中文：计算有质量中微子的费米-狄拉克能量密度和压强积分，并按无质量费米子的能量密度归一化。
     其中 ``x = pc/(kB*T)``，``y = mc^2/(kB*T) = mc^2/(kB*T0)*a``。
-    
+
     """
 
     I_rho = quad(integrand_rho, 0, 30, args=(y))
@@ -55,6 +55,19 @@ def _make_subhorizon_event(z_tail):
 
 
 def solve_SGWB(Nv, Sv, j0, z0, z_tail=5.0, rtol=1e-6, atol=None):
+    """Integrate one tensor mode with LSODA on a precomputed background grid.
+
+    ``Nv`` and ``Sv`` hold the expansion grid and sampled ``sigma(N)``;
+    ``j0`` and ``z0`` define the mode's initial grid point and
+    ``z = ln(k/aH)``. A terminal event stops integration as ``z`` crosses
+    ``z_tail`` upward. ``rtol`` and ``atol`` are passed to ``solve_ivp``.
+    The returned result includes a dense solution in ``result.sol``.
+
+    中文：在预先生成的背景网格上用 LSODA 积分单个张量模态。``Nv`` 和 ``Sv`` 分别是膨胀网格与
+    采样的 ``sigma(N)``；``j0`` 和 ``z0`` 指定模态的起始网格点及 ``z = ln(k/aH)`` 初值。
+    当 ``z`` 向上穿过 ``z_tail`` 时终止；``rtol`` 和 ``atol`` 传给 ``solve_ivp``，返回结果的
+    ``result.sol`` 提供稠密解。
+    """
 
     N_span = (Nv[j0], Nv[-1])
     ini_state = [z0, 0, math.exp(z0)]
@@ -80,16 +93,16 @@ def tensor(N, state, spline):
     Dynamical system for tensor modes:
 
     中文：以 ``N`` 为自变量，将张量模态方程写成 ``(z, x, y)`` 的一阶系统；``sigma`` 由背景样条提供。
-    
+
     z = ln(2*pi*f/aH)
     x = \dot T_h / H
     y = (2*pi*f/aH) * T_h
     sigma = -2 \dot H / 3H^2
 
-    z' = 1.5*sigma - 1                
+    z' = 1.5*sigma - 1
     x' = -3*x + 1.5*sigma*x - exp(z)*y
-    y' = -y + 1.5*sigma*y + exp(z)*x 
-    
+    y' = -y + 1.5*sigma*y + exp(z)*x
+
     """
 
     z, x, y = state
