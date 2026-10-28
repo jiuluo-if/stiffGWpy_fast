@@ -156,6 +156,19 @@ _OUTER_FULL_REUSE_SIGMA_TOL = 1.0e-4
 _OUTER_FULL_REUSE_FHOR_TOL = 1.0e-4
 
 
+def _integer_setting(name, value):
+    if isinstance(value, bool):
+        raise ValueError("%s must be an integer, got %r" % (name, value))
+    try:
+        integer = int(value)
+        numeric = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError("%s must be an integer, got %r" % (name, value)) from exc
+    if not math.isfinite(numeric) or numeric != integer:
+        raise ValueError("%s must be an integer, got %r" % (name, value))
+    return integer
+
+
 def set_threads(n):
     """Set the Numba worker count used by the frequency-parallel kernel.
 
@@ -165,7 +178,7 @@ def set_threads(n):
     模块级设置，正式高层调用优先使用逐次配置。
     """
     global _THREADS
-    n = int(n)
+    n = _integer_setting("thread count", n)
     if not 1 <= n <= _MAX_THREADS:
         raise ValueError("thread count must be an integer in [1, %d], got %d" % (_MAX_THREADS, n))
     with _NUMBA_CONFIG_LOCK:
@@ -185,7 +198,7 @@ def set_col_step(n):
     中文：此 setter 仅改旧模块级设置；正式 ``fast`` 预设使用 ``col_step=8``。
     """
     global _COL_STEP
-    n = int(n)
+    n = _integer_setting("column stride", n)
     if not 1 <= n <= 8:
         raise ValueError("column stride must be an integer in [1, 8], got %d" % n)
     with _NUMBA_CONFIG_LOCK:

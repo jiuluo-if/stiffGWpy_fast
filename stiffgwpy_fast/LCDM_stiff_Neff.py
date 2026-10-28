@@ -5,7 +5,8 @@
 """
 
 import math
-import os
+from collections.abc import Mapping
+from os import PathLike
 from pathlib import Path
 
 import numpy as np
@@ -35,53 +36,78 @@ from .global_param import (
     spl_T_N,
 )
 
+_DEFAULT_COSMO_PARAMS = {
+    'Omega_bh2': 0.0223828,
+    'Omega_ch2': 0.1201075,
+    'H0': 67.32117,
+    'DN_eff': 0.0,
+    'A_s': 2.100549e-9,
+    'r': 0.0,
+    'n_t': 0.0,
+    'cr': 0,
+    'T_re': 1e12,
+    'DN_re': 0,
+    'kappa10': 0.0,
+}
+
 
 class LCDM_SN:
     """
     Cosmological model: LCDM + stiff component + constant Delta N_eff
 
-    The free/base parameters of the model are: 
+    The free/base parameters of the model are:
     'Omega_bh2', 'Omega_ch2', 'H0', 'DN_eff', 'A_s', 'r', 'n_t', 'cr', 'T_re', 'DN_re', 'kappa10'.
     - [H0] = km s^-1 Mpc^-1, [T_re] = GeV.
     - Set cr > 0 if the consistency relation is assumed, otherwise set cr <= 0 and provide (n_t, DN_re).
-    - DN_re is the number of e-folds from the end of inflation to the end of reheating, 
+    - DN_re is the number of e-folds from the end of inflation to the end of reheating,
       assuming a^{-3} matter-like evolution.
     - kappa10 := rho_stiff/rho_photon at 10 MeV.
 
-    There are three ways to instantiate a model with desired base parameters: 
-    1. input a yaml file,  2. input a dictionary, 
+    There are three ways to instantiate a model with desired base parameters:
+    1. input a yaml file,  2. input a dictionary,
     3. specify the parameters by keyword arguments.
-    
+
     They will be stored in the 'obj_name.cosmo_param' attribute as a dictionary
     and can be modified later on.
 
     中文：模型参数保存在 `cosmo_param` 字典中。`derived_param` 根据当前参数计算共享的
     膨胀率、物质组分和张量初始条件；改变物理参数后应重置上层求解状态。
-  
+
     """
 
-    def __init__(self, *args,
-                 **kwargs):
-        if len(args) > 0:
-            if type(args[0]) == str:
-                if os.path.exists(args[0]):
-                    if Path(args[0]).suffix in ('.yml', '.yaml'):
-                        with open(args[0], 'r') as stream:
-                            try:
-                                self.cosmo_param = yaml.safe_load(stream)
-                            except yaml.YAMLError as exc:
-                                print(exc)
-            elif type(args[0]) == dict:
-                self.cosmo_param = args[0].copy()
+    def __init__(self, *args, **kwargs):
+        if len(args) > 1:
+            raise TypeError("LCDM_SN accepts at most one positional configuration")
+
+        if not args:
+            params = _DEFAULT_COSMO_PARAMS.copy()
+        elif isinstance(args[0], Mapping):
+            params = dict(args[0])
+        elif isinstance(args[0], (str, PathLike)):
+            config_path = Path(args[0])
+            if config_path.suffix.lower() not in ('.yml', '.yaml'):
+                raise ValueError("configuration file must have a .yml or .yaml suffix")
+            if not config_path.is_file():
+                raise FileNotFoundError("configuration file not found: %s" % config_path)
+            with config_path.open('r', encoding='utf-8') as stream:
+                loaded = yaml.safe_load(stream)
+            if not isinstance(loaded, Mapping):
+                raise ValueError("configuration file must contain a YAML mapping")
+            params = dict(loaded)
         else:
-            self.cosmo_param = {'Omega_bh2': 0.0223828, 'Omega_ch2': 0.1201075, 'H0': 67.32117, 'DN_eff': 0.,
-                                'A_s': 2.100549e-9, 'r': 0., 'n_t': 0., 'cr': 0,
-                                'T_re': 1e12, 'DN_re': 0, 'kappa10': 0.,
-                               }    # 默认采用 Planck 2018 Plik 最佳拟合值，不启用一致性关系和刚性物质。
-            if len(kwargs) > 0:
-                for key in kwargs:
-                    if key in self.cosmo_param:
-                        self.cosmo_param[key] = kwargs[key]
+            raise TypeError("configuration must be a mapping or a YAML path")
+
+        allowed = set(_DEFAULT_COSMO_PARAMS)
+        unknown = (set(params) | set(kwargs)) - allowed
+        if unknown:
+            raise TypeError("unknown cosmological parameter(s): %s" % ', '.join(sorted(unknown)))
+        params.update(kwargs)
+        if args:
+            missing = allowed - set(params)
+            if missing:
+                raise ValueError("configuration is missing required parameter(s): %s"
+                                 % ', '.join(sorted(missing)))
+        self.cosmo_param = params
 
         self.DN_eff_GW = 0          # 再加热结束前引力波贡献的相对论自由度。
 
@@ -159,11 +185,11 @@ class LCDM_SN:
 
     def gen_expansion(self):
         """
-        Generate the expansion history of an extended Lambda-CDM model 
+        Generate the expansion history of an extended Lambda-CDM model
         with an extra stiff matter and a constant Delta_Neff (which can
         mimic the effect of the primordial SGWB)
 
-        N_re and N_inf are LOOKBACK numbers of e-folds 
+        N_re and N_inf are LOOKBACK numbers of e-folds
         at the end of reheating and inflation, respectively
         N_re = ln (T_re/T_CMB), N_BBN < N_re < N_inf
 
@@ -173,13 +199,14 @@ class LCDM_SN:
         ``N_re`` 和 ``N_inf`` 分别是再加热结束和暴胀结束时的回溯 e-fold 数，且
         ``N_re = ln(T_re/T_CMB)``、``N_BBN < N_re < N_inf``。仅在
         ``self.derived_param['N_inf']`` 已有值时调用。
-        
+
         """
 
         # 读取一次派生参数，供本次膨胀历史计算复用。
         derived = self.derived_param
 
-        Omh2 = derived['Omega_mh2']; Osh2 = derived['Omega_sh2']
+        Omh2 = derived['Omega_mh2']
+        Osh2 = derived['Omega_sh2']
 
         Oerh2 = Omega_ph2 * 7/8 * (4/11)**(4/3) * self.cosmo_param['DN_eff']         # 额外辐射的 Omega*h^2。
         Otrh2 = Omega_orh2 + Oerh2                                                   # 电子-正电子湮灭后的总辐射密度参数。
@@ -190,12 +217,14 @@ class LCDM_SN:
 
         # Construct output arrays / 构造输出数组。
 
-        len_inf = math.floor(derived['N_inf']*100)+1; Nv = np.arange(0, len_inf)*.01
+        len_inf = math.floor(derived['N_inf']*100)+1
+        Nv = np.arange(0, len_inf)*.01
         if Nv[-1] != derived['N_inf']:
             Nv = np.append(Nv, derived['N_inf'])
         # Nv is equivalent to ln(a), its present-day value is set at Nv[-1] = N_inf.
         # Nv 对应 ln(a)，并将今天的端点设为 Nv[-1]=N_inf。
-        Sv = np.zeros_like(Nv); fv = np.zeros_like(Nv)  # fv 与视界频率 f_H=aH/(2π) 成比例。
+        Sv = np.zeros_like(Nv)
+        fv = np.zeros_like(Nv)  # fv 与视界频率 f_H=aH/(2π) 成比例。
 
 
         # Main loop: calculate the expansion history / 主循环：计算膨胀历史。
@@ -204,7 +233,8 @@ class LCDM_SN:
         # 再加热边界落在网格上最近的节点；连续边界位置由 N_inf-N_re 给出。
 
         for i in range(index_re, len(Nv), 1):
-            eN = math.exp(Nv[-1]-Nv[i]); e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 分别对应 a^-1 和 a^-3。
+            eN = math.exp(Nv[-1]-Nv[i])
+            e3N = math.exp(3.0*(Nv[-1]-Nv[i]))  # 分别对应 a^-1 和 a^-3。
             nu = nu_today / eN          # 中微子质量与热能之比 (m_nu*c^2)/(kB*T_nu)。
             if (nu > 100):              # 有质量中微子处于深度非相对论区。
                 H2 = Omh2 + Omega_mnuh2 + (Omega_ph2+2/3*Omega_nh2+Oerh2)*eN + Osh2*e3N + OLh2/e3N    # h^2*a^3 项。
@@ -234,7 +264,8 @@ class LCDM_SN:
 
         # Convert fv into physical units: here \tilde f_H = ln (f_H/Hz)
         # 将 fv 转换为 ln(f_H/Hz)，最终再除以 ln(10) 输出 log10(f_H/Hz)。
-        f0 = fv[-1]; Delta_f = math.log(2*math.pi/derived['H_0'])
+        f0 = fv[-1]
+        Delta_f = math.log(2*math.pi/derived['H_0'])
         fv = fv - f0 - Delta_f
 
         # Output the expansion history and frequencies / 写出膨胀历史与频率数组。
@@ -248,8 +279,8 @@ class LCDM_SN:
 
 def input_nt(params):
     """
-    Input the tensor spectral index. 
-    Use the inflationary consistency relation or the provided n_t.    
+    Input the tensor spectral index.
+    Use the inflationary consistency relation or the provided n_t.
     中文：读取张量谱指数 ``n_t``；可按暴胀一致性关系从模型参数推导，或使用用户显式提供的值。
     """
     if params['cr'] > 0:

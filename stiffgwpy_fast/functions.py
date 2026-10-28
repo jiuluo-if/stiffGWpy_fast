@@ -84,6 +84,9 @@ def solve_SGWB(Nv, Sv, j0, z0, z_tail=5.0, rtol=1e-6, atol=None):
                        jac=jacobian,
                       )
 
+    if not result.success:
+        raise RuntimeError("LSODA tensor integration failed: %s" % result.message)
+
     return result
 
 
