@@ -339,6 +339,9 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
                        events=[_make_tail_event(z_tail)],
                        args=(bg,), dense_output=True)
 
+    if not result.success:
+        raise RuntimeError("reference tensor integration failed: %s" % result.message)
+
     used_tail = bool(result.t_events[0].size)
     n_steps = int(result.nfev)
     # Adiabaticity parameter of the deep-subhorizon hand-off: the frozen-amplitude

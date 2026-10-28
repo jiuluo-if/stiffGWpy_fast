@@ -63,29 +63,29 @@ class LCDM_SG(LCDM_SN):
     """
     Cosmological model: LCDM + stiff component + constant Delta N_eff
 
-    The free/base parameters of the model are: 
+    The free/base parameters of the model are:
     'Omega_bh2', 'Omega_ch2', 'H0', 'DN_eff', 'A_s', 'r', 'n_t', 'cr', 'T_re', 'DN_re', 'kappa10'.
     - [H0] = km s^-1 Mpc^-1, [T_re] = GeV.
     - Set cr > 0 if the consistency relation is assumed, otherwise set cr <= 0 and provide (n_t, DN_re).
-    - DN_re is the number of e-folds from the end of inflation to the end of reheating, 
+    - DN_re is the number of e-folds from the end of inflation to the end of reheating,
       assuming a^{-3} matter-like evolution.
     - kappa10 := rho_stiff/rho_photon at 10 MeV.
 
-    There are three ways to instantiate a model with desired base parameters: 
-    1. input a yaml file,  2. input a dictionary, 
+    There are three ways to instantiate a model with desired base parameters:
+    1. input a yaml file,  2. input a dictionary,
     3. specify the parameters by keyword arguments.
-    
+
     They will be stored in the 'obj_name.cosmo_param' attribute as a dictionary
     and can be modified later on.
-    
-    Once a successful 'SGWB_iter' calculation has been performed for an instance, 
-    if for some reason you would like to reuse this instance with a new set of 
-    parameters, you MUST run 'obj_name.reset()' first to reset the status, and 
+
+    Once a successful 'SGWB_iter' calculation has been performed for an instance,
+    if for some reason you would like to reuse this instance with a new set of
+    parameters, you MUST run 'obj_name.reset()' first to reset the status, and
     then modify the 'obj_name.cosmo_param' dictionary with desired values.
 
     中文：`LCDM_SG` 在基础宇宙学模型上提供 SGWB 迭代和引擎分派。构造参数可以来自 YAML、
     字典或关键字；复用实例并更改参数前，先调用 `reset()`。
-    
+
     """
     def __init__(self, *args,
                  **kwargs):
@@ -125,7 +125,7 @@ class LCDM_SG(LCDM_SN):
 
     def run_SGWB_single(self, freq, z_tail=5.0, rtol=1e-6, atol=None):
         """
-        Integrate the equation of motion of primordial tensor fluctuations 
+        Integrate the equation of motion of primordial tensor fluctuations
         for a single frequency and given expansion history
 
         中文：在给定膨胀历史下，对单个频率的原初张量扰动方程进行积分。
@@ -442,15 +442,17 @@ class LCDM_SG(LCDM_SN):
             print('High-end cutoff frequency has not been set properly.')
             return None
 
-        if self.SGWB_converge == False:
+        if not self.SGWB_converge:
             Omega_nu = Omega_nh2/self.derived_param['h']**2
 
             self.DN_eff_orig = self.cosmo_param['DN_eff']
             # Record the original input value of DN_eff before entering the iterations
             # 保存输入的 DN_eff，未收敛时用于恢复原始模型状态。
 
-            self.DN_gw = [0]; DN_gw_new = 0
-            DN_gw_min = 0; DN_gw_max = 10
+            self.DN_gw = [0]
+            DN_gw_new = 0
+            DN_gw_min = 0
+            DN_gw_max = 10
             converged = False
             try:
                 for _iter in range(MAX_ITER):    # 外层自洽迭代。
@@ -526,7 +528,7 @@ class LCDM_SG(LCDM_SN):
 
     def find_index_hc(self, freq):
         """
-        Find the index in the number of e-folds array at which 
+        Find the index in the number of e-folds array at which
         the horizon size is closest to freq, i.e., freq ~ aH/2pi
 
         中文：在 e-fold 数组中查找视界频率最接近 ``freq``（即 ``freq ≈ aH/(2π)``）的节点索引。
@@ -534,7 +536,8 @@ class LCDM_SG(LCDM_SN):
         j = 0
         while freq <= self.f_hor[j] and j<len(self.N)-1:
             j = j+1
-        if (j >= 1): j = j-1
+        if j >= 1:
+            j = j-1
 
         return j
 
@@ -556,7 +559,9 @@ class LCDM_SG(LCDM_SN):
         r = float(freq_res)
         if not 0.25 <= r <= 8.0:
             raise ValueError('freq_res must be in [0.25, 8.0], got %r' % freq_res)
-        fmax = self.f_hor[0]; fmin = min(self.f_hor); fcmb = math.log10(f_piv)
+        fmax = self.f_hor[0]
+        fmin = min(self.f_hor)
+        fcmb = math.log10(f_piv)
         if self.derived_param['nt']>0:            # 只保留超视界功率小于 1 的模式。
             fmax = min(fmax, (-math.log10(self.derived_param['A_t']))/self.derived_param['nt']+math.log10(f_piv))
 
@@ -568,7 +573,8 @@ class LCDM_SG(LCDM_SN):
         f = cat((f, f[-1]-np.linspace(1,10,int(10*r))*.2/r), axis=None)
 
         if fmax >= self.f_re:
-            f = f[np.logical_or(f>=self.f_re+.2, f>=fmax)]; f = f[f>=fmax-.4]
+            f = f[np.logical_or(f>=self.f_re+.2, f>=fmax)]
+            f = f[f>=fmax-.4]
             f = cat((f, np.arange(f[-1]-.5, self.f_re+1.5, -.5/r)), axis=None)          # 再加热期间，覆盖 T_re 之前的频率段。
             f = cat((f, np.arange(f[-1]-.1, self.f_re+.8, -.1/r)), axis=None)          # 接近 f_re 的频率段。
             f = cat((f, np.arange(f[-1]-.05, self.f_re+.4, -.05/r)), axis=None)
@@ -583,7 +589,8 @@ class LCDM_SG(LCDM_SN):
 
         f = f[f>=fcmb]
         f = cat((f, np.arange(f[-1]-1, fcmb, -1/r)), axis=None)                         # 辐射主导期，从 z_eq 之前延伸至枢轴频率。
-        f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2/r)), axis=None); f = f[f>=fmin]     # 穿过 z_eq 并延伸至当前最低频率。
+        f = cat((f, np.arange(f[-1]-.2, fmin-1, -.2/r)), axis=None)
+        f = f[f>=fmin]  # 穿过 z_eq 并延伸至当前最低频率。
 
         self.f = f
 
@@ -602,22 +609,31 @@ class LCDM_SG(LCDM_SN):
         # Patch the per-frequency solutions into matrices for integration over frequency.
         # 将逐频率求解结果写入矩阵，以便沿频率方向积分。
         M_N_hc = -np.ones((len(self.f),len(self.Nv)))
-        M_Ogw = np.zeros_like(M_N_hc); M_Opgw = np.zeros_like(M_N_hc); M_Oj = np.zeros_like(M_N_hc)
+        M_Ogw = np.zeros_like(M_N_hc)
+        M_Opgw = np.zeros_like(M_N_hc)
+        M_Oj = np.zeros_like(M_N_hc)
         for i in range(len(self.f)):
             # Only count GW energy density when each mode is at least 3 decades inside the horizon
             # 每个模式在视界内深入至少 3 个数量级后，才计入引力波能量密度。
             cond = self.N_hc[i]>=self.N_hc[i][0]
             M_N_hc[i, (mask := np.isin(self.Nv, self.N_hc[i][cond]))] = self.N_hc[i][cond]
-            M_Ogw[i,mask] = self.Ogw[i][cond]; M_Opgw[i,mask] = self.Opgw[i][cond]; M_Oj[i,mask] = self.Oj[i][cond]
+            M_Ogw[i,mask] = self.Ogw[i][cond]
+            M_Opgw[i,mask] = self.Opgw[i][cond]
+            M_Oj[i,mask] = self.Oj[i][cond]
 
-        M_N_hc = np.transpose(M_N_hc); M_Ogw = np.transpose(M_Ogw); M_Opgw = np.transpose(M_Opgw); M_Oj = np.transpose(M_Oj)
+        M_N_hc = np.transpose(M_N_hc)
+        M_Ogw = np.transpose(M_Ogw)
+        M_Opgw = np.transpose(M_Opgw)
+        M_Oj = np.transpose(M_Oj)
 
         # Integrate the spectrum at each expansion-history node.
         # 对膨胀历史的每个节点积分频谱。
         for i in range(len(self.Nv)):
             ind_int = (M_N_hc[i]>=0)
             f_int = np.flip(self.f[ind_int])                           # log10(f/Hz)，按频率递增排列。
-            Ogw_int = np.flip(M_Ogw[i,ind_int]); Opgw_int = np.flip(M_Opgw[i,ind_int]); Oj_int = np.flip(M_Oj[i,ind_int])
+            Ogw_int = np.flip(M_Ogw[i,ind_int])
+            Opgw_int = np.flip(M_Opgw[i,ind_int])
+            Oj_int = np.flip(M_Oj[i,ind_int])
 
             if len(f_int)>=2:
                 # Exclude the negative super-horizon Omega_j contribution from this integral for now.
@@ -625,7 +641,8 @@ class LCDM_SG(LCDM_SN):
                 self.g2[i] = integrate.simpson(Ogw_int-Oj_int, f_int) * ln10
                 self.w2[i] = integrate.simpson(Opgw_int, f_int) * ln10
             else:
-                self.g2[i] = 0; self.w2[i] = 0
+                self.g2[i] = 0
+                self.w2[i] = 0
 
 def add_boundary_knots(spline):
     """
