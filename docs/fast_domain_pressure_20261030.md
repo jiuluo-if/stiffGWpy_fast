@@ -90,8 +90,22 @@ At `freq_res=8`, the full self-consistent Reference solve returns
 `DN_gw=2.2914118670` on 800 frequencies in 481.6 seconds. At that root, a
 fixed-background `freq_res=16` map gives `2.2914094306`, a relative change of
 `1.06e-6`; the full `freq_res=8` solve has a self-consistency residual of
-`5.0e-10`. This supports convergence of the integrated `DN_gw`. The spectrum
-is still not certified to `1e-3 dex`:
+`5.0e-10`. This supports convergence of the integrated `DN_gw`. A separate
+`z_tail=7` cross-check on all 800 native frequencies had maximum spectrum
+difference `9.90096e-4 dex` (even/odd halves), with P95 `6.48e-4` and
+`7.10e-4 dex`; at nine nearby frequencies, halving the LSODA step from
+`0.00125` to `0.000625` reduced the maximum to `5.40e-4 dex`. That result does
+not certify the automatic output, which preserves the requested `z_tail=5`.
+For the matching `z_tail=5` convention, the full-grid LSODA comparison at
+`h=0.00125` initially exceeded the `1e-3 dex` gate (`1.0522e-3 dex`). Around
+its worst point, step refinement gave `1.0522e-3`, `5.3351e-4`, and
+`2.6545e-4 dex` at `h=0.00125`, `0.000625`, and `0.0003125`. The complete
+800-frequency `h=0.0003125` comparison then had maximum difference
+`3.57898e-4 dex`, P95 `2.31351e-4 dex`, and median absolute difference
+`7.00581e-5 dex` (Reference 67.6 s, LSODA 287.4 s). This passes the sampled
+native-bin spectral gate for the requested tail convention; it does not
+certify interpolation between the 800 output bins.
+
 8/16 uniform grids are nonnested, so their interpolated max difference
 (`0.013 dex`) is not an exact-node comparison. Separate curvature-adaptive
 Reference grids at `1e-3` and `2.5e-4 dex` changed the integrated result by
@@ -108,13 +122,15 @@ direct-midpoint regression. On sample 2, this method remains expensive and
 uncertified: the `1e-3 dex` target used 1822 retained nodes but still had
 `9.09e-3 dex` sampled error after 14 rounds; the `2.5e-4 dex` target used 3467
 nodes and 655 seconds, while its DN proxy changed by `3.03e-4` from the coarse
-result and its spectrum changed by `9.43e-3 dex` on a dense probe. A further
+result and its spectrum changed by `9.43e-3 dex` on a dense probe. These are
+continuous-interpolant convergence diagnostics, distinct from the native-bin
+cross-solver gate above. A further
 `6.25e-5 dex` run hit the 6000-node hard cap after 7982 Reference evaluations
 and 681 seconds. Its DN proxy was within `1.20e-4` of uniform `freq_res=8`,
 but the remaining local estimate was `4.35e-3 dex` and its spectrum differed
 by `4.38e-3 dex` from the 3467-node grid. This reaches the practical per-point
-reference budget without meeting the spectrum gate; the high-frequency
-sample's continuous spectrum remains unresolved.
+Reference budget without certifying between-node continuous interpolation; the
+sampled 800-bin output passes the refined independent LSODA comparison above.
 
 The real automatic-escalation regressions verify this resolution floor: sample
 2 returns the 800-bin `freq_res=8` Reference root (`DN_gw=2.2914118670`) in
