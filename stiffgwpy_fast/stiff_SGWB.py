@@ -222,7 +222,9 @@ class LCDM_SG(LCDM_SN):
         it defaults to False and does not affect the original LSODA engine.
         When both ``auto_escalate`` and ``escalate_to_reference`` are enabled,
         recoverable Fast numerical failures also retry with Reference at
-        ``rtol <= 1e-9``; input/guard rejections and raised Fast exceptions do not.
+        ``rtol <= 1e-9`` and ``freq_res >= 8``; input/guard rejections and
+        raised Fast exceptions do not. Uncertified successful Fast results use
+        the same minimum Reference frequency density when escalated.
 
         中文说明：默认 ``fast`` 预设的 outer tolerance 为 ``1e-6``；显式传入
         非默认 ``tol`` 会覆盖它。函数签名中的 ``1e-4`` 保留给 LSODA 和旧手动配置路径。
@@ -400,7 +402,7 @@ class LCDM_SG(LCDM_SN):
                 reference_kwargs = dict(
                     z_tail=z_tail,
                     rtol=(1e-9 if rtol is None else min(float(rtol), 1e-9)),
-                    freq_res=freq_res)
+                    freq_res=max(float(freq_res), 8.0))
                 result = self.SGWB_iter(engine='reference', **reference_kwargs)
                 status = ('FAST_ESCALATED' if result is not None
                           else 'FAST_ESCALATION_FAILED')
@@ -448,10 +450,15 @@ class LCDM_SG(LCDM_SN):
                         self.escalations = getattr(self, 'escalations', 0) + 1
                         self.reset()
                         if escalate_to_reference:
+                            reference_freq_res = (
+                                max(float(freq_res), 8.0)
+                                if budget_status.startswith('uncertified')
+                                else freq_res
+                            )
                             reference_kwargs = dict(
                                 z_tail=z_tail,
                                 rtol=(1e-9 if rtol is None else min(float(rtol), 1e-9)),
-                                freq_res=freq_res)
+                                freq_res=reference_freq_res)
                             result = self.SGWB_iter(
                                 engine='reference', **reference_kwargs)
                         else:

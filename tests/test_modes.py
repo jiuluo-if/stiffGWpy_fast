@@ -208,6 +208,7 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     from stiffgwpy_fast import fast_sgwb as FS
     from stiffgwpy_fast import reference as REF
     from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+    captured_reference = {}
 
     def fake_fast(m, **kw):
         m.SGWB_converge = True
@@ -217,6 +218,7 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
 
     def fake_ref(m, **kw):
+        captured_reference.update(kw)
         m.cosmo_param['DN_eff'] = 0.00227
         m.DN_gw = np.array([0.0, 0.00227])
         m.kappa_r = 1.9e-3
@@ -241,6 +243,7 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     assert m.last_eval_status == 'FAST_ESCALATED'
     assert m.eval_status_counts['FAST_ESCALATED'] == 1
     assert m.eval_status_counts['REFERENCE'] >= 1
+    assert captured_reference['freq_res'] == 8.0
 
 
 def test_auto_escalate_fast_numerical_failure_to_reference(monkeypatch, fast_settings):
@@ -248,12 +251,14 @@ def test_auto_escalate_fast_numerical_failure_to_reference(monkeypatch, fast_set
     import numpy as np
 
     from stiffgwpy_fast import reference as REF
+    captured_reference = {}
 
     def failed_fast(m, **kwargs):
         m.fast_failure_reason = 'nonfinite'
         return None
 
     def recovered_reference(m, **kwargs):
+        captured_reference.update(kwargs)
         m.cosmo_param['DN_eff'] = 0.25
         m.DN_gw = np.array([0.0, 0.25])
         m.log10OmegaGW = np.array([-12.0])
@@ -277,3 +282,4 @@ def test_auto_escalate_fast_numerical_failure_to_reference(monkeypatch, fast_set
     assert m.reference_evals == 1
     assert m.last_engine == 'reference'
     assert m.last_eval_status == 'FAST_ESCALATED'
+    assert captured_reference['freq_res'] == 8.0
