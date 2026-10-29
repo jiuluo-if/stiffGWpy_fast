@@ -420,3 +420,5 @@ def test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference():
     assert model.last_engine == 'reference'
     assert model.reference_evals == 1
     assert np.isfinite(model.log10OmegaGW).all()
+    assert len(model.f) == 800
+    assert model.DN_gw[-1] == pytest.approx(2.2914118670, rel=2e-4)

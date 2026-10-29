@@ -77,13 +77,14 @@ by `3.92e-3` and the spectrum by `4.09e-3 dex`. Alternate `construct` and
 increasing `freq_res` or reducing `h` to `0.000625` did not fix that residual.
 No Fast-only accuracy candidate is promoted.
 
-With `auto_escalate=True, escalate_to_reference=True` and `freq_res=1`, the
-local budget marks this point `uncertified-path-configuration` with estimated
-`DN_gw_error=0.0539` (the default escalation threshold is `5e-3`). It returns
-`FAST_ESCALATED`, but its Reference root near `2.296589` is not frequency
-converged: a fixed-background map at `freq_res=2` differs by `1.92e-3` from
-`freq_res=1`, and at `freq_res=4` differs by `2.18e-3`. This default Reference
-fallback is a recovery path, not an accuracy pass.
+With `auto_escalate=True, escalate_to_reference=True` and requested
+`freq_res=1`, the local budget marks this point `uncertified-path-configuration`
+with estimated `DN_gw_error=0.0539` (the default escalation threshold is
+`5e-3`). Automatic Reference escalation now raises `freq_res` to at least 8
+for uncertified paths (and returned Fast numerical failures), while preserving
+caller values above 8. The old direct res1 Reference root near `2.296589` is
+not frequency converged: fixed-background maps at res2/res4 differed from
+res1 by `1.92e-3`/`2.18e-3`.
 
 At `freq_res=8`, the full self-consistent Reference solve returns
 `DN_gw=2.2914118670` on 800 frequencies in 481.6 seconds. At that root, a
@@ -115,6 +116,12 @@ by `4.38e-3 dex` from the 3467-node grid. This reaches the practical per-point
 reference budget without meeting the spectrum gate; the high-frequency
 sample's continuous spectrum remains unresolved.
 
+The real automatic-escalation regressions verify this resolution floor: sample
+2 returns the 800-bin `freq_res=8` Reference root (`DN_gw=2.2914118670`) in
+483.7 seconds; sample 9 still passes its prior DN anchor in 207.2 seconds.
+These costs occur only after explicit
+`auto_escalate=True, escalate_to_reference=True` use.
+
 The Reference `freq_res=16` attempt initially hit an artificial
 `quad(limit=800)` ceiling with 1600 breakpoints. The limit now scales with the
 breakpoint count and retains 50 adaptive subdivisions; an exact 1600-node
@@ -132,8 +139,8 @@ regression covers the failure. The high-resolution rerun then completed.
 - The goal-grid transition reserve stays inside the valid frequency band when
   blue-tilt amplitude cutoff places `fmax` below the reheating feature.
 - An explicit Reference escalation request now retries recoverable Fast
-  numerical failures, with a strict reference tolerance and without changing
-  ordinary Fast or physical-rejection behavior.
+  numerical failures, with `rtol<=1e-9` and a minimum `freq_res=8` on
+  uncertified paths, without changing ordinary Fast or physical-rejection behavior.
 - The pressure scanner records staged classifications, resource telemetry,
   resumable chunks, and optional coordinatewise minimization.
 - Reference frequency quadrature now sizes QUADPACK's interval limit to dense
