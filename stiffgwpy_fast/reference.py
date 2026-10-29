@@ -481,8 +481,13 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     def _quad(func, breakpoints):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
+            # QUADPACK counts every supplied point as a pre-partitioned panel;
+            # keep additional room for its adaptive subdivisions as the
+            # frequency grid grows.
+            # QUADPACK 会将每个输入断点计为预分区间；频率网格增大时，仍为自适应细分留出余量。
+            limit = max(800, len(breakpoints) + 50)
             return quad(func, float(x[0]), float(x[-1]), epsabs=0.0,
-                        epsrel=1e-10, limit=800, points=breakpoints)
+                        epsrel=1e-10, limit=limit, points=breakpoints)
 
     val, abserr = _quad(f_quad, x)
     g2 = ln10v * val
