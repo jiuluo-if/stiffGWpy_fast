@@ -164,6 +164,46 @@ regression covers the failure. The high-resolution rerun then completed.
 - Adaptive frequency refinement now honors `max_points` as a hard cap and
   prioritizes intervals with the largest sampled or estimated interpolation
   error; this detects missed peaks but does not certify sample 2's spectrum.
+- The independent Reference engine now honors the existing `physical_guard`
+  option instead of unconditionally rejecting total `Delta N_eff > 5`;
+  explicit Reference escalation forwards the same opt-in guard.
+
+## High-`DN_gw` Reference recovery
+
+The 514-case screen at `11b2eaf` contains 125 finite Fast outputs with
+`DN_gw > 10` and no `max_iter` failures. This does not establish accuracy. A
+fresh replay of its `baseline_cr_0` point at `9418e3a`
+(`r=0.01`, `n_t=0.5`, `cr=0`, `T_re=2000 GeV`, `kappa10=0.01`) returns
+`DN_gw=252043.75` in 0.41 s, but its raw Fast result
+misses the dense same-background Reference map by `2.49e-3` relative and the
+spectrum by `2.95e-3 dex`. A high-resolution Fast solve (`grid_independent`,
+`freq_res=8`) remains inaccurate (`2.28e-3` DN-map difference and `2.95e-3 dex`
+max spectrum difference); halving `h` to `0.00125` does not materially change
+the discrepancy. Thus `DN_gw_max=10` is not the cause of this point's accuracy
+failure. The scan also provides no real `max_iter` counterexample proving the
+fixed bisection ceiling is the active failure cause, so the ceiling was not
+changed.
+
+The real blocker for robust recovery was an unconditional total-`Delta N_eff`
+guard inside `run_reference`, even though the public `physical_guard` option
+defaults off. The Reference path now makes that check conditional: with the
+guard off, values above 5 are evaluated; with it on, the solver raises an
+explicit physical-guard error. Fast→Reference escalation forwards the
+caller's setting. A synthetic `DN_gw=12` fixed-point regression covers both
+branches.
+
+On this high-blue-tilt sample, explicit automatic escalation now returns a
+finite 1568-bin Reference result in 633.3 s at
+`DN_eff=251417.467588`, `DN_gw=251417.467439`; relative self-consistency
+residual is `5.93e-10`. At the same background, a `freq_res=16` Reference map
+differs from the `freq_res=8` map by `1.70e-6` relative. Full-grid LSODA at
+`h=0.000625` independently gives a fixed-background `DN_gw` map `1.144e-4`
+relative to the Reference root and a sampled spectrum max difference of
+`7.760e-4 dex` (P95 `4.167e-4`, median `4.153e-5 dex`), passing both acceptance
+gates. LSODA used 242.6 s. The coarser `h=0.00125` run failed both gates,
+which motivated the step-refinement check. This validates one difficult point
+through the explicit Reference recovery path; it does not promote raw Fast at
+this point or establish a general high-`DN_gw` boundary.
 
 These fixes improve correctness and observability. They do not yet certify a
 larger Fast-only accuracy domain. Remaining failures, exception cases, and
@@ -181,6 +221,7 @@ pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_blu
 pytest -q tests/test_freq_adaptive.py::test_goal_oriented_freqs_never_crosses_blue_tilt_amplitude_cutoff -o addopts=''
 pytest -q tests/test_freq_adaptive.py::test_adaptive_detects_narrow_feature_between_seed_nodes -o addopts=''
 pytest -q tests/test_reference.py::test_integrate_spectrum_scales_quad_budget_with_breakpoint_count -o addopts=''
+pytest -q tests/test_reference.py::test_reference_physical_guard_is_optional_for_large_fixed_point -o addopts=''
 ```
 
 For the high-resolution DN check, run `LCDM_SG(...).SGWB_iter(engine="reference", z_tail=5.0, rtol=1e-9, freq_res=8.0)` with the sample-2 parameters above. It takes about eight minutes on the recorded Windows machine.

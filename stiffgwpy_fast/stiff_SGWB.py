@@ -218,8 +218,9 @@ class LCDM_SG(LCDM_SN):
         override the selected fast preset and sets the LSODA/reference tail
         threshold; ``rtol`` and ``atol`` tune reference/LSODA ODE tolerances.
         ``freq_res`` scales frequency-grid density (audit-only; 1.0 = default).
-        ``physical_guard`` enables the fast-path total-``N_eff`` rejection above 5;
-        it defaults to False and does not affect the original LSODA engine.
+        ``physical_guard`` enables total-``N_eff`` rejection above 5 for the
+        fast and Reference engines; it defaults to False and does not affect
+        the original LSODA engine.
         When both ``auto_escalate`` and ``escalate_to_reference`` are enabled,
         recoverable Fast numerical failures also retry with Reference at
         ``rtol <= 1e-9`` and ``freq_res >= 8``; input/guard rejections and
@@ -268,7 +269,7 @@ class LCDM_SG(LCDM_SN):
             # 独立的连续 sigma 高精度参考流程运行较慢，用于认证/基准点，不用于 MCMC 热路径。
             from .reference import apply_reference_to_model
             apply_reference_to_model(self, freq_res=freq_res, z_tail=z_tail,
-                                     rtol=rtol)
+                                     rtol=rtol, physical_guard=physical_guard)
             self.last_engine = 'reference'
             _mark_eval_status(self, 'REFERENCE')
             return self
@@ -402,7 +403,8 @@ class LCDM_SG(LCDM_SN):
                 reference_kwargs = dict(
                     z_tail=z_tail,
                     rtol=(1e-9 if rtol is None else min(float(rtol), 1e-9)),
-                    freq_res=max(float(freq_res), 8.0))
+                    freq_res=max(float(freq_res), 8.0),
+                    physical_guard=physical_guard)
                 result = self.SGWB_iter(engine='reference', **reference_kwargs)
                 status = ('FAST_ESCALATED' if result is not None
                           else 'FAST_ESCALATION_FAILED')

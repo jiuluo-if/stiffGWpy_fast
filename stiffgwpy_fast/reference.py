@@ -514,7 +514,7 @@ def _spectrum_at_dn(m, freqs, DN_eff, z_tail, rtol, workers=None):
 
 def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
                   z_start=-12.0, tol=1e-7, max_iter=60, freq_subset=None,
-                  self_consistent=True, workers=None):
+                  self_consistent=True, workers=None, physical_guard=False):
     """High-accuracy SGWB solve, returning derived results.
 
     When ``dn_eff`` is given (recommended for benchmarking) a *single* pass at
@@ -528,11 +528,18 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     the chosen frequency set, so a coarse ``freq_subset`` also carries a
     frequency-grid error that is reported separately.
 
+    ``physical_guard`` rejects a self-consistent result when the total
+    ``Delta N_eff`` exceeds 5. It is disabled by default so this reference
+    solver can evaluate points outside that physical range.
+
     中文：显式提供 ``dn_eff`` 时，只在该背景上求解一次，用于隔离连续 ``sigma`` 和高阶 ODE
     的误差；设为 ``None`` 且 ``self_consistent=True`` 时，会迭代求解 ``Delta N_eff``。
     ``freq_subset`` 是 ``log10(f/Hz)`` 数组；未提供时使用由连续背景构造的频率网格。
     频谱和玻尔积分使用同一频率集合，稀疏子集带来的频率网格误差会单独报告。
+    ``physical_guard`` 可显式拒绝总 ``Delta N_eff`` 超过 5 的自洽结果；默认关闭。
     """
+    if not isinstance(physical_guard, bool):
+        raise TypeError('physical_guard must be a bool, got %r' % (physical_guard,))
     DN_eff_orig = m.cosmo_param['DN_eff']
     Omega_nu = gp.Omega_nh2 / m.derived_param['h'] ** 2
     if freq_subset is not None:
@@ -561,9 +568,8 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
             DN_gw_new = gp.Neff0 * g2 / Omega_nu
             if not math.isfinite(DN_gw_new):
                 raise RuntimeError('reference: non-finite DN_gw_new')
-            if DN_eff_orig + DN_gw_new > 5.0:
-                DN_gw_new = 0.0
-                break
+            if physical_guard and DN_eff_orig + DN_gw_new > 5.0:
+                raise RuntimeError('reference: total Delta N_eff exceeds physical guard')
             if abs((gp.Neff0 + DN_eff_orig + DN_gw_new) /
                    (gp.Neff0 + DN_eff_orig + DN_gw_list[-1]) - 1.0) < tol:
                 converged = True
@@ -612,7 +618,8 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     )
 
 
-def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11):
+def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11,
+                             physical_guard=False):
     """Run the continuous-sigma reference and expose it on the model.
 
     Mirrors the fast/LSODA output contract so ``LCDM_SG`` and the Cobaya adapter
@@ -623,7 +630,8 @@ def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11):
     同一输出接口读取。该流程较慢，用于认证/基准点，不进入 MCMC 热路径。
     """
     ref = run_reference(m, dn_eff=None, freq_res=freq_res, z_tail=z_tail,
-                        rtol=rtol, self_consistent=True)
+                        rtol=rtol, self_consistent=True,
+                        physical_guard=physical_guard)
     m.cosmo_param['DN_eff'] = ref['DN_eff']
     m.DN_gw = np.append([0.0], ref['DN_gw'])
     m.kappa_r = ref['kappa_r']

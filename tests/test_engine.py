@@ -36,6 +36,23 @@ def test_engine_physical_guard_defaults_off_and_is_configurable(monkeypatch):
     assert observed == [False, True]
 
 
+def test_reference_engine_receives_physical_guard_option(monkeypatch):
+    from stiffgwpy_fast import reference as REF
+
+    observed = []
+
+    def fake_reference(model, **kwargs):
+        observed.append(kwargs['physical_guard'])
+        return model
+
+    monkeypatch.setattr(REF, 'apply_reference_to_model', fake_reference)
+    model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+
+    assert model.SGWB_iter(engine='reference') is model
+    assert model.SGWB_iter(engine='reference', physical_guard=True) is model
+    assert observed == [False, True]
+
+
 def test_fast_state_isolation_across_parameters_and_threads(fast_settings):
     """A→B→A and thread changes must not reuse parameter-dependent results."""
     m_a1 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
