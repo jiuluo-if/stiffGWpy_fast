@@ -2313,7 +2313,9 @@ def _SGWB_iter_fast_impl(
             )
             if kink_split:
                 solve_args += (kink_index, kink_fraction, phi_re)
-            if not (outer_background_stable and _iter > 0):
+            # 只有背景与频率/时间网格都稳定时才可复用传播缓冲；网格变化会清空缓冲。
+            # Recompute propagation when grid-dependent buffers were rebuilt.
+            if not (outer_background_stable and grid_same and _iter > 0):
                 # 刚由 np.zeros 分配的全零缓冲无需再次清零。
                 if assemble and not _fresh_buffers:
                     # 外层背景更新后 horizon 起点可能发生微小移动；清空起点之前的列，

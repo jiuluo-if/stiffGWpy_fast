@@ -282,3 +282,32 @@ def test_stiff_plateau_slope_unity():
     lo = np.log10(Ogw - Oj)
     slope = np.polyfit(freqs, lo, 1)[0]
     assert abs(slope - 1.0) < 0.05
+
+
+def test_fast_outer_reuse_recomputes_when_frequency_grid_changes():
+    from stiffgwpy_fast import fast_sgwb as FS
+
+    FS.apply_accuracy_mode('fast')
+    model = LCDM_SG(
+        r=2.5157032591313454e-5,
+        n_t=1.3755212701484574,
+        kappa10=0.1653015270125515,
+        T_re=0.0485083021944659,
+        DN_re=10.0,
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        A_s=2.100549e-9,
+        cr=0.0,
+        DN_eff=0.0,
+    )
+
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+    )
+
+    assert result is model
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert np.all(model.Ogw_today - model.Oj_today > 0.0)
+    assert model.DN_gw[-1] > 0.0
