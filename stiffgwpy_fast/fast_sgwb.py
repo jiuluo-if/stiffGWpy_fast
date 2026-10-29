@@ -888,9 +888,9 @@ def gen_kernel(
     Omh2,
     Osh2,
     Oerh2,
-    Otrh2,
-    Otreh2,
-    OLh2,
+    Otrh2_base,
+    Otreh2_base,
+    OLh2_base,
     Omega_mnuh2,
     Omega_ph2,
     Omega_nh2,
@@ -912,9 +912,18 @@ def gen_kernel(
     for i in range(index_re, n):
         eN = math.exp(Nlast - Nv[i])
         e3N = eN * eN * eN
+        # Keep the large extra-radiation term out of the present-day closure
+        # subtraction.  At eN=1 these contributions cancel analytically; adding
+        # Oerh2 and OLh2 separately loses the finite H0^2 term when DN_eff is large.
+        # 将额外辐射与今天的闭合项合并计算；eN=1 时两者解析抵消，分开相加会在大 DN_eff 时丢失有限的 H0^2。
+        extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
         nu = nu_today / eN
         if nu > 100.0:
-            H2 = Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
+            H2 = (
+                Omh2 + Omega_mnuh2
+                + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN
+                + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            )
             Sv[i] = (
                 Omh2 + Omega_mnuh2 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + 2.0 * Osh2 * e3N
             ) / H2
@@ -922,7 +931,11 @@ def gen_kernel(
             lnnu = math.log10(nu)
             rho_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_RHO)
             p_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_P)
-            H2 = Omh2 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2 + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
+            H2 = (
+                Omh2
+                + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN
+                + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            )
             Sv[i] = (
                 Omh2
                 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
@@ -930,17 +943,17 @@ def gen_kernel(
                 + 2.0 * Osh2 * e3N
             ) / H2
         elif Nv[i] > Nlast - N_fin:
-            H2 = Omh2 + Otrh2 * eN + Osh2 * e3N + OLh2 / e3N
-            Sv[i] = (Omh2 + 4.0 / 3.0 * Otrh2 * eN + 2.0 * Osh2 * e3N) / H2
+            H2 = Omh2 + Otrh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            Sv[i] = (Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
         elif Nv[i] >= Nlast - N_max:
             Nl = Nlast - Nv[i]
             rho_i = cubic_any(Nl, TH_X, TH_C_RHO)
             rhop_i = cubic_any(Nl, TH_X, TH_C_RHOP)
-            H2 = Omh2 + (Omega_ph2 * rho_i + Oerh2) * eN + Osh2 * e3N + OLh2 / e3N
+            H2 = Omh2 + Omega_ph2 * rho_i * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
             Sv[i] = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
         else:
-            H2 = Omh2 + Otreh2 * eN + Osh2 * e3N + OLh2 / e3N
-            Sv[i] = (Omh2 + 4.0 / 3.0 * Otreh2 * eN + 2.0 * Osh2 * e3N) / H2
+            H2 = Omh2 + Otreh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            Sv[i] = (Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
         f_hor[i] = -0.5 * Nv[i] + 0.5 * math.log(H2)
     fv_re = f_hor[index_re]
     Nv_re = Nv[index_re]
@@ -969,9 +982,9 @@ def gen_fast(m, h=0.01, kink_split=False):
     Omh2 = d["Omega_mh2"]
     Osh2 = d["Omega_sh2"]
     Oerh2 = gp.Omega_ph2 * 7 / 8 * (4 / 11) ** (4 / 3) * p["DN_eff"]
-    Otrh2 = gp.Omega_orh2 + Oerh2
-    Otreh2 = gp.Omega_ph2 * gp.rho_th[-1] + Oerh2
-    OLh2 = d["h"] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 - gp.Omega_ph2 - Oerh2 - Osh2
+    Otrh2_base = gp.Omega_orh2
+    Otreh2_base = gp.Omega_ph2 * gp.rho_th[-1]
+    OLh2_base = d["h"] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 - gp.Omega_ph2 - Osh2
     # Use the *continuous* present-day anchor N_inf (not the grid-quantised
     # floor(N_inf/h)*h) so the fast path is anchored identically to the
     # continuous-sigma reference.  The floor(N_inf/h)*h anchor attenuates the
@@ -1005,9 +1018,9 @@ def gen_fast(m, h=0.01, kink_split=False):
         Omh2,
         Osh2,
         Oerh2,
-        Otrh2,
-        Otreh2,
-        OLh2,
+        Otrh2_base,
+        Otreh2_base,
+        OLh2_base,
         gp.Omega_mnuh2,
         gp.Omega_ph2,
         gp.Omega_nh2,
@@ -2096,6 +2109,9 @@ def _SGWB_iter_fast_impl(
                 kink_index, kink_fraction = _correct_kink_background(m)
             else:
                 gen_fast(m, h, kink_split=kink_split)
+            if not all(np.isfinite(np.asarray(values, dtype=float)).all() for values in (m.Nv, m.sigma, m.f_hor)):
+                m.fast_failure_reason = "nonfinite_background"
+                break
             outer_background_stable = False
             outer_full_reuse = bool(
                 _OUTER_FULL_REUSE_ENABLED and kink_split and not transition_refine and freq_grid == "goal"
@@ -2134,6 +2150,12 @@ def _SGWB_iter_fast_impl(
                 m.construct_f(freq_res)
             if support_grid is None:
                 support_grid = np.asarray(m.f, dtype=float)
+            if not all(
+                np.isfinite(np.asarray(values, dtype=float)).all()
+                for values in (m.Nv, m.sigma, m.f_hor, m.f, support_grid)
+            ):
+                m.fast_failure_reason = "nonfinite_frequency_grid"
+                break
             if eval_freqs is not None and freq_grid in ("goal", "grid_independent", "adaptive"):
                 ef = np.asarray(eval_freqs, dtype=float)
                 fmin_g, fmax_g = float(np.min(m.f)), float(np.max(m.f))
@@ -2160,10 +2182,16 @@ def _SGWB_iter_fast_impl(
                 Nv = m.Nv.astype(np.float64)
                 integration_freqs = np.asarray(support_grid, dtype=np.float64)
                 integration_indices = np.searchsorted(-freqs, -integration_freqs).astype(np.int64)
-                if integration_indices.size != integration_freqs.size or not np.allclose(
-                    freqs[integration_indices], integration_freqs, rtol=0.0, atol=1e-12
+                if (
+                    integration_indices.size != integration_freqs.size
+                    or np.any(integration_indices < 0)
+                    or np.any(integration_indices >= freqs.size)
                 ):
-                    raise RuntimeError("integration support grid is not native")
+                    m.fast_failure_reason = "invalid_frequency_grid"
+                    break
+                if not np.allclose(freqs[integration_indices], integration_freqs, rtol=0.0, atol=1e-12):
+                    m.fast_failure_reason = "invalid_frequency_grid"
+                    break
                 ev_minus = np.exp(-Nv)
                 idx_out = np.unique(np.append(np.arange(0, nv, col_step), nv - 1))
                 n_coarse = len(idx_out)
