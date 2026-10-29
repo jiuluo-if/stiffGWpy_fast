@@ -215,7 +215,7 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
                 spectrum_finite_bins=int(np.count_nonzero(np.isfinite(log_spectrum))),
                 DN_gw=float(model.DN_gw[-1]),
                 f_range=[float(np.min(model.f)), float(np.max(model.f))],
-                outer_iterations=int(len(model.DN_gw) - 1),
+                dn_gw_background_nodes=int(len(model.DN_gw)),
                 outer_reuse=bool(getattr(model, "outer_full_reuse_used", False)),
             )
     except Exception as exc:
