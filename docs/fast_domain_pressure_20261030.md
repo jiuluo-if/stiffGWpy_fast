@@ -205,6 +205,20 @@ which motivated the step-refinement check. This validates one difficult point
 through the explicit Reference recovery path; it does not promote raw Fast at
 this point or establish a general high-`DN_gw` boundary.
 
+A second screen point just beyond the scanner's `N_inf=120` resource preflight
+(`DN_re=100`, `N_inf=137.7723`, with the other `baseline_cr_0` parameters)
+also returns a finite raw Fast spectrum in 0.31 s, but its `DN_gw=251883.50`
+is `2.635e-3` away from the independent Reference root. Explicit escalation
+returns a finite 1802-bin Reference result in 752.8 s at
+`DN_eff=251221.539082`, `DN_gw=251221.539201` (self-consistency residual
+`4.75e-10` relative). Full-grid LSODA at `h=0.000625` takes 884.8 s and gives
+`DN_gw=251255.308391`, `1.344e-4` relative to the Reference root; maximum
+spectrum difference is `7.623e-4 dex` (P95 `4.502e-4`, median `5.025e-5 dex`).
+At its worst frequency, halving the LSODA step reduces the local difference
+from `7.623e-4` to `2.980e-4 dex`. This certifies this point beyond the scanner
+preflight boundary; it does not certify all `N_inf>120` points or the raw Fast
+result.
+
 These fixes improve correctness and observability. They do not yet certify a
 larger Fast-only accuracy domain. Remaining failures, exception cases, and
 timeouts need separate root-cause work; no timeout or nonfinite result is
