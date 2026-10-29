@@ -143,6 +143,28 @@ The Reference `freq_res=16` attempt initially hit an artificial
 breakpoint count and retains 50 adaptive subdivisions; an exact 1600-node
 regression covers the failure. The high-resolution rerun then completed.
 
+## Reclassified steep-blue cutoff case
+
+The existing `test_fast_guard_off_reports_nonfinite_background_instead_of_index_error`
+was introduced at `2cb7a4d`, before the goal-grid transition reserve was clipped
+to the valid blue-tilt band. At current HEAD `0814be1`, that sample now returns
+a finite 64-bin raw Fast result (`DN_gw=0.108301603`); the old expected
+`nonfinite_background` failure is stale. The result is not accurate: its local
+budget is `uncertified-path-configuration` with `DN_gw_error=0.01896`; a dense
+same-background Reference map differs by `5.18e-4` relative and the native
+spectrum differs by `3.05e-3 dex` max. The regression now asserts the finite
+result remains uncertified and exercises explicit Reference escalation.
+
+Automatic escalation returns `FAST_ESCALATED` with 554 bins in 254.0 s at
+`DN_eff=0.1082445735`, `DN_gw=0.1082445636`. Full-grid LSODA at
+`h=0.000625` initially put the DN map `4.21e-4` below the Reference root, just
+outside the DN gate; halving to `h=0.0003125` moved it to `-1.91e-4`, narrowly
+inside. The final `h=0.00015625` map is `-8.36e-5` relative, with max spectrum
+difference `5.38e-4 dex` (P95 `4.09e-4`, median `5.47e-5 dex`). The full LSODA
+pass took 455.7 s. This reclassifies the old background failure as a recoverable
+but uncertified raw-Fast point; only the explicit Reference path passes both
+independent gates.
+
 ## Accepted fixes in this work
 
 - Grid changes now invalidate outer propagation reuse, preventing a false
@@ -167,6 +189,20 @@ regression covers the failure. The high-resolution rerun then completed.
 - The independent Reference engine now honors the existing `physical_guard`
   option instead of unconditionally rejecting total `Delta N_eff > 5`;
   explicit Reference escalation forwards the same opt-in guard.
+- The exact zero-tensor limit (`r*A_s=0`, `cr<=0`) now returns zero energy and
+  `DN_gw=0`, with `log10OmegaGW=-inf`; the single-field `cr>0` branch continues
+  to require positive `r`. The pressure scanner records this as
+  `exact_zero_tensor_spectrum`, separate from invalid/nonfinite output. A
+  nonzero `r*A_s` product that underflows is reported as
+  `tensor_amplitude_underflow`, never reclassified as the exact-zero limit.
+- The Fast entry path adds one exact-zero eligibility check. A two-core,
+  25-pair alternating profile compared the real helper with a stub that still
+  makes the same function call but returns `False`; all five output digests
+  matched for each of six ordinary cases. Across cases, helper-vs-stub warm
+  P50 changes ranged from `-1.33%` to `+3.57%`, and P95 changes from `-0.42%`
+  to `+4.65%`. This isolates the helper-body overhead conservatively; it is
+  not a whole-solver before/after comparison. Candidate absolute warm P50 was
+  `6.65–11.30 ms`, P95 `7.24–12.17 ms` in this run.
 
 ## High-`DN_gw` Reference recovery
 
@@ -250,10 +286,17 @@ python scripts/pressure_fast_domain.py --suite sobol --power 4 --seed 20261030 -
 python scripts/pressure_fast_domain.py --suite latin --power 4 --seed 20261030 --threads 2 --max-n-inf 120 --output .planning/pressure_latin.jsonl
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_hard_point_to_reference -o addopts=''
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference -o addopts=''
+pytest -q tests/test_physics_limits.py::test_blue_tilt_cutoff_point_is_finite_but_uncertified -o addopts=''
+pytest -q tests/test_physics_limits.py::test_blue_tilt_cutoff_point_escalates_to_reference -o addopts=''
 pytest -q tests/test_freq_adaptive.py::test_goal_oriented_freqs_never_crosses_blue_tilt_amplitude_cutoff -o addopts=''
 pytest -q tests/test_freq_adaptive.py::test_adaptive_detects_narrow_feature_between_seed_nodes -o addopts=''
 pytest -q tests/test_reference.py::test_integrate_spectrum_scales_quad_budget_with_breakpoint_count -o addopts=''
 pytest -q tests/test_reference.py::test_reference_physical_guard_is_optional_for_large_fixed_point -o addopts=''
+pytest -q tests/test_physics_limits.py::test_fast_zero_tensor_limit_returns_exact_zero_spectrum -o addopts=''
+pytest -q tests/test_physics_limits.py::test_lsoda_zero_tensor_limit_returns_exact_zero_spectrum -o addopts=''
+pytest -q tests/test_reference.py::test_reference_zero_tensor_limit_is_exact_and_grid_safe -o addopts=''
+pytest -q tests/test_pressure_fast_domain.py::test_zero_tensor_limit_is_success_with_separate_classification -o addopts=''
+pytest -q tests/test_pressure_fast_domain.py::test_underflowed_nonzero_tensor_amplitude_is_not_zero_success -o addopts=''
 ```
 
 For the high-resolution DN check, run `LCDM_SG(...).SGWB_iter(engine="reference", z_tail=5.0, rtol=1e-9, freq_res=8.0)` with the sample-2 parameters above. It takes about eight minutes on the recorded Windows machine.

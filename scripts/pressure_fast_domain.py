@@ -29,6 +29,7 @@ sys.path.insert(0, str(ROOT))
 
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
 from stiffgwpy_fast import global_param as gp  # noqa: E402
+from stiffgwpy_fast.LCDM_stiff_Neff import _has_exact_zero_tensor_amplitude  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 BASE = {
@@ -140,6 +141,8 @@ def _classify_reason(reason: str | None) -> str:
         return "nonfinite_numerical_state"
     if reason == "invalid_frequency_grid":
         return "frequency_grid_failure"
+    if reason == "tensor_amplitude_underflow":
+        return "floating_point_underflow"
     if reason:
         return "solver_failure"
     return "unknown_failure"
@@ -215,15 +218,28 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
         else:
             log_spectrum = np.asarray(model.log10OmegaGW, dtype=float)
             physical_spectrum = np.asarray(model.Ogw_today) - np.asarray(model.Oj_today)
+            dn_gw = float(model.DN_gw[-1])
+            exact_zero_tensor = (
+                _has_exact_zero_tensor_amplitude(params)
+                and dn_gw == 0.0 and np.all(physical_spectrum == 0.0)
+                and np.isneginf(log_spectrum).all()
+            )
+            if exact_zero_tensor:
+                output_status = "success"
+                output_classification = "exact_zero_tensor_spectrum"
+            elif (np.isfinite(log_spectrum).all()
+                  and np.all(physical_spectrum > 0.0)):
+                output_status = "success"
+                output_classification = "finite_positive_spectrum"
+            else:
+                output_status = "returned_nonfinite_output"
+                output_classification = "degenerate_or_invalid_spectrum"
             result.update(
-                status="success" if np.isfinite(log_spectrum).all()
-                and np.all(physical_spectrum > 0.0) else "returned_nonfinite_output",
-                classification=("finite_positive_spectrum" if np.isfinite(log_spectrum).all()
-                                and np.all(physical_spectrum > 0.0)
-                                else "degenerate_or_invalid_spectrum"),
+                status=output_status,
+                classification=output_classification,
                 n_freq=int(log_spectrum.size),
                 spectrum_finite_bins=int(np.count_nonzero(np.isfinite(log_spectrum))),
-                DN_gw=float(model.DN_gw[-1]),
+                DN_gw=dn_gw,
                 f_range=[float(np.min(model.f)), float(np.max(model.f))],
                 dn_gw_background_nodes=int(len(model.DN_gw)),
                 outer_reuse=bool(getattr(model, "outer_full_reuse_used", False)),

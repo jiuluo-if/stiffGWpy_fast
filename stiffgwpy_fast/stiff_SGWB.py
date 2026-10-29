@@ -16,7 +16,7 @@ from scipy import integrate
 
 from .functions import solve_SGWB
 from .global_param import Neff0, Omega_nh2, f_piv, ln10, z_ratio
-from .LCDM_stiff_Neff import LCDM_SN
+from .LCDM_stiff_Neff import LCDM_SN, _has_exact_zero_tensor_amplitude
 
 MAX_ITER = 60            # 外层自洽二分迭代上限。
 _DEFAULT_ACCURACY_MODE = object()
@@ -477,7 +477,9 @@ class LCDM_SG(LCDM_SN):
         self.last_engine = 'lsoda'
         _mark_eval_status(self, 'LSODA')
 
-        if self.cosmo_param['r'] <= 0:
+        r = self.cosmo_param['r']
+        zero_tensor_limit = _has_exact_zero_tensor_amplitude(self.cosmo_param)
+        if r < 0 or (r == 0 and not zero_tensor_limit):
             print('Must set a positive r to calculate the inflationary GWs!')
             return None
 
@@ -550,7 +552,10 @@ class LCDM_SG(LCDM_SN):
             self.Ogw_today = np.array([self.Ogw[i][-1] for i in range(len(self.f))])
             self.Opgw_today = np.array([self.Opgw[i][-1] for i in range(len(self.f))])
             self.Oj_today = np.array([self.Oj[i][-1] for i in range(len(self.f))])
-            self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)  # log10(Omega_GW(f)) 以记录频谱。
+            if self.derived_param['A_t'] == 0.0:
+                self.log10OmegaGW = np.full(self.Ogw_today.shape, -np.inf, dtype=float)
+            else:
+                self.log10OmegaGW = np.log10(self.Ogw_today - self.Oj_today)
             # 暂不扣除超视界阶段 Omega_j 的负贡献。
 
             # Extra radiation (e.g. SGWB) parameterized as kappa_rad(T_i) for AlterBBN.
@@ -566,6 +571,10 @@ class LCDM_SG(LCDM_SN):
 
     def Tensor_power(self, freq):
         derived = self.derived_param
+        if _has_exact_zero_tensor_amplitude(self.cosmo_param):
+            return np.zeros_like(freq, dtype=float) if np.ndim(freq) else 0.0
+        if derived['A_t'] == 0.0:
+            raise FloatingPointError('tensor amplitude underflowed to zero')
         return derived['A_t'] * np.power((10**freq)/f_piv, derived['nt'])
 
 
@@ -605,8 +614,12 @@ class LCDM_SG(LCDM_SN):
         fmax = self.f_hor[0]
         fmin = min(self.f_hor)
         fcmb = math.log10(f_piv)
-        if self.derived_param['nt']>0:            # 只保留超视界功率小于 1 的模式。
-            fmax = min(fmax, (-math.log10(self.derived_param['A_t']))/self.derived_param['nt']+math.log10(f_piv))
+        derived = self.derived_param
+        zero_tensor_limit = _has_exact_zero_tensor_amplitude(self.cosmo_param)
+        if derived['A_t'] == 0.0 and not zero_tensor_limit:
+            raise FloatingPointError('tensor amplitude underflowed to zero')
+        if derived['nt'] > 0 and not zero_tensor_limit:  # 只保留超视界功率小于 1 的模式。
+            fmax = min(fmax, (-math.log10(derived['A_t']))/derived['nt']+math.log10(f_piv))
 
         f = fmax+np.zeros(1)
         f = cat((f, f[-1]-np.linspace(1,24,int(24*r))*1e-3/r), axis=None)

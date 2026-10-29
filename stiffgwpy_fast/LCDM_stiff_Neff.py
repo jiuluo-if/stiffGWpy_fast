@@ -51,6 +51,19 @@ _DEFAULT_COSMO_PARAMS = {
 }
 
 
+def _has_exact_zero_tensor_amplitude(params):
+    """Return whether input zeros make ``r * A_s`` exactly zero by definition.
+
+    Do not infer this degenerate limit from a computed ``A_t == 0`` alone:
+    the product of two nonzero subnormal inputs can underflow to zero.
+    """
+    r = float(params['r'])
+    A_s = float(params['A_s'])
+    cr = float(params['cr'])
+    return (math.isfinite(r) and math.isfinite(A_s) and math.isfinite(cr)
+            and r >= 0.0 and cr <= 0.0 and (r == 0.0 or A_s == 0.0))
+
+
 class LCDM_SN:
     """
     Cosmological model: LCDM + stiff component + constant Delta N_eff

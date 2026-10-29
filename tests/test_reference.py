@@ -303,3 +303,39 @@ def test_reference_physical_guard_is_optional_for_large_fixed_point(monkeypatch)
         REF.run_reference(
             m, freq_subset=freqs, z_tail=5.0, rtol=1e-9, tol=1e-8,
             physical_guard=True)
+
+
+def test_reference_zero_tensor_limit_is_exact_and_grid_safe():
+    """r=0, cr=0 has a zero spectrum independent of the input tilt."""
+    from stiffgwpy_fast.freq_adaptive import grid_independent_freqs
+
+    m = LCDM_SG(r=0.0, cr=0.0, n_t=0.5, T_re=2e3,
+                kappa10=1e-2, DN_re=10.0, DN_eff=0.0)
+    grid, _, _ = grid_independent_freqs(m, 1.0)
+    assert np.isfinite(grid).all()
+
+    freqs = np.array([grid[0], grid[len(grid) // 2], grid[-1]])
+    result = REF.run_reference(
+        m, dn_eff=0.0, freq_subset=freqs, z_tail=5.0, rtol=1e-9,
+        self_consistent=False)
+
+    assert result['DN_gw'] == 0.0
+    assert np.all(result['Ogw'] == 0.0)
+    assert np.all(result['Oj'] == 0.0)
+    assert np.all(result['Opgw'] == 0.0)
+    assert np.all(np.isneginf(result['log10OmegaGW']))
+
+    single_field = LCDM_SG(r=0.0, cr=1.0, T_re=2e3, kappa10=1e-2)
+    with pytest.raises(ValueError, match='positive r'):
+        REF.run_reference(
+            single_field, dn_eff=0.0, freq_subset=freqs,
+            self_consistent=False)
+
+    underflow = LCDM_SG(
+        r=1e-300, cr=0.0, n_t=0.0, A_s=1e-60, T_re=2e3,
+        kappa10=1e-2, DN_re=10.0, DN_eff=0.0,
+    )
+    with pytest.raises(FloatingPointError, match='underflow'):
+        REF.run_reference(
+            underflow, dn_eff=0.0, freq_subset=freqs,
+            self_consistent=False)

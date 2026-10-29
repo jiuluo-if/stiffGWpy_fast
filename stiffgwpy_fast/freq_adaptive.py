@@ -17,6 +17,8 @@ can include requested ``eval_freqs``. See ``docs/numerical_method.md`` and
 import numpy as np
 from scipy.interpolate import PchipInterpolator
 
+from .LCDM_stiff_Neff import _has_exact_zero_tensor_amplitude
+
 __all__ = ['adapt_refine_grid', 'adaptive_spectrum_reference',
            'grid_independent_freqs', 'goal_oriented_freqs']
 
@@ -156,6 +158,9 @@ def grid_independent_freqs(m, freq_res=1.0):
     N_inf = d['N_inf']
     N_re_abs = N_inf - d['N_re']
     dn = m.cosmo_param['DN_eff']
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    if d['A_t'] == 0.0 and not zero_tensor_limit:
+        raise FloatingPointError('tensor amplitude underflowed to zero')
     # 与 N 无关的连续背景量只求值一次；原实现每次调用 f_hor_cont 都重算它们。
     h2_cache = {}
 
@@ -185,7 +190,7 @@ def grid_independent_freqs(m, freq_res=1.0):
     fmax = f_hor_cont(0.0)
     fmin = f_hor_cont(N_inf)
     fcmb = _m.log10(gp.f_piv)
-    if d['nt'] > 0:
+    if d['nt'] > 0 and not zero_tensor_limit:
         fmax = min(fmax, (-_m.log10(d['A_t'])) / d['nt'] + _m.log10(gp.f_piv))
     # Uniform-in-log10 frequency grid scaled by freq_res (density tuned to be
     # comparable to the model's empirical grid at freq_res=1), capped at the

@@ -181,8 +181,8 @@ def test_gen_fast_avoids_present_day_cancellation_for_large_dn_eff():
     assert np.isfinite(sigma_today)
 
 
-def test_fast_guard_off_reports_nonfinite_background_instead_of_index_error():
-    """Runaway parameters must fail as a recorded background error, not leak IndexError."""
+def test_blue_tilt_cutoff_point_is_finite_but_uncertified():
+    """The clipped grid is finite here, but its local error budget must reject certification."""
     model = LCDM_SG(
         r=2.981401117884715e-6,
         n_t=2.433506923077321,
@@ -202,8 +202,44 @@ def test_fast_guard_off_reports_nonfinite_background_instead_of_index_error():
         freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
     )
 
-    assert result is None
-    assert model.fast_failure_reason == 'nonfinite_background'
+    assert result is model
+    assert model.SGWB_converge
+    assert model.fast_failure_reason is None
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert model.local_error_budget['certification_status'].startswith('uncertified')
+    assert model.DN_gw_error > 2e-4
+
+
+@pytest.mark.slow
+def test_blue_tilt_cutoff_point_escalates_to_reference():
+    """Explicit escalation recovers the steep-blue point outside Fast's accuracy gate."""
+    model = LCDM_SG(
+        r=2.981401117884715e-6,
+        n_t=2.433506923077321,
+        kappa10=0.005956142774765002,
+        T_re=152.38081588419843,
+        DN_re=22.053096877437447,
+        Omega_bh2=0.014198405074411415,
+        Omega_ch2=0.3483299468903473,
+        H0=69.1484144351007,
+        A_s=3.2897061708711526e-9,
+        cr=0.0,
+        DN_eff=0.0,
+    )
+
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        rtol=1e-9, freq_res=1.0, threads=2, accuracy_mode='fast',
+        physical_guard=False, auto_escalate=True, escalate_to_reference=True,
+    )
+
+    assert result is model
+    assert model.last_eval_status == 'FAST_ESCALATED'
+    assert model.last_engine == 'reference'
+    assert model.escalations == 1
+    assert len(model.f) == 554
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert model.DN_gw[-1] == pytest.approx(0.1082445636, rel=2e-4)
 
 
 def test_sigma_exact_reduces_model_bias():
@@ -422,3 +458,62 @@ def test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference():
     assert np.isfinite(model.log10OmegaGW).all()
     assert len(model.f) == 800
     assert model.DN_gw[-1] == pytest.approx(2.2914118670, rel=2e-4)
+
+
+def test_fast_zero_tensor_limit_returns_exact_zero_spectrum():
+    """r=0 with the free-tilt branch has an exact zero-GW solution."""
+    from stiffgwpy_fast import fast_sgwb as FS
+
+    model = LCDM_SG(
+        r=0.0, cr=0.0, n_t=0.5, T_re=2e3, kappa10=1e-2,
+        DN_re=10.0, DN_eff=0.0,
+    )
+    result = FS.SGWB_iter_fast(model, tol=1e-7)
+
+    assert result is model
+    assert model.SGWB_converge
+    assert model.DN_gw[-1] == 0.0
+    assert model.cosmo_param['DN_eff'] == 0.0
+    assert np.all(model.Ogw_today == 0.0)
+    assert np.all(model.Oj_today == 0.0)
+    assert np.all(model.Opgw_today == 0.0)
+    assert np.all(np.isneginf(model.log10OmegaGW))
+    assert np.isfinite(model.f).all()
+
+    zero_scalar = LCDM_SG(
+        r=1e-2, cr=0.0, n_t=0.5, A_s=0.0, T_re=2e3,
+        kappa10=1e-2, DN_re=10.0, DN_eff=0.0,
+    )
+    assert FS.SGWB_iter_fast(zero_scalar, tol=1e-7) is zero_scalar
+    assert zero_scalar.DN_gw[-1] == 0.0
+    assert np.isneginf(zero_scalar.log10OmegaGW).all()
+
+    rejected = LCDM_SG(r=0.0, cr=1.0, T_re=2e3, kappa10=1e-2)
+    assert FS.SGWB_iter_fast(rejected, tol=1e-7) is None
+    assert rejected.fast_failure_reason == 'invalid_r'
+
+    underflow = LCDM_SG(
+        r=1e-300, cr=0.0, n_t=0.0, A_s=1e-60, T_re=2e3,
+        kappa10=1e-2, DN_re=10.0, DN_eff=0.0,
+    )
+    assert FS.SGWB_iter_fast(underflow, tol=1e-7) is None
+    assert underflow.fast_failure_reason == 'tensor_amplitude_underflow'
+
+
+def test_lsoda_zero_tensor_limit_returns_exact_zero_spectrum(monkeypatch):
+    """The original LSODA engine shares the exact free-tilt r=0 limit."""
+    monkeypatch.setenv('SGWB_POOL_SIZE', '1')
+    model = LCDM_SG(
+        r=0.0, cr=0.0, n_t=0.5, T_re=2e3, kappa10=1e-2,
+        DN_re=10.0, DN_eff=0.0,
+    )
+
+    result = model.SGWB_iter(
+        engine='lsoda', fallback=False, tol=1e-6, z_tail=5.0,
+        rtol=1e-6, freq_res=0.25)
+
+    assert result is model
+    assert model.DN_gw[-1] == 0.0
+    assert np.all(model.Ogw_today == 0.0)
+    assert np.all(model.Oj_today == 0.0)
+    assert np.all(np.isneginf(model.log10OmegaGW))

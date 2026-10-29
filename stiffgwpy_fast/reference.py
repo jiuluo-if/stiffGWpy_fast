@@ -30,6 +30,7 @@ from scipy.integrate import quad, solve_ivp
 
 from . import global_param as gp
 from ._resources import package_path
+from .LCDM_stiff_Neff import _has_exact_zero_tensor_amplitude
 
 __all__ = [
     'background_at',
@@ -318,7 +319,10 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     bg = _Background(m, DN_eff)
     A_t = m.derived_param['A_t']
     nt = m.derived_param['nt']
-    P_t = A_t * (10.0 ** freq / gp.f_piv) ** nt
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    if A_t == 0.0 and not zero_tensor_limit:
+        raise FloatingPointError('reference: tensor amplitude underflowed to zero')
+    P_t = 0.0 if zero_tensor_limit else A_t * (10.0 ** freq / gp.f_piv) ** nt
 
     # Real log10(z) relationship: z = ln(2 pi f / (a H)) = (log10 f - f_hor)*ln10.
     # We integrate the ODE for z directly; only the *starting* z uses the
@@ -540,6 +544,15 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     """
     if not isinstance(physical_guard, bool):
         raise TypeError('physical_guard must be a bool, got %r' % (physical_guard,))
+    r = m.cosmo_param['r']
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    if r < 0 or (r == 0 and not zero_tensor_limit):
+        raise ValueError('reference: positive r is required for the single-field consistency branch')
+    derived = m.derived_param
+    if derived['N_inf'] is None:
+        raise ValueError('reference: derived N_inf cutoff is undefined')
+    if derived['A_t'] == 0.0 and not zero_tensor_limit:
+        raise FloatingPointError('reference: tensor amplitude underflowed to zero')
     DN_eff_orig = m.cosmo_param['DN_eff']
     Omega_nu = gp.Omega_nh2 / m.derived_param['h'] ** 2
     if freq_subset is not None:
@@ -599,7 +612,10 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     # 超视界低频尾部的 Ogw-Oj 可能非正，无法取 log10；该谱量仅在模态重新入视界后
     # 才有物理意义，因此这里仅为输出添加数值下限保护。
     integrand = Ogw - Oj
-    logOmega = np.log10(np.maximum(integrand, 1e-40))
+    if zero_tensor_limit:
+        logOmega = np.full(integrand.shape, -np.inf, dtype=float)
+    else:
+        logOmega = np.log10(np.maximum(integrand, 1e-40))
     return dict(
         freqs=freqs,
         log10OmegaGW=logOmega,
