@@ -387,5 +387,37 @@ def test_fast_auto_escalates_uncertified_hard_point_to_reference():
     assert result is model
     assert model.last_eval_status == 'FAST_ESCALATED'
     assert model.last_engine == 'reference'
+    assert model.reference_evals == 1
     assert np.isfinite(model.log10OmegaGW).all()
-    assert model.DN_gw[-1] == pytest.approx(2.919856692533879e-4, rel=2e-4)
+    assert model.DN_gw[-1] == pytest.approx(2.919915649660215e-4, rel=2e-4)
+
+
+@pytest.mark.slow
+def test_fast_auto_escalates_nonfinite_solver_failure_to_reference():
+    """An explicit escalation request recovers a Fast-only numerical failure."""
+    model = LCDM_SG(
+        r=0.19649188544593907,
+        n_t=1.0622501865308032,
+        kappa10=0.011598483151630803,
+        T_re=1761.314039059193,
+        DN_re=10.0,
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        A_s=2.100549e-9,
+        cr=0.0,
+        DN_eff=0.0,
+    )
+
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+        auto_escalate=True, escalate_to_reference=True,
+    )
+
+    assert result is model
+    assert model.last_eval_status == 'FAST_ESCALATED'
+    assert model.last_engine == 'reference'
+    assert model.reference_evals == 1
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert model.DN_gw[-1] == pytest.approx(2.2966, rel=2e-4)
