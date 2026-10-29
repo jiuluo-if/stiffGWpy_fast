@@ -39,6 +39,7 @@ from . import global_param as gp
 from ._resources import package_path
 from .config import FastSolverConfig
 from .functions import int_FD
+from .LCDM_stiff_Neff import _has_exact_zero_tensor_amplitude
 
 _FAST_SOLVER_CONFIG_KEYS = frozenset(
     field.name for field in fields(FastSolverConfig) if field.init
@@ -2016,13 +2017,19 @@ def _SGWB_iter_fast_impl(
     # deterministic physical rejection from a recoverable numerical failure.
     # 供外层读取的失败原因，用于区分确定性物理拒绝和可恢复的数值失败。
     m.fast_failure_reason = None
-    if m.cosmo_param["r"] <= 0:
+    r = m.cosmo_param["r"]
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    if r < 0 or (r == 0 and not zero_tensor_limit):
         m.fast_failure_reason = "invalid_r"
         print("Must set a positive r to calculate the inflationary GWs!")
         return None
-    if m.derived_param["N_inf"] is None:
+    derived = m.derived_param
+    if derived["N_inf"] is None:
         m.fast_failure_reason = "invalid_cutoff"
         print("High-end cutoff frequency has not been set properly.")
+        return None
+    if derived["A_t"] == 0.0 and not zero_tensor_limit:
+        m.fast_failure_reason = "tensor_amplitude_underflow"
         return None
 
     if getattr(m, "SGWB_converge", False):
@@ -2221,7 +2228,11 @@ def _SGWB_iter_fast_impl(
                 ev_minus = np.exp(-Nv)
                 idx_out = np.unique(np.append(np.arange(0, nv, col_step), nv - 1))
                 n_coarse = len(idx_out)
-                P_t = m.derived_param["A_t"] * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
+                A_t = m.derived_param["A_t"]
+                if zero_tensor_limit:
+                    P_t = np.zeros(freqs.shape, dtype=np.float64)
+                else:
+                    P_t = A_t * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
                 fp_freq = np.power(10.0, freqs)
                 Xf = np.flip(freqs)
                 hf = np.diff(Xf)
@@ -2497,7 +2508,10 @@ def _SGWB_iter_fast_impl(
     m.Ogw_today = Ogw[:, -1].copy()
     m.Opgw_today = Opgw[:, -1].copy()
     m.Oj_today = Oj[:, -1].copy()
-    m.log10OmegaGW = np.log10(m.Ogw_today - m.Oj_today)
+    if zero_tensor_limit:
+        m.log10OmegaGW = np.full(m.Ogw_today.shape, -np.inf, dtype=np.float64)
+    else:
+        m.log10OmegaGW = np.log10(m.Ogw_today - m.Oj_today)
     m.kappa_r = m.cosmo_param["DN_eff"] * 7 / 8 * (4 / 11) ** (4 / 3) * gp.z_ratio**4
     # Local a-posteriori quadrature error: Richardson estimate from the
     # Simpson-vs-trapezoid difference on the final frequency grid,
