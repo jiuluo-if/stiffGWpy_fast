@@ -43,43 +43,67 @@ def _merge_cached(grid, values, new_grid, new_values):
 
 def adapt_refine_grid(logf_init, evaluate, target_dex=1e-3, min_dlogf=0.02,
                       max_iter=10, max_points=3000, return_detail=False):
-    """Refine a ``log10 f`` grid to keep the PCHIP interpolant under ``target_dex``.
+    """Refine a ``log10 f`` grid using curvature and sampled midpoint error.
 
     ``evaluate`` maps an array of ``log10 f`` to ``log10 Omega_GW``.  New
-    midpoints are solved incrementally; existing points are cached.
+    interval midpoints are checked against the current PCHIP, and intervals
+    whose sampled or curvature-estimated error exceeds ``target_dex`` are
+    refined. Existing points are reused; ``max_points`` is a hard grid cap.
 
     Returns ``(logf, logOmega, n_solves)`` (or a detail dict with
     ``local_error_max`` when ``return_detail`` is set).
 
-    中文：自适应细化 ``log10(f)`` 网格，使 PCHIP 插值误差不超过 ``target_dex``。
-    ``evaluate`` 将频率数组映射为 ``log10(Omega_GW)``；新中点逐步求解，已算节点从缓存读取。
+    中文：按曲率估计和实际中点误差自适应细化 ``log10(f)`` 网格。
+    ``evaluate`` 将频率数组映射为 ``log10(Omega_GW)``；只保留误差超过目标的中点，且严格遵守节点上限。
     默认返回 ``(logf, logOmega, n_solves)``；启用 ``return_detail`` 时还返回 ``local_error_max``。
     """
     logf = np.unique(np.asarray(logf_init, dtype=float))
+    if logf.size > max_points:
+        raise ValueError("initial frequency grid exceeds max_points")
     vals = None
     n_solves = 0
     local_err = 0.0
     for _ in range(max_iter):
+        if logf.size >= max_points:
+            break
         if vals is None:
             vals = np.asarray(evaluate(logf), dtype=float)
             n_solves += int(logf.size)
         c2 = _local_curvature(logf, vals)
-        to_add = []
-        local_err = 0.0
-        for i in range(logf.size - 1):
-            h = float(logf[i + 1] - logf[i])
-            if h <= min_dlogf:
-                continue
-            c = abs(float(c2[i]))
-            err = c * h * h / 8.0
-            local_err = max(local_err, err)
-            if err > target_dex:
-                to_add.append(0.5 * (logf[i] + logf[i + 1]))
-        if not to_add or logf.size >= max_points:
+        widths = np.diff(logf)
+        eligible = np.flatnonzero(widths > min_dlogf)
+        if not eligible.size:
             break
-        new = np.unique(np.asarray(to_add, dtype=float))
-        nv = np.asarray(evaluate(new), dtype=float)
-        n_solves += int(new.size)
+        mids = 0.5 * (logf[eligible] + logf[eligible + 1])
+        mid_values = np.asarray(evaluate(mids), dtype=float)
+        n_solves += int(mids.size)
+        sampled_error = np.abs(
+            mid_values - PchipInterpolator(logf, vals)(mids)
+        )
+        curvature_error = np.abs(c2[eligible]) * widths[eligible] ** 2 / 8.0
+        interval_error = np.maximum(sampled_error, curvature_error)
+        local_err = float(np.max(interval_error)) if interval_error.size else 0.0
+        selected = interval_error > target_dex
+        if not np.any(selected):
+            break
+        to_add = list(zip(interval_error[selected], mids[selected]))
+        remaining = max_points - int(logf.size)
+        if len(to_add) > remaining:
+            # Spend the remaining budget on the intervals with the largest
+            # estimated interpolation error rather than overshooting in a batch.
+            # 最后剩余预算优先分配给估计插值误差最大的区间，避免整批中点使节点数超限。
+            to_add = sorted(to_add, key=lambda item: (-item[0], item[1]))[:remaining]
+        selected_mids = np.asarray([mid for _, mid in to_add], dtype=float)
+        midpoint_values_by_frequency = {
+            float(mid): float(value) for mid, value in zip(mids, mid_values)
+        }
+        selected_values = np.asarray(
+            [midpoint_values_by_frequency[float(mid)] for mid in selected_mids],
+            dtype=float,
+        )
+        new_order = np.argsort(selected_mids)
+        new = selected_mids[new_order]
+        nv = selected_values[new_order]
         logf, vals = _merge_cached(logf, vals, new, nv)
     if return_detail:
         return logf, vals, n_solves, {'local_error_max': float(local_err),

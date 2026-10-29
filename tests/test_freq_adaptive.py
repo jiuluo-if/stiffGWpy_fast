@@ -48,6 +48,35 @@ def test_adaptive_is_cheap_on_smooth_function():
     assert logf.size <= 4 * f0.size
 
 
+def test_adaptive_grid_respects_hard_max_points():
+    """A refinement batch must not overshoot the configured point budget."""
+    initial = np.linspace(0.0, 1.0, 12)
+    grid, _, _ = FA.adapt_refine_grid(
+        initial, _sharp, target_dex=1e-8, min_dlogf=1e-6,
+        max_iter=10, max_points=40,
+    )
+
+    assert grid.size <= 40
+
+
+def test_adaptive_detects_narrow_feature_between_seed_nodes():
+    """Node-only curvature can miss a narrow feature centered between nodes."""
+    seed = np.linspace(0.0, 1.0, 11)
+
+    def narrow_feature(x):
+        x = np.asarray(x, dtype=float)
+        return np.exp(-0.5 * ((x - 0.45) / 0.005) ** 2)
+
+    grid, values, _ = FA.adapt_refine_grid(
+        seed, narrow_feature, target_dex=1e-2, min_dlogf=1e-4,
+        max_iter=12, max_points=512,
+    )
+
+    dense = np.linspace(0.0, 1.0, 10001)
+    err = np.max(np.abs(PchipInterpolator(grid, values)(dense) - narrow_feature(dense)))
+    assert err < 2e-2
+
+
 def test_grid_independent_freqs_invariant_to_sigma_grid():
     """The frequency set must not depend on the sigma-grid resolution."""
     FS.apply_accuracy_mode('production')
