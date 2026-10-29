@@ -111,8 +111,7 @@ def test_float_robustness_extreme_params():
     """Extreme parameters must not produce NaN/inf in the fast spectrum.
 
     Covers tiny tensor-to-scalar ratio, negligible stiff density, low reheating
-    temperature and the deterministic >5 Delta N_eff guard.  The guard rejection
-    is a shared fast/LSODA physical rejection, not a numerical failure.
+    temperature, plus the opt-in total Delta N_eff guard behavior.
     """
     from stiffgwpy_fast import fast_sgwb as FS
 
@@ -131,11 +130,17 @@ def test_float_robustness_extreme_params():
             lo = np.asarray(m.log10OmegaGW)
             assert np.all(np.isfinite(lo))
             assert lo.min() > -320.0  # 确认数值没有下溢为 -inf。
-        # Huge stiff drives total N_eff > 5 -> deterministic physical rejection.
+        # The high-level fast path has the physical guard disabled by default.
         m_bad = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e3)
         r = FS.SGWB_iter_fast(m_bad, tol=1e-7)
+        assert r is m_bad
+        assert m_bad.cosmo_param['DN_eff'] > 5.0
+
+        # Callers can still opt into the previous physical rejection.
+        m_guarded = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e3)
+        r = FS.SGWB_iter_fast(m_guarded, tol=1e-7, physical_guard=True)
         assert r is None
-        assert m_bad.fast_failure_reason == 'shared_Neff_guard'
+        assert m_guarded.fast_failure_reason == 'shared_Neff_guard'
     finally:
         FS.set_threads(saved['threads'])
         FS.set_col_step(saved['col_step'])

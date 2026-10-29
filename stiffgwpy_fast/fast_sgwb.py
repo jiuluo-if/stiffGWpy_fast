@@ -1938,6 +1938,7 @@ def _SGWB_iter_fast_impl(
     freq_grid_max_points=1500,
     eval_freqs=None,
     frequency_quadrature="pchip",
+    physical_guard=False,
 ):
     """Accelerated (approximate) self-consistent SGWB iteration.
 
@@ -2325,7 +2326,7 @@ def _SGWB_iter_fast_impl(
                 m.fast_failure_reason = "nonfinite"
                 print("SGWB_iter_fast: non-finite DN_gw_new, aborting.")
                 break
-            if DN_eff_orig + DN_gw_new > 5:
+            if physical_guard and DN_eff_orig + DN_gw_new > 5:
                 m.fast_failure_reason = "shared_Neff_guard"
                 print("SGWB_iter_fast: total N_eff too large, aborting.")
                 break
@@ -2536,6 +2537,7 @@ def SGWB_iter_fast(
     freq_grid_max_points=1500,
     eval_freqs=None,
     frequency_quadrature="pchip",
+    physical_guard=False,
 ):
     """Run the fast solver with an isolated configuration snapshot.
 
@@ -2565,6 +2567,8 @@ def SGWB_iter_fast(
         raise TypeError("config must be a FastSolverConfig")
     if kink_split is not None and not isinstance(kink_split, bool):
         raise TypeError("kink_split must be a bool or None, got %r" % kink_split)
+    if not isinstance(physical_guard, bool):
+        raise TypeError("physical_guard must be a bool, got %r" % physical_guard)
     lock = _NUMBA_CONFIG_LOCK if config is None or not _numba_layer_is_threadsafe() else nullcontext()
     with lock:
         return _SGWB_iter_fast_impl(
@@ -2580,4 +2584,5 @@ def SGWB_iter_fast(
             freq_grid_max_points=freq_grid_max_points,
             eval_freqs=eval_freqs,
             frequency_quadrature=frequency_quadrature,
+            physical_guard=physical_guard,
         )

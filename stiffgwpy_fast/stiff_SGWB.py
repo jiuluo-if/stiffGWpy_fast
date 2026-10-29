@@ -199,7 +199,8 @@ class LCDM_SG(LCDM_SN):
                   accuracy_mode=_DEFAULT_ACCURACY_MODE,
                   auto_escalate=False, error_tol=None, sigma_exact=False,
                   escalate_to_reference=False, transition_refine=None,
-                  likelihood_sigma=None, dlogl_tol=None, eval_freqs=None):
+                  likelihood_sigma=None, dlogl_tol=None, eval_freqs=None,
+                  physical_guard=False):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -217,6 +218,8 @@ class LCDM_SG(LCDM_SN):
         override the selected fast preset and sets the LSODA/reference tail
         threshold; ``rtol`` and ``atol`` tune reference/LSODA ODE tolerances.
         ``freq_res`` scales frequency-grid density (audit-only; 1.0 = default).
+        ``physical_guard`` enables the fast-path total-``N_eff`` rejection above 5;
+        it defaults to False and does not affect the original LSODA engine.
 
         中文说明：默认 ``fast`` 预设的 outer tolerance 为 ``1e-6``；显式传入
         非默认 ``tol`` 会覆盖它。函数签名中的 ``1e-4`` 保留给 LSODA 和旧手动配置路径。
@@ -266,8 +269,11 @@ class LCDM_SG(LCDM_SN):
             return self
         if engine == 'fast':
             from . import fast_sgwb
+            if not isinstance(physical_guard, bool):
+                raise TypeError("physical_guard must be a bool, got %r" % physical_guard)
             self.fast_evals = getattr(self, 'fast_evals', 0) + 1
             self.last_engine = 'fast'
+            self.fast_physical_guard_enabled = physical_guard
             self.last_fast_error = None
             self.fast_failure_reason = None
             fallback_attempted = False
@@ -325,7 +331,8 @@ class LCDM_SG(LCDM_SN):
                                                   transition_refine=tr_mode,
                                                   kink_split=kink_mode,
                                                   config=config,
-                                                  eval_freqs=eval_freqs)
+                                                  eval_freqs=eval_freqs,
+                                                  physical_guard=physical_guard)
             except Exception as exc:
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = repr(exc)

@@ -21,6 +21,21 @@ def test_engine_fast_deterministic(model):
     np.testing.assert_array_equal(model.log10OmegaGW, m2.log10OmegaGW)
 
 
+def test_engine_physical_guard_defaults_off_and_is_configurable(monkeypatch):
+    observed = []
+
+    def fake_fast(model, **kwargs):
+        observed.append(kwargs['physical_guard'])
+        return model
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', fake_fast)
+    default_model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    assert default_model.SGWB_iter(engine='fast') is default_model
+    enabled_model = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    assert enabled_model.SGWB_iter(engine='fast', physical_guard=True) is enabled_model
+    assert observed == [False, True]
+
+
 def test_fast_state_isolation_across_parameters_and_threads(fast_settings):
     """A→B→A and thread changes must not reuse parameter-dependent results."""
     m_a1 = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
