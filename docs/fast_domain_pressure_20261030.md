@@ -107,7 +107,13 @@ direct-midpoint regression. On sample 2, this method remains expensive and
 uncertified: the `1e-3 dex` target used 1822 retained nodes but still had
 `9.09e-3 dex` sampled error after 14 rounds; the `2.5e-4 dex` target used 3467
 nodes and 655 seconds, while its DN proxy changed by `3.03e-4` from the coarse
-result and its spectrum changed by `9.43e-3 dex` on a dense probe.
+result and its spectrum changed by `9.43e-3 dex` on a dense probe. A further
+`6.25e-5 dex` run hit the 6000-node hard cap after 7982 Reference evaluations
+and 681 seconds. Its DN proxy was within `1.20e-4` of uniform `freq_res=8`,
+but the remaining local estimate was `4.35e-3 dex` and its spectrum differed
+by `4.38e-3 dex` from the 3467-node grid. This reaches the practical per-point
+reference budget without meeting the spectrum gate; the high-frequency
+sample's continuous spectrum remains unresolved.
 
 The Reference `freq_res=16` attempt initially hit an artificial
 `quad(limit=800)` ceiling with 1600 breakpoints. The limit now scales with the
