@@ -77,13 +77,33 @@ by `3.92e-3` and the spectrum by `4.09e-3 dex`. Alternate `construct` and
 increasing `freq_res` or reducing `h` to `0.000625` did not fix that residual.
 No Fast-only accuracy candidate is promoted.
 
-With `auto_escalate=True, escalate_to_reference=True`, the local budget marks
-this point uncertified and the wrapper runs Reference at `rtol<=1e-9`. It
-returns `FAST_ESCALATED` near `DN_gw=2.296589`; a separate fixed-background
-Reference pass at that value has `5e-11` absolute map residual. This is a
-same-solver consistency check, not a separate oracle. The run took about 60
-seconds. This expands the opt-in reliable evaluation path for the point, not
-the Fast-only accuracy domain.
+With `auto_escalate=True, escalate_to_reference=True` and `freq_res=1`, the
+local budget marks this point `uncertified-path-configuration` with estimated
+`DN_gw_error=0.0539` (the default escalation threshold is `5e-3`). It returns
+`FAST_ESCALATED`, but its Reference root near `2.296589` is not frequency
+converged: a fixed-background map at `freq_res=2` differs by `1.92e-3` from
+`freq_res=1`, and at `freq_res=4` differs by `2.18e-3`. This default Reference
+fallback is a recovery path, not an accuracy pass.
+
+At `freq_res=8`, the full self-consistent Reference solve returns
+`DN_gw=2.2914118670` on 800 frequencies in 481.6 seconds. At that root, a
+fixed-background `freq_res=16` map gives `2.2914094306`, a relative change of
+`1.06e-6`; the full `freq_res=8` solve has a self-consistency residual of
+`5.0e-10`. This supports convergence of the integrated `DN_gw`. The spectrum
+is still not certified to `1e-3 dex`:
+8/16 uniform grids are nonnested, so their interpolated max difference
+(`0.013 dex`) is not an exact-node comparison; separate curvature-adaptive
+Reference grids at `1e-3` and `2.5e-4 dex` changed the integrated result by
+`1.04e-3` and the common-node spectrum by `1.24e-3 dex`. The stricter
+`6.25e-5 dex` run used 6013 nodes; its integrated DN proxy was `2.2915402`,
+`5.6e-5` relative to the `freq_res=8` map. It approached the dense uniform-grid
+DN but did not establish the spectrum gate. This point is DN-converged with
+high-resolution Reference; full spectrum certification is open.
+
+The Reference `freq_res=16` attempt initially hit an artificial
+`quad(limit=800)` ceiling with 1600 breakpoints. The limit now scales with the
+breakpoint count and retains 50 adaptive subdivisions; an exact 1600-node
+regression covers the failure. The high-resolution rerun then completed.
 
 ## Accepted fixes in this work
 
@@ -101,6 +121,8 @@ the Fast-only accuracy domain.
   ordinary Fast or physical-rejection behavior.
 - The pressure scanner records staged classifications, resource telemetry,
   resumable chunks, and optional coordinatewise minimization.
+- Reference frequency quadrature now sizes QUADPACK's interval limit to dense
+  breakpoint grids, avoiding the old 800-subinterval failure.
 
 These fixes improve correctness and observability. They do not yet certify a
 larger Fast-only accuracy domain. Remaining failures, exception cases, and
@@ -116,7 +138,10 @@ python scripts/pressure_fast_domain.py --suite latin --power 4 --seed 20261030 -
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_hard_point_to_reference -o addopts=''
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference -o addopts=''
 pytest -q tests/test_freq_adaptive.py::test_goal_oriented_freqs_never_crosses_blue_tilt_amplitude_cutoff -o addopts=''
+pytest -q tests/test_reference.py::test_integrate_spectrum_scales_quad_budget_with_breakpoint_count -o addopts=''
 ```
+
+For the high-resolution DN check, run `LCDM_SG(...).SGWB_iter(engine="reference", z_tail=5.0, rtol=1e-9, freq_res=8.0)` with the sample-2 parameters above. It takes about eight minutes on the recorded Windows machine.
 
 The date-stamped per-point records and paired timing JSON used for this
 summary were local ignored research artifacts. Re-running the commands creates

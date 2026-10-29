@@ -73,6 +73,17 @@ def test_integrate_spectrum_exponential():
     assert qerr >= 0.0
 
 
+def test_integrate_spectrum_scales_quad_budget_with_breakpoint_count():
+    """A dense reference grid must not exceed quad's fixed interval budget."""
+    freqs = np.linspace(-18.0, -7.0, 1600)
+    Ogw = 10.0 ** (-14.0 - 0.3 * freqs)
+
+    g2, qerr, _ = REF.integrate_spectrum(freqs, Ogw, np.zeros_like(Ogw))
+
+    assert np.isfinite(g2)
+    assert qerr is not None and qerr >= 0.0
+
+
 def test_integrate_spectrum_interpolation_error_matches_spline_integrals():
     freqs = np.linspace(-20.0, 7.0, 247)
     spectrum = np.exp(-0.23 * (freqs + 4.0)) * (

@@ -394,7 +394,7 @@ def test_fast_auto_escalates_uncertified_hard_point_to_reference():
 
 @pytest.mark.slow
 def test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference():
-    """The blue-tilt cutoff case is resolved by its explicit Reference path."""
+    """The opt-in route returns Reference output for this uncertified Fast case."""
     model = LCDM_SG(
         r=0.19649188544593907,
         n_t=1.0622501865308032,
@@ -420,4 +420,3 @@ def test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference():
     assert model.last_engine == 'reference'
     assert model.reference_evals == 1
     assert np.isfinite(model.log10OmegaGW).all()
-    assert model.DN_gw[-1] == pytest.approx(2.2966, rel=2e-4)
