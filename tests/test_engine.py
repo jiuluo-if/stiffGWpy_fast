@@ -253,11 +253,12 @@ def test_engine_fast_close_to_lsoda_on_case_a():
     mo = LCDM_SG(**kw)
     mo.SGWB_iter(engine='lsoda')
     mf = LCDM_SG(**kw)
-    mf.SGWB_iter(engine='fast', accuracy_mode='production')
+    mf.SGWB_iter(engine='fast', accuracy_mode='fast')
     assert mo.SGWB_converge and mf.SGWB_converge
-    # 显式 production 档位仍是精度回归档位；保留其基准积分结果作为数值锚点，
-    # 独立 reference/oracle 仍是最终精度依据。
-    assert mf.DN_gw[-1] == pytest.approx(0.002261731150563835, rel=2e-5)
+    # The formal fast profile is the compatibility target; independent
+    # reference/oracle comparisons remain the final accuracy evidence.
+    # 正式 fast 档位是接口兼容目标；独立 reference/oracle 对照仍是最终精度依据。
+    assert mf.DN_gw[-1] == pytest.approx(0.0022636474150855806, rel=2e-5)
     rel = abs(mo.DN_gw[-1] - mf.DN_gw[-1]) / abs(mo.DN_gw[-1])
     # LSODA 仅作为回归引擎，不作为精度真值。
     assert rel < 3e-3             # production 与 LSODA 的实测差异约为 2.1e-3

@@ -220,6 +220,9 @@ class LCDM_SG(LCDM_SN):
         ``freq_res`` scales frequency-grid density (audit-only; 1.0 = default).
         ``physical_guard`` enables the fast-path total-``N_eff`` rejection above 5;
         it defaults to False and does not affect the original LSODA engine.
+        When both ``auto_escalate`` and ``escalate_to_reference`` are enabled,
+        recoverable Fast numerical failures also retry with Reference at
+        ``rtol <= 1e-9``; input/guard rejections and raised Fast exceptions do not.
 
         中文说明：默认 ``fast`` 预设的 outer tolerance 为 ``1e-6``；显式传入
         非默认 ``tol`` 会覆盖它。函数签名中的 ``1e-4`` 保留给 LSODA 和旧手动配置路径。
@@ -384,6 +387,25 @@ class LCDM_SG(LCDM_SN):
                 else:
                     status = 'FAST_FAILED'
                 _mark_eval_status(self, status)
+            if (result is None and auto_escalate and escalate_to_reference
+                    and reason not in ('shared_Neff_guard', 'invalid_r',
+                                       'invalid_cutoff', 'exception')):
+                # An explicit Reference escalation also recovers numerical Fast
+                # failures. Deterministic input/guard rejections and raised
+                # implementation exceptions retain their existing semantics.
+                # 显式请求 Reference 升级时，也尝试恢复 Fast 数值失败；确定性输入/物理拒绝及抛出的实现异常保持原语义。
+                self.escalated_from = accuracy_mode
+                self.escalations = getattr(self, 'escalations', 0) + 1
+                self.reset()
+                reference_kwargs = dict(
+                    z_tail=z_tail,
+                    rtol=(1e-9 if rtol is None else min(float(rtol), 1e-9)),
+                    freq_res=freq_res)
+                result = self.SGWB_iter(engine='reference', **reference_kwargs)
+                status = ('FAST_ESCALATED' if result is not None
+                          else 'FAST_ESCALATION_FAILED')
+                _mark_eval_status(self, status)
+                return result
             if result is not None:
                 # Local a-posteriori error budget (physics-first, per point):
                 # WKB handoff / frequency grid / quadrature / phase truncation
@@ -426,7 +448,12 @@ class LCDM_SG(LCDM_SN):
                         self.escalations = getattr(self, 'escalations', 0) + 1
                         self.reset()
                         if escalate_to_reference:
-                            result = self.SGWB_iter(engine='reference')
+                            reference_kwargs = dict(
+                                z_tail=z_tail,
+                                rtol=(1e-9 if rtol is None else min(float(rtol), 1e-9)),
+                                freq_res=freq_res)
+                            result = self.SGWB_iter(
+                                engine='reference', **reference_kwargs)
                         else:
                             result = self.SGWB_iter(engine='fast',
                                                     accuracy_mode='reference')
