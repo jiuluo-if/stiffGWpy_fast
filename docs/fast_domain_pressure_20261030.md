@@ -60,29 +60,30 @@ spectrum exactly. The raw Fast-to-Reference accuracy comparison remains the
 performance.
 
 A second minimized counterexample (`r=0.19649`, `n_t=1.06225`,
-`kappa10=0.01160`, `T_re=1761.31 GeV`, `cr=0`) exposed a more severe
-frequency-grid failure. At `DN_eff=0`, the formal `goal` grid produced a Fast
-one-step map of about `2.91e13`; changing `freq_res` from 1 to 8 did not change
-it. The same Fast map with `construct`, `grid_independent`, or `adaptive`
-sampling was about `2.24`, consistent with the fixed-background Reference map
-`2.23857`. The high-level Reference solve found a self-consistent result near
-`DN_gw=2.2966`, and a fixed-background Reference evaluation at that value
-reproduced the map to `5e-11` absolute residual.
+`kappa10=0.01160`, `T_re=1761.31 GeV`, `cr=0`) exposed a frequency-grid
+boundary error. Before the fix, the blue-tilt amplitude cutoff was
+`fmax=-7.277`, while the reheating frequency was `f_re=0.0735`. The goal-grid
+builder still added an `f_re±1` reserve, extending to `-0.926`, outside the
+valid band. At `DN_eff=0`, Fast and Reference on those same 80 nodes both
+integrated to about `2.9e13`; `freq_res=1..8` could not change the extra
+feature nodes. This was grid construction, not a tensor-propagation mismatch.
 
-The alternate Fast grids avoided the catastrophic map but did not meet the
-accuracy gates: `construct` at `freq_res=1` differed from its fixed-background
-Reference by `3.47e-4` in `DN_gw` and `3.06e-3 dex` in the spectrum. Increasing
-`freq_res` to 4 or reducing propagation step `h` from `0.005` to `0.000625`
-did not improve these errors. Therefore the alternate grid is not promoted as
-a Fast accuracy fix.
+The builder now adds the transition reserve only where it overlaps the valid
+frequency interval. On this case its 64 seed nodes stay within
+`[-18.459,-7.277]`. Fast returns a finite raw result, but it is not accurate
+enough: against fixed-background Reference on the same nodes, `DN_gw` differs
+by `3.92e-3` and the spectrum by `4.09e-3 dex`. Alternate `construct` and
+`grid_independent` grids also miss the gates (`3.47e-4` DN and `3.06e-3 dex`);
+increasing `freq_res` or reducing `h` to `0.000625` did not fix that residual.
+No Fast-only accuracy candidate is promoted.
 
-The explicitly requested `auto_escalate=True, escalate_to_reference=True`
-path now also retries a returned Fast numerical failure in Reference, using
-`rtol <= 1e-9` while preserving caller tail and grid density. It
-continues to exclude input/guard rejections and raised Fast
-exceptions. A regression test confirms this point returns a finite Reference
-result with `FAST_ESCALATED`; the run took about 61 seconds. This expands the
-opt-in reliable evaluation path for this point, not the Fast-only domain.
+With `auto_escalate=True, escalate_to_reference=True`, the local budget marks
+this point uncertified and the wrapper runs Reference at `rtol<=1e-9`. It
+returns `FAST_ESCALATED` near `DN_gw=2.296589`; a separate fixed-background
+Reference pass at that value has `5e-11` absolute map residual. This is a
+same-solver consistency check, not a separate oracle. The run took about 60
+seconds. This expands the opt-in reliable evaluation path for the point, not
+the Fast-only accuracy domain.
 
 ## Accepted fixes in this work
 
@@ -93,6 +94,8 @@ opt-in reliable evaluation path for this point, not the Fast-only domain.
   explicit reasons instead of leaking arithmetic/type exceptions.
 - Repeated requested evaluation frequencies are deduplicated before matrix
   construction, avoiding a zero frequency interval.
+- The goal-grid transition reserve stays inside the valid frequency band when
+  blue-tilt amplitude cutoff places `fmax` below the reheating feature.
 - An explicit Reference escalation request now retries recoverable Fast
   numerical failures, with a strict reference tolerance and without changing
   ordinary Fast or physical-rejection behavior.
@@ -111,7 +114,8 @@ python scripts/pressure_fast_domain.py --suite boundaries --threads 2 --max-n-in
 python scripts/pressure_fast_domain.py --suite sobol --power 4 --seed 20261030 --threads 2 --max-n-inf 120 --output .planning/pressure_sobol.jsonl
 python scripts/pressure_fast_domain.py --suite latin --power 4 --seed 20261030 --threads 2 --max-n-inf 120 --output .planning/pressure_latin.jsonl
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_hard_point_to_reference -o addopts=''
-pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_nonfinite_solver_failure_to_reference -o addopts=''
+pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference -o addopts=''
+pytest -q tests/test_freq_adaptive.py::test_goal_oriented_freqs_never_crosses_blue_tilt_amplitude_cutoff -o addopts=''
 ```
 
 The date-stamped per-point records and paired timing JSON used for this

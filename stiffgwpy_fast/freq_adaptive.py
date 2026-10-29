@@ -206,7 +206,13 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
     f_re = float(getattr(m, 'f_re', 0.5 * (fmin + fmax)))
     lo = max(float(fmin), f_re - float(feature_half_width))
     hi = min(float(fmax), f_re + float(feature_half_width))
-    feature = np.linspace(hi, lo, feature_n)
+    if lo <= hi:
+        feature = np.linspace(hi, lo, feature_n)
+    else:
+        # The reheating feature can lie above the valid blue-tilt amplitude
+        # cutoff. In that case its reserve must not reopen the excluded band.
+        # 再加热特征可能落在蓝倾振幅截止频率之外，此时不能因特征预留重新扩展已排除频段。
+        feature = np.empty(0, dtype=float)
 
     if eval_freqs is None:
         eval = np.empty(0, dtype=float)
