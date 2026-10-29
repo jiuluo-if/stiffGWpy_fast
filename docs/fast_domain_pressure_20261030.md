@@ -92,13 +92,22 @@ fixed-background `freq_res=16` map gives `2.2914094306`, a relative change of
 `5.0e-10`. This supports convergence of the integrated `DN_gw`. The spectrum
 is still not certified to `1e-3 dex`:
 8/16 uniform grids are nonnested, so their interpolated max difference
-(`0.013 dex`) is not an exact-node comparison; separate curvature-adaptive
+(`0.013 dex`) is not an exact-node comparison. Separate curvature-adaptive
 Reference grids at `1e-3` and `2.5e-4 dex` changed the integrated result by
-`1.04e-3` and the common-node spectrum by `1.24e-3 dex`. The stricter
-`6.25e-5 dex` run used 6013 nodes; its integrated DN proxy was `2.2915402`,
-`5.6e-5` relative to the `freq_res=8` map. It approached the dense uniform-grid
-DN but did not establish the spectrum gate. This point is DN-converged with
-high-resolution Reference; full spectrum certification is open.
+`1.04e-3` and the common-node spectrum by `1.24e-3 dex`. The curvature-only
+estimator was false-safe on this case: at 6000 points its local estimate was
+`1.84e-3 dex`, while a dense probe still found `2.74e-3 dex` change versus the
+3213-point grid.
+
+The adaptive helper now checks actual midpoint residuals as well as curvature
+and enforces `max_points` by prioritizing intervals with the largest measured
+or estimated error. A Gaussian peak centered between seed nodes reproduced the
+old false-safe result (dense interpolation error `1.0`) and now passes the
+direct-midpoint regression. On sample 2, this method remains expensive and
+uncertified: the `1e-3 dex` target used 1822 retained nodes but still had
+`9.09e-3 dex` sampled error after 14 rounds; the `2.5e-4 dex` target used 3467
+nodes and 655 seconds, while its DN proxy changed by `3.03e-4` from the coarse
+result and its spectrum changed by `9.43e-3 dex` on a dense probe.
 
 The Reference `freq_res=16` attempt initially hit an artificial
 `quad(limit=800)` ceiling with 1600 breakpoints. The limit now scales with the
@@ -123,6 +132,9 @@ regression covers the failure. The high-resolution rerun then completed.
   resumable chunks, and optional coordinatewise minimization.
 - Reference frequency quadrature now sizes QUADPACK's interval limit to dense
   breakpoint grids, avoiding the old 800-subinterval failure.
+- Adaptive frequency refinement now honors `max_points` as a hard cap and
+  prioritizes intervals with the largest sampled or estimated interpolation
+  error; this detects missed peaks but does not certify sample 2's spectrum.
 
 These fixes improve correctness and observability. They do not yet certify a
 larger Fast-only accuracy domain. Remaining failures, exception cases, and
@@ -138,6 +150,7 @@ python scripts/pressure_fast_domain.py --suite latin --power 4 --seed 20261030 -
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_hard_point_to_reference -o addopts=''
 pytest -q tests/test_physics_limits.py::test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference -o addopts=''
 pytest -q tests/test_freq_adaptive.py::test_goal_oriented_freqs_never_crosses_blue_tilt_amplitude_cutoff -o addopts=''
+pytest -q tests/test_freq_adaptive.py::test_adaptive_detects_narrow_feature_between_seed_nodes -o addopts=''
 pytest -q tests/test_reference.py::test_integrate_spectrum_scales_quad_budget_with_breakpoint_count -o addopts=''
 ```
 
