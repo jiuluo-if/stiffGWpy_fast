@@ -219,6 +219,24 @@ from `7.623e-4` to `2.980e-4 dex`. This certifies this point beyond the scanner
 preflight boundary; it does not certify all `N_inf>120` points or the raw Fast
 result.
 
+## Extreme-amplitude runaway classification
+
+The `A_s=1e100`, `cr=1` boundary point (`N_inf=152.227` at input
+`DN_eff=0`) is not merely hidden by the `N_inf=120` scanner preflight. A fresh
+Fast replay exits with `invalid_iterate_cutoff`: tracing the first outer maps
+gives `F(0)=1.07845e106`, then `F(1.07845e106)=1.50199e204`, after which the
+derived interval is invalid. With a one-map diagnostic, 20 inputs from
+`DN_eff=1` through `1e158` all produce finite maps. On the logarithmic probes
+`1e10` through `1e158`, `F(x)/x` ranges from `1.28096e98` to `1.58571e98`,
+with no observed fixed-point sign change. The derived `Delta_N>=0` boundary is near
+`log10(DN_eff)=158.44162414575`; `N_inf` is `37.77234` just below it and
+becomes `None` just above it because `Delta_N<0`.
+
+This is classified as runaway with no fixed point observed inside the sampled
+derived-valid interval, not as a `DN_gw_max=10` or `MAX_ITER=60` failure. The
+finite log sweep is evidence, not a proof over the continuum, so this case is
+not labeled mathematically unsolvable and no approximate root is returned.
+
 These fixes improve correctness and observability. They do not yet certify a
 larger Fast-only accuracy domain. Remaining failures, exception cases, and
 timeouts need separate root-cause work; no timeout or nonfinite result is
