@@ -44,10 +44,10 @@ def sigma_vec(N, m, DN_eff):
     Omh2 = d['Omega_mh2']
     Osh2 = d['Omega_sh2']
     Oerh2 = gp.Omega_ph2 * 7 / 8 * (4 / 11) ** (4 / 3) * DN_eff
-    Otrh2 = gp.Omega_orh2 + Oerh2
-    Otreh2 = gp.Omega_ph2 * gp.rho_th[-1] + Oerh2
-    OLh2 = d['h'] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 \
-        - gp.Omega_ph2 - Oerh2 - Osh2
+    Otrh2_base = gp.Omega_orh2
+    Otreh2_base = gp.Omega_ph2 * gp.rho_th[-1]
+    OLh2_base = d['h'] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 \
+        - gp.Omega_ph2 - Osh2
     N_inf = d['N_inf']
     N_re_abs = N_inf - d['N_re']
     fd_rho, fd_p = _fd_from_ref()
@@ -57,6 +57,7 @@ def sigma_vec(N, m, DN_eff):
     Nr = N[running]
     eN = np.exp(N_inf - Nr)
     e3N = eN * eN * eN
+    extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
     nu = gp.nu_today / eN
     Omega_ph2 = gp.Omega_ph2
     Omega_nh2 = gp.Omega_nh2
@@ -65,8 +66,8 @@ def sigma_vec(N, m, DN_eff):
     m1 = nu > 100.0
     out = np.empty(running.sum())
     if m1.any():
-        H2 = (Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1]
-              + Osh2 * e3N[m1] + OLh2 / e3N[m1])
+        H2 = (Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN[m1]
+              + Osh2 * e3N[m1] + extra_radiation_h2[m1] + OLh2_base / e3N[m1])
         out[m1] = (Omh2 + Omega_mnuh2
                    + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1]
                    + 2.0 * Osh2 * e3N[m1]) / H2
@@ -75,28 +76,33 @@ def sigma_vec(N, m, DN_eff):
         lognu = np.log10(nu[m2])
         rho_nu = fd_rho(lognu)
         p_nu = fd_p(lognu)
-        H2 = (Omh2 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2 + Oerh2) * eN[m2]
-              + Osh2 * e3N[m2] + OLh2 / e3N[m2])
+        H2 = (Omh2 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN[m2]
+              + Osh2 * e3N[m2] + extra_radiation_h2[m2] + OLh2_base / e3N[m2])
         out[m2] = (Omh2
                    + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m2]
                    + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN[m2]
                    + 2.0 * Osh2 * e3N[m2]) / H2
     m3 = (~m1) & (~m2) & (Nr > N_inf - gp.N_fin)
     if m3.any():
-        H2 = Omh2 + Otrh2 * eN[m3] + Osh2 * e3N[m3] + OLh2 / e3N[m3]
-        out[m3] = (Omh2 + 4.0 / 3.0 * Otrh2 * eN[m3] + 2.0 * Osh2 * e3N[m3]) / H2
+        H2 = (Omh2 + Otrh2_base * eN[m3] + Osh2 * e3N[m3]
+              + extra_radiation_h2[m3] + OLh2_base / e3N[m3])
+        out[m3] = (Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN[m3]
+                   + 2.0 * Osh2 * e3N[m3]) / H2
     m4 = (~m1) & (~m2) & (~m3) & (Nr >= N_inf - gp.N_max)
     if m4.any():
         Nl = N_inf - Nr[m4]
         rho_i = gp.spl_rho(Nl)
         rhop_i = gp.spl_rhop(Nl)
-        H2 = Omh2 + (Omega_ph2 * rho_i + Oerh2) * eN[m4] + Osh2 * e3N[m4] + OLh2 / e3N[m4]
+        H2 = (Omh2 + Omega_ph2 * rho_i * eN[m4] + Osh2 * e3N[m4]
+              + extra_radiation_h2[m4] + OLh2_base / e3N[m4])
         out[m4] = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN[m4]
                    + 2.0 * Osh2 * e3N[m4]) / H2
     m5 = (~m1) & (~m2) & (~m3) & (~m4)
     if m5.any():
-        H2 = Omh2 + Otreh2 * eN[m5] + Osh2 * e3N[m5] + OLh2 / e3N[m5]
-        out[m5] = (Omh2 + 4.0 / 3.0 * Otreh2 * eN[m5] + 2.0 * Osh2 * e3N[m5]) / H2
+        H2 = (Omh2 + Otreh2_base * eN[m5] + Osh2 * e3N[m5]
+              + extra_radiation_h2[m5] + OLh2_base / e3N[m5])
+        out[m5] = (Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN[m5]
+                   + 2.0 * Osh2 * e3N[m5]) / H2
     sigma[running] = out
     return sigma
 
@@ -111,10 +117,10 @@ def H2_vec(N, m, DN_eff):
     Omh2 = d['Omega_mh2']
     Osh2 = d['Omega_sh2']
     Oerh2 = gp.Omega_ph2 * 7 / 8 * (4 / 11) ** (4 / 3) * DN_eff
-    Otrh2 = gp.Omega_orh2 + Oerh2
-    Otreh2 = gp.Omega_ph2 * gp.rho_th[-1] + Oerh2
-    OLh2 = d['h'] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 \
-        - gp.Omega_ph2 - Oerh2 - Osh2
+    Otrh2_base = gp.Omega_orh2
+    Otreh2_base = gp.Omega_ph2 * gp.rho_th[-1]
+    OLh2_base = d['h'] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 \
+        - gp.Omega_ph2 - Osh2
     N_inf = d['N_inf']
     fd_rho, _ = _fd_from_ref()
     # Preserve the legacy scalar ``math.exp`` result across platforms while
@@ -126,6 +132,7 @@ def H2_vec(N, m, DN_eff):
         count=N.size,
     )
     e3N = eN * eN * eN
+    extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
     nu = gp.nu_today / eN
     out = np.empty_like(N)
     # Keep the scalar branch precedence explicit while evaluating each
@@ -136,30 +143,35 @@ def H2_vec(N, m, DN_eff):
     high_nu = nu > 100.0
     if np.any(high_nu):
         out[high_nu] = (Omh2 + gp.Omega_mnuh2
-                        + (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2 + Oerh2) * eN[high_nu]
-                        + Osh2 * e3N[high_nu] + OLh2 / e3N[high_nu])
+                        + (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2) * eN[high_nu]
+                        + Osh2 * e3N[high_nu] + extra_radiation_h2[high_nu]
+                        + OLh2_base / e3N[high_nu])
     thermal_nu = (~high_nu) & (nu >= 0.1)
     if np.any(thermal_nu):
         rho_nu = fd_rho(np.log10(nu[thermal_nu]))
         out[thermal_nu] = (Omh2
-                           + (gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2 + Oerh2)
+                           + (gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2)
                            * eN[thermal_nu]
-                           + Osh2 * e3N[thermal_nu] + OLh2 / e3N[thermal_nu])
+                           + Osh2 * e3N[thermal_nu] + extra_radiation_h2[thermal_nu]
+                           + OLh2_base / e3N[thermal_nu])
     relativistic = (~high_nu) & (~thermal_nu) & (N > N_inf - gp.N_fin)
     if np.any(relativistic):
-        out[relativistic] = (Omh2 + Otrh2 * eN[relativistic]
-                             + Osh2 * e3N[relativistic] + OLh2 / e3N[relativistic])
+        out[relativistic] = (Omh2 + Otrh2_base * eN[relativistic]
+                             + Osh2 * e3N[relativistic] + extra_radiation_h2[relativistic]
+                             + OLh2_base / e3N[relativistic])
     thermal_grid = ((~high_nu) & (~thermal_nu) & (~relativistic)
                     & (N >= N_inf - gp.N_max))
     if np.any(thermal_grid):
         Nl = N_inf - N[thermal_grid]
         rho_nu = gp.spl_rho(Nl)
-        out[thermal_grid] = (Omh2 + (gp.Omega_ph2 * rho_nu + Oerh2) * eN[thermal_grid]
-                             + Osh2 * e3N[thermal_grid] + OLh2 / e3N[thermal_grid])
+        out[thermal_grid] = (Omh2 + gp.Omega_ph2 * rho_nu * eN[thermal_grid]
+                             + Osh2 * e3N[thermal_grid] + extra_radiation_h2[thermal_grid]
+                             + OLh2_base / e3N[thermal_grid])
     early = ~(high_nu | thermal_nu | relativistic | thermal_grid)
     if np.any(early):
-        out[early] = (Omh2 + Otreh2 * eN[early]
-                      + Osh2 * e3N[early] + OLh2 / e3N[early])
+        out[early] = (Omh2 + Otreh2_base * eN[early]
+                      + Osh2 * e3N[early] + extra_radiation_h2[early]
+                      + OLh2_base / e3N[early])
     return out
 
 

@@ -151,6 +151,61 @@ def test_float_robustness_extreme_params():
         FS._KINK_SPLIT = saved['kink_split']
 
 
+def test_gen_fast_avoids_present_day_cancellation_for_large_dn_eff():
+    """Large extra radiation must not cancel the finite present-day H2 anchor."""
+    from stiffgwpy_fast import fast_sgwb as FS
+    from stiffgwpy_fast.exact_background import H2_vec, sigma_vec
+
+    model = LCDM_SG(
+        r=0.026636847157969202,
+        n_t=2.9357513057156224,
+        kappa10=6.370761587894848,
+        T_re=8349.551883276852,
+        DN_re=5.104113570393838,
+        Omega_bh2=0.02493600106013432,
+        Omega_ch2=0.3458984920924526,
+        H0=52.30419572699695,
+        A_s=2.190471632694714e-9,
+        cr=0.0,
+        DN_eff=2.0648360336399695e53,
+    )
+
+    FS.gen_fast(model, h=0.005)
+
+    assert np.all(np.isfinite(model.f_hor))
+    assert np.all(np.isfinite(model.sigma))
+    today = np.array([model.derived_param['N_inf']])
+    h2_today = H2_vec(today, model, model.cosmo_param['DN_eff'])[0]
+    sigma_today = sigma_vec(today, model, model.cosmo_param['DN_eff'])[0]
+    assert h2_today == pytest.approx(model.derived_param['h'] ** 2, rel=1e-14)
+    assert np.isfinite(sigma_today)
+
+
+def test_fast_guard_off_reports_nonfinite_background_instead_of_index_error():
+    """Runaway parameters must fail as a recorded background error, not leak IndexError."""
+    model = LCDM_SG(
+        r=2.981401117884715e-6,
+        n_t=2.433506923077321,
+        kappa10=0.005956142774765002,
+        T_re=152.38081588419843,
+        DN_re=22.053096877437447,
+        Omega_bh2=0.014198405074411415,
+        Omega_ch2=0.3483299468903473,
+        H0=69.1484144351007,
+        A_s=3.2897061708711526e-9,
+        cr=0.0,
+        DN_eff=0.0,
+    )
+
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == 'nonfinite_background'
+
+
 def test_sigma_exact_reduces_model_bias():
     """Continuous-sigma construction remains closer to the reference oracle."""
     from stiffgwpy_fast import fast_sgwb as FS

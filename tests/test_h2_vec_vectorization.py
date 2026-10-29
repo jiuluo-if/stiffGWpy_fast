@@ -59,5 +59,6 @@ def test_h2_vec_batches_spline_evaluation_without_changing_values(monkeypatch):
     monkeypatch.setattr(gp, 'spl_rho', counted_spline)
     actual = EB.H2_vec(n, model, dn_eff)
 
-    np.testing.assert_array_equal(actual, expected)
+    # Stable closure grouping changes only the final rounding order.
+    np.testing.assert_allclose(actual, expected, rtol=5e-15, atol=0.0)
     assert calls == [1]
