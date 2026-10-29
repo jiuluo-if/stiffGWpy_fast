@@ -359,3 +359,33 @@ def test_fast_reports_invalid_derived_cutoff_after_outer_update():
     assert result is None
     assert model.fast_failure_reason == 'invalid_iterate_cutoff'
     assert model.cosmo_param['DN_eff'] == 0.0
+
+
+@pytest.mark.slow
+def test_fast_auto_escalates_uncertified_hard_point_to_reference():
+    """困难点按请求升级到参考引擎；Verify the escalated spectrum is finite."""
+    model = LCDM_SG(
+        r=2.5157032591313454e-5,
+        n_t=1.3755212701484574,
+        kappa10=0.1653015270125515,
+        T_re=0.0485083021944659,
+        DN_re=10.0,
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        A_s=2.100549e-9,
+        cr=0.0,
+        DN_eff=0.0,
+    )
+
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+        auto_escalate=True, escalate_to_reference=True,
+    )
+
+    assert result is model
+    assert model.last_eval_status == 'FAST_ESCALATED'
+    assert model.last_engine == 'reference'
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert model.DN_gw[-1] == pytest.approx(2.919856692533879e-4, rel=2e-4)
