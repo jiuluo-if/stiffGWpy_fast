@@ -924,9 +924,9 @@ def gen_kernel(
                 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN
                 + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
             )
-            Sv[i] = (
+            sigma_numerator = (
                 Omh2 + Omega_mnuh2 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + 2.0 * Osh2 * e3N
-            ) / H2
+            )
         elif nu >= 0.1:
             lnnu = math.log10(nu)
             rho_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_RHO)
@@ -936,24 +936,29 @@ def gen_kernel(
                 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN
                 + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
             )
-            Sv[i] = (
+            sigma_numerator = (
                 Omh2
                 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
                 + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN
                 + 2.0 * Osh2 * e3N
-            ) / H2
+            )
         elif Nv[i] > Nlast - N_fin:
             H2 = Omh2 + Otrh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            Sv[i] = (Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
+            sigma_numerator = Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N
         elif Nv[i] >= Nlast - N_max:
             Nl = Nlast - Nv[i]
             rho_i = cubic_any(Nl, TH_X, TH_C_RHO)
             rhop_i = cubic_any(Nl, TH_X, TH_C_RHOP)
             H2 = Omh2 + Omega_ph2 * rho_i * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            Sv[i] = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
+            sigma_numerator = Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN + 2.0 * Osh2 * e3N
         else:
             H2 = Omh2 + Otreh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            Sv[i] = (Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N) / H2
+            sigma_numerator = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N
+        # H² 非正时实数膨胀率与 sigma 均无定义；返回节点号，避免除零或对数域异常。
+        # Nonpositive H² has no real expansion rate at this node; report it before division/log.
+        if H2 <= 0.0:
+            return i + 1
+        Sv[i] = sigma_numerator / H2
         f_hor[i] = -0.5 * Nv[i] + 0.5 * math.log(H2)
     fv_re = f_hor[index_re]
     Nv_re = Nv[index_re]
@@ -963,6 +968,7 @@ def gen_kernel(
     f0 = f_hor[n - 1] + Delta_f
     for i in range(n):
         f_hor[i] = (f_hor[i] - f0) / ln10v
+    return 0
 
 
 def gen_fast(m, h=0.01, kink_split=False):
@@ -1010,7 +1016,7 @@ def gen_fast(m, h=0.01, kink_split=False):
     Sv = np.empty(len(Nv))
     f_hor = np.empty(len(Nv))
     Delta_f = math.log(2 * math.pi / d["H_0"])
-    gen_kernel(
+    background_status = gen_kernel(
         Nv,
         Sv,
         f_hor,
@@ -1037,6 +1043,14 @@ def gen_fast(m, h=0.01, kink_split=False):
         Delta_f,
         ln10,
     )
+    m._fast_background_failure = None
+    m._fast_background_failure_detail = None
+    m._fast_background_failure_index = None
+    if background_status != 0:
+        m._fast_background_failure = "nonpositive_h2"
+        m._fast_background_failure_detail = "H2 <= 0"
+        m._fast_background_failure_index = background_status - 1
+        return
     m.Nv = Nv
     m.N = Nv - Nv[-1]
     m.sigma = Sv
@@ -2093,6 +2107,8 @@ def _SGWB_iter_fast_impl(
     derived_cache_was_enabled = getattr(m, "_fast_derived_cache_enabled", False)
     m._fast_derived_cache_enabled = True
     m._fast_derived_cache_key = None
+    m._fast_background_failure = None
+    m._fast_background_failure_index = None
     try:
         for _iter in range(MAX_ITER):
             if transition_refine:
@@ -2106,9 +2122,15 @@ def _SGWB_iter_fast_impl(
                 )
             elif kink_split:
                 gen_fast(m, h)
+                if m._fast_background_failure is not None:
+                    m.fast_failure_reason = m._fast_background_failure
+                    break
                 kink_index, kink_fraction = _correct_kink_background(m)
             else:
                 gen_fast(m, h, kink_split=kink_split)
+                if m._fast_background_failure is not None:
+                    m.fast_failure_reason = m._fast_background_failure
+                    break
             if not all(np.isfinite(np.asarray(values, dtype=float)).all() for values in (m.Nv, m.sigma, m.f_hor)):
                 m.fast_failure_reason = "nonfinite_background"
                 break

@@ -130,6 +130,8 @@ def latin_cases(power: int, seed: int) -> list[dict]:
 def _classify_reason(reason: str | None) -> str:
     if reason in ("invalid_r", "invalid_cutoff", "shared_Neff_guard"):
         return "explicit_input_or_physics_guard"
+    if reason == "nonpositive_h2":
+        return "background_h2_nonpositive"
     if reason == "max_iter":
         return "outer_iteration_limit"
     if reason and reason.startswith("nonfinite"):
@@ -200,6 +202,12 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
             )
         result["warnings"] = [str(w.message) for w in caught]
         result["reason"] = model.fast_failure_reason
+        result["background_failure_index"] = getattr(
+            model, "_fast_background_failure_index", None
+        )
+        result["background_failure_detail"] = getattr(
+            model, "_fast_background_failure_detail", None
+        )
         if out is None:
             result.update(status="failed", classification=_classify_reason(model.fast_failure_reason))
         else:

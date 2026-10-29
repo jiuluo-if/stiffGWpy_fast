@@ -311,3 +311,26 @@ def test_fast_outer_reuse_recomputes_when_frequency_grid_changes():
     assert np.isfinite(model.log10OmegaGW).all()
     assert np.all(model.Ogw_today - model.Oj_today > 0.0)
     assert model.DN_gw[-1] > 0.0
+
+def test_fast_reports_nonpositive_background_h2_without_leaking_division_error():
+    model = LCDM_SG(
+        Omega_bh2=-1e100,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-2,
+        n_t=0.5,
+        cr=0.0,
+        T_re=2e3,
+        DN_re=10.0,
+        kappa10=1e-2,
+    )
+
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == 'nonpositive_h2'
