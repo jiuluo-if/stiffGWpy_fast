@@ -2187,7 +2187,7 @@ def _SGWB_iter_fast_impl(
                 fmin_g, fmax_g = float(np.min(m.f)), float(np.max(m.f))
                 ef = ef[(ef >= fmin_g) & (ef <= fmax_g)]
                 if ef.size:
-                    m.f = np.sort(np.concatenate((np.asarray(m.f, dtype=float), ef)))[::-1]
+                    m.f = np.unique(np.concatenate((np.asarray(m.f, dtype=float), ef)))[::-1]
             freqs_new = m.f.astype(np.float64)
             nv_new = len(m.Nv)
             # Reuse grid-dependent quantities across bisection iterations when

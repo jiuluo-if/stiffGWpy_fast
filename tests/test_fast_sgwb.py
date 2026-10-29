@@ -658,6 +658,24 @@ def test_eval_freqs_are_native_grid_nodes():
     assert np.allclose(dmin, 0.0), dmin
 
 
+def test_eval_freqs_already_present_in_grid_are_not_duplicated():
+    cfg = FS.FastSolverConfig(
+        h=0.02, col_step=8, z_tail=5.0, phase_max=0.0,
+        freq_grid='goal', threads=1, kink_split=True,
+    )
+    base = _make_model()
+    assert FS.SGWB_iter_fast(base, tol=1e-6, config=cfg) is base
+
+    model = _make_model()
+    existing = np.asarray(base.f[:4], dtype=float)
+    assert FS.SGWB_iter_fast(
+        model, tol=1e-6, config=cfg, eval_freqs=existing,
+    ) is model
+
+    assert np.unique(model.f).size == model.f.size
+    assert np.all(np.isfinite(model.log10OmegaGW))
+
+
 def test_eval_freqs_do_not_change_self_consistent_dn():
     """Likelihood-only native nodes must not perturb the bolometric DN integral."""
     cfg = FS.FastSolverConfig(h=0.02, col_step=8, z_tail=5.0,
