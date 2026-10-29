@@ -2111,6 +2111,10 @@ def _SGWB_iter_fast_impl(
     m._fast_background_failure_index = None
     try:
         for _iter in range(MAX_ITER):
+            n_inf = m.derived_param["N_inf"]
+            if n_inf is None or not math.isfinite(float(n_inf)) or n_inf <= 0.0:
+                m.fast_failure_reason = "invalid_iterate_cutoff"
+                break
             if transition_refine:
                 from .exact_background import build_kink_refined_grid
 

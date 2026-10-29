@@ -130,6 +130,8 @@ def latin_cases(power: int, seed: int) -> list[dict]:
 def _classify_reason(reason: str | None) -> str:
     if reason in ("invalid_r", "invalid_cutoff", "shared_Neff_guard"):
         return "explicit_input_or_physics_guard"
+    if reason == "invalid_iterate_cutoff":
+        return "outer_iterate_derived_cutoff_invalid"
     if reason == "nonpositive_h2":
         return "background_h2_nonpositive"
     if reason == "max_iter":

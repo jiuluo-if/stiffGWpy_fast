@@ -334,3 +334,28 @@ def test_fast_reports_nonpositive_background_h2_without_leaking_division_error()
 
     assert result is None
     assert model.fast_failure_reason == 'nonpositive_h2'
+
+def test_fast_reports_invalid_derived_cutoff_after_outer_update():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=1e20,
+        r=1e-2,
+        n_t=0.5,
+        cr=1.0,
+        T_re=2e3,
+        DN_re=10.0,
+        kappa10=1e-2,
+    )
+
+    assert model.derived_param['N_inf'] is not None
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == 'invalid_iterate_cutoff'
+    assert model.cosmo_param['DN_eff'] == 0.0
