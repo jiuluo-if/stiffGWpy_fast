@@ -241,3 +241,39 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     assert m.last_eval_status == 'FAST_ESCALATED'
     assert m.eval_status_counts['FAST_ESCALATED'] == 1
     assert m.eval_status_counts['REFERENCE'] >= 1
+
+
+def test_auto_escalate_fast_numerical_failure_to_reference(monkeypatch, fast_settings):
+    """An explicit reference request retries a returned Fast numerical failure."""
+    import numpy as np
+
+    from stiffgwpy_fast import reference as REF
+
+    def failed_fast(m, **kwargs):
+        m.fast_failure_reason = 'nonfinite'
+        return None
+
+    def recovered_reference(m, **kwargs):
+        m.cosmo_param['DN_eff'] = 0.25
+        m.DN_gw = np.array([0.0, 0.25])
+        m.log10OmegaGW = np.array([-12.0])
+        m.f = np.array([1.0])
+        m.SGWB_converge = True
+        m.reference_evals = getattr(m, 'reference_evals', 0) + 1
+        return m
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', failed_fast)
+    monkeypatch.setattr(REF, 'apply_reference_to_model', recovered_reference)
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+
+    result = m.SGWB_iter(
+        engine='fast', auto_escalate=True, escalate_to_reference=True,
+    )
+
+    assert result is m
+    assert m.fast_failure_reason == 'nonfinite'
+    assert m.fast_failures == 1
+    assert m.escalations == 1
+    assert m.reference_evals == 1
+    assert m.last_engine == 'reference'
+    assert m.last_eval_status == 'FAST_ESCALATED'

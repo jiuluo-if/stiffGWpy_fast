@@ -393,8 +393,8 @@ def test_fast_auto_escalates_uncertified_hard_point_to_reference():
 
 
 @pytest.mark.slow
-def test_fast_auto_escalates_nonfinite_solver_failure_to_reference():
-    """An explicit escalation request recovers a Fast-only numerical failure."""
+def test_fast_auto_escalates_uncertified_blue_tilt_cutoff_case_to_reference():
+    """The blue-tilt cutoff case is resolved by its explicit Reference path."""
     model = LCDM_SG(
         r=0.19649188544593907,
         n_t=1.0622501865308032,

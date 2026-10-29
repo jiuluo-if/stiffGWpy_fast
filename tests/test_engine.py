@@ -261,7 +261,7 @@ def test_engine_fast_close_to_lsoda_on_case_a():
     assert mf.DN_gw[-1] == pytest.approx(0.0022636474150855806, rel=2e-5)
     rel = abs(mo.DN_gw[-1] - mf.DN_gw[-1]) / abs(mo.DN_gw[-1])
     # LSODA 仅作为回归引擎，不作为精度真值。
-    assert rel < 3e-3             # production 与 LSODA 的实测差异约为 2.1e-3
+    assert rel < 3e-3             # fast 与 LSODA 的实测差异约为 2.1e-3
     # 两个引擎使用不同频率网格；先把 LSODA 谱插值到 fast 节点，再在公共网格上比较，
     # 保持与 fast-reference 认证相同的匹配网格纪律。
     o_f = np.argsort(np.asarray(mf.f))

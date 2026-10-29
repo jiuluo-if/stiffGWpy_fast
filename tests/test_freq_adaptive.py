@@ -78,6 +78,26 @@ def test_goal_oriented_freqs_keeps_transition_and_eval_nodes():
     assert np.min(np.abs(grid - m.f_re)) < 0.1
 
 
+def test_goal_oriented_freqs_never_crosses_blue_tilt_amplitude_cutoff():
+    """A reheating reserve outside the valid band must not extend the grid."""
+    m = LCDM_SG(
+        r=0.19649188544593907,
+        n_t=1.0622501865308032,
+        kappa10=0.011598483151630803,
+        T_re=1761.314039059193,
+        DN_re=10.0,
+        cr=0.0,
+    )
+    FS.gen_fast(m, 0.005)
+    _, fmin, fmax = FA.grid_independent_freqs(m, 1.0)
+
+    assert m.f_re > fmax
+    grid = FA.goal_oriented_freqs(m, 1.0)
+
+    assert np.all(grid >= fmin)
+    assert np.all(grid <= fmax)
+
+
 def test_grid_independent_freqs_reuses_endpoint_h2(monkeypatch):
     """The endpoint H2 evaluations should not repeat within one grid build."""
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
