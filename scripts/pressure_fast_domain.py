@@ -275,6 +275,10 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20261030)
     parser.add_argument("--max-n-inf", type=float, default=120.0)
     parser.add_argument("--threads", type=int, default=2)
+    parser.add_argument("--start-index", type=int, default=0,
+                        help="first index in the selected deterministic suite")
+    parser.add_argument("--max-cases", type=int, default=None,
+                        help="optional bounded chunk size for resumable scans")
     parser.add_argument("--minimize-failures", action="store_true",
                         help="bisect each failed coordinate toward the default model")
     parser.add_argument("--output", type=Path, default=Path("fast_domain_pressure.jsonl"))
@@ -296,6 +300,11 @@ def main() -> None:
         cases = latin_cases(args.power, args.seed)
     else:
         cases = boundary_cases() + sobol_cases(args.power, args.seed) + latin_cases(args.power, args.seed)
+    if args.start_index < 0 or (args.max_cases is not None and args.max_cases < 1):
+        parser.error("--start-index must be non-negative and --max-cases must be positive")
+    suite_size = len(cases)
+    first_index = args.start_index
+    cases = cases[first_index:first_index + args.max_cases if args.max_cases is not None else None]
 
     FS.apply_accuracy_mode("fast")
     process = psutil.Process()
@@ -305,6 +314,7 @@ def main() -> None:
         "record_type": "manifest", "commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "suite": args.suite, "seed": args.seed, "case_count": len(cases),
+        "suite_total_count": suite_size, "start_index": first_index,
         "sobol_power": args.power, "max_n_inf_preflight": args.max_n_inf,
         "threads_argument": args.threads, "python": platform.python_version(),
         "numpy": np.__version__, "scipy": scipy.__version__,
@@ -325,7 +335,8 @@ def main() -> None:
     max_rss_mb = process.memory_info().rss / 1024**2
     with output.open("w", encoding="utf-8") as stream:
         stream.write(json.dumps(metadata, ensure_ascii=False) + "\n")
-        for index, item in enumerate(cases):
+        for local_index, item in enumerate(cases):
+            index = first_index + local_index
             record = evaluate(item, args.max_n_inf, args.threads)
             record["sample_index"] = index
             if args.minimize_failures and record["status"] != "success":
@@ -339,10 +350,11 @@ def main() -> None:
             max_rss_mb = max(max_rss_mb, process.memory_info().rss / 1024**2)
             print(json.dumps({key: record.get(key) for key in
                               ("sample_index", "label", "status", "classification",
-                               "reason", "runtime_s")}, ensure_ascii=False))
+                               "reason", "runtime_s")}, ensure_ascii=False), flush=True)
     batch_wall_s = time.perf_counter() - batch_started
     summary = {
         "commit": metadata["commit"], "suite": args.suite, "case_count": len(cases),
+        "suite_total_count": suite_size, "start_index": first_index,
         "status_counts": dict(counts),
         "runtime_p50_s": float(np.percentile(runtimes, 50)) if runtimes else None,
         "runtime_p95_s": float(np.percentile(runtimes, 95)) if runtimes else None,
