@@ -275,3 +275,31 @@ def test_apply_reference_to_model(monkeypatch):
     assert m.kappa_r == pytest.approx(1.94e-3)
     assert np.allclose(m.log10OmegaGW, logO)
     assert m.SGWB_converge
+
+
+def test_reference_physical_guard_is_optional_for_large_fixed_point(monkeypatch):
+    """The physical total-Neff guard must not cap numeric exploration by default."""
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2, DN_eff=0.0)
+    freqs = np.array([-1.0, 0.0, 1.0, 2.0])
+    omega_nu = REF.gp.Omega_nh2 / m.derived_param['h']**2
+    target_dn = 12.0
+    target_g2 = target_dn * omega_nu / REF.gp.Neff0
+
+    def fake_spectrum(model, frequencies, dn_eff, **kwargs):
+        count = len(frequencies)
+        return (np.ones(count), np.zeros(count), np.zeros(count),
+                np.zeros(count, dtype=bool))
+
+    monkeypatch.setattr(REF, 'spectrum_reference', fake_spectrum)
+    monkeypatch.setattr(REF, 'integrate_spectrum',
+                        lambda *args, **kwargs: (target_g2, 0.0, 0.0))
+
+    result = REF.run_reference(
+        m, freq_subset=freqs, z_tail=5.0, rtol=1e-9, tol=1e-8)
+
+    assert result['DN_gw'] == pytest.approx(target_dn)
+    assert result['DN_eff'] == pytest.approx(target_dn)
+    with pytest.raises(RuntimeError, match='physical guard'):
+        REF.run_reference(
+            m, freq_subset=freqs, z_tail=5.0, rtol=1e-9, tol=1e-8,
+            physical_guard=True)

@@ -244,6 +244,7 @@ def test_auto_escalate_to_reference_engine(monkeypatch, fast_settings):
     assert m.eval_status_counts['FAST_ESCALATED'] == 1
     assert m.eval_status_counts['REFERENCE'] >= 1
     assert captured_reference['freq_res'] == 8.0
+    assert captured_reference['physical_guard'] is False
 
 
 def test_auto_escalate_fast_numerical_failure_to_reference(monkeypatch, fast_settings):
