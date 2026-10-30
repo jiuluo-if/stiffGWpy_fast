@@ -241,6 +241,24 @@ the corresponding Oracle WKB-to-deep `DN_gw` differences are at most
 reproduced by [`benchmark_kink_terminal_step_fix.py`](../scripts/benchmark_kink_terminal_step_fix.py).
 This is four named-point evidence, not a global parameter-space certification.
 
+The same fix also recovers the retained random-corpus sample11 at
+`h=.005`, `freq_grid='grid_independent'`, and `z_tail=8` on the 94 native
+tail10 Reference frequencies. Corrected Fast gives `DN_gw=4.85759964`, about
+`2.62e-5` relative from the separately iterated Reference root
+`4.85747263`; median/P95/max spectrum error is `4.01e-5/1.43e-4/1.65e-4 dex`.
+The legacy terminal step had P95/max `5.17e-4/6.33e-4 dex` and seven modes
+over `5e-4`. At `z_tail=5`, a `1.70e-3 dex` worst-bin error remains because
+the shallower frozen-tail convention dominates that bin; the endpoint fix
+does not remove this separate tail error. The underlying sample parameters
+and earlier transition-refined recovery are recorded in
+[`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md). The
+endpoint-path A/B is reproducible with
+[`benchmark_sample11_terminal_step.py`](../scripts/benchmark_sample11_terminal_step.py)
+using the saved 94-mode Reference spectrum
+[`sample11_reference_tail10_spectrum_20261030.json`](sample11_reference_tail10_spectrum_20261030.json)
+and its second-map fixed-point check
+[`sample11_reference_second_map_20261030.json`](sample11_reference_second_map_20261030.json).
+
 The separate blue-tilt res4 `h=.02, transition_refine=True` fixed-background
 Reference map is still running; do not use this endpoint correction's Oracle C
 checks to claim that candidate's self-consistent root is verified.
