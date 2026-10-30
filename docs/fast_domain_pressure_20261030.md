@@ -552,6 +552,14 @@ Of the 297 finite successes, 93 have `DN_gw>10`; the largest is
 analytically certified. The scan maps computability and failure classes but
 does not certify those extreme values' precision.
 
+The fresh 140-point coupled suite at `8e26916` covers the deduplicated
+`cr × effective n_t × kappa10 × T_re` combinations: 140/140 outputs are finite,
+with zero solver failures. All 140 remain `uncertified-path-configuration`;
+local `DN_gw_error` estimates range from `4.05e-3` (median `3.04e-2`, P95
+`1.003`) to `1.023`. On an uncontended single-process/two-thread run, per-case
+P50/P95 is `5.86/11.51 ms`, throughput `112.4 cases/s`, and observed peak RSS
+`179.5 MiB`. This is computability/sampler evidence only, not an accuracy pass.
+
 The current Sobol and Latin-hypercube pilots (`power=4`, seed `20261030`) each
 sample 16 points after canonicalizing the unused `n_t` coordinate for `cr>0`.
 Sobol outcomes are 6 resource preflight skips, 6 invalid-derived rejects, 2
