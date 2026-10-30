@@ -464,12 +464,27 @@ interval widths and uses the continuous split primitive for the combined
 options did not meet the accuracy gates is not valid evidence for the masked
 combination; fresh reference comparisons are required.
 
-A new res4 A/B found that the corrected transition-refined candidate's sampled
-spectrum is promising against an older fixed-background `z_tail=9` spectrum,
-but that reference was evaluated at another Fast background. Its map/root
-gate is therefore still unverified and the candidate is not promoted.
+A preliminary res4 A/B compared against a fixed-background `z_tail=9`
+spectrum evaluated at another Fast background, so it could not certify the
+candidate. A later same-background run is recorded below; tail convergence and
+a second parameter case are still pending before promotion.
 Separately, a fresh `A_s=1e20` trace localizes the first nonfinite value to the
 last `S2` background-primitive node on the second outer iterate: `sigma` and
 `Phi` are huge but finite before `exp(Psi)` loses representability. A local
 H2-log prototype avoids that NaN but then returns `max_iter`; neither a real
 self-consistent root nor a larger reliable region has been established.
+
+### Same-background res4 result
+
+The mode decomposition was rerun at the exact Fast candidate background
+`DN_eff=0.1337445240188877` and on the same 260 frequency nodes. The uniform
+`h=0.005` Fast path differs from the `z_tail=9` Reference by median/P95/max
+`2.897e-4 / 2.231e-3 / 2.366e-3 dex`; 66 modes exceed `1e-3 dex`. The
+transition-refined path with `radius=0.005` differs by
+`3.969e-5 / 3.581e-4 / 4.198e-4 dex`, with no modes above `5e-4 dex`.
+All 66 uniform-path outliers have `zmax<8` and no WKB handoff, isolating the
+tested error from the analytic tail. At this candidate background the
+Reference `z_tail=9` map is `0.133735610403`, `-6.665e-5` relative to the Fast
+fixed point. A full `z_tail=10` map and another parameter counterexample are
+still under verification; this single point does not certify the global Fast
+domain.
