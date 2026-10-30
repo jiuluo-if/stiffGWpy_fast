@@ -31,6 +31,35 @@ def test_transition_refine_config_reaches_grid_builder(monkeypatch, model):
     assert calls == [(0.25, 8), (0.25, 8)]
 
 
+def test_transition_refine_and_kink_split_use_actual_nonuniform_steps(monkeypatch, model):
+    """The refined grid passes real local steps to propagation；细化网格须传递真实局部步长。"""
+    import numpy as np
+
+    captured = []
+    original = FS.solve_kernel
+
+    def capture(*args):
+        nv, h_arr = args[0], args[19]
+        captured.append((np.asarray(nv).copy(), None if h_arr is None else np.asarray(h_arr).copy()))
+        return original(*args)
+
+    monkeypatch.setattr(FS, 'solve_kernel', capture)
+    config = FS.resolve_config(
+        'fast', threads=1, h=0.02, z_tail=5.0, freq_grid='construct',
+        transition_refine_radius=0.25, transition_refine_factor=8,
+    )
+
+    assert FS.SGWB_iter_fast(
+        model, tol=1e-6, config=config, transition_refine=True, kink_split=True,
+    ) is model
+
+    assert captured
+    nv, h_arr = captured[-1]
+    assert h_arr is not None
+    np.testing.assert_allclose(h_arr, np.diff(nv), rtol=0.0, atol=1e-14)
+    assert np.unique(np.round(h_arr, 12)).size > 1
+
+
 def test_transition_refine_controls_survive_base_config_resolution():
     base = FS.resolve_config(
         'fast', transition_refine_radius=0.25, transition_refine_factor=8)
