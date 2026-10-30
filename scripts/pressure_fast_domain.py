@@ -80,12 +80,14 @@ def boundary_cases() -> list[dict]:
         else:
             values = SIGNED_VALUES
         for cr in (0.0, 1.0):
-            for index, value in enumerate(values):
+            effective_values = (BASE["n_t"],) if key == "n_t" and cr > 0.0 else values
+            for index, value in enumerate(effective_values):
                 update = {key: float(value), "cr": cr}
                 cases.append(_case(f"boundary_{key}_cr{int(cr)}_{index}", **update))
 
     for cr in (0.0, 1.0):
-        for nt in (-2.0, 0.0, 1.0, 2.0, 5.0, 10.0):
+        nt_values = (-2.0, 0.0, 1.0, 2.0, 5.0, 10.0) if cr <= 0.0 else (BASE["n_t"],)
+        for nt in nt_values:
             for kappa in (1e-8, 1e-2, 1.0, 1e2, 1e4):
                 for tre in (1e-3, float(gp.T_max), 1e4, 1e8):
                     cases.append(_case(
@@ -119,6 +121,10 @@ def qmc_cases(points: np.ndarray, prefix: str) -> list[dict]:
             "DN_eff": -1e6 + 2e6 * u[9],
             "cr": float(index % 2),
         })
+        if params["cr"] > 0.0:
+            # The consistency relation derives n_t from r; keep the unused input canonical.
+            # 一致性关系会由 r 推导 n_t；对该分支将不生效的输入规范化为基准值。
+            params["n_t"] = BASE["n_t"]
         rows.append({"label": f"{prefix}_{index:04d}", "params": params})
     return rows
 
@@ -280,7 +286,7 @@ def minimize_failure(item: dict, original: dict, max_n_inf: float,
     trace = []
     evaluations = 0
     for key in PARAMETERS:
-        if key == "cr" or failing[key] == passing[key]:
+        if key == "cr" or (key == "n_t" and failing["cr"] > 0.0) or failing[key] == passing[key]:
             continue
         fail_value = failing[key]
         pass_value = passing[key]

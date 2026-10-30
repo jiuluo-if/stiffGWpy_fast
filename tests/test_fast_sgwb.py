@@ -4,6 +4,7 @@ import pytest
 from numba import get_num_threads
 
 from stiffgwpy_fast import LCDM_SG
+from stiffgwpy_fast import exact_background as EB
 from stiffgwpy_fast import fast_sgwb as FS
 
 
@@ -608,6 +609,36 @@ def test_kink_split_variant_inserts_only_reheating_breakpoint():
     assert m.sigma[m.kink_split_index + 1] > 1.0
     assert m.kink_split_used is True
     assert m.transition_refine_used is False
+
+
+def test_sigma_exact_and_kink_split_select_continuous_split_primitive(monkeypatch):
+    """sigma_exact remains active with kink splitting；精确背景积分不得被转折拆分遮蔽。"""
+    calls = {'exact': 0, 'fast_split': 0}
+    exact = EB.exact_phi_s2_split
+    fast_split = EB.fast_phi_s2_split
+
+    def capture_exact(*args, **kwargs):
+        calls['exact'] += 1
+        return exact(*args, **kwargs)
+
+    def capture_fast(*args, **kwargs):
+        calls['fast_split'] += 1
+        return fast_split(*args, **kwargs)
+
+    monkeypatch.setattr(EB, 'exact_phi_s2_split', capture_exact)
+    monkeypatch.setattr(EB, 'fast_phi_s2_split', capture_fast)
+    config = FS.resolve_config(
+        'fast', threads=1, h=0.02, z_tail=5.0, freq_grid='construct',
+    )
+    model = _make_model()
+
+    assert FS.SGWB_iter_fast(
+        model, tol=1e-6, config=config, sigma_exact=True, kink_split=True,
+    ) is model
+
+    assert calls['exact'] > 0
+    assert calls['fast_split'] == 0
+    assert model.sigma_exact_used is True
 
 
 def test_phase_envelope_caps_each_split_transfer_segment():

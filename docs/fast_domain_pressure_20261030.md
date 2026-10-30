@@ -6,11 +6,16 @@ The reproducible scanner is [`scripts/pressure_fast_domain.py`](../scripts/press
 
 ## Scope and method
 
-- Boundary suite: 514 unique points covering zero/near-zero and signed/log
+- Historical boundary-suite record: 514 points covering zero/near-zero and signed/log
   sweeps over the cosmological inputs, both `cr` branches, transition-adjacent
   and coupled cases. The scanner classifies derivation, preflight, background,
   propagation, and output outcomes separately. `N_inf > 120` is recorded as a
   resource preflight skip, not as an input clamp or a solver failure.
+- The current scanner removes `n_t` as an effective dimension wherever
+  `cr>0`, since `input_nt()` derives it from `r`. The reproducible boundary
+  suite is now 402 cases and the coupled sub-suite is 140 cases; the 514/240
+  counts and results below remain historical measurements and are not
+  silently recomputed.
 - Stiff corpus replay: 20 retained cases from the 2026-10-29 random solver
   study, replayed once at `c2b1b54`.
 - Random pilots: 16-point Sobol and 16-point Latin-hypercube pilots. Their
@@ -444,3 +449,27 @@ The date-stamped per-point records and paired timing JSON used for this
 summary were local ignored research artifacts. Re-running the commands creates
 fresh records; the counts above must be interpreted with the stated source
 commits and screen definitions.
+
+## Fresh branch-priority audit (2026-10-30)
+
+At the subsequent numeric baseline `12c920e`, code inspection and red tests
+found that `transition_refine=True,kink_split=True` built a nonuniform grid,
+then selected the `kink_split` primitive branch and passed `h_arr=None` to the
+tensor kernel. The kernel therefore stepped by the uniform configured `h` on
+refined intervals. The same branch ordering made `sigma_exact=True` inactive
+whenever `kink_split=True`, while telemetry still recorded it as requested.
+The implementation now routes transition-refined grids through their local
+interval widths and uses the continuous split primitive for the combined
+`sigma_exact+kink_split` case. The historical A/B sentence above saying those
+options did not meet the accuracy gates is not valid evidence for the masked
+combination; fresh reference comparisons are required.
+
+A new res4 A/B found that the corrected transition-refined candidate's sampled
+spectrum is promising against an older fixed-background `z_tail=9` spectrum,
+but that reference was evaluated at another Fast background. Its map/root
+gate is therefore still unverified and the candidate is not promoted.
+Separately, a fresh `A_s=1e20` trace localizes the first nonfinite value to the
+last `S2` background-primitive node on the second outer iterate: `sigma` and
+`Phi` are huge but finite before `exp(Psi)` loses representability. A local
+H2-log prototype avoids that NaN but then returns `max_iter`; neither a real
+self-consistent root nor a larger reliable region has been established.

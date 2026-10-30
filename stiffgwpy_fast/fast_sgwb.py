@@ -2246,9 +2246,21 @@ def _SGWB_iter_fast_impl(
                 W_support_last = Ws[Ns - 1].copy()
                 Ogw = Oj = Opgw = None
             first = False
-            if kink_split:
-                # exact split 路径会覆盖均匀网格 primitive，因此这里只准备
-                # 频率起点和尾部匹配所需的因子。
+            if transition_refine:
+                # The refined grid is nonuniform and already contains N_re as
+                # an exact node; its interval widths must reach solve_kernel.
+                # 细化网格为非均匀网格且已精确包含 N_re；实际区间步长必须传入传播核。
+                Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
+                    m, Nv, freqs, h, variable_grid=True
+                )
+                from .exact_background import exact_phi_s2_grid
+
+                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(m, Nv, m.cosmo_param["DN_eff"])
+            elif kink_split:
+                # Kink splitting overrides only the uniform-grid primitive.
+                # With sigma_exact, retain continuous-background samples on
+                # both sides instead of silently falling back to interpolation.
+                # 转折拆分仅覆盖均匀网格原函数；sigma_exact 同时开启时仍使用连续背景的单侧采样。
                 Sv, f_hor, j0s, z0s, fp_minus = prep_frequency_only(m, Nv, freqs)
                 reuse_exact = (
                     exact_primitive is not None
@@ -2265,19 +2277,21 @@ def _SGWB_iter_fast_impl(
                 if reuse_exact:
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 else:
-                    from .exact_background import fast_phi_s2_split
+                    if sigma_exact:
+                        from .exact_background import exact_phi_s2_split
 
-                    exact_primitive = fast_phi_s2_split(m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma)
+                        exact_primitive = exact_phi_s2_split(
+                            m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
+                        )
+                    else:
+                        from .exact_background import fast_phi_s2_split
+
+                        exact_primitive = fast_phi_s2_split(
+                            m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
+                        )
                     exact_Nv, exact_sigma, exact_f_hor = _retain_outer_background_snapshot(Nv, m.sigma, m.f_hor)
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 h_arr = None
-            elif transition_refine:
-                Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                    m, Nv, freqs, h, variable_grid=True
-                )
-                from .exact_background import exact_phi_s2_grid
-
-                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(m, Nv, m.cosmo_param["DN_eff"])
             elif sigma_exact:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
                     m, Nv, freqs, h, variable_grid=False
