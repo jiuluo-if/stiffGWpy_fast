@@ -204,3 +204,43 @@ The candidate remains validation-only. Matched records are in
 [`oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/`](oracle_c_wkb_corner_20261023/transition_h00296875_r0015625_f95/)
 and raw paired timings are in
 [`benchmark_transition_frontier_ab_20261023.json`](benchmark_transition_frontier_ab_20261023.json).
+
+## 2026-10-30 kink-path terminal step correction
+
+`gen_fast` appends the exact present-day endpoint `N_inf`. When `kink_split`
+was enabled, the propagation call still received `h_arr=None`, so its scalar
+step `h` was also used for the shorter final interval. The fix passes that
+single terminal width as a scalar; general transition-refined grids continue
+to use their per-interval step array. It avoids a per-step array lookup in the
+ordinary kink path.
+
+The red regression records the actual final interval and verifies that the
+kernel receives it. A six-point, two-thread, 15-pair A/B found the scalar path
+equivalent to the general array-step path within `2.5e-14 dex` maximum spectrum
+difference and `<1e-14` relative `DN_gw` difference. Against the legacy scalar
+step path, a 101-pair replay on high-T, stiff, and low-r measured P50/P95
+changes of `-0.16%/-1.06%`, `-0.27%/+1.78%`, and `-0.98%/-0.16%`.
+
+For an independent accuracy check, the four 76-frequency Oracle C records use
+WKB-corrected `z_tail=5` values where available and deep `z_tail=10` values for
+the remaining modes. The comparison uses `log10(Ogw_today - Oj_today)`, matching
+Fast's public spectrum convention. Results are bound to Oracle source commit
+`1bf840d` and Fast commit `d3fff31`:
+
+| Point | Fast spectrum P95/max error before | After | Fast `DN_gw` relative error vs WKB after |
+|---|---:|---:|---:|
+| Default | `4.05e-4 / 5.45e-4 dex` | `2.98e-4 / 4.16e-4 dex` | `1.07e-5` |
+| Low-T | `1.03e-3 / 1.84e-3 dex` | `2.56e-4 / 3.91e-4 dex` | `6.25e-7` |
+| High-T | `4.12e-4 / 9.23e-4 dex` | `2.55e-4 / 3.87e-4 dex` | `9.88e-6` |
+| Stiff | `9.03e-4 / 2.97e-3 dex` | `2.53e-4 / 3.93e-4 dex` | `1.15e-5` |
+
+All 76 positive modes at each point are below `5e-4 dex` after the correction;
+the corresponding Oracle WKB-to-deep `DN_gw` differences are at most
+`1.25e-5`. Raw pointwise comparisons and provenance are in
+[`kink_terminal_step_fix_oracle_c_20261030.json`](kink_terminal_step_fix_oracle_c_20261030.json),
+reproduced by [`benchmark_kink_terminal_step_fix.py`](../scripts/benchmark_kink_terminal_step_fix.py).
+This is four named-point evidence, not a global parameter-space certification.
+
+The separate blue-tilt res4 `h=.02, transition_refine=True` fixed-background
+Reference map is still running; do not use this endpoint correction's Oracle C
+checks to claim that candidate's self-consistent root is verified.
