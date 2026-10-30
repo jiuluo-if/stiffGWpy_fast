@@ -596,3 +596,27 @@ blue-tilt res4 point the transition-refined candidate P50/P95 is
 explicit validation path and misses the aspirational 100 ms target. Cold JIT
 startup and thread scaling are not measured in this focused profile; paired
 profile RSS is about `234 MiB` with two-thread affinity.
+
+## 2026-10-30 terminal interval and difficult res4 update
+
+The formal `kink_split` path used an exact `N_inf` node, but passed no interval
+array to `solve_kernel`; the kernel therefore advanced the last partial
+interval with full `h`. It now uses the actual final interval width through a
+scalar, keeping the ordinary loop free of a per-step width-array lookup. A
+separate regression keeps the distinct kink and `N_inf` anchors when their
+representable separation is below the grid-node merge tolerance.
+
+On four 76-node Oracle C anchors, corrected Fast spectra are within
+`2.53e-4`–`2.98e-4 dex` P95 and `3.87e-4`–`4.16e-4 dex` maximum; the before-fix
+maximum ranged `5.45e-4`–`2.97e-3 dex`. `DN_gw` relative differences versus
+the WKB-corrected maps are `6.25e-7`–`1.15e-5`. Six named normal cases remain
+within the 5% P50/P95 timing budget in paired tests; high-T, stiff, and low-r
+received 101-pair rechecks. See `accuracy.md` and the reproducible
+[`benchmark_kink_terminal_step_fix.py`](../scripts/benchmark_kink_terminal_step_fix.py)
+with its raw [`Oracle C comparison`](kink_terminal_step_fix_oracle_c_20261030.json).
+
+The res4 blue-tilt `h=.02, radius=0` transition-refined candidate remains a
+separate optional experiment. Its same-background sampled spectrum passes the
+`5e-4 dex` screen and its fixed-resource timing is below100ms P50/P95 on eight
+threads, but its exact-DN independent Reference map is still running; the
+candidate is not certified or promoted yet.

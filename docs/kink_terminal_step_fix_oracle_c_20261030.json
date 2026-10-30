@@ -1,0 +1,166 @@
+{
+  "source_file": "F:\\codex\\stiffGWpy\\stiffgwpy_fast\\fast_sgwb.py",
+  "source_commit": "d3fff31f1902a476e76ca2109be4b50772171053",
+  "cases": {
+    "default": {
+      "oracle_source_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd",
+      "legacy_dn_gw": 0.002263647416409727,
+      "corrected_dn_gw": 0.002263647413742555,
+      "oracle_dn_wkb": 0.0022636716958505643,
+      "legacy_dn_rel": 1.0725689984847623e-05,
+      "corrected_dn_rel": 1.0726868235228927e-05,
+      "legacy_spectrum_median_p95_max_dex": [
+        9.482052078624292e-06,
+        0.0004045539843127166,
+        0.0005451993100056285
+      ],
+      "corrected_spectrum_median_p95_max_dex": [
+        9.482052078624292e-06,
+        0.00029786580677804153,
+        0.00041560726855394137
+      ],
+      "legacy_modes_over_1e3": 0,
+      "corrected_modes_over_1e3": 0,
+      "compared_positive_modes": 76,
+      "excluded_nonpositive_reference_modes": 0,
+      "legacy_worst_mode": {
+        "f": -16.881470864233894,
+        "reference_omega": 1.5772157712913917e-16,
+        "fast_log10omega": -15.802654088180834,
+        "used_reference_tail": "deep"
+      },
+      "corrected_worst_mode": {
+        "f": -13.199685777745273,
+        "reference_omega": 8.005490887703655e-17,
+        "fast_log10omega": -16.096196425210103,
+        "used_reference_tail": "wkb"
+      },
+      "legacy_runtime_s": 0.34551070001907647,
+      "corrected_runtime_s": 0.013119000010192394,
+      "reference_tail_sources": {
+        "wkb": 70,
+        "deep": 6
+      }
+    },
+    "lowT": {
+      "oracle_source_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd",
+      "legacy_dn_gw": 5.3114602833937826e-08,
+      "corrected_dn_gw": 5.3105842149665125e-08,
+      "oracle_dn_wkb": 5.310580895597224e-08,
+      "legacy_dn_rel": 0.00016559163937933293,
+      "corrected_dn_rel": 6.25048248707847e-07,
+      "legacy_spectrum_median_p95_max_dex": [
+        7.313685486565191e-06,
+        0.0010255438940345307,
+        0.001844166437589223
+      ],
+      "corrected_spectrum_median_p95_max_dex": [
+        6.118824070533435e-06,
+        0.0002557471433171088,
+        0.00039132131735186704
+      ],
+      "legacy_modes_over_1e3": 5,
+      "corrected_modes_over_1e3": 0,
+      "compared_positive_modes": 76,
+      "excluded_nonpositive_reference_modes": 0,
+      "legacy_worst_mode": {
+        "f": -16.656404827948514,
+        "reference_omega": 1.204028642117876e-16,
+        "fast_log10omega": -15.92120734814885,
+        "used_reference_tail": "deep"
+      },
+      "corrected_worst_mode": {
+        "f": -12.94439967692983,
+        "reference_omega": 7.994829498476481e-17,
+        "fast_log10omega": -16.096799472471616,
+        "used_reference_tail": "wkb"
+      },
+      "legacy_runtime_s": 0.006694099982269108,
+      "corrected_runtime_s": 0.0060746000381186604,
+      "reference_tail_sources": {
+        "wkb": 70,
+        "deep": 6
+      }
+    },
+    "highT": {
+      "oracle_source_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd",
+      "legacy_dn_gw": 0.0564330842714595,
+      "corrected_dn_gw": 0.056433084268923024,
+      "oracle_dn_wkb": 0.05643364188828657,
+      "legacy_dn_rel": 9.880929325289247e-06,
+      "corrected_dn_rel": 9.880974271493094e-06,
+      "legacy_spectrum_median_p95_max_dex": [
+        7.158542523644229e-06,
+        0.0004124508657068482,
+        0.0009233722104085018
+      ],
+      "corrected_spectrum_median_p95_max_dex": [
+        6.00994577792946e-06,
+        0.0002545554687571894,
+        0.00038739312368463175
+      ],
+      "legacy_modes_over_1e3": 0,
+      "corrected_modes_over_1e3": 0,
+      "compared_positive_modes": 76,
+      "excluded_nonpositive_reference_modes": 0,
+      "legacy_worst_mode": {
+        "f": -16.358499333428902,
+        "reference_omega": 9.998300930572553e-17,
+        "fast_log10omega": -15.99915042370666,
+        "used_reference_tail": "deep"
+      },
+      "corrected_worst_mode": {
+        "f": -13.10213622465658,
+        "reference_omega": 8.060781464174229e-17,
+        "fast_log10omega": -16.09323545972048,
+        "used_reference_tail": "wkb"
+      },
+      "legacy_runtime_s": 0.013198099914006889,
+      "corrected_runtime_s": 0.017430000007152557,
+      "reference_tail_sources": {
+        "wkb": 70,
+        "deep": 6
+      }
+    },
+    "stiff": {
+      "oracle_source_commit": "1bf840d489d907c5156c87ea556da9b22b2df8cd",
+      "legacy_dn_gw": 0.014984335009515634,
+      "corrected_dn_gw": 0.014984334917157427,
+      "oracle_dn_wkb": 0.014984507081582266,
+      "legacy_dn_rel": 1.148333179696949e-05,
+      "corrected_dn_rel": 1.148949537695142e-05,
+      "legacy_spectrum_median_p95_max_dex": [
+        6.322610045295107e-06,
+        0.0009027734623066053,
+        0.002967228160800417
+      ],
+      "corrected_spectrum_median_p95_max_dex": [
+        4.7323159391154945e-06,
+        0.00025261114726093936,
+        0.0003928603907699113
+      ],
+      "legacy_modes_over_1e3": 3,
+      "corrected_modes_over_1e3": 0,
+      "compared_positive_modes": 76,
+      "excluded_nonpositive_reference_modes": 0,
+      "legacy_worst_mode": {
+        "f": -16.87766056627603,
+        "reference_omega": 1.6039514919263138e-15,
+        "fast_log10omega": -14.791841541997842,
+        "used_reference_tail": "deep"
+      },
+      "corrected_worst_mode": {
+        "f": -12.765193266641113,
+        "reference_omega": 7.338879135666597e-16,
+        "fast_log10omega": -15.13397740426623,
+        "used_reference_tail": "wkb"
+      },
+      "legacy_runtime_s": 0.01576750003732741,
+      "corrected_runtime_s": 0.013449399964883924,
+      "reference_tail_sources": {
+        "wkb": 70,
+        "deep": 6
+      }
+    }
+  }
+}
