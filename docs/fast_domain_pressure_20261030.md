@@ -629,3 +629,41 @@ Reference root `4.85747263`) and spectrum median/P95/max
 `6.33e-4 dex` and seven bins over `5e-4`; the corrected path has none. At
 `z_tail=5`, the maximum remains `1.70e-3 dex`, attributable to the shallow
 frozen-tail convention rather than the terminal step.
+
+## Historical stiff nonfinite source: goal-grid cutoff
+
+The old stiff-corpus replay used Fast source `9f1a70a` and failed at samples
+2, 5, 11, and 18. A controlled replay patches only the old unconditional
+goal-feature reserve into the current solver and reproduces all four failures;
+the current cutoff-guarded builder returns finite outputs. The old grid had 80
+frequencies, with 16 nodes beyond the blue-tilt amplitude cutoff:
+
+| Sample | Old grid max log10(f) | Amplitude cutoff | Initial overshoot | First nonfinite stage (`DN_eff` entering map) | Current finite `DN_gw` |
+|---|---:|---:|---:|---|---:|
+| 2 | `-6.001` | `-7.683` | `1.683 dex` | background `S2` (`1.157e11`) | `94.10` |
+| 5 | `-5.149` | `-8.187` | `3.038 dex` | background `S2` (`1.303e15`) | `0.9235` |
+| 11 | `-5.515` | `-7.869` | `2.354 dex` | background `S2` (`9.372e12`) | `4.9048` |
+| 18 | `-3.463` | `-7.940` | `4.476 dex` | background `S2` (`3.004e12`) | `53.83` |
+
+The incorrect high-frequency reserve increases as `f_re` moves during the
+runaway outer map; some later legacy grids reached `max(log10(f)) > 120`. The
+first nonfinite array is `S2=exp(3F-4N)` in background primitive construction;
+the subsequent `DN_gw_new` failure occurs after the map has already grown by
+many orders of magnitude. The clipped current grid uses 64 nodes, never
+exceeds the amplitude cutoff, and makes all four replays finite. Finite output
+is not an accuracy pass: sample11's formal `z_tail=5` spectrum remains
+tail-sensitive, and the other three values still need independent precision
+checks. This is an invalid frequency-support/grid failure, not evidence of a
+mathematical no-solution.
+
+This cutoff guard was introduced in `d363f9b`. The four-case current/legacy
+grid A/B and per-iteration failure-stage trace can be replayed with
+[`benchmark_goal_grid_cutoff_failures.py`](../scripts/benchmark_goal_grid_cutoff_failures.py);
+raw records are in
+[`stiff_goal_grid_cutoff_replay_20261030.json`](stiff_goal_grid_cutoff_replay_20261030.json).
+
+The regression was fixed by `d363f9b`, which leaves the feature reserve empty
+when it does not overlap the valid band. The replay is reproducible with
+[`benchmark_goal_grid_cutoff_failures.py`](../scripts/benchmark_goal_grid_cutoff_failures.py);
+per-outer-iteration grids and first-nonfinite telemetry are in
+[`stiff_goal_grid_cutoff_replay_20261030.json`](stiff_goal_grid_cutoff_replay_20261030.json).

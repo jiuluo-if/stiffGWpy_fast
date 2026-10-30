@@ -1,0 +1,1136 @@
+{
+  "legacy_grid_commit": "9f1a70a9885fea8f03db9e43d948a2a7daed5f19",
+  "cutoff_fix_commit": "d363f9b2a497d15628f947234ec6fe7790c4c710",
+  "current_code_commit": "af080cf9a726d61d61334e7de7da5c9ea4c3956c",
+  "source_file": "F:\\codex\\stiffGWpy\\stiffgwpy_fast\\fast_sgwb.py",
+  "resources": {
+    "threads": 2,
+    "cpu_affinity": [
+      4,
+      5
+    ]
+  },
+  "records": [
+    {
+      "sample_id": 2,
+      "legacy": {
+        "sample_id": 2,
+        "grid_path": "legacy_unconditional_reserve",
+        "status": "failure",
+        "failure_reason": "nonfinite",
+        "first_nonfinite_layer": "background_S2",
+        "first_nonfinite_dn_eff": 115729184164.56839,
+        "dn_gw": null,
+        "frequency_grid_builds": [
+          {
+            "count": 80,
+            "max_log10f": -6.000540905906538,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 1.6826686825853319
+          },
+          {
+            "count": 80,
+            "max_log10f": -5.968891370587199,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 1.7143182179046708
+          },
+          {
+            "count": 80,
+            "max_log10f": -5.911622250714868,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 1.7715873377770022
+          },
+          {
+            "count": 80,
+            "max_log10f": -5.794099373555022,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 1.8891102149368484
+          },
+          {
+            "count": 80,
+            "max_log10f": -5.566264646392732,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 2.1169449420991384
+          },
+          {
+            "count": 80,
+            "max_log10f": -5.17173317529074,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 2.5114764132011302
+          },
+          {
+            "count": 80,
+            "max_log10f": -4.545900051540741,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 3.137309536951129
+          },
+          {
+            "count": 80,
+            "max_log10f": -3.5833335867462166,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 4.0998760017456535
+          },
+          {
+            "count": 80,
+            "max_log10f": -2.108945641813061,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 5.574263946678808
+          },
+          {
+            "count": 80,
+            "max_log10f": 0.14953309850421181,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 7.832742686996082
+          },
+          {
+            "count": 80,
+            "max_log10f": 3.61073697241504,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 11.29394656090691
+          },
+          {
+            "count": 80,
+            "max_log10f": 8.919898491196205,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 16.603108079688077
+          },
+          {
+            "count": 80,
+            "max_log10f": 17.073981970389926,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 24.757191558881797
+          },
+          {
+            "count": 80,
+            "max_log10f": 29.60984288526807,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 37.29305247375994
+          },
+          {
+            "count": 80,
+            "max_log10f": 48.879853065119285,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 56.563062653611155
+          },
+          {
+            "count": 80,
+            "max_log10f": 78.47295490721386,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 86.15616449570572
+          },
+          {
+            "count": 80,
+            "max_log10f": 123.87495435232462,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 131.55816394081648
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 265877.4566099073,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 857475.7579346847,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 2690002.954014055,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 10825031.384679051,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 75333784.60580958,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 1373348657.655247,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 115729184164.56839,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 102854934757899.0,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 3.3820702236405253e+18,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.8287226547097156e+25,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.1746633159914299e+36,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.3882531795326323e+52,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.817099550694192e+77,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 9.768380186604302e+115,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.4997754429090222e+175,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 9.550478439184631e+265,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 11,
+              "Oj": 0,
+              "Opgw": 11
+            },
+            "first_nonfinite_layer": "background_S2"
+          }
+        ],
+        "runtime_s": 0.3037579000229016
+      },
+      "current": {
+        "sample_id": 2,
+        "grid_path": "current_cutoff_guard",
+        "status": "finite",
+        "failure_reason": null,
+        "first_nonfinite_layer": null,
+        "first_nonfinite_dn_eff": null,
+        "dn_gw": 94.1025800336571,
+        "frequency_grid_builds": [
+          {
+            "count": 64,
+            "max_log10f": -7.68320958849187,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.68320958849187,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.68320958849187,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.68320958849187,
+            "amplitude_fmax": -7.68320958849187,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 92.15961148912635,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 94.06200350678864,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          }
+        ],
+        "runtime_s": 0.029382699984125793
+      }
+    },
+    {
+      "sample_id": 5,
+      "legacy": {
+        "sample_id": 5,
+        "grid_path": "legacy_unconditional_reserve",
+        "status": "failure",
+        "failure_reason": "nonfinite",
+        "first_nonfinite_layer": "background_S2",
+        "first_nonfinite_dn_eff": 1303358452935235.8,
+        "dn_gw": null,
+        "frequency_grid_builds": [
+          {
+            "count": 80,
+            "max_log10f": -5.148907645474471,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 3.038169637672225
+          },
+          {
+            "count": 80,
+            "max_log10f": -4.523720487586343,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 3.663356795560353
+          },
+          {
+            "count": 80,
+            "max_log10f": -2.954193999745023,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 5.232883283401673
+          },
+          {
+            "count": 80,
+            "max_log10f": -0.37530091227145335,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 7.811776370875243
+          },
+          {
+            "count": 80,
+            "max_log10f": 3.845149939841434,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 12.03222722298813
+          },
+          {
+            "count": 80,
+            "max_log10f": 10.761831568258456,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 18.94890885140515
+          },
+          {
+            "count": 80,
+            "max_log10f": 22.11431781015386,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 30.301395093300556
+          },
+          {
+            "count": 80,
+            "max_log10f": 40.75070094424275,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 48.937778227389444
+          },
+          {
+            "count": 80,
+            "max_log10f": 71.308494335224,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 79.49557161837069
+          },
+          {
+            "count": 80,
+            "max_log10f": 121.35247963950415,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 129.53955692265086
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 6210281.441085741,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 9062749626.93251,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 1303358452935235.8,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 3.597208220858344e+23,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.450918297521613e+37,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.2425140773697767e+60,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.3284535895852815e+97,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 3.038465909065976e+158,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 3.720702761274048e+258,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 11,
+              "Oj": 0,
+              "Opgw": 11
+            },
+            "first_nonfinite_layer": "background_S2"
+          }
+        ],
+        "runtime_s": 0.026353899971581995
+      },
+      "current": {
+        "sample_id": 5,
+        "grid_path": "current_cutoff_guard",
+        "status": "finite",
+        "failure_reason": null,
+        "first_nonfinite_layer": null,
+        "first_nonfinite_dn_eff": null,
+        "dn_gw": 0.9235161813175283,
+        "frequency_grid_builds": [
+          {
+            "count": 64,
+            "max_log10f": -8.187077283146696,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -8.187077283146696,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -8.187077283146696,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -8.187077283146696,
+            "amplitude_fmax": -8.187077283146696,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 0.9037730335449503,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 0.9230983181801904,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          }
+        ],
+        "runtime_s": 0.011251999996602535
+      }
+    },
+    {
+      "sample_id": 11,
+      "legacy": {
+        "sample_id": 11,
+        "grid_path": "legacy_unconditional_reserve",
+        "status": "failure",
+        "failure_reason": "nonfinite",
+        "first_nonfinite_layer": "background_S2",
+        "first_nonfinite_dn_eff": 9372043330002.67,
+        "dn_gw": null,
+        "frequency_grid_builds": [
+          {
+            "count": 80,
+            "max_log10f": -5.514950531635315,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 2.354045844435775
+          },
+          {
+            "count": 80,
+            "max_log10f": -5.113999324811294,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 2.754997051259796
+          },
+          {
+            "count": 80,
+            "max_log10f": -3.936098323723253,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 3.932898052347837
+          },
+          {
+            "count": 80,
+            "max_log10f": -1.8729178246636966,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 5.996078551407393
+          },
+          {
+            "count": 80,
+            "max_log10f": 1.680010421467573,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 9.549006797538663
+          },
+          {
+            "count": 80,
+            "max_log10f": 7.806880033115997,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 15.675876409187087
+          },
+          {
+            "count": 80,
+            "max_log10f": 18.392113062460464,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 26.261109438531555
+          },
+          {
+            "count": 80,
+            "max_log10f": 36.68844658403047,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 44.55744296010156
+          },
+          {
+            "count": 80,
+            "max_log10f": 68.27083808445035,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 76.13983446052144
+          },
+          {
+            "count": 80,
+            "max_log10f": 122.71014375979317,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 130.57914013586426
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 2600688.3412181293,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 700117859.6982574,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 9372043330002.67,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.195888811291757e+20,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.1450134808323993e+32,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 3.1761140183640093e+53,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.243263339852516e+90,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.816963188455429e+153,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.3739074525662193e+262,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 12,
+              "Oj": 0,
+              "Opgw": 12
+            },
+            "first_nonfinite_layer": "background_S2"
+          }
+        ],
+        "runtime_s": 0.029858099995180964
+      },
+      "current": {
+        "sample_id": 11,
+        "grid_path": "current_cutoff_guard",
+        "status": "finite",
+        "failure_reason": null,
+        "first_nonfinite_layer": null,
+        "first_nonfinite_dn_eff": null,
+        "dn_gw": 4.904819283885337,
+        "frequency_grid_builds": [
+          {
+            "count": 64,
+            "max_log10f": -7.86899637607109,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.86899637607109,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.86899637607109,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.86899637607109,
+            "amplitude_fmax": -7.86899637607109,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 4.828156264844249,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 4.903616399926059,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          }
+        ],
+        "runtime_s": 0.011207800009287894
+      }
+    },
+    {
+      "sample_id": 18,
+      "legacy": {
+        "sample_id": 18,
+        "grid_path": "legacy_unconditional_reserve",
+        "status": "failure",
+        "failure_reason": "nonfinite",
+        "first_nonfinite_layer": "background_S2",
+        "first_nonfinite_dn_eff": 3004332772032.3247,
+        "dn_gw": null,
+        "frequency_grid_builds": [
+          {
+            "count": 80,
+            "max_log10f": -3.463440254953913,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 4.476257606273437
+          },
+          {
+            "count": 80,
+            "max_log10f": -1.6495242149512253,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 6.290173646276124
+          },
+          {
+            "count": 80,
+            "max_log10f": 1.9944383883528856,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 9.934136249580234
+          },
+          {
+            "count": 80,
+            "max_log10f": 8.20454396271864,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 16.14424182394599
+          },
+          {
+            "count": 80,
+            "max_log10f": 18.806855117102902,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 26.74655297833025
+          },
+          {
+            "count": 80,
+            "max_log10f": 36.91598356661185,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 44.8556814278392
+          },
+          {
+            "count": 80,
+            "max_log10f": 67.80747949845163,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 75.74717735967897
+          },
+          {
+            "count": 80,
+            "max_log10f": 120.43112078992027,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 16,
+            "max_overshoot_dex": 128.37081865114763
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 3004332772032.3247,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 5.831436782852989e+19,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 1.534570059776004e+32,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.458153672021437e+53,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 4.063178749261009e+89,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 2.4652319752946548e+151,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": "background_S2"
+          },
+          {
+            "dn_eff_input": 4.356526649797082e+256,
+            "background_s2_nonfinite": 1,
+            "output_nonfinite": {
+              "Ogw": 11,
+              "Oj": 0,
+              "Opgw": 11
+            },
+            "first_nonfinite_layer": "background_S2"
+          }
+        ],
+        "runtime_s": 0.02132159995380789
+      },
+      "current": {
+        "sample_id": 18,
+        "grid_path": "current_cutoff_guard",
+        "status": "finite",
+        "failure_reason": null,
+        "first_nonfinite_layer": null,
+        "first_nonfinite_dn_eff": null,
+        "dn_gw": 53.83473676943346,
+        "frequency_grid_builds": [
+          {
+            "count": 64,
+            "max_log10f": -7.93969786122735,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.93969786122735,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.93969786122735,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          },
+          {
+            "count": 64,
+            "max_log10f": -7.93969786122735,
+            "amplitude_fmax": -7.93969786122735,
+            "nodes_above_cutoff": 0,
+            "max_overshoot_dex": 0.0
+          }
+        ],
+        "kernel_calls": [
+          {
+            "dn_eff_input": 0.0,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 53.00590761663499,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          },
+          {
+            "dn_eff_input": 53.82185414054607,
+            "background_s2_nonfinite": 0,
+            "output_nonfinite": {
+              "Ogw": 0,
+              "Oj": 0,
+              "Opgw": 0
+            },
+            "first_nonfinite_layer": null
+          }
+        ],
+        "runtime_s": 0.011207400006242096
+      }
+    }
+  ]
+}
