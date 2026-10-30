@@ -1381,6 +1381,7 @@ def solve_kernel(
     kink_index=-1,
     kink_fraction=0.0,
     phi_re=0.0,
+    h_final=0.0,
 ):
     """Integrate independent modes and write their coarse output rows.
 
@@ -1419,7 +1420,12 @@ def solve_kernel(
             assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
         if zz < z_tail:
             while k < nv - 1 and zz < z_tail:
-                h_step = h_arr[k] if h_arr is not None else h
+                if h_arr is not None:
+                    h_step = h_arr[k]
+                elif k == nv - 2 and h_final > 0.0:
+                    h_step = h_final
+                else:
+                    h_step = h
                 z_node = zz
                 z_mid_step = z0 + Phi_mid[k] - Phi0
                 if k == kink_index and 0.0 < kink_fraction < 1.0:
@@ -2267,10 +2273,12 @@ def _SGWB_iter_fast_impl(
                     )
                     h_arr = np.diff(Nv)
             elif kink_split:
-                # Kink splitting overrides only the uniform-grid primitive.
-                # With sigma_exact, retain continuous-background samples on
-                # both sides instead of silently falling back to interpolation.
-                # 转折拆分仅覆盖均匀网格原函数；sigma_exact 同时开启时仍使用连续背景的单侧采样。
+                # The interior kink stays in one fractional interval and the
+                # final N_inf anchor creates at most one short terminal step.
+                # Pass that width as a scalar so the uniform hot loop avoids a
+                # per-step array lookup. ``sigma_exact`` still selects the
+                # continuous-background primitive above.
+                # 内部 kink 由区间比例拆分；精确 N_inf 端点最多产生一个短尾步长，单独传标量以避免热循环数组读取。
                 Sv, f_hor, j0s, z0s, fp_minus = prep_frequency_only(m, Nv, freqs)
                 reuse_exact = (
                     exact_primitive is not None
@@ -2373,7 +2381,8 @@ def _SGWB_iter_fast_impl(
                 handoff_eps,
             )
             if kink_split:
-                solve_args += (kink_index, kink_fraction, phi_re)
+                h_final = float(Nv[-1] - Nv[-2]) if h_arr is None else 0.0
+                solve_args += (kink_index, kink_fraction, phi_re, h_final)
             # 只有背景与频率/时间网格都稳定时才可复用传播缓冲；网格变化会清空缓冲。
             # Recompute propagation when grid-dependent buffers were rebuilt.
             if not (outer_background_stable and grid_same and _iter > 0):

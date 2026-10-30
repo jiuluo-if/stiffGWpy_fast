@@ -60,6 +60,34 @@ def test_transition_refine_and_kink_split_use_actual_nonuniform_steps(monkeypatc
     assert np.unique(np.round(h_arr, 12)).size > 1
 
 
+def test_kink_split_passes_actual_terminal_step_without_grid_array(monkeypatch, model):
+    """The exact terminal node uses its actual short step without array loads."""
+    import numpy as np
+
+    captured = []
+    original = FS.solve_kernel
+
+    def capture(*args):
+        captured.append((np.asarray(args[0]).copy(), args[19],
+                         args[26] if len(args) > 26 else None))
+        return original(*args)
+
+    monkeypatch.setattr(FS, 'solve_kernel', capture)
+    config = FS.resolve_config(
+        'fast', threads=1, h=0.02, z_tail=5.0, freq_grid='construct',
+        kink_split=True,
+    )
+
+    assert FS.SGWB_iter_fast(
+        model, tol=1e-6, config=config, kink_split=True,
+    ) is model
+
+    assert captured
+    nv, h_arr, h_final = captured[-1]
+    assert h_arr is None
+    assert h_final == pytest.approx(float(nv[-1] - nv[-2]), rel=0.0, abs=1e-14)
+
+
 def test_transition_refined_grid_merges_roundoff_close_kink_nodes():
     """Refinement-grid construction keeps one exact kink node without tiny gaps."""
     import numpy as np
