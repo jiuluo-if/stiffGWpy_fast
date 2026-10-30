@@ -54,6 +54,11 @@ def no_copy_primitive(m, Nv, DN_eff, sigma_nodes=None):
         nodes_left[at_re] = 1.0
         nodes_right[at_re] = EB.sigma_vec(
             np.array([n_re]), m, DN_eff)[0]
+        kink_nodes = np.flatnonzero(at_re)
+        sigma_pre = nodes_left[kink_nodes[0]]
+        sigma_post = nodes_right[kink_nodes[-1]]
+        nodes_right[at_re] = sigma_pre
+        nodes_left[at_re] = sigma_post
     else:
         nodes_left = nodes
         nodes_right = nodes
