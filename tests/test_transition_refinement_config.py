@@ -60,6 +60,49 @@ def test_transition_refine_and_kink_split_use_actual_nonuniform_steps(monkeypatc
     assert np.unique(np.round(h_arr, 12)).size > 1
 
 
+def test_transition_refined_grid_merges_roundoff_close_kink_nodes():
+    """Refinement-grid construction keeps one exact kink node without tiny gaps."""
+    import numpy as np
+
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+
+    model = LCDM_SG(
+        r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01,
+        DN_re=10.0, DN_eff=0.0,
+    )
+    nv, _, _, _ = EB.build_kink_refined_grid(
+        model, 0.02, refine_radius=0.005, refine_factor=32,
+    )
+    n_re = float(model.derived_param['N_inf'] - model.derived_param['N_re'])
+
+    assert np.min(np.diff(nv)) > 1e-12
+    assert np.count_nonzero(np.isclose(nv, n_re, rtol=0.0, atol=1e-12)) == 1
+    assert np.any(nv == n_re)
+
+
+def test_transition_refined_grid_preserves_distinct_nearby_physical_anchors():
+    """A tiny but representable reheating interval retains both exact endpoints."""
+    import numpy as np
+
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+
+    model = LCDM_SG(
+        r=0.01, cr=0.0, n_t=2.0, T_re=2.2891117685881964e-13,
+        DN_re=5e-13, DN_eff=0.0,
+    )
+    n_re = float(model.derived_param['N_inf'] - model.derived_param['N_re'])
+    n_inf = float(model.derived_param['N_inf'])
+    assert n_re < n_inf
+    assert n_inf - n_re < 1e-12
+
+    nv, _, _, _ = EB.build_kink_refined_grid(
+        model, 0.02, refine_radius=0.005, refine_factor=32,
+    )
+
+    assert np.any(nv == n_re)
+    assert np.any(nv == n_inf)
+
+
 def test_transition_refine_controls_survive_base_config_resolution():
     base = FS.resolve_config(
         'fast', transition_refine_radius=0.25, transition_refine_factor=8)
