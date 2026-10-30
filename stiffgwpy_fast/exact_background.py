@@ -317,7 +317,22 @@ def build_kink_refined_grid(m, h, refine_radius=2.0, refine_factor=8):
     if hi > present:
         hi = present
     refined = np.arange(lo, hi + 1e-12, h / refine_factor)
-    Nv = np.unique(np.sort(np.concatenate((Nv, refined, [N_re_abs, present]))))
+    # ``arange`` can land a few ulps from an explicit boundary or from a node
+    # on the other grid.  Retaining both creates near-zero intervals in the
+    # variable-step propagation kernel and ambiguous one-sided kink samples.
+    # Drop generated copies around the exact physical anchors, merge remaining
+    # generated nodes, then restore both anchors even if they are close to each
+    # other; a tiny but representable reheating interval must remain explicit.
+    node_tol = 1e-12
+    nodes = np.concatenate((Nv, refined))
+    near_anchor = ((np.abs(nodes - N_re_abs) <= node_tol)
+                   | (np.abs(nodes - present) <= node_tol))
+    nodes = np.sort(nodes[~near_anchor])
+    if nodes.size:
+        keep = np.concatenate(([True], np.diff(nodes) > node_tol))
+        nodes = nodes[keep]
+    anchors = np.unique(np.array([N_re_abs, present], dtype=float))
+    Nv = np.sort(np.concatenate((nodes, anchors)))
     dn = m.cosmo_param['DN_eff']
     sigma = sigma_vec(Nv, m, dn)
     H2 = H2_vec(Nv, m, dn)
