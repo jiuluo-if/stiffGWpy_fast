@@ -486,5 +486,20 @@ All 66 uniform-path outliers have `zmax<8` and no WKB handoff, isolating the
 tested error from the analytic tail. At this candidate background the
 Reference `z_tail=9` map is `0.133735610403`, `-6.665e-5` relative to the Fast
 fixed point. A full `z_tail=10` map and another parameter counterexample are
-still under verification; this single point does not certify the global Fast
-domain.
+still under verification at this stage; the sample-11 check below closes the
+second-counterexample gate, while tail convergence for this res4 point and the
+global Fast domain remain open.
+
+The second retained stiff failure, random-corpus sample 11 (`r=6.41847e-4`,
+`n_t=1.44008`, `kappa10=1.1694`, `T_re=3.10117 GeV`, `cr=0`), was also
+replayed with the radius-`0.005` transition-refined path on its 94 native
+grid-independent frequencies. At the Fast root `DN_eff=4.857617627`, the
+Reference `z_tail=10` map is `4.857475102` (`-2.934e-5` relative). The
+sampled spectrum error median/P95/max is
+`1.308e-5 / 4.507e-5 / 7.908e-5 dex`; Reference quadrature and interpolation
+estimates are `6.68e-19` and `4.42e-7` in `DN_gw`, and no frequency exceeds
+`5e-4 dex`. At the same background and frequencies, uniform Fast has max error
+`7.134e-4 dex`, P95 `6.249e-4 dex`, and 13 frequencies above `5e-4 dex`. This
+recovers a second previously nonfinite/out-of-tolerance counterexample through
+an independent fixed-background map; the full self-consistent Reference root
+and other parameter directions remain open.
