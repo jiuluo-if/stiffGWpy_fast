@@ -206,3 +206,38 @@ def test_fast_split_uses_node_background_without_losing_kink_accuracy():
     assert np.max(s2_rel) < 3e-3
     assert np.max(s2inv_rel) < 3e-3
     assert fast[4:] == pytest.approx(exact[4:], rel=1e-12, abs=1e-12)
+
+
+def test_fast_split_uses_one_sided_sigma_when_kink_is_a_grid_node():
+    """An exact reheating node keeps the pre-kink sigma=1 limit；kink节点前用单侧极限。"""
+    model = LCDM_SG(
+        r=1e-2, cr=0.0, n_t=2.0, T_re=1e4, kappa10=1e-2,
+        DN_re=10.0, DN_eff=0.1337445240188877,
+    )
+    nv, _, _, _ = EB.build_kink_refined_grid(
+        model, 0.005, refine_radius=0.005, refine_factor=8,
+    )
+    n_re = float(model.derived_param['N_inf'] - model.derived_param['N_re'])
+    kink_nodes = np.flatnonzero(np.isclose(nv, n_re, rtol=0.0, atol=1e-12))
+    first_kink = int(kink_nodes[0])
+    last_kink = int(kink_nodes[-1])
+    primitive = EB.fast_phi_s2_split(
+        model, nv, model.cosmo_param['DN_eff'], sigma_nodes=model.sigma,
+    )
+    f_nodes = (primitive[0] + nv - nv[0]) / 1.5
+
+    assert primitive[4] == -1
+    h_pre = float(nv[first_kink] - nv[first_kink - 1])
+    assert f_nodes[first_kink] - f_nodes[first_kink - 1] == pytest.approx(
+        h_pre, rel=1e-12, abs=1e-14,
+    )
+    h_post = float(nv[last_kink + 1] - nv[last_kink])
+    sigma_mid = float(EB.sigma_vec(
+        np.array([0.5 * (nv[last_kink] + nv[last_kink + 1])]),
+        model, model.cosmo_param['DN_eff'],
+    )[0])
+    sigma_end = float(model.sigma[last_kink + 1])
+    expected_post_integral = h_post * (2.0 + 4.0 * sigma_mid + sigma_end) / 6.0
+    assert f_nodes[last_kink + 1] - f_nodes[last_kink] == pytest.approx(
+        expected_post_integral, rel=1e-12, abs=1e-14,
+    )

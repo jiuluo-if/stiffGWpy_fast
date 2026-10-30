@@ -2253,9 +2253,19 @@ def _SGWB_iter_fast_impl(
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
                     m, Nv, freqs, h, variable_grid=True
                 )
-                from .exact_background import exact_phi_s2_grid
+                if sigma_exact:
+                    from .exact_background import exact_phi_s2_grid
 
-                Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(m, Nv, m.cosmo_param["DN_eff"])
+                    Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
+                        m, Nv, m.cosmo_param["DN_eff"]
+                    )
+                else:
+                    from .exact_background import fast_phi_s2_split
+
+                    Phi_grid, Phi_mid, S2, S2inv, _, _, _ = fast_phi_s2_split(
+                        m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
+                    )
+                    h_arr = np.diff(Nv)
             elif kink_split:
                 # Kink splitting overrides only the uniform-grid primitive.
                 # With sigma_exact, retain continuous-background samples on
