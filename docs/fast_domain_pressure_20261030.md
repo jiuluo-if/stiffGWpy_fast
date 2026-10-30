@@ -480,6 +480,10 @@ The mode decomposition was rerun at the exact Fast candidate background
 `DN_eff=0.1337445240188877` and on the same 260 frequency nodes. The uniform
 `h=0.005` Fast path differs from the `z_tail=9` Reference by median/P95/max
 `2.897e-4 / 2.231e-3 / 2.366e-3 dex`; 66 modes exceed `1e-3 dex`. The
+uniform-grid `sigma_exact+kink_split` path differs by
+`2.897e-4 / 2.232e-3 / 2.367e-3 dex` and still has 66 modes over `1e-3`, so
+continuous-sigma primitive interpolation is not the leading source for this
+case. The
 transition-refined path with `radius=0.005` differs by
 `3.969e-5 / 3.581e-4 / 4.198e-4 dex`, with no modes above `5e-4 dex`.
 All 66 uniform-path outliers have `zmax<8` and no WKB handoff, isolating the
