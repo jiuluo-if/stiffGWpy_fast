@@ -553,6 +553,17 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
 
     d = m.derived_param
     n_re = float(d['N_inf'] - d['N_re'])
+    kink_start = int(np.searchsorted(Nv, n_re - 1.0e-12, side='left'))
+    kink_stop = int(np.searchsorted(Nv, n_re + 1.0e-12, side='right'))
+    if kink_stop > kink_start:
+        # The interval ending at N_re needs the pre-kink left limit; the
+        # interval starting there needs the post-kink right limit. Treat a
+        # roundoff-close node cluster as the same breakpoint.
+        # N_re前一段用左极限、后一段用右极限；将舍入误差内的节点簇视为同一断点。
+        sigma_pre = nodes_left[kink_start]
+        sigma_post = nodes_right[kink_stop - 1]
+        nodes_right[kink_start:kink_stop] = sigma_pre
+        nodes_left[kink_start:kink_stop] = sigma_post
     kink_index = int(np.searchsorted(Nv, n_re, side='right') - 1)
     kink_fraction = 0.0
     sig_left = sig_re = sig_right = 0.0

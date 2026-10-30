@@ -459,8 +459,9 @@ tensor kernel. The kernel therefore stepped by the uniform configured `h` on
 refined intervals. The same branch ordering made `sigma_exact=True` inactive
 whenever `kink_split=True`, while telemetry still recorded it as requested.
 The implementation now routes transition-refined grids through their local
-interval widths and uses the continuous split primitive for the combined
-`sigma_exact+kink_split` case. The historical A/B sentence above saying those
+interval widths. It uses the node-based fast primitive by default and the
+continuous primitive when `sigma_exact=True`; `kink_split` remains covered by
+the exact reheating node. The historical A/B sentence above saying those
 options did not meet the accuracy gates is not valid evidence for the masked
 combination; fresh reference comparisons are required.
 
@@ -479,10 +480,12 @@ much more as frequency density increased; sampled spectra also shifted by
 candidate was rolled back and does not establish an accurate root or a larger
 reliable region.
 
-### Same-background res4 result
+### Shared-grid res4 result
 
-The mode decomposition was rerun at the exact Fast candidate background
-`DN_eff=0.1337445240188877` and on the same 260 frequency nodes. The uniform
+The mode decomposition was rerun at the Fast node-primitive candidate
+background `DN_eff=0.13374433666555344` on 260 native frequency nodes. The
+Reference spectrum/map uses exactly this background and these frequencies.
+The uniform
 `h=0.005` Fast path differs from the `z_tail=9` Reference by median/P95/max
 `2.897e-4 / 2.231e-3 / 2.366e-3 dex`; 66 modes exceed `1e-3 dex`. The
 uniform-grid `sigma_exact+kink_split` path differs by
@@ -491,29 +494,43 @@ continuous-sigma primitive interpolation is not the leading source for this
 case. The transition-refined path with `radius=0.005` differs by
 `3.969e-5 / 3.581e-4 / 4.198e-4 dex`, with no modes above `5e-4 dex`.
 All 66 uniform-path outliers have `zmax<8` and no WKB handoff, isolating the
-tested error from the analytic tail. At this candidate background the
-Reference `z_tail=9` map is `0.133735610403`, `-6.665e-5` relative to the Fast
-fixed point. A full `z_tail=10` map at the nearby `h=0.0025` Fast root
+tested error from the analytic tail. At this exact background the Reference
+`z_tail=9` map is `0.133735606198`, `-6.528e-5` relative to the Fast
+node-primitive root. A full `z_tail=10` map at the nearby `h=0.0025` Fast root
 `0.133745206036` gives `0.133736995454` (`-6.139e-5` relative). On the same
 260 frequencies, the Reference spectrum changes from `z_tail=9` to10 by
 median/P95/max `5.69e-8 / 7.28e-5 / 2.06e-4 dex`; the radius-`0.005` h=.005
 candidate differs from that tail-10 output by max `3.888e-4 dex`, with no
 frequency above `5e-4`. The two nearby `z_tail=9` maps give local slope
-`dF/dDN_eff≈0.0211`; extrapolating that slope with the tail-10 map estimates
-a Reference root near `0.133736818`, `-5.76e-5` relative to the h=.005 Fast
-root. This local secant estimate is within the `2e-4` root gate; it is not a
-full outer Reference iteration. The global Fast domain remains open.
+`dF/dDN_eff≈0.0214`; extrapolating that slope with the tail-10 map estimates
+a Reference root near `0.133736816`, `-5.62e-5` relative to the node-primitive
+Fast root. This local secant estimate is within the `2e-4` root gate; it is not
+a full outer Reference iteration. The direct tail9 map residual and tail-depth
+check both stay inside the requested map/root tolerance. The global Fast
+domain remains open.
+
+Using the node-based fast primitive instead of the full-grid exact primitive
+on the transition-refined grid changes the blue-tilt spectrum by at most
+`3.26e-6 dex` and the root by `1.40e-6` relative. On sample11 it changes the
+spectrum by at most `3.13e-6 dex` and the root by `2.08e-7` relative. In
+25-pair warm profiles it is 1.3% faster at blue res4 P50 and 2.7% at P95; at
+sample11 it is 6.1% faster at P50 and 6.4% at P95. Both remain inside their
+same-frequency Reference gates; the Reference background differs by only
+`1.4e-6` relative.
 
 The second retained stiff failure, random-corpus sample 11 (`r=6.41847e-4`,
 `n_t=1.44008`, `kappa10=1.1694`, `T_re=3.10117 GeV`, `cr=0`), was also
 replayed with the radius-`0.005` transition-refined path on its 94 native
-grid-independent frequencies. At the Fast root `DN_eff=4.857617627`, the
-Reference `z_tail=10` map is `4.857475102` (`-2.934e-5` relative). The
+grid-independent frequencies. The node-fast Fast root is `DN_eff=4.857618635`;
+the Reference map `4.857475102` was computed `2.08e-7` relative away at the
+full-exact-primitive root `4.857617627`, giving an approximately `-2.955e-5`
+map residual at the node-fast value. The
 sampled spectrum error median/P95/max is
-`1.308e-5 / 4.507e-5 / 7.908e-5 dex`; Reference quadrature and interpolation
+`1.288e-5 / 4.513e-5 / 7.917e-5 dex`; Reference quadrature and interpolation
 estimates are `6.68e-19` and `4.42e-7` in `DN_gw`, and no frequency exceeds
-`5e-4 dex`. At the same background and frequencies, uniform Fast has max error
-`7.134e-4 dex`, P95 `6.249e-4 dex`, and 13 frequencies above `5e-4 dex`. This
+`5e-4 dex`. At that nearly identical background and frequency set, uniform
+Fast has max error `7.134e-4 dex`, P95 `6.249e-4 dex`, and 13 frequencies above
+`5e-4 dex`. This
 recovers a second previously nonfinite/out-of-tolerance counterexample. A
 second Reference map at the first map value `4.857475102` returns
 `4.857472632` (`-5.084e-7` relative), confirming the self-consistent Reference
@@ -523,11 +540,12 @@ root on these 94 native nodes. Other parameter directions remain open.
 
 Paired warm runs against numeric baseline `12c920e` cover six ordinary Fast
 cases, two warmups and 25 alternating pairs per case. Outputs are bitwise
-identical. The worst P50 ratio is `1.021` and the worst P95 ratio is `1.048`
-(the high-T P95 was separately repeated for 101 pairs and measured `0.991`);
+identical. The worst P50 ratio is `1.013` and the worst P95 ratio is `1.017`
+(the high-T P95 was separately repeated for 101 pairs and measured `0.999`);
 the normal-path change stays within the 5% budget. A same-point res4 profile
-with 25 pairs measures uniform Fast P50/P95 `238.4/241.8 ms` and the
-transition-refined candidate `272.0/275.6 ms` (about 14% slower). This misses
+with 25 pairs measures uniform Fast P50/P95 `239.1/243.2 ms` and the
+transition-refined node-fast candidate `265.7/276.4 ms` (about 11.1%/13.7% slower).
+This misses
 the aspirational 100 ms difficult-point target, so the candidate is not made
 the default. Profiles exclude cold JIT startup; thread scaling was not
 measured in this focused comparison.
@@ -570,11 +588,11 @@ signed/log pilots do not add a precision-certified region.
 
 For the branch-priority correction, 25-pair warm Fast timing across six named
 normal cases gives identical spectrum arrays. P50 ratios to numeric baseline
-are `1.002/1.015/1.010/0.983/0.984/1.021`; P95 ratios are
-`1.048/0.984/0.991/0.968/0.958/1.027`, with the high-T P95 from a separate
+are `0.996/1.013/0.982/0.999/1.001/1.007`; P95 ratios are
+`0.940/0.955/1.005/0.974/0.948/1.017`, with the high-T P95 from a separate
 101-pair replay. These stay within the 5% normal-path target. At the difficult
 blue-tilt res4 point the transition-refined candidate P50/P95 is
-`272/276 ms` versus `238/242 ms` uniform (14% slower), so it remains an
+`265.7/276.4 ms` versus `239.1/243.2 ms` uniform (11.1%/13.7% slower), so it remains an
 explicit validation path and misses the aspirational 100 ms target. Cold JIT
 startup and thread scaling are not measured in this focused profile; paired
 profile RSS is about `234 MiB` with two-thread affinity.
