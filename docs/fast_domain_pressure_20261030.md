@@ -483,16 +483,21 @@ The mode decomposition was rerun at the exact Fast candidate background
 uniform-grid `sigma_exact+kink_split` path differs by
 `2.897e-4 / 2.232e-3 / 2.367e-3 dex` and still has 66 modes over `1e-3`, so
 continuous-sigma primitive interpolation is not the leading source for this
-case. The
-transition-refined path with `radius=0.005` differs by
+case. The transition-refined path with `radius=0.005` differs by
 `3.969e-5 / 3.581e-4 / 4.198e-4 dex`, with no modes above `5e-4 dex`.
 All 66 uniform-path outliers have `zmax<8` and no WKB handoff, isolating the
 tested error from the analytic tail. At this candidate background the
 Reference `z_tail=9` map is `0.133735610403`, `-6.665e-5` relative to the Fast
-fixed point. A full `z_tail=10` map and another parameter counterexample are
-still under verification at this stage; the sample-11 check below closes the
-second-counterexample gate, while tail convergence for this res4 point and the
-global Fast domain remain open.
+fixed point. A full `z_tail=10` map at the nearby `h=0.0025` Fast root
+`0.133745206036` gives `0.133736995454` (`-6.139e-5` relative). On the same
+260 frequencies, the Reference spectrum changes from `z_tail=9` to10 by
+median/P95/max `5.69e-8 / 7.28e-5 / 2.06e-4 dex`; the radius-`0.005` h=.005
+candidate differs from that tail-10 output by max `3.888e-4 dex`, with no
+frequency above `5e-4`. The two nearby `z_tail=9` maps give local slope
+`dF/dDN_eff≈0.0211`; extrapolating that slope with the tail-10 map estimates
+a Reference root near `0.133736818`, `-5.76e-5` relative to the h=.005 Fast
+root. This local secant estimate is within the `2e-4` root gate; it is not a
+full outer Reference iteration. The global Fast domain remains open.
 
 The second retained stiff failure, random-corpus sample 11 (`r=6.41847e-4`,
 `n_t=1.44008`, `kappa10=1.1694`, `T_re=3.10117 GeV`, `cr=0`), was also
