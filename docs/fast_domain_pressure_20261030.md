@@ -504,6 +504,7 @@ sampled spectrum error median/P95/max is
 estimates are `6.68e-19` and `4.42e-7` in `DN_gw`, and no frequency exceeds
 `5e-4 dex`. At the same background and frequencies, uniform Fast has max error
 `7.134e-4 dex`, P95 `6.249e-4 dex`, and 13 frequencies above `5e-4 dex`. This
-recovers a second previously nonfinite/out-of-tolerance counterexample through
-an independent fixed-background map; the full self-consistent Reference root
-and other parameter directions remain open.
+recovers a second previously nonfinite/out-of-tolerance counterexample. A
+second Reference map at the first map value `4.857475102` returns
+`4.857472632` (`-5.084e-7` relative), confirming the self-consistent Reference
+root on these 94 native nodes. Other parameter directions remain open.
