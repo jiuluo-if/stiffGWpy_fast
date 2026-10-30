@@ -471,8 +471,12 @@ a second parameter case are still pending before promotion.
 Separately, a fresh `A_s=1e20` trace localizes the first nonfinite value to the
 last `S2` background-primitive node on the second outer iterate: `sigma` and
 `Phi` are huge but finite before `exp(Psi)` loses representability. A local
-H2-log prototype avoids that NaN but then returns `max_iter`; neither a real
-self-consistent root nor a larger reliable region has been established.
+H2-log panel correction plus an unbounded root bracket produced a finite Fast
+fixed point, but the root changed by `4.99e-3` relative when `h` halved and by
+much more as frequency density increased; sampled spectra also shifted by
+`2.17e-3 dex`. The independent Reference overflowed in `math.exp(z)`. That
+candidate was rolled back and does not establish an accurate root or a larger
+reliable region.
 
 ### Same-background res4 result
 
@@ -513,3 +517,23 @@ recovers a second previously nonfinite/out-of-tolerance counterexample. A
 second Reference map at the first map value `4.857475102` returns
 `4.857472632` (`-5.084e-7` relative), confirming the self-consistent Reference
 root on these 94 native nodes. Other parameter directions remain open.
+
+## Current 402-point boundary rescreen
+
+The deduplicated `boundaries` suite was rerun at source commit `2b7316a`; its
+402 inputs contain 401 completed rows and one manually stopped resource case.
+Counts are: 297 finite successes (295 positive spectra plus two exact-zero
+limits), 57 solver failures (39 nonpositive H2, 15 nonfinite numerical states,
+3 invalid outer cutoffs), 22 exceptions (15 solver exceptions, 7 parameter
+derivation exceptions), 14 invalid-cutoff preflight rejects, 10 resource
+preflight skips, one returned nonfinite spectrum, and one resource timeout.
+The timeout is boundary case 129 (`A_s=100,cr=1`), stopped after more than 220
+CPU seconds; it is not counted as a mathematical no-solution case. Completed
+records have runtime P50/P95 `5.24/14.60 ms` and peak observed RSS `183.9 MiB`
+for a two-thread, single-process scan.
+
+Of the 297 finite successes, 93 have `DN_gw>10`; the largest is
+`7.78e96`. All 295 nonzero spectra remain
+`uncertified-path-configuration`; only the two exact-zero spectra are
+analytically certified. The scan maps computability and failure classes but
+does not certify those extreme values' precision.
