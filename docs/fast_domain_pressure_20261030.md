@@ -91,9 +91,48 @@ residual and spectrum differences max `5.95e-3 dex` / P95 `4.64e-3`. Refining
 the LSODA background around reheating by 16× (local spacing about
 `6.25e-4`, 11,340 background nodes) leaves its root unchanged to `1.3e-9`
 absolute, so this discrepancy is not explained by the reheating grid alone.
-The Reference frequency sequence is converged, but this point is not certified
-across independent propagation algorithms; both the Fast and LSODA paths need
-further root-cause work before claiming the point reliable.
+At the stated `z_tail=5`, the Reference frequency sequence is converged, but
+this point is not certified across independent propagation algorithms; both
+the Fast and LSODA paths need further root-cause work before claiming the point
+reliable. The follow-up below shows why the tail setting itself also needs
+convergence checking for this sample.
+
+### Propagation-tail recheck and rejected Fast candidate
+
+A follow-up checked whether the earlier `z_tail=5` Reference comparisons were
+deep enough for this blue-tilt point. On a shared mode at the Fast
+`grid_independent/res8` root, extending the Reference propagation from
+`z_tail=5` to `z_tail=10` moves the Reference log spectrum by about
+`2.88e-3 dex`; changing only the Reference start from `z_start=-12` to Fast's
+actual `z_start=-6.911807` changes it by only `2.71e-4 dex`. At the low
+frequency end, extending the tail from 5 to 8 changes the Fast mode by about
+`2.60e-3 dex`; halving its step from `h=0.005` to `0.0025` then changes the
+mode by `1.60e-4 dex`, and further halving to `0.000625` changes it by less
+than `1.4e-6 dex`. This isolates the earlier mismatch mainly to tail handoff
+and low-frequency step error, not the initial-time cutoff. It also means the
+previous `z_tail=5` root comparison is not a deep-tail oracle for this sample.
+
+The best screened Fast candidate was
+`grid_independent`, `freq_res=4`, `h=0.0025`, `z_tail=8`. Its root is
+`DN_gw=0.133708325663`. On the same 260 frequencies and fixed background, a
+Reference propagation to `z_tail=9` gives a map of `0.133734847235`, a
+`1.984e-4` relative residual, and spectrum max/P95/median differences of
+`4.554e-4 / 4.320e-4 / 1.946e-4 dex`. The same-background spectrum gate
+passes, and the map residual is just inside the DN gate. That Reference map
+took `2207.5 s`; a second map was not run, so a fully converged Reference
+fixed point at res4 was not independently established. At res1, repeated
+tail-9 Reference maps converge near `0.133952642`; the candidate's
+`0.133925317` root is about `2.04e-4` relative away, narrowly outside the
+DN gate. The evidence therefore does not certify the candidate's
+self-consistent root at either density.
+
+A 25-pair alternating warm timing on the same res4 case measured the
+`h=0.005,z_tail=5` baseline at P50/P95 `41.0/43.4 ms` and the candidate at
+`255.0/263.0 ms` (about `6.2×` slower); output digests differ as expected
+from the changed numerical settings. No ordinary Fast defaults or solver code
+were changed. The candidate is rejected for promotion until a res4/res8
+deep-tail fixed-point comparison passes both accuracy gates with adequate
+margin and a targeted path can show acceptable cost.
 
 ## Accuracy and guarded recovery
 
