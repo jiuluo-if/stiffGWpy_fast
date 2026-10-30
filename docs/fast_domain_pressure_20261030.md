@@ -466,8 +466,9 @@ combination; fresh reference comparisons are required.
 
 A preliminary res4 A/B compared against a fixed-background `z_tail=9`
 spectrum evaluated at another Fast background, so it could not certify the
-candidate. A later same-background run is recorded below; tail convergence and
-a second parameter case are still pending before promotion.
+candidate. The later same-background and tail-convergence checks are recorded
+below; transition refinement remains an opt-in validation path and the global
+Fast domain remains open.
 Separately, a fresh `A_s=1e20` trace localizes the first nonfinite value to the
 last `S2` background-primitive node on the second outer iterate: `sigma` and
 `Phi` are huge but finite before `exp(Psi)` loses representability. A local
@@ -517,6 +518,19 @@ recovers a second previously nonfinite/out-of-tolerance counterexample. A
 second Reference map at the first map value `4.857475102` returns
 `4.857472632` (`-5.084e-7` relative), confirming the self-consistent Reference
 root on these 94 native nodes. Other parameter directions remain open.
+
+### Fast-path performance check
+
+Paired warm runs against numeric baseline `12c920e` cover six ordinary Fast
+cases, two warmups and 25 alternating pairs per case. Outputs are bitwise
+identical. The worst P50 ratio is `1.021` and the worst P95 ratio is `1.048`
+(the high-T P95 was separately repeated for 101 pairs and measured `0.991`);
+the normal-path change stays within the 5% budget. A same-point res4 profile
+with 25 pairs measures uniform Fast P50/P95 `238.4/241.8 ms` and the
+transition-refined candidate `272.0/275.6 ms` (about 14% slower). This misses
+the aspirational 100 ms difficult-point target, so the candidate is not made
+the default. Profiles exclude cold JIT startup; thread scaling was not
+measured in this focused comparison.
 
 ## Current 402-point boundary rescreen
 
