@@ -1,0 +1,81 @@
+{
+  "source_commit": "eef7bf92fd029e7cfc88fa6336e3348bf328db65",
+  "source_file": "F:\\codex\\stiffGWpy\\stiffgwpy_fast\\fast_sgwb.py",
+  "case": "random_solver_stiff_sample11",
+  "params": {
+    "r": 0.000641847083065821,
+    "n_t": 1.4400831295705445,
+    "kappa10": 1.1693981508537732,
+    "T_re": 3.101174976979448,
+    "DN_re": 10.0,
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "cr": 0.0,
+    "DN_eff": 0.0
+  },
+  "frequency_count": 94,
+  "reference_background_dn": 4.85761762717139,
+  "reference_fixed_point_dn": 4.8574726324269895,
+  "reference_map_residual": -5.083961904015032e-07,
+  "reference_spectrum_source": "docs\\sample11_reference_tail10_spectrum_20261030.json",
+  "results": [
+    {
+      "z_tail": 5.0,
+      "legacy": {
+        "runtime_s": 0.6363716000923887,
+        "dn_eff": 4.8575984323559895,
+        "dn_gw": 4.8575984323559895,
+        "dn_residual": 2.511520058590122e-08
+      },
+      "corrected": {
+        "runtime_s": 0.021092699957080185,
+        "dn_eff": 4.8575984323559895,
+        "dn_gw": 4.8575984323559895,
+        "dn_residual": 2.511520058590122e-08
+      },
+      "legacy_spectrum_median_p95_max_dex": [
+        4.238120799637812e-05,
+        0.0005419006369063333,
+        0.0017020787628254652
+      ],
+      "corrected_spectrum_median_p95_max_dex": [
+        4.020449458508324e-05,
+        0.0003073317941213459,
+        0.0017020787628254652
+      ],
+      "legacy_modes_over_5e-4": 7,
+      "corrected_modes_over_5e-4": 3,
+      "corrected_dn_root_rel_vs_reference": 2.5898227024539374e-05
+    },
+    {
+      "z_tail": 8.0,
+      "legacy": {
+        "runtime_s": 0.06279360002372414,
+        "dn_eff": 4.857599644742126,
+        "dn_gw": 4.857599644742126,
+        "dn_residual": 2.5107224743692313e-08
+      },
+      "corrected": {
+        "runtime_s": 0.058127099997363985,
+        "dn_eff": 4.857599644742126,
+        "dn_gw": 4.857599644742126,
+        "dn_residual": 2.5107220302800215e-08
+      },
+      "legacy_spectrum_median_p95_max_dex": [
+        4.206250566962666e-05,
+        0.0005174144493959252,
+        0.000632663113460552
+      ],
+      "corrected_spectrum_median_p95_max_dex": [
+        4.0097949941753086e-05,
+        0.00014329454668935424,
+        0.0001650952894713953
+      ],
+      "legacy_modes_over_5e-4": 7,
+      "corrected_modes_over_5e-4": 0,
+      "corrected_dn_root_rel_vs_reference": 2.6147818988944857e-05
+    }
+  ]
+}

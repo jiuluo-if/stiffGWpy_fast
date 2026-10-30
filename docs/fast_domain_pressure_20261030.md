@@ -620,3 +620,12 @@ separate optional experiment. Its same-background sampled spectrum passes the
 `5e-4 dex` screen and its fixed-resource timing is below100ms P50/P95 on eight
 threads, but its exact-DN independent Reference map is still running; the
 candidate is not certified or promoted yet.
+
+The terminal-step correction also improves random-corpus sample11 on the
+94-mode tail10 Reference grid at `h=.005,z_tail=8`: corrected Fast has
+`DN_gw=4.85759964` (about `2.62e-5` relative from the independently iterated
+Reference root `4.85747263`) and spectrum median/P95/max
+`4.01e-5/1.43e-4/1.65e-4 dex`. The legacy partial-step path has max
+`6.33e-4 dex` and seven bins over `5e-4`; the corrected path has none. At
+`z_tail=5`, the maximum remains `1.70e-3 dex`, attributable to the shallow
+frozen-tail convention rather than the terminal step.
