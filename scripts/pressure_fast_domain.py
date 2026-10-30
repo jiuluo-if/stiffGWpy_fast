@@ -95,6 +95,12 @@ def boundary_cases() -> list[dict]:
     return cases
 
 
+def coupled_cases() -> list[dict]:
+    """Return the deterministic ``cr × n_t × kappa10 × T_re`` cross."""
+    return [case for case in boundary_cases()
+            if case["label"].startswith("coupled_")]
+
+
 def qmc_cases(points: np.ndarray, prefix: str) -> list[dict]:
     """Map unit-cube samples into broad signed/log parameter ranges."""
     rows = []
@@ -172,6 +178,7 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
         "status": None, "classification": None, "reason": None,
         "derived": {}, "runtime_s": None, "n_freq": None,
         "DN_gw": None, "spectrum_finite_bins": None,
+        "fast_accuracy_status": None, "fast_accuracy_budget": None,
     }
     try:
         model = LCDM_SG(**params)
@@ -244,6 +251,15 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
                 dn_gw_background_nodes=int(len(model.DN_gw)),
                 outer_reuse=bool(getattr(model, "outer_full_reuse_used", False)),
             )
+            accuracy_budget = getattr(model, "local_error_budget", None)
+            if exact_zero_tensor:
+                result["fast_accuracy_status"] = "analytic_exact_limit"
+            elif accuracy_budget is not None:
+                result.update(
+                    fast_accuracy_status=accuracy_budget.get(
+                        "certification_status", "uncertified"),
+                    fast_accuracy_budget=accuracy_budget,
+                )
     except Exception as exc:
         result.update(status="exception", classification="solver_exception", reason=repr(exc))
     return _finish_record(result, started)
@@ -296,7 +312,7 @@ def minimize_failure(item: dict, original: dict, max_n_inf: float,
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--suite", choices=("smoke", "boundaries", "sobol", "latin", "all"), default="smoke")
+    parser.add_argument("--suite", choices=("smoke", "coupled", "boundaries", "sobol", "latin", "all"), default="smoke")
     parser.add_argument("--power", type=int, default=5, help="Sobol sample count is 2**power")
     parser.add_argument("--seed", type=int, default=20261030)
     parser.add_argument("--max-n-inf", type=float, default=120.0)
@@ -318,6 +334,8 @@ def main() -> None:
         cases = [_case("baseline_cr0", cr=0.0), _case("baseline_cr1", cr=1.0),
                  _case("zero_stiff", cr=0.0, kappa10=0.0),
                  _case("near_zero_r", cr=0.0, r=1e-200)]
+    elif args.suite == "coupled":
+        cases = coupled_cases()
     elif args.suite == "boundaries":
         cases = boundary_cases()
     elif args.suite == "sobol":
@@ -356,7 +374,9 @@ def main() -> None:
         "preflight_note": "resource_limit_preflight is not a solver failure and inputs are never clipped",
     }
     counts: Counter = Counter()
+    accuracy_counts: Counter = Counter()
     runtimes = []
+    dn_error_estimates = []
     batch_started = time.perf_counter()
     max_rss_mb = process.memory_info().rss / 1024**2
     with output.open("w", encoding="utf-8") as stream:
@@ -371,17 +391,31 @@ def main() -> None:
             stream.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
             stream.flush()
             counts[record["status"]] += 1
+            if record.get("fast_accuracy_status") is not None:
+                accuracy_counts[record["fast_accuracy_status"]] += 1
+            accuracy_budget = record.get("fast_accuracy_budget") or {}
+            if accuracy_budget.get("DN_gw_error") is not None:
+                dn_error_estimates.append(float(accuracy_budget["DN_gw_error"]))
             if record["runtime_s"] is not None:
                 runtimes.append(record["runtime_s"])
             max_rss_mb = max(max_rss_mb, process.memory_info().rss / 1024**2)
-            print(json.dumps({key: record.get(key) for key in
+            summary_record = {key: record.get(key) for key in
                               ("sample_index", "label", "status", "classification",
-                               "reason", "runtime_s")}, ensure_ascii=False), flush=True)
+                               "reason", "fast_accuracy_status", "runtime_s")}
+            summary_record["DN_gw_error_estimate"] = accuracy_budget.get("DN_gw_error")
+            print(json.dumps(summary_record, ensure_ascii=False), flush=True)
     batch_wall_s = time.perf_counter() - batch_started
     summary = {
         "commit": metadata["commit"], "suite": args.suite, "case_count": len(cases),
         "suite_total_count": suite_size, "start_index": first_index,
         "status_counts": dict(counts),
+        "fast_accuracy_status_counts": dict(accuracy_counts),
+        "fast_dn_gw_error_estimate": {
+            "min": float(min(dn_error_estimates)) if dn_error_estimates else None,
+            "median": float(np.percentile(dn_error_estimates, 50)) if dn_error_estimates else None,
+            "p95": float(np.percentile(dn_error_estimates, 95)) if dn_error_estimates else None,
+            "max": float(max(dn_error_estimates)) if dn_error_estimates else None,
+        },
         "runtime_p50_s": float(np.percentile(runtimes, 50)) if runtimes else None,
         "runtime_p95_s": float(np.percentile(runtimes, 95)) if runtimes else None,
         "sum_solver_runtime_s": sum(runtimes),

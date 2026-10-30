@@ -42,6 +42,59 @@ not a proof that no solution exists. Several other cases grow to nonfinite
 state in fewer than ten outer iterations, so increasing the 60-iteration cap
 alone would not repair those failures.
 
+## Current-head coupled recheck and accuracy triage
+
+The deterministic `coupled` suite is now directly runnable and emits each
+Fast result's local accuracy budget without conflating finite output with an
+independent accuracy pass:
+
+```powershell
+python scripts/pressure_fast_domain.py --suite coupled --threads 2 --max-n-inf 120 --output .planning/pressure_coupled.jsonl
+```
+
+At source commit `b607750d43df67cc6b132c8ab3806d5026eee4f2`, all 240
+`cr × n_t × kappa10 × T_re` points return finite positive spectra. Runtime P50
+is `6.33 ms`, P95 `11.65 ms`, batch throughput `115.8 cases/s`, and peak
+observed RSS `180.3 MiB` for this single-process, two-thread screen. The CLI
+summary also aggregates local accuracy statuses and `DN_gw_error` estimates.
+This revives the old nonfinite cluster as
+computable outputs, but every point's Fast budget is
+`uncertified-path-configuration`: estimated `DN_gw_error` ranges from
+`4.05e-3` (median `2.56e-2`) to `1.02`, and none is below `2e-4`. These budget
+values are not measured errors; this screen does not establish a larger
+reliable Fast region.
+
+For `cr=0, n_t=2, T_re=1e4 GeV, kappa10=0.01, DN_re=10`, the formal Fast result
+at `freq_res=1` is `DN_gw=0.133901825` on 64 nodes. Independent Reference
+self-consistency gives `0.133262472` at `freq_res=1` (65 nodes),
+`0.133042970` at `freq_res=4` (260 nodes), and `0.133041909` at `freq_res=8`
+(521 nodes). The res4/res8 roots agree to `8.0e-6` relative, while res1 is
+`1.65e-3` away; the low-density Reference answer is not converged.
+
+Frequency densification alone does not repair Fast: `grid_independent` at
+res4/res8 gives roots `0.133707459`/`0.133706435`, which stabilize against each
+other but remain about `5.0e-3` from the converged Reference root. At Fast's
+res8 root and the identical 521 frequencies, a fixed-background Reference map
+is `0.133055770` (`-4.87e-3` relative); the spectrum differs by max
+`3.20e-3 dex`, P95 `3.18e-3`, median `1.90e-3`. Varying Fast `z_tail` 5/8/10,
+`h` 0.005/0.0025, phase cap 0.25/0.1, `sigma_exact`, and transition
+refinement did not meet either accuracy gate. No such Fast candidate is
+promoted.
+
+LSODA also needs a careful comparison here. At `freq_res=1`, tightening
+`rtol` from `1e-9` to `1e-11` changes its root only from `0.133247367` to
+`0.133247361`; it agrees with Reference res1 within `1.14e-4`, but both are
+under-resolved relative to Reference res4/res8. At `freq_res=4`, LSODA gives
+`0.132952454`, `6.80e-4` below Reference res4. A fixed-background Reference
+map on the exact same 467 LSODA frequencies has a `1.43e-3` relative root
+residual and spectrum differences max `5.95e-3 dex` / P95 `4.64e-3`. Refining
+the LSODA background around reheating by 16× (local spacing about
+`6.25e-4`, 11,340 background nodes) leaves its root unchanged to `1.3e-9`
+absolute, so this discrepancy is not explained by the reheating grid alone.
+The Reference frequency sequence is converged, but this point is not certified
+across independent propagation algorithms; both the Fast and LSODA paths need
+further root-cause work before claiming the point reliable.
+
 ## Accuracy and guarded recovery
 
 The retained difficult sample 9 has `DN_gw=2.926979295585161e-4` on the raw
