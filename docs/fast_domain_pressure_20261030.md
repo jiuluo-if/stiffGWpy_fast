@@ -551,3 +551,22 @@ Of the 297 finite successes, 93 have `DN_gw>10`; the largest is
 `uncertified-path-configuration`; only the two exact-zero spectra are
 analytically certified. The scan maps computability and failure classes but
 does not certify those extreme values' precision.
+
+The current Sobol and Latin-hypercube pilots (`power=4`, seed `20261030`) each
+sample 16 points after canonicalizing the unused `n_t` coordinate for `cr>0`.
+Sobol outcomes are 6 resource preflight skips, 6 invalid-derived rejects, 2
+derivation/solver exceptions, and 2 nonpositive-H2 failures; Latin-hypercube
+outcomes are 5 resource skips, 6 invalid-derived rejects, 4 exceptions, and 1
+nonpositive-H2 failure. Neither pilot contains a finite output, so these broad
+signed/log pilots do not add a precision-certified region.
+
+For the branch-priority correction, 25-pair warm Fast timing across six named
+normal cases gives identical spectrum arrays. P50 ratios to numeric baseline
+are `1.002/1.015/1.010/0.983/0.984/1.021`; P95 ratios are
+`1.048/0.984/0.991/0.968/0.958/1.027`, with the high-T P95 from a separate
+101-pair replay. These stay within the 5% normal-path target. At the difficult
+blue-tilt res4 point the transition-refined candidate P50/P95 is
+`272/276 ms` versus `238/242 ms` uniform (14% slower), so it remains an
+explicit validation path and misses the aspirational 100 ms target. Cold JIT
+startup and thread scaling are not measured in this focused profile; paired
+profile RSS is about `234 MiB` with two-thread affinity.
