@@ -130,9 +130,56 @@ A 25-pair alternating warm timing on the same res4 case measured the
 `h=0.005,z_tail=5` baseline at P50/P95 `41.0/43.4 ms` and the candidate at
 `255.0/263.0 ms` (about `6.2×` slower); output digests differ as expected
 from the changed numerical settings. No ordinary Fast defaults or solver code
-were changed. The candidate is rejected for promotion until a res4/res8
-deep-tail fixed-point comparison passes both accuracy gates with adequate
-margin and a targeted path can show acceptable cost.
+were changed. Follow-up candidate tests did not close the accuracy gap; the
+candidate is rejected for promotion.
+
+### Adaptive-handoff and selective-step experiments (not retained)
+
+The first-order `handoff_eps=|1.5 sigma-1| exp(-z)` is not a sufficient
+standalone handoff rule for this sample. A first calculation reported
+`0.999998` correlation between the log proxy and tail-depth error, but it
+incorrectly included the `-1` sentinel for modes that never use the analytic
+tail. Recomputing only the 47 actual handoff modes gives a log-log correlation
+of `0.434`. In particular, at `f=-16.292921`, the mode's maximum `z` is only
+`4.98977`; as `sigma` approaches `2/3`, the first-order proxy falls below
+`6.76e-6` even though the mode never reaches `z=8`. An epsilon threshold alone
+can therefore hand off too early. The prototype was removed.
+
+The `freq_res=4`, `z_tail=8`, `h=0.005` spectrum comparison against the saved
+`z_tail=9` Reference spectrum (computed at the `h=0.0025` candidate's
+background; the `h=0.005` Fast root differs by `6.5e-6` relative) partitions
+by maximum mode `z`: all 53 bins over `1e-3 dex` lie among 118 modes with
+`z_max<8`; the 142 modes that reach `z=8` have maximum error `4.51e-4 dex`.
+This identifies the no-WKB-handoff modes as the affected subset on this
+sample, not a global parameter-space rule.
+
+Two selective substep prototypes did not improve those modes. First, halving
+only negative-`z` segments left the res4 max spectrum difference at about
+`1.98e-3 dex`. Then full propagation modes were selected by `z_max<z_tail` and
+substepped on the existing coarse background grid using its endpoint and
+midpoint values. The warm 15-pair profile measured P50/P95 `230.5/234.1 ms`,
+versus `227.0/231.3 ms` for `h=0.005,z_tail=8`; spectrum max/P95 remained
+`1.982e-3/1.699e-3 dex` with 53 bins over threshold. This is evidence that
+substepping the tensor state over the coarse `Phi` background does not replace
+refining that background grid. The `sigma_exact=True` and
+`transition_refine=True` controls at `h=0.005,z_tail=8` also left the compared
+spectrum unchanged to the displayed precision.
+
+Uniform `h=0.0025,z_tail=8` does pass the same-background spectrum gate:
+max/P95/median `4.554e-4/4.320e-4/1.946e-4 dex`, with zero bins over
+`1e-3 dex`. At res4 its warm P50/P95 was `256.8/269.9 ms` versus
+`227.0/231.3 ms` for the `h=0.005,z_tail=8` baseline. Its deep-tail Reference
+map residual is only `1.984e-4`, and the 2207.5-second Reference pass did not
+complete a second map. The res1 self-consistent Reference comparison misses
+the DN limit by a narrow margin. Thus even the uniform refinement remains a
+research candidate, not a certified Fast optimization.
+
+The per-mode epsilon prototype, both selective substep prototypes, and the
+uniform-refinement candidate were not retained in source. The remaining
+promising path is a mode-aware refinement of the *background* integration
+grid (or an independent continuous-background propagation), followed by the
+same deep-tail fixed-point and performance checks; no accuracy gain is
+claimed until those checks pass.
 
 ## Accuracy and guarded recovery
 
