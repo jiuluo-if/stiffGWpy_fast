@@ -1016,6 +1016,48 @@ relative and emitted zero warnings. This isolates the integration fix from
 mode propagation; see the [re-integration record](qmc_sobol146_post_scale_reintegration_20261105.json)
 and [driver](../scripts/reintegrate_qmc_sobol146_post_scale.py).
 
+## 2026-11-05 stable Fast PCHIP slopes and adaptive-grid point check
+
+The Fast vectorized PCHIP slope routine had the same reciprocal-slope
+overflow for subnormal spectral tails. It now scales each valid same-sign
+secant pair by its smaller magnitude before forming the weighted harmonic
+mean. A warning-as-error regression fails on the former reciprocal formula
+and passes with the scaled expression. On a normal Fast point, 30 alternating
+warm pairs are bitwise identical for `DN_gw` and every spectrum node; P50/P95
+is `0.004932/0.005355 s` before and `0.004823/0.005249 s` after. This sample's
+Fast run also emitted zero PCHIP warnings after the change.
+
+The adaptive frequency grid is now selectable through the backward-compatible
+optional `SGWB_iter(freq_grid=..., freq_grid_target=...,
+freq_grid_max_points=...)` arguments; leaving them unset preserves the current
+goal-grid default. For sample146 the default 77-node goal grid's `DN_gw`
+relative error against the res=8 reference is `84.6%` (`45.8%` using the
+larger absolute value as denominator). Existing adaptive at target `3e-4` uses
+295 nodes but still differs by `2.58%` relative to Reference; tightening to `1e-6`, with
+`sigma_exact=True` and `z_tail=10`, uses 321 nodes and differs by `7.07e-5`.
+An independent Prüfer tail10 map at that exact 321-node array (`DN_eff` fixed)
+gives `DN_gw` relative error `5.06e-5`, maximum spectrum error `3.72e-4 dex`
+and P95 `4.90e-5 dex`, meeting the pointwise and integral gates. The Reference
+run took `660.6 s`, used one worker and emitted no warnings. This validates one
+extreme point through the explicit adaptive path only; the general error-budget
+label remains `uncertified-path-configuration`, and default Fast settings are
+unchanged.
+
+Reproduce the threshold sweep with
+[`probe_qmc_sobol146_fast_adaptive_grid.py`](../scripts/probe_qmc_sobol146_fast_adaptive_grid.py)
+and the independent exact-map check with
+[`validate_qmc_sobol146_fast_adaptive_reference.py`](../scripts/validate_qmc_sobol146_fast_adaptive_reference.py).
+Raw records are
+[`qmc_sobol146_fast_adaptive_grid_20261105.json`](qmc_sobol146_fast_adaptive_grid_20261105.json),
+[`qmc_sobol146_fast_adaptive_reference_20261105.json`](qmc_sobol146_fast_adaptive_reference_20261105.json),
+and [`fast_pchip_stable_slopes_ab_20261105.json`](fast_pchip_stable_slopes_ab_20261105.json).
+After exposing the same low-level settings through `SGWB_iter`, the high-level
+candidate reproduced the exact 321-node frequency hash and bitwise-identical
+`DN_gw`; the core solver hash was unchanged. The prior Reference result did not
+store a separate spectrum copy for that wrapper-only continuity check. See
+[`qmc_sobol146_adaptive_api_continuity_20261105.json`](qmc_sobol146_adaptive_api_continuity_20261105.json)
+and [`verify_qmc_sobol146_adaptive_api_continuity.py`](../scripts/verify_qmc_sobol146_adaptive_api_continuity.py).
+
 The full grids, spectra, frequency/source hashes, warnings, runtime and
 environment are recorded in
 [`qmc_sobol146_reference_grid_convergence_20261105.json`](qmc_sobol146_reference_grid_convergence_20261105.json);

@@ -1,4 +1,6 @@
 """PCHIP 单次拟合共享：全程积分、逐区间积分与局部 estimator 的复用路径。"""
+import warnings
+
 import numpy as np
 import pytest
 from scipy import interpolate
@@ -89,6 +91,24 @@ def test_vectorized_pchip_integrals_match_scipy_breakdown():
         assert fast.shape == local.shape
         assert np.allclose(fast, local, rtol=1e-9, atol=1e-12 * scale)
         assert float(np.sum(fast)) == pytest.approx(total, rel=1e-12)
+
+
+def test_vectorized_pchip_integral_handles_subnormal_spectrum_without_warning():
+    """Reciprocal PCHIP slopes must stay finite for tiny decaying spectra."""
+    freqs = np.linspace(0.0, 10.0, 257)
+    unit_scale_spectrum = np.exp(-48.0 * freqs)
+    scale = 1e-106
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        actual = FS._pchip_integrals_vectorized(
+            freqs, scale * unit_scale_spectrum
+        )
+    expected = scale * FS._pchip_integrals_vectorized(
+        freqs, unit_scale_spectrum
+    )
+
+    assert np.allclose(actual, expected, rtol=2e-13, atol=np.nextafter(0.0, 1.0))
 
 
 def test_vectorized_pchip_integrals_handle_flat_and_sign_changing_data():
