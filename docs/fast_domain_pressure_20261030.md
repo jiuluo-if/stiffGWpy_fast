@@ -699,3 +699,46 @@ when it does not overlap the valid band. The replay is reproducible with
 [`benchmark_goal_grid_cutoff_failures.py`](../scripts/benchmark_goal_grid_cutoff_failures.py);
 per-outer-iteration grids and first-nonfinite telemetry are in
 [`stiff_goal_grid_cutoff_replay_20261030.json`](stiff_goal_grid_cutoff_replay_20261030.json).
+
+## 2026-11-04 current-head boundary recheck
+
+At commit `f3e9949a4b90ca4a70e0f6686cf9912e95eee15e`, the current 402-point
+deterministic `boundaries` suite was rerun with `threads=2` and the explicit
+`N_inf<=120` resource preflight. Results: 278 `success` statuses (276 finite
+positive spectra plus two exact-zero limits), 76 solver failures, 22 parameter
+or solver exceptions, 14 invalid-derived-cutoff preflight rejects, 10 resource
+preflight skips, one returned nonfinite spectrum, and one manually interrupted
+resource-limited point. The counts describe numerical outcomes, not domain-wide
+accuracy certification.
+
+Only the two analytic exact-zero cases received an accuracy status that is
+certified by construction. The 276 finite-positive successes and one returned
+nonfinite output have `uncertified-path-configuration` estimates; estimated
+`DN_gw` error spans `4.05e-3` to `1.023`, with median `1.18e-2` and P95
+`1.003`. These are budget estimates, not measured Fast-to-Reference errors.
+The 76 solver failures comprise 39 nonpositive background `H²`, 26 nonfinite
+background primitives, 10 nonfinite numerical states, and one invalid outer
+iterate cutoff. The 22 exceptions comprise 15 solver and 7 parameter-derivation
+exceptions. Runtime P50/P95 for
+returned cases was `4.70/11.60 ms`; maximum sampled post-case RSS was
+`182.5 MiB` in this single-process screen.
+
+The difficult `boundary_A_s_cr1_9` point (`A_s=100`, `cr=1`, derived
+`n_t=-0.00125`, `N_inf=77.01`) was consuming CPU without returning. It was
+stopped after `240.8125` CPU seconds and is explicitly recorded as
+`resource_budget_interrupted`, not as a solver failure or mathematical
+no-solution. Another historical slow point at current suite index316
+(`coupled_cr0_nt1_k100_T10000`) now returned in `0.283 s` with a finite
+spectrum, but `DN_gw=14929.45` and the local error budget remains
+uncertified (`DN_gw_error` estimate `0.0452`).
+
+The complete per-point record, including all 402 parameter sets, status and
+failure classes, accuracy budgets, timings, and the explicit resource
+interruption is
+[`fast_domain_pressure_boundary_20261104.jsonl`](fast_domain_pressure_boundary_20261104.jsonl).
+The test harness remains
+[`pressure_fast_domain.py`](../scripts/pressure_fast_domain.py). Reproduce
+with the same deterministic suite and chunk it around index129; that index has
+no per-case watchdog and should be run under a separately stated resource
+budget. No finite output in this scan should be counted as an accuracy pass
+without an independent Reference comparison.
