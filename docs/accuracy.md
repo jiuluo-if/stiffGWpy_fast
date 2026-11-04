@@ -662,15 +662,21 @@ separate pressure point from the minimized Fast failure set uses the default
 `n_t=1.0622501865308032`, `T_re=1761.314039059193 GeV`,
 `kappa10=0.011598483151630803`, `cr=0`, `DN_re=10`, and fixed `DN_eff=0`.
 The two tail modes and one no-tail mode match current Cartesian within
-`9.37e-9`, `2.56e-9`, and `3.86e-8 dex`; dense Riccati residuals stay below
-`2.64e-14`. This is a three-mode fixed-background check, not a complete
+`9.37e-9`, `2.56e-9`, and `3.86e-8 dex`; three additional middle frequencies
+`-11.722586`, `-13.621946`, and `-14.0` are tail modes and match within
+`2.42e-8`, `1.24e-8`, and `7.25e-9 dex`. Dense Riccati residuals stay below
+`2.72e-13`. These are six fixed-background mode checks, not a complete
 spectrum or self-consistency validation of the difficult point. Reproduce
 with the explicit `--r`, `--cr`, `--n-t`, `--t-re`, `--kappa10`, `--dn-re`,
 and `--dn-eff` options; raw records are
 [`nonosc_phase_sample2_tail_cross_20261104.json`](nonosc_phase_sample2_tail_cross_20261104.json),
 [`nonosc_phase_sample2_high_20261104.json`](nonosc_phase_sample2_high_20261104.json),
 and
-[`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json).
+[`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json),
+[`nonosc_phase_sample2_mid1_20261104.json`](nonosc_phase_sample2_mid1_20261104.json),
+[`nonosc_phase_sample2_mid2_20261104.json`](nonosc_phase_sample2_mid2_20261104.json),
+and
+[`nonosc_phase_sample2_mid3_20261104.json`](nonosc_phase_sample2_mid3_20261104.json).
 
 The positive consistency-relation branch was also sampled with `cr=0.1` and
 `r=.01`, for which the model derives `n_t=-r/8=-.00125` (the supplied `n_t=2`
