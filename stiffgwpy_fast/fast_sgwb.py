@@ -2003,7 +2003,7 @@ def _SGWB_iter_fast_impl(
     m,
     tol=1e-4,
     freq_res=1.0,
-    sigma_exact=False,
+    sigma_exact=None,
     transition_refine=False,
     kink_split=None,
     freq_grid=None,
@@ -2037,6 +2037,10 @@ def _SGWB_iter_fast_impl(
     continuous piecewise-exact ``sigma`` (reheating kink as an exact breakpoint)
     instead of the fixed-grid cubic spline, removing the ~1% continuous-sigma-vs-
     grid model bias (see ``stiffgwpy_fast.exact_background``).
+    If ``sigma_exact`` is omitted, it defaults to enabled for the opt-in
+    transition-refined path and disabled on the regular fast path. Pass
+    ``sigma_exact=False`` to explicitly retain the node-based primitive with
+    transition refinement.
 
     ``freq_grid`` selects the frequency sampling: ``'goal'`` (the formal fast
     sparse grid with transition reserve and native ``eval_freqs``),
@@ -2059,6 +2063,8 @@ def _SGWB_iter_fast_impl(
     控制背景与采样策略。``tol`` 是外层自洽停止阈值，``freq_res`` 调整频率密度。成功时写入 fast 输出并返回模型；
     失败时恢复输入的 ``DN_eff`` 状态并返回 ``None``。``eval_freqs`` 只把求解范围内的指定频率加为原生节点。
     """
+    if sigma_exact is None:
+        sigma_exact = bool(transition_refine)
     # Machine-readable reason used by the engine wrapper to distinguish a
     # deterministic physical rejection from a recoverable numerical failure.
     # 供外层读取的失败原因，用于区分确定性物理拒绝和可恢复的数值失败。
@@ -2701,7 +2707,7 @@ def SGWB_iter_fast(
     m,
     tol=1e-4,
     freq_res=1.0,
-    sigma_exact=False,
+    sigma_exact=None,
     transition_refine=False,
     kink_split=None,
     freq_grid=None,
@@ -2727,6 +2733,8 @@ def SGWB_iter_fast(
     It inserts the reheating boundary as an exact node and uses ``h`` divided by
     ``transition_refine_factor`` within the configured radius, measured in e-folds.
     The formal ``fast`` profile instead uses the exact uniform-grid kink split.
+    If ``sigma_exact`` is omitted, transition refinement recomputes primitives
+    from the continuous background; pass ``sigma_exact=False`` to opt out.
     ``kink_split`` accepts ``True`` or ``False``; ``None`` uses the resolved configuration value.
 
     中文：低层 fast 求解器接收隔离的配置快照；频率积分默认用 PCHIP，也可显式选 Simpson。
@@ -2734,6 +2742,7 @@ def SGWB_iter_fast(
     线程层尚未初始化时也保守加锁；TBB/OpenMP 初始化后，显式配置调用可并行执行。
     ``transition_refine=True`` 选择仅用于验证的可变步长路径：将再加热边界插入为精确节点，
     并在配置的半径（单位为 e-fold）内使用 ``h / transition_refine_factor`` 步长。正式 ``fast`` 档位仍使用精确均匀网格 kink 拆分。
+    未传入 ``sigma_exact`` 时，转折细化路径默认按连续背景重算原函数；显式传 ``False`` 可保留节点快速原函数。
     ``kink_split`` 只能为 ``True`` 或 ``False``；传入 ``None`` 时使用解析后的配置值。
     """
     if config is not None and not isinstance(config, FastSolverConfig):
