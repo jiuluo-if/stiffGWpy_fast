@@ -88,6 +88,66 @@ def test_kink_split_passes_actual_terminal_step_without_grid_array(monkeypatch, 
     assert h_final == pytest.approx(float(nv[-1] - nv[-2]), rel=0.0, abs=1e-14)
 
 
+def test_uniform_refined_grid_uses_scalar_terminal_step():
+    """A uniform transition grid can avoid a full step array."""
+    import numpy as np
+
+    nv = np.array([0.0, 0.02, 0.04, 0.06, 0.08, 0.092])
+
+    assert FS._uniform_step_terminal_width(nv, 0.02) == pytest.approx(
+        float(nv[-1] - nv[-2]), rel=0.0, abs=1e-15)
+
+
+@pytest.mark.parametrize(
+    'nv',
+    [
+        [0.0, 0.02, 0.03, 0.05, 0.07, 0.082],
+        [0.0, 0.02, 0.04, 0.04 + 5e-14, 0.06, 0.072],
+    ],
+)
+def test_nonuniform_refined_grid_keeps_interval_array(nv):
+    """A kink substep or a tiny physical anchor must keep exact local widths."""
+    import numpy as np
+
+    assert FS._uniform_step_terminal_width(np.asarray(nv), 0.02) == 0.0
+
+
+@pytest.mark.parametrize('kink_split', [True, False])
+def test_aligned_zero_radius_refinement_uses_scalar_terminal_step(monkeypatch, kink_split):
+    """An exactly aligned kink does not need per-interval width loads."""
+    import numpy as np
+
+    from stiffgwpy_fast.stiff_SGWB import LCDM_SG
+
+    model = LCDM_SG(
+        r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01,
+        DN_re=10.0, DN_eff=0.0,
+    )
+    captured = []
+    original = FS.solve_kernel
+
+    def capture(*args):
+        captured.append((np.asarray(args[0]).copy(), args[19], args[26]))
+        return original(*args)
+
+    monkeypatch.setattr(FS, 'solve_kernel', capture)
+    config = FS.resolve_config(
+        'fast', threads=1, h=0.02, z_tail=5.0, freq_grid='construct',
+        transition_refine_radius=0.0, transition_refine_factor=32,
+        kink_split=kink_split,
+    )
+
+    assert FS.SGWB_iter_fast(
+        model, tol=1e-6, config=config,
+        transition_refine=True, kink_split=kink_split,
+    ) is model
+
+    assert captured
+    nv, h_arr, h_final = captured[-1]
+    assert h_arr is None
+    assert h_final == pytest.approx(float(nv[-1] - nv[-2]), rel=0.0, abs=1e-14)
+
+
 def test_transition_refined_grid_merges_roundoff_close_kink_nodes():
     """Refinement-grid construction keeps one exact kink node without tiny gaps."""
     import numpy as np
