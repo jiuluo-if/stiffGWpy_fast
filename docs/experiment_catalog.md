@@ -232,6 +232,9 @@ res4 candidate has zero modes above `5e-4 dex` and a maximum error of
 with maximum same-input spectrum error `7.057e-5 dex`. The paired runs remain
 below 100 ms P50. Raw comparisons and reproduction commands are in
 [`accuracy.md`](accuracy.md#2026-11-04-continuous-background-default-for-transition-refinement).
+The exact-input res4 tail10 Reference map now also directly closes at the
+continuous candidate root: map residual `+3.466e-5`, same-input spectrum max
+`3.458e-4 dex` on 260 modes.
 
 The current `A_s=1e20` trace now stops at its first bad `S2=exp(Psi)` value
 before tensor propagation, reporting the primitive and index; no extended
