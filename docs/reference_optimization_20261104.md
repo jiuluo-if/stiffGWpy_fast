@@ -164,8 +164,9 @@ Its map differs from the archived Reference map by `4.386e-7` relative, the
 fixed-point residual at that input is `-4.394e-7`, and same-input spectrum
 P95/max error is `6.651e-6 / 5.246e-5 dex`. Candidate propagation took `569.1 s`
 including a `0.325 s` spline JIT warmup. This is a candidate-only run, not a
-paired full-grid Cartesian speed ratio; the full-grid Cartesian rerun and map
-slope/root-shift check remain open. Raw per-mode data and provenance are in
+paired full-grid Cartesian speed ratio; the paired run and its secant-based
+root-shift estimate are reported in the following section. The local root
+derivative remains unmeasured. Raw per-mode data and provenance are in
 [`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).
 
 ## Archived Reference map secant sensitivity
@@ -212,6 +213,56 @@ The maximum same-input spectrum error is `3.94e-6 dex`. This supports a roughly
 speedups show it is not a per-frequency guarantee. Raw samples are in
 [`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).
 
+## Full-grid paired Cartesian A/B
+
+The production Prüfer backend was paired against the spline-accelerated
+Cartesian implementation once on each of the same 260 archived frequencies,
+alternating execution order by mode. Both used the independent root input
+`DN_eff=0.13373681817755848` and `z_tail=10`; Prüfer used `rtol=1e-9`,
+Cartesian `rtol=1e-11`. All 260 pairs completed. The paired spectrum error
+median/P95/maximum is `1.575e-7 / 6.654e-6 / 5.246e-5 dex`. Total serial time
+is `574.13 s` versus `1992.45 s`, an aggregate `3.470x` speedup (`3.468x`
+including the separately measured `0.313 s` JIT warmup). Per-mode speedup
+P50/P95 is `2.632x/4.332x`; these data cover one parameter point and do not
+establish general performance scaling.
+
+Reintegrating the stored per-mode logarithmic spectra reproduces the
+benchmark's Prüfer map to `4.2e-16` relative and gives the current Cartesian
+map `0.1337368185045801`, within `3.24e-9` relative of the archived Cartesian
+map. Prüfer and current Cartesian map outputs differ by `4.42e-7` relative;
+the corresponding first-order root shift using the archived interval secant
+slope `0.0211261` is `-6.04e-8` in `DN_eff`. This secant is not a local
+derivative or rigorous root enclosure. The paired raw data and reconstruction
+are
+[`reference_prufer_cartesian_paired_fullgrid_20261104.json`](reference_prufer_cartesian_paired_fullgrid_20261104.json)
+and
+[`reference_prufer_cartesian_paired_fullgrid_analysis_20261104.json`](reference_prufer_cartesian_paired_fullgrid_analysis_20261104.json).
+
+## Newton–Kantorovich phase-transfer single-mode prototype
+
+Read Stojimirovic and Bremer's [original paper](https://arxiv.org/html/2409.18487v2),
+sections 2.4, 4, 5.1–5.4 and 6.3. It solves a discretized Riccati equation on
+Chebyshev nodes using Newton–Kantorovich updates, with a Liouville–Green
+initial guess; this is distinct from the project's earlier Kummer phase
+post-fit. The authors require smooth positive coefficients on high-frequency
+intervals and warn that phase derivatives become steep near turning points.
+
+The prototype uses the damped tensor equation and removes its first-derivative
+term to form `Q=exp(2z)-p'/2-p^2/4`, `p=3-1.5*sigma`. It first integrates the
+production `z'=1.5*sigma-1` equation and the original `(T,T')` state with DOP853
+to `z=5`; six phase-transfer segments then reach the tail event at `z=10`.
+Every segment uses an analytic branch derivative, and the `nu=0.1` background
+switch is split explicitly; the right side uses the neutrino-spline branch.
+At res4 `log10(f/Hz)=-12.6723`, Chebyshev orders 16/24/32 agree with Cartesian
+to `1.7461e-8 dex` (order-to-order spread `<=5.4e-15 dex`), with dense Riccati
+residual `<=2.72e-14`. The latest run took `0.134 s` including the low-frequency
+DOP853 prefix, against `12.43 s` Cartesian; spline JIT warmup (`0.308 s`) was
+measured separately. This is a one-mode screen;
+the method is not integrated into the production backend. The reproducible
+script and artifact are
+[`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
+and [`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json).
+
 ## Original papers read so far
 
 The task attachment says a 37-paper appendix exists, but the attached file
@@ -251,8 +302,8 @@ not a claim that the missing 37-paper set or a 50-paper survey is complete.
 
 - The new backend is opt-in. The Cartesian default and public output meanings
   are unchanged.
-- Accuracy is fully checked only at the res4 Reference root and on a small
-  paired timing subset; broader parameter, turning-point, zero-amplitude,
+- The full 260-mode Prüfer/Cartesian comparison is complete only for the
+  res4 Reference root. Broader parameter, turning-point, zero-amplitude,
   strong-coupling, tail-depth, tolerance, batch and thread coverage remains.
 - The global Fast reliable parameter domain remains uncertified.
 - The missing 37-paper bibliography must be recovered before that requirement

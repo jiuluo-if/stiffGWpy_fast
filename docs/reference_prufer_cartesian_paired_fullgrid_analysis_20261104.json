@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "analysis": "paired_current_cartesian_vs_prufer_full_260_mode_res4",
+  "source_sha": "2208216709c767da48af27a462959a6df3b6b0b4",
+  "worktree_dirty": true,
+  "analysis_script_sha256": "af85724c93aaecb8b1fcbc83ea2cea6bdcab07c141edfb1621408ec41333d1e7",
+  "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133736818177558
+  },
+  "z_tail": 10.0,
+  "candidate_rtol": 1e-09,
+  "cartesian_rtol": 1e-11,
+  "frequency_count": 260,
+  "successful_paired_modes": 260,
+  "candidate_used_tail_modes": 115,
+  "paired_same_input_spectrum_abs_dex": {
+    "median": 1.574642638502155e-07,
+    "p95": 6.654070049805222e-06,
+    "max": 5.245540882192756e-05
+  },
+  "prufer_vs_archived_cartesian_abs_dex": {
+    "median": 1.614503108982035e-07,
+    "p95": 6.6508957403676965e-06,
+    "max": 5.2463967577409676e-05
+  },
+  "current_cartesian_vs_archived_cartesian_abs_dex": {
+    "median": 2.7848900963078904e-09,
+    "p95": 2.4184135671845292e-08,
+    "max": 6.016784404039299e-08
+  },
+  "per_mode_speedup_cartesian_over_prufer": {
+    "median": 2.631627289603168,
+    "p95": 4.331706281038966,
+    "max": 5.472735735249916
+  },
+  "timing": {
+    "prufer_sum_s": 574.1294009026606,
+    "cartesian_sum_s": 1992.4469696010929,
+    "prufer_mode_runtime_s": {
+      "median": 2.6272864000638947,
+      "p95": 5.689697429875377,
+      "max": 6.503911200212315
+    },
+    "cartesian_mode_runtime_s": {
+      "median": 7.180201850133017,
+      "p95": 23.707193144934713,
+      "max": 34.91909300000407
+    },
+    "prufer_rhs_evaluations_total": 65078677,
+    "cartesian_rhs_evaluations_total": 210292477,
+    "aggregate_speedup": 3.470379615585821,
+    "prufer_modes_per_second_serial": 0.452859581117465,
+    "cartesian_modes_per_second_serial": 0.13049280807310748,
+    "jit_warmup_s": 0.3133680000901222,
+    "aggregate_speedup_including_jit": 3.4684864662965245
+  },
+  "integral_map": {
+    "root_input_dn_eff": 0.133736818177558,
+    "candidate_dn_gw": 0.1337367594174389,
+    "candidate_recorded_dn_gw": 0.13373675941743884,
+    "candidate_map_reconstruction_relative_error": 4.150777353441641e-16,
+    "current_cartesian_dn_gw": 0.13373681850458013,
+    "archived_cartesian_dn_gw": 0.13373681807168084,
+    "candidate_vs_current_cartesian_map_relative_difference": 4.4181656103436e-07,
+    "current_cartesian_vs_archived_map_relative_difference": 3.2369493007409076e-09,
+    "candidate_fixed_point_residual_relative": -4.393712958368693e-07,
+    "current_cartesian_fixed_point_residual_relative": 2.445266277849866e-09,
+    "candidate_map_quadrature_error": 1.8399610380354935e-20,
+    "candidate_map_interpolation_error": 1.8359265464707613e-10,
+    "current_cartesian_map_quadrature_error": 1.8399618509611116e-20,
+    "current_cartesian_map_interpolation_error": 1.8219038717003942e-10,
+    "archived_interval_secant_slope": 0.021126056001098025,
+    "candidate_cartesian_root_shift_first_order_estimate": -6.036235982948612e-08,
+    "root_shift_method_limit": "uses an archived interval secant average, not a local derivative or a rigorous root enclosure"
+  },
+  "input_provenance": {
+    "paired_json": "F:\\codex\\stiffGWpy\\docs\\reference_prufer_cartesian_paired_fullgrid_20261104.json",
+    "paired_json_sha256": "5ac7f34d59b1bd9c375c48a742ee197bad5e5e7a7ca5fd3b4785f8c52d9e12e0",
+    "frequency_spectrum_npz": "F:\\codex\\stiffGWpy\\docs\\res4_reference_secant_root_tail10_20261104.npz",
+    "frequency_spectrum_npz_sha256": "a62fbc394f8364b1e218098577c30e596e10010ff8a79a24d119822aa5891a5c",
+    "reference_map_json": "F:\\codex\\stiffGWpy\\docs\\res4_reference_secant_root_tail10_20261104.json",
+    "reference_map_json_sha256": "bacd0f28dd1b3caf9b6ee7aa504ce05d50550ef0b5de1332f0171064da8fddc9",
+    "secant_analysis_json": "F:\\codex\\stiffGWpy\\docs\\res4_reference_map_sensitivity_20261104.json",
+    "secant_analysis_json_sha256": "4c8295bfdfc7bc5d5cf6dc410fb69b45caeb103113a5b2d816dcdedbdf6d8ff2"
+  },
+  "semantics": "post-processing of 260 paired per-mode DOP853 Reference runs; log-spectrum inversion is exact for this archive because all nodes are above the benchmark's -40 floor"
+}

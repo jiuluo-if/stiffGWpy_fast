@@ -302,6 +302,23 @@ The expanded eight-frequency A/B reports `3.626x` aggregate (`3.586x`
 including JIT warmup), per-mode P50/P95 `2.778x/4.174x`, and maximum same-input
 spectrum error `3.94e-6 dex`; see
 [`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).
+The complete 260-mode alternating A/B at the independent res4 root is now
+available in
+[`reference_prufer_cartesian_paired_fullgrid_20261104.json`](reference_prufer_cartesian_paired_fullgrid_20261104.json):
+all modes completed, paired spectrum error median/P95/max is
+`1.575e-7/6.654e-6/5.246e-5 dex`, aggregate speedup is `3.470x` (`3.468x`
+including JIT), and per-mode speedup P50/P95 is `2.632x/4.332x`. Reconstruct
+integral maps and the secant-based root-shift estimate with
+[`analyze_reference_paired_fullgrid.py`](../scripts/analyze_reference_paired_fullgrid.py);
+the secant estimate is not a rigorous root bracket.
+
+The standalone Newton–Kantorovich phase-transfer screen is also recorded at
+[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json).
+On one tail-using res4 mode, a DOP853 low-frequency prefix plus six high-frequency
+phase intervals matched current Cartesian within `1.7461e-8 dex` in `0.134 s`
+versus `12.43 s` Cartesian on the latest run. It has not passed full-grid or
+parameter-domain tests and remains a research prototype. Reproduce with
+[`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py).
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
