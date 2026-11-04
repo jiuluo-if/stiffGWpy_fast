@@ -630,7 +630,9 @@ preserves the prior full-array output to `6.04e-14 dex` and reduces warm P50
 at the candidate point versus default `h=.005` by about `15%`, `6%`, and `9%`
 at 2, 7, and 8 threads respectively; at 8 threads P50/P95 is
 `66.6/73.9 ms`. Real interior subdivisions and near-coincident physical
-anchors retain the exact interval array. Full Reference, continuous DOP853,
+anchors retain the exact interval array. The latest 15-pair 8-thread benchmark
+records candidate/default P50/P95 `62.0/68.7` vs `67.7/70.7 ms`; the corrected
+three-variant throughput is `13.82 cases/s`. Full Reference, continuous DOP853,
 performance, and resource records are linked from `accuracy.md`.
 
 The terminal-step correction also improves random-corpus sample11 on the
