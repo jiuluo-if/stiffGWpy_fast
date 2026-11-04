@@ -641,8 +641,8 @@ def test_sigma_exact_and_kink_split_select_continuous_split_primitive(monkeypatc
     assert model.sigma_exact_used is True
 
 
-def test_transition_refine_uses_fast_node_primitive_unless_sigma_exact(monkeypatch):
-    """Variable-grid Fast keeps node interpolation unless exact sigma is requested；可变网格默认走节点快速原函数。"""
+def test_transition_refine_primitive_can_be_selected_explicitly(monkeypatch):
+    """Explicit sigma_exact selects either the node or continuous primitive."""
     calls = {'fast': 0, 'exact_grid': 0}
     fast_primitive = EB.fast_phi_s2_split
     exact_grid = EB.exact_phi_s2_grid
@@ -664,6 +664,7 @@ def test_transition_refine_uses_fast_node_primitive_unless_sigma_exact(monkeypat
     fast_model = _make_model()
     assert FS.SGWB_iter_fast(
         fast_model, tol=1e-6, config=config, transition_refine=True, kink_split=True,
+        sigma_exact=False,
     ) is fast_model
     assert calls == {'fast': 2, 'exact_grid': 0}
 
@@ -674,6 +675,36 @@ def test_transition_refine_uses_fast_node_primitive_unless_sigma_exact(monkeypat
     ) is exact_model
     assert calls['fast'] == 2
     assert calls['exact_grid'] == 2
+
+
+def test_transition_refine_defaults_to_continuous_background_primitive(monkeypatch):
+    """The opt-in refined path uses the continuous primitive unless explicitly disabled."""
+    calls = {'fast': 0, 'exact_grid': 0}
+    fast_primitive = EB.fast_phi_s2_split
+    exact_grid = EB.exact_phi_s2_grid
+
+    def capture_fast(*args, **kwargs):
+        calls['fast'] += 1
+        return fast_primitive(*args, **kwargs)
+
+    def capture_exact_grid(*args, **kwargs):
+        calls['exact_grid'] += 1
+        return exact_grid(*args, **kwargs)
+
+    monkeypatch.setattr(EB, 'fast_phi_s2_split', capture_fast)
+    monkeypatch.setattr(EB, 'exact_phi_s2_grid', capture_exact_grid)
+    config = FS.resolve_config(
+        'fast', threads=1, h=0.02, z_tail=5.0, freq_grid='construct',
+        transition_refine_radius=0.25, transition_refine_factor=8,
+    )
+    model = _make_model()
+
+    assert FS.SGWB_iter_fast(
+        model, tol=1e-6, config=config, transition_refine=True, kink_split=True,
+    ) is model
+
+    assert calls == {'fast': 0, 'exact_grid': 2}
+    assert model.sigma_exact_used is True
 
 
 def test_phase_envelope_caps_each_split_transfer_segment():

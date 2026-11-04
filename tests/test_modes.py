@@ -39,6 +39,21 @@ def test_accuracy_modes_valid(fast_settings):
     assert FS.ACCURACY_MODES['debug']['h'] <= FS.ACCURACY_MODES['fast']['h']
 
 
+def test_high_level_transition_refine_forwards_sigma_exact_auto_sentinel(monkeypatch):
+    captured = {}
+
+    def capture_fast(model, **kwargs):
+        captured.update(kwargs)
+        return model
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', capture_fast)
+    model = LCDM_SG(r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01)
+
+    assert model.SGWB_iter(engine='fast', transition_refine=True) is model
+    assert captured['transition_refine'] is True
+    assert captured['sigma_exact'] is None
+
+
 def test_only_fast_is_formal_user_profile(fast_settings):
     assert FS.USER_FAST_PROFILES == ('fast',)
     assert tuple(FS.FAST_PROFILES) == ('fast',)

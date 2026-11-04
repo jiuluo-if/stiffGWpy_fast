@@ -320,6 +320,14 @@ On the blue-tilt res4 point (`r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`,
   [`current18`](res4_dop853_current18_20261104.json); the 53-mode cohort is
   historical and is included to check those former outliers against the
   continuous-coefficient solver, not to imply they remain current failures.
+- A targeted frequency-density check held `h=.005` and `z_tail=8` fixed while
+  increasing `freq_res` from 4 to 8 and 16. The Fast root moved from
+  `0.1337074583` to `0.1337063774`, but the same 18 modes remained above
+  `5e-4 dex` and the maximum spectrum difference stayed near `6.455e-4 dex`.
+  This rules out frequency-grid density as the main cause for these outliers;
+  it is not a replacement for the separate background/root comparisons. Raw
+  measurements are in
+  [`res4_default_frequency_density_20261104.json`](res4_default_frequency_density_20261104.json).
 
 The retained stiff random sample11 is a second independent hard point. Its
 current h=.02 Fast root (`DN_eff=4.857519441699757`) was checked by a same-input

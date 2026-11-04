@@ -63,6 +63,10 @@ outer self-consistency iteration itself.
 the retained 94-mode sample11 case using its saved Fast-root frequency grid.
 It records the map residual, quadrature/interpolation estimates, and same-DN
 per-mode spectrum errors, and saves the raw Reference spectrum beside its JSON.
+`benchmark_sample11_sigma_exact.py` alternates complete h=.02 transition-refined
+sample11 roots using the continuous-background primitive by default and the
+explicit node primitive. It records matched-grid errors against the saved
+tail10 Reference spectrum and warm P50/P95 timings.
 `benchmark_background_primitive_guard.py` alternates six normal Fast regimes
 with the pre-kernel primitive finite check enabled/disabled to quantify its
 runtime overhead and confirm identical spectra.

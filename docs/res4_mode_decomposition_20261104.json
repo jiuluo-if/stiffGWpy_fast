@@ -106,5 +106,54 @@
     ],
     "modes_over_5e-4_dex": 0,
     "source_commit": "e49c496fd62da71b8d01fb097402dc7f9f832ac2"
+  },
+  "default_frequency_density_probe": {
+    "fixed_h": 0.005,
+    "fixed_z_tail": 8.0,
+    "rows": [
+      {
+        "freq_res": 4.0,
+        "runtime_s": 0.37784940004348755,
+        "dn_eff": 0.13370745830380665,
+        "dn_gw": 0.13370745830380665,
+        "dn_residual": 1.8091421466470692e-07,
+        "solved_frequency_count": 260,
+        "reference_mode_spectrum_error_median_p95_max_dex": [
+          0.00025227787937476265,
+          0.0005699087554196677,
+          0.0006455033769050544
+        ],
+        "modes_over_5e-4_dex": 18
+      },
+      {
+        "freq_res": 8.0,
+        "runtime_s": 0.36502999998629093,
+        "dn_eff": 0.1337064284103342,
+        "dn_gw": 0.1337064284103342,
+        "dn_residual": 1.8106297688946782e-07,
+        "solved_frequency_count": 779,
+        "reference_mode_spectrum_error_median_p95_max_dex": [
+          0.0002522147186470036,
+          0.0005699619393148222,
+          0.0006454976088079434
+        ],
+        "modes_over_5e-4_dex": 18
+      },
+      {
+        "freq_res": 16.0,
+        "runtime_s": 0.6205739000579342,
+        "dn_eff": 0.13370637739415542,
+        "dn_gw": 0.13370637739415542,
+        "dn_residual": 1.8146711605604438e-07,
+        "solved_frequency_count": 1300,
+        "reference_mode_spectrum_error_median_p95_max_dex": [
+          0.00025221268783637285,
+          0.0005699677834733127,
+          0.0006455013373205531
+        ],
+        "modes_over_5e-4_dex": 18
+      }
+    ],
+    "conclusion": "Increasing freq_res from4 to16 changes the default root only slightly and leaves the 18 edge-mode errors unchanged; frequency density is not the dominant source of those spectrum outliers."
   }
 }

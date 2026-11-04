@@ -197,7 +197,7 @@ class LCDM_SG(LCDM_SN):
                   z_tail=None, rtol=1e-6, atol=None, freq_res=None,
                   h=None, col_step=None, threads=None,
                   accuracy_mode=_DEFAULT_ACCURACY_MODE,
-                  auto_escalate=False, error_tol=None, sigma_exact=False,
+                  auto_escalate=False, error_tol=None, sigma_exact=None,
                   escalate_to_reference=False, transition_refine=None,
                   likelihood_sigma=None, dlogl_tol=None, eval_freqs=None,
                   physical_guard=False):
@@ -242,6 +242,10 @@ class LCDM_SG(LCDM_SN):
         the legacy settings (env FAST_H/FAST_COL_STEP/FAST_THREADS) and
         ``z_tail``/``freq_res``/``tol`` are applied as passed. The preferred
         named-mode path is per-call and does not mutate that legacy state.
+        When ``transition_refine=True`` and ``sigma_exact`` is omitted, Fast
+        recomputes the background primitive from the continuous piecewise
+        sigma; explicitly pass ``sigma_exact=False`` to select the node-based
+        primitive.
         On success the model object is returned.
 
         """

@@ -219,6 +219,11 @@ Reference array. Their provenance summary is
 [`res4_mode_decomposition_20261104.json`](res4_mode_decomposition_20261104.json);
 the detailed data files are linked from [`accuracy.md`](accuracy.md).
 
+A targeted `freq_res=4/8/16` check at fixed `h=.005,z_tail=8` leaves the same
+18 modes above `5e-4 dex`; increasing frequency density is not the main source
+of their error. The raw comparison is
+[`res4_default_frequency_density_20261104.json`](res4_default_frequency_density_20261104.json).
+
 The current `A_s=1e20` trace now stops at its first bad `S2=exp(Psi)` value
 before tensor propagation, reporting the primitive and index; no extended
 finite spectrum is claimed. A 501-pair six-regime A/B confirms the diagnostic
