@@ -756,14 +756,23 @@ fails before the fix and passes after it; the corrected 800-bin run has no tail
 semantic mismatches and maximum spectral error below `1e-6 dex` on supported
 modes.
 
-Independent order replays of the 88 gamma-zero residual failures find 14 more
+Independent order replays of the 88 gamma-zero residual failures find 14
 no-tail modes with adjacent-order agreement and Cartesian validation: 13
 orders 16/24 pairs and one 24/32 pair. Their maximum adjacent-order difference
-is `2.54e-10 dex`, and maximum Cartesian error is `2.72e-8 dex`. Together with
-the 709 three-order modes this checks 723/800 modes in two separately stated
-tiers; 74 residual failures and three non-positive-`Q` modes remain. Since the
-candidate spectrum is still incomplete, no phase `DN_gw` map or new root claim
-is made.
+is `2.54e-10 dex`, and maximum Cartesian error is `2.72e-8 dex`.
+
+A follow-up independently validated every one of the 37 order-16 solutions
+that passed the existing collocation and dense-residual gates. Tight Cartesian
+(`rtol=1e-11`) and Prüfer (`rtol=1e-9`) references agree within `9.32e-8 dex`
+maximum; the order-16 spectrum differs from them by at most `1.59e-8` and
+`9.33e-8 dex`, respectively. Thirteen of these 37 already appear in the
+adjacent-order set; the 24/32 pair contributes one additional mode. Thus
+747/800 frequencies are validated across the three-order, dual-reference
+single-order, and adjacent-order checks, with 50 residual failures and three
+non-positive-`Q` modes unresolved. The phase spectrum remains incomplete, so
+no phase `DN_gw` map or root is claimed. Reproduce the dual-reference pass with
+[`validate_sample2_order16_reference.py`](../scripts/validate_sample2_order16_reference.py)
+and see [`sample2_phase_order16_dual_reference_20261105.json`](sample2_phase_order16_dual_reference_20261105.json).
 
 Raw Reference and phase arrays, exact 800-bin rows, and provenance hashes are
 in [`sample2_reference_root_res8_tail5_20261104.json`](sample2_reference_root_res8_tail5_20261104.json),
@@ -775,6 +784,8 @@ Reproduce with
 [`benchmark_phase_sample2_reference_root_grid.py`](../scripts/benchmark_phase_sample2_reference_root_grid.py)
 and the residual probe
 [`analyze_sample2_root_phase_order_failures.py`](../scripts/analyze_sample2_root_phase_order_failures.py).
+The order-16 dual-reference validation record is
+[`sample2_phase_order16_dual_reference_20261105.json`](sample2_phase_order16_dual_reference_20261105.json).
 
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
