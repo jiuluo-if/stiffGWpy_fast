@@ -212,6 +212,14 @@ relative, and same-DN spectrum maximum error is `9.149e-5 dex` on 94 modes.
 Raw Fast/Reference arrays and a rerunnable driver are linked in
 [`accuracy.md`](accuracy.md).
 
+The current `A_s=1e20` trace now stops at its first bad `S2=exp(Psi)` value
+before tensor propagation, reporting the primitive and index; no extended
+finite spectrum is claimed. A 501-pair six-regime A/B confirms the diagnostic
+guard preserves output exactly and keeps the worst P50/P95 ratio below `1.019`.
+See the staged failure details and raw timing samples in
+[`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md) and
+[`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json).
+
 Commit `671aa11` adds a guarded scalar terminal-step path for transition grids
 whose interior intervals are uniform within floating-point roundoff. The
 previous exact interval-array path is retained for real refinements and tiny

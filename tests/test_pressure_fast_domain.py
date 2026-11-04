@@ -1,5 +1,7 @@
 """Tests for domain-pressure classifications at exact limits."""
 
+import pytest
+
 from scripts.pressure_fast_domain import (
     BASE,
     boundary_cases,
@@ -56,6 +58,33 @@ def test_underflowed_nonzero_tensor_amplitude_is_not_zero_success():
     assert result['status'] == 'failed'
     assert result['classification'] == 'floating_point_underflow'
     assert result['reason'] == 'tensor_amplitude_underflow'
+
+
+def test_background_primitive_overflow_keeps_its_failure_class():
+    from scripts.pressure_fast_domain import _classify_reason
+
+    assert _classify_reason('nonfinite_background_primitive') == 'nonfinite_background_primitive'
+
+
+@pytest.mark.parametrize('cr', [0.0, 1.0])
+def test_pressure_record_reports_first_background_primitive_overflow(cr):
+    params = dict(
+        BASE,
+        A_s=1e20,
+        r=1e-2,
+        n_t=0.5,
+        cr=cr,
+        T_re=2e3,
+        kappa10=1e-2,
+    )
+    result = evaluate({'label': 'background_primitive_overflow', 'params': params},
+                      max_n_inf=120.0, threads=1)
+
+    assert result['status'] == 'failed'
+    assert result['classification'] == 'nonfinite_background_primitive'
+    assert result['background_failure_detail'] == 'S2'
+    assert result['background_failure_index'] is not None
+    assert result['background_failure_log_scale'] > 700.0
 
 
 def test_finite_success_includes_local_accuracy_budget_without_claiming_certification():

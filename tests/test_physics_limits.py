@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 from scipy.integrate import solve_ivp
 
+from stiffgwpy_fast import fast_sgwb as FS
 from stiffgwpy_fast import global_param as gp
 from stiffgwpy_fast import reference as REF
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
@@ -375,9 +376,9 @@ def test_fast_reports_invalid_derived_cutoff_after_outer_update():
     model = LCDM_SG(
         Omega_bh2=0.0223828,
         Omega_ch2=0.1201075,
-        H0=67.32117,
+        H0=1e100,
         DN_eff=0.0,
-        A_s=1e20,
+        A_s=2.100549e-9,
         r=1e-2,
         n_t=0.5,
         cr=1.0,
@@ -395,6 +396,41 @@ def test_fast_reports_invalid_derived_cutoff_after_outer_update():
     assert result is None
     assert model.fast_failure_reason == 'invalid_iterate_cutoff'
     assert model.cosmo_param['DN_eff'] == 0.0
+
+
+def test_fast_stops_before_tensor_when_background_primitive_overflows(monkeypatch):
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=1e20,
+        r=1e-2,
+        n_t=0.5,
+        cr=0.0,
+        T_re=2e3,
+        DN_re=10.0,
+        kappa10=1e-2,
+    )
+    calls = []
+    original_kernel = FS.solve_kernel
+
+    def counted_kernel(*args, **kwargs):
+        calls.append(1)
+        return original_kernel(*args, **kwargs)
+
+    monkeypatch.setattr(FS, 'solve_kernel', counted_kernel)
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=1, accuracy_mode='fast', physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == 'nonfinite_background_primitive'
+    assert model._fast_background_failure_detail == 'S2'
+    assert 0 <= model._fast_background_failure_index < len(model.Nv)
+    assert model._fast_background_failure_log_scale > 700.0
+    assert len(calls) == 1
 
 
 @pytest.mark.slow

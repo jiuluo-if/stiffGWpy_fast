@@ -1261,6 +1261,19 @@ def prep_fast(m, Nv, freqs, h, variable_grid=False):
     return Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus
 
 
+def _first_nonfinite_primitive(arrays):
+    """Return the first ``(name, index)`` with a non-finite background value.
+
+    中文：按传入顺序返回背景原函数数组中首个非有限值的名称和索引；全有限时返回 ``None``。
+    """
+    for name, values in arrays:
+        values = np.asarray(values, dtype=np.float64)
+        if not np.isfinite(values).all():
+            bad = np.flatnonzero(~np.isfinite(values))
+            return name, int(bad[0])
+    return None
+
+
 # ================= stepping, assembly and kernel / 步进、组装与计算核 =================
 def _uniform_step_terminal_width(Nv, h):
     """Return the final interval if all preceding grid steps equal ``h``.
@@ -2149,6 +2162,8 @@ def _SGWB_iter_fast_impl(
     m._fast_derived_cache_key = None
     m._fast_background_failure = None
     m._fast_background_failure_index = None
+    m._fast_background_failure_detail = None
+    m._fast_background_failure_log_scale = None
     try:
         for _iter in range(MAX_ITER):
             n_inf = m.derived_param["N_inf"]
@@ -2360,6 +2375,27 @@ def _SGWB_iter_fast_impl(
                 kink_index = -1
                 kink_fraction = 0.0
                 phi_re = 0.0
+            bad_primitive = _first_nonfinite_primitive((
+                ("Phi_grid", Phi_grid),
+                ("Phi_mid", Phi_mid),
+                ("S2", S2),
+                ("S2inv", S2inv),
+            ))
+            if bad_primitive is not None:
+                name, index = bad_primitive
+                m.fast_failure_reason = "nonfinite_background_primitive"
+                m._fast_background_failure = m.fast_failure_reason
+                m._fast_background_failure_detail = name
+                m._fast_background_failure_index = index
+                if name == "S2":
+                    m._fast_background_failure_log_scale = float(
+                        2.0 * (Phi_grid[index] - Nv[index] - Nv[0])
+                    )
+                elif name == "S2inv":
+                    m._fast_background_failure_log_scale = float(
+                        -(Phi_grid[index] - Nv[index] - Nv[0])
+                    )
+                break
             _fresh_buffers = False
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at

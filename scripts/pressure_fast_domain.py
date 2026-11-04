@@ -149,6 +149,8 @@ def _classify_reason(reason: str | None) -> str:
         return "background_h2_nonpositive"
     if reason == "max_iter":
         return "outer_iteration_limit"
+    if reason == "nonfinite_background_primitive":
+        return "nonfinite_background_primitive"
     if reason and reason.startswith("nonfinite"):
         return "nonfinite_numerical_state"
     if reason == "invalid_frequency_grid":
@@ -185,6 +187,9 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
         "derived": {}, "runtime_s": None, "n_freq": None,
         "DN_gw": None, "spectrum_finite_bins": None,
         "fast_accuracy_status": None, "fast_accuracy_budget": None,
+        "background_failure_index": None,
+        "background_failure_detail": None,
+        "background_failure_log_scale": None,
     }
     try:
         model = LCDM_SG(**params)
@@ -226,6 +231,9 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
         result["background_failure_detail"] = getattr(
             model, "_fast_background_failure_detail", None
         )
+        result["background_failure_log_scale"] = _json_scalar(getattr(
+            model, "_fast_background_failure_log_scale", None
+        ))
         if out is None:
             result.update(status="failed", classification=_classify_reason(model.fast_failure_reason))
         else:

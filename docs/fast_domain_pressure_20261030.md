@@ -480,6 +480,24 @@ much more as frequency density increased; sampled spectra also shifted by
 candidate was rolled back and does not establish an accurate root or a larger
 reliable region.
 
+Current Fast now checks `Phi_grid`, `Phi_mid`, `S2`, and `S2inv` immediately
+after background-primitive construction and stops before tensor propagation
+when one is nonfinite. Replaying the same point returns
+`nonfinite_background_primitive`, detail `S2`, index `9555`, with
+`log(S2)=4.261099410933e12`; this exceeds the representable exponential range
+by many orders. The scanner preserves this distinct failure class and records
+the log scale. This is fail-closed diagnostics; no scaled finite spectrum is
+claimed for this input.
+
+The same-parameter failure test on both `cr=0` and `cr=1` branches now confirms
+that the first bad primitive is reported before another tensor solve. A 501-pair
+normal-case A/B across default, lowT, highT, stiff, low_r, and high_kappa shows
+bitwise-identical spectra and DN maps; the largest P50/P95 ratio is `1.0187`,
+inside the 5% budget. Reproduce with
+[`benchmark_background_primitive_guard.py`](../scripts/benchmark_background_primitive_guard.py);
+the raw per-call samples are in
+[`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json).
+
 ### Shared-grid res4 result
 
 The mode decomposition was rerun at the Fast node-primitive candidate
