@@ -301,6 +301,54 @@ not a claim that the missing 37-paper set or a 50-paper survey is complete.
    full-grid cost limit its immediate use here.
    [Original PDF](https://arxiv.org/pdf/2212.06924),
    [JOSS software paper](https://doi.org/10.21105/joss.05430)
+5. Bremer, “Phase function methods for second order linear ordinary
+   differential equations with turning points,” arXiv:2209.14561 (2022).
+   The construction assumes a smooth coefficient with one turning point,
+   combines adaptive Chebyshev ODE solves with coefficient windowing (§4), and
+   proves in §3 that an even-order turning point cannot have a single
+   nonoscillatory phase across the whole line. The Appell solution can grow rapidly on the
+   exponential side. Multiple turns and the reheating kink therefore require
+   piecewise phases and matching; this is not a direct production algorithm.
+   [Original full text](https://arxiv.org/abs/2209.14561)
+6. Bremer, “On the numerical solution of second order differential equations
+   in the high-frequency regime,” arXiv:1409.6049 (2014). Theorem 8 assumes a
+   smooth, strictly positive coefficient and a rapidly decaying
+   Schwarzian-derived correction after a Liouville coordinate transform; the
+   numerical method (§4) windows the coefficient, solves logarithmic Kummer
+   equations, then spectrally integrates the phase; experiments are in §5. It is foundational for
+   the later phase-function work but does not cover a turning point or
+   coefficient jump without a separate extension.
+   [Original full text](https://arxiv.org/abs/1409.6049)
+7. Bremer, “On the numerical calculation of the roots of special functions
+   satisfying second order ordinary differential equations,” arXiv:1512.08357
+   (2015). Once a nonoscillatory phase is available, roots are obtained by
+   inverting the monotone phase (§4), avoiding large-argument trigonometric loss;
+   the per-root work is frequency independent under the same positive-
+   coefficient assumptions. This targets root locations, not propagation of
+   the tensor state, and is not a new propagation backend.
+   [Original full text](https://arxiv.org/abs/1512.08357)
+8. Chen, Serkh and Bremer, “On the adaptive Levin method,” arXiv:2211.13400
+   (2022). Its §3 analysis proves that Chebyshev collocation with truncated SVD
+   avoids low-frequency breakdown in the stated Levin setting, including
+   stationary points; §7.3 tests stationary-phase integrals. This is an
+   oscillatory-integral method rather than a propagation
+   method; it may inform future integral work, but its assumptions do not
+   directly replace the current spectrum integral.
+   [Original full text](https://arxiv.org/abs/2211.13400)
+9. Serkh and Bremer, “Phase function methods for second order inhomogeneous
+   linear ordinary differential equations,” arXiv:2211.13744 (2022). It
+   combines a phase-function basis with adaptive Levin integrals (formula (4),
+   §3) for a slowly varying forcing and positive, slowly varying coefficient;
+   numerical tests are in §4. The authors note
+   that large negative coefficients make one phase-basis function grow rapidly
+   and render this representation unstable; the current tensor equation is
+   homogeneous and crosses such regimes, so the construction is not adopted.
+   [Original full text](https://arxiv.org/abs/2211.13744)
+
+The exact 37-item appendix remains absent from the supplied attachment and
+repository history. The nine entries above are distinct primary works with
+targeted full-text reading; they do not reconstruct that list and do not meet
+the requested 50-source audit.
 
 ## Current limits
 
