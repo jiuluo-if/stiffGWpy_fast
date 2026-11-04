@@ -224,6 +224,26 @@ def _make_tail_event(z_tail):
     return event
 
 
+def _tensor_prufer(N, state, bg):
+    """Evolve the exact tensor system in logarithmic-amplitude/phase variables.
+
+    中文：将笛卡尔张量状态严格改写为 ``x=A sin(theta)``, ``y=A cos(theta)``，
+    在 log-amplitude 和相位坐标中传播，避免直接解析高频笛卡尔振荡。
+    """
+    z, log_amplitude, phase = state
+    _, sigma = _H2_and_sigma(bg, N)
+    try:
+        omega = math.exp(z)
+    except OverflowError as exc:
+        raise FloatingPointError('reference Prüfer frequency overflowed') from exc
+    if omega == 0.0:
+        raise FloatingPointError('reference Prüfer frequency underflowed to zero')
+    z_prime = 1.5 * sigma - 1.0
+    log_amplitude_prime = 1.5 * sigma - 2.0 + math.cos(2.0 * phase)
+    phase_prime = -omega - math.sin(2.0 * phase)
+    return z_prime, log_amplitude_prime, phase_prime
+
+
 def _handoff_diagnostics(bg, N, zf, xf, yf):
     """Return phase/amplitude and local adiabaticity at a mode hand-off.
 
@@ -250,6 +270,81 @@ def _handoff_diagnostics(bg, N, zf, xf, yf):
         'omega_second_over_omega3': float(
             (1.5 * sigma_prime + z_prime * z_prime) / (omega * omega)),
     }
+
+
+def _solve_reference_mode_prufer(m, freq, DN_eff, z_tail, z_start, rtol, atol):
+    """Solve one mode with the Cartesian state expressed in Prüfer variables."""
+    bg = _Background(m, DN_eff)
+    A_t = m.derived_param['A_t']
+    nt = m.derived_param['nt']
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    if A_t == 0.0 and not zero_tensor_limit:
+        raise FloatingPointError('reference: tensor amplitude underflowed to zero')
+    P_t = 0.0 if zero_tensor_limit else A_t * (10.0 ** freq / gp.f_piv) ** nt
+
+    Nstart = _find_start_N(bg, freq, z_start)
+    fh_start = f_hor_abs(bg, Nstart)
+    z0 = (freq - fh_start) * ln10
+    if atol is None:
+        atol = [1e-12, 1e-12, 1e-12]
+    result = solve_ivp(
+        _tensor_prufer, (Nstart, bg.N_inf), (z0, z0, 0.0),
+        method='DOP853', rtol=rtol, atol=atol,
+        events=[_make_tail_event(z_tail)], args=(bg,), dense_output=False)
+    if not result.success:
+        raise RuntimeError("reference Prüfer integration failed: %s" % result.message)
+
+    used_tail = bool(result.t_events[0].size)
+    n_steps = int(result.nfev)
+    if used_tail:
+        t_event = float(result.t_events[0][0])
+        if not result.y_events or result.y_events[0].shape != (1, 3):
+            raise RuntimeError('reference Prüfer integration returned no tail event state')
+        zf, log_amplitude, phase = result.y_events[0][0]
+    else:
+        zf, log_amplitude, phase = result.y[:, -1]
+        t_event = None
+
+    if not all(math.isfinite(float(v)) for v in (zf, log_amplitude, phase)):
+        raise FloatingPointError('reference Prüfer state is non-finite')
+    try:
+        amplitude = math.exp(float(log_amplitude))
+    except OverflowError as exc:
+        raise FloatingPointError('reference Prüfer amplitude overflowed') from exc
+    if amplitude == 0.0 and not zero_tensor_limit:
+        raise FloatingPointError('reference Prüfer amplitude underflowed to zero')
+    xf = amplitude * math.sin(float(phase))
+    yf = amplitude * math.cos(float(phase))
+
+    eps_handoff = None
+    matching_error_rel = None
+    if used_tail:
+        _, sigma = _H2_and_sigma(bg, t_event)
+        eps_handoff = abs(1.5 * sigma - 1.0) / math.exp(float(zf))
+        matching_error_rel = eps_handoff
+        coefficient = amplitude / math.sqrt(2.0)
+        transfer = coefficient * math.exp(-float(zf) + t_event - bg.N_inf)
+        x_today = transfer * 10.0 ** (
+            freq - f_hor_abs(bg, bg.N_inf))
+        Oj = -transfer * transfer / 3.0 * P_t
+        Opgw = x_today * x_today / 36.0 * P_t
+        Ogw = 3.0 * Opgw + Oj
+        diagnostics = _handoff_diagnostics(bg, t_event, float(zf), xf, yf)
+    else:
+        Th = yf / math.exp(float(zf))
+        Oj = xf * Th / 3.0 * P_t
+        Ogw = (xf * xf + yf * yf) / 24.0 * P_t + Oj
+        Opgw = (-5.0 * xf * xf + 7.0 * yf * yf) / 72.0 * P_t
+        diagnostics = _handoff_diagnostics(
+            bg, bg.N_inf, float(zf), xf, yf)
+
+    if not all(math.isfinite(float(v)) for v in (Ogw, Oj, Opgw)):
+        raise FloatingPointError('reference Prüfer output is non-finite')
+    return dict(
+        Ogw_today=float(Ogw), Oj_today=float(Oj), Opgw_today=float(Opgw),
+        used_tail=used_tail, event_N=t_event, n_steps=n_steps, z0=z0,
+        eps_handoff=eps_handoff, matching_error_rel=matching_error_rel,
+        backend='prufer', **diagnostics)
 
 
 def _find_start_N(bg, freq, z_start):
@@ -299,21 +394,28 @@ def f_hor_abs(bg, N):
 
 
 def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
-                         rtol=1e-12, atol=None):
+                         rtol=1e-12, atol=None, backend='cartesian'):
     """Solve a single frequency with the independent high-accuracy pipeline.
 
     Returns a dict with the today values ``Ogw_today``, ``Oj_today``,
     ``Opgw_today`` plus diagnostics (whether the analytic tail was used, the
     hand-off time, the number of ODE steps taken, and the deep-subhorizon
     adiabaticity ``eps_handoff`` with the leading-order WKB matching error
-    ``matching_error_rel``).  ``eps_handoff = |1.5*sigma - 1| / exp(z)`` and the
-    frozen-amplitude tail is an ``O(eps)`` approximation.
+    ``matching_error_rel``). ``backend`` selects the default Cartesian state or
+    the opt-in Prüfer amplitude/phase transform. ``eps_handoff =
+    |1.5*sigma - 1| / exp(z)`` and the frozen-amplitude tail is an ``O(eps)``
+    approximation.
 
     中文：用独立高精度流程求解单个频率。返回今天的 ``Ogw_today``、``Oj_today``、
     ``Opgw_today``，以及是否使用解析尾部、交接时刻、ODE 步数、深次视界绝热性
-    ``eps_handoff`` 和 WKB 振幅匹配误差 ``matching_error_rel``。冻结振幅尾部是
-    ``O(eps)`` 近似，不代表精确解。
+    ``eps_handoff`` 和 WKB 振幅匹配误差 ``matching_error_rel``。``backend`` 可选默认
+    笛卡尔状态或 opt-in Prüfer 振幅/相位变换。冻结振幅尾部是 ``O(eps)`` 近似，不代表精确解。
     """
+    if backend not in ('cartesian', 'prufer'):
+        raise ValueError("reference backend must be 'cartesian' or 'prufer'")
+    if backend == 'prufer':
+        return _solve_reference_mode_prufer(
+            m, freq, DN_eff, z_tail, z_start, rtol, atol)
     if atol is None:
         atol = [1e-12, 1e-22, 1e-22]
     bg = _Background(m, DN_eff)
@@ -413,13 +515,17 @@ def _sync_size():
     return int(MPI.COMM_WORLD.Get_size())
 
 
-def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None):
+def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None,
+                       backend='cartesian', z_start=-12.0):
     """Solve every frequency and return today's spectrum arrays.
 
     中文：逐个频率调用参考模态求解器，返回今天的 ``Ogw``、``Oj``、``Opgw`` 和尾部使用标记。
     ``workers=None`` 时读取 ``SGWB_POOL_SIZE``（默认 1），线程数不超过 CPU 数；
-    MPI world size 大于 1 时强制串行，避免再嵌套线程池。
+    MPI world size 大于 1 时强制串行，避免再嵌套线程池。``backend`` 默认使用 Cartesian，
+    也可显式选择 ``prufer``；``z_start`` 控制每个模态的超视界起点。
     """
+    if backend not in ('cartesian', 'prufer'):
+        raise ValueError("reference backend must be 'cartesian' or 'prufer'")
     freqs = np.asarray(freqs, dtype=float)
     n = freqs.size
     Ogw = np.empty(n)
@@ -431,15 +537,18 @@ def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None):
     workers = max(1, min(workers, os.cpu_count() or 1))
     if _sync_size() > 1:
         workers = 1
-    tasks = [(float(f), DN_eff, z_tail, rtol) for f in freqs]
+    tasks = [(float(f), DN_eff, z_tail, rtol, z_start) for f in freqs]
     if workers > 1 and n > 1:
         def _task(t):
-            freq, dn, zt, rtol = t
-            return solve_reference_mode(m, freq, dn, z_tail=zt, rtol=rtol)
+            freq, dn, zt, rtol, z0 = t
+            return solve_reference_mode(m, freq, dn, z_tail=zt, rtol=rtol,
+                                        backend=backend, z_start=z0)
         with ThreadPoolExecutor(max_workers=workers) as ex:
             results = list(ex.map(_task, tasks))
     else:
-        results = [solve_reference_mode(m, float(f), DN_eff, z_tail=z_tail, rtol=rtol)
+        results = [solve_reference_mode(
+            m, float(f), DN_eff, z_tail=z_tail, rtol=rtol,
+            backend=backend, z_start=z_start)
                    for f in freqs]
     for i, sol in enumerate(results):
         Ogw[i] = sol['Ogw_today']
@@ -511,14 +620,17 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     return float(g2), float(ln10v * abs(abserr)), (None if interp_err is None else float(interp_err))
 
 
-def _spectrum_at_dn(m, freqs, DN_eff, z_tail, rtol, workers=None):
+def _spectrum_at_dn(m, freqs, DN_eff, z_tail, rtol, workers=None,
+                    backend='cartesian', z_start=-12.0):
     return spectrum_reference(m, freqs, DN_eff, z_tail=z_tail, rtol=rtol,
-                              workers=workers)
+                              workers=workers, backend=backend,
+                              z_start=z_start)
 
 
 def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
                   z_start=-12.0, tol=1e-7, max_iter=60, freq_subset=None,
-                  self_consistent=True, workers=None, physical_guard=False):
+                  self_consistent=True, workers=None, physical_guard=False,
+                  backend='cartesian'):
     """High-accuracy SGWB solve, returning derived results.
 
     When ``dn_eff`` is given (recommended for benchmarking) a *single* pass at
@@ -540,10 +652,13 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     的误差；设为 ``None`` 且 ``self_consistent=True`` 时，会迭代求解 ``Delta N_eff``。
     ``freq_subset`` 是 ``log10(f/Hz)`` 数组；未提供时使用由连续背景构造的频率网格。
     频谱和玻尔积分使用同一频率集合，稀疏子集带来的频率网格误差会单独报告。
-    ``physical_guard`` 可显式拒绝总 ``Delta N_eff`` 超过 5 的自洽结果；默认关闭。
+    ``physical_guard`` 可显式拒绝总 ``Delta N_eff`` 超过 5 的自洽结果；默认关闭。``backend``
+    默认使用 Cartesian，``prufer`` 后端需显式指定。
     """
     if not isinstance(physical_guard, bool):
         raise TypeError('physical_guard must be a bool, got %r' % (physical_guard,))
+    if backend not in ('cartesian', 'prufer'):
+        raise ValueError("reference backend must be 'cartesian' or 'prufer'")
     r = m.cosmo_param['r']
     zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
     if r < 0 or (r == 0 and not zero_tensor_limit):
@@ -566,7 +681,9 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
         freqs = np.asarray(freqs, dtype=float)
 
     def solve(freqs_in, dn):
-        return _spectrum_at_dn(m, freqs_in, dn, z_tail, rtol, workers=workers)
+        return _spectrum_at_dn(m, freqs_in, dn, z_tail, rtol,
+                               workers=workers, backend=backend,
+                               z_start=z_start)
 
     if self_consistent and dn_eff is None:
         DN_gw_list = [0.0]
@@ -631,11 +748,12 @@ def run_reference(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11,
         n_iter=n_iter,
         z_tail=z_tail,
         rtol=rtol,
+        mode_backend=backend,
     )
 
 
 def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11,
-                             physical_guard=False):
+                             physical_guard=False, backend='cartesian'):
     """Run the continuous-sigma reference and expose it on the model.
 
     Mirrors the fast/LSODA output contract so ``LCDM_SG`` and the Cobaya adapter
@@ -647,7 +765,7 @@ def apply_reference_to_model(m, freq_res=1.0, z_tail=5.0, rtol=1e-11,
     """
     ref = run_reference(m, dn_eff=None, freq_res=freq_res, z_tail=z_tail,
                         rtol=rtol, self_consistent=True,
-                        physical_guard=physical_guard)
+                        physical_guard=physical_guard, backend=backend)
     m.cosmo_param['DN_eff'] = ref['DN_eff']
     m.DN_gw = np.append([0.0], ref['DN_gw'])
     m.kappa_r = ref['kappa_r']

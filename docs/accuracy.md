@@ -424,3 +424,53 @@ The direct same-input res4 map and candidate spectrum are archived as
 [`res4_sigma_exact_same_input_20261104.json`](res4_sigma_exact_same_input_20261104.json),
 and [`res4_sigma_exact_same_input_20261104.npz`](res4_sigma_exact_same_input_20261104.npz).
 The 260-mode tail10 map used `rtol=1e-11`, four workers, and took `5692 s`.
+
+## 2026-11-04 opt-in Reference Prüfer backend
+
+`solve_reference_mode`, `spectrum_reference`, `run_reference`, and
+`apply_reference_to_model` now accept `backend="prufer"`. The default remains
+`backend="cartesian"`. The new backend applies the exact state change
+`x=A sin(theta)`, `y=A cos(theta)` and evolves `(z, log(A), theta)`; it keeps the
+same continuous background, DOP853 method, tail event, and frozen-amplitude
+tail convention. Non-finite ODE results and amplitude/frequency overflow or
+underflow fail explicitly. The production backend is opt-in pending validation
+over additional parameter regimes.
+
+At the independently closed res4 Reference root
+`DN_eff=0.13373681817755848`, the production Prüfer backend was run on the same
+260 frequencies as the archived Cartesian tail10 spectrum. Candidate settings
+were `rtol=1e-9`, `atol=[1e-12,1e-12,1e-12]`, one worker, `z_tail=10`; the
+Cartesian archive used `rtol=1e-11`. The candidate map is
+`DN_gw=0.1337368198597089`, versus the Cartesian map
+`0.13373681807168084`: relative map difference `1.337e-8`, and fixed-point
+residual relative to the input root `1.258e-8`. On all 260 same-input modes the
+median/P95/maximum spectrum error is `1.465e-7 / 2.602e-6 / 4.279e-5 dex`.
+Candidate quadrature/interpolation estimates are `1.84e-20` and `1.83e-10`.
+The single-worker candidate propagation took `657.4 s`; this is a candidate
+runtime, not a paired full-grid speedup measurement.
+
+A repeated paired screen on four representative modes (two alternating
+Cartesian/Prüfer pairs per mode) used the same root background and frequency
+points. The Cartesian side used `rtol=1e-11`; the candidate used `rtol=1e-9`.
+Aggregate candidate speedup was `4.269x`, per-mode speedup P50/P95 was
+`4.144x / 4.704x`, and the selected-mode maximum spectrum difference was
+`1.401e-5 dex`. The low-frequency endpoint mode was only `2.03x` faster, so the
+four-mode timing cannot be generalized to every parameter or frequency.
+
+The root-grid result and repeat samples are archived in
+[`reference_prufer_production_res4_refroot_20261104.json`](reference_prufer_production_res4_refroot_20261104.json)
+and [`reference_prufer_production_ab_smoke_20261104.json`](reference_prufer_production_ab_smoke_20261104.json).
+Reproduce with [`benchmark_res4_prufer_candidate.py`](../scripts/benchmark_res4_prufer_candidate.py),
+using `--reference docs/res4_reference_secant_root_tail10_20261104.npz`,
+`--reference-map docs/res4_reference_secant_root_tail10_20261104.json`,
+`--dn-eff 0.13373681817755848`, `--rtol 1e-9`, `--candidate-only --full-grid`.
+The older experimental Prüfer helper produced the initial screening artifacts;
+these current figures come from the package backend.
+
+The public author ARDC package `riccati==2.0.0` was also screened on one mode.
+At `eps=epsh=1e-9`, its spectrum error was `3.585e-4 dex` in `0.145 s`, and
+tightening the tolerance did not reduce the observed offset. The 260-mode run
+did not finish within a 45-minute CPU budget; it was cancelled without a
+partial spectrum or accuracy result. This is recorded as an incomplete resource
+screen, not as a full-grid method rejection, in
+[`reference_ardc_res4_timeout_20261104.json`](reference_ardc_res4_timeout_20261104.json).

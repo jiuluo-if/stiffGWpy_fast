@@ -158,6 +158,78 @@ def test_reference_mode_reports_tail_phase_and_adiabaticity():
     assert sol['amplitude_handoff'] > 0.0
 
 
+@pytest.mark.parametrize(
+    ('freq', 'expected_tail'),
+    [(-8.0, True), (-20.0, False)],
+)
+def test_prufer_reference_backend_matches_cartesian_mode(freq, expected_tail):
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    dn_eff = m.cosmo_param['DN_eff']
+    cartesian = REF.solve_reference_mode(
+        m, freq, dn_eff, z_tail=5.0, rtol=1e-9, backend='cartesian')
+    prufer = REF.solve_reference_mode(
+        m, freq, dn_eff, z_tail=5.0, rtol=1e-9, backend='prufer')
+
+    assert cartesian['used_tail'] is expected_tail
+    assert prufer['used_tail'] is expected_tail
+    for name in ('Ogw_today', 'Oj_today', 'Opgw_today'):
+        assert prufer[name] == pytest.approx(cartesian[name], rel=1e-4, abs=1e-30)
+
+
+def test_prufer_reference_backend_fails_closed_on_ode_failure(monkeypatch):
+    from types import SimpleNamespace
+
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    monkeypatch.setattr(
+        REF, 'solve_ivp',
+        lambda *args, **kwargs: SimpleNamespace(success=False,
+                                                  message='mocked solver failure'))
+
+    with pytest.raises(RuntimeError, match='mocked solver failure'):
+        REF.solve_reference_mode(
+            m, -8.0, m.cosmo_param['DN_eff'], z_tail=5.0, rtol=1e-8,
+            backend='prufer')
+
+
+def test_prufer_rhs_rejects_frequency_exponential_underflow():
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    bg = REF._Background(m, m.cosmo_param['DN_eff'])
+
+    with pytest.raises(FloatingPointError, match='frequency underflow'):
+        REF._tensor_prufer(bg.N_inf, (-1000.0, 0.0, 0.0), bg)
+
+
+def test_run_reference_forwards_optional_mode_backend():
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    freqs = np.array([-8.0, -15.0, -20.0, -21.0])
+    dn_eff = m.cosmo_param['DN_eff']
+
+    result = REF.run_reference(
+        m, dn_eff=dn_eff, freq_subset=freqs, z_tail=5.0, rtol=1e-9,
+        self_consistent=False, backend='prufer')
+
+    assert result['mode_backend'] == 'prufer'
+    assert result['DN_eff'] == pytest.approx(dn_eff)
+    assert result['n_freq'] == len(freqs)
+
+
+def test_run_reference_forwards_z_start_to_spectrum_modes(monkeypatch):
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    calls = []
+
+    def fake_mode(*args, **kwargs):
+        calls.append(kwargs)
+        return {'Ogw_today': 1.0, 'Oj_today': 0.0, 'Opgw_today': 1.0,
+                'used_tail': False}
+
+    monkeypatch.setattr(REF, 'solve_reference_mode', fake_mode)
+    REF.run_reference(
+        m, dn_eff=m.cosmo_param['DN_eff'], freq_subset=np.array([-8.0]),
+        self_consistent=False, z_start=-9.0, backend='prufer')
+
+    assert calls[0]['z_start'] == -9.0
+
+
 def test_tail_diagnostic_cache_key_binds_tail_and_frequency():
     from scripts.benchmark_tail_diagnostics import _cache_key
 
@@ -315,15 +387,17 @@ def test_reference_zero_tensor_limit_is_exact_and_grid_safe():
     assert np.isfinite(grid).all()
 
     freqs = np.array([grid[0], grid[len(grid) // 2], grid[-1]])
-    result = REF.run_reference(
-        m, dn_eff=0.0, freq_subset=freqs, z_tail=5.0, rtol=1e-9,
-        self_consistent=False)
+    for backend in ('cartesian', 'prufer'):
+        result = REF.run_reference(
+            m, dn_eff=0.0, freq_subset=freqs, z_tail=5.0, rtol=1e-9,
+            self_consistent=False, backend=backend)
 
-    assert result['DN_gw'] == 0.0
-    assert np.all(result['Ogw'] == 0.0)
-    assert np.all(result['Oj'] == 0.0)
-    assert np.all(result['Opgw'] == 0.0)
-    assert np.all(np.isneginf(result['log10OmegaGW']))
+        assert result['DN_gw'] == 0.0
+        assert result['mode_backend'] == backend
+        assert np.all(result['Ogw'] == 0.0)
+        assert np.all(result['Oj'] == 0.0)
+        assert np.all(result['Opgw'] == 0.0)
+        assert np.all(np.isneginf(result['log10OmegaGW']))
 
     single_field = LCDM_SG(r=0.0, cr=1.0, T_re=2e3, kappa10=1e-2)
     with pytest.raises(ValueError, match='positive r'):
