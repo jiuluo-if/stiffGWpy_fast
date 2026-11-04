@@ -494,8 +494,9 @@ check at `rtol=1e-11` had maximum error `1.93e-8 dex`. A no-JIT scalar path
 avoids compiling for the measured cheap low-frequency single-mode case. The
 updated Prüfer backend also passes a full 260-mode same-input tail10 check at
 the independent Cartesian root: map difference `4.39e-7` relative and maximum
-spectrum difference `5.25e-5 dex`. The Cartesian full-grid rerun and local root
-slope check remain open. Raw
+spectrum difference `5.25e-5 dex`. A fresh full-grid paired Cartesian rerun is
+now available below. The exact local root derivative remains unmeasured; the
+available sensitivity is an archived interval secant. Raw
 data are in [`reference_spline_eval_benchmark_20261104.json`](reference_spline_eval_benchmark_20261104.json).
 For cold requests, the first measured cheap low-frequency mode avoids JIT and
 remains `17.6 ms`; a costly mode pays `0.3 s` once and then uses the compiled
@@ -513,9 +514,69 @@ The full-grid run record is
 An expanded 8-frequency paired A/B (two alternating pairs per mode across
 indices `0,65,100,130,160,195,220,259`) measured `3.626x` aggregate speedup,
 or `3.586x` including JIT warmup, with per-mode P50/P95 `2.778x/4.174x` and
-maximum error `3.94e-6 dex`. This remains a frequency sample rather than a
-full-grid paired timing; raw data are in
+maximum error `3.94e-6 dex`. This eight-frequency subset remains a sample; the
+complete 260-mode paired timing is reported below. Raw data are in
 [`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).
+
+The same Prüfer/Cartesian comparison was then run once on every one of the
+260 archived frequencies, alternating solver order by mode, at identical
+`DN_eff=0.13373681817755848` and `z_tail=10`, with Prüfer `rtol=1e-9` and
+Cartesian `rtol=1e-11`. All 260 pairs completed. The direct paired spectrum
+absolute-dex difference has median/P95/maximum
+`1.575e-7 / 6.654e-6 / 5.246e-5 dex`. Total propagation time was
+`574.13 s` Prüfer versus `1992.45 s` Cartesian (`3.470x` aggregate); including
+the separately measured `0.313 s` spline JIT gives `3.468x`. Per-mode speedup
+P50/P95 is `2.632x/4.332x`; single-mode runtime P50/P95 was `2.627/5.690 s`
+and `7.180/23.707 s`, respectively. These are serial measurements on this
+res4 point, not general parameter or thread-scaling guarantees.
+
+Reconstructed from the paired per-mode outputs, the Prüfer integral map is
+`0.1337367594174389`, while the current Cartesian map is `0.1337368185045801`.
+The latter differs from the archived Cartesian map by `3.24e-9` relative. The
+Prüfer fixed-point residual is `-4.394e-7` relative; current Cartesian is
+`+2.45e-9`. The paired map difference is `4.42e-7` relative and gives an
+archived-secant first-order root-shift estimate of `-6.04e-8` in `DN_eff`
+(`-4.51e-7` relative). The slope is an interval secant, not a local derivative
+or a rigorous root bracket. Both methods report quadrature/interpolation
+estimates near `1.84e-20 / 1.82e-10`. The raw 260-mode rows and reconstructed
+summary are in
+[`reference_prufer_cartesian_paired_fullgrid_20261104.json`](reference_prufer_cartesian_paired_fullgrid_20261104.json)
+and
+[`reference_prufer_cartesian_paired_fullgrid_analysis_20261104.json`](reference_prufer_cartesian_paired_fullgrid_analysis_20261104.json).
+Reproduce with [`benchmark_res4_prufer_candidate.py`](../scripts/benchmark_res4_prufer_candidate.py)
+and [`analyze_reference_paired_fullgrid.py`](../scripts/analyze_reference_paired_fullgrid.py).
+The run telemetry records one worker and the software/resource environment;
+this run did not measure peak RSS or worker scaling.
+
+### Standalone Newton–Kantorovich phase-transfer prototype
+
+The scalar damped tensor equation is written as
+`T'' + p T' + exp(2z) T = 0`, with `p=3-1.5*sigma`. Setting
+`u=exp(0.5*integral(p dN))*T` gives
+`u'' + Q u = 0`, where `Q=exp(2z)-p'/2-p^2/4`. On each smooth high-frequency
+interval, the prototype solves the logarithmic-derivative Riccati equation
+`r'+r^2+Q=0` by Chebyshev collocation and Newton steps initialized by the
+Liouville–Green expansion, then transfers the state through a phase basis.
+Unlike the earlier Kummer-after-fit prototype, the phase is obtained by
+solving the collocated Riccati residual directly. The implementation remains
+standalone and does not alter the Reference API or production path.
+
+For `r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`, `kappa10=.01`, `DN_re=10`,
+`DN_eff=.13373681817755848`, and `log10(f/Hz)=-12.6723`, DOP853 propagated the
+original production `z'=1.5*sigma-1` together with `(T,T')` from `z=-12` to
+`z=5`. Six phase intervals then reached `z=10`, with an exact split at the
+`nu=.1` background branch boundary, using the branch-specific formula on each
+side. Orders 16/24/32 agree in spectrum within `5.4e-15 dex`; maximum Riccati
+residual on dense checks was `2.72e-14`. The spectrum differs from current
+Cartesian Reference (`rtol=1e-11`) by `1.7461e-8 dex`. The latest run took
+`0.134 s` including the low-frequency DOP853 prefix, versus `12.43 s` Cartesian
+(`~93x`) on this one
+tail-using mode. This passes a single-mode screen only; no no-tail, full-grid,
+integral-map, self-consistency, or parameter-domain check has been completed.
+Reproduce with
+[`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py);
+the full sample, segment residuals and provenance are in
+[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json).
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
