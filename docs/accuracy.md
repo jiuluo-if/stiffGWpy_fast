@@ -630,6 +630,19 @@ retained pending broader validation. The separate raw record is
 [`nonosc_phase_res4_fullgrid_gamma0_20261104.json`](nonosc_phase_res4_fullgrid_gamma0_20261104.json),
 reproduced with `--minimum-gamma 0`.
 
+A second fixed-background cross-check at `DN_eff=0.133732083004284` (same
+cosmological parameters, different background normalization) also passed at
+three modes: the two tail modes have errors `8.42e-9` and `4.12e-9 dex`, and
+the no-tail mode has error `3.39e-9 dex`. Candidate/Cartesian single-run times
+were `0.134/11.573`, `0.131/6.578`, and `0.493/9.945 s`; these are not repeated
+timing distributions. This supports stability across two nearby `DN_eff`
+backgrounds only; it is not another cosmological parameter point or a
+self-consistency check. Raw results are
+[`nonosc_phase_res4_dn133732_tail_cross_20261104.json`](nonosc_phase_res4_dn133732_tail_cross_20261104.json),
+[`nonosc_phase_res4_dn133732_high_20261104.json`](nonosc_phase_res4_dn133732_high_20261104.json),
+and
+[`nonosc_phase_res4_dn133732_notail_20261104.json`](nonosc_phase_res4_dn133732_notail_20261104.json).
+
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
