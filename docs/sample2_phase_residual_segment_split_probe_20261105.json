@@ -1,0 +1,532 @@
+{
+  "schema_version": 1,
+  "experiment": "sample2_remaining_residual_modes_segment_split_screen",
+  "source_sha": "c6250750efcf8afd613948f69affa044b1b4a45e",
+  "worktree_dirty": true,
+  "script_sha256": "4f8cd305aef006de1fdfbac56f2daa604d930bd4a05771cdfd12473f6ca5619e",
+  "analyzer_script_sha256": "f719018e46b3f18f91e515cbed1fe4b4f885c710c4c2542d4275c572f7a5efd8",
+  "phase_script_sha256": "1d6296f1ac1394e05d89f97bbc548b62e0a293e8243b108f66e1fe88bd32c543",
+  "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "root_grid_artifact_sha256": "4c88a05634d88f17079956ca03b26c990548832aff651d00f9827633e3ff9357",
+  "residual_probe_artifact_sha256": "ae6c18ec53185d047f0c1c47dac925bd324887d65e48a812eb19351952996438",
+  "dual_reference_artifact_sha256": "9cf56c41ac818f4e6f2a887572a0f1660020455108ea119a2fe7b072b2ad1c2a",
+  "phase_start_offset_artifact_sha256": "d31207602e4dd0355f05827a1a4c73b4d5d9596413276934151e858fe504acad",
+  "params": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0,
+    "DN_eff": 2.291411867022825
+  },
+  "z_tail": 5.0,
+  "partitions": [
+    2,
+    4
+  ],
+  "orders": [
+    16,
+    24,
+    32
+  ],
+  "acceptance_gates": {
+    "collocation_scaled_max": 1e-10,
+    "dense_scaled_max": 1e-09,
+    "max_cartesian_spectrum_error_dex": 0.001,
+    "tail_semantics_must_match": true
+  },
+  "mode_count_probed": 7,
+  "mode_count_with_any_screened_order": 0,
+  "screened_mode_indices": [],
+  "total_wall_seconds": 1.6726880997885019,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "This combines interval splitting with the current least-squares Newton fallback on the remaining residual failures.",
+    "The screened Cartesian comparison is not a fresh dual-reference validation.",
+    "This does not complete the phase integral map or root."
+  ],
+  "rows": [
+    {
+      "index": 787,
+      "freq_log10_hz": -18.291438536648336,
+      "phase_start": 0.5,
+      "reference_log10_omega": -14.837693104321756,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000692 exceeds the prototype gate on high_frequency branch N=[46.973170209747501, 47.309189571626291], last relative update=0.00518 after 20 steps",
+              "seconds": 0.0015956999268382788
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.11 exceeds the prototype gate on high_frequency branch N=[47.309189571626291, 47.645208933505074], last relative update=0.116 after 20 steps",
+              "seconds": 0.00412619998678565
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000755 exceeds the prototype gate on high_frequency branch N=[47.309189571626291, 47.645208933505074], last relative update=0.00254 after 20 steps",
+              "seconds": 0.004265700001269579
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00847 exceeds the prototype gate on high_frequency branch N=[47.141179890686892, 47.309189571626291], last relative update=0.00367 after 20 steps",
+              "seconds": 0.0034905001521110535
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0151 exceeds the prototype gate on high_frequency branch N=[46.973170209747501, 47.141179890686892], last relative update=0.00398 after 20 steps",
+              "seconds": 0.0015533999539911747
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.086 exceeds the prototype gate on high_frequency branch N=[47.477199252565683, 47.645208933505074], last relative update=0.00161 after 20 steps",
+              "seconds": 0.009837400168180466
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 1553,
+      "status": "probe_complete"
+    },
+    {
+      "index": 788,
+      "freq_log10_hz": -18.30543355513125,
+      "phase_start": 0.0,
+      "reference_log10_omega": -14.740787307660973,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.82e-05 exceeds the prototype gate on neutrino_spline branch N=[46.082140908355413, 46.370091635383844], last relative update=0.0023 after 20 steps",
+              "seconds": 0.019696799805387855
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.03841369994916022
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000386 exceeds the prototype gate on neutrino_spline branch N=[45.794190181326989, 46.082140908355413], last relative update=0.00412 after 20 steps",
+              "seconds": 0.005021899938583374
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0207 exceeds the prototype gate on neutrino_spline branch N=[45.794190181326989, 45.938165544841205], last relative update=0.00717 after 20 steps",
+              "seconds": 0.0034103998914361
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0146 exceeds the prototype gate on neutrino_spline branch N=[46.082140908355413, 46.226116271869628], last relative update=0.0419 after 20 steps",
+              "seconds": 0.03872180008329451
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000302 exceeds the prototype gate on high_frequency branch N=[47.007650284444459, 47.326429608974763], last relative update=0.0176 after 20 steps",
+              "seconds": 0.07967820018529892
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 1097,
+      "status": "probe_complete"
+    },
+    {
+      "index": 789,
+      "freq_log10_hz": -18.31942857361416,
+      "phase_start": 0.0,
+      "reference_log10_omega": -14.640556026203749,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 8.11e-05 exceeds the prototype gate on neutrino_spline branch N=[46.115206756270709, 46.370091635383844], last relative update=0.00762 after 20 steps",
+              "seconds": 0.019577299943193793
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.037317599868401885
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.036227099830284715
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000326 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 46.688870959914155], last relative update=0.0012 after 20 steps",
+              "seconds": 0.06691340007819235
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.07740759989246726
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.08073549997061491
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 965,
+      "status": "probe_complete"
+    },
+    {
+      "index": 790,
+      "freq_log10_hz": -18.333423592097077,
+      "phase_start": 0.0,
+      "reference_log10_omega": -14.54559530178781,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 7.28e-05 exceeds the prototype gate on neutrino_spline branch N=[46.148482297467169, 46.370091635383844], last relative update=0.00397 after 20 steps",
+              "seconds": 0.01955550001002848
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.03785769990645349
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000686 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.007650284444459], last relative update=0.00378 after 20 steps",
+              "seconds": 0.039024199824780226
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.03226209990680218
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.01729310001246631
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.03720590006560087
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 977,
+      "status": "probe_complete"
+    },
+    {
+      "index": 792,
+      "freq_log10_hz": -18.361413629062902,
+      "phase_start": 0.0,
+      "reference_log10_omega": -14.383913942574148,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.016992200165987015
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.03890970000065863
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.04249890008941293
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000205 exceeds the prototype gate on neutrino_spline branch N=[46.138764459227694, 46.215873517946406], last relative update=0.0018 after 20 steps",
+              "seconds": 0.02074499987065792
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.07801649998873472
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.019211000064387918
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 1013,
+      "status": "probe_complete"
+    },
+    {
+      "index": 793,
+      "freq_log10_hz": -18.375408647545818,
+      "phase_start": 0.0,
+      "reference_log10_omega": -14.318201726464071,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.017595099983736873
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000433 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.007650284444459], last relative update=0.00135 after 20 steps",
+              "seconds": 0.038626299938187
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.04156700009480119
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 8.05e-05 exceeds the prototype gate on neutrino_spline branch N=[46.190154822436121, 46.250133760085362], last relative update=0.00075 after 20 steps",
+              "seconds": 0.020035299938172102
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.016943099908530712
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0569 exceeds the prototype gate on high_frequency branch N=[47.007650284444459, 47.326429608974763], last relative update=0.00197 after 20 steps",
+              "seconds": 0.08140060002915561
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 1001,
+      "status": "probe_complete"
+    },
+    {
+      "index": 794,
+      "freq_log10_hz": -18.389403666028734,
+      "phase_start": 0.0,
+      "reference_log10_omega": -14.261896926023406,
+      "reference_used_tail": false,
+      "partitions": [
+        {
+          "segments_per_original_branch_interval": 2,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.59e-07 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.007650284444459], last relative update=0.00024 after 20 steps",
+              "seconds": 0.034480500034987926
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000268 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.007650284444459], last relative update=0.000645 after 20 steps",
+              "seconds": 0.03619180014356971
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.72e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.007650284444459], last relative update=3.6e-06 after 20 steps",
+              "seconds": 0.03895360021851957
+            }
+          ]
+        },
+        {
+          "segments_per_original_branch_interval": 4,
+          "completed_order_count": 0,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00484 exceeds the prototype gate on high_frequency branch N=[46.688870959914155, 47.007650284444459], last relative update=0.0102 after 20 steps",
+              "seconds": 0.06957129994407296
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.07445530011318624
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.03570589981973171
+            }
+          ]
+        }
+      ],
+      "low_rhs_nfev": 929,
+      "status": "probe_complete"
+    }
+  ]
+}

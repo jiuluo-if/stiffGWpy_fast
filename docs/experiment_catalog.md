@@ -419,6 +419,11 @@ orders8/12/16 and found no adjacent-order pair; keep it as an exploratory
 result only. See
 [`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json)
 and `scripts/probe_sample2_lower_collocation_orders.py`.
+Splitting each remaining residual interval into two or four subsegments produced
+no screened candidate across the seven remaining modes and is not retained;
+raw evidence is in
+[`sample2_phase_residual_segment_split_probe_20261105.json`](sample2_phase_residual_segment_split_probe_20261105.json)
+and `scripts/probe_sample2_residual_segment_splits.py`.
 The targeted start-offset replay is `scripts/probe_sample2_phase_start_offsets.py`.
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of

@@ -819,6 +819,14 @@ used to alter the candidate or its residual gates; see
 [`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json)
 and [`probe_sample2_lower_collocation_orders.py`](../scripts/probe_sample2_lower_collocation_orders.py).
 
+The remaining seven residual-failure modes were also tested with each original
+branch interval split into two and four propagation segments, using the current
+Newton/backtracking/least-squares solve and unchanged residual gates. No order
+produced a screened candidate in this `1.67 s` probe; segment splitting is not
+retained as a recovery path. See
+[`sample2_phase_residual_segment_split_probe_20261105.json`](sample2_phase_residual_segment_split_probe_20261105.json)
+and [`probe_sample2_residual_segment_splits.py`](../scripts/probe_sample2_residual_segment_splits.py).
+
 Raw Reference and phase arrays, exact 800-bin rows, and provenance hashes are
 in [`sample2_reference_root_res8_tail5_20261104.json`](sample2_reference_root_res8_tail5_20261104.json),
 [`sample2_reference_root_res8_tail5_20261104.npz`](sample2_reference_root_res8_tail5_20261104.npz),
