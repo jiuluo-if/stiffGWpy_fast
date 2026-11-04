@@ -659,6 +659,16 @@ and `--dn-eff` options; raw records are
 and
 [`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json).
 
+The positive consistency-relation branch was also sampled with `cr=0.1` and
+`r=.01`, for which the model derives `n_t=-r/8=-.00125` (the supplied `n_t=2`
+does not control the spectrum on this branch). At the same res4 background
+normalization, a tail mode and a no-tail mode match Cartesian within
+`3.54e-8` and `3.21e-9 dex`. This checks branch semantics at two frequencies,
+not a full grid or root; see
+[`nonosc_phase_cr_positive_tail_20261104.json`](nonosc_phase_cr_positive_tail_20261104.json)
+and
+[`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
+
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
