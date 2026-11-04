@@ -339,6 +339,13 @@ An isolated `--minimum-gamma 0` full-grid screen completed 219/260 modes, with
 39 residual failures and two non-positive-`Q` failures; it recovered six
 additional modes, so the default screen remains unchanged. Its artifact is
 [`nonosc_phase_res4_fullgrid_gamma0_20261104.json`](nonosc_phase_res4_fullgrid_gamma0_20261104.json).
+Three additional single-mode checks at `DN_eff=0.133732083004284` match
+Cartesian within `8.42e-9`, `4.12e-9`, and `3.39e-9 dex` for two tail modes and
+one no-tail mode. They vary the background normalization only; see
+[`nonosc_phase_res4_dn133732_tail_cross_20261104.json`](nonosc_phase_res4_dn133732_tail_cross_20261104.json),
+[`nonosc_phase_res4_dn133732_high_20261104.json`](nonosc_phase_res4_dn133732_high_20261104.json),
+and
+[`nonosc_phase_res4_dn133732_notail_20261104.json`](nonosc_phase_res4_dn133732_notail_20261104.json).
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
