@@ -719,8 +719,8 @@ nonfinite output have `uncertified-path-configuration` estimates; estimated
 The 76 solver failures comprise 39 nonpositive background `H²`, 26 nonfinite
 background primitives, 10 nonfinite numerical states, and one invalid outer
 iterate cutoff. The 22 exceptions comprise 15 solver and 7 parameter-derivation
-exceptions. Runtime P50/P95 for
-returned cases was `4.70/11.60 ms`; maximum sampled post-case RSS was
+exceptions. Runtime P50/P95 among returned cases was `4.70/11.60 ms`; maximum
+sampled post-case RSS was
 `182.5 MiB` in this single-process screen.
 
 The difficult `boundary_A_s_cr1_9` point (`A_s=100`, `cr=1`, derived
