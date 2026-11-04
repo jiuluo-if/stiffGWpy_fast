@@ -74,6 +74,8 @@ _THERMAL_RHO_X, _THERMAL_RHO_C = gp.spl_rho.x, gp.spl_rho.c
 _THERMAL_RHOP_X, _THERMAL_RHOP_C = gp.spl_rhop.x, gp.spl_rhop.c
 _NUMBA_H2_SIGMA_READY = False
 _NUMBA_H2_SIGMA_MIN_BATCH_SIZE = 32
+_NUMBA_TENSOR_RHS_READY = False
+_NUMBA_TENSOR_RHS_MIN_BATCH_SIZE = 32
 
 
 @njit(cache=False)
@@ -380,6 +382,52 @@ def _tensor_orig(N, state, bg):
     return (dz, dx, dy)
 
 
+@njit(cache=False)
+def _tensor_numba_core(N, state, h2_sigma_args):
+    """Fused compiled tensor RHS used by the opt-in reference experiment."""
+    z, x, y = state
+    H2, sigma = _h2_sigma_numba_core(N, *h2_sigma_args)
+    ez = math.exp(z)
+    dz = 1.5 * sigma - 1.0
+    dx = -3.0 * x + 1.5 * sigma * x - ez * y
+    dy = -y + 1.5 * sigma * y + ez * x
+    return dz, dx, dy, H2, sigma
+
+
+def _make_numba_tensor_rhs(bg):
+    """Build a per-background adapter around the fused compiled RHS.
+
+    Extreme exponents and singular/nonfinite backgrounds use the retained
+    Python implementation so its exception and nonfinite behavior stays
+    authoritative.
+    """
+    args = _h2_sigma_numba_args(bg)
+
+    def rhs(N, state, background):
+        N = float(N)
+        z = float(state[0])
+        if bg.N_inf - N > 700.0 or z > 700.0:
+            return _tensor_orig(N, state, background)
+        dz, dx, dy, H2, sigma = _tensor_numba_core(N, state, args)
+        if (N >= bg.N_re_abs
+                and (H2 == 0.0 or not math.isfinite(H2)
+                     or not math.isfinite(sigma))):
+            return _tensor_orig(N, state, background)
+        return dz, dx, dy
+
+    return rhs
+
+
+def _warmup_numba_reference_tensor_rhs(bg):
+    global _NUMBA_TENSOR_RHS_READY
+    if not _NUMBA_H2_SIGMA_READY:
+        _warmup_numba_reference_background(bg)
+    _tensor_numba_core(
+        float(bg.N_inf), np.array([0.0, 0.0, 1.0]),
+        _h2_sigma_numba_args(bg))
+    _NUMBA_TENSOR_RHS_READY = True
+
+
 def _make_tail_event(z_tail):
     def event(N, state, bg):
         return state[0] - z_tail
@@ -627,7 +675,9 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
 
     y0 = math.exp(z0)
     Nspan = (Nstart, bg.N_inf)
-    result = solve_ivp(_tensor_orig, Nspan, (z0, 0.0, y0),
+    tensor_rhs = (_make_numba_tensor_rhs(bg) if _NUMBA_TENSOR_RHS_READY
+                  else _tensor_orig)
+    result = solve_ivp(tensor_rhs, Nspan, (z0, 0.0, y0),
                        method='DOP853', rtol=rtol, atol=atol,
                        events=[_make_tail_event(z_tail)],
                        args=(bg,), dense_output=False)
@@ -727,6 +777,10 @@ def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None,
                 _warmup_numba_reference_background(_Background(m, DN_eff))
             else:
                 _warmup_numba_spline()
+            if (backend == 'cartesian'
+                    and not _NUMBA_TENSOR_RHS_READY
+                    and n >= _NUMBA_TENSOR_RHS_MIN_BATCH_SIZE):
+                _warmup_numba_reference_tensor_rhs(_Background(m, DN_eff))
     Ogw = np.empty(n)
     Oj = np.empty(n)
     Opgw = np.empty(n)

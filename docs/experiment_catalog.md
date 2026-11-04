@@ -464,6 +464,20 @@ and [`benchmark_reference_start_search_fullgrid.py`](../scripts/benchmark_refere
 The five-frequency Prüfer ODE screen remains mixed at0.86–1.57x and was not
 promoted to a full-grid speed claim.
 
+The fused Numba tensor RHS is enabled only after a costly Reference batch of
+at least32 frequencies. Three exact 800-frequency A/B pairs match the archived
+Cartesian spectrum and `DN_gw` bitwise; warm P50/P95 is `27.258/27.361 s` for
+the current compiled-H2 RHS and `23.851/23.959 s` for the fused RHS (12.5%
+lower P50). The measured kernel/background warm cost is `0.679 s`. A 32-node
+stratified screen estimates the first compiled batch at `1.036 s`, below the
+current-path P50 `1.098 s`; outputs match bitwise. This is one cosmology and
+one worker, so it is not a multi-background throughput or memory claim. Drivers
+and records:
+[`benchmark_reference_numba_rhs_fullgrid.py`](../scripts/benchmark_reference_numba_rhs_fullgrid.py),
+[`reference_numba_rhs_fullgrid_ab_20261105.json`](reference_numba_rhs_fullgrid_ab_20261105.json),
+[`benchmark_reference_numba_rhs_batch_crossover.py`](../scripts/benchmark_reference_numba_rhs_batch_crossover.py),
+and [`reference_numba_rhs_batch_crossover_20261105.json`](reference_numba_rhs_batch_crossover_20261105.json).
+
 A positive-`cr` cross-check extends the compiled-vs-Python exact-equality
 comparison to two modes and compares Cartesian with Prüfer propagation. Both
 formulations agree within `3.80e-8` relative in `Omega_GW` on the selected

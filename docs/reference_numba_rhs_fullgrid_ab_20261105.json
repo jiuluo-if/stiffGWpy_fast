@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_fused_numba_rhs_fullgrid_ab",
+  "created_at": "2026-11-05T04:34:16.877529+08:00",
+  "source_commit": "ad8615b507e19f60a0e2b2119634010630459579",
+  "branch": "fast_v0.2",
+  "reference_module_sha256": "562cab0ee9f80834129f65603c2caeebf7fe3490307992f6ae9d5ddf3607aced",
+  "script_sha256": "25f1be98c33e03bfea0a78e25762b6222016633698e0a0dbff68b73ab70e7c74",
+  "baseline_archive_sha256": "c970fbd101a324d8f102905fd9922669c30082e858f986b22065fe0c3705bd1a",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0
+  },
+  "DN_eff": 2.291411867022825,
+  "frequency_res": 8.0,
+  "frequency_count": 800,
+  "frequency_sha256": "b363185747da99e0258d1924a3927bf01255266a2159cda247bf6a42ca0326dc",
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "rtol": 1e-09,
+  "backend": "cartesian",
+  "workers": 1,
+  "jit_compile_and_warm_s_excluded": 0.6786372000351548,
+  "paired_runs": 3,
+  "current_compiled_h2_runtime_s": [
+    27.21410429989919,
+    27.25785159994848,
+    27.372141500003636
+  ],
+  "fused_numba_rhs_runtime_s": [
+    23.67385799996555,
+    23.851184400031343,
+    23.971181500004604
+  ],
+  "current_compiled_h2_p50_s": 27.25785159994848,
+  "current_compiled_h2_p95_s": 27.36071250999812,
+  "fused_numba_rhs_p50_s": 23.851184400031343,
+  "fused_numba_rhs_p95_s": 23.95918179000728,
+  "candidate_over_current_p50": 0.8750207004603555,
+  "pair_checks": [
+    {
+      "pair": 0,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    },
+    {
+      "pair": 1,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    },
+    {
+      "pair": 2,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "One cosmology and one fixed 800-frequency background only.",
+    "The fused RHS is an experiment-only dispatch in this run; no production default is enabled.",
+    "The separate JIT warmup is reported, and this run does not measure cold Reference startup or multi-worker throughput."
+  ]
+}

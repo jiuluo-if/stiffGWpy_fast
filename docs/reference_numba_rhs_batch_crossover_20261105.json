@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_fused_numba_rhs_batch_crossover",
+  "created_at": "2026-11-05T04:27:17.960048+08:00",
+  "source_commit": "ad8615b507e19f60a0e2b2119634010630459579",
+  "branch": "fast_v0.2",
+  "reference_module_sha256": "562cab0ee9f80834129f65603c2caeebf7fe3490307992f6ae9d5ddf3607aced",
+  "script_sha256": "c07a8f55749689e3fc3089babe669519a20340c5bb7acd11969596d47e41b138",
+  "baseline_archive_sha256": "c970fbd101a324d8f102905fd9922669c30082e858f986b22065fe0c3705bd1a",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0
+  },
+  "DN_eff": 2.291411867022825,
+  "frequency_grid_sha256": "b363185747da99e0258d1924a3927bf01255266a2159cda247bf6a42ca0326dc",
+  "batch_sizes": [
+    32,
+    64,
+    128,
+    256
+  ],
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "rtol": 1e-09,
+  "atol": [
+    1e-12,
+    1e-22,
+    1e-22
+  ],
+  "workers": 1,
+  "jit_compile_and_warm_s": 0.10577889997512102,
+  "paired_runs_per_size": 2,
+  "results": [
+    {
+      "frequency_count": 32,
+      "frequency_index_sha256": "4d4c34235f43d0b3b3f1ad94924c1ad9ecbc8d13d80f4b1e250265625bcc3145",
+      "current_runtime_s": [
+        1.1238436000421643,
+        1.0714201999362558
+      ],
+      "fused_runtime_s": [
+        0.9342958000488579,
+        0.9251737999729812
+      ],
+      "current_p50_s": 1.09763189998921,
+      "fused_p50_s": 0.9297348000109196,
+      "fused_over_current_p50": 0.8470369711558666,
+      "cold_fused_first_batch_estimate_s": 1.0355136999860406,
+      "cold_fused_over_current_p50": 0.9434070748091595,
+      "paired_checks": [
+        {
+          "pair": 0,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        },
+        {
+          "pair": 1,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        }
+      ]
+    },
+    {
+      "frequency_count": 64,
+      "frequency_index_sha256": "858f7184c97169b1677799525ca6ca0a5f51f4588565d74d116e5342d0e2e023",
+      "current_runtime_s": [
+        2.16389700002037,
+        2.184166499879211
+      ],
+      "fused_runtime_s": [
+        1.8912353999912739,
+        1.9135348999407142
+      ],
+      "current_p50_s": 2.1740317499497905,
+      "fused_p50_s": 1.902385149965994,
+      "fused_over_current_p50": 0.8750493869327942,
+      "cold_fused_first_batch_estimate_s": 2.008164049941115,
+      "cold_fused_over_current_p50": 0.9237050240814072,
+      "paired_checks": [
+        {
+          "pair": 0,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        },
+        {
+          "pair": 1,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        }
+      ]
+    },
+    {
+      "frequency_count": 128,
+      "frequency_index_sha256": "9441f90b561da5e78d9ba3f4df898ddb0de1730c33c85534b1001e828ef8814a",
+      "current_runtime_s": [
+        4.402554400032386,
+        4.40062480000779
+      ],
+      "fused_runtime_s": [
+        3.821215400006622,
+        3.8193965998943895
+      ],
+      "current_p50_s": 4.401589600020088,
+      "fused_p50_s": 3.820305999950506,
+      "fused_over_current_p50": 0.8679378013645503,
+      "cold_fused_first_batch_estimate_s": 3.926084899925627,
+      "cold_fused_over_current_p50": 0.8919697783518274,
+      "paired_checks": [
+        {
+          "pair": 0,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        },
+        {
+          "pair": 1,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        }
+      ]
+    },
+    {
+      "frequency_count": 256,
+      "frequency_index_sha256": "ad8c56ba97221e97910b67317e380342148b0a3f2e1e94cc2c6e9e597b5a2bb0",
+      "current_runtime_s": [
+        8.692481000209227,
+        8.82058409997262
+      ],
+      "fused_runtime_s": [
+        7.590015400201082,
+        7.644552899990231
+      ],
+      "current_p50_s": 8.756532550090924,
+      "fused_p50_s": 7.6172841500956565,
+      "fused_over_current_p50": 0.8698973145502168,
+      "cold_fused_first_batch_estimate_s": 7.7230630500707775,
+      "cold_fused_over_current_p50": 0.8819773130393473,
+      "paired_checks": [
+        {
+          "pair": 0,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        },
+        {
+          "pair": 1,
+          "bitwise_same_Ogw": true,
+          "bitwise_same_Oj": true,
+          "bitwise_same_Opgw": true,
+          "bitwise_same_tail_mask": true
+        }
+      ]
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "One cosmology and stratified subsets of one archived 800-node grid.",
+    "Cold estimate adds the measured one-time JIT warmup to warm P50; it is not a separate process-start measurement."
+  ]
+}

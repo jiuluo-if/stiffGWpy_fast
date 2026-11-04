@@ -906,6 +906,30 @@ and scalar probe records are
 and [`reference_fullgrid_profile_compiled_20261105.json`](reference_fullgrid_profile_compiled_20261105.json),
 plus [`reference_h2_numba_probe_20261105.json`](reference_h2_numba_probe_20261105.json).
 
+The tensor RHS was then fused with the compiled background evaluator. The batch
+path warms this kernel only for at least32 frequencies when a costly mode is
+present; a cold one-frequency call keeps the original Python RHS. On the same
+sample2 800-node map, three alternating pairs match the archive and each other
+bitwise for `DN_gw`, every spectrum value, the grid and tail mask. Warm P50/P95
+falls from `27.258/27.361 s` to `23.851/23.959 s` (12.5% lower P50); combined
+JIT/background warm cost is `0.679 s`, measured separately. The 32-node batch
+screen also repaid the extra RHS compilation on its first batch (`1.036 s`
+including the measured `0.106 s` compile versus current P50 `1.098 s`). This
+remains one cosmology and one worker; cold process startup, multi-worker memory
+and other full-grid backgrounds are not certified. Reproduce with
+[`benchmark_reference_numba_rhs_fullgrid.py`](../scripts/benchmark_reference_numba_rhs_fullgrid.py)
+and [`benchmark_reference_numba_rhs_batch_crossover.py`](../scripts/benchmark_reference_numba_rhs_batch_crossover.py);
+raw results are
+[`reference_numba_rhs_fullgrid_ab_20261105.json`](reference_numba_rhs_fullgrid_ab_20261105.json)
+and [`reference_numba_rhs_batch_crossover_20261105.json`](reference_numba_rhs_batch_crossover_20261105.json).
+
+The fused RHS matches the original derivative tuple bitwise on five parameter
+backgrounds at piecewise/transition boundaries and seeded states, and preserves
+overflow and singular-background handling through the original Python fallback.
+The complete Reference focused suite passes 56 tests with one slow-marked test
+deselected; that slow test also passes separately. This is scoped regression
+evidence, not a claim of global parameter-domain correctness.
+
 The same-day `_find_start_N` change reuses the fixed horizon normalization
 anchors and stops only after evaluating the first floating-point-stagnant
 midpoint. All 800 sample2 start coordinates and five complete representative
@@ -931,7 +955,7 @@ compile/warm cost was `0.598 s`. See
 and reproduce with
 [`validate_reference_h2_numba_cr_positive.py`](../scripts/validate_reference_h2_numba_cr_positive.py).
 
-The Reference focused suite now reports `49 passed, 1 deselected`, including
+The Reference focused suite now reports `56 passed, 1 deselected`, including
 pointwise branch/boundary checks across five backgrounds (`cr=0/1`, low/high
 reheating temperatures, and strong coupling). This broadens evaluator
 equivalence evidence but does not replace multi-background full-spectrum
