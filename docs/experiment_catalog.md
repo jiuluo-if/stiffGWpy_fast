@@ -339,6 +339,13 @@ An isolated `--minimum-gamma 0` full-grid screen completed 219/260 modes, with
 39 residual failures and two non-positive-`Q` failures; it recovered six
 additional modes, so the default screen remains unchanged. Its artifact is
 [`nonosc_phase_res4_fullgrid_gamma0_20261104.json`](nonosc_phase_res4_fullgrid_gamma0_20261104.json).
+An independent order probe of its 39 residual failures found 5 no-tail modes
+that converge between orders 16/24 and match Cartesian within `3.28e-9 dex`;
+order 32 failed for all 39. These are recorded as two-order cross-checks, not
+as part of the stricter 219-mode 16/24/32 count. See
+[`nonosc_phase_res4_residual_order_probe_20261104.json`](nonosc_phase_res4_residual_order_probe_20261104.json)
+and rerun with
+[`analyze_phase_residual_order_failures.py`](../scripts/analyze_phase_residual_order_failures.py).
 Three additional single-mode checks at `DN_eff=0.133732083004284` match
 Cartesian within `8.42e-9`, `4.12e-9`, and `3.39e-9 dex` for two tail modes and
 one no-tail mode. They vary the background normalization only; see

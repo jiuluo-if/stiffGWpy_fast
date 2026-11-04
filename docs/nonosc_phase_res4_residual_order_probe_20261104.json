@@ -1,0 +1,1373 @@
+{
+  "schema_version": 1,
+  "experiment": "independent_collocation_order_probe_on_gamma_zero_residual_failures",
+  "source_sha": "8e89aa414c9409a3951a9da876fdee38e738e005",
+  "worktree_dirty": true,
+  "script_sha256": "2b67d791540c21309c8a44086577949e37fac597138a1feb6036fb19939aceaf",
+  "phase_script_sha256": "410a15958fd9fb74f63ca832a5cd9b7fdd8be1f039db7385ae265cf1fbc278f2",
+  "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "fullgrid_artifact_sha256": "439ffb1521b31fc162ea72b9e044eb385b0d6f3d62fab0010b5514374e19c424",
+  "reference_archive_sha256": "5ac7f34d59b1bd9c375c48a742ee197bad5e5e7a7ca5fd3b4785f8c52d9e12e0",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133736818177558
+  },
+  "minimum_gamma": 0.0,
+  "mode_count": 39,
+  "order_success_counts": {
+    "16": 14,
+    "24": 7,
+    "32": 0
+  },
+  "order32_successes": 0,
+  "total_wall_seconds": 1.5595738999545574,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "rows": [
+    {
+      "index": 199,
+      "freq_log10_hz": -16.678728725156923,
+      "phase_start": 4.0,
+      "attempt_count_from_fullgrid": 3,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 3.73e-09 exceeds the prototype gate on neutrino_spline branch N=[48.072018181733768, 48.107156261298698], last relative update=6.06e-05 after 20 steps",
+          "seconds": 0.0037315001245588064
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000157 exceeds the prototype gate on neutrino_spline branch N=[48.072018181733768, 48.107156261298698], last relative update=0.0122 after 20 steps",
+          "seconds": 0.0039820000529289246
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00165 exceeds the prototype gate on neutrino_spline branch N=[48.072018181733768, 48.107156261298698], last relative update=0.035 after 20 steps",
+          "seconds": 0.004953199997544289
+        }
+      ],
+      "low_rhs_nfev": 7745,
+      "low_seconds": 0.089965800056234,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 206,
+      "freq_log10_hz": -16.886471229040335,
+      "phase_start": 3.5,
+      "attempt_count_from_fullgrid": 4,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.329266157161232,
+          "abs_dex_error_vs_cartesian": 2.7004745106751216e-09,
+          "max_collocation_residual_scaled": 7.027971380813593e-12,
+          "max_dense_residual_scaled": 3.204340964511808e-10,
+          "seconds": 0.01903249998576939
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.58e-05 exceeds the prototype gate on neutrino_spline branch N=[48.023183045543831, 48.107156261298698], last relative update=0.00499 after 20 steps",
+          "seconds": 0.003703499911352992
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 6.88e-05 exceeds the prototype gate on neutrino_spline branch N=[48.023183045543831, 48.107156261298698], last relative update=0.00802 after 20 steps",
+          "seconds": 0.004562899935990572
+        }
+      ],
+      "low_rhs_nfev": 5045,
+      "low_seconds": 0.05641800002194941,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 212,
+      "freq_log10_hz": -17.064536232368972,
+      "phase_start": 3.0,
+      "attempt_count_from_fullgrid": 5,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.541964592239104,
+          "abs_dex_error_vs_cartesian": 2.1974493336074374e-09,
+          "max_collocation_residual_scaled": 7.992828796599406e-15,
+          "max_dense_residual_scaled": 3.742745515217489e-10,
+          "seconds": 0.018234699964523315
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.541964592286245,
+          "abs_dex_error_vs_cartesian": 2.2445902914114413e-09,
+          "max_collocation_residual_scaled": 4.0993035426622885e-11,
+          "max_dense_residual_scaled": 4.098322524250319e-11,
+          "seconds": 0.01951140002347529
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 3.11e-07 exceeds the prototype gate on neutrino_spline branch N=[47.827583659577535, 48.107156261298698], last relative update=0.000524 after 20 steps",
+          "seconds": 0.004623200045898557
+        }
+      ],
+      "low_rhs_nfev": 3569,
+      "low_seconds": 0.03943020012229681,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 213,
+      "freq_log10_hz": -17.094213732923745,
+      "phase_start": 3.0,
+      "attempt_count_from_fullgrid": 5,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.60412973389832,
+          "abs_dex_error_vs_cartesian": 1.8207657603852567e-10,
+          "max_collocation_residual_scaled": 2.5236424592511152e-11,
+          "max_dense_residual_scaled": 3.869206440014435e-10,
+          "seconds": 0.018261699937283993
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 4.73e-06 exceeds the prototype gate on neutrino_spline branch N=[47.97516187492073, 48.107156261298698], last relative update=0.0021 after 20 steps",
+          "seconds": 0.0037497999146580696
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000587 exceeds the prototype gate on neutrino_spline branch N=[47.97516187492073, 48.107156261298698], last relative update=0.0229 after 20 steps",
+          "seconds": 0.004531599814072251
+        }
+      ],
+      "low_rhs_nfev": 3461,
+      "low_seconds": 0.03864610008895397,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 218,
+      "freq_log10_hz": -17.24260123569761,
+      "phase_start": 2.5,
+      "attempt_count_from_fullgrid": 6,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.73946421513424,
+          "abs_dex_error_vs_cartesian": 2.2722268511188304e-09,
+          "max_collocation_residual_scaled": 1.449489920086555e-14,
+          "max_dense_residual_scaled": 4.706880335662831e-10,
+          "seconds": 0.018271199893206358
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.73946421507958,
+          "abs_dex_error_vs_cartesian": 2.217564798456806e-09,
+          "max_collocation_residual_scaled": 3.584395570463358e-12,
+          "max_dense_residual_scaled": 3.5896739837121767e-12,
+          "seconds": 0.01927720010280609
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.66e-07 exceeds the prototype gate on neutrino_spline branch N=[47.639190035654764, 48.107156261298698], last relative update=0.000365 after 20 steps",
+          "seconds": 0.004595200065523386
+        }
+      ],
+      "low_rhs_nfev": 2573,
+      "low_seconds": 0.027491800021380186,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 219,
+      "freq_log10_hz": -17.27227873625238,
+      "phase_start": 2.5,
+      "attempt_count_from_fullgrid": 6,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.772625008777414,
+          "abs_dex_error_vs_cartesian": 4.036664336126705e-10,
+          "max_collocation_residual_scaled": 1.039385456621511e-14,
+          "max_dense_residual_scaled": 4.924167452929175e-10,
+          "seconds": 0.01854349998757243
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.66e-08 exceeds the prototype gate on neutrino_spline branch N=[47.781762468319847, 48.107156261298698], last relative update=0.00012 after 20 steps",
+          "seconds": 0.0037344000302255154
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.94e-06 exceeds the prototype gate on neutrino_spline branch N=[47.781762468319847, 48.107156261298698], last relative update=0.00159 after 20 steps",
+          "seconds": 0.004680100129917264
+        }
+      ],
+      "low_rhs_nfev": 2525,
+      "low_seconds": 0.027738699922338128,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 220,
+      "freq_log10_hz": -17.301956236807158,
+      "phase_start": 2.5,
+      "attempt_count_from_fullgrid": 6,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 4.32e-10 exceeds the prototype gate on neutrino_spline branch N=[47.927820180929949, 48.107156261298698], last relative update=2e-05 after 20 steps",
+          "seconds": 0.0029760999605059624
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.79624489816905,
+          "abs_dex_error_vs_cartesian": 3.64154217891155e-09,
+          "max_collocation_residual_scaled": 1.673944363184717e-11,
+          "max_dense_residual_scaled": 1.6868574195836008e-11,
+          "seconds": 0.0192179000005126
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 8.02e-07 exceeds the prototype gate on neutrino_spline branch N=[47.927820180929949, 48.107156261298698], last relative update=0.000678 after 20 steps",
+          "seconds": 0.004575999919325113
+        }
+      ],
+      "low_rhs_nfev": 2633,
+      "low_seconds": 0.02763199992477894,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 221,
+      "freq_log10_hz": -17.33163373736193,
+      "phase_start": 2.5,
+      "attempt_count_from_fullgrid": 6,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00791 exceeds the prototype gate on neutrino_spline branch N=[48.079699233794571, 48.107156261298698], last relative update=0.0687 after 20 steps",
+          "seconds": 0.002979899989441037
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 33.1 exceeds the prototype gate on neutrino_spline branch N=[48.079699233794571, 48.107156261298698], last relative update=0.794 after 20 steps",
+          "seconds": 0.0036976998671889305
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.578 exceeds the prototype gate on neutrino_spline branch N=[48.079699233794571, 48.107156261298698], last relative update=1.07 after 20 steps",
+          "seconds": 0.004539499990642071
+        }
+      ],
+      "low_rhs_nfev": 2621,
+      "low_seconds": 0.028067999985069036,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 224,
+      "freq_log10_hz": -17.420666239026247,
+      "phase_start": 2.5,
+      "attempt_count_from_fullgrid": 6,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.799280752200307,
+          "abs_dex_error_vs_cartesian": 3.270717030545711e-09,
+          "max_collocation_residual_scaled": 4.581949426457962e-15,
+          "max_dense_residual_scaled": 3.1415343033155426e-13,
+          "seconds": 0.0016403000336140394
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.799280752200314,
+          "abs_dex_error_vs_cartesian": 3.2707241359730688e-09,
+          "max_collocation_residual_scaled": 8.3439092661343e-15,
+          "max_dense_residual_scaled": 3.165387800962059e-14,
+          "seconds": 0.001996999839320779
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.49e-10 exceeds the prototype gate on high_frequency branch N=[48.681237560545256, 49.382273559419929], last relative update=1.14e-05 after 20 steps",
+          "seconds": 0.0010012001730501652
+        }
+      ],
+      "low_rhs_nfev": 3017,
+      "low_seconds": 0.029217700008302927,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 225,
+      "freq_log10_hz": -17.450343739581022,
+      "phase_start": 2.0,
+      "attempt_count_from_fullgrid": 7,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.850560941126663,
+          "abs_dex_error_vs_cartesian": 3.084927868712839e-10,
+          "max_collocation_residual_scaled": 1.6832485871319993e-14,
+          "max_dense_residual_scaled": 6.866687958891214e-10,
+          "seconds": 0.018217199947685003
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.41e-09 exceeds the prototype gate on neutrino_spline branch N=[47.594508820789173, 48.107156261298698], last relative update=4.35e-05 after 20 steps",
+          "seconds": 0.0037504001520574093
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 3.99e-06 exceeds the prototype gate on neutrino_spline branch N=[47.594508820789173, 48.107156261298698], last relative update=0.00178 after 20 steps",
+          "seconds": 0.004669699817895889
+        }
+      ],
+      "low_rhs_nfev": 1973,
+      "low_seconds": 0.021011400036513805,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 226,
+      "freq_log10_hz": -17.480021240135795,
+      "phase_start": 2.0,
+      "attempt_count_from_fullgrid": 7,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.910024345565635,
+          "abs_dex_error_vs_cartesian": 5.7598725788921e-10,
+          "max_collocation_residual_scaled": 5.6587003695392675e-14,
+          "max_dense_residual_scaled": 7.263312906859596e-10,
+          "seconds": 0.018207999877631664
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000117 exceeds the prototype gate on neutrino_spline branch N=[47.73628001191345, 48.107156261298698], last relative update=0.00983 after 20 steps",
+          "seconds": 0.003792200004681945
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00482 exceeds the prototype gate on neutrino_spline branch N=[47.73628001191345, 48.107156261298698], last relative update=0.0617 after 20 steps",
+          "seconds": 0.0045848998706787825
+        }
+      ],
+      "low_rhs_nfev": 1985,
+      "low_seconds": 0.020521300146356225,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 227,
+      "freq_log10_hz": -17.509698740690567,
+      "phase_start": 2.0,
+      "attempt_count_from_fullgrid": 7,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.12e-08 exceeds the prototype gate on neutrino_spline branch N=[47.88104384104436, 48.107156261298698], last relative update=0.000101 after 20 steps",
+          "seconds": 0.0029078000225126743
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 6.03e-06 exceeds the prototype gate on neutrino_spline branch N=[47.88104384104436, 48.107156261298698], last relative update=0.0024 after 20 steps",
+          "seconds": 0.0037734999787062407
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0045 exceeds the prototype gate on neutrino_spline branch N=[47.88104384104436, 48.107156261298698], last relative update=0.0587 after 20 steps",
+          "seconds": 0.0045848998706787825
+        }
+      ],
+      "low_rhs_nfev": 2009,
+      "low_seconds": 0.020587800070643425,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 228,
+      "freq_log10_hz": -17.539376241245343,
+      "phase_start": 2.0,
+      "attempt_count_from_fullgrid": 7,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00526 exceeds the prototype gate on neutrino_spline branch N=[48.03072646858071, 48.107156261298698], last relative update=0.0931 after 20 steps",
+          "seconds": 0.0029561000410467386
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0248 exceeds the prototype gate on neutrino_spline branch N=[48.03072646858071, 48.107156261298698], last relative update=0.0841 after 20 steps",
+          "seconds": 0.0037312000058591366
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 40.2 exceeds the prototype gate on neutrino_spline branch N=[48.03072646858071, 48.107156261298698], last relative update=0.845 after 20 steps",
+          "seconds": 0.0045819999650120735
+        }
+      ],
+      "low_rhs_nfev": 1997,
+      "low_seconds": 0.020071200095117092,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 232,
+      "freq_log10_hz": -17.65808624346443,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "dense Riccati residual 1.01e-09 exceeds the prototype gate",
+          "seconds": 0.01822919980622828
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 7.5e-06 exceeds the prototype gate on neutrino_spline branch N=[47.550013280464896, 48.107156261298698], last relative update=0.0024 after 20 steps",
+          "seconds": 0.00375879998318851
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00016 exceeds the prototype gate on neutrino_spline branch N=[47.550013280464896, 48.107156261298698], last relative update=0.0112 after 20 steps",
+          "seconds": 0.004611100070178509
+        }
+      ],
+      "low_rhs_nfev": 1517,
+      "low_seconds": 0.01502029993571341,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 233,
+      "freq_log10_hz": -17.687763744019207,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.73e-09 exceeds the prototype gate on neutrino_spline branch N=[47.691092204353602, 48.107156261298698], last relative update=3.76e-05 after 20 steps",
+          "seconds": 0.0029458000790327787
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 4.43e-05 exceeds the prototype gate on neutrino_spline branch N=[47.691092204353602, 48.107156261298698], last relative update=0.00591 after 20 steps",
+          "seconds": 0.0037295001093298197
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000704 exceeds the prototype gate on neutrino_spline branch N=[47.691092204353602, 48.107156261298698], last relative update=0.0208 after 20 steps",
+          "seconds": 0.0045750997960567474
+        }
+      ],
+      "low_rhs_nfev": 1517,
+      "low_seconds": 0.014418099774047732,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 234,
+      "freq_log10_hz": -17.71744124457398,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.34e-06 exceeds the prototype gate on neutrino_spline branch N=[47.834757855513772, 48.107156261298698], last relative update=0.00108 after 20 steps",
+          "seconds": 0.003010799875482917
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000433 exceeds the prototype gate on neutrino_spline branch N=[47.834757855513772, 48.107156261298698], last relative update=0.019 after 20 steps",
+          "seconds": 0.003751399926841259
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.221 exceeds the prototype gate on neutrino_spline branch N=[47.834757855513772, 48.107156261298698], last relative update=0.197 after 20 steps",
+          "seconds": 0.004564099945127964
+        }
+      ],
+      "low_rhs_nfev": 1445,
+      "low_seconds": 0.014522500103339553,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 235,
+      "freq_log10_hz": -17.747118745128752,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00757 exceeds the prototype gate on neutrino_spline branch N=[47.982596153194848, 48.107156261298698], last relative update=0.0844 after 20 steps",
+          "seconds": 0.0029145998414605856
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.153 exceeds the prototype gate on neutrino_spline branch N=[47.982596153194848, 48.107156261298698], last relative update=0.217 after 20 steps",
+          "seconds": 0.0038695000112056732
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.192 exceeds the prototype gate on neutrino_spline branch N=[47.982596153194848, 48.107156261298698], last relative update=0.112 after 20 steps",
+          "seconds": 0.004560499917715788
+        }
+      ],
+      "low_rhs_nfev": 1481,
+      "low_seconds": 0.01499260007403791,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 236,
+      "freq_log10_hz": -17.776796245683524,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "dense Riccati residual 1.01e-09 exceeds the prototype gate",
+          "seconds": 0.0016016000881791115
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.952174789127135,
+          "abs_dex_error_vs_cartesian": 6.468425794992072e-11,
+          "max_collocation_residual_scaled": 6.483874776403146e-15,
+          "max_dense_residual_scaled": 3.4008366518972924e-14,
+          "seconds": 0.0020110001787543297
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 3.73e-09 exceeds the prototype gate on high_frequency branch N=[48.137570561810058, 49.382273559419929], last relative update=5.49e-05 after 20 steps",
+          "seconds": 0.001431899843737483
+        }
+      ],
+      "low_rhs_nfev": 1733,
+      "low_seconds": 0.01720719994045794,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 237,
+      "freq_log10_hz": -17.806473746238296,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.04183946667981,
+          "abs_dex_error_vs_cartesian": 6.782840955565916e-10,
+          "max_collocation_residual_scaled": 3.4872722672166443e-15,
+          "max_dense_residual_scaled": 2.3928879174695737e-10,
+          "seconds": 0.0017908001318573952
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.04183946667963,
+          "abs_dex_error_vs_cartesian": 6.781029071589728e-10,
+          "max_collocation_residual_scaled": 7.464997129043266e-14,
+          "max_dense_residual_scaled": 7.616469094026011e-14,
+          "seconds": 0.0019853999838232994
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.02e-08 exceeds the prototype gate on high_frequency branch N=[48.305904585099938, 49.382273559419929], last relative update=9.27e-05 after 20 steps",
+          "seconds": 0.0009894000831991434
+        }
+      ],
+      "low_rhs_nfev": 1649,
+      "low_seconds": 0.01629639999009669,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 238,
+      "freq_log10_hz": -17.836151246793072,
+      "phase_start": 1.5,
+      "attempt_count_from_fullgrid": 8,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -17.883449307193636,
+          "abs_dex_error_vs_cartesian": 8.455458555545192e-13,
+          "max_collocation_residual_scaled": 8.435431693143415e-15,
+          "max_dense_residual_scaled": 1.1511300374000213e-11,
+          "seconds": 0.0017917999066412449
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.69e-10 exceeds the prototype gate on high_frequency branch N=[48.504936503535191, 49.382273559419929], last relative update=1.5e-05 after 20 steps",
+          "seconds": 0.0008932000491768122
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.81e-05 exceeds the prototype gate on high_frequency branch N=[48.504936503535191, 49.382273559419929], last relative update=0.00389 after 20 steps",
+          "seconds": 0.00100170006044209
+        }
+      ],
+      "low_rhs_nfev": 1817,
+      "low_seconds": 0.017145700054243207,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 239,
+      "freq_log10_hz": -17.865828747347845,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1e-10 exceeds the prototype gate on neutrino_spline branch N=[47.505689065641413, 48.107156261298698], last relative update=8.57e-06 after 20 steps",
+          "seconds": 0.0029938998632133007
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 8.97e-05 exceeds the prototype gate on neutrino_spline branch N=[47.505689065641413, 48.107156261298698], last relative update=0.00828 after 20 steps",
+          "seconds": 0.0037539999466389418
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000243 exceeds the prototype gate on neutrino_spline branch N=[47.505689065641413, 48.107156261298698], last relative update=0.011 after 20 steps",
+          "seconds": 0.004582100082188845
+        }
+      ],
+      "low_rhs_nfev": 1265,
+      "low_seconds": 0.011862199986353517,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 240,
+      "freq_log10_hz": -17.895506247902617,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.98e-07 exceeds the prototype gate on neutrino_spline branch N=[47.646167898222629, 48.107156261298698], last relative update=0.000394 after 20 steps",
+          "seconds": 0.0029100000392645597
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00271 exceeds the prototype gate on neutrino_spline branch N=[47.646167898222629, 48.107156261298698], last relative update=0.042 after 20 steps",
+          "seconds": 0.003764999797567725
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.07 exceeds the prototype gate on neutrino_spline branch N=[47.646167898222629, 48.107156261298698], last relative update=0.148 after 20 steps",
+          "seconds": 0.004670700058341026
+        }
+      ],
+      "low_rhs_nfev": 1229,
+      "low_seconds": 0.01191100012511015,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 241,
+      "freq_log10_hz": -17.92518374845739,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0001 exceeds the prototype gate on neutrino_spline branch N=[47.788874984504147, 48.107156261298698], last relative update=0.00925 after 20 steps",
+          "seconds": 0.0029177998658269644
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0407 exceeds the prototype gate on neutrino_spline branch N=[47.788874984504147, 48.107156261298698], last relative update=0.178 after 20 steps",
+          "seconds": 0.0037260998506098986
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.71 exceeds the prototype gate on neutrino_spline branch N=[47.788874984504147, 48.107156261298698], last relative update=0.386 after 20 steps",
+          "seconds": 0.004619499901309609
+        }
+      ],
+      "low_rhs_nfev": 1289,
+      "low_seconds": 0.01218630000948906,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 242,
+      "freq_log10_hz": -17.95486124901216,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000781 exceeds the prototype gate on neutrino_spline branch N=[47.935153545996172, 48.107156261298698], last relative update=0.0237 after 20 steps",
+          "seconds": 0.002917399862781167
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.321 exceeds the prototype gate on neutrino_spline branch N=[47.935153545996172, 48.107156261298698], last relative update=0.284 after 20 steps",
+          "seconds": 0.0037155000027269125
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0105 exceeds the prototype gate on neutrino_spline branch N=[47.935153545996172, 48.107156261298698], last relative update=0.0219 after 20 steps",
+          "seconds": 0.004592699930071831
+        }
+      ],
+      "low_rhs_nfev": 1253,
+      "low_seconds": 0.012386800022795796,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 243,
+      "freq_log10_hz": -17.984538749566937,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.76e-05 exceeds the prototype gate on neutrino_spline branch N=[48.087411816848103, 48.107156261298698], last relative update=0.0137 after 20 steps",
+          "seconds": 0.0029674998950213194
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 5.55 exceeds the prototype gate on neutrino_spline branch N=[48.087411816848103, 48.107156261298698], last relative update=0.101 after 20 steps",
+          "seconds": 0.0037291001062840223
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.525 exceeds the prototype gate on neutrino_spline branch N=[48.087411816848103, 48.107156261298698], last relative update=0.0147 after 20 steps",
+          "seconds": 0.004556499887257814
+        }
+      ],
+      "low_rhs_nfev": 1361,
+      "low_seconds": 0.013207999989390373,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 244,
+      "freq_log10_hz": -18.01421625012171,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.019803193712843,
+          "abs_dex_error_vs_cartesian": 4.3158010498700605e-10,
+          "max_collocation_residual_scaled": 1.1795374349653416e-14,
+          "max_dense_residual_scaled": 5.75426682928584e-10,
+          "seconds": 0.0018188001122325659
+        },
+        {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.01980319371282,
+          "abs_dex_error_vs_cartesian": 4.3160142126907886e-10,
+          "max_collocation_residual_scaled": 2.0900836220363285e-11,
+          "max_dense_residual_scaled": 2.0902350939175355e-11,
+          "seconds": 0.0019616999197751284
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00014 exceeds the prototype gate on high_frequency branch N=[48.250466971648827, 49.382273559419929], last relative update=0.0103 after 20 steps",
+          "seconds": 0.0009857998229563236
+        }
+      ],
+      "low_rhs_nfev": 1541,
+      "low_seconds": 0.015019599813967943,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 245,
+      "freq_log10_hz": -18.04389375067648,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.153317386954914,
+          "abs_dex_error_vs_cartesian": 4.7773340838830336e-11,
+          "max_collocation_residual_scaled": 1.8504986716403212e-14,
+          "max_dense_residual_scaled": 4.552036868714566e-11,
+          "seconds": 0.0017859998624771833
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.03e-07 exceeds the prototype gate on high_frequency branch N=[48.436258377795617, 49.382273559419929], last relative update=0.000389 after 20 steps",
+          "seconds": 0.0008441000245511532
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000137 exceeds the prototype gate on high_frequency branch N=[48.436258377795617, 49.382273559419929], last relative update=0.00997 after 20 steps",
+          "seconds": 0.0009876999538391829
+        }
+      ],
+      "low_rhs_nfev": 1481,
+      "low_seconds": 0.013570500072091818,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 246,
+      "freq_log10_hz": -18.073571251231254,
+      "phase_start": 1.0,
+      "attempt_count_from_fullgrid": 9,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.043580329227225,
+          "abs_dex_error_vs_cartesian": 5.17736964411597e-11,
+          "max_collocation_residual_scaled": 2.891052054391989e-14,
+          "max_dense_residual_scaled": 5.558580542121511e-13,
+          "seconds": 0.0017816000618040562
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000814 exceeds the prototype gate on high_frequency branch N=[48.700019790298185, 49.382273559419929], last relative update=0.0252 after 20 steps",
+          "seconds": 0.0008314000442624092
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0147 exceeds the prototype gate on high_frequency branch N=[48.700019790298185, 49.382273559419929], last relative update=0.0995 after 20 steps",
+          "seconds": 0.000974699854850769
+        }
+      ],
+      "low_rhs_nfev": 1637,
+      "low_seconds": 0.014980599982663989,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 247,
+      "freq_log10_hz": -18.103248751786026,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 4.05e-06 exceeds the prototype gate on neutrino_spline branch N=[47.601455165835795, 48.107156261298698], last relative update=0.00168 after 20 steps",
+          "seconds": 0.0030137000139802694
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.33 exceeds the prototype gate on neutrino_spline branch N=[47.601455165835795, 48.107156261298698], last relative update=0.525 after 20 steps",
+          "seconds": 0.0038514998741447926
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0364 exceeds the prototype gate on neutrino_spline branch N=[47.601455165835795, 48.107156261298698], last relative update=0.0942 after 20 steps",
+          "seconds": 0.004713200032711029
+        }
+      ],
+      "low_rhs_nfev": 1037,
+      "low_seconds": 0.0101133999414742,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 248,
+      "freq_log10_hz": -18.132926252340802,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 5.05e-05 exceeds the prototype gate on neutrino_spline branch N=[47.74334339033561, 48.107156261298698], last relative update=0.00592 after 20 steps",
+          "seconds": 0.0029030998703092337
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.021 exceeds the prototype gate on neutrino_spline branch N=[47.74334339033561, 48.107156261298698], last relative update=0.0852 after 20 steps",
+          "seconds": 0.003777100006118417
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0103 exceeds the prototype gate on neutrino_spline branch N=[47.74334339033561, 48.107156261298698], last relative update=0.0252 after 20 steps",
+          "seconds": 0.004556099884212017
+        }
+      ],
+      "low_rhs_nfev": 1157,
+      "low_seconds": 0.010801200056448579,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 249,
+      "freq_log10_hz": -18.162603752895574,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00603 exceeds the prototype gate on neutrino_spline branch N=[47.888295497851495, 48.107156261298698], last relative update=0.0518 after 20 steps",
+          "seconds": 0.002881699940189719
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.094 exceeds the prototype gate on neutrino_spline branch N=[47.888295497851495, 48.107156261298698], last relative update=0.112 after 20 steps",
+          "seconds": 0.0037124999798834324
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 307 exceeds the prototype gate on neutrino_spline branch N=[47.888295497851495, 48.107156261298698], last relative update=1.08 after 20 steps",
+          "seconds": 0.004536899970844388
+        }
+      ],
+      "low_rhs_nfev": 1109,
+      "low_seconds": 0.010400600032880902,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 250,
+      "freq_log10_hz": -18.192281253450346,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 13.8 exceeds the prototype gate on neutrino_spline branch N=[48.038295110043173, 48.107156261298698], last relative update=0.568 after 20 steps",
+          "seconds": 0.0028868999797850847
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00671 exceeds the prototype gate on neutrino_spline branch N=[48.038295110043173, 48.107156261298698], last relative update=0.00623 after 20 steps",
+          "seconds": 0.003768299939110875
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.129 exceeds the prototype gate on neutrino_spline branch N=[48.038295110043173, 48.107156261298698], last relative update=0.0206 after 20 steps",
+          "seconds": 0.004553199978545308
+        }
+      ],
+      "low_rhs_nfev": 1121,
+      "low_seconds": 0.010707000037655234,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 251,
+      "freq_log10_hz": -18.22195875400512,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "dense Riccati residual 2.81e-09 exceeds the prototype gate",
+          "seconds": 0.001581300050020218
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.21e-08 exceeds the prototype gate on high_frequency branch N=[48.197146870727011, 49.382273559419929], last relative update=7.68e-05 after 20 steps",
+          "seconds": 0.0008323998190462589
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0647 exceeds the prototype gate on high_frequency branch N=[48.197146870727011, 49.382273559419929], last relative update=0.151 after 20 steps",
+          "seconds": 0.0009695999324321747
+        }
+      ],
+      "low_rhs_nfev": 1385,
+      "low_seconds": 0.012703899992629886,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 252,
+      "freq_log10_hz": -18.25163625455989,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "completed",
+          "tail_used": false,
+          "log10_omega": -18.255521509118104,
+          "abs_dex_error_vs_cartesian": 4.858335955759685e-11,
+          "max_collocation_residual_scaled": 8.450988937906049e-14,
+          "max_dense_residual_scaled": 3.6718361447619645e-10,
+          "seconds": 0.001786600099876523
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000216 exceeds the prototype gate on high_frequency branch N=[48.373496954494357, 49.382273559419929], last relative update=0.00914 after 20 steps",
+          "seconds": 0.00083580007776618
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.00181 exceeds the prototype gate on high_frequency branch N=[48.373496954494357, 49.382273559419929], last relative update=0.0233 after 20 steps",
+          "seconds": 0.0010152999311685562
+        }
+      ],
+      "low_rhs_nfev": 1385,
+      "low_seconds": 0.013195900013670325,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 253,
+      "freq_log10_hz": -18.281313755114667,
+      "phase_start": 0.5,
+      "attempt_count_from_fullgrid": 10,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000821 exceeds the prototype gate on high_frequency branch N=[48.596808224334133, 49.382273559419929], last relative update=0.0144 after 20 steps",
+          "seconds": 0.0007148000877350569
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0102 exceeds the prototype gate on high_frequency branch N=[48.596808224334133, 49.382273559419929], last relative update=0.0435 after 20 steps",
+          "seconds": 0.0008239999879151583
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.26 exceeds the prototype gate on high_frequency branch N=[48.596808224334133, 49.382273559419929], last relative update=0.194 after 20 steps",
+          "seconds": 0.0010447001550346613
+        }
+      ],
+      "low_rhs_nfev": 1541,
+      "low_seconds": 0.014587299898266792,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 254,
+      "freq_log10_hz": -18.31099125566944,
+      "phase_start": 0.0,
+      "attempt_count_from_fullgrid": 11,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 1.77e-05 exceeds the prototype gate on neutrino_spline branch N=[47.556933158093976, 48.107156261298698], last relative update=0.00277 after 20 steps",
+          "seconds": 0.0028824000619351864
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0281 exceeds the prototype gate on neutrino_spline branch N=[47.556933158093976, 48.107156261298698], last relative update=0.0659 after 20 steps",
+          "seconds": 0.0038026999682188034
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.543 exceeds the prototype gate on neutrino_spline branch N=[47.556933158093976, 48.107156261298698], last relative update=0.161 after 20 steps",
+          "seconds": 0.004565799841657281
+        }
+      ],
+      "low_rhs_nfev": 1001,
+      "low_seconds": 0.009483000030741096,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 255,
+      "freq_log10_hz": -18.34066875622421,
+      "phase_start": 0.0,
+      "attempt_count_from_fullgrid": 11,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.000796 exceeds the prototype gate on neutrino_spline branch N=[47.698113528222081, 48.107156261298698], last relative update=0.0208 after 20 steps",
+          "seconds": 0.0028653000481426716
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 6.71 exceeds the prototype gate on neutrino_spline branch N=[47.698113528222081, 48.107156261298698], last relative update=0.55 after 20 steps",
+          "seconds": 0.00369629985652864
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.809 exceeds the prototype gate on neutrino_spline branch N=[47.698113528222081, 48.107156261298698], last relative update=0.092 after 20 steps",
+          "seconds": 0.004596800077706575
+        }
+      ],
+      "low_rhs_nfev": 1085,
+      "low_seconds": 0.010177100077271461,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 256,
+      "freq_log10_hz": -18.370346256778983,
+      "phase_start": 0.0,
+      "attempt_count_from_fullgrid": 11,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.0133 exceeds the prototype gate on neutrino_spline branch N=[47.841932060925288, 48.107156261298698], last relative update=0.0502 after 20 steps",
+          "seconds": 0.0029196999967098236
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 2.57 exceeds the prototype gate on neutrino_spline branch N=[47.841932060925288, 48.107156261298698], last relative update=0.275 after 20 steps",
+          "seconds": 0.0037652000319212675
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 80.6 exceeds the prototype gate on neutrino_spline branch N=[47.841932060925288, 48.107156261298698], last relative update=0.856 after 20 steps",
+          "seconds": 0.004556300118565559
+        }
+      ],
+      "low_rhs_nfev": 1037,
+      "low_seconds": 0.009825800079852343,
+      "status": "order_probe_complete"
+    },
+    {
+      "index": 257,
+      "freq_log10_hz": -18.400023757333756,
+      "phase_start": 0.0,
+      "attempt_count_from_fullgrid": 11,
+      "orders": [
+        {
+          "order": 16,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.204 exceeds the prototype gate on neutrino_spline branch N=[47.990037159872784, 48.107156261298698], last relative update=0.087 after 20 steps",
+          "seconds": 0.002862299792468548
+        },
+        {
+          "order": 24,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 4.73 exceeds the prototype gate on neutrino_spline branch N=[47.990037159872784, 48.107156261298698], last relative update=0.172 after 20 steps",
+          "seconds": 0.003664500080049038
+        },
+        {
+          "order": 32,
+          "status": "failed",
+          "exception_type": "ArithmeticError",
+          "message": "collocated Riccati residual 0.376 exceeds the prototype gate on neutrino_spline branch N=[47.990037159872784, 48.107156261298698], last relative update=0.023 after 20 steps",
+          "seconds": 0.004603500012308359
+        }
+      ],
+      "low_rhs_nfev": 1025,
+      "low_seconds": 0.010067700175568461,
+      "status": "order_probe_complete"
+    }
+  ],
+  "limitations": [
+    "Each order is replayed independently at the final phase start recorded by the full-grid screen.",
+    "This probes residual-gate failures only; it is not a complete parameter-domain result."
+  ]
+}
