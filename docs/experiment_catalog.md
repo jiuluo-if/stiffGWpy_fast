@@ -270,3 +270,7 @@ reproduction instructions are in
 [`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json),
 [`reference_optimization_20261104.md`](reference_optimization_20261104.md),
 and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).
+After changing the Cartesian baseline, the Prüfer A/B was repeated on the same
+four modes: aggregate speedup `3.349x`, per-mode P50/P95 `3.085x/3.990x`, and
+maximum spectrum error `1.401e-5 dex`; see
+[`reference_prufer_production_ab_postdense_20261104.json`](reference_prufer_production_ab_postdense_20261104.json).

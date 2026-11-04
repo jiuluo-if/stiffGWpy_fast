@@ -108,6 +108,16 @@ reproduction driver are
 [`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json)
 and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).
 
+Because this change also accelerates the Cartesian baseline, the earlier
+Prüfer A/B speedup was remeasured against the new default. On the same four
+res4 frequencies, two alternating pairs per mode, candidate `rtol=1e-9` versus
+Cartesian `rtol=1e-11`, the Prüfer aggregate speedup is now `3.349x`; the
+per-mode ratio P50/P95 is `3.085x/3.990x`. Maximum spectrum error against the
+archived same-input Cartesian spectrum is `1.401e-5 dex`. The low-frequency
+endpoint is only `1.736x` faster. These four modes do not provide a full-grid
+speed distribution. Updated samples are in
+[`reference_prufer_production_ab_postdense_20261104.json`](reference_prufer_production_ab_postdense_20261104.json).
+
 ## Original papers read so far
 
 The task attachment says a 37-paper appendix exists, but the attached file

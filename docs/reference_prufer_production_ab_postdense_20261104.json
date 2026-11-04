@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "experiment": "production_prufer_backend_against_archived_cartesian_res4",
+  "source_sha": "c03a919a81ab40bd06ef1ef6f29d6e57c4bf3ffe",
+  "source_script_sha256": "f6779931fff7172ba4b358aa358707c96f7eaaf49e68521313a1dffb4f96cc6b",
+  "reference_module_sha256": "93f34a72bc153d57e330deea841756d0417aac644ae66e424179465aae3f2153",
+  "worktree_dirty": false,
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "candidate_rtol": 1e-09,
+  "cartesian_rtol": 1e-11,
+  "repeats_per_mode": 2,
+  "atol": [
+    1e-12,
+    1e-12,
+    1e-12
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "reference_archive": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+  "frequency_count_full_grid": 260,
+  "selected_indices": [
+    0,
+    65,
+    130,
+    259
+  ],
+  "max_abs_dex_error": 1.40091702505174e-05,
+  "median_abs_dex_error": 2.2201060234650072e-07,
+  "sum_candidate_seconds": 20.71593469986692,
+  "sum_cartesian_seconds": 69.38514500018209,
+  "aggregate_speedup": 3.349361059755987,
+  "per_mode_speedup_p50": 3.0847059777433934,
+  "per_mode_speedup_p95": 3.990281599127114,
+  "rows": [
+    {
+      "index": 0,
+      "freq_log10_hz": -10.772906114757099,
+      "candidate_runtime_s": 2.6257805499481037,
+      "candidate_runtime_samples_s": [
+        2.544377699960023,
+        2.7071833999361843
+      ],
+      "candidate_nfev": 419669,
+      "candidate_nfev_samples": [
+        419669,
+        419669
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 7.4735259499866515,
+      "cartesian_runtime_samples_s": [
+        7.51027789991349,
+        7.436774000059813
+      ],
+      "cartesian_nfev": 1080653,
+      "speedup": 2.849383594031111,
+      "speedup_samples": [
+        2.951715030371273,
+        2.747052157690949
+      ],
+      "cartesian_log10_omega": -5.484907380411613,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -5.484907380411613,
+      "candidate_log10_omega": -5.484907818757599,
+      "candidate_log10_omega_samples": [
+        -5.484907818757599,
+        -5.484907818757599
+      ],
+      "abs_dex_error": 4.383459861756478e-07
+    },
+    {
+      "index": 65,
+      "freq_log10_hz": -12.701943650817343,
+      "candidate_runtime_s": 4.706186400027946,
+      "candidate_runtime_samples_s": [
+        4.76993599999696,
+        4.642436800058931
+      ],
+      "candidate_nfev": 466997,
+      "candidate_nfev_samples": [
+        466997,
+        466997
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 15.306998300133273,
+      "cartesian_runtime_samples_s": [
+        15.348208400188014,
+        15.265788200078532
+      ],
+      "cartesian_nfev": 1384397,
+      "speedup": 3.253005276914901,
+      "speedup_samples": [
+        3.217696925115514,
+        3.2883136287142882
+      ],
+      "cartesian_log10_omega": -9.266168329391268,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -9.266168329391268,
+      "candidate_log10_omega": -9.26616832371605,
+      "candidate_log10_omega_samples": [
+        -9.26616832371605,
+        -9.26616832371605
+      ],
+      "abs_dex_error": 5.675218517353642e-09
+    },
+    {
+      "index": 130,
+      "freq_log10_hz": -14.630981186877587,
+      "candidate_runtime_s": 3.0148970499867573,
+      "candidate_runtime_samples_s": [
+        3.1639862000010908,
+        2.865807899972424
+      ],
+      "candidate_nfev": 266894,
+      "candidate_nfev_samples": [
+        266894,
+        266894
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 11.892795549938455,
+      "cartesian_runtime_samples_s": [
+        12.088412699988112,
+        11.697178399888799
+      ],
+      "cartesian_nfev": 1045274,
+      "speedup": 3.951130654242741,
+      "speedup_samples": [
+        3.8206275046281633,
+        4.0816338038573186
+      ],
+      "cartesian_log10_omega": -13.121854706353078,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -13.121854706353078,
+      "candidate_log10_omega": -13.121868715523329,
+      "candidate_log10_omega_samples": [
+        -13.121868715523329,
+        -13.121868715523329
+      ],
+      "abs_dex_error": 1.40091702505174e-05
+    },
+    {
+      "index": 259,
+      "freq_log10_hz": -18.459378758443304,
+      "candidate_runtime_s": 0.011103349970653653,
+      "candidate_runtime_samples_s": [
+        0.01158900000154972,
+        0.010617699939757586
+      ],
+      "candidate_nfev": 914,
+      "candidate_nfev_samples": [
+        914,
+        914
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 0.019252700032666326,
+      "cartesian_runtime_samples_s": [
+        0.0195291000418365,
+        0.01897630002349615
+      ],
+      "cartesian_nfev": 1754,
+      "speedup": 1.7361868688178888,
+      "speedup_samples": [
+        1.68514108544525,
+        1.7872326521905273
+      ],
+      "cartesian_log10_omega": -17.58935732939446,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -17.58935732939446,
+      "candidate_log10_omega": -17.589357331644816,
+      "candidate_log10_omega_samples": [
+        -17.589357331644816,
+        -17.589357331644816
+      ],
+      "abs_dex_error": 2.2503563457121345e-09
+    }
+  ],
+  "semantics": "production Reference backend=prufer; compare to archived Cartesian same-input map"
+}
