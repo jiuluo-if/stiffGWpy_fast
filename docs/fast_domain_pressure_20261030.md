@@ -742,3 +742,25 @@ with the same deterministic suite and chunk it around index129; that index has
 no per-case watchdog and should be run under a separately stated resource
 budget. No finite output in this scan should be counted as an accuracy pass
 without an independent Reference comparison.
+
+## 2026-11-04 broad Sobol and LHS pilots
+
+Two additional 128-point QMC sweeps used the full signed/log mapping in
+`pressure_fast_domain.py`, seed `20261104`, two threads, and the same
+`N_inf<=120` resource preflight. The Sobol set produced four finite-positive
+outputs, six nonpositive-background failures, 39 resource skips, 46 invalid
+derived-cutoff rejects, and 33 exceptions. Its four local `DN_gw_error`
+estimates range from `0.140` to `1.045`; none is a measured Reference error
+or an accuracy pass. The LHS set produced four finite-positive outputs, seven
+nonpositive-background failures, 41 resource skips, 48 invalid-derived-cutoff
+rejects, 27 exceptions, and one returned nonfinite output. Its five available
+error-budget estimates range from `0.00405` to `1.040`; all successful spectra
+remain uncertified. These deliberately broad samples mostly locate invalid or
+resource-heavy regions and are not estimates of success probability in the
+whole input space.
+
+The pointwise JSONL files retain each parameter vector, derived status,
+failure reason, runtime, and accuracy budget:
+[`fast_domain_pressure_sobol128_20261104.jsonl`](fast_domain_pressure_sobol128_20261104.jsonl)
+and
+[`fast_domain_pressure_latin128_20261104.jsonl`](fast_domain_pressure_latin128_20261104.jsonl).
