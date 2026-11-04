@@ -215,7 +215,7 @@ Raw Fast/Reference arrays and a rerunnable driver are linked in
 The current `A_s=1e20` trace now stops at its first bad `S2=exp(Psi)` value
 before tensor propagation, reporting the primitive and index; no extended
 finite spectrum is claimed. A 501-pair six-regime A/B confirms the diagnostic
-guard preserves output exactly and keeps the worst P50/P95 ratio below `1.019`.
+guard preserves output exactly and keeps the worst P50/P95 ratio below `1.025`.
 See the staged failure details and raw timing samples in
 [`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md) and
 [`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json).

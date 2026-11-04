@@ -492,7 +492,7 @@ claimed for this input.
 The same-parameter failure test on both `cr=0` and `cr=1` branches now confirms
 that the first bad primitive is reported before another tensor solve. A 501-pair
 normal-case A/B across default, lowT, highT, stiff, low_r, and high_kappa shows
-bitwise-identical spectra and DN maps; the largest P50/P95 ratio is `1.0187`,
+bitwise-identical spectra and DN maps; the largest P50/P95 ratio is `1.0248`,
 inside the 5% budget. Reproduce with
 [`benchmark_background_primitive_guard.py`](../scripts/benchmark_background_primitive_guard.py);
 the raw per-call samples are in

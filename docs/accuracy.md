@@ -328,12 +328,12 @@ CPUs. This expensive path is for verification only.
 
 With 15 alternating pairs on fixed affinity, candidate/default warm P50/P95
 ratios are `0.849/0.894` at 2 threads, `0.938/0.926` at 7 threads, and
-`0.916/0.972` at 8 threads. The fresh 8-thread run measured candidate
-`62.0/68.7 ms` versus default `67.7/70.7 ms`, below the 100 ms difficult-point
+`0.907/0.893` at 8 threads after the primitive-failure guard. That run measured
+candidate `57.7/61.9 ms` versus default `63.7/69.4 ms`, below the 100 ms difficult-point
 target. In that run, scalar steps vs the full interval array differed by
 `2.78e-16` in `DN_eff` and at most `2.85e-14 dex` in spectrum, while using
-`0.730/0.769` of array-path P50/P95. The corrected three-variant batch rate
-was `13.82 cases/s`. A separate 10-pair resource profile
+`0.695/0.718` of array-path P50/P95. The corrected three-variant batch rate
+was `14.52 cases/s`. A separate 10-pair resource profile
 measured 14.8 cases/s and post-call RSS maxima of 159.5 MiB (default) and
 157.0 MiB (candidate); these are sampled RSS values, not OS high-water marks.
 The scalar-step output matches the previous full-array candidate to

@@ -1,6 +1,6 @@
 {
   "case": "blue_res4_aligned_transition_scalar_step",
-  "code_commit": "671aa11d52e97102c952041caf935e3b8f6b6329",
+  "code_commit": "9cc3fae4cb29c1980aeac15420d249de1954e234",
   "parameters": {
     "r": 0.01,
     "cr": 0,
@@ -143,17 +143,18 @@
         8
       ],
       "default_p50_p95_ms": [
-        67.6857,
-        70.67941
+        63.6695,
+        69.38173
       ],
       "candidate_p50_p95_ms": [
-        61.9828,
-        68.69766
+        57.7234,
+        61.94366
       ],
       "candidate_over_default_p50_p95": [
-        0.9157443891398035,
-        0.9719614241262059
-      ]
+        0.906609915265551,
+        0.8927949764296739
+      ],
+      "latest_case_rate": 14.51909654859974
     }
   },
   "batch_and_memory": {
@@ -176,7 +177,7 @@
     "latest_three_variant_benchmark_cases_per_second": 13.821309511157585
   },
   "validation": {
-    "targeted_tests": "69 passed, 1 deselected (transition refinement, Fast SGWB, pressure sampler, benchmark metric)",
+    "targeted_tests": "89 passed, 6 deselected (transition, Fast, pressure, physics limits, benchmark metrics)",
     "ruff": "passed",
     "compileall": "passed",
     "github_actions_run": "41759168617, 9/9 success"
@@ -205,8 +206,8 @@
       8
     ],
     "candidate_over_array_p50_p95": [
-      0.7300304813413675,
-      0.7685616477359495
+      0.6953378248964945,
+      0.7177111349767569
     ],
     "dn_eff_absolute_difference": 2.7755575615628914e-16,
     "spectrum_delta_median_p95_max_dex": [
@@ -214,5 +215,24 @@
       1.7763568394002505e-14,
       2.842170943040401e-14
     ]
+  },
+  "normal_guard_overhead": {
+    "artifact": "background_primitive_guard_benchmark_20261104.json",
+    "pairs_per_regime": 501,
+    "regimes": [
+      "default",
+      "lowT",
+      "highT",
+      "stiff",
+      "low_r",
+      "high_kappa"
+    ],
+    "worst_guard_over_baseline_p50_p95": 1.0247892528580778,
+    "dn_gw_and_spectrum_identical": true
+  },
+  "latest_ci_validation": {
+    "run_id": 41773012073,
+    "head_sha": "9cc3fae4cb29c1980aeac15420d249de1954e234",
+    "jobs": "9/9 success"
   }
 }

@@ -113,7 +113,7 @@ IPTA 和 NANOGrav 现在只在理论频点覆盖范围内插值，不再对范�
 
 第二个困难点为保留的随机样本11。当前 h=.02 Fast 根在同一`DN_eff`的 tail10 Reference 映射相对残差为`-9.48e-6`；94个同 DN 模态的谱最大差为`9.149e-5 dex`。原始 Fast/Reference 数组和可复现脚本见[`accuracy.md`](accuracy.md)。
 
-当前`A_s=1e20`失败现在会在张量传播前首次发现`S2=exp(Psi)`非有限并报告数组和索引，不声称存在可表示的有限谱。6个常规区间的501组配对开销 A/B 显示 DN/谱输出逐位一致，最差 P50/P95 比值低于`1.019`；原始样本见[`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json)。
+当前`A_s=1e20`失败现在会在张量传播前首次发现`S2=exp(Psi)`非有限并报告数组和索引，不声称存在可表示的有限谱。6个常规区间的501组配对开销 A/B 显示 DN/谱输出逐位一致，最差 P50/P95 比值为`1.0248`；原始样本见[`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json)。
 
 提交`671aa11`增加了受保护的标量终点步长路径：只有内部区间在浮点舍入容差内均匀时才使用；真实细化区间和极短物理锚点仍走完整步长数组。目标点输出相对之前数组路径根差`1.67e-15`、频谱最大差`6.04e-14 dex`。针对代码的测试为`61 passed, 1 deselected`，GitHub Actions 运行`41759168617`的9个 job 全部通过。完整点位结果、资源测量和原始 Reference 频谱见[`accuracy.md`](accuracy.md)以及
 [`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json)、原始闭合根映射[`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json)。复现实验使用[`res4_reference_secant_root_tail10_20261104.npz`](res4_reference_secant_root_tail10_20261104.npz)、[`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)和[`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py)。这些是单个困难参数点的验证，不等同于全参数域认证。
