@@ -3,6 +3,7 @@ name: ci
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 env:
   NUMBA_NUM_THREADS: "2"
