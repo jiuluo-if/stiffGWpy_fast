@@ -115,6 +115,10 @@ IPTA 和 NANOGrav 现在只在理论频点覆盖范围内插值，不再对范�
 
 逐模归因资料现包含当前完整根 260 模误差、同背景原函数路径比较、历史 53 模与当前 18 个边缘模的连续系数 DOP853 复算，以及对应 tail9 Reference 数组。数据说明见[`res4_mode_decomposition_20261104.json`](res4_mode_decomposition_20261104.json)，逐模文件从[`accuracy.md`](accuracy.md)导航。
 
+固定`h=.005,z_tail=8`将`freq_res`从4提高到8和16后，仍是相同18个模态超过`5e-4 dex`；频率网格密度不是这些偏差的主因，原始结果见[`res4_default_frequency_density_20261104.json`](res4_default_frequency_density_20261104.json)。
+
+提交`6f5f472`后，省略`sigma_exact`时只有显式开启的转折细化路径会默认按连续分段`sigma`重算背景原函数；显式传`False`和普通 Fast 路径仍保留节点快速原函数。res4完整根的260模最大误差为`3.456e-4 dex`，超过`5e-4`的模态从18个降到0；sample11新根在同输入 tail10 Reference 映射残差为`-6.21e-6`，94模最大谱差`7.057e-5 dex`。两点困难路径 P50 都低于100 ms。配对原始数据、DOP853/Reference 证据和复现命令见[`accuracy.md`](accuracy.md#2026-11-04-continuous-background-default-for-transition-refinement)。
+
 当前`A_s=1e20`失败现在会在张量传播前首次发现`S2=exp(Psi)`非有限并报告数组和索引，不声称存在可表示的有限谱。6个常规区间的501组配对开销 A/B 显示 DN/谱输出逐位一致，最差 P50/P95 比值为`1.0248`；原始样本见[`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json)。
 
 提交`671aa11`增加了受保护的标量终点步长路径：只有内部区间在浮点舍入容差内均匀时才使用；真实细化区间和极短物理锚点仍走完整步长数组。目标点输出相对之前数组路径根差`1.67e-15`、频谱最大差`6.04e-14 dex`。针对代码的测试为`61 passed, 1 deselected`，GitHub Actions 运行`41759168617`的9个 job 全部通过。完整点位结果、资源测量和原始 Reference 频谱见[`accuracy.md`](accuracy.md)以及

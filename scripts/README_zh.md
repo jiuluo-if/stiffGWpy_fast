@@ -43,6 +43,7 @@ JSON 同时保存三个变体在全部260个频点上的逐模误差。
 此脚本本身不执行外层自洽迭代。
 `benchmark_sample11_reference_map.py` 使用保存的 sample11 Fast 根频率网格，对候选根做94模态精确输入 Reference 检查；记录 DN 映射残差、求积/插值误差和同 DN 逐模谱误差，并保存原始 Reference 谱。
 `benchmark_sample11_sigma_exact.py` 交替运行 sample11 的 h=.02 转折细化完整根，默认采用连续背景原函数，并与显式节点原函数对照；记录相对已存 tail10 Reference 谱的同频误差及热 P50/P95。
+通过 `--reference` 和 `--reference-map` 可指定连续原函数新根上的同输入映射及频谱。
 `benchmark_background_primitive_guard.py` 在六个常规参数区间交替启停原函数有限值检查，测量开销并核对谱和 DN 输出不变。
 
 `benchmark_lvk_likelihood_cache.py` 需要安装 Cobaya extra；它使用随包的 54,593 行 LVK 数据，对比旧似然计算与缓存数据/NumPy 归约路径。

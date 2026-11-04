@@ -6,6 +6,7 @@ The default variant follows the transition-refined API default. Passing
 """
 
 import argparse
+import hashlib
 import json
 import statistics
 import subprocess
@@ -56,6 +57,10 @@ def _run(sigma_exact, config, reference_freqs, reference_log):
             error, [50, 95, 100]
         ).tolist(),
         "modes_over_5e-4_dex": int(np.count_nonzero(error > 5e-4)),
+        "spectrum_sha256": hashlib.sha256(
+            np.ascontiguousarray(np.asarray(model.log10OmegaGW)[order][indexes])
+            .tobytes()
+        ).hexdigest(),
     }
 
 
@@ -133,6 +138,7 @@ def main():
             **{key: value for key, value in rows[-1].items()
                if key != "elapsed_ms"},
             "raw_elapsed_ms": [row["elapsed_ms"] for row in rows],
+            "deterministic": len({row["spectrum_sha256"] for row in rows}) == 1,
         }
     record = {
         "source_sha": subprocess.check_output(

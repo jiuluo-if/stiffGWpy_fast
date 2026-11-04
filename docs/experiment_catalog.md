@@ -224,6 +224,15 @@ A targeted `freq_res=4/8/16` check at fixed `h=.005,z_tail=8` leaves the same
 of their error. The raw comparison is
 [`res4_default_frequency_density_20261104.json`](res4_default_frequency_density_20261104.json).
 
+Commit `6f5f472` makes an omitted `sigma_exact` select the continuous
+background primitive only on the opt-in transition-refined path; an explicit
+false value and the regular Fast path retain the node primitive. The updated
+res4 candidate has zero modes above `5e-4 dex` and a maximum error of
+`3.456e-4 dex`; the sample11 exact-input Reference map residual is `-6.21e-6`
+with maximum same-input spectrum error `7.057e-5 dex`. The paired runs remain
+below 100 ms P50. Raw comparisons and reproduction commands are in
+[`accuracy.md`](accuracy.md#2026-11-04-continuous-background-default-for-transition-refinement).
+
 The current `A_s=1e20` trace now stops at its first bad `S2=exp(Psi)` value
 before tensor propagation, reporting the primitive and index; no extended
 finite spectrum is claimed. A 501-pair six-regime A/B confirms the diagnostic
