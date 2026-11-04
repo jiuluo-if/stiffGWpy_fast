@@ -354,12 +354,16 @@ one no-tail mode. They vary the background normalization only; see
 and
 [`nonosc_phase_res4_dn133732_notail_20261104.json`](nonosc_phase_res4_dn133732_notail_20261104.json).
 At a distinct minimized Fast pressure point (`r=.19649`, `n_t=1.06225`,
-`T_re=1761.31 GeV`, `kappa10=.0115985`, fixed `DN_eff=0`), three modes match
-Cartesian within `3.86e-8 dex`; this is not full-spectrum or root validation.
+`T_re=1761.31 GeV`, `kappa10=.0115985`, fixed `DN_eff=0`), six tail/no-tail
+modes match Cartesian within `3.86e-8 dex` maximum; this is not full-spectrum
+or root validation.
 See [`nonosc_phase_sample2_tail_cross_20261104.json`](nonosc_phase_sample2_tail_cross_20261104.json),
 [`nonosc_phase_sample2_high_20261104.json`](nonosc_phase_sample2_high_20261104.json),
+[`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json),
+[`nonosc_phase_sample2_mid1_20261104.json`](nonosc_phase_sample2_mid1_20261104.json),
+[`nonosc_phase_sample2_mid2_20261104.json`](nonosc_phase_sample2_mid2_20261104.json),
 and
-[`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json).
+[`nonosc_phase_sample2_mid3_20261104.json`](nonosc_phase_sample2_mid3_20261104.json).
 Two modes also exercise the positive `cr` branch; at `cr=.1`, `r=.01` the
 model derives `n_t=-.00125`, and the tail/no-tail errors are `3.54e-8` and
 `3.21e-9 dex`. See
