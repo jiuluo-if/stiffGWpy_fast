@@ -41,6 +41,7 @@ PNG 默认写入 `scripts/`，也可通过输出路径参数指定其他位置�
 `benchmark_res4_reference_root.py` 在显式 `DN_eff` 和相同260个原生频率上运行一次独立固定背景 Reference 映射；耗时可能达到数十分钟，
 此脚本本身不执行外层自洽迭代。
 `benchmark_sample11_reference_map.py` 使用保存的 sample11 Fast 根频率网格，对候选根做94模态精确输入 Reference 检查；记录 DN 映射残差、求积/插值误差和同 DN 逐模谱误差，并保存原始 Reference 谱。
+`benchmark_background_primitive_guard.py` 在六个常规参数区间交替启停原函数有限值检查，测量开销并核对谱和 DN 输出不变。
 
 `benchmark_lvk_likelihood_cache.py` 需要安装 Cobaya extra；它使用随包的 54,593 行 LVK 数据，对比旧似然计算与缓存数据/NumPy 归约路径。
 它保留逐次耗时、似然差值和低频支持边界检查；测量范围是单次似然调用，不代表完整 Cobaya 或 MCMC 耗时。

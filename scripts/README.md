@@ -62,6 +62,9 @@ outer self-consistency iteration itself.
 the retained 94-mode sample11 case using its saved Fast-root frequency grid.
 It records the map residual, quadrature/interpolation estimates, and same-DN
 per-mode spectrum errors, and saves the raw Reference spectrum beside its JSON.
+`benchmark_background_primitive_guard.py` alternates six normal Fast regimes
+with the pre-kernel primitive finite check enabled/disabled to quantify its
+runtime overhead and confirm identical spectra.
 
 `benchmark_lvk_likelihood_cache.py` requires the Cobaya extra and compares the
 previous LVK likelihood calculation with the cached-data/NumPy-reduction path
