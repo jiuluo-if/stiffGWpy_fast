@@ -90,7 +90,8 @@ def test_fullgrid_driver_accepts_a_valid_zero_segment_tail_transfer(monkeypatch)
     assert result["orders"][2]["abs_dex_error_vs_cartesian"] < 1e-3
 
 
-def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch):
+@pytest.mark.parametrize(("index", "order"), [(656, 24), (687, 16)])
+def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch, index, order):
     root_grid = json.loads(
         (
             Path(__file__).resolve().parents[1]
@@ -105,8 +106,8 @@ def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch)
             / "sample2_phase_root_residual_order_probe_20261105.json"
         ).read_text(encoding="utf-8")
     )
-    row = next(item for item in root_grid["rows"] if item["index"] == 656)
-    probe_row = next(item for item in probe["rows"] if item["index"] == 656)
+    row = next(item for item in root_grid["rows"] if item["index"] == index)
+    probe_row = next(item for item in probe["rows"] if item["index"] == index)
     module = phase
     params = {key: value for key, value in root_grid["params"].items() if key != "DN_eff"}
     monkeypatch.setattr(module, "PARAMS", params)
@@ -127,7 +128,7 @@ def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch)
     assert low.success and low.t_events[0].size
 
     state, bounds, segments, _, tail_used, z_end = module.candidate(
-        24,
+        order,
         low.y_events[0][0].tolist(),
         float(low.t_events[0][0]),
         phase_start,
@@ -140,4 +141,5 @@ def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch)
     )
     assert max(item["collocation_residual_scaled"] for item in segments) <= 1e-10
     assert max(item["dense_residual_scaled"] for item in segments) <= 1e-9
+    assert any(item["newton_residual_converged"] for item in segments)
     assert abs(math.log10(power["OmegaGW"]) - row["reference_log10_omega"]) < 1e-3

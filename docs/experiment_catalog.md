@@ -383,17 +383,18 @@ model derives `n_t=-.00125`, and the tail/no-tail errors are `3.54e-8` and
 and
 [`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
 On the distinct minimized sample2 cosmology's full 800-node Reference-root
-grid, phase propagation passes 700/800 at `gamma_min=10` and714/800 at0, with
-maximum error `8.668e-7 dex` on either strict set; gamma0 takes141.6s versus
-45.9s for Cartesian and has no complete phase integral map. A tail-event
+grid, phase propagation passes 700/800 at `gamma_min=10` and718/800 at0, with
+maximum error `8.668e-7 dex` on either strict set; gamma0 takes132.7s versus
+43.3s for Cartesian and has no complete phase integral map. A tail-event
 classification regression corrected four `z_today<z_tail` cases. Stopping
-Newton once the unchanged collocation residual gate is met (while retaining
-the dense gate and 20-step cap) adds five strict modes `[670,710,725,739,752]`
-without losses or increased maximum error. Among 83 remaining residual
-failures, 16 pass adjacent-order checks and 51 completed orders across 35 modes
-pass tighter Cartesian/Prüfer references. All 16 adjacent-order modes are in
-that set, so 749/800 are validated and 48 residual failures plus three
-non-positive-`Q` modes remain. Lower orders8/12/16 add no unique coverage.
+Newton at the unchanged collocation gate while retaining the dense gate and
+20-step cap adds five modes; backtracking only when a full step fails to lower
+the residual adds four more `[685,712,713,751]`. No prior strict mode is lost
+or exceeds the existing error bound. Among 79 remaining residual failures, 14
+pass adjacent-order checks and 46 completed order candidates across 32 modes pass
+tighter Cartesian/Prüfer references. All 14 adjacent-order modes overlap that
+set, so 750/800 are validated and 47 residual failures plus three non-positive-`Q`
+modes remain. Lower orders 8/12/16 add no unique coverage.
 These checks still do not provide a complete phase integral map or root. See
 [`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
 [`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),

@@ -149,16 +149,30 @@ def phase_segment(a, b, regime, k, state, z_left):
     iterations = 0
     newton_update_converged = False
     newton_residual_converged = False
+    newton_backtracks = 0
     last_relative_update = math.inf
     for iterations in range(1, 21):
         resid = Dt @ r + r * r + scale**2 * q
+        residual_norm = float(np.max(np.abs(resid)))
+        r_before = r.copy()
         h = np.linalg.solve(Dt + np.diag(2.0 * r), -resid)
         r += h
+        resid = Dt @ r + r * r + scale**2 * q
+        if float(np.max(np.abs(resid))) >= residual_norm:
+            for backtrack in range(1, 9):
+                damped_h = h * (0.5**backtrack)
+                trial = r_before + damped_h
+                trial_resid = Dt @ trial + trial * trial + scale**2 * q
+                if float(np.max(np.abs(trial_resid))) < residual_norm:
+                    r = trial
+                    h = damped_h
+                    resid = trial_resid
+                    newton_backtracks += backtrack
+                    break
         last_relative_update = float(np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0))
         if last_relative_update < 2e-14:
             newton_update_converged = True
             break
-        resid = Dt @ r + r * r + scale**2 * q
         if float(np.max(np.abs(resid)) / scale**2) <= 1e-10:
             newton_residual_converged = True
             break
@@ -217,6 +231,7 @@ def phase_segment(a, b, regime, k, state, z_left):
             "newton_iterations": iterations,
             "newton_update_converged": newton_update_converged,
             "newton_residual_converged": newton_residual_converged,
+            "newton_backtracks": newton_backtracks,
             "newton_last_relative_update": last_relative_update,
             "collocation_residual_scaled": collocation_residual_scaled,
             "dense_residual_scaled": dense_residual_scaled,
