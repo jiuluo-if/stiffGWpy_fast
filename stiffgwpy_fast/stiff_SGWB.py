@@ -200,7 +200,8 @@ class LCDM_SG(LCDM_SN):
                   auto_escalate=False, error_tol=None, sigma_exact=None,
                   escalate_to_reference=False, transition_refine=None,
                   likelihood_sigma=None, dlogl_tol=None, eval_freqs=None,
-                  physical_guard=False):
+                  physical_guard=False, freq_grid=None,
+                  freq_grid_target=3e-4, freq_grid_max_points=1500):
         """
         Main numerical scheme:
         Iteration method that yields self-consistent cosmology including the stiff-amplified primordial SGWB,
@@ -218,6 +219,10 @@ class LCDM_SG(LCDM_SN):
         override the selected fast preset and sets the LSODA/reference tail
         threshold; ``rtol`` and ``atol`` tune reference/LSODA ODE tolerances.
         ``freq_res`` scales frequency-grid density (audit-only; 1.0 = default).
+        ``freq_grid`` optionally selects ``construct``, ``grid_independent``,
+        ``adaptive`` or ``goal`` on the Fast engine; leaving it unset preserves
+        the accuracy preset's existing grid. ``freq_grid_target`` and
+        ``freq_grid_max_points`` tune the opt-in adaptive grid.
         ``physical_guard`` enables total-``N_eff`` rejection above 5 for the
         fast and Reference engines; it defaults to False and does not affect
         the original LSODA engine.
@@ -267,6 +272,26 @@ class LCDM_SG(LCDM_SN):
             z_tail = 5.0
         if freq_res is None:
             freq_res = 1.0
+        if freq_grid is not None and engine != 'fast':
+            raise ValueError("freq_grid is only supported by engine='fast'")
+        if freq_grid is None and (
+                freq_grid_target != 3e-4 or freq_grid_max_points != 1500):
+            raise ValueError("frequency-grid target/limit require an explicit freq_grid")
+        if freq_grid is not None:
+            if freq_grid not in ('construct', 'grid_independent', 'adaptive', 'goal'):
+                raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal")
+            if (isinstance(freq_grid_target, bool)
+                    or not isinstance(freq_grid_target, (int, float, np.integer, np.floating))
+                    or not np.isfinite(freq_grid_target)
+                    or not 0.0 < float(freq_grid_target) < 1.0):
+                raise ValueError("freq_grid_target must be finite and in (0, 1)")
+            if (isinstance(freq_grid_max_points, bool)
+                    or not isinstance(freq_grid_max_points, (int, np.integer))
+                    or freq_grid_max_points < 2):
+                raise ValueError("freq_grid_max_points must be an integer >= 2")
+            if freq_grid != 'adaptive' and (
+                    freq_grid_target != 3e-4 or freq_grid_max_points != 1500):
+                raise ValueError("frequency-grid target/limit apply only to freq_grid='adaptive'")
         if engine == 'reference':
             # Independent continuous-sigma high-accuracy pipeline (slow; for
             # certification / benchmark points, not the MCMC thermal path).
@@ -335,6 +360,13 @@ class LCDM_SG(LCDM_SN):
                     tr_mode = bool(transition_refine)
                     if tr_mode:
                         kink_mode = False
+                grid_overrides = {}
+                if freq_grid is not None:
+                    grid_overrides = {
+                        'freq_grid': freq_grid,
+                        'freq_grid_target': freq_grid_target,
+                        'freq_grid_max_points': freq_grid_max_points,
+                    }
                 result = fast_sgwb.SGWB_iter_fast(self, tol=f_tol,
                                                   freq_res=f_freq,
                                                   sigma_exact=sigma_exact,
@@ -342,7 +374,8 @@ class LCDM_SG(LCDM_SN):
                                                   kink_split=kink_mode,
                                                   config=config,
                                                   eval_freqs=eval_freqs,
-                                                  physical_guard=physical_guard)
+                                                  physical_guard=physical_guard,
+                                                  **grid_overrides)
             except Exception as exc:
                 self.fast_failures = getattr(self, 'fast_failures', 0) + 1
                 self.last_fast_error = repr(exc)

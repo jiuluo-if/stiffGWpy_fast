@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "experiment": "sobol_20261105_0146_adaptive_high_level_api_continuity",
+  "created_at": "2026-11-05T06:44:26.013530+08:00",
+  "source_commit": "4cfffe85aa1babdbfe76f12a466e37715b9beaa0",
+  "branch": "fast_v0.2",
+  "fast_grid_artifact": "qmc_sobol146_fast_adaptive_grid_20261105.json",
+  "fast_grid_artifact_sha256": "92899098c6f5ad18f3b1374b516c0cebc697fe9ff2e3fac06d98faee650315db",
+  "reference_validation_artifact": "qmc_sobol146_fast_adaptive_reference_20261105.json",
+  "reference_validation_artifact_sha256": "2cd65a88daecb5669095886bc2d4ca32f8755dbc34a8819826a1bbec208bd478",
+  "reference_validation_original_fast_snapshot_sha256": "970efa0d3bfe94d178c511401392f763415c573dd444972b31b8f372fd84ba54",
+  "fast_case": "adaptive_sigma_exact_tail10_1e-06",
+  "checks": {
+    "frequency_sha256_equal": true,
+    "frequency_count_equal": true,
+    "DN_gw_bitwise_equal": true,
+    "fast_core_sha256_equal": true,
+    "absolute_DN_gw_delta": 0.0,
+    "fast_core_sha256": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
+    "adaptive_high_level_api_sha256": "256b28289455588c712920f5b13c0ff7af5d26aecb9b238b78d695d9b0843de8"
+  },
+  "runtime_configuration": {
+    "freq_grid": "adaptive",
+    "freq_grid_target": 1e-06,
+    "freq_grid_max_points": 1500,
+    "sigma_exact": true,
+    "z_tail": 10.0,
+    "frequency_count": 321,
+    "DN_gw": 6.109481767541323e-106
+  },
+  "script_sha256": "732ab0162eb955ee68335f5bccb2f4484b8a3a60d7686e63ba3f010cc3405cf4",
+  "resources": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4"
+  },
+  "limitations": [
+    "This links the original independent Reference comparison to the public high-level invocation through exact core-source, frequency-grid, and DN_gw equality checks.",
+    "It does not rerun the 321-mode Reference or reconstruct the prior Fast spectrum array; the low-level Fast core and all numerical settings are unchanged."
+  ]
+}

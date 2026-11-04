@@ -529,3 +529,22 @@ current code changed `DN_gw` by only `1.74e-16` relative and produced no
 warnings; see
 [`qmc_sobol146_post_scale_reintegration_20261105.json`](qmc_sobol146_post_scale_reintegration_20261105.json)
 and [`reintegrate_qmc_sobol146_post_scale.py`](../scripts/reintegrate_qmc_sobol146_post_scale.py).
+
+The Fast custom PCHIP slope now uses a scaled weighted harmonic-mean formula
+that avoids reciprocal overflow on subnormal tails. The new warning-as-error
+regression passes. A 30-pair normal Fast A/B is bitwise identical with no warm
+P50/P95 regression. The high-level Fast API gained optional adaptive-grid
+arguments without changing its default. On sample146, the default 77-node goal
+result differs from res=8 by `84.6%` relative to Reference (`45.8%` with the
+symmetric max-value denominator). Adaptive target `3e-4` still leaves a
+`2.58%` relative map difference; the explicitly validated
+`adaptive`, `target=1e-6`, `sigma_exact`, `z_tail=10` route used 321 nodes and
+passed an exact-array Prüfer comparison (`5.06e-5` relative `DN_gw`, maximum
+`3.72e-4 dex`). It took 660.6s on one worker and applies to this single point.
+See [accuracy evidence](accuracy.md#2026-11-05-stable-fast-pchip-slopes-and-adaptive-grid-point-check),
+the [sweep](qmc_sobol146_fast_adaptive_grid_20261105.json),
+the [same-grid Reference result](qmc_sobol146_fast_adaptive_reference_20261105.json),
+and [normal-path benchmark](fast_pchip_stable_slopes_ab_20261105.json).
+The public wrapper reproduces the same frequency hash and `DN_gw`; its
+continuity check and spectrum-copy limitation are recorded in
+[`qmc_sobol146_adaptive_api_continuity_20261105.json`](qmc_sobol146_adaptive_api_continuity_20261105.json).

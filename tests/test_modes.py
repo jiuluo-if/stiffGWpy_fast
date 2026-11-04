@@ -54,6 +54,37 @@ def test_high_level_transition_refine_forwards_sigma_exact_auto_sentinel(monkeyp
     assert captured['sigma_exact'] is None
 
 
+def test_high_level_adaptive_frequency_grid_override_is_opt_in(monkeypatch):
+    captured = {}
+
+    def capture_fast(model, **kwargs):
+        captured.update(kwargs)
+        return model
+
+    monkeypatch.setattr(FS, 'SGWB_iter_fast', capture_fast)
+    model = LCDM_SG(r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01)
+
+    assert model.SGWB_iter(
+        engine='fast', freq_grid='adaptive', freq_grid_target=1e-6,
+        freq_grid_max_points=1500, sigma_exact=True, z_tail=10.0,
+    ) is model
+    assert captured['freq_grid'] == 'adaptive'
+    assert captured['freq_grid_target'] == 1e-6
+    assert captured['freq_grid_max_points'] == 1500
+    assert captured['sigma_exact'] is True
+    assert captured['config'].z_tail == 10.0
+
+
+@pytest.mark.parametrize('target, max_points', [(0.0, 1500), (1e-6, 1.5), (float('nan'), 1500)])
+def test_high_level_adaptive_frequency_grid_rejects_invalid_limits(target, max_points):
+    model = LCDM_SG(r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01)
+    with pytest.raises(ValueError, match='freq_grid_target|freq_grid_max_points'):
+        model.SGWB_iter(
+            engine='fast', freq_grid='adaptive', freq_grid_target=target,
+            freq_grid_max_points=max_points,
+        )
+
+
 def test_only_fast_is_formal_user_profile(fast_settings):
     assert FS.USER_FAST_PROFILES == ('fast',)
     assert tuple(FS.FAST_PROFILES) == ('fast',)

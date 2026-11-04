@@ -1657,12 +1657,26 @@ def _pchip_slopes(x, y):
     condition = (smk[1:] != smk[:-1]) | (mk[1:] == 0.0) | (mk[:-1] == 0.0)
     w1 = 2.0 * hk[1:] + hk[:-1]
     w2 = hk[1:] + 2.0 * hk[:-1]
-    # 零斜率会产生 inf/nan，但这些位置随后由 condition 覆盖，因此只在这里
-    # 抑制 numpy 的除零/无效值告警，不改变任何已选中的数值。
-    with np.errstate(divide="ignore", invalid="ignore"):
-        whmean = (w1 / mk[:-1] + w2 / mk[1:]) / (w1 + w2)
-        harmonic = 1.0 / whmean
-    dk[1:-1] = np.where(condition, 0.0, harmonic)
+    # Compute the weighted harmonic mean after scaling both secants by the
+    # smaller magnitude. This is algebraically equivalent to the reciprocal
+    # formula but avoids overflowing 1/m for subnormal spectrum slopes.
+    # 先按较小割线斜率的幅值归一化，再计算加权调和平均；代数上等价于倒数公式，
+    # 但不会因 subnormal 谱斜率的 1/m 运算而溢出。
+    valid = ~condition
+    if np.any(valid):
+        m0 = mk[:-1][valid]
+        m1 = mk[1:][valid]
+        abs0 = np.abs(m0)
+        abs1 = np.abs(m1)
+        small = np.minimum(abs0, abs1)
+        scaled_denominator = (
+            w1[valid] * (small / abs0)
+            + w2[valid] * (small / abs1)
+        )
+        harmonic = np.sign(m0) * small * (
+            (w1[valid] + w2[valid]) / scaled_denominator
+        )
+        dk[1:-1][valid] = harmonic
     dk[0] = _pchip_edge_slope(hk[0], hk[1], mk[0], mk[1])
     dk[-1] = _pchip_edge_slope(hk[-1], hk[-2], mk[-1], mk[-2])
     return dk
