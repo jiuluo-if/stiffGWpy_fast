@@ -382,6 +382,10 @@ On res4, this gives a full Fast root `DN_eff=0.13373208300428413`, whose
 relative gap to the independently closed tail10 Reference root is
 `-3.54e-5`. Across all 260 frequencies the median/P95/maximum spectrum error
 is `3.914e-5 / 3.164e-4 / 3.456e-4 dex`, with zero modes above `5e-4 dex`.
+The direct tail10 Reference map at this exact Fast root returns
+`0.13373671803614506`, a map residual of `+3.466e-5`; the same-input spectrum
+error is `3.901e-5 / 3.167e-4 / 3.458e-4 dex` median/P95/maximum. Its
+quadrature/interpolation estimates are `1.84e-20` and `1.82e-10`.
 The prior default h=.005 result had 18 modes above that threshold and maximum
 error `6.455e-4 dex`. In 15 paired 8-thread runs, the refined continuous
 candidate measured P50/P95 `66.9/69.3 ms` versus `68.5/71.5 ms` for the
@@ -413,3 +417,10 @@ For the exact-input sample11 comparison, pass
 and `--reference-map docs/sample11_h02_sigma_exact_reference_map_20261104.json`.
 The prior sample11 nonfinite recovery and res4 error attribution are recorded
 in [`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md).
+
+The direct same-input res4 map and candidate spectrum are archived as
+[`res4_sigma_exact_reference_map_20261104.json`](res4_sigma_exact_reference_map_20261104.json),
+[`res4_sigma_exact_reference_map_20261104.npz`](res4_sigma_exact_reference_map_20261104.npz),
+[`res4_sigma_exact_same_input_20261104.json`](res4_sigma_exact_same_input_20261104.json),
+and [`res4_sigma_exact_same_input_20261104.npz`](res4_sigma_exact_same_input_20261104.npz).
+The 260-mode tail10 map used `rtol=1e-11`, four workers, and took `5692 s`.
