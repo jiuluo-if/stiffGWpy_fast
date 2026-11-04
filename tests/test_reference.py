@@ -133,6 +133,43 @@ def test_numba_h2_sigma_matches_python_at_every_background_branch(model):
         assert actual == expected
 
 
+@pytest.mark.parametrize('params, dn_eff', [
+    ({'r': 1e-2, 'cr': 1, 'T_re': 2e3, 'kappa10': 1e-2},
+     0.133732083004284),
+    ({'r': 1e-2, 'cr': 1, 'T_re': 1e4, 'kappa10': 1e-2}, 0.2),
+    ({'r': 1e-2, 'cr': 1, 'T_re': 1e1, 'kappa10': 1e-2}, 0.2),
+    ({'r': 1e-2, 'cr': 1, 'T_re': 2e3, 'kappa10': 1.0}, 0.2),
+    ({'r': 0.19649188544593907, 'cr': 0,
+      'T_re': 1761.314039059193, 'kappa10': 0.011598483151630803},
+     2.291411867022825),
+])
+def test_numba_h2_sigma_matches_python_across_cosmologies(params, dn_eff):
+    """The compiled evaluator agrees across reheating, stiffness and cr branches."""
+    model = LCDM_SG(**params, DN_eff=dn_eff)
+    background = REF._Background(model, dn_eff)
+    REF._warmup_numba_reference_background(background)
+
+    points = [
+        0.0,
+        np.nextafter(background.N_re_abs, -np.inf),
+        background.N_re_abs,
+        np.nextafter(background.N_re_abs, np.inf),
+        background.N_inf - background.N_fin,
+        background.N_inf - background.N_max,
+        background.N_inf,
+    ]
+    for nu_edge in (100.0, 0.1):
+        edge = background.N_inf + math.log(nu_edge / background.nu_today)
+        points.extend((np.nextafter(edge, -np.inf), edge,
+                       np.nextafter(edge, np.inf)))
+    rng = np.random.default_rng(20261105)
+    points.extend(rng.uniform(0.0, background.N_inf, 256))
+
+    for N in points:
+        assert REF._H2_and_sigma(background, float(N)) == \
+            REF._H2_and_sigma_python(background, float(N))
+
+
 @pytest.mark.parametrize('freqs, expected_warmups', [
     (np.array([-12.0]), 0),
     (np.linspace(-18.0, -7.0, 32), 1),
