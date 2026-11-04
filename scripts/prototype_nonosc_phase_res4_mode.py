@@ -27,7 +27,18 @@ from stiffgwpy_fast import global_param as gp  # noqa: E402
 from stiffgwpy_fast import reference as R  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
-PARAMS = dict(r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01, DN_re=10.0)
+PARAMS = dict(
+    Omega_bh2=0.0223828,
+    Omega_ch2=0.1201075,
+    H0=67.32117,
+    A_s=2.100549e-9,
+    r=0.01,
+    cr=0.0,
+    n_t=2.0,
+    T_re=1e4,
+    kappa10=0.01,
+    DN_re=10.0,
+)
 DEFAULT_DN = 0.13373681817755848
 DEFAULT_FREQ = -12.6723
 DEFAULT_PHASE = 5.0
@@ -350,11 +361,33 @@ low_event.direction = 1
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--omega-bh2", type=float, default=PARAMS["Omega_bh2"])
+    parser.add_argument("--omega-ch2", type=float, default=PARAMS["Omega_ch2"])
+    parser.add_argument("--h0", type=float, default=PARAMS["H0"])
+    parser.add_argument("--a-s", type=float, default=PARAMS["A_s"])
+    parser.add_argument("--r", type=float, default=PARAMS["r"])
+    parser.add_argument("--cr", type=float, default=PARAMS["cr"])
+    parser.add_argument("--n-t", type=float, default=PARAMS["n_t"])
+    parser.add_argument("--t-re", type=float, default=PARAMS["T_re"])
+    parser.add_argument("--kappa10", type=float, default=PARAMS["kappa10"])
+    parser.add_argument("--dn-re", type=float, default=PARAMS["DN_re"])
     parser.add_argument("--dn-eff", type=float, default=DEFAULT_DN)
     parser.add_argument("--frequency", type=float, default=DEFAULT_FREQ)
     parser.add_argument("--phase-start", type=float, default=DEFAULT_PHASE)
     parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args(argv)
+    PARAMS.update(
+        Omega_bh2=args.omega_bh2,
+        Omega_ch2=args.omega_ch2,
+        H0=args.h0,
+        A_s=args.a_s,
+        r=args.r,
+        cr=args.cr,
+        n_t=args.n_t,
+        T_re=args.t_re,
+        kappa10=args.kappa10,
+        DN_re=args.dn_re,
+    )
     configure_case(args.dn_eff, args.frequency, args.phase_start)
     if args.output is None:
         if FREQ == DEFAULT_FREQ and DN == DEFAULT_DN and ZPHASE == DEFAULT_PHASE:

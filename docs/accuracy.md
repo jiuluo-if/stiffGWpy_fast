@@ -607,8 +607,8 @@ and 22 segments; their maximum observed collocation/dense residuals were
 Two modes near the tail threshold use different handoff semantics (phase to
 today, Cartesian to tail) and contribute the two largest errors, both below
 `1.55e-4 dex`. For the 213 completed modes, the single-run order-32 phase time
-has P50/P95 `0.178/0.287 s`; summed phase and archived Cartesian times are
-`39.94/1990.97 s` (`49.8x` on this supported subset). This is not an all-grid
+has P50/P95 `0.172/0.282 s`; summed phase and archived Cartesian times are
+`39.16/1990.97 s` (`50.8x` on this supported subset). This is not an all-grid
 speedup claim or an interleaved benchmark; peak RSS was not measured. Failed
 modes are preserved as failures, not included in the accuracy statistics. The
 complete per-mode record, including phase-start attempts, residuals, branch
@@ -642,6 +642,22 @@ self-consistency check. Raw results are
 [`nonosc_phase_res4_dn133732_high_20261104.json`](nonosc_phase_res4_dn133732_high_20261104.json),
 and
 [`nonosc_phase_res4_dn133732_notail_20261104.json`](nonosc_phase_res4_dn133732_notail_20261104.json).
+
+The prototype CLI now records all base cosmological inputs explicitly. A
+separate pressure point from the minimized Fast failure set uses the default
+`Omega_bh2`, `Omega_ch2`, `H0`, and `A_s`, with `r=0.19649188544593907`,
+`n_t=1.0622501865308032`, `T_re=1761.314039059193 GeV`,
+`kappa10=0.011598483151630803`, `cr=0`, `DN_re=10`, and fixed `DN_eff=0`.
+The two tail modes and one no-tail mode match current Cartesian within
+`9.37e-9`, `2.56e-9`, and `3.86e-8 dex`; dense Riccati residuals stay below
+`2.64e-14`. This is a three-mode fixed-background check, not a complete
+spectrum or self-consistency validation of the difficult point. Reproduce
+with the explicit `--r`, `--cr`, `--n-t`, `--t-re`, `--kappa10`, `--dn-re`,
+and `--dn-eff` options; raw records are
+[`nonosc_phase_sample2_tail_cross_20261104.json`](nonosc_phase_sample2_tail_cross_20261104.json),
+[`nonosc_phase_sample2_high_20261104.json`](nonosc_phase_sample2_high_20261104.json),
+and
+[`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json).
 
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave

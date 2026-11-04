@@ -328,7 +328,7 @@ The subsequent complete-grid screen completed 213/260 modes (maximum/P95
 order-32 error `1.548e-4/5.562e-8 dex`); 45 modes failed the high-frequency
 screen and two had non-positive `Q`. The existing 20-step Newton limit was
 retained; 14 modes passed the collocation and dense residual gates despite not
-reaching the tighter update stopping test. The `49.8x` summed time ratio
+reaching the tighter update stopping test. The `50.8x` summed time ratio
 applies only to the 213 supported modes and compares a single candidate run
 with archived Cartesian timings; it is not full-grid coverage or a paired
 performance claim.
@@ -346,6 +346,13 @@ one no-tail mode. They vary the background normalization only; see
 [`nonosc_phase_res4_dn133732_high_20261104.json`](nonosc_phase_res4_dn133732_high_20261104.json),
 and
 [`nonosc_phase_res4_dn133732_notail_20261104.json`](nonosc_phase_res4_dn133732_notail_20261104.json).
+At a distinct minimized Fast pressure point (`r=.19649`, `n_t=1.06225`,
+`T_re=1761.31 GeV`, `kappa10=.0115985`, fixed `DN_eff=0`), three modes match
+Cartesian within `3.86e-8 dex`; this is not full-spectrum or root validation.
+See [`nonosc_phase_sample2_tail_cross_20261104.json`](nonosc_phase_sample2_tail_cross_20261104.json),
+[`nonosc_phase_sample2_high_20261104.json`](nonosc_phase_sample2_high_20261104.json),
+and
+[`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json).
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see

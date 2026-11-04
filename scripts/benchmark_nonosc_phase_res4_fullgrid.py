@@ -169,7 +169,8 @@ def main(argv=None):
     module_sha = hashlib.sha256(ref_module.read_bytes()).hexdigest()
     if module_sha != archive["reference_module_sha256"]:
         raise RuntimeError("Cartesian archive and current Reference module hashes differ")
-    params = dict(archive["parameters"])
+    params = dict(phase.PARAMS)
+    params.update(archive["parameters"])
     for name, value in phase.PARAMS.items():
         if params.get(name) != value:
             raise RuntimeError("phase prototype and Cartesian archive parameters differ at %s" % name)
