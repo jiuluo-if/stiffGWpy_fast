@@ -59,7 +59,9 @@ independent fixed-background Reference map at an explicit `DN_eff` on the same
 260 native frequencies; it can take tens of minutes and does not perform the
 outer self-consistency iteration itself.
 `benchmark_sample11_reference_map.py` repeats the exact-input map check for
-the retained 94-mode sample11 case using its saved tail10 frequency grid.
+the retained 94-mode sample11 case using its saved Fast-root frequency grid.
+It records the map residual, quadrature/interpolation estimates, and same-DN
+per-mode spectrum errors, and saves the raw Reference spectrum beside its JSON.
 
 `benchmark_lvk_likelihood_cache.py` requires the Cobaya extra and compares the
 previous LVK likelihood calculation with the cached-data/NumPy-reduction path

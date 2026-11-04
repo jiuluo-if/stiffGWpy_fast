@@ -310,6 +310,22 @@ On the blue-tilt res4 point (`r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`,
   `1.40e-6 dex`. Both methods stay within `2.5e-5 dex` of the tail9 Reference
   on those modes. They do not trigger the analytic tail handoff.
 
+The retained stiff random sample11 is a second independent hard point. Its
+current h=.02 Fast root (`DN_eff=4.857519441699757`) was checked by a same-input
+tail10 Reference map: Reference maps to `4.857473394469992`, a relative
+residual of `-9.48e-6`. On the same 94 native frequencies and exact same DN,
+the Reference spectrum median/P95/maximum difference is
+`3.016e-5 / 6.953e-5 / 9.149e-5 dex`, with no modes above `5e-4 dex`.
+Reference estimates are `6.68e-19` for quadrature and `4.42e-7` for
+interpolation. Raw Fast and Reference spectra plus the map record are
+[`sample11_h02_fast_20261104.npz`](sample11_h02_fast_20261104.npz),
+[`sample11_h02_reference_map_20261104.npz`](sample11_h02_reference_map_20261104.npz),
+and [`sample11_h02_reference_map_20261104.json`](sample11_h02_reference_map_20261104.json).
+The reproducible exact-map driver is
+[`benchmark_sample11_reference_map.py`](../scripts/benchmark_sample11_reference_map.py);
+the 94-mode tail10 Reference run took `2158 s` with four workers on four pinned
+CPUs. This expensive path is for verification only.
+
 With 15 alternating pairs on fixed affinity, candidate/default warm P50/P95
 ratios are `0.849/0.894` at 2 threads, `0.938/0.926` at 7 threads, and
 `0.916/0.972` at 8 threads. The fresh 8-thread run measured candidate
@@ -332,5 +348,5 @@ the aggregate results and provenance are in
 [`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json).
 The raw closed-root Reference map is saved in
 [`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json).
-This remains one difficult parameter point, not global parameter-space
+These are two difficult parameter points, not global parameter-space
 certification.
