@@ -253,15 +253,19 @@ production `z'=1.5*sigma-1` equation and the original `(T,T')` state with DOP853
 to `z=5`; six phase-transfer segments then reach the tail event at `z=10`.
 Every segment uses an analytic branch derivative, and the `nu=0.1` background
 switch is split explicitly; the right side uses the neutrino-spline branch.
-At res4 `log10(f/Hz)=-12.6723`, Chebyshev orders 16/24/32 agree with Cartesian
-to `1.7461e-8 dex` (order-to-order spread `<=5.4e-15 dex`), with dense Riccati
-residual `<=2.72e-14`. The latest run took `0.134 s` including the low-frequency
-DOP853 prefix, against `12.43 s` Cartesian; spline JIT warmup (`0.308 s`) was
-measured separately. This is a one-mode screen;
-the method is not integrated into the production backend. The reproducible
-script and artifact are
-[`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
-and [`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json).
+Two tail-using frequencies were screened at this same res4 point:
+`log10(f/Hz)=-12.6723` crosses the `nu=0.1` boundary, while `-10.772906`
+reaches `z=10` before it. With orders 16/24/32, errors versus current
+Cartesian (`rtol=1e-11`) were `1.7461e-8` and `4.1274e-9 dex`; the first mode's
+order-to-order spread is `<=5.4e-15 dex`. Dense Riccati residuals were
+`<=2.72e-14` and `<=2.25e-14`. Latest total candidate times including the low
+DOP853 prefix were `0.138/0.139 s`, versus `12.66/7.57 s` Cartesian. Spline JIT
+warmup (`~0.31 s`) was measured separately. This remains two-mode, one-point
+evidence; the method is not integrated into the production backend. Reproduce
+with [`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
+and `--frequency -10.772906114757099`; the records are
+[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json)
+and [`nonosc_phase_res4_highfreq_mode_20261104.json`](nonosc_phase_res4_highfreq_mode_20261104.json).
 
 ## Original papers read so far
 

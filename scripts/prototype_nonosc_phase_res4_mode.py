@@ -28,16 +28,32 @@ from stiffgwpy_fast import reference as R  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 PARAMS = dict(r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01, DN_re=10.0)
-DN = 0.13373681817755848
-FREQ = -12.6723
+DEFAULT_DN = 0.13373681817755848
+DEFAULT_FREQ = -12.6723
+DN = DEFAULT_DN
+FREQ = DEFAULT_FREQ
 ZSTART = -12.0
 ZPHASE = 5.0
 ZTAIL = 10.0
-model = LCDM_SG(**PARAMS, DN_eff=DN)
-bg = R._Background(model, DN)
-NSTART = R._find_start_N(bg, FREQ, ZSTART)
-Z0 = (FREQ - R.f_hor_abs(bg, NSTART)) * math.log(10.0)
-NCUT = bg.N_inf - math.log(bg.nu_today / 0.1)
+model = None
+bg = None
+NSTART = None
+Z0 = None
+NCUT = None
+
+
+def configure_case(dn_eff, freq):
+    global DN, FREQ, model, bg, NSTART, Z0, NCUT
+    DN = float(dn_eff)
+    FREQ = float(freq)
+    model = LCDM_SG(**PARAMS, DN_eff=DN)
+    bg = R._Background(model, DN)
+    NSTART = R._find_start_N(bg, FREQ, ZSTART)
+    Z0 = (FREQ - R.f_hor_abs(bg, NSTART)) * math.log(10.0)
+    NCUT = bg.N_inf - math.log(bg.nu_today / 0.1)
+
+
+configure_case(DEFAULT_DN, DEFAULT_FREQ)
 
 
 def p_and_prime(n, regime):
@@ -171,27 +187,65 @@ def phase_segment(a, b, regime, k, state, z_left):
 
 def make_bounds(N5, z5):
     zcut = z5 + quad(lambda n: zprime(n, "radiation"), N5, NCUT, epsabs=1e-13, epsrel=1e-13)[0]
+    Ncut100 = bg.N_inf - math.log(bg.nu_today / 100.0)
+    zcut100 = (
+        zcut
+        + quad(
+            lambda n: zprime(n, "neutrino_spline"),
+            NCUT,
+            Ncut100,
+            epsabs=1e-13,
+            epsrel=1e-13,
+        )[0]
+    )
     bounds = [(N5, z5, "radiation")]
+    if ZTAIL > zcut100:
+        raise ValueError("tail event lies beyond the prototype's supported nu=100 background boundary")
+
     for z in (6.0, 7.0, 8.0, 9.0):
+        if abs(z - zcut) < 1e-12:
+            continue
+        if z < zcut:
+            regime = "radiation"
+            left, right = N5, NCUT
+            zbase = z5
+            nbase = N5
+        else:
+            regime = "neutrino_spline"
+            left, right = NCUT, Ncut100
+            zbase = zcut
+            nbase = NCUT
         n = brentq(
-            lambda v: z5 + quad(lambda x: zprime(x, "radiation"), N5, v, epsabs=1e-13, epsrel=1e-13)[0] - z,
+            lambda v: zbase + quad(lambda x: zprime(x, regime), nbase, v, epsabs=1e-13, epsrel=1e-13)[0] - z,
+            left,
+            right,
+            xtol=5e-14,
+            rtol=1e-14,
+        )
+        bounds.append((n, z, regime))
+
+    if ZTAIL < zcut:
+        n_tail = brentq(
+            lambda v: z5 + quad(lambda x: zprime(x, "radiation"), N5, v, epsabs=1e-13, epsrel=1e-13)[0] - ZTAIL,
             N5,
             NCUT,
             xtol=5e-14,
             rtol=1e-14,
         )
-        bounds.append((n, z, "radiation"))
-    bounds.append((NCUT, zcut, "radiation"))
-    for z in (ZTAIL,):
-        n = brentq(
-            lambda v: zcut + quad(lambda x: zprime(x, "neutrino_spline"), NCUT, v, epsabs=1e-13, epsrel=1e-13)[0] - z,
+        bounds.append((n_tail, ZTAIL, "radiation"))
+    else:
+        bounds.append((NCUT, zcut, "radiation"))
+        n_tail = brentq(
+            lambda v: (
+                zcut + quad(lambda x: zprime(x, "neutrino_spline"), NCUT, v, epsabs=1e-13, epsrel=1e-13)[0] - ZTAIL
+            ),
             NCUT,
-            bg.N_inf,
+            Ncut100,
             xtol=5e-14,
             rtol=1e-14,
         )
-        bounds.append((n, z, "neutrino_spline"))
-    return bounds
+        bounds.append((n_tail, ZTAIL, "neutrino_spline"))
+    return sorted(bounds, key=lambda row: row[0])
 
 
 def candidate(k, low_state, N5, z5):
@@ -240,12 +294,16 @@ low_event.direction = 1
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--output",
-        type=Path,
-        default=ROOT / "docs" / "nonosc_phase_res4_mode_20261104.json",
-    )
+    parser.add_argument("--dn-eff", type=float, default=DEFAULT_DN)
+    parser.add_argument("--frequency", type=float, default=DEFAULT_FREQ)
+    parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args(argv)
+    configure_case(args.dn_eff, args.frequency)
+    if args.output is None:
+        if FREQ == DEFAULT_FREQ and DN == DEFAULT_DN:
+            args.output = ROOT / "docs" / "nonosc_phase_res4_mode_20261104.json"
+        else:
+            args.output = ROOT / "docs" / ("nonosc_phase_res4_mode_freq_%+.4f_20261104.json" % FREQ)
     low_start = time.perf_counter()
     lo = solve_ivp(
         low_rhs,
