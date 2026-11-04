@@ -145,3 +145,13 @@ Reference 增加显式的 backend="prufer" 选项，默认仍为 Cartesian。该
 随后在同一独立 res4 根、相同 260 频率上对当前 Prüfer 与优化后的 Cartesian 逐模交替配对，260 对全部成功。谱差中位数/P95/最大值为`1.575e-7/6.654e-6/5.246e-5 dex`；总耗时`574.13/1992.45 s`，汇总加速`3.470`倍（计入`0.313 s` JIT 后`3.468`倍），逐模速度比 P50/P95 为`2.632/4.332`。由逐模日志重建的 Cartesian DN 映射与归档映射相差`3.24e-9`相对；Prüfer 与当前 Cartesian 映射差`4.42e-7`相对。基于已存区间差商的一阶根位移为`-6.04e-8` DN_eff；该差商不是严格局部导数或根括区。逐模原始数据和重建记录见[全频配对 JSON](reference_prufer_cartesian_paired_fullgrid_20261104.json)与[分析结果](reference_prufer_cartesian_paired_fullgrid_analysis_20261104.json)，可用[基准驱动](../scripts/benchmark_res4_prufer_candidate.py)和[后处理脚本](../scripts/analyze_reference_paired_fullgrid.py)复现。
 
 另将 Stojimirovic–Bremer 的 Chebyshev 配点 Newton–Kantorovich Riccati 相位方法做成独立原型，直接求解离散 Riccati 残差，与旧 Kummer 事后拟合不同。两条 tail 模态均在同一 res4 参数点：`log10(f/Hz)=-12.6723` 跨过`nu=0.1`分界，`-10.772906`在分界前达到`z=10`。生产`z'=1.5 sigma-1`和张量状态先由 DOP853 传播到`z=5`，再用六个相位谱段传播到尾部。相对当前 Cartesian 谱差分别为`1.7461e-8`和`4.1274e-9 dex`；总耗时`0.138/0.139 s`对`12.66/7.57 s`。样条 JIT 约`0.31 s`单独记录。只有两模单点验证，无全频谱、根或跨参数认证，不接入生产后端。详细公式和限制见[优化研究记录](reference_optimization_20261104.md)，数据见[低频模态 JSON](nonosc_phase_res4_mode_20261104.json)与[高频模态 JSON](nonosc_phase_res4_highfreq_mode_20261104.json)，用[原型脚本](../scripts/prototype_nonosc_phase_res4_mode.py)复现。
+
+## 2026-11-05 极小信号积分与极端频率网格收敛
+
+sample146 的 Prüfer Reference 频谱包含 subnormal 浮点值，SciPy PCHIP 在调和斜率倒数运算中发出溢出警告。现对确有非零 subnormal 谱值且谱峰小于 1 的积分输入按谱峰归一化，并将积分及两类误差估计按相同尺度还原。新增警告即错误的回归测试通过；Reference 定向套件为`57 passed, 1 deselected`。
+
+固定背景下，`rtol=1e-9`、`z_tail=5`、单线程的 Prüfer Reference 在 res=1/2/4/8（295/590/1181/2362 节点）的`DN_gw`依次为`6.174897172552e-106`、`6.114755710207e-106`、`6.109445931037e-106`、`6.109049829317e-106`。res=4 到 res=8 的相对变化为`6.48e-5`，小于`2e-4`门槛；res=1 到 res=8 变化为`1.066e-2`，显示粗网格显著欠分辨积分。修复后重跑无 PCHIP 警告，积分结果与修复前差异小于约`2e-15`。这是一个固定背景的数值收敛检查，不能解释为自洽根或 Fast 可信参数域扩张。详见[精度记录](accuracy.md#2026-11-05-subnormal-reference-integral-and-extreme-grid-convergence)、[复现脚本](../scripts/validate_qmc_extreme_reference_grid_convergence.py)和[完整结果](qmc_sobol146_reference_grid_convergence_20261105.json)。
+
+另用 800 节点、正常幅度的合成谱做 24 组交替 A/B。积分与两类误差估计逐位相同；P50 为缩放前`0.079655 s`、当前`0.079686 s`（实测开销`0.04%`），P95 分别为`0.080338/0.080249 s`。这是积分器微基准，不代表完整宇宙学 Reference 速度。数据见[配对计时 JSON](reference_integrate_spectrum_scale_ab_20261105.json)，用[驱动脚本](../scripts/benchmark_reference_integrate_spectrum_scale.py)复现。
+
+将归档的 77 个 tail5/tail10 Prüfer 模态用当前积分器重新求积（不重跑 ODE）后，`DN_gw` 相对变化仅`1.74e-16`，且没有警告。数据见[修复后重新积分记录](qmc_sobol146_post_scale_reintegration_20261105.json)，可用[脚本](../scripts/reintegrate_qmc_sobol146_post_scale.py)复现。

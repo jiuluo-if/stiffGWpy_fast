@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "experiment": "sobol_20261105_0146_post_scale_reintegration",
+  "created_at": "2026-11-05T06:08:20.670710+08:00",
+  "source_commit": "8dbbc314053108c41e526cab7a990ffa3213386e",
+  "branch": "fast_v0.2",
+  "source_artifact": "qmc_sobol146_full_prufer_tail_convergence_20261105.json",
+  "source_artifact_sha256": "4f98c71813172db37aa4f11e107b74e3fcb8c71b2ca867848883ee326fd80fea",
+  "source_script_sha256": "10560d150bd2b6a8fc324ed29c2484b34a780cff8b0fa04c6ae08549ecc6beb3",
+  "parameters": {
+    "Omega_bh2": 3.615814484655857,
+    "Omega_ch2": 3.6480581387877464,
+    "H0": 62.82323393970728,
+    "DN_eff": 798918.0516451597,
+    "A_s": 7.436275388558332e-84,
+    "r": 8.909682360413819e-40,
+    "n_t": -5.932244639843702,
+    "cr": 0.0,
+    "T_re": 1261.702537246479,
+    "DN_re": 64.39131675288081,
+    "kappa10": 5.1043531347393325e-23
+  },
+  "DN_eff_fixed": 798918.0516451597,
+  "reference_backend": "prufer archived modes, reintegrated only",
+  "reference_rtol": 1e-09,
+  "reference_z_start": -12.0,
+  "reference_tail_thresholds": [
+    5.0,
+    10.0
+  ],
+  "frequency_count": 77,
+  "frequency_sha256": "55406f99bd0920bada12b28256b57f62bebb33c99569f6643b742be4d7ac24e0",
+  "frequency_range": [
+    -18.4894101248476,
+    12.225018695066938
+  ],
+  "results": {
+    "prufer_tail5": {
+      "frequency_count": 77,
+      "frequency_sha256": "55406f99bd0920bada12b28256b57f62bebb33c99569f6643b742be4d7ac24e0",
+      "old_pre_scale_DN_gw": 1.1111752069870278e-105,
+      "current_DN_gw": 1.1111752069870276e-105,
+      "relative_delta": 1.742565839526749e-16,
+      "quadrature_error": 1.755509187264138e-124,
+      "interpolation_error": 1.2497902018447685e-110,
+      "runtime_s": 0.008129100082442164,
+      "warnings": []
+    },
+    "prufer_tail10": {
+      "frequency_count": 77,
+      "frequency_sha256": "55406f99bd0920bada12b28256b57f62bebb33c99569f6643b742be4d7ac24e0",
+      "old_pre_scale_DN_gw": 1.1111752069870278e-105,
+      "current_DN_gw": 1.1111752069870276e-105,
+      "relative_delta": 1.742565839526749e-16,
+      "quadrature_error": 1.755509187264138e-124,
+      "interpolation_error": 1.2497902018447685e-110,
+      "runtime_s": 0.00804059999063611,
+      "warnings": []
+    }
+  },
+  "warnings": [],
+  "current_reference_module_sha256": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+  "script_sha256": "12bae5f670df8272f5c5036184f5b3bb4206dee16860ce3bd9caca70c88579c3",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "Reuses archived per-mode ODE solutions; it independently reruns only the frequency integration.",
+    "This verifies scale-safe integration on the native 77-node grid, not grid convergence, a self-consistent root, or Fast-domain certification."
+  ]
+}

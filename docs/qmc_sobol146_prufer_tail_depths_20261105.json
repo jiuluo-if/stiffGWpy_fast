@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "experiment": "sobol_20261105_0146_prufer_tail_depth_convergence",
+  "created_at": "2026-11-05T05:28:17.221377+08:00",
+  "source_commit": "8dbbc314053108c41e526cab7a990ffa3213386e",
+  "branch": "fast_v0.2",
+  "qmc_seed": 20261105,
+  "qmc_power": 8,
+  "sample_index": 146,
+  "label": "sobol_20261105_0146",
+  "parameters": {
+    "Omega_bh2": 3.615814484655857,
+    "Omega_ch2": 3.6480581387877464,
+    "H0": 62.82323393970728,
+    "DN_eff": 798918.0516451597,
+    "A_s": 7.436275388558332e-84,
+    "r": 8.909682360413819e-40,
+    "n_t": -5.932244639843702,
+    "cr": 0.0,
+    "T_re": 1261.702537246479,
+    "DN_re": 64.39131675288081,
+    "kappa10": 5.1043531347393325e-23
+  },
+  "DN_eff_fixed": 798918.0516451597,
+  "reference_backends_and_rtol": [
+    [
+      "cartesian",
+      1e-11
+    ],
+    [
+      "prufer",
+      1e-09
+    ]
+  ],
+  "tail_thresholds": [
+    10.0,
+    12.0,
+    15.0
+  ],
+  "jit_background_warm_s": 0.5785980999935418,
+  "total_mode_runtime_s": 8.216614099685103,
+  "fast_reference_crosscheck_sha256": "4f98c71813172db37aa4f11e107b74e3fcb8c71b2ca867848883ee326fd80fea",
+  "module_sha256": "261d91d56e43d49ad5d99ba5494cdd43a55d5cadbf8368a282f3069ea802d374",
+  "script_sha256": "33bfa844fe0126bc1167501e9114d780fc3a2141373d4a6320fb5d67b081bc19",
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 32,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": "tbb",
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "modes": [
+    {
+      "frequency_log10_hz": -14.101634579145523,
+      "solutions": {
+        "cartesian": {
+          "tail10": {
+            "elapsed_s": 1.9347682998050004,
+            "log10Omega_GW": -134.42762360901426,
+            "used_tail": true,
+            "event_N": 101.70048365301594,
+            "nfev": 328697,
+            "matching_error_rel": 0.0018202676409539702,
+            "warnings": []
+          },
+          "tail12": {
+            "elapsed_s": 1.947211500024423,
+            "log10Omega_GW": -134.4276395689273,
+            "used_tail": false,
+            "event_N": null,
+            "nfev": 331334,
+            "matching_error_rel": null,
+            "warnings": []
+          },
+          "tail15": {
+            "elapsed_s": 1.9454218000173569,
+            "log10Omega_GW": -134.4276395689273,
+            "used_tail": false,
+            "event_N": null,
+            "nfev": 331334,
+            "matching_error_rel": null,
+            "warnings": []
+          },
+          "tail_depth_deltas": {
+            "tail10_vs_tail12_abs_dex": 1.595991304270683e-05,
+            "tail12_vs_tail15_abs_dex": 0.0,
+            "tail10_vs_tail15_abs_dex": 1.595991304270683e-05
+          }
+        },
+        "prufer": {
+          "tail10": {
+            "elapsed_s": 0.7960942999925464,
+            "log10Omega_GW": -134.42762360512376,
+            "used_tail": true,
+            "event_N": 101.70048365301543,
+            "nfev": 140969,
+            "matching_error_rel": 0.001820267640878254,
+            "warnings": []
+          },
+          "tail12": {
+            "elapsed_s": 0.797081199940294,
+            "log10Omega_GW": -134.4276395592553,
+            "used_tail": false,
+            "event_N": null,
+            "nfev": 141518,
+            "matching_error_rel": null,
+            "warnings": []
+          },
+          "tail15": {
+            "elapsed_s": 0.7960369999054819,
+            "log10Omega_GW": -134.4276395592553,
+            "used_tail": false,
+            "event_N": null,
+            "nfev": 141518,
+            "matching_error_rel": null,
+            "warnings": []
+          },
+          "tail_depth_deltas": {
+            "tail10_vs_tail12_abs_dex": 1.5954131555417916e-05,
+            "tail12_vs_tail15_abs_dex": 0.0,
+            "tail10_vs_tail15_abs_dex": 1.5954131555417916e-05
+          }
+        }
+      },
+      "cartesian_vs_prufer_tail15_abs_dex": 9.671992984294775e-09
+    }
+  ],
+  "limitations": [
+    "One selected high-handoff-error mode only; this tests tail convergence, not a full root.",
+    "The broader map uses the same 77-node Fast grid; independent frequency-grid convergence is separate."
+  ]
+}

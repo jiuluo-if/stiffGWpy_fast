@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_integrate_spectrum_scale_ab",
+  "created_at": "2026-11-05T06:05:31.170748+08:00",
+  "source_commit": "8dbbc314053108c41e526cab7a990ffa3213386e",
+  "branch": "fast_v0.2",
+  "repeat_pairs": 24,
+  "frequency_count": 800,
+  "frequency_range": [
+    -18.5,
+    12.2
+  ],
+  "frequency_sha256": "b9c09ae458d20dfcc8164f069e10f76198f7602181f34e7c1f6542a878380126",
+  "spectrum_definition": "10**(-112 + 0.35*sin(0.73*f) + 0.04*f)",
+  "spectrum_min": 9.498124554304043e-114,
+  "spectrum_max": 6.0904850214660745e-112,
+  "spectrum_is_subnormal": false,
+  "zero_j_lambda_sha256": "56a43ef88ddfcd0f56f7dd973312c0e73d62f59655c01d7b4e59aaa3be8b3fb6",
+  "outputs": {
+    "pre_scale": [
+      9.332523536435882e-111,
+      1.0361182508007305e-124,
+      2.653778226800143e-118
+    ],
+    "current": [
+      9.332523536435882e-111,
+      1.0361182508007305e-124,
+      2.653778226800143e-118
+    ]
+  },
+  "maximum_relative_output_delta": 0.0,
+  "timings_s": {
+    "pre_scale": {
+      "samples": [
+        0.07983949990011752,
+        0.08014529990032315,
+        0.07944109989330173,
+        0.08009669999592006,
+        0.07959360000677407,
+        0.08034099987708032,
+        0.07984260004013777,
+        0.07937539997510612,
+        0.08036769996397197,
+        0.07957780011929572,
+        0.07926660007797182,
+        0.07951269997283816,
+        0.07960959989577532,
+        0.07922450010664761,
+        0.07935320003889501,
+        0.0790621000342071,
+        0.07980399997904897,
+        0.07937689987011254,
+        0.07928659999743104,
+        0.08031850005500019,
+        0.08010070002637804,
+        0.07971600000746548,
+        0.07970039988867939,
+        0.07990420004352927
+      ],
+      "p50": 0.07965499989222735,
+      "p95": 0.0803376249037683
+    },
+    "current": {
+      "samples": [
+        0.0801293000113219,
+        0.07951080007478595,
+        0.0803498001769185,
+        0.07964550005272031,
+        0.08010199991986156,
+        0.08027030015364289,
+        0.07992590009234846,
+        0.07941429992206395,
+        0.07969709997996688,
+        0.07941080001182854,
+        0.07969589997082949,
+        0.07930410001426935,
+        0.0790862999856472,
+        0.07960329996421933,
+        0.07919289986602962,
+        0.08004579995758832,
+        0.0793627998791635,
+        0.07962600002065301,
+        0.07925960002467036,
+        0.07970919995568693,
+        0.07973890006542206,
+        0.08008899982087314,
+        0.07967650005593896,
+        0.0796944999601692
+      ],
+      "p50": 0.07968550000805408,
+      "p95": 0.08024915013229475
+    }
+  },
+  "source_sha256": {
+    "reference_module": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "script": "318e9d8d8529e16d7e18a601fef8aece1a9cf5021d5bcbed028e497704cebf0b"
+  },
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "Synthetic normal-scale PCHIP integral microbenchmark, not a cosmological full-grid runtime comparison.",
+    "Alternating A/B on one process; timings are scoped to this machine and input size."
+  ]
+}

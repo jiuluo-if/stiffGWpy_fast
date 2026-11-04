@@ -1,0 +1,1076 @@
+{
+  "schema_version": 1,
+  "experiment": "sobol_20261105_0146_fast_reference_crosscheck",
+  "created_at": "2026-11-05T04:51:52.854524+08:00",
+  "source_commit": "8dbbc314053108c41e526cab7a990ffa3213386e",
+  "branch": "fast_v0.2",
+  "qmc_source_file": "docs/fast_domain_pressure_sobol_20261105_256.jsonl",
+  "qmc_seed": 20261105,
+  "qmc_power": 8,
+  "sample_index": 146,
+  "label": "sobol_20261105_0146",
+  "parameter_sha256": "8e1710af40cb8a44aa2ec8471807662842bc53387b36bbc1f4854096c04f9ad5",
+  "parameters": {
+    "Omega_bh2": 3.615814484655857,
+    "Omega_ch2": 3.6480581387877464,
+    "H0": 62.82323393970728,
+    "DN_eff": 798918.0516451597,
+    "A_s": 7.436275388558332e-84,
+    "r": 8.909682360413819e-40,
+    "n_t": -5.932244639843702,
+    "cr": 0.0,
+    "T_re": 1261.702537246479,
+    "DN_re": 64.39131675288081,
+    "kappa10": 5.1043531347393325e-23
+  },
+  "fast_module_sha256": "8d631de419baca27b7a17e65d36fb259f4f33e4dcee6068398ecf27212e2b644",
+  "reference_module_sha256": "261d91d56e43d49ad5d99ba5494cdd43a55d5cadbf8368a282f3069ea802d374",
+  "pressure_script_sha256": "362c465ab574aefe7284df0e6b9aa0d9cae2558e6327a2f0a1c891570c0fc8c1",
+  "validation_script_sha256": "2cf7bfda9905c392405a7ce66326a571904610c5db106f7544b8170dc51dde2f",
+  "frequency_count": 77,
+  "frequency_sha256": "55406f99bd0920bada12b28256b57f62bebb33c99569f6643b742be4d7ac24e0",
+  "frequency_range": [
+    -18.4894101248476,
+    12.225018695066938
+  ],
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "fast": {
+    "tol": 1e-06,
+    "frequency_res": 1.0,
+    "threads": 2,
+    "runtime_s": 0.2971544999163598,
+    "dn_eff_input": 798918.0516451597,
+    "dn_eff_final": 798918.0516451597,
+    "DN_gw": 1.1277202070959275e-105,
+    "spectrum_log10_range": [
+      -318.20457479432883,
+      -109.45374897660571
+    ],
+    "accuracy_status": "uncertified-path-configuration",
+    "accuracy_budget": {
+      "categories": {
+        "background_model": {
+          "value": 0.0024,
+          "kind": "calibrated",
+          "certification": "uncertified-path-configuration"
+        },
+        "sigma_transition": {
+          "value": 0.0024,
+          "kind": "calibrated",
+          "certification": "uncertified-path-configuration"
+        },
+        "ode_integration": {
+          "value": 2e-06,
+          "kind": "local",
+          "certification": "calibrated-at-fiducial"
+        },
+        "horizon_crossing": {
+          "value": 2e-06,
+          "kind": "local",
+          "certification": "calibrated-at-fiducial"
+        },
+        "wkb_handoff": {
+          "value": 0.10716912369855276,
+          "aggregate": 0.007006705455141064,
+          "kind": "local",
+          "certification": "local-measured"
+        },
+        "interpolation": {
+          "value": 1e-09,
+          "kind": "calibrated",
+          "certification": "calibrated-at-fiducial"
+        },
+        "frequency_grid": {
+          "value": 0.0016,
+          "kind": "calibrated",
+          "certification": "uncertified-path-configuration"
+        },
+        "quadrature": {
+          "value": 0.02695003330480277,
+          "kind": "local",
+          "certification": "local-measured"
+        },
+        "tail_approximation": {
+          "value": 0.0004017107384637534,
+          "kind": "calibrated",
+          "certification": "calibrated-at-fiducial"
+        },
+        "floating_point": {
+          "value": 2.1158083089041794e-15,
+          "cancellation_ratio": 0.8423461076268755,
+          "kind": "local",
+          "certification": "local-measured"
+        },
+        "self_consistency": {
+          "value": 1.0000000000000002,
+          "kind": "local",
+          "certification": "local-measured"
+        }
+      },
+      "DN_gw_error": 1.002764446426725,
+      "Delta_Neff_abs_error": 1.1308377291927793e-105,
+      "systematic_error": 0.0024,
+      "random_rss": 1.000364446426725,
+      "handoff_eps_max": 0.10716912369855276,
+      "handoff_eps_mean": 0.007006705455141064,
+      "z_tail_used": 5.0,
+      "phase_max_used": 0.25,
+      "freq_grid_used": "goal",
+      "certification_status": "uncertified-path-configuration",
+      "local_terms": [
+        "ode_integration",
+        "horizon_crossing",
+        "wkb_handoff",
+        "quadrature",
+        "floating_point",
+        "self_consistency"
+      ],
+      "calibrated_terms": [
+        "ode_integration",
+        "horizon_crossing",
+        "interpolation",
+        "tail_approximation"
+      ],
+      "uncertified_terms": [
+        "background_model",
+        "sigma_transition",
+        "frequency_grid"
+      ],
+      "explicit_uncertainty": "uncertainty is a mix of point-local and fiducial-calibrated terms; calibrated terms are NOT universal per-point error estimates"
+    },
+    "warnings": [
+      "overflow encountered in divide",
+      "overflow encountered in divide"
+    ]
+  },
+  "reference": {
+    "fixed_background_DN_eff": 798918.0516451597,
+    "cartesian_rtol_1e-10_runtime_s": 4.310582699952647,
+    "cartesian_rtol_1e-11_runtime_s": 4.863342300057411,
+    "prufer_rtol_1e-9_runtime_s": 2.9692121997941285,
+    "cartesian_rtol_1e-10_DN_gw": 1.1111752057314164e-105,
+    "cartesian_rtol_1e-11_DN_gw": 1.1111752066227443e-105,
+    "prufer_rtol_1e-9_DN_gw": 1.1111752069870278e-105,
+    "cartesian_map_relative_DN_gw_difference_1e-10_vs_1e-11": 8.021488856787155e-10,
+    "prufer_vs_cartesian_DN_gw_relative": 3.278362302741699e-10,
+    "reference_quadrature_error": 1.7555091866886191e-124,
+    "reference_interpolation_error": 1.24979020143941e-110,
+    "cartesian_warnings": {
+      "1e-10": [
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "1e-11": [
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    },
+    "prufer_warnings": [
+      "overflow encountered in divide",
+      "overflow encountered in divide",
+      "overflow encountered in divide"
+    ]
+  },
+  "comparison": {
+    "positive_spectrum_bins": 77,
+    "max_abs_spectrum_delta_dex": 0.006445653337621593,
+    "p95_abs_spectrum_delta_dex": 0.006397899181433786,
+    "max_fast_error_index": 73,
+    "max_fast_error_frequency_log10_hz": -17.026818276280245,
+    "max_fast_error_handoff_eps": -1.0,
+    "max_cartesian_1e-10_vs_1e-11_dex": 2.7797000257123727e-09,
+    "max_prufer_vs_cartesian_dex": 2.887012442442938e-07,
+    "DN_gw_absolute_difference_fast_vs_reference": 1.6545000473183137e-107,
+    "DN_gw_relative_difference_fast_vs_reference": 0.014671192702833041,
+    "DN_eff_float_spacing": 1.1641532182693481e-10,
+    "reference_total_DN_eff_rounds_to_input": true
+  },
+  "sampled_background_check": {
+    "points": 513,
+    "H2_all_finite_positive": true,
+    "H2_min": 0.3946758722643189,
+    "H2_max": 7.180086840642248e+16
+  },
+  "frequency_records": [
+    {
+      "frequency_log10_hz": 12.225018695066938,
+      "fast_log10_omega": -318.20457479432883,
+      "reference_cartesian_rtol1e-11_log10_omega": -318.20285640324926,
+      "reference_prufer_rtol1e-9_log10_omega": -318.20285640324926,
+      "fast_minus_reference_dex": -0.0017183910795779411,
+      "cartesian_prufer_delta_dex": 0.0,
+      "fast_handoff_eps": 0.0033774064701126024,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 11.702664463435738,
+      "fast_log10_omega": -314.6201930665837,
+      "reference_cartesian_rtol1e-11_log10_omega": -314.6198868054309,
+      "reference_prufer_rtol1e-9_log10_omega": -314.6198867973827,
+      "fast_minus_reference_dex": -0.00030626115278664656,
+      "cartesian_prufer_delta_dex": -8.048175459407503e-09,
+      "fast_handoff_eps": 0.003369866621659799,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 11.284781078130779,
+      "fast_log10_omega": -311.3526483620807,
+      "reference_cartesian_rtol1e-11_log10_omega": -311.35235621098997,
+      "reference_prufer_rtol1e-9_log10_omega": -311.3523562050581,
+      "fast_minus_reference_dex": -0.00029215109071856205,
+      "cartesian_prufer_delta_dex": -5.93189497521962e-09,
+      "fast_handoff_eps": 0.0033773291980624337,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 10.76242684649958,
+      "fast_log10_omega": -307.21621380415144,
+      "reference_cartesian_rtol1e-11_log10_omega": -307.2159167948355,
+      "reference_prufer_rtol1e-9_log10_omega": -307.2159167835528,
+      "fast_minus_reference_dex": -0.0002970093159433418,
+      "cartesian_prufer_delta_dex": -1.12826796794252e-08,
+      "fast_handoff_eps": 0.003369789522114641,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 10.240072614868378,
+      "fast_log10_omega": -303.07339844791494,
+      "reference_cartesian_rtol1e-11_log10_omega": -303.073101639843,
+      "reference_prufer_rtol1e-9_log10_omega": -303.0731016280776,
+      "fast_minus_reference_dex": -0.00029680807193699366,
+      "cartesian_prufer_delta_dex": -1.1765393992391182e-08,
+      "fast_handoff_eps": 0.003370682860561086,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 9.822189229563419,
+      "fast_log10_omega": -299.758698446018,
+      "reference_cartesian_rtol1e-11_log10_omega": -299.75840140508666,
+      "reference_prufer_rtol1e-9_log10_omega": -299.75840139351004,
+      "fast_minus_reference_dex": -0.00029704093134341747,
+      "cartesian_prufer_delta_dex": -1.1576616998354439e-08,
+      "fast_handoff_eps": 0.003369712424333457,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 9.29983499793222,
+      "fast_log10_omega": -295.6152649430634,
+      "reference_cartesian_rtol1e-11_log10_omega": -295.61496809263633,
+      "reference_prufer_rtol1e-9_log10_omega": -295.61496808118346,
+      "fast_minus_reference_dex": -0.0002968504270484118,
+      "cartesian_prufer_delta_dex": -1.145286887549446e-08,
+      "fast_handoff_eps": 0.003370605742341112,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 8.77748076630102,
+      "fast_log10_omega": -291.47182331297654,
+      "reference_cartesian_rtol1e-11_log10_omega": -291.4715272822125,
+      "reference_prufer_rtol1e-9_log10_omega": -291.4715272735195,
+      "fast_minus_reference_dex": -0.0002960307640478277,
+      "cartesian_prufer_delta_dex": -8.693007202964509e-09,
+      "fast_handoff_eps": 0.0033714992971692853,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 8.35959738099606,
+      "fast_log10_omega": -288.1570704079473,
+      "reference_cartesian_rtol1e-11_log10_omega": -288.1567741020055,
+      "reference_prufer_rtol1e-9_log10_omega": -288.15677409268034,
+      "fast_minus_reference_dex": -0.00029630594178797764,
+      "cartesian_prufer_delta_dex": -9.325162864115555e-09,
+      "fast_handoff_eps": 0.003370528625885528,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 7.837243149364861,
+      "fast_log10_omega": -284.01362854748515,
+      "reference_cartesian_rtol1e-11_log10_omega": -284.0133325578401,
+      "reference_prufer_rtol1e-9_log10_omega": -284.01333254734243,
+      "fast_minus_reference_dex": -0.0002959896450533961,
+      "cartesian_prufer_delta_dex": -1.0497672064957442e-08,
+      "fast_handoff_eps": 0.003371422160269954,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 7.314888917733661,
+      "fast_log10_omega": -279.87018657964967,
+      "reference_cartesian_rtol1e-11_log10_omega": -279.86989100476274,
+      "reference_prufer_rtol1e-9_log10_omega": -279.8698909933396,
+      "fast_minus_reference_dex": -0.00029557488693399137,
+      "cartesian_prufer_delta_dex": -1.1423139767430257e-08,
+      "fast_handoff_eps": 0.0033723159315322665,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 6.897005532428701,
+      "fast_log10_omega": -276.5554337811921,
+      "reference_cartesian_rtol1e-11_log10_omega": -276.5551377616675,
+      "reference_prufer_rtol1e-9_log10_omega": -276.55513775320674,
+      "fast_minus_reference_dex": -0.00029601952462599,
+      "cartesian_prufer_delta_dex": -8.460744993499247e-09,
+      "fast_handoff_eps": 0.0033713450251354705,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 6.374651300797502,
+      "fast_log10_omega": -272.4119918222269,
+      "reference_cartesian_rtol1e-11_log10_omega": -272.4116962077112,
+      "reference_prufer_rtol1e-9_log10_omega": -272.4116961992505,
+      "fast_minus_reference_dex": -0.0002956145157213541,
+      "cartesian_prufer_delta_dex": -8.460688150080387e-09,
+      "fast_handoff_eps": 0.0033722387759491045,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 5.852297069166302,
+      "fast_log10_omega": -268.2685496655132,
+      "reference_cartesian_rtol1e-11_log10_omega": -268.268254653755,
+      "reference_prufer_rtol1e-9_log10_omega": -268.2682546452937,
+      "fast_minus_reference_dex": -0.00029501175822588266,
+      "cartesian_prufer_delta_dex": -8.461256584268995e-09,
+      "fast_handoff_eps": 0.003373132763697989,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 5.434413683861342,
+      "fast_log10_omega": -264.95379706407687,
+      "reference_cartesian_rtol1e-11_log10_omega": -264.95350141059,
+      "reference_prufer_rtol1e-9_log10_omega": -264.95350140213014,
+      "fast_minus_reference_dex": -0.00029565348688720405,
+      "cartesian_prufer_delta_dex": -8.459835498797474e-09,
+      "fast_handoff_eps": 0.0033721616221312,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 4.912059452230142,
+      "fast_log10_omega": -260.81035491466395,
+      "reference_cartesian_rtol1e-11_log10_omega": -260.8100598566337,
+      "reference_prufer_rtol1e-9_log10_omega": -260.8100598481652,
+      "fast_minus_reference_dex": -0.00029505803024676425,
+      "cartesian_prufer_delta_dex": -8.468475698464317e-09,
+      "fast_handoff_eps": 0.0033730555894264293,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 4.389705220598943,
+      "fast_log10_omega": -256.66691278842956,
+      "reference_cartesian_rtol1e-11_log10_omega": -256.6666183026774,
+      "reference_prufer_rtol1e-9_log10_omega": -256.6666182942136,
+      "fast_minus_reference_dex": -0.00029448575213564254,
+      "cartesian_prufer_delta_dex": -8.463814538117731e-09,
+      "fast_handoff_eps": 0.0033739497937142864,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 3.9718218352939836,
+      "fast_log10_omega": -253.35216016318515,
+      "reference_cartesian_rtol1e-11_log10_omega": -253.35186505951242,
+      "reference_prufer_rtol1e-9_log10_omega": -253.35186505104565,
+      "fast_minus_reference_dex": -0.00029510367272678195,
+      "cartesian_prufer_delta_dex": -8.466770395898493e-09,
+      "fast_handoff_eps": 0.0033729784169205302,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 3.449467603662784,
+      "fast_log10_omega": -249.20871804366556,
+      "reference_cartesian_rtol1e-11_log10_omega": -249.2084235055561,
+      "reference_prufer_rtol1e-9_log10_omega": -249.20842349709613,
+      "fast_minus_reference_dex": -0.00029453810944346515,
+      "cartesian_prufer_delta_dex": -8.459977607344626e-09,
+      "fast_handoff_eps": 0.0033738726007498023,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 2.9271133720315845,
+      "fast_log10_omega": -245.06527585345103,
+      "reference_cartesian_rtol1e-11_log10_omega": -245.06498195159986,
+      "reference_prufer_rtol1e-9_log10_omega": -245.06498194313977,
+      "fast_minus_reference_dex": -0.00029390185116540124,
+      "cartesian_prufer_delta_dex": -8.460091294182348e-09,
+      "fast_handoff_eps": 0.0033747670216291775,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 2.5092299867266235,
+      "fast_log10_omega": -241.7505232983737,
+      "reference_cartesian_rtol1e-11_log10_omega": -241.75022870843486,
+      "reference_prufer_rtol1e-9_log10_omega": -241.75022869997346,
+      "fast_minus_reference_dex": -0.0002945899388464568,
+      "cartesian_prufer_delta_dex": -8.461398692816147e-09,
+      "fast_handoff_eps": 0.00337379540955146,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 1.986875755095424,
+      "fast_log10_omega": -237.60708111362948,
+      "reference_cartesian_rtol1e-11_log10_omega": -237.6067871544786,
+      "reference_prufer_rtol1e-9_log10_omega": -237.606787146018,
+      "fast_minus_reference_dex": -0.00029395915086638524,
+      "cartesian_prufer_delta_dex": -8.460602884952095e-09,
+      "fast_handoff_eps": 0.003374689809967259,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 1.4645215234642244,
+      "fast_log10_omega": -233.4636385771077,
+      "reference_cartesian_rtol1e-11_log10_omega": -233.46334560052233,
+      "reference_prufer_rtol1e-9_log10_omega": -233.4633455920624,
+      "fast_minus_reference_dex": -0.0002929765853707522,
+      "cartesian_prufer_delta_dex": -8.459920763925766e-09,
+      "fast_handoff_eps": 0.0033755844474905304,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 1.046638138159265,
+      "fast_log10_omega": -230.14888637339283,
+      "reference_cartesian_rtol1e-11_log10_omega": -230.14859235735733,
+      "reference_prufer_rtol1e-9_log10_omega": -230.14859234889738,
+      "fast_minus_reference_dex": -0.0002940160354967247,
+      "cartesian_prufer_delta_dex": -8.459949185635196e-09,
+      "fast_handoff_eps": 0.003374612600071838,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 0.5242839065280656,
+      "fast_log10_omega": -226.00544384172008,
+      "reference_cartesian_rtol1e-11_log10_omega": -226.00515080340108,
+      "reference_prufer_rtol1e-9_log10_omega": -226.0051507949409,
+      "fast_minus_reference_dex": -0.0002930383190005159,
+      "cartesian_prufer_delta_dex": -8.46017655931064e-09,
+      "fast_handoff_eps": 0.0033755072171265882,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": 0.0019296748968660182,
+      "fast_log10_omega": -221.8620295112614,
+      "reference_cartesian_rtol1e-11_log10_omega": -221.86261135787902,
+      "reference_prufer_rtol1e-9_log10_omega": -221.86261134763348,
+      "fast_minus_reference_dex": 0.0005818466176208403,
+      "cartesian_prufer_delta_dex": -1.0245543080600328e-08,
+      "fast_handoff_eps": 0.006740379460228528,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -0.41595371040809326,
+      "fast_log10_omega": -218.54702422546765,
+      "reference_cartesian_rtol1e-11_log10_omega": -218.5441100575235,
+      "reference_prufer_rtol1e-9_log10_omega": -218.54411005372873,
+      "fast_minus_reference_dex": -0.0029141679441408996,
+      "cartesian_prufer_delta_dex": -3.794781378019252e-09,
+      "fast_handoff_eps": 0.006755305947196955,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -0.7573780790633404,
+      "fast_log10_omega": -215.83974719333665,
+      "reference_cartesian_rtol1e-11_log10_omega": -215.83867470260708,
+      "reference_prufer_rtol1e-9_log10_omega": -215.83867469802158,
+      "fast_minus_reference_dex": -0.0010724907295696084,
+      "cartesian_prufer_delta_dex": -4.585501756082522e-09,
+      "fast_handoff_eps": 0.006763137552634798,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -0.8823780790633404,
+      "fast_log10_omega": -214.84703650647998,
+      "reference_cartesian_rtol1e-11_log10_omega": -214.84940826321622,
+      "reference_prufer_rtol1e-9_log10_omega": -214.84940826097804,
+      "fast_minus_reference_dex": 0.0023717567362382397,
+      "cartesian_prufer_delta_dex": -2.238181195934885e-09,
+      "fast_handoff_eps": 0.006748431228403756,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.0073780790633404,
+      "fast_log10_omega": -213.85877059760261,
+      "reference_cartesian_rtol1e-11_log10_omega": -213.85766911422354,
+      "reference_prufer_rtol1e-9_log10_omega": -213.85766911226986,
+      "fast_minus_reference_dex": -0.0011014833790738976,
+      "cartesian_prufer_delta_dex": -1.953679884536541e-09,
+      "fast_handoff_eps": 0.006767510044166304,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.1323780790633404,
+      "fast_log10_omega": -212.8661135726005,
+      "reference_cartesian_rtol1e-11_log10_omega": -212.86816668608296,
+      "reference_prufer_rtol1e-9_log10_omega": -212.86816668719752,
+      "fast_minus_reference_dex": 0.0020531134824466335,
+      "cartesian_prufer_delta_dex": 1.1145573353132932e-09,
+      "fast_handoff_eps": 0.0067527943009212015,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.2573780790633404,
+      "fast_log10_omega": -211.86231366107023,
+      "reference_cartesian_rtol1e-11_log10_omega": -211.85951987953354,
+      "reference_prufer_rtol1e-9_log10_omega": -211.8595198781756,
+      "fast_minus_reference_dex": -0.0027937815366954055,
+      "cartesian_prufer_delta_dex": -1.3579324331658427e-09,
+      "fast_handoff_eps": 0.006738110588275247,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.3823780790633404,
+      "fast_log10_omega": -210.89989083145494,
+      "reference_cartesian_rtol1e-11_log10_omega": -210.89869932815128,
+      "reference_prufer_rtol1e-9_log10_omega": -210.89869932714575,
+      "fast_minus_reference_dex": -0.001191503303658692,
+      "cartesian_prufer_delta_dex": -1.0055316579382634e-09,
+      "fast_handoff_eps": 0.006757160266586969,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.5073780790633404,
+      "fast_log10_omega": -209.87361848639122,
+      "reference_cartesian_rtol1e-11_log10_omega": -209.87551198023195,
+      "reference_prufer_rtol1e-9_log10_omega": -209.8755119789694,
+      "fast_minus_reference_dex": 0.0018934938407255686,
+      "cartesian_prufer_delta_dex": -1.2625491763174068e-09,
+      "fast_handoff_eps": 0.006742466999791259,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.6323780790633404,
+      "fast_log10_omega": -208.845636759559,
+      "reference_cartesian_rtol1e-11_log10_omega": -208.84841797068128,
+      "reference_prufer_rtol1e-9_log10_omega": -208.84841797096038,
+      "fast_minus_reference_dex": 0.0027812111222829117,
+      "cartesian_prufer_delta_dex": 2.7910118660656735e-10,
+      "fast_handoff_eps": 0.006761528884456641,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.7573780790633404,
+      "fast_log10_omega": -207.91424996877436,
+      "reference_cartesian_rtol1e-11_log10_omega": -207.9171607342409,
+      "reference_prufer_rtol1e-9_log10_omega": -207.91716073509485,
+      "fast_minus_reference_dex": 0.0029107654665381233,
+      "cartesian_prufer_delta_dex": 8.539586815459188e-10,
+      "fast_handoff_eps": 0.006746825996622769,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -1.8823780790633404,
+      "fast_log10_omega": -207.06115162315479,
+      "reference_cartesian_rtol1e-11_log10_omega": -207.06407544655332,
+      "reference_prufer_rtol1e-9_log10_omega": -207.06407544881284,
+      "fast_minus_reference_dex": 0.002923823398532477,
+      "cartesian_prufer_delta_dex": 2.2595258997171186e-09,
+      "fast_handoff_eps": 0.00676590011452204,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.0073780790633404,
+      "fast_log10_omega": -206.25602701874513,
+      "reference_cartesian_rtol1e-11_log10_omega": -206.2589501680605,
+      "reference_prufer_rtol1e-9_log10_omega": -206.25895017740865,
+      "fast_minus_reference_dex": 0.002923149315364526,
+      "cartesian_prufer_delta_dex": 9.348156027044752e-09,
+      "fast_handoff_eps": 0.006751187674973175,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.1323780790633404,
+      "fast_log10_omega": -205.47856332301203,
+      "reference_cartesian_rtol1e-11_log10_omega": -205.4814852029639,
+      "reference_prufer_rtol1e-9_log10_omega": -205.4814852073286,
+      "fast_minus_reference_dex": 0.0029218799518844207,
+      "cartesian_prufer_delta_dex": 4.364693495517713e-09,
+      "fast_handoff_eps": 0.006770274104891565,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.2573780790633404,
+      "fast_log10_omega": -204.71678751722578,
+      "reference_cartesian_rtol1e-11_log10_omega": -204.71970852655858,
+      "reference_prufer_rtol1e-9_log10_omega": -204.71970853730593,
+      "fast_minus_reference_dex": 0.0029210093327947106,
+      "cartesian_prufer_delta_dex": 1.0747356782303541e-08,
+      "fast_handoff_eps": 0.006755552149213355,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.3823780790633404,
+      "fast_log10_omega": -203.96386196878433,
+      "reference_cartesian_rtol1e-11_log10_omega": -203.96678311958678,
+      "reference_prufer_rtol1e-9_log10_omega": -203.96678312696454,
+      "fast_minus_reference_dex": 0.0029211508024502564,
+      "cartesian_prufer_delta_dex": 7.377764177363133e-09,
+      "fast_handoff_eps": 0.0067408622239614234,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.5073780790633404,
+      "fast_log10_omega": -203.2159215508067,
+      "reference_cartesian_rtol1e-11_log10_omega": -203.21884217226176,
+      "reference_prufer_rtol1e-9_log10_omega": -203.2188421745912,
+      "fast_minus_reference_dex": 0.002920621455047012,
+      "cartesian_prufer_delta_dex": 2.3294433049159124e-09,
+      "fast_handoff_eps": 0.006759919520725353,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.6323780790633404,
+      "fast_log10_omega": -202.4707853703931,
+      "reference_cartesian_rtol1e-11_log10_omega": -202.47370603955883,
+      "reference_prufer_rtol1e-9_log10_omega": -202.47370604053887,
+      "fast_minus_reference_dex": 0.0029206691657464035,
+      "cartesian_prufer_delta_dex": 9.80037384579191e-10,
+      "fast_handoff_eps": 0.006745220195405147,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.7573780790633404,
+      "fast_log10_omega": -201.72722707441886,
+      "reference_cartesian_rtol1e-11_log10_omega": -201.73014768599688,
+      "reference_prufer_rtol1e-9_log10_omega": -201.73014771484574,
+      "fast_minus_reference_dex": 0.002920611578019816,
+      "cartesian_prufer_delta_dex": 2.884885930143355e-08,
+      "fast_handoff_eps": 0.006764289907584183,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -2.9232540222378525,
+      "fast_log10_omega": -200.74181858137496,
+      "reference_cartesian_rtol1e-11_log10_omega": -200.74473921663008,
+      "reference_prufer_rtol1e-9_log10_omega": -200.7447392866828,
+      "fast_minus_reference_dex": 0.002920635255122761,
+      "cartesian_prufer_delta_dex": 7.005272095739201e-08,
+      "fast_handoff_eps": 0.006743646323111422,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -3.3411374075428117,
+      "fast_log10_omega": -198.26179545051644,
+      "reference_cartesian_rtol1e-11_log10_omega": -198.2647159948575,
+      "reference_prufer_rtol1e-9_log10_omega": -198.2647160164364,
+      "fast_minus_reference_dex": 0.0029205443410660337,
+      "cartesian_prufer_delta_dex": 2.157889866793994e-08,
+      "fast_handoff_eps": 0.006758579904581794,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -3.863491639174013,
+      "fast_log10_omega": -195.16290102016404,
+      "reference_cartesian_rtol1e-11_log10_omega": -195.1658216833347,
+      "reference_prufer_rtol1e-9_log10_omega": -195.16582168278958,
+      "fast_minus_reference_dex": 0.002920663170669968,
+      "cartesian_prufer_delta_dex": -5.451283868751489e-10,
+      "fast_handoff_eps": 0.0067434980407842975,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -4.385845870805211,
+      "fast_log10_omega": -192.06415340449388,
+      "reference_cartesian_rtol1e-11_log10_omega": -192.06707401742176,
+      "reference_prufer_rtol1e-9_log10_omega": -192.06707407457455,
+      "fast_minus_reference_dex": 0.0029206129278804838,
+      "cartesian_prufer_delta_dex": 5.715278916795796e-08,
+      "fast_handoff_eps": 0.00676217323142535,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -4.803729256110172,
+      "fast_log10_omega": -189.58516552829565,
+      "reference_cartesian_rtol1e-11_log10_omega": -189.58808625207283,
+      "reference_prufer_rtol1e-9_log10_omega": -189.5880864010343,
+      "fast_minus_reference_dex": 0.002920723777180001,
+      "cartesian_prufer_delta_dex": 1.4896147604304133e-07,
+      "fast_handoff_eps": 0.006743349879742795,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -5.32608348774137,
+      "fast_log10_omega": -186.48643235407536,
+      "reference_cartesian_rtol1e-11_log10_omega": -186.48935282058787,
+      "reference_prufer_rtol1e-9_log10_omega": -186.48935281965595,
+      "fast_minus_reference_dex": 0.0029204665125064366,
+      "cartesian_prufer_delta_dex": -9.31919430513517e-10,
+      "fast_handoff_eps": 0.006762021929806015,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -5.848437719372571,
+      "fast_log10_omega": -183.38769861635566,
+      "reference_cartesian_rtol1e-11_log10_omega": -183.39061914065692,
+      "reference_prufer_rtol1e-9_log10_omega": -183.3906193857738,
+      "fast_minus_reference_dex": 0.002920524301259775,
+      "cartesian_prufer_delta_dex": 2.4511686547157296e-07,
+      "fast_handoff_eps": 0.006746926083557468,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -6.2663211046775285,
+      "fast_log10_omega": -180.9087118030611,
+      "reference_cartesian_rtol1e-11_log10_omega": -180.91163225891657,
+      "reference_prufer_rtol1e-9_log10_omega": -180.91163224960536,
+      "fast_minus_reference_dex": 0.002920455855473847,
+      "cartesian_prufer_delta_dex": -9.311207804785226e-09,
+      "fast_handoff_eps": 0.006761867000551146,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -6.78867533630873,
+      "fast_log10_omega": -177.80997829797025,
+      "reference_cartesian_rtol1e-11_log10_omega": -177.81289883954216,
+      "reference_prufer_rtol1e-9_log10_omega": -177.8128991282434,
+      "fast_minus_reference_dex": 0.002920541571910462,
+      "cartesian_prufer_delta_dex": 2.887012442442938e-07,
+      "fast_handoff_eps": 0.006746771601188828,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -7.3110295679399275,
+      "fast_log10_omega": -174.711245138505,
+      "reference_cartesian_rtol1e-11_log10_omega": -174.71416564969817,
+      "reference_prufer_rtol1e-9_log10_omega": -174.714165649533,
+      "fast_minus_reference_dex": 0.0029205111931673855,
+      "cartesian_prufer_delta_dex": -1.651869752095081e-10,
+      "fast_handoff_eps": 0.006765457457317294,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -7.728912953244889,
+      "fast_log10_omega": -172.2322586256069,
+      "reference_cartesian_rtol1e-11_log10_omega": -172.23517915829453,
+      "reference_prufer_rtol1e-9_log10_omega": -172.23517915852509,
+      "fast_minus_reference_dex": 0.0029205326876251547,
+      "cartesian_prufer_delta_dex": 2.305569068994373e-10,
+      "fast_handoff_eps": 0.006746622799279531,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -8.25126718487609,
+      "fast_log10_omega": -169.1335255505591,
+      "reference_cartesian_rtol1e-11_log10_omega": -169.13644604617232,
+      "reference_prufer_rtol1e-9_log10_omega": -169.13644604716512,
+      "fast_minus_reference_dex": 0.0029204956132105053,
+      "cartesian_prufer_delta_dex": 9.927987321134424e-10,
+      "fast_handoff_eps": 0.006765303478988912,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -8.773621416507288,
+      "fast_log10_omega": -166.03479227754414,
+      "reference_cartesian_rtol1e-11_log10_omega": -166.03771281531303,
+      "reference_prufer_rtol1e-9_log10_omega": -166.03771281604187,
+      "fast_minus_reference_dex": 0.0029205377688867884,
+      "cartesian_prufer_delta_dex": 7.288463166332804e-10,
+      "fast_handoff_eps": 0.006750200369517092,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -9.191504801812249,
+      "fast_log10_omega": -163.55580555658833,
+      "reference_cartesian_rtol1e-11_log10_omega": -163.55872605011723,
+      "reference_prufer_rtol1e-9_log10_omega": -163.55872604898178,
+      "fast_minus_reference_dex": 0.0029204935289044442,
+      "cartesian_prufer_delta_dex": -1.13544729174464e-09,
+      "fast_handoff_eps": 0.006765148716437819,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -9.713859033443446,
+      "fast_log10_omega": -160.45707219690104,
+      "reference_cartesian_rtol1e-11_log10_omega": -160.45999275796794,
+      "reference_prufer_rtol1e-9_log10_omega": -160.45999275741576,
+      "fast_minus_reference_dex": 0.002920561066900973,
+      "cartesian_prufer_delta_dex": -5.521769708138891e-10,
+      "fast_handoff_eps": 0.006750045949806331,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -10.236213265074648,
+      "fast_log10_omega": -157.35833907005215,
+      "reference_cartesian_rtol1e-11_log10_omega": -157.36125966735145,
+      "reference_prufer_rtol1e-9_log10_omega": -157.36125966682573,
+      "fast_minus_reference_dex": 0.0029205972992940588,
+      "cartesian_prufer_delta_dex": -5.257163593341829e-10,
+      "fast_handoff_eps": 0.0067687361127002355,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -10.654096650379605,
+      "fast_log10_omega": -154.8793525801001,
+      "reference_cartesian_rtol1e-11_log10_omega": -154.88227325573885,
+      "reference_prufer_rtol1e-9_log10_omega": -154.88227325558236,
+      "fast_minus_reference_dex": 0.0029206756387623045,
+      "cartesian_prufer_delta_dex": -1.5648993212380446e-10,
+      "fast_handoff_eps": 0.00674989152023636,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -11.176450882010807,
+      "fast_log10_omega": -151.7806194262093,
+      "reference_cartesian_rtol1e-11_log10_omega": -151.78354039398081,
+      "reference_prufer_rtol1e-9_log10_omega": -151.78354039315704,
+      "fast_minus_reference_dex": 0.002920967771501637,
+      "cartesian_prufer_delta_dex": -8.237748261308298e-10,
+      "fast_handoff_eps": 0.006768581251741495,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -11.698805113642008,
+      "fast_log10_omega": -148.6818863039486,
+      "reference_cartesian_rtol1e-11_log10_omega": -148.68480798351325,
+      "reference_prufer_rtol1e-9_log10_omega": -148.68480798352408,
+      "fast_minus_reference_dex": 0.0029216795646505034,
+      "cartesian_prufer_delta_dex": 1.0828671292983927e-11,
+      "fast_handoff_eps": 0.006753470831267072,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -12.116688498946965,
+      "fast_log10_omega": -146.20289916476148,
+      "reference_cartesian_rtol1e-11_log10_omega": -146.20582256279778,
+      "reference_prufer_rtol1e-9_log10_omega": -146.20582256267292,
+      "fast_minus_reference_dex": 0.0029233980363017054,
+      "cartesian_prufer_delta_dex": -1.248565695277648e-10,
+      "fast_handoff_eps": 0.0067684264916887706,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -12.639042730578167,
+      "fast_log10_omega": -143.10416441985222,
+      "reference_cartesian_rtol1e-11_log10_omega": -143.10708687629963,
+      "reference_prufer_rtol1e-9_log10_omega": -143.10708687628568,
+      "fast_minus_reference_dex": 0.0029224564474077397,
+      "cartesian_prufer_delta_dex": -1.3955059330328368e-11,
+      "fast_handoff_eps": 0.006753317385770658,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -13.161396962209365,
+      "fast_log10_omega": -140.00542509989037,
+      "reference_cartesian_rtol1e-11_log10_omega": -140.00827072865553,
+      "reference_prufer_rtol1e-9_log10_omega": -140.00827072862126,
+      "fast_minus_reference_dex": 0.002845628765157926,
+      "cartesian_prufer_delta_dex": -3.427658157306723e-11,
+      "fast_handoff_eps": 0.006738251955768779,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -13.579280347514326,
+      "fast_log10_omega": -137.52642433099487,
+      "reference_cartesian_rtol1e-11_log10_omega": -137.5286783930106,
+      "reference_prufer_rtol1e-9_log10_omega": -137.528678392968,
+      "fast_minus_reference_dex": 0.0022540620157371904,
+      "cartesian_prufer_delta_dex": -4.260414243617561e-11,
+      "fast_handoff_eps": 0.006719562636261785,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -14.101634579145523,
+      "fast_log10_omega": -134.42763783185492,
+      "reference_cartesian_rtol1e-11_log10_omega": -134.42545415441643,
+      "reference_prufer_rtol1e-9_log10_omega": -134.42545415438198,
+      "fast_minus_reference_dex": -0.002183677438495124,
+      "cartesian_prufer_delta_dex": -3.444711182964966e-11,
+      "fast_handoff_eps": 0.006638681479908584,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -14.623988810776725,
+      "fast_log10_omega": -131.32872621638367,
+      "reference_cartesian_rtol1e-11_log10_omega": -131.32792150688,
+      "reference_prufer_rtol1e-9_log10_omega": -131.32792150682602,
+      "fast_minus_reference_dex": -0.0008047095036829433,
+      "cartesian_prufer_delta_dex": -5.397282620833721e-11,
+      "fast_handoff_eps": 0.006405445971767831,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -15.041872196081686,
+      "fast_log10_omega": -128.84932706846072,
+      "reference_cartesian_rtol1e-11_log10_omega": -128.84819475695804,
+      "reference_prufer_rtol1e-9_log10_omega": -128.84819475690662,
+      "fast_minus_reference_dex": -0.001132311502686889,
+      "cartesian_prufer_delta_dex": -5.141487235960085e-11,
+      "fast_handoff_eps": 0.0059510527682396204,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -15.564226427712883,
+      "fast_log10_omega": -125.7490432043037,
+      "reference_cartesian_rtol1e-11_log10_omega": -125.75136112972038,
+      "reference_prufer_rtol1e-9_log10_omega": -125.75136112947852,
+      "fast_minus_reference_dex": 0.002317925416676303,
+      "cartesian_prufer_delta_dex": -2.418545363980229e-10,
+      "fast_handoff_eps": 0.010336930791992108,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -16.086580659344087,
+      "fast_log10_omega": -122.64500610236281,
+      "reference_cartesian_rtol1e-11_log10_omega": -122.64691518101324,
+      "reference_prufer_rtol1e-9_log10_omega": -122.64691518091095,
+      "fast_minus_reference_dex": 0.0019090786504278867,
+      "cartesian_prufer_delta_dex": -1.0228973224002402e-10,
+      "fast_handoff_eps": 0.10716912369855276,
+      "reference_cartesian_used_tail": true,
+      "reference_prufer_used_tail": true
+    },
+    {
+      "frequency_log10_hz": -16.50446404464904,
+      "fast_log10_omega": -120.1488870186967,
+      "reference_cartesian_rtol1e-11_log10_omega": -120.15532854052313,
+      "reference_prufer_rtol1e-9_log10_omega": -120.15532854073682,
+      "fast_minus_reference_dex": 0.00644152182643154,
+      "cartesian_prufer_delta_dex": 2.1368862235249253e-10,
+      "fast_handoff_eps": -1.0,
+      "reference_cartesian_used_tail": false,
+      "reference_prufer_used_tail": false
+    },
+    {
+      "frequency_log10_hz": -17.026818276280245,
+      "fast_log10_omega": -117.01093981120584,
+      "reference_cartesian_rtol1e-11_log10_omega": -117.01738546454347,
+      "reference_prufer_rtol1e-9_log10_omega": -117.01738546438409,
+      "fast_minus_reference_dex": 0.006445653337621593,
+      "cartesian_prufer_delta_dex": -1.5937473563099047e-10,
+      "fast_handoff_eps": -1.0,
+      "reference_cartesian_used_tail": false,
+      "reference_prufer_used_tail": false
+    },
+    {
+      "frequency_log10_hz": -17.549172507911443,
+      "fast_log10_omega": -113.61875745747648,
+      "reference_cartesian_rtol1e-11_log10_omega": -113.62515137257368,
+      "reference_prufer_rtol1e-9_log10_omega": -113.62515137212863,
+      "fast_minus_reference_dex": 0.006393915097206104,
+      "cartesian_prufer_delta_dex": -4.4505554797069635e-10,
+      "fast_handoff_eps": -1.0,
+      "reference_cartesian_used_tail": false,
+      "reference_prufer_used_tail": false
+    },
+    {
+      "frequency_log10_hz": -17.967055893216404,
+      "fast_log10_omega": -111.56956018921119,
+      "reference_cartesian_rtol1e-11_log10_omega": -111.57597402472953,
+      "reference_prufer_rtol1e-9_log10_omega": -111.57597402455814,
+      "fast_minus_reference_dex": 0.006413835518344513,
+      "cartesian_prufer_delta_dex": -1.7139711872005137e-10,
+      "fast_handoff_eps": -1.0,
+      "reference_cartesian_used_tail": false,
+      "reference_prufer_used_tail": false
+    },
+    {
+      "frequency_log10_hz": -18.4894101248476,
+      "fast_log10_omega": -109.45374897660571,
+      "reference_cartesian_rtol1e-11_log10_omega": -109.46016791917874,
+      "reference_prufer_rtol1e-9_log10_omega": -109.4601679190371,
+      "fast_minus_reference_dex": 0.006418942573034769,
+      "cartesian_prufer_delta_dex": -1.4163958894641837e-10,
+      "fast_handoff_eps": -1.0,
+      "reference_cartesian_used_tail": false,
+      "reference_prufer_used_tail": false
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 16,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": "tbb",
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2,
+    "workers_fast": 2,
+    "workers_reference": 1
+  },
+  "limitations": [
+    "The Reference maps use the same 77 Fast-native frequencies and fixed final DN_eff; they certify this discrete map, not frequency-grid convergence or a continuous-spectrum root.",
+    "The H2 positivity check samples 513 points; it is diagnostic, not a proof over the continuous interval.",
+    "The Fast output is intentionally classified uncertified; no input bound or domain claim is inferred from this one point."
+  ]
+}

@@ -2,6 +2,7 @@
 """Tests for the independent high-accuracy reference pipeline."""
 
 import math
+import warnings
 
 import numpy as np
 import pytest
@@ -368,6 +369,27 @@ def test_integrate_spectrum_exponential():
         (10.0 ** (-14.0 - 0.3 * b)) - (10.0 ** (-14.0 - 0.3 * a)))
     assert g2 == pytest.approx(exact, rel=1e-3)
     assert qerr >= 0.0
+
+
+def test_integrate_spectrum_rescales_subnormal_dynamic_range():
+    """Tiny physical spectra should not overflow PCHIP's reciprocal slopes."""
+    freqs = np.linspace(0.0, 10.0, 257)
+    unit_scale_spectrum = np.exp(-48.0 * freqs)
+    scale = 1e-106
+    tiny_spectrum = scale * unit_scale_spectrum
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('error', RuntimeWarning)
+        actual, qerr, ierr = REF.integrate_spectrum(
+            freqs, tiny_spectrum, np.zeros_like(tiny_spectrum)
+        )
+    expected, expected_qerr, expected_ierr = REF.integrate_spectrum(
+        freqs, unit_scale_spectrum, np.zeros_like(unit_scale_spectrum)
+    )
+
+    assert actual == pytest.approx(scale * expected, rel=2e-13, abs=0.0)
+    assert qerr == pytest.approx(scale * expected_qerr, rel=2e-13, abs=0.0)
+    assert ierr == pytest.approx(scale * expected_ierr, rel=2e-13, abs=0.0)
 
 
 def test_integrate_spectrum_scales_quad_budget_with_breakpoint_count():

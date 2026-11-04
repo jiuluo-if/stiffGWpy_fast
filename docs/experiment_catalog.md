@@ -493,3 +493,39 @@ samples were rejected by the resource preflight or ended in a failure or
 exception. This is a sampling screen, not a measured success rate or a global
 boundary. See the raw files and statuses listed in
 [`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md#2026-11-05-256-point-sobol-and-latin-hypercube-pilots).
+
+## 2026-11-05 subnormal integral scaling and extreme frequency-grid audit
+
+At QMC sample146, the fixed-background Prüfer Reference spectrum reached
+subnormal values. SciPy PCHIP warned while forming reciprocal secant slopes.
+`integrate_spectrum` now scales only this small-signal case and restores the
+same scale to the integral and error estimates. A warning-as-error regression
+and the focused Reference suite pass (`57 passed, 1 deselected`).
+
+With `rtol=1e-9`, `z_tail=5`, and one worker, full Prüfer maps at frequency
+resolutions 1/2/4/8 use 295/590/1181/2362 nodes. Res=4 to res=8 `DN_gw` changes
+by `6.48e-5` relative, but res=1 to res=8 changes by `1.066e-2`. The native
+77-node Fast integral at this extreme point is therefore not certified. This
+is a fixed-background single-point convergence check, not a parameter-domain
+claim. See [accuracy evidence](accuracy.md#2026-11-05-subnormal-reference-integral-and-extreme-grid-convergence),
+the [driver](../scripts/validate_qmc_extreme_reference_grid_convergence.py),
+and the [full result](qmc_sobol146_reference_grid_convergence_20261105.json).
+On the same native 77 frequencies, Cartesian versus Prüfer tail5 differs by at
+most `2.89e-7 dex`, while default Fast versus tail10 differs by `0.00645 dex`
+and `1.47%` in `DN_gw`. `sigma_exact` plus tail10 reduces these same-grid
+differences to `0.000346 dex` and `5.09e-5` relative, but does not establish a
+resolved bolometric integral. Per-mode and tail-depth evidence is stored in
+[`qmc_sobol146_reference_crosscheck_20261105.json`](qmc_sobol146_reference_crosscheck_20261105.json),
+[`qmc_sobol146_full_prufer_tail_convergence_20261105.json`](qmc_sobol146_full_prufer_tail_convergence_20261105.json),
+[`qmc_sobol146_mode_tail_probe_20261105.json`](qmc_sobol146_mode_tail_probe_20261105.json),
+and [`qmc_sobol146_prufer_tail_depths_20261105.json`](qmc_sobol146_prufer_tail_depths_20261105.json).
+The separate 800-node normal-scale integrator A/B returned bitwise-identical
+integrals and error estimates, with P50 `0.079655 s` before and `0.079686 s`
+after (0.04% measured overhead); see
+[`reference_integrate_spectrum_scale_ab_20261105.json`](reference_integrate_spectrum_scale_ab_20261105.json)
+and [`benchmark_reference_integrate_spectrum_scale.py`](../scripts/benchmark_reference_integrate_spectrum_scale.py).
+Reintegrating the archived native 77-mode tail5/tail10 Prüfer outputs with the
+current code changed `DN_gw` by only `1.74e-16` relative and produced no
+warnings; see
+[`qmc_sobol146_post_scale_reintegration_20261105.json`](qmc_sobol146_post_scale_reintegration_20261105.json)
+and [`reintegrate_qmc_sobol146_post_scale.py`](../scripts/reintegrate_qmc_sobol146_post_scale.py).

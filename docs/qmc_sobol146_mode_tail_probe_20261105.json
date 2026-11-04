@@ -1,0 +1,732 @@
+{
+  "schema_version": 1,
+  "experiment": "sobol_20261105_0146_mode_tail_probe",
+  "created_at": "2026-11-05T05:12:33.727504+08:00",
+  "source_commit": "8dbbc314053108c41e526cab7a990ffa3213386e",
+  "branch": "fast_v0.2",
+  "qmc_seed": 20261105,
+  "qmc_power": 8,
+  "sample_index": 146,
+  "label": "sobol_20261105_0146",
+  "params": {
+    "Omega_bh2": 3.615814484655857,
+    "Omega_ch2": 3.6480581387877464,
+    "H0": 62.82323393970728,
+    "DN_eff": 798918.0516451597,
+    "A_s": 7.436275388558332e-84,
+    "r": 8.909682360413819e-40,
+    "n_t": -5.932244639843702,
+    "cr": 0.0,
+    "T_re": 1261.702537246479,
+    "DN_re": 64.39131675288081,
+    "kappa10": 5.1043531347393325e-23
+  },
+  "frequency_count": 77,
+  "frequency_sha256": "55406f99bd0920bada12b28256b57f62bebb33c99569f6643b742be4d7ac24e0",
+  "selected_modes": [
+    -17.026818276280245,
+    -16.50446404464904,
+    -16.086580659344087,
+    -1.8823780790633404,
+    -1.0073780790633404
+  ],
+  "z_start": -12.0,
+  "tail_thresholds": [
+    5.0,
+    10.0
+  ],
+  "fast": {
+    "runtime_s": 0.2977890002075583,
+    "DN_eff_final": 798918.0516451597,
+    "DN_gw": 1.1277202070959275e-105,
+    "frequency_grid_error": 0.0,
+    "quadrature_error_local": 0.02695003330480277,
+    "local_error_budget": {
+      "categories": {
+        "background_model": {
+          "value": 0.0024,
+          "kind": "calibrated",
+          "certification": "uncertified-path-configuration"
+        },
+        "sigma_transition": {
+          "value": 0.0024,
+          "kind": "calibrated",
+          "certification": "uncertified-path-configuration"
+        },
+        "ode_integration": {
+          "value": 2e-06,
+          "kind": "local",
+          "certification": "calibrated-at-fiducial"
+        },
+        "horizon_crossing": {
+          "value": 2e-06,
+          "kind": "local",
+          "certification": "calibrated-at-fiducial"
+        },
+        "wkb_handoff": {
+          "value": 0.10716912369855276,
+          "aggregate": 0.007006705455141064,
+          "kind": "local",
+          "certification": "local-measured"
+        },
+        "interpolation": {
+          "value": 1e-09,
+          "kind": "calibrated",
+          "certification": "calibrated-at-fiducial"
+        },
+        "frequency_grid": {
+          "value": 0.0016,
+          "kind": "calibrated",
+          "certification": "uncertified-path-configuration"
+        },
+        "quadrature": {
+          "value": 0.02695003330480277,
+          "kind": "local",
+          "certification": "local-measured"
+        },
+        "tail_approximation": {
+          "value": 0.0004017107384637534,
+          "kind": "calibrated",
+          "certification": "calibrated-at-fiducial"
+        },
+        "floating_point": {
+          "value": 2.1158083089041794e-15,
+          "cancellation_ratio": 0.8423461076268755,
+          "kind": "local",
+          "certification": "local-measured"
+        },
+        "self_consistency": {
+          "value": 1.0000000000000002,
+          "kind": "local",
+          "certification": "local-measured"
+        }
+      },
+      "DN_gw_error": 1.002764446426725,
+      "Delta_Neff_abs_error": 1.1308377291927793e-105,
+      "systematic_error": 0.0024,
+      "random_rss": 1.000364446426725,
+      "handoff_eps_max": 0.10716912369855276,
+      "handoff_eps_mean": 0.007006705455141064,
+      "z_tail_used": 5.0,
+      "phase_max_used": 0.25,
+      "freq_grid_used": "goal",
+      "certification_status": "uncertified-path-configuration",
+      "local_terms": [
+        "ode_integration",
+        "horizon_crossing",
+        "wkb_handoff",
+        "quadrature",
+        "floating_point",
+        "self_consistency"
+      ],
+      "calibrated_terms": [
+        "ode_integration",
+        "horizon_crossing",
+        "interpolation",
+        "tail_approximation"
+      ],
+      "uncertified_terms": [
+        "background_model",
+        "sigma_transition",
+        "frequency_grid"
+      ],
+      "explicit_uncertainty": "uncertainty is a mix of point-local and fiducial-calibrated terms; calibrated terms are NOT universal per-point error estimates"
+    },
+    "warnings": [
+      "overflow encountered in divide",
+      "overflow encountered in divide"
+    ]
+  },
+  "reference_background_warm_s": 0.3867473001591861,
+  "runs": [
+    {
+      "frequency_log10_hz": -17.026818276280245,
+      "fast_handoff_eps": -1.0,
+      "runs": {
+        "cartesian_tail5": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.012413999997079372,
+          "Omega_GW_today": 9.607591637200658e-118,
+          "log10Omega_GW_today": -117.01738546454347,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 1970,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -117.01093981120584,
+          "fast_minus_reference_dex": 0.006445653337621593
+        },
+        "prufer_tail5": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.006598399952054024,
+          "Omega_GW_today": 9.607591640726615e-118,
+          "log10Omega_GW_today": -117.01738546438409,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 1082,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -117.01093981120584,
+          "fast_minus_reference_dex": 0.006445653178246857
+        },
+        "cartesian_tail10": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.01195070007815957,
+          "Omega_GW_today": 9.607591637200658e-118,
+          "log10Omega_GW_today": -117.01738546454347,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 1970,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -117.01093981120584,
+          "fast_minus_reference_dex": 0.006445653337621593
+        },
+        "prufer_tail10": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.006590100005269051,
+          "Omega_GW_today": 9.607591640726615e-118,
+          "log10Omega_GW_today": -117.01738546438409,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 1082,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -117.01093981120584,
+          "fast_minus_reference_dex": 0.006445653178246857
+        }
+      }
+    },
+    {
+      "frequency_log10_hz": -16.50446404464904,
+      "fast_handoff_eps": -1.0,
+      "runs": {
+        "cartesian_tail5": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.01795420004054904,
+          "Omega_GW_today": 6.9931277097603655e-121,
+          "log10Omega_GW_today": -120.15532854052313,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 2930,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -120.1488870186967,
+          "fast_minus_reference_dex": 0.00644152182643154
+        },
+        "prufer_tail5": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.011147100012749434,
+          "Omega_GW_today": 6.9931277063193915e-121,
+          "log10Omega_GW_today": -120.15532854073682,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 1862,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -120.1488870186967,
+          "fast_minus_reference_dex": 0.006441522040120162
+        },
+        "cartesian_tail10": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.017939900048077106,
+          "Omega_GW_today": 6.9931277097603655e-121,
+          "log10Omega_GW_today": -120.15532854052313,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 2930,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -120.1488870186967,
+          "fast_minus_reference_dex": 0.00644152182643154
+        },
+        "prufer_tail10": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.011146800126880407,
+          "Omega_GW_today": 6.9931277063193915e-121,
+          "log10Omega_GW_today": -120.15532854073682,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 1862,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -120.1488870186967,
+          "fast_minus_reference_dex": 0.006441522040120162
+        }
+      }
+    },
+    {
+      "frequency_log10_hz": -16.086580659344087,
+      "fast_handoff_eps": 0.10716912369855276,
+      "runs": {
+        "cartesian_tail5": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.03094500000588596,
+          "Omega_GW_today": 2.2546795146804332e-123,
+          "log10Omega_GW_today": -122.64691518101324,
+          "used_tail": true,
+          "event_N": 101.68344254754376,
+          "nfev": 5069,
+          "matching_error_rel": 0.1134932372197076,
+          "warnings": [],
+          "fast_log10Omega_GW": -122.64500610236281,
+          "fast_minus_reference_dex": 0.0019090786504278867
+        },
+        "prufer_tail5": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.018965999828651547,
+          "Omega_GW_today": 2.2546795152115216e-123,
+          "log10Omega_GW_today": -122.64691518091095,
+          "used_tail": true,
+          "event_N": 101.68344254754358,
+          "nfev": 3221,
+          "matching_error_rel": 0.11349323721900319,
+          "warnings": [],
+          "fast_log10Omega_GW": -122.64500610236281,
+          "fast_minus_reference_dex": 0.0019090785481381545
+        },
+        "cartesian_tail10": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.031718899961560965,
+          "Omega_GW_today": 2.254860606572889e-123,
+          "log10Omega_GW_today": -122.64688030064517,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 5258,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -122.64500610236281,
+          "fast_minus_reference_dex": 0.001874198282351358
+        },
+        "prufer_tail10": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.019439300056546926,
+          "Omega_GW_today": 2.254860609172491e-123,
+          "log10Omega_GW_today": -122.64688030014447,
+          "used_tail": false,
+          "event_N": null,
+          "nfev": 3326,
+          "matching_error_rel": null,
+          "warnings": [],
+          "fast_log10Omega_GW": -122.64500610236281,
+          "fast_minus_reference_dex": 0.001874197781660314
+        }
+      }
+    },
+    {
+      "frequency_log10_hz": -1.8823780790633404,
+      "fast_handoff_eps": 0.00676590011452204,
+      "runs": {
+        "cartesian_tail5": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.06206470006145537,
+          "Omega_GW_today": 8.628286423349508e-208,
+          "log10Omega_GW_today": -207.06407544655332,
+          "used_tail": true,
+          "event_N": 69.67914004547998,
+          "nfev": 9677,
+          "matching_error_rel": 0.006737946883718737,
+          "warnings": [],
+          "fast_log10Omega_GW": -207.06115162315479,
+          "fast_minus_reference_dex": 0.002923823398532477
+        },
+        "prufer_tail5": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.03709060000255704,
+          "Omega_GW_today": 8.628286378458884e-208,
+          "log10Omega_GW_today": -207.06407544881284,
+          "used_tail": true,
+          "event_N": 69.67914004116722,
+          "nfev": 6485,
+          "matching_error_rel": 0.006737946883718834,
+          "warnings": [],
+          "fast_log10Omega_GW": -207.06115162315479,
+          "fast_minus_reference_dex": 0.0029238256580583766
+        },
+        "cartesian_tail10": {
+          "rtol": 1e-11,
+          "elapsed_s": 6.3796176998876035,
+          "Omega_GW_today": 8.686223362595272e-208,
+          "log10Omega_GW_today": -207.0611690071295,
+          "used_tail": true,
+          "event_N": 74.67914150994066,
+          "nfev": 1076453,
+          "matching_error_rel": 4.5399917479845186e-05,
+          "warnings": [],
+          "fast_log10Omega_GW": -207.06115162315479,
+          "fast_minus_reference_dex": 1.7383974721951745e-05
+        },
+        "prufer_tail10": {
+          "rtol": 1e-09,
+          "elapsed_s": 2.1878104999195784,
+          "Omega_GW_today": 8.686222248538566e-208,
+          "log10Omega_GW_today": -207.0611690628302,
+          "used_tail": true,
+          "event_N": 74.67914150562781,
+          "nfev": 385481,
+          "matching_error_rel": 4.5399917479845186e-05,
+          "warnings": [],
+          "fast_log10Omega_GW": -207.06115162315479,
+          "fast_minus_reference_dex": 1.7439675417563194e-05
+        }
+      }
+    },
+    {
+      "frequency_log10_hz": -1.0073780790633404,
+      "fast_handoff_eps": 0.006767510044166304,
+      "runs": {
+        "cartesian_tail5": {
+          "rtol": 1e-11,
+          "elapsed_s": 0.06390920002013445,
+          "Omega_GW_today": 1.3878127905486419e-214,
+          "log10Omega_GW_today": -213.85766911422354,
+          "used_tail": true,
+          "event_N": 67.66437801975108,
+          "nfev": 9905,
+          "matching_error_rel": 0.006737946515874468,
+          "warnings": [],
+          "fast_log10Omega_GW": -213.85877059760261,
+          "fast_minus_reference_dex": -0.0011014833790738976
+        },
+        "prufer_tail5": {
+          "rtol": 1e-09,
+          "elapsed_s": 0.02981560002081096,
+          "Omega_GW_today": 1.3878127967917353e-214,
+          "log10Omega_GW_today": -213.85766911226986,
+          "used_tail": true,
+          "event_N": 67.66437802010238,
+          "nfev": 5405,
+          "matching_error_rel": 0.006737946515874428,
+          "warnings": [],
+          "fast_log10Omega_GW": -213.85877059760261,
+          "fast_minus_reference_dex": -0.0011014853327537821
+        },
+        "cartesian_tail10": {
+          "rtol": 1e-11,
+          "elapsed_s": 6.37676230003126,
+          "Omega_GW_today": 1.3843201323559006e-214,
+          "log10Omega_GW_today": -213.85876346505378,
+          "used_tail": true,
+          "event_N": 72.66437842002567,
+          "nfev": 1076681,
+          "matching_error_rel": 4.539991554071803e-05,
+          "warnings": [],
+          "fast_log10Omega_GW": -213.85877059760261,
+          "fast_minus_reference_dex": -7.132548830668384e-06
+        },
+        "prufer_tail10": {
+          "rtol": 1e-09,
+          "elapsed_s": 1.4861517001409084,
+          "Omega_GW_today": 1.3843298272355062e-214,
+          "log10Omega_GW_today": -213.8587604235478,
+          "used_tail": true,
+          "event_N": 72.66437842037693,
+          "nfev": 259649,
+          "matching_error_rel": 4.539991554071787e-05,
+          "warnings": [],
+          "fast_log10Omega_GW": -213.85877059760261,
+          "fast_minus_reference_dex": -1.0174054807521316e-05
+        }
+      }
+    }
+  ],
+  "fast_variants": [
+    {
+      "name": "sigma_exact_tail5",
+      "z_tail": 5.0,
+      "transition_refine": false,
+      "sigma_exact": true,
+      "runtime_s": 0.007316100178286433,
+      "DN_gw": 1.1112318030836685e-105,
+      "DN_eff_final": 798918.0516451597,
+      "warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "max_abs_error_vs_cartesian_tail5_dex": 0.002923823398532477,
+      "max_abs_error_vs_cartesian_tail10_dex": 0.001873625731377615,
+      "modes": [
+        {
+          "frequency_log10_hz": -17.026818276280245,
+          "fast_log10Omega_GW": -117.01735111421623,
+          "fast_minus_cartesian_tail5_dex": 3.4350327240417755e-05,
+          "fast_minus_cartesian_tail10_dex": 3.4350327240417755e-05
+        },
+        {
+          "frequency_log10_hz": -16.50446404464904,
+          "fast_log10Omega_GW": -120.15533140708985,
+          "fast_minus_cartesian_tail5_dex": -2.866566717329988e-06,
+          "fast_minus_cartesian_tail10_dex": -2.866566717329988e-06
+        },
+        {
+          "frequency_log10_hz": -16.086580659344087,
+          "fast_log10Omega_GW": -122.64500667491379,
+          "fast_minus_cartesian_tail5_dex": 0.0019085060994541436,
+          "fast_minus_cartesian_tail10_dex": 0.001873625731377615
+        },
+        {
+          "frequency_log10_hz": -1.8823780790633404,
+          "fast_log10Omega_GW": -207.06115162315479,
+          "fast_minus_cartesian_tail5_dex": 0.002923823398532477,
+          "fast_minus_cartesian_tail10_dex": 1.7383974721951745e-05
+        },
+        {
+          "frequency_log10_hz": -1.0073780790633404,
+          "fast_log10Omega_GW": -213.85877059760261,
+          "fast_minus_cartesian_tail5_dex": -0.0011014833790738976,
+          "fast_minus_cartesian_tail10_dex": -7.132548830668384e-06
+        }
+      ]
+    },
+    {
+      "name": "sigma_exact_tail10",
+      "z_tail": 10.0,
+      "transition_refine": false,
+      "sigma_exact": true,
+      "runtime_s": 0.07264239992946386,
+      "DN_gw": 1.1112318030836677e-105,
+      "DN_eff_final": 798918.0516451597,
+      "warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "max_abs_error_vs_cartesian_tail5_dex": 0.002924070761139319,
+      "max_abs_error_vs_cartesian_tail10_dex": 3.4350327240417755e-05,
+      "modes": [
+        {
+          "frequency_log10_hz": -17.026818276280245,
+          "fast_log10Omega_GW": -117.01735111421623,
+          "fast_minus_cartesian_tail5_dex": 3.4350327240417755e-05,
+          "fast_minus_cartesian_tail10_dex": 3.4350327240417755e-05
+        },
+        {
+          "frequency_log10_hz": -16.50446404464904,
+          "fast_log10Omega_GW": -120.15533140708985,
+          "fast_minus_cartesian_tail5_dex": -2.866566717329988e-06,
+          "fast_minus_cartesian_tail10_dex": -2.866566717329988e-06
+        },
+        {
+          "frequency_log10_hz": -16.086580659344087,
+          "fast_log10Omega_GW": -122.64686298519378,
+          "fast_minus_cartesian_tail5_dex": 5.219581946391827e-05,
+          "fast_minus_cartesian_tail10_dex": 1.7315451387389658e-05
+        },
+        {
+          "frequency_log10_hz": -1.8823780790633404,
+          "fast_log10Omega_GW": -207.06115137579218,
+          "fast_minus_cartesian_tail5_dex": 0.002924070761139319,
+          "fast_minus_cartesian_tail10_dex": 1.763133732879396e-05
+        },
+        {
+          "frequency_log10_hz": -1.0073780790633404,
+          "fast_log10Omega_GW": -213.85877084041812,
+          "fast_minus_cartesian_tail5_dex": -0.0011017261945767132,
+          "fast_minus_cartesian_tail10_dex": -7.375364333483958e-06
+        }
+      ]
+    },
+    {
+      "name": "transition_sigma_tail5",
+      "z_tail": 5.0,
+      "transition_refine": true,
+      "sigma_exact": true,
+      "runtime_s": 0.05655870004557073,
+      "DN_gw": 1.116499197274917e-105,
+      "DN_eff_final": 798918.0516451597,
+      "warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "max_abs_error_vs_cartesian_tail5_dex": 0.003016219586385205,
+      "max_abs_error_vs_cartesian_tail10_dex": 0.002091594503866645,
+      "modes": [
+        {
+          "frequency_log10_hz": -17.026818276280245,
+          "fast_log10Omega_GW": -117.0152938700396,
+          "fast_minus_cartesian_tail5_dex": 0.002091594503866645,
+          "fast_minus_cartesian_tail10_dex": 0.002091594503866645
+        },
+        {
+          "frequency_log10_hz": -16.50446404464904,
+          "fast_log10Omega_GW": -120.1532657648337,
+          "fast_minus_cartesian_tail5_dex": 0.0020627756894242566,
+          "fast_minus_cartesian_tail10_dex": 0.0020627756894242566
+        },
+        {
+          "frequency_log10_hz": -16.086580659344087,
+          "fast_log10Omega_GW": -122.64500653280516,
+          "fast_minus_cartesian_tail5_dex": 0.0019086482080865608,
+          "fast_minus_cartesian_tail10_dex": 0.0018737678400100322
+        },
+        {
+          "frequency_log10_hz": -1.8823780790633404,
+          "fast_log10Omega_GW": -207.06105922696693,
+          "fast_minus_cartesian_tail5_dex": 0.003016219586385205,
+          "fast_minus_cartesian_tail10_dex": 0.00010978016257467971
+        },
+        {
+          "frequency_log10_hz": -1.0073780790633404,
+          "fast_log10Omega_GW": -213.8587661125975,
+          "fast_minus_cartesian_tail5_dex": -0.0010969983739528288,
+          "fast_minus_cartesian_tail10_dex": -2.6475437095996313e-06
+        }
+      ]
+    },
+    {
+      "name": "transition_sigma_tail10",
+      "z_tail": 10.0,
+      "transition_refine": true,
+      "sigma_exact": true,
+      "runtime_s": 0.30528130009770393,
+      "DN_gw": 1.116499197274917e-105,
+      "DN_eff_final": 798918.0516451597,
+      "warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "max_abs_error_vs_cartesian_tail5_dex": 0.003016414574517512,
+      "max_abs_error_vs_cartesian_tail10_dex": 0.002091594503866645,
+      "modes": [
+        {
+          "frequency_log10_hz": -17.026818276280245,
+          "fast_log10Omega_GW": -117.0152938700396,
+          "fast_minus_cartesian_tail5_dex": 0.002091594503866645,
+          "fast_minus_cartesian_tail10_dex": 0.002091594503866645
+        },
+        {
+          "frequency_log10_hz": -16.50446404464904,
+          "fast_log10Omega_GW": -120.1532657648337,
+          "fast_minus_cartesian_tail5_dex": 0.0020627756894242566,
+          "fast_minus_cartesian_tail10_dex": 0.0020627756894242566
+        },
+        {
+          "frequency_log10_hz": -16.086580659344087,
+          "fast_log10Omega_GW": -122.64480235294208,
+          "fast_minus_cartesian_tail5_dex": 0.0021128280711621983,
+          "fast_minus_cartesian_tail10_dex": 0.0020779477030856697
+        },
+        {
+          "frequency_log10_hz": -1.8823780790633404,
+          "fast_log10Omega_GW": -207.0610590319788,
+          "fast_minus_cartesian_tail5_dex": 0.003016414574517512,
+          "fast_minus_cartesian_tail10_dex": 0.00010997515070698682
+        },
+        {
+          "frequency_log10_hz": -1.0073780790633404,
+          "fast_log10Omega_GW": -213.85876634979974,
+          "fast_minus_cartesian_tail5_dex": -0.0010972355761964536,
+          "fast_minus_cartesian_tail10_dex": -2.88474595322441e-06
+        }
+      ]
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 16,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": "tbb",
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2,
+    "reference_workers": 1
+  },
+  "summary": [
+    {
+      "frequency_log10_hz": -17.026818276280245,
+      "fast_handoff_eps": -1.0,
+      "fast_reference_error_tail5_dex": 0.006445653337621593,
+      "fast_reference_error_tail10_dex": 0.006445653337621593,
+      "cartesian_prufer_delta_tail5_dex": -1.5937473563099047e-10,
+      "cartesian_tail5_tail10_delta_dex": 0.0,
+      "cartesian_tail5_nfev": 1970,
+      "cartesian_tail10_nfev": 1970,
+      "cartesian_tail10_runtime_s": 0.01195070007815957,
+      "cartesian_tail10_matching_error": null,
+      "used_tail_tail5": false,
+      "used_tail_tail10": false
+    },
+    {
+      "frequency_log10_hz": -16.50446404464904,
+      "fast_handoff_eps": -1.0,
+      "fast_reference_error_tail5_dex": 0.00644152182643154,
+      "fast_reference_error_tail10_dex": 0.00644152182643154,
+      "cartesian_prufer_delta_tail5_dex": 2.1368862235249253e-10,
+      "cartesian_tail5_tail10_delta_dex": 0.0,
+      "cartesian_tail5_nfev": 2930,
+      "cartesian_tail10_nfev": 2930,
+      "cartesian_tail10_runtime_s": 0.017939900048077106,
+      "cartesian_tail10_matching_error": null,
+      "used_tail_tail5": false,
+      "used_tail_tail10": false
+    },
+    {
+      "frequency_log10_hz": -16.086580659344087,
+      "fast_handoff_eps": 0.10716912369855276,
+      "fast_reference_error_tail5_dex": 0.0019090786504278867,
+      "fast_reference_error_tail10_dex": 0.001874198282351358,
+      "cartesian_prufer_delta_tail5_dex": -1.0228973224002402e-10,
+      "cartesian_tail5_tail10_delta_dex": -3.488036807652861e-05,
+      "cartesian_tail5_nfev": 5069,
+      "cartesian_tail10_nfev": 5258,
+      "cartesian_tail10_runtime_s": 0.031718899961560965,
+      "cartesian_tail10_matching_error": null,
+      "used_tail_tail5": true,
+      "used_tail_tail10": false
+    },
+    {
+      "frequency_log10_hz": -1.8823780790633404,
+      "fast_handoff_eps": 0.00676590011452204,
+      "fast_reference_error_tail5_dex": 0.002923823398532477,
+      "fast_reference_error_tail10_dex": 1.7383974721951745e-05,
+      "cartesian_prufer_delta_tail5_dex": 2.2595258997171186e-09,
+      "cartesian_tail5_tail10_delta_dex": -0.002906439423810525,
+      "cartesian_tail5_nfev": 9677,
+      "cartesian_tail10_nfev": 1076453,
+      "cartesian_tail10_runtime_s": 6.3796176998876035,
+      "cartesian_tail10_matching_error": 4.5399917479845186e-05,
+      "used_tail_tail5": true,
+      "used_tail_tail10": true
+    },
+    {
+      "frequency_log10_hz": -1.0073780790633404,
+      "fast_handoff_eps": 0.006767510044166304,
+      "fast_reference_error_tail5_dex": -0.0011014833790738976,
+      "fast_reference_error_tail10_dex": -7.132548830668384e-06,
+      "cartesian_prufer_delta_tail5_dex": -1.953679884536541e-09,
+      "cartesian_tail5_tail10_delta_dex": 0.0010943508302432292,
+      "cartesian_tail5_nfev": 9905,
+      "cartesian_tail10_nfev": 1076681,
+      "cartesian_tail10_runtime_s": 6.37676230003126,
+      "cartesian_tail10_matching_error": 4.539991554071803e-05,
+      "used_tail_tail5": true,
+      "used_tail_tail10": true
+    }
+  ],
+  "limitations": [
+    "Only five selected modes are compared; this probe cannot certify the full map or root.",
+    "The full-grid tail10 Cartesian/Pruefer comparison exceeded the 600 CPU-second screen budget; this targeted follow-up records per-mode tail costs.",
+    "The Fast point remains uncertified; finite output is not a boundary claim."
+  ],
+  "script_sha256": "6431a0adafd71c6f660f9af38f397f03f2414f8b55a909e5d86ce8c6c09b7029",
+  "fast_module_sha256": "8d631de419baca27b7a17e65d36fb259f4f33e4dcee6068398ecf27212e2b644",
+  "reference_module_sha256": "261d91d56e43d49ad5d99ba5494cdd43a55d5cadbf8368a282f3069ea802d374",
+  "provenance_note": "The unchanged driver hash was added after the run; module hashes identify source_commit."
+}
