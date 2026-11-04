@@ -113,6 +113,8 @@ IPTA 和 NANOGrav 现在只在理论频点覆盖范围内插值，不再对范�
 
 第二个困难点为保留的随机样本11。当前 h=.02 Fast 根在同一`DN_eff`的 tail10 Reference 映射相对残差为`-9.48e-6`；94个同 DN 模态的谱最大差为`9.149e-5 dex`。原始 Fast/Reference 数组和可复现脚本见[`accuracy.md`](accuracy.md)。
 
+逐模归因资料现包含当前完整根 260 模误差、同背景原函数路径比较、历史 53 模与当前 18 个边缘模的连续系数 DOP853 复算，以及对应 tail9 Reference 数组。数据说明见[`res4_mode_decomposition_20261104.json`](res4_mode_decomposition_20261104.json)，逐模文件从[`accuracy.md`](accuracy.md)导航。
+
 当前`A_s=1e20`失败现在会在张量传播前首次发现`S2=exp(Psi)`非有限并报告数组和索引，不声称存在可表示的有限谱。6个常规区间的501组配对开销 A/B 显示 DN/谱输出逐位一致，最差 P50/P95 比值为`1.0248`；原始样本见[`background_primitive_guard_benchmark_20261104.json`](background_primitive_guard_benchmark_20261104.json)。
 
 提交`671aa11`增加了受保护的标量终点步长路径：只有内部区间在浮点舍入容差内均匀时才使用；真实细化区间和极短物理锚点仍走完整步长数组。目标点输出相对之前数组路径根差`1.67e-15`、频谱最大差`6.04e-14 dex`。针对代码的测试为`61 passed, 1 deselected`，GitHub Actions 运行`41759168617`的9个 job 全部通过。完整点位结果、资源测量和原始 Reference 频谱见[`accuracy.md`](accuracy.md)以及

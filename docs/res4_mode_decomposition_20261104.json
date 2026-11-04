@@ -1,0 +1,110 @@
+{
+  "analysis_head": "e49c496fd62da71b8d01fb097402dc7f9f832ac2",
+  "numerical_source_commit": "9cc3fae4cb29c1980aeac15420d249de1954e234",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0,
+    "n_t": 2,
+    "T_re_GeV": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10
+  },
+  "frequency_count": 260,
+  "reference": {
+    "tail_z": 9,
+    "dn_eff": 0.13374433666555344,
+    "reference_dn_map": 0.13373560619823374,
+    "map_relative_residual_vs_fast": -6.527728603213349e-05
+  },
+  "current_full_root": {
+    "baseline_dn_eff": 0.13370745830380665,
+    "candidate_dn_eff": 0.13374433666555344,
+    "baseline_median_p95_max_dex": [
+      0.00024991646174932214,
+      0.000570373033388449,
+      0.0006454853302031438
+    ],
+    "candidate_median_p95_max_dex": [
+      4.054250453044972e-05,
+      0.0003579978831303343,
+      0.0004197397062082331
+    ],
+    "baseline_modes_over_5e-4_dex": 18,
+    "baseline_modes_over_1e-3_dex": 0,
+    "candidate_modes_over_5e-4_dex": 0
+  },
+  "same_background_modes": {
+    "dn_eff": 0.13374433666555344,
+    "baseline_median_p95_max_dex": [
+      4.039792821863841e-05,
+      0.0003581107472282241,
+      0.0004198356701330397
+    ],
+    "sigma_exact_median_p95_max_dex": [
+      3.945757981416165e-05,
+      0.00035810412248444835,
+      0.00041983980807458465
+    ],
+    "transition_candidate_median_p95_max_dex": [
+      4.039792822485566e-05,
+      0.0003581107472380829,
+      0.00041983567012948697
+    ],
+    "baseline_handoff_used_for_over_1e-3_modes": 0
+  },
+  "continuous_coefficient_dop853": {
+    "historical_53_modes": {
+      "dn_eff": 0.13374433666555344,
+      "n_modes": 53,
+      "runtime_s": 51.29974389995914,
+      "fast_error_median_p95_max_dex": [
+        5.624612196442058e-06,
+        1.3178009623970866e-05,
+        1.833840982889967e-05
+      ],
+      "direct_error_median_p95_max_dex": [
+        5.084289007584175e-06,
+        1.3223210157065067e-05,
+        1.669089523659295e-05
+      ],
+      "direct_tolerance_change_max_dex": 1.2611277462326598e-06,
+      "direct_modes_under_5e-4_dex": 53
+    },
+    "current_18_edge_modes": {
+      "dn_eff": 0.13374433666555344,
+      "n_modes": 18,
+      "runtime_s": 54.96902479999699,
+      "fast_error_median_p95_max_dex": [
+        4.9579709715530385e-06,
+        1.632245404170617e-05,
+        2.3236363023926287e-05
+      ],
+      "direct_error_median_p95_max_dex": [
+        5.310620668552701e-06,
+        1.6449141412078192e-05,
+        2.4621494372212283e-05
+      ],
+      "direct_tolerance_change_max_dex": 1.4045243545979247e-06,
+      "direct_modes_under_5e-4_dex": 18
+    },
+    "interpretation": "The 53-mode set is historical. Current full-root and fixed-background errors are stored as per-mode CSV artifacts; DOP853 directly checks the same continuous coefficient system on both selected sets."
+  },
+  "artifacts": [
+    "res4_mode_errors_full_root_20261104.csv",
+    "res4_mode_errors_fixed_background_20261104.csv",
+    "res4_dop853_historical53_20261104.json",
+    "res4_dop853_current18_20261104.json",
+    "res4_reference_transition_tail9_20261104.json",
+    "res4_reference_transition_tail9_20261104.npz"
+  ],
+  "h02_complete_root": {
+    "dn_eff": 0.13372910340092017,
+    "median_p95_max_dex": [
+      6.108905851132107e-05,
+      0.0003162129154804738,
+      0.00034532080874072335
+    ],
+    "modes_over_5e-4_dex": 0,
+    "source_commit": "e49c496fd62da71b8d01fb097402dc7f9f832ac2"
+  }
+}

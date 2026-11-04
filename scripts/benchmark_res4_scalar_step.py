@@ -36,6 +36,25 @@ def batch_case_rate(pair_count, variant_count, elapsed_seconds):
     return pair_count * variant_count / elapsed_seconds
 
 
+def per_mode_error_record(frequencies, reference_log, variants):
+    """Keep same-grid reference values and absolute dex errors for each mode."""
+    frequencies = np.asarray(frequencies, dtype=float)
+    reference_log = np.asarray(reference_log, dtype=float)
+    if frequencies.ndim != 1 or reference_log.shape != frequencies.shape:
+        raise ValueError("frequencies and reference_log must be equal 1-D arrays")
+    errors = {}
+    for name, spectrum in variants.items():
+        spectrum = np.asarray(spectrum, dtype=float)
+        if spectrum.shape != frequencies.shape:
+            raise ValueError(f"variant {name!r} does not match the reference grid")
+        errors[name] = np.abs(spectrum - reference_log).tolist()
+    return {
+        "log10_f_Hz": frequencies.tolist(),
+        "reference_log10OmegaGW": reference_log.tolist(),
+        "absolute_error_dex": errors,
+    }
+
+
 def run_variant(name, frequencies, reference_log, threads):
     option = VARIANTS[name]
     config = FS.resolve_config(
@@ -163,6 +182,10 @@ def main():
     array_stats = record["variants"]["refined_h02_array_steps"]
     record["scalar_over_array_p50_ratio"] = candidate["warm_p50_ms"] / array_stats["warm_p50_ms"]
     record["scalar_over_array_p95_ratio"] = candidate["warm_p95_ms"] / array_stats["warm_p95_ms"]
+    record["per_mode"] = per_mode_error_record(
+        frequencies, reference_log,
+        {name: first_raw[name]["log_spectrum"] for name in VARIANTS},
+    )
     args.output.write_text(json.dumps(record, indent=2), encoding="utf-8")
     print(json.dumps(record, indent=2))
 

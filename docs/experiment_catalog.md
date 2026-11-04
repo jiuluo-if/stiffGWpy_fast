@@ -212,6 +212,13 @@ relative, and same-DN spectrum maximum error is `9.149e-5 dex` on 94 modes.
 Raw Fast/Reference arrays and a rerunnable driver are linked in
 [`accuracy.md`](accuracy.md).
 
+For mode-level attribution, the repository now includes all 260 current-root
+errors, all 260 same-background primitive/path comparisons, the historical 53
+and current 18 continuous-coefficient DOP853 records, and the matching tail9
+Reference array. Their provenance summary is
+[`res4_mode_decomposition_20261104.json`](res4_mode_decomposition_20261104.json);
+the detailed data files are linked from [`accuracy.md`](accuracy.md).
+
 The current `A_s=1e20` trace now stops at its first bad `S2=exp(Psi)` value
 before tensor propagation, reporting the primitive and index; no extended
 finite spectrum is claimed. A 501-pair six-regime A/B confirms the diagnostic
