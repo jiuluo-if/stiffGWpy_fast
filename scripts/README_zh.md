@@ -38,6 +38,7 @@ PNG 默认写入 `scripts/`，也可通过输出路径参数指定其他位置�
 
 `benchmark_res4_scalar_step.py` 配对运行默认 h=.005 路径与对齐 h=.02 转折细化完整根路径，
 读取已保存的 tail10 Reference 谱，并记录同频误差、线程 affinity、首次调用和热 P50/P95、调用后 RSS、批吞吐及重复输出摘要。
+JSON 同时保存三个变体在全部260个频点上的逐模误差。
 `benchmark_res4_reference_root.py` 在显式 `DN_eff` 和相同260个原生频率上运行一次独立固定背景 Reference 映射；耗时可能达到数十分钟，
 此脚本本身不执行外层自洽迭代。
 `benchmark_sample11_reference_map.py` 使用保存的 sample11 Fast 根频率网格，对候选根做94模态精确输入 Reference 检查；记录 DN 映射残差、求积/插值误差和同 DN 逐模谱误差，并保存原始 Reference 谱。

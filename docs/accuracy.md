@@ -304,11 +304,22 @@ On the blue-tilt res4 point (`r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`,
   tensor propagation, or analytic-tail handoff. The 260-node Reference's own
   tail9-to-tail10 change and quadrature/interpolation estimates above bound
   the Reference contribution separately.
+- Per-mode current full-root and fixed-background rows are archived in
+  [`res4_mode_errors_full_root_20261104.csv`](res4_mode_errors_full_root_20261104.csv)
+  and [`res4_mode_errors_fixed_background_20261104.csv`](res4_mode_errors_fixed_background_20261104.csv).
+  The latter separates uniform fast primitive, uniform `sigma_exact`, and
+  transition-refined propagation on the same DN and native grid. The raw
+  same-background tail9 Reference is in
+  [`res4_reference_transition_tail9_20261104.npz`](res4_reference_transition_tail9_20261104.npz).
 - An independent DOP853 integration of the continuous-coefficient tensor
   system on the 18 former edge modes agrees with the refined Fast values to
   maximum `2.56e-6 dex`; the two DOP853 tolerance settings differ by at most
   `1.40e-6 dex`. Both methods stay within `2.5e-5 dex` of the tail9 Reference
-  on those modes. They do not trigger the analytic tail handoff.
+  on those modes. They do not trigger the analytic tail handoff. Raw per-mode
+  probes are [`historical53`](res4_dop853_historical53_20261104.json) and
+  [`current18`](res4_dop853_current18_20261104.json); the 53-mode cohort is
+  historical and is included to check those former outliers against the
+  continuous-coefficient solver, not to imply they remain current failures.
 
 The retained stiff random sample11 is a second independent hard point. Its
 current h=.02 Fast root (`DN_eff=4.857519441699757`) was checked by a same-input
