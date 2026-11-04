@@ -344,9 +344,22 @@ not a claim that the missing 37-paper set or a 50-paper survey is complete.
    and render this representation unstable; the current tensor equation is
    homogeneous and crosses such regimes, so the construction is not adopted.
    [Original full text](https://arxiv.org/abs/2211.13744)
+10. Agocs, Handley, Lasenby and Hobson, “An efficient method for solving
+    highly oscillatory ordinary differential equations with applications to
+    physical systems,” arXiv:1906.01421 (2019, `oscode`). The solver targets
+    `x''+2 gamma x'+omega^2 x=0`, can consume numerically tabulated background
+    coefficients, and alternates adaptive fifth-order RK with WKB steps using
+    an order-difference error estimate. It was applied to the Mukhanov–Sasaki
+    equation. The authors caution that tolerances below `1e-6` need a higher
+    order RK pair, accumulated WKB phase integrals above about `1e12` exceed
+    double-precision phase resolution, and dense arbitrary-point output was
+    not available in that version. It is a strong independent candidate for
+    single-mode comparison, but reheating kinks require explicit partitioning
+    and its documented error ceiling must be tested against the present gates.
+    [Original full text](https://arxiv.org/abs/1906.01421)
 
 The exact 37-item appendix remains absent from the supplied attachment and
-repository history. The nine entries above are distinct primary works with
+repository history. The ten entries above are distinct primary works with
 targeted full-text reading; they do not reconstruct that list and do not meet
 the requested 50-source audit.
 
