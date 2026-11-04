@@ -259,6 +259,78 @@ using the saved 94-mode Reference spectrum
 and its second-map fixed-point check
 [`sample11_reference_second_map_20261030.json`](sample11_reference_second_map_20261030.json).
 
-The separate blue-tilt res4 `h=.02, transition_refine=True` fixed-background
-Reference map is still running; do not use this endpoint correction's Oracle C
-checks to claim that candidate's self-consistent root is verified.
+The separate blue-tilt res4 `h=.02, transition_refine=True` candidate's
+independent fixed-background Reference and local secant-root check are now
+complete; see the 2026-11-04 record below. This is a separate parameter-point
+check and does not expand the four-point Oracle C scope above.
+
+## 2026-11-04 res4 aligned-transition scalar-step path
+
+The optional `transition_refine=True`, `h=.02`, zero-radius path uses an exact
+reheating node, but its grid is otherwise uniform for this parameter point.
+The kernel now detects that shape and uses scalar `h` plus the exact final
+interval width. If any true interior refinement or near-coincident physical
+anchor exists, it retains the full interval-width array. The optimization is
+guarded by a floating-point roundoff check and does not change the formal
+default grid. Code and regression tests are committed at `671aa11`.
+
+On the blue-tilt res4 point (`r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`,
+`kappa10=.01`, `DN_re=10`) and 260 common native frequencies:
+
+- The refreshed uniform `h=.005` full-root spectrum has maximum tail9 error
+  `6.455e-4 dex`; 18 modes exceed `5e-4 dex` and none exceed `1e-3 dex`.
+- The `h=.02`, zero-radius refined candidate has Fast root
+  `DN_eff=0.13372910340092184`. Independent tail9/tail10 Reference maps at
+  that exact input differ from the Fast map by `4.622e-5` and `5.647e-5`
+  relative. Its spectrum maximum error is `3.4487e-4 dex` against tail10, with
+  zero modes above `5e-4 dex`.
+- The independent Reference fixed-point root is closed at
+  `DN_eff=0.13373681807168084` (input `0.13373681817755848`, relative map
+  residual `-7.92e-10`). The Fast root differs by `-5.77e-5` relative. At the
+  Reference root, Fast's spectrum median/P95/maximum error is
+  `6.109e-5 / 3.162e-4 / 3.4532e-4 dex`.
+- Reference tail9-to-tail10 spectrum change on the same 260 frequencies is
+  median/P95/maximum `9.94e-8 / 7.282e-5 / 2.0604e-4 dex`. Reference estimates
+  at the closed root are `1.84e-20` quadrature error and `1.82e-10`
+  interpolation error.
+- A fresh fixed-background factorial decomposition at the candidate
+  `DN_eff=0.13374433666555344` puts the maximum tail9 spectrum error of the
+  uniform fast primitive, uniform `sigma_exact`, and transition-refined path
+  at `4.1984e-4 dex`; none of the 260 modes exceeds `5e-4 dex`. The old
+  53-mode `>1e-3 dex` record is stale for current source. Comparing complete
+  roots instead, the default root has 18 modes above `5e-4 dex` while the
+  candidate has none. This isolates the remaining default-root discrepancy
+  mainly to the outer `DN_eff` map/root, rather than the continuous primitive,
+  tensor propagation, or analytic-tail handoff. The 260-node Reference's own
+  tail9-to-tail10 change and quadrature/interpolation estimates above bound
+  the Reference contribution separately.
+- An independent DOP853 integration of the continuous-coefficient tensor
+  system on the 18 former edge modes agrees with the refined Fast values to
+  maximum `2.56e-6 dex`; the two DOP853 tolerance settings differ by at most
+  `1.40e-6 dex`. Both methods stay within `2.5e-5 dex` of the tail9 Reference
+  on those modes. They do not trigger the analytic tail handoff.
+
+With 15 alternating pairs on fixed affinity, candidate/default warm P50/P95
+ratios are `0.849/0.894` at 2 threads, `0.938/0.926` at 7 threads, and
+`0.916/0.972` at 8 threads. The fresh 8-thread run measured candidate
+`62.0/68.7 ms` versus default `67.7/70.7 ms`, below the 100 ms difficult-point
+target. In that run, scalar steps vs the full interval array differed by
+`2.78e-16` in `DN_eff` and at most `2.85e-14 dex` in spectrum, while using
+`0.730/0.769` of array-path P50/P95. The corrected three-variant batch rate
+was `13.82 cases/s`. A separate 10-pair resource profile
+measured 14.8 cases/s and post-call RSS maxima of 159.5 MiB (default) and
+157.0 MiB (candidate); these are sampled RSS values, not OS high-water marks.
+The scalar-step output matches the previous full-array candidate to
+`6.04e-14 dex` maximum and the root to `1.67e-15` absolute.
+
+Reproduction uses [`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)
+with the saved 260-mode Reference spectrum
+[`res4_reference_secant_root_tail10_20261104.npz`](res4_reference_secant_root_tail10_20261104.npz).
+The expensive independent root map can be rerun with
+[`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py);
+the aggregate results and provenance are in
+[`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json).
+The raw closed-root Reference map is saved in
+[`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json).
+This remains one difficult parameter point, not global parameter-space
+certification.

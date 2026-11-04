@@ -36,6 +36,11 @@ PNG 默认写入 `scripts/`，也可通过输出路径参数指定其他位置�
 `benchmark_transition_frontier_ab.py` 在两个 `DN_re` 边界上交替运行正式 fast 与匹配的转折细化配置，
 记录每次求解耗时及各配置内部的输出摘要。它本身不认证精度；精度需查看匹配的 Oracle C 记录。
 
+`benchmark_res4_scalar_step.py` 配对运行默认 h=.005 路径与对齐 h=.02 转折细化完整根路径，
+读取已保存的 tail10 Reference 谱，并记录同频误差、线程 affinity、首次调用和热 P50/P95、调用后 RSS、批吞吐及重复输出摘要。
+`benchmark_res4_reference_root.py` 在显式 `DN_eff` 和相同260个原生频率上运行一次独立固定背景 Reference 映射；耗时可能达到数十分钟，
+此脚本本身不执行外层自洽迭代。
+
 `benchmark_lvk_likelihood_cache.py` 需要安装 Cobaya extra；它使用随包的 54,593 行 LVK 数据，对比旧似然计算与缓存数据/NumPy 归约路径。
 它保留逐次耗时、似然差值和低频支持边界检查；测量范围是单次似然调用，不代表完整 Cobaya 或 MCMC 耗时。
 默认在 `docs/` 下生成带时间戳的 JSON；`--json` 可指定输出路径。

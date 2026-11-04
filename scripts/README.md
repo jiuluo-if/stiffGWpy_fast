@@ -50,6 +50,15 @@ transition-refinement configuration on the two `DN_re` edges. It records raw
 solver-call timings and per-variant output digests; it does not establish
 accuracy by itself. Read the matched Oracle C records separately.
 
+`benchmark_res4_scalar_step.py` runs paired full-root Fast comparisons between
+the default h=.005 path and the aligned h=.02 transition-refinement path. It
+uses the saved tail10 Reference spectrum and records fixed-frequency errors,
+thread affinity, first-call and warm P50/P95 timings, post-call RSS, batch
+throughput, and repeat digests. `benchmark_res4_reference_root.py` runs one
+independent fixed-background Reference map at an explicit `DN_eff` on the same
+260 native frequencies; it can take tens of minutes and does not perform the
+outer self-consistency iteration itself.
+
 `benchmark_lvk_likelihood_cache.py` requires the Cobaya extra and compares the
 previous LVK likelihood calculation with the cached-data/NumPy-reduction path
 on the packaged 54,593-bin table. It records raw per-call samples, likelihood
