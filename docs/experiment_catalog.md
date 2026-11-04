@@ -324,6 +324,16 @@ parameter-domain tests and remains a research prototype. Reproduce with
 [`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
 and `--frequency -10.772906114757099` or
 `--frequency -14.6013 --phase-start 6`.
+The subsequent complete-grid screen completed 213/260 modes (maximum/P95
+order-32 error `1.548e-4/5.562e-8 dex`); 45 modes failed the high-frequency
+screen and two had non-positive `Q`. The existing 20-step Newton limit was
+retained; 14 modes passed the collocation and dense residual gates despite not
+reaching the tighter update stopping test. The `45.9x` summed time ratio
+applies only to the 213 supported modes and compares a single candidate run with archived
+Cartesian timings; it is not full-grid coverage or a paired performance claim.
+See [`nonosc_phase_res4_fullgrid_20261104.json`](nonosc_phase_res4_fullgrid_20261104.json)
+and reproduce with
+[`benchmark_nonosc_phase_res4_fullgrid.py`](../scripts/benchmark_nonosc_phase_res4_fullgrid.py).
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see

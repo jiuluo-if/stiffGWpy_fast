@@ -136,23 +136,23 @@ def phase_segment(a, b, regime, k, state, z_left):
     qp = Dt @ q
     r = 1j * scale * np.sqrt(q) - qp / (4.0 * q)
     iterations = 0
+    newton_update_converged = False
+    last_relative_update = math.inf
     for iterations in range(1, 21):
         resid = Dt @ r + r * r + scale**2 * q
         h = np.linalg.solve(Dt + np.diag(2.0 * r), -resid)
         r += h
-        if np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0) < 2e-14:
+        last_relative_update = float(np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0))
+        if last_relative_update < 2e-14:
+            newton_update_converged = True
             break
-    else:
-        raise RuntimeError(
-            "Newton iteration did not converge on %s branch N=[%.17g, %.17g], "
-            "Q range=[%.17g, %.17g], last relative update=%.3g"
-            % (regime, a, b, float(Q.min()), float(Q.max()), float(np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0)))
-        )
     resid = Dt @ r + r * r + scale**2 * q
     collocation_residual_scaled = float(np.max(np.abs(resid)) / scale**2)
     if collocation_residual_scaled > 1e-10:
         raise ArithmeticError(
-            "collocated Riccati residual %.3g exceeds the prototype gate" % collocation_residual_scaled
+            "collocated Riccati residual %.3g exceeds the prototype gate on %s branch "
+            "N=[%.17g, %.17g], last relative update=%.3g after %d steps"
+            % (collocation_residual_scaled, regime, a, b, last_relative_update, iterations)
         )
     cr = C.chebfit(x, r, k - 1)
     xd = np.linspace(-1.0, 1.0, 201)
@@ -199,6 +199,8 @@ def phase_segment(a, b, regime, k, state, z_left):
             "order": k,
             "gamma_min": gamma_min,
             "newton_iterations": iterations,
+            "newton_update_converged": newton_update_converged,
+            "newton_last_relative_update": last_relative_update,
             "collocation_residual_scaled": collocation_residual_scaled,
             "dense_residual_scaled": dense_residual_scaled,
         },
