@@ -170,6 +170,55 @@ def test_numba_h2_sigma_matches_python_across_cosmologies(params, dn_eff):
             REF._H2_and_sigma_python(background, float(N))
 
 
+@pytest.mark.parametrize('params, dn_eff', [
+    ({'r': 1e-2, 'cr': 1, 'T_re': 2e3, 'kappa10': 1e-2},
+     0.133732083004284),
+    ({'r': 1e-2, 'cr': 1, 'T_re': 1e4, 'kappa10': 1e-2}, 0.2),
+    ({'r': 1e-2, 'cr': 1, 'T_re': 1e1, 'kappa10': 1e-2}, 0.2),
+    ({'r': 1e-2, 'cr': 1, 'T_re': 2e3, 'kappa10': 1.0}, 0.2),
+    ({'r': 0.19649188544593907, 'cr': 0,
+      'T_re': 1761.314039059193, 'kappa10': 0.011598483151630803},
+     2.291411867022825),
+])
+def test_numba_tensor_rhs_matches_python_on_piecewise_boundaries(params, dn_eff):
+    """A fused Numba tensor RHS preserves the Python derivatives exactly."""
+    model = LCDM_SG(**params, DN_eff=dn_eff)
+    background = REF._Background(model, dn_eff)
+    REF._warmup_numba_reference_background(background)
+    rhs = REF._make_numba_tensor_rhs(background)
+
+    points = [background.N_re_abs, background.N_inf - background.N_fin,
+              background.N_inf - background.N_max, background.N_inf]
+    for nu_edge in (100.0, 0.1):
+        edge = background.N_inf + math.log(nu_edge / background.nu_today)
+        points.extend((np.nextafter(edge, -np.inf), edge,
+                       np.nextafter(edge, np.inf)))
+    rng = np.random.default_rng(20261105)
+    points.extend(rng.uniform(background.N_re_abs, background.N_inf, 128))
+    states = [np.array([z, x, y]) for z, x, y in (
+        (-12.0, 0.0, 1.0), (-1.0, 1e-8, -2e-8),
+        (0.0, 1.0, 0.5), (8.0, -0.2, 0.3),
+    )]
+
+    for N in points:
+        for state in states:
+            expected = REF._tensor_orig(float(N), state, background)
+            actual = rhs(float(N), state, background)
+            assert actual == expected
+
+
+def test_numba_tensor_rhs_preserves_python_overflow_failures(model):
+    """Extreme exponents retain the existing Python OverflowError behavior."""
+    dn_eff = model.cosmo_param['DN_eff']
+    background = REF._Background(model, dn_eff)
+    rhs = REF._make_numba_tensor_rhs(background)
+    background.N_re_abs = -1000.0
+    with pytest.raises(OverflowError):
+        rhs(background.N_inf - 711.0, np.array([0.0, 0.0, 1.0]), background)
+    with pytest.raises(OverflowError):
+        rhs(background.N_inf, np.array([711.0, 0.0, 1.0]), background)
+
+
 @pytest.mark.parametrize('freqs, expected_warmups', [
     (np.array([-12.0]), 0),
     (np.linspace(-18.0, -7.0, 32), 1),
@@ -177,12 +226,22 @@ def test_numba_h2_sigma_matches_python_across_cosmologies(params, dn_eff):
 def test_spectrum_reference_jit_warmup_is_batched(model, monkeypatch, freqs,
                                                     expected_warmups):
     """Do not pay the H2 JIT compile cost for a one-frequency reference call."""
-    calls = []
+    h2_calls = []
+    rhs_calls = []
     monkeypatch.setattr(REF, '_NUMBA_H2_SIGMA_READY', False)
+    monkeypatch.setattr(REF, '_NUMBA_TENSOR_RHS_READY', False)
     monkeypatch.setattr(REF, '_warmup_numba_spline', lambda: None)
+
+    def warm_h2(bg):
+        h2_calls.append(bg)
+        monkeypatch.setattr(REF, '_NUMBA_H2_SIGMA_READY', True)
+
     monkeypatch.setattr(
-        REF, '_warmup_numba_reference_background',
-        lambda bg: calls.append(bg),
+        REF, '_warmup_numba_reference_background', warm_h2,
+    )
+    monkeypatch.setattr(
+        REF, '_warmup_numba_reference_tensor_rhs',
+        lambda bg: rhs_calls.append(bg),
     )
     monkeypatch.setattr(
         REF, 'solve_reference_mode',
@@ -196,7 +255,34 @@ def test_spectrum_reference_jit_warmup_is_batched(model, monkeypatch, freqs,
         model, freqs, model.cosmo_param['DN_eff'], workers=1
     )
 
-    assert len(calls) == expected_warmups
+    assert len(h2_calls) == expected_warmups
+    assert len(rhs_calls) == expected_warmups
+
+
+def test_spectrum_reference_prufer_batch_skips_cartesian_rhs_warmup(model,
+                                                                    monkeypatch):
+    calls = []
+    monkeypatch.setattr(REF, '_NUMBA_H2_SIGMA_READY', True)
+    monkeypatch.setattr(REF, '_NUMBA_TENSOR_RHS_READY', False)
+    monkeypatch.setattr(REF, '_warmup_numba_spline', lambda: None)
+    monkeypatch.setattr(
+        REF, '_warmup_numba_reference_tensor_rhs',
+        lambda bg: calls.append(bg),
+    )
+    monkeypatch.setattr(
+        REF, 'solve_reference_mode',
+        lambda *args, **kwargs: {
+            'Ogw_today': 1.0, 'Oj_today': 0.0, 'Opgw_today': 1.0,
+            'used_tail': False,
+        },
+    )
+
+    REF.spectrum_reference(
+        model, np.linspace(-18.0, -7.0, 32), model.cosmo_param['DN_eff'],
+        workers=1, backend='prufer',
+    )
+
+    assert calls == []
 
 
 def test_numba_h2_sigma_preserves_cr_positive_mode_solutions(monkeypatch):
@@ -261,6 +347,11 @@ def test_numba_h2_sigma_preserves_python_overflow_and_nonfinite_behavior(model):
         expected_zero = REF._H2_and_sigma_python(singular, 0.0)
         actual_zero = REF._H2_and_sigma(singular, 0.0)
     assert expected_zero == actual_zero == (0.0, math.inf)
+    with np.errstate(all='ignore'):
+        expected_rhs = REF._tensor_orig(0.0, np.array([0.0, 1.0, 1.0]), singular)
+        actual_rhs = REF._make_numba_tensor_rhs(singular)(
+            0.0, np.array([0.0, 1.0, 1.0]), singular)
+    assert actual_rhs == expected_rhs
 
 
 def test_integrate_spectrum_exponential():
