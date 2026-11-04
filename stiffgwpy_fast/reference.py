@@ -25,6 +25,7 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
+from numba import njit
 from scipy import interpolate
 from scipy.integrate import quad, solve_ivp
 
@@ -69,6 +70,73 @@ def _fd_splines():
 _FD_NU, _FD_RHO_CS, _FD_P_CS = _fd_splines()
 
 
+@njit(cache=False)
+def _cubic_spline_eval(x, c, point):
+    """Evaluate a SciPy cubic segment with compiled Horner arithmetic.
+
+    中文：使用原样条系数和 Horner 形式计算三次分段多项式，避免标量 SciPy 分发开销。
+    """
+    if math.isnan(point):
+        return math.nan
+    lo = 0
+    hi = x.size
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if point < x[mid]:
+            hi = mid
+        else:
+            lo = mid + 1
+    i = lo - 1
+    if i < 0:
+        i = 0
+    elif i >= x.size - 1:
+        i = x.size - 2
+    dx = point - x[i]
+    return ((c[0, i] * dx + c[1, i]) * dx + c[2, i]) * dx + c[3, i]
+
+
+def _cubic_spline_eval_python(x, c, point):
+    """Evaluate a cubic spline scalar without the first-call JIT cost.
+
+    中文：便宜的冷单模使用 Python 标量 Horner 求值，避免为一次短计算触发 JIT 编译。
+    """
+    point = float(point)
+    if math.isnan(point):
+        return math.nan
+    i = int(np.searchsorted(x, point, side='right')) - 1
+    if i < 0:
+        i = 0
+    elif i >= x.size - 1:
+        i = x.size - 2
+    dx = point - float(x[i])
+    return ((float(c[0, i]) * dx + float(c[1, i])) * dx
+            + float(c[2, i])) * dx + float(c[3, i])
+
+
+# Measured cold-cost crossover for the res4 frequency screen; this only selects
+# an evaluator and does not alter the represented cubic or any physical input.
+# 中文：根据 res4 冷启动基准选择评估器，不改变样条和物理输入。
+_NUMBA_SPLINE_CROSSOVER_FREQ = -15.0
+
+
+def _spline_evaluator_for_frequency(freq, compiled_ready=None):
+    """Avoid first-call compilation for cheap modes; use it for costly modes.
+
+    中文：JIT 尚未编译时，便宜频点用 Python 路径；高成本频点和已预热批次用 Numba 路径。
+    """
+    if compiled_ready is None:
+        compiled_ready = bool(getattr(_cubic_spline_eval, 'signatures', ()))
+    if compiled_ready or freq >= _NUMBA_SPLINE_CROSSOVER_FREQ:
+        return _cubic_spline_eval
+    return _cubic_spline_eval_python
+
+
+def _warmup_numba_spline():
+    if not _cubic_spline_eval.signatures:
+        _cubic_spline_eval(
+            gp.spl_rho.x, gp.spl_rho.c, float(gp.spl_rho.x[0]))
+
+
 class _Background:
     """Store model-dependent densities and boundaries for exact background evaluation.
 
@@ -79,9 +147,9 @@ class _Background:
     __slots__ = ('Omh2', 'Osh2', 'Oerh2', 'Otrh2', 'Otreh2', 'OLh2',
                  'N_inf', 'N_re', 'N_re_abs', 'N_fin', 'N_max',
                  'nu_today', 'Omega_ph2', 'Omega_nh2', 'Omega_mnuh2',
-                 'H_0')
+                 'H_0', 'spline_eval')
 
-    def __init__(self, m, DN_eff):
+    def __init__(self, m, DN_eff, spline_eval=None):
         d = m.derived_param
         Omh2 = d['Omega_mh2']
         Osh2 = d['Omega_sh2']
@@ -109,6 +177,8 @@ class _Background:
         self.Omega_nh2 = gp.Omega_nh2
         self.Omega_mnuh2 = gp.Omega_mnuh2
         self.H_0 = d['H_0']
+        self.spline_eval = (_cubic_spline_eval_python if spline_eval is None
+                            else spline_eval)
 
 
 def _H2_and_sigma(bg, N):
@@ -135,8 +205,8 @@ def _H2_and_sigma(bg, N):
                  + 2.0 * bg.Osh2 * e3N) / H2
     elif nu >= 0.1:
         lognu = math.log10(nu)
-        rho_nu = float(_FD_RHO_CS(lognu))
-        p_nu = float(_FD_P_CS(lognu))
+        rho_nu = bg.spline_eval(_FD_RHO_CS.x, _FD_RHO_CS.c, lognu)
+        p_nu = bg.spline_eval(_FD_P_CS.x, _FD_P_CS.c, lognu)
         H2 = (bg.Omh2
               + (bg.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * bg.Omega_nh2 + bg.Oerh2) * eN
               + bg.Osh2 * e3N + bg.OLh2 / e3N)
@@ -149,8 +219,8 @@ def _H2_and_sigma(bg, N):
         sigma = (bg.Omh2 + 4.0 / 3.0 * bg.Otrh2 * eN + 2.0 * bg.Osh2 * e3N) / H2
     elif N >= Nlast - bg.N_max:
         Nl = Nlast - N
-        rho_i = float(gp.spl_rho(Nl))
-        rhop_i = float(gp.spl_rhop(Nl))
+        rho_i = bg.spline_eval(gp.spl_rho.x, gp.spl_rho.c, Nl)
+        rhop_i = bg.spline_eval(gp.spl_rhop.x, gp.spl_rhop.c, Nl)
         H2 = bg.Omh2 + (bg.Omega_ph2 * rho_i + bg.Oerh2) * eN \
             + bg.Osh2 * e3N + bg.OLh2 / e3N
         sigma = (bg.Omh2 + (bg.Omega_ph2 * rhop_i + 4.0 / 3.0 * bg.Oerh2) * eN
@@ -274,10 +344,12 @@ def _handoff_diagnostics(bg, N, zf, xf, yf):
 
 def _solve_reference_mode_prufer(m, freq, DN_eff, z_tail, z_start, rtol, atol):
     """Solve one mode with the Cartesian state expressed in Prüfer variables."""
-    bg = _Background(m, DN_eff)
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    spline_eval = (_cubic_spline_eval_python if zero_tensor_limit else
+                   _spline_evaluator_for_frequency(freq))
+    bg = _Background(m, DN_eff, spline_eval=spline_eval)
     A_t = m.derived_param['A_t']
     nt = m.derived_param['nt']
-    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
     if A_t == 0.0 and not zero_tensor_limit:
         raise FloatingPointError('reference: tensor amplitude underflowed to zero')
     P_t = 0.0 if zero_tensor_limit else A_t * (10.0 ** freq / gp.f_piv) ** nt
@@ -418,10 +490,12 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
             m, freq, DN_eff, z_tail, z_start, rtol, atol)
     if atol is None:
         atol = [1e-12, 1e-22, 1e-22]
-    bg = _Background(m, DN_eff)
+    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
+    spline_eval = (_cubic_spline_eval_python if zero_tensor_limit else
+                   _spline_evaluator_for_frequency(freq))
+    bg = _Background(m, DN_eff, spline_eval=spline_eval)
     A_t = m.derived_param['A_t']
     nt = m.derived_param['nt']
-    zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
     if A_t == 0.0 and not zero_tensor_limit:
         raise FloatingPointError('reference: tensor amplitude underflowed to zero')
     P_t = 0.0 if zero_tensor_limit else A_t * (10.0 ** freq / gp.f_piv) ** nt
@@ -530,6 +604,9 @@ def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None,
         raise ValueError("reference backend must be 'cartesian' or 'prufer'")
     freqs = np.asarray(freqs, dtype=float)
     n = freqs.size
+    if (n and not _has_exact_zero_tensor_amplitude(m.cosmo_param)
+            and np.any(freqs >= _NUMBA_SPLINE_CROSSOVER_FREQ)):
+        _warmup_numba_spline()
     Ogw = np.empty(n)
     Oj = np.empty(n)
     Opgw = np.empty(n)
