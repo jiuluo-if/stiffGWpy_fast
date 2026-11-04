@@ -131,3 +131,9 @@ res4 连续背景候选根上的精确输入 tail10 Reference map 也已完成�
 Reference 增加显式的 backend="prufer" 选项，默认仍为 Cartesian。该实现是对原张量系统的振幅/相位坐标变换，不改物理方程；固定 res4 根点、260 个频率、tail10 下，候选 DN_gw 相对 Cartesian map 差 1.34e-8，同输入谱最大差 4.28e-5 dex。4 个代表模态、每模两组交替 A/B 测得汇总 4.27x 加速；这是采样点证据，不能推广到整个参数域。
 
 结果文件与适用限制见 [accuracy.md](accuracy.md#2026-11-04-opt-in-reference-prufer-backend)；数学变换、论文条件和资源结果汇总见 [reference_optimization_20261104.md](reference_optimization_20261104.md)。ARDC 作者代码的 260 模尝试在 45 分钟 CPU 预算内未完成，状态是资源超时且没有精度结论，原始记录见 [reference_ardc_res4_timeout_20261104.json](reference_ardc_res4_timeout_20261104.json)。
+
+## 2026-11-04 Reference 背景样条评估优化
+
+保持现有 SciPy 三次样条系数和背景方程不变，Reference 热回调改用 Numba 二分定位区间并 Horner 求值。两个困难模态相对 SciPy 标量调用加速`1.61–1.76`倍；四个历史频谱点最大差`1.93e-8 dex`。首次低频单模不触发 JIT；含高频的频谱批次在线程分发前预热。4 worker 与串行输出逐位一致，但该四模测试更慢，不能声称线程提速。样条 A/B、冷启动、worker 结果分别见[reference_spline_eval_benchmark_20261104.json](reference_spline_eval_benchmark_20261104.json)、[reference_spline_cold_low_20261104.json](reference_spline_cold_low_20261104.json)、[reference_spline_cold_high_20261104.json](reference_spline_cold_high_20261104.json)和[reference_spline_workers_20261104.json](reference_spline_workers_20261104.json)。更新基线后，4模 Prüfer 汇总加速`3.137`倍、最大谱差`5.22e-7 dex`，见[reference_prufer_production_ab_post_spline_20261104.json](reference_prufer_production_ab_post_spline_20261104.json)。这些均为采样点验证；新的全频谱自洽根仍待复验。
+
+随后在独立 Cartesian Reference 根`DN_eff=0.13373681817755848`和相同 260 个频率上，完成更新后 Prüfer 的 candidate-only tail10 全谱映射：相对映射差`4.39e-7`，固定点残差`-4.39e-7`，最大谱差`5.25e-5 dex`，单 worker 模传播耗时`569.1 s`。该结果验证新背景插值下的候选全网格精度，不是与当前 Cartesian 全网格配对的速度比；根附近映射斜率仍未测。原始逐模数据见[reference_prufer_spline_res4_refroot_20261104.json](reference_prufer_spline_res4_refroot_20261104.json)。

@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_numba_scalar_cubic_spline_evaluation",
+  "source_sha": "282b9c2ca92c69d2a91ab289f046cfdd69123b7f",
+  "worktree_dirty": true,
+  "source_script_sha256": "5a20630fc7db9a988b3d783590e7e66d964fcece2ce14686db4bf2b21c494af7",
+  "reference_module_sha256": "2942acfd55aef06a887f654a538dc68ea080c3d39ce053877290d5914905561f",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "rtol": 1e-09,
+  "atol": [
+    1e-12,
+    1e-22,
+    1e-22
+  ],
+  "pairs_per_case": 3,
+  "reference_archive": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+  "archive_rtol": 1e-11,
+  "archive_indices": [
+    0,
+    65,
+    130,
+    259
+  ],
+  "jit_warmup_compile_seconds": 0.3114795999135822,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "summaries": {
+    "no_tail": {
+      "freq_log10_hz": -14.6013,
+      "used_tail": false,
+      "scipy_runtime_s": {
+        "p50": 10.222749300068244,
+        "p95": 10.425108359917067
+      },
+      "numba_runtime_s": {
+        "p50": 6.192886400036514,
+        "p95": 6.439564430085011
+      },
+      "median_speedup": 1.650724499000655,
+      "paired_speedup_p50": 1.6720780264077542,
+      "paired_speedup_p95": 1.6855359008043076,
+      "scipy_nfev": [
+        627950,
+        627950,
+        627950
+      ],
+      "numba_nfev": [
+        627950,
+        627950,
+        627950
+      ],
+      "max_pair_relative_output_diff": 1.115192778440759e-08
+    },
+    "tail": {
+      "freq_log10_hz": -12.6723,
+      "used_tail": true,
+      "scipy_runtime_s": {
+        "p50": 11.214612700045109,
+        "p95": 11.294905749871395
+      },
+      "numba_runtime_s": {
+        "p50": 6.983031900133938,
+        "p95": 7.097242439957336
+      },
+      "median_speedup": 1.6059804480959063,
+      "paired_speedup_p50": 1.5898642075647162,
+      "paired_speedup_p95": 1.6043688240427874,
+      "scipy_nfev": [
+        767117,
+        767117,
+        767117
+      ],
+      "numba_nfev": [
+        767033,
+        767033,
+        767033
+      ],
+      "max_pair_relative_output_diff": 2.286175174941456e-07
+    }
+  },
+  "samples": [
+    {
+      "case": "no_tail",
+      "pair": 0,
+      "method": "scipy",
+      "runtime_s": 10.44759269990027,
+      "nfev": 627950,
+      "used_tail": false,
+      "output": [
+        8.661364430673465e-14,
+        4.2630919190589363e-17,
+        1.0847571488623188e-13
+      ]
+    },
+    {
+      "case": "no_tail",
+      "pair": 0,
+      "method": "numba",
+      "runtime_s": 6.192886400036514,
+      "nfev": 627950,
+      "used_tail": false,
+      "output": [
+        8.661364430684575e-14,
+        4.2630919364253406e-17,
+        1.0847571367651855e-13
+      ],
+      "paired_max_abs_output_diff": 1.2097133387732454e-21,
+      "paired_max_rel_output_diff": 1.115192778440759e-08
+    },
+    {
+      "case": "no_tail",
+      "pair": 1,
+      "method": "numba",
+      "runtime_s": 6.466973100090399,
+      "nfev": 627950,
+      "used_tail": false,
+      "output": [
+        8.661364430684575e-14,
+        4.2630919364253406e-17,
+        1.0847571367651855e-13
+      ]
+    },
+    {
+      "case": "no_tail",
+      "pair": 1,
+      "method": "scipy",
+      "runtime_s": 10.204599200049415,
+      "nfev": 627950,
+      "used_tail": false,
+      "output": [
+        8.661364430673465e-14,
+        4.2630919190589363e-17,
+        1.0847571488623188e-13
+      ],
+      "paired_max_abs_output_diff": 1.2097133387732454e-21,
+      "paired_max_rel_output_diff": 1.115192778440759e-08
+    },
+    {
+      "case": "no_tail",
+      "pair": 2,
+      "method": "scipy",
+      "runtime_s": 10.222749300068244,
+      "nfev": 627950,
+      "used_tail": false,
+      "output": [
+        8.661364430673465e-14,
+        4.2630919190589363e-17,
+        1.0847571488623188e-13
+      ]
+    },
+    {
+      "case": "no_tail",
+      "pair": 2,
+      "method": "numba",
+      "runtime_s": 6.113799199927598,
+      "nfev": 627950,
+      "used_tail": false,
+      "output": [
+        8.661364430684575e-14,
+        4.2630919364253406e-17,
+        1.0847571367651855e-13
+      ],
+      "paired_max_abs_output_diff": 1.2097133387732454e-21,
+      "paired_max_rel_output_diff": 1.115192778440759e-08
+    },
+    {
+      "case": "tail",
+      "pair": 0,
+      "method": "scipy",
+      "runtime_s": 11.214612700045109,
+      "nfev": 767117,
+      "used_tail": true,
+      "output": [
+        6.209402163828679e-10,
+        -6.621437180328878e-21,
+        2.0698007212982978e-10
+      ]
+    },
+    {
+      "case": "tail",
+      "pair": 0,
+      "method": "numba",
+      "runtime_s": 6.983031900133938,
+      "nfev": 767033,
+      "used_tail": true,
+      "output": [
+        6.209400744250571e-10,
+        -6.621435666552349e-21,
+        2.0698002481055954e-10
+      ],
+      "paired_max_abs_output_diff": 1.4195781078172886e-16,
+      "paired_max_rel_output_diff": 2.286175174941456e-07
+    },
+    {
+      "case": "tail",
+      "pair": 1,
+      "method": "numba",
+      "runtime_s": 6.909843400120735,
+      "nfev": 767033,
+      "used_tail": true,
+      "output": [
+        6.209400744250571e-10,
+        -6.621435666552349e-21,
+        2.0698002481055954e-10
+      ]
+    },
+    {
+      "case": "tail",
+      "pair": 1,
+      "method": "scipy",
+      "runtime_s": 10.933143300004303,
+      "nfev": 767117,
+      "used_tail": true,
+      "output": [
+        6.209402163828679e-10,
+        -6.621437180328878e-21,
+        2.0698007212982978e-10
+      ],
+      "paired_max_abs_output_diff": 1.4195781078172886e-16,
+      "paired_max_rel_output_diff": 2.286175174941456e-07
+    },
+    {
+      "case": "tail",
+      "pair": 2,
+      "method": "scipy",
+      "runtime_s": 11.303827199852094,
+      "nfev": 767117,
+      "used_tail": true,
+      "output": [
+        6.209402163828679e-10,
+        -6.621437180328878e-21,
+        2.0698007212982978e-10
+      ]
+    },
+    {
+      "case": "tail",
+      "pair": 2,
+      "method": "numba",
+      "runtime_s": 7.109932499937713,
+      "nfev": 767033,
+      "used_tail": true,
+      "output": [
+        6.209400744250571e-10,
+        -6.621435666552349e-21,
+        2.0698002481055954e-10
+      ],
+      "paired_max_abs_output_diff": 1.4195781078172886e-16,
+      "paired_max_rel_output_diff": 2.286175174941456e-07
+    }
+  ],
+  "archive_check": {
+    "max_abs_dex_error": 1.9228139080951223e-08,
+    "rows": [
+      {
+        "index": 0,
+        "freq_log10_hz": -10.772906114757099,
+        "runtime_s": 8.337788200005889,
+        "nfev": 1080701,
+        "used_tail": true,
+        "candidate_log10_omega": -5.48490738062006,
+        "reference_log10_omega": -5.484907380411613,
+        "abs_dex_error": 2.084465933194224e-10
+      },
+      {
+        "index": 65,
+        "freq_log10_hz": -12.701943650817343,
+        "runtime_s": 13.67292629997246,
+        "nfev": 1384445,
+        "used_tail": true,
+        "candidate_log10_omega": -9.266168332487336,
+        "reference_log10_omega": -9.266168329391268,
+        "abs_dex_error": 3.096067402452718e-09
+      },
+      {
+        "index": 130,
+        "freq_log10_hz": -14.630981186877587,
+        "runtime_s": 12.839311100076884,
+        "nfev": 1045298,
+        "used_tail": false,
+        "candidate_log10_omega": -13.121854687124939,
+        "reference_log10_omega": -13.121854706353078,
+        "abs_dex_error": 1.9228139080951223e-08
+      },
+      {
+        "index": 259,
+        "freq_log10_hz": -18.459378758443304,
+        "runtime_s": 0.016790199792012572,
+        "nfev": 1754,
+        "used_tail": false,
+        "candidate_log10_omega": -17.589357329394435,
+        "reference_log10_omega": -17.58935732939446,
+        "abs_dex_error": 2.4868995751603507e-14
+      }
+    ]
+  },
+  "method": "alternating SciPy CubicSpline scalar call versus Numba Horner evaluation of the same stored coefficients"
+}

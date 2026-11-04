@@ -274,3 +274,27 @@ After changing the Cartesian baseline, the Prüfer A/B was repeated on the same
 four modes: aggregate speedup `3.349x`, per-mode P50/P95 `3.085x/3.990x`, and
 maximum spectrum error `1.401e-5 dex`; see
 [`reference_prufer_production_ab_postdense_20261104.json`](reference_prufer_production_ab_postdense_20261104.json).
+
+The Reference background now evaluates its unchanged SciPy cubic coefficients
+through a Numba Horner helper for expensive modes and retains a no-JIT scalar
+path for cheap cold single-mode requests. Same-input res4 A/B runs were
+`1.61x–1.76x` faster; four archived spectrum modes matched within
+`1.93e-8 dex`. See
+[`reference_spline_eval_benchmark_20261104.json`](reference_spline_eval_benchmark_20261104.json)
+and [`benchmark_reference_spline_eval.py`](../scripts/benchmark_reference_spline_eval.py).
+Cold low-frequency single-mode calls do not compile; batched high-frequency
+spectra warm the kernel before worker dispatch. Four-worker outputs matched
+serial bitwise on four selected modes, but the small parallel run was slower,
+so no thread speedup is claimed. The post-spline Prüfer comparison remains
+`3.137x` on four modes with max spectrum error `5.22e-7 dex`; raw data are in
+[`reference_prufer_production_ab_post_spline_20261104.json`](reference_prufer_production_ab_post_spline_20261104.json)
+and [`reference_spline_workers_20261104.json`](reference_spline_workers_20261104.json).
+Cold dispatch records are in
+[`reference_spline_cold_low_20261104.json`](reference_spline_cold_low_20261104.json)
+and [`reference_spline_cold_high_20261104.json`](reference_spline_cold_high_20261104.json);
+reproduce them with [`benchmark_reference_spline_cold.py`](../scripts/benchmark_reference_spline_cold.py).
+On the same updated source, a candidate-only 260-mode tail10 Prüfer run at the
+independent Reference root had map difference `4.39e-7` relative and maximum
+spectrum error `5.25e-5 dex`; runtime was `569.1 s` on one worker. It is not a
+paired full-grid Cartesian speed comparison. See
+[`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).

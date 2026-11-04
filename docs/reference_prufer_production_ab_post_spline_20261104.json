@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "experiment": "production_prufer_backend_against_archived_cartesian_res4",
+  "source_sha": "282b9c2ca92c69d2a91ab289f046cfdd69123b7f",
+  "source_script_sha256": "53a1ea445bb24959dffb4cf4a6464b4a04911be3442117b3a9ff1a7ed4e7ce4d",
+  "reference_module_sha256": "2942acfd55aef06a887f654a538dc68ea080c3d39ce053877290d5914905561f",
+  "worktree_dirty": true,
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "candidate_rtol": 1e-09,
+  "cartesian_rtol": 1e-11,
+  "repeats_per_mode": 2,
+  "atol": [
+    1e-12,
+    1e-12,
+    1e-12
+  ],
+  "spline_jit_warmup_seconds": 0.2954358998686075,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "reference_archive": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+  "frequency_count_full_grid": 260,
+  "selected_indices": [
+    0,
+    65,
+    130,
+    259
+  ],
+  "max_abs_dex_error": 5.211432121399184e-07,
+  "median_abs_dex_error": 2.944972163909654e-07,
+  "sum_candidate_seconds": 19.015464999713004,
+  "sum_cartesian_seconds": 59.64338980009779,
+  "aggregate_speedup": 3.1365727738447617,
+  "per_mode_speedup_p50": 3.0301478299489037,
+  "per_mode_speedup_p95": 3.539313407052311,
+  "rows": [
+    {
+      "index": 0,
+      "freq_log10_hz": -10.772906114757099,
+      "candidate_runtime_s": 2.7203501999611035,
+      "candidate_runtime_samples_s": [
+        2.588705899892375,
+        2.851994500029832
+      ],
+      "candidate_nfev": 419873,
+      "candidate_nfev_samples": [
+        419873,
+        419873
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 7.582151300041005,
+      "cartesian_runtime_samples_s": [
+        7.609533600043505,
+        7.554769000038505
+      ],
+      "cartesian_nfev": 1080701,
+      "speedup": 2.79422747070507,
+      "speedup_samples": [
+        2.939512595988548,
+        2.648942345421592
+      ],
+      "cartesian_log10_omega": -5.48490738062006,
+      "cartesian_abs_dex_from_archive": 2.084465933194224e-10,
+      "reference_log10_omega": -5.484907380411613,
+      "candidate_log10_omega": -5.4849077877577725,
+      "candidate_log10_omega_samples": [
+        -5.4849077877577725,
+        -5.4849077877577725
+      ],
+      "abs_dex_error": 4.073461594700234e-07
+    },
+    {
+      "index": 65,
+      "freq_log10_hz": -12.701943650817343,
+      "candidate_runtime_s": 4.113936600042507,
+      "candidate_runtime_samples_s": [
+        4.111739000072703,
+        4.116134200012311
+      ],
+      "candidate_nfev": 465953,
+      "candidate_nfev_samples": [
+        465953,
+        465953
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 12.90896985004656,
+      "cartesian_runtime_samples_s": [
+        12.972377799917012,
+        12.845561900176108
+      ],
+      "cartesian_nfev": 1384445,
+      "speedup": 3.137872228040597,
+      "speedup_samples": [
+        3.1549613921719346,
+        3.120783063909259
+      ],
+      "cartesian_log10_omega": -9.266168332487336,
+      "cartesian_abs_dex_from_archive": 3.096067402452718e-09,
+      "reference_log10_omega": -9.266168329391268,
+      "candidate_log10_omega": -9.266168511039542,
+      "candidate_log10_omega_samples": [
+        -9.266168511039542,
+        -9.266168511039542
+      ],
+      "abs_dex_error": 1.8164827331190736e-07
+    },
+    {
+      "index": 130,
+      "freq_log10_hz": -14.630981186877587,
+      "candidate_runtime_s": 2.663285599905066,
+      "candidate_runtime_samples_s": [
+        2.6127766999416053,
+        2.713794499868527
+      ],
+      "candidate_nfev": 267794,
+      "candidate_nfev_samples": [
+        267794,
+        267794
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 9.313376649981365,
+      "cartesian_runtime_samples_s": [
+        9.490347099956125,
+        9.136406200006604
+      ],
+      "cartesian_nfev": 1045298,
+      "speedup": 3.4994688512763474,
+      "speedup_samples": [
+        3.6322840371962255,
+        3.36665366535647
+      ],
+      "cartesian_log10_omega": -13.121854687124939,
+      "cartesian_abs_dex_from_archive": 1.9228139080951223e-08,
+      "reference_log10_omega": -13.121854706353078,
+      "candidate_log10_omega": -13.121854185209866,
+      "candidate_log10_omega_samples": [
+        -13.121854185209866,
+        -13.121854185209866
+      ],
+      "abs_dex_error": 5.211432121399184e-07
+    },
+    {
+      "index": 259,
+      "freq_log10_hz": -18.459378758443304,
+      "candidate_runtime_s": 0.010160099947825074,
+      "candidate_runtime_samples_s": [
+        0.01051499997265637,
+        0.00980519992299378
+      ],
+      "candidate_nfev": 914,
+      "candidate_nfev_samples": [
+        914,
+        914
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 0.01719709997996688,
+      "cartesian_runtime_samples_s": [
+        0.017268499825149775,
+        0.017125700134783983
+      ],
+      "cartesian_nfev": 1754,
+      "speedup": 1.6944333013540969,
+      "speedup_samples": [
+        1.642272931056156,
+        1.7465936716520378
+      ],
+      "cartesian_log10_omega": -17.589357329394435,
+      "cartesian_abs_dex_from_archive": 2.4868995751603507e-14,
+      "reference_log10_omega": -17.58935732939446,
+      "candidate_log10_omega": -17.589357331644866,
+      "candidate_log10_omega_samples": [
+        -17.589357331644866,
+        -17.589357331644866
+      ],
+      "abs_dex_error": 2.2504060837036377e-09
+    }
+  ],
+  "semantics": "production Reference backend=prufer; compare to archived Cartesian same-input map"
+}

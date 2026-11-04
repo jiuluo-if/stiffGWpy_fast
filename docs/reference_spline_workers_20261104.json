@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_numba_spline_worker_consistency",
+  "source_sha": "282b9c2ca92c69d2a91ab289f046cfdd69123b7f",
+  "worktree_dirty": true,
+  "source_script_sha256": "2169b63598245c2a17c51f8061ba65f15e13711acf8caad7daccc5bb368be6a1",
+  "reference_module_sha256": "2942acfd55aef06a887f654a538dc68ea080c3d39ce053877290d5914905561f",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "frequency_indices": [
+    0,
+    65,
+    130,
+    259
+  ],
+  "frequencies_log10_hz": [
+    -10.772906114757099,
+    -12.701943650817343,
+    -14.630981186877587,
+    -18.459378758443304
+  ],
+  "z_tail": 10.0,
+  "rtol": 1e-09,
+  "atol": [
+    1e-12,
+    1e-22,
+    1e-22
+  ],
+  "worker_count": 4,
+  "parallel_cold_or_warm_seconds": 34.78555179992691,
+  "parallel_jit_warmup_seconds": [
+    0.2960157000925392
+  ],
+  "serial_seconds": 17.501994400052354,
+  "serial_jit_warmup_seconds": [
+    2.2700056433677673e-05
+  ],
+  "bitwise_output_match": true,
+  "max_abs_component_diffs": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "max_abs_spectrum_error_dex_vs_archive": 3.720241696925086e-07,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 4,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "semantics": "four selected res4 modes only; worker consistency smoke, not a scaling estimate"
+}

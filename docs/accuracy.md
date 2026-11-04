@@ -478,7 +478,32 @@ res4 modes at `rtol=1e-11`, `z_tail=10`, and identical backgrounds, all
 `29.4/35.2 MB`. This scoped A/B does not establish a full-grid speed ratio.
 See [`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json)
 and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).
-Rechecking the Prüfer candidate against this faster Cartesian baseline gives
+The Reference hot path also evaluates the existing background `CubicSpline`
+coefficients with a Numba Horner evaluator. It matched the four-spline SciPy
+interpolants within `2.22e-16` absolute error on a 250,000-point screen. On two
+hard modes, the solve was `1.61x–1.76x` faster; the four-mode archived-spectrum
+check at `rtol=1e-11` had maximum error `1.93e-8 dex`. A no-JIT scalar path
+avoids compiling for the measured cheap low-frequency single-mode case. The
+updated Prüfer backend also passes a full 260-mode same-input tail10 check at
+the independent Cartesian root: map difference `4.39e-7` relative and maximum
+spectrum difference `5.25e-5 dex`. The Cartesian full-grid rerun and local root
+slope check remain open. Raw
+data are in [`reference_spline_eval_benchmark_20261104.json`](reference_spline_eval_benchmark_20261104.json).
+For cold requests, the first measured cheap low-frequency mode avoids JIT and
+remains `17.6 ms`; a costly mode pays `0.3 s` once and then uses the compiled
+interpolant. A four-mode 4-worker smoke matched serial outputs bitwise but was
+slower (`34.79 s` vs `17.50 s`), so it establishes thread correctness only.
+The fresh-process low/high mode records and worker smoke are
+[`reference_spline_cold_low_20261104.json`](reference_spline_cold_low_20261104.json),
+[`reference_spline_cold_high_20261104.json`](reference_spline_cold_high_20261104.json),
+and [`reference_spline_workers_20261104.json`](reference_spline_workers_20261104.json).
+After the Cartesian spline change, the four-mode Prüfer A/B is `3.137x`
+aggregate with maximum spectrum error `5.22e-7 dex`; see
+[`reference_prufer_production_ab_post_spline_20261104.json`](reference_prufer_production_ab_post_spline_20261104.json).
+The full-grid run record is
+[`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).
+Before the scalar-spline optimization, rechecking Prüfer against the
+dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
 ratios `3.085x/3.990x` and maximum spectrum error `1.401e-5 dex`; the endpoint
 mode is only `1.736x` faster. The updated paired samples are in

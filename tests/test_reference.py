@@ -209,6 +209,78 @@ def test_cartesian_tail_uses_event_state_without_dense_output(monkeypatch):
     assert math.isfinite(result['Ogw_today'])
 
 
+@pytest.mark.parametrize(
+    'name', ('spl_rho', 'spl_rhop', '_FD_RHO_CS', '_FD_P_CS'))
+def test_reference_compiled_cubic_spline_matches_scipy(name):
+    spline = (getattr(REF.gp, name) if name.startswith('spl_')
+              else getattr(REF, name))
+    points = np.concatenate((
+        np.array([spline.x[0] - 0.1, spline.x[0], spline.x[-1],
+                  spline.x[-1] + 0.1, np.nan]),
+        np.linspace(spline.x[0], spline.x[-1], 51),
+    ))
+    expected = np.asarray(spline(points), dtype=float)
+    for evaluator in (REF._cubic_spline_eval,
+                      REF._cubic_spline_eval_python):
+        actual = np.array([
+            evaluator(spline.x, spline.c, float(point))
+            for point in points
+        ])
+        np.testing.assert_allclose(actual, expected, rtol=2e-15, atol=3e-16,
+                                   equal_nan=True)
+
+
+def test_reference_spline_dispatch_avoids_cold_jit_for_cheap_modes():
+    assert REF._spline_evaluator_for_frequency(
+        -18.5, compiled_ready=False) is REF._cubic_spline_eval_python
+    assert REF._spline_evaluator_for_frequency(
+        -14.0, compiled_ready=False) is REF._cubic_spline_eval
+    assert REF._spline_evaluator_for_frequency(
+        -18.5, compiled_ready=True) is REF._cubic_spline_eval
+
+
+def test_spectrum_reference_warms_compiled_spline_before_mode_dispatch(monkeypatch):
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    events = []
+
+    def fake_mode(*args, **kwargs):
+        events.append('mode')
+        return {'Ogw_today': 1.0, 'Oj_today': 0.0, 'Opgw_today': 1.0,
+                'used_tail': False}
+
+    monkeypatch.setattr(REF, '_sync_size', lambda: 1)
+    monkeypatch.setattr(REF, '_warmup_numba_spline',
+                        lambda: events.append('warmup'))
+    monkeypatch.setattr(REF, 'solve_reference_mode', fake_mode)
+
+    REF.spectrum_reference(
+        m, np.array([-18.0, -14.0, np.nan]),
+        m.cosmo_param['DN_eff'], workers=2)
+
+    assert events == ['warmup', 'mode', 'mode', 'mode']
+
+
+def test_exact_zero_spectrum_does_not_warm_numba(monkeypatch):
+    m = LCDM_SG(r=0.0, cr=0.0, T_re=2e3, kappa10=1e-2)
+
+    def unexpected_warmup():
+        raise AssertionError('exact zero tensor should skip spline JIT warmup')
+
+    monkeypatch.setattr(REF, '_warmup_numba_spline', unexpected_warmup)
+    monkeypatch.setattr(REF, '_sync_size', lambda: 1)
+    monkeypatch.setattr(
+        REF, 'solve_reference_mode',
+        lambda *args, **kwargs: {
+            'Ogw_today': 0.0, 'Oj_today': 0.0, 'Opgw_today': 0.0,
+            'used_tail': False,
+        })
+
+    result = REF.spectrum_reference(
+        m, np.array([-14.0]), m.cosmo_param['DN_eff'], workers=1)
+
+    assert np.array_equal(result[0], np.array([0.0]))
+
+
 def test_prufer_rhs_rejects_frequency_exponential_underflow():
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     bg = REF._Background(m, m.cosmo_param['DN_eff'])

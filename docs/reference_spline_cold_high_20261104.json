@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_spline_single_mode_cold_dispatch",
+  "source_sha": "282b9c2ca92c69d2a91ab289f046cfdd69123b7f",
+  "worktree_dirty": true,
+  "source_script_sha256": "c3895809c63d091eeb658b4143c169079949bdba5e08de38022037b1a1e58a2a",
+  "reference_module_sha256": "2942acfd55aef06a887f654a538dc68ea080c3d39ce053877290d5914905561f",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "freq_log10_hz": -14.6013,
+  "z_tail": 10.0,
+  "rtol": 1e-09,
+  "atol": [
+    1e-12,
+    1e-22,
+    1e-22
+  ],
+  "runtime_s": 6.257647099904716,
+  "jit_signatures_before": 0,
+  "jit_signatures_after": 1,
+  "nfev": 627950,
+  "used_tail": false,
+  "log10_omega": -13.06262749866597,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  }
+}

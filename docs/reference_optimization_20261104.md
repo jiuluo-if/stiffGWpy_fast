@@ -118,6 +118,75 @@ endpoint is only `1.736x` faster. These four modes do not provide a full-grid
 speed distribution. Updated samples are in
 [`reference_prufer_production_ab_postdense_20261104.json`](reference_prufer_production_ab_postdense_20261104.json).
 
+## Compiled scalar background-spline evaluation
+
+Profiling the Cartesian DOP853 RHS found the Fermi–Dirac density and pressure
+`CubicSpline` scalar calls consumed `2.59 s` of a `7.35 s` no-tail solve and
+`2.43 s` of a `7.58 s` tail solve at `rtol=1e-9` (about 35% and 32%). A
+Numba-compiled evaluator now applies binary interval search and Horner
+evaluation to the exact four coefficients of the same SciPy cubic segment.
+No spline table, coefficients, or background equations are changed. Across
+250,000 random points spanning both spline tables, the maximum absolute
+difference from SciPy was `2.22e-16`, including tested extrapolation edges.
+
+Alternating A/B on the same res4 inputs, `DN_eff=0.133732083004284`,
+`z_tail=10`, `rtol=1e-9`, three pairs per mode:
+
+| Mode | SciPy P50/P95 | Compiled P50/P95 | Median speedup | Max paired output difference |
+|---|---:|---:|---:|---:|
+| `log10(f/Hz)=-14.6013`, no tail | `10.22/10.43 s` | `6.19/6.44 s` | `1.65x` | `1.12e-8` relative |
+| `log10(f/Hz)=-12.6723`, tail | `11.21/11.29 s` | `6.98/7.10 s` | `1.61x` | `2.29e-7` relative |
+
+The Reference `nfev` was unchanged for the no-tail mode; the tail mode changed
+by 84 evaluations out of 767,000 as roundoff changed a few adaptive step
+decisions. At `rtol=1e-11`, comparison with the archived same-input Cartesian
+res4 spectrum at four frequencies (two tail and two no-tail) had maximum error
+`1.93e-8 dex`. First-call JIT compilation took `0.31 s`. Cold dispatch uses the
+non-JIT scalar evaluator below the measured frequency crossover and prewarms
+once before a spectrum batch containing expensive modes; a cheap low-frequency
+single-mode solve took `17.6 ms` and did not compile. A cold 4-worker two-mode
+smoke matched serial outputs bitwise; it is not a scaling claim. Exact-zero
+tensor spectra bypass JIT. The Fast path does not use this evaluator.
+Fresh-process measurements are retained in
+[`reference_spline_cold_low_20261104.json`](reference_spline_cold_low_20261104.json)
+and [`reference_spline_cold_high_20261104.json`](reference_spline_cold_high_20261104.json),
+with reproduction driver
+[`benchmark_reference_spline_cold.py`](../scripts/benchmark_reference_spline_cold.py).
+
+Raw paired timing, archived-spectrum checks, source hashes, and resource
+metadata are in
+[`reference_spline_eval_benchmark_20261104.json`](reference_spline_eval_benchmark_20261104.json);
+reproduce with [`benchmark_reference_spline_eval.py`](../scripts/benchmark_reference_spline_eval.py).
+After this interpolation change, the production Prüfer backend was run over
+the full 260-mode tail10 grid at the independently closed Cartesian Reference
+root `DN_eff=0.13373681817755848`, with candidate `rtol=1e-9` and one worker.
+Its map differs from the archived Reference map by `4.386e-7` relative, the
+fixed-point residual at that input is `-4.394e-7`, and same-input spectrum
+P95/max error is `6.651e-6 / 5.246e-5 dex`. Candidate propagation took `569.1 s`
+including a `0.325 s` spline JIT warmup. This is a candidate-only run, not a
+paired full-grid Cartesian speed ratio; the full-grid Cartesian rerun and map
+slope/root-shift check remain open. Raw per-mode data and provenance are in
+[`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).
+
+The crossover is a latency dispatch only. A fresh low-frequency single-mode
+call at `log10(f/Hz)=-18.4594` used the Python scalar evaluator, completed in
+`17.6 ms`, and left the Numba dispatcher uncompiled. A fresh expensive mode at
+`-14.6013` compiled on demand and completed in `5.89 s`. A four-frequency
+parallel smoke included the one-time `0.296 s` warmup and returned bitwise the
+same spectra as serial, but took `34.79 s` versus `17.50 s`; this confirms
+correctness and shows no speedup for that small batch. The parallel sample is
+not a thread-scaling estimate. Its record and driver are
+[`reference_spline_workers_20261104.json`](reference_spline_workers_20261104.json)
+and [`benchmark_reference_spline_workers.py`](../scripts/benchmark_reference_spline_workers.py).
+
+Finally, Prüfer was remeasured against the Numba-accelerated Cartesian path on
+the same four res4 frequencies, two alternating pairs each, at candidate
+`rtol=1e-9` and Cartesian `rtol=1e-11`. Aggregate speedup is `3.137x`, per-mode
+ratio P50/P95 `3.030x/3.539x`, and maximum spectrum error `5.22e-7 dex`; the
+low-frequency endpoint is `1.69x` faster. The four-mode result does not
+replace the full-grid map result above. Raw samples are in
+[`reference_prufer_production_ab_post_spline_20261104.json`](reference_prufer_production_ab_post_spline_20261104.json).
+
 ## Original papers read so far
 
 The task attachment says a 37-paper appendix exists, but the attached file

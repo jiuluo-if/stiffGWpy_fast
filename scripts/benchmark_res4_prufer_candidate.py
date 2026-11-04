@@ -77,6 +77,9 @@ def main(argv=None):
     reference_source = ROOT / "stiffgwpy_fast" / "reference.py"
     script_digest = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     reference_digest = hashlib.sha256(reference_source.read_bytes()).hexdigest()
+    jit_warmup_start = time.perf_counter()
+    REF._warmup_numba_spline()
+    jit_warmup_seconds = time.perf_counter() - jit_warmup_start
     cartesian_rtol = (args.rtol if args.cartesian_rtol is None
                       else args.cartesian_rtol)
     rows = []
@@ -200,6 +203,7 @@ def main(argv=None):
         "cartesian_rtol": cartesian_rtol,
         "repeats_per_mode": args.repeats,
         "atol": [1e-12, 1e-12, 1e-12],
+        "spline_jit_warmup_seconds": jit_warmup_seconds,
         "resources": telemetry(workers=1, threads=1),
         "reference_archive": str(args.reference.resolve()),
         "frequency_count_full_grid": int(len(freqs)),
