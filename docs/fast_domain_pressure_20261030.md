@@ -615,11 +615,23 @@ received 101-pair rechecks. See `accuracy.md` and the reproducible
 [`benchmark_kink_terminal_step_fix.py`](../scripts/benchmark_kink_terminal_step_fix.py)
 with its raw [`Oracle C comparison`](kink_terminal_step_fix_oracle_c_20261030.json).
 
-The res4 blue-tilt `h=.02, radius=0` transition-refined candidate remains a
-separate optional experiment. Its same-background sampled spectrum passes the
-`5e-4 dex` screen and its fixed-resource timing is below100ms P50/P95 on eight
-threads, but its exact-DN independent Reference map is still running; the
-candidate is not certified or promoted yet.
+The res4 blue-tilt `h=.02, radius=0` transition-refined candidate remains an
+optional difficult-point path. The independent Reference map at the secant
+root closes to relative residual `-7.92e-10`; its Reference fixed-point root
+is `0.133736818072`, versus Fast `0.133729103401` (`-5.77e-5` relative). On
+260 common frequencies the Fast spectrum maximum error against this root is
+`3.4532e-4 dex`, with zero modes above `5e-4 dex`. Tail9-to-tail10 Reference
+spectra differ by at most `2.061e-4 dex`, below the requested Fast spectrum
+gate.
+
+The aligned transition grid uses a guarded scalar final-step path when all
+interior intervals match the base step within floating-point roundoff. It
+preserves the prior full-array output to `6.04e-14 dex` and reduces warm P50
+at the candidate point versus default `h=.005` by about `15%`, `6%`, and `9%`
+at 2, 7, and 8 threads respectively; at 8 threads P50/P95 is
+`66.6/73.9 ms`. Real interior subdivisions and near-coincident physical
+anchors retain the exact interval array. Full Reference, continuous DOP853,
+performance, and resource records are linked from `accuracy.md`.
 
 The terminal-step correction also improves random-corpus sample11 on the
 94-mode tail10 Reference grid at `h=.005,z_tail=8`: corrected Fast has

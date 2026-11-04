@@ -6,7 +6,7 @@ Status: current map of research notes and run artifacts
 
 Last full inventory: 2026-10-22
 
-Focused refresh: 2026-10-23 (formal-fast profile, Prüfer provenance, transition-refinement frontier, and LVK likelihood cache)
+Focused refresh: 2026-11-04 (formal-fast profile, Prüfer provenance, transition-refinement frontier, LVK likelihood cache, and res4 root closure)
 
 Code version: each artifact is commit-bound. The validation manifest is dated `2026-09-17`; newer profiles and reports are linked by their own run commit.
 
@@ -183,3 +183,42 @@ under `docs/`; use the thematic table above to follow each thread.
 - Engineering and plans: `engineering_audit.md`, `test_coverage_matrix.md`, `test_duplication_audit.md`, `superpowers/plans/2026-09-10-fast-v02-dn-gw.md`, `superpowers/plans/2026-09-23-fast-v02-tensor-propagation.md`.
 - Fast domain pressure screen: [`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md) records the 514-point boundary screen, 240-point coupled recheck, retained correctness fixes, difficult-point Reference/LSODA checks, the deep-tail correction, and rejected adaptive-handoff/selective-step candidates.
 - Navigation and history: `README.md`, `README_zh.md`, `experiment_catalog.md`, `experiment_catalog_zh.md`, `archive/README.md`, `archive/README_zh.md`, `archive/baselines/baseline_54d65e3.md`.
+
+## 2026-11-04 res4 root closure and aligned-grid scalar step
+
+The old pre-terminal-step artifact with 53 modes above `1e-3 dex` does not
+describe current HEAD. A fresh current-source decomposition finds 18 default
+uniform-path modes above `5e-4 dex` and none above `1e-3`; the h=.02
+transition-refined candidate is below `5e-4 dex` on all 260 native frequencies.
+Its Reference fixed-point root was independently closed at relative map
+residual `-7.92e-10`; Fast and Reference roots differ by `5.77e-5` relative.
+An independent continuous-coefficient DOP853 replay on the 18 remaining
+baseline edge modes agrees with refined Fast to max `2.56e-6 dex` and with
+tail9 Reference to max `2.47e-5 dex`.
+
+A fresh fixed-background 260-mode factorial run at the candidate DN finds all
+three tested propagation preparations (uniform fast primitive, uniform
+`sigma_exact`, and transition-refined) below `4.20e-4 dex` maximum against
+tail9. The current full-root default discrepancy is therefore dominated by the
+outer DN-map/root difference; the old 53-mode tensor-propagation interpretation
+is not current evidence. A fresh 15-pair 8-thread benchmark measured candidate
+P50/P95 at `62.0/68.7 ms` versus `67.7/70.7 ms` default. The three-variant
+batch rate is `13.82 cases/s`; scalar-step vs array-step spectra differ by at
+most `2.85e-14 dex`.
+
+Commit `671aa11` adds a guarded scalar terminal-step path for transition grids
+whose interior intervals are uniform within floating-point roundoff. The
+previous exact interval-array path is retained for real refinements and tiny
+physical anchors. At the target point, it preserves the array-path root to
+`1.67e-15` and spectra to `6.04e-14 dex`; the candidate meets the 100 ms
+8-thread target. The focused code tests are `61 passed, 1 deselected`; GitHub
+Actions run `41759168617` passed all nine jobs. Full point-level results and
+resource measurements are in [`accuracy.md`](accuracy.md) and
+[`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json).
+The Reference spectrum used for reproduction is
+[`res4_reference_secant_root_tail10_20261104.npz`](res4_reference_secant_root_tail10_20261104.npz),
+[`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json),
+and the benchmark drivers are
+[`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)
+and [`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py).
+These are sampled hard-point results, not global domain certification.

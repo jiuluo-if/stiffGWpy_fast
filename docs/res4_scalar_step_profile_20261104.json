@@ -1,0 +1,218 @@
+{
+  "case": "blue_res4_aligned_transition_scalar_step",
+  "code_commit": "671aa11d52e97102c952041caf935e3b8f6b6329",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0,
+    "n_t": 2,
+    "T_re_GeV": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10
+  },
+  "grid": {
+    "frequency_count": 260,
+    "h": 0.02,
+    "transition_refine_radius": 0.0,
+    "transition_refine_factor": 32,
+    "tail_z": 10
+  },
+  "current_old_outlier_context": {
+    "uniform_full_root_spectrum_error_median_p95_max_dex": [
+      0.00024991646174932214,
+      0.000570373033388449,
+      0.0006454853302031438
+    ],
+    "uniform_modes_over_5e-4": 18,
+    "uniform_modes_over_1e-3": 0,
+    "refined_full_root_spectrum_error_median_p95_max_dex": [
+      4.054250453044972e-05,
+      0.0003579978831303343,
+      0.0004197397062082331
+    ],
+    "refined_modes_over_5e-4": 0,
+    "fixed_background_refined_error_median_p95_max_dex": [
+      4.039792822485566e-05,
+      0.0003581107472380829,
+      0.00041983567012948697
+    ]
+  },
+  "fixed_point": {
+    "fast_dn_eff": 0.13372910340092184,
+    "reference_secant_root": 0.13373681817755848,
+    "fast_vs_reference_root_relative": -5.768625829271043e-05,
+    "reference_map_at_secant_root": 0.13373681807168084,
+    "reference_map_closure_relative": -7.916865484876011e-10,
+    "fast_map_residual_at_fast_root_tail9_relative": 4.62242403896629e-05,
+    "fast_map_residual_at_fast_root_tail10_relative": 5.647032190746109e-05,
+    "reference_secant_root_spectrum_error_median_p95_max_dex": [
+      6.108905849089297e-05,
+      0.0003162129154674176,
+      0.00034532080873184157
+    ],
+    "reference_quadrature_error": 1.8399618450052478e-20,
+    "reference_interpolation_error": 1.8218675245852667e-10,
+    "reference_root_vs_candidate_background_spectrum_delta_median_p95_max_dex": [
+      4.246358189519128e-07,
+      5.340660136798902e-07,
+      5.688550057669772e-07
+    ]
+  },
+  "reference_tail9_to_tail10_spectrum_delta_median_p95_max_dex": [
+    9.940451484169444e-08,
+    7.281693898244506e-05,
+    0.00020603868804514036
+  ],
+  "continuous_ode_cross_check_on_18_edge_modes": {
+    "n_modes": 18,
+    "fast_to_reference_median_p95_max_dex": [
+      4.9579709715530385e-06,
+      1.632245404170617e-05,
+      2.3236363023926287e-05
+    ],
+    "DOP853_to_reference_median_p95_max_dex": [
+      5.310620668552701e-06,
+      1.6449141412078192e-05,
+      2.4621494372212283e-05
+    ],
+    "DOP853_tolerance_change_max_dex": 1.4045243545979247e-06,
+    "fast_to_DOP853_median_p95_max_dex": [
+      7.108965309754467e-07,
+      1.5606990020344807e-06,
+      2.555582373275911e-06
+    ]
+  },
+  "scalar_vs_array_interval_path": {
+    "root_difference": -1.6653345369377348e-15,
+    "spectrum_delta_median_p95_max_dex": [
+      1.0658141036401503e-14,
+      4.2810199829545976e-14,
+      6.039613253960852e-14
+    ]
+  },
+  "paired_performance": {
+    "2_threads": {
+      "affinity": [
+        0,
+        1
+      ],
+      "default_p50_p95_ms": [
+        191.1162,
+        197.30418
+      ],
+      "candidate_p50_p95_ms": [
+        160.2419,
+        172.24145
+      ],
+      "candidate_over_default_p50_p95": [
+        0.8487084811238308,
+        0.8943021786751781
+      ]
+    },
+    "7_threads": {
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "default_p50_p95_ms": [
+        81.8909,
+        87.35714
+      ],
+      "candidate_p50_p95_ms": [
+        77.4053,
+        80.77616
+      ],
+      "candidate_over_default_p50_p95": [
+        0.9452246830844452,
+        0.924665802932651
+      ]
+    },
+    "8_threads": {
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8
+      ],
+      "default_p50_p95_ms": [
+        67.6857,
+        70.67941
+      ],
+      "candidate_p50_p95_ms": [
+        61.9828,
+        68.69766
+      ],
+      "candidate_over_default_p50_p95": [
+        0.9157443891398035,
+        0.9719614241262059
+      ]
+    }
+  },
+  "batch_and_memory": {
+    "threads": 8,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8
+    ],
+    "pairs": 10,
+    "batch_cases_per_second": 14.800814340389321,
+    "default_post_call_rss_max_mib": 159.50390625,
+    "candidate_post_call_rss_max_mib": 156.9921875,
+    "deterministic_replay": true,
+    "latest_three_variant_benchmark_cases_per_second": 13.821309511157585
+  },
+  "validation": {
+    "targeted_tests": "69 passed, 1 deselected (transition refinement, Fast SGWB, pressure sampler, benchmark metric)",
+    "ruff": "passed",
+    "compileall": "passed",
+    "github_actions_run": "41759168617, 9/9 success"
+  },
+  "scope_note": "One parameter point and 260 modes; this is not global parameter-space certification.",
+  "current_fixed_background_factorial": {
+    "source_commit": "671aa11d52e97102c952041caf935e3b8f6b6329",
+    "reference_tail": 9,
+    "frequency_count": 260,
+    "dn_eff": 0.13374433666555344,
+    "max_error_dex": 0.00041983980807458465,
+    "modes_over_5e-4_dex": 0,
+    "modes_over_1e-3_dex": 0,
+    "historical_53_mode_record": "not reproducible on current source"
+  },
+  "scalar_vs_array_current_8_threads": {
+    "pairs": 15,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8
+    ],
+    "candidate_over_array_p50_p95": [
+      0.7300304813413675,
+      0.7685616477359495
+    ],
+    "dn_eff_absolute_difference": 2.7755575615628914e-16,
+    "spectrum_delta_median_p95_max_dex": [
+      3.552713678800501e-15,
+      1.7763568394002505e-14,
+      2.842170943040401e-14
+    ]
+  }
+}

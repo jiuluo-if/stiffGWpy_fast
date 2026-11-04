@@ -4,7 +4,7 @@
 
 状态：研究主题和运行产物导航
 
-最近一次完整盘点：2026-10-22；2026-10-23 定向更新了 formal-fast 基线 profile、Prüfer 来源、转折细化边界实验和 LVK 似然缓存记录。
+最近一次完整盘点：2026-10-22；2026-11-04 定向更新了 formal-fast 基线 profile、Prüfer 来源、转折细化边界实验、LVK 似然缓存和 res4 根闭合记录。
 
 代码版本：每个实验文件均绑定自己的 commit；validation manifest 日期为 `2026-09-17`，较新的 profile 和报告需按各自运行提交号读取。
 
@@ -104,3 +104,12 @@ IPTA 和 NANOGrav 现在只在理论频点覆盖范围内插值，不再对范�
 - 参数/后验：`parameter_validation/parameter_validation_report.md`、`paramsweep_plain/validation_summary.md`、`paramsweep_z8/validation_summary.md`、`paramsweep_z8b/validation_summary.md`、`mcmc_posterior/posterior_validation.md`、`mcmc_sagenet_compare/report.md`。
 - 工程和计划：`engineering_audit.md`、`test_coverage_matrix.md`、`test_duplication_audit.md`、`superpowers/plans/2026-09-10-fast-v02-dn-gw.md`、`superpowers/plans/2026-09-23-fast-v02-tensor-propagation.md`。
 - 导航和历史：`README.md`、`README_zh.md`、`experiment_catalog.md`、`experiment_catalog_zh.md`、`archive/README.md`、`archive/README_zh.md`、`archive/baselines/baseline_54d65e3.md`。
+
+## 2026-11-04 res4 根闭合与对齐网格标量步长
+
+当前代码重跑逐模分解后，终点步长修复前记录的“53 个模态超过 `1e-3 dex`”已过时。当前默认均匀路径有18个模态超过`5e-4 dex`、没有模态超过`1e-3 dex`；`h=.02`转折细化候选在260个原生频率上均低于`5e-4 dex`。独立 Reference 固定点根的映射残差为`-7.92e-10`，Fast 与 Reference 根相差`5.77e-5`相对值。对当前18个边缘模态做的连续系数 DOP853 重算，与细化 Fast 最大相差`2.56e-6 dex`，与 tail9 Reference 最大相差`2.47e-5 dex`。
+
+在候选 DN 上重新运行260模态固定背景分解后，均匀快速原函数、均匀`sigma_exact`和转折细化路径的 tail9 最大谱误差均为`4.20e-4 dex`以内。因此当前完整根对照中的主要剩余差异来自外层 DN 映射/根，而非原函数、张量传播或旧的53模态解释。15组交替配对的8线程基准为：候选 P50/P95 `62.0/68.7 ms`，默认路径`67.7/70.7 ms`；三变体吞吐`13.82 cases/s`；标量步长和数组步长频谱最大差`2.85e-14 dex`。
+
+提交`671aa11`增加了受保护的标量终点步长路径：只有内部区间在浮点舍入容差内均匀时才使用；真实细化区间和极短物理锚点仍走完整步长数组。目标点输出相对之前数组路径根差`1.67e-15`、频谱最大差`6.04e-14 dex`。针对代码的测试为`61 passed, 1 deselected`，GitHub Actions 运行`41759168617`的9个 job 全部通过。完整点位结果、资源测量和原始 Reference 频谱见[`accuracy.md`](accuracy.md)以及
+[`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json)、原始闭合根映射[`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json)。复现实验使用[`res4_reference_secant_root_tail10_20261104.npz`](res4_reference_secant_root_tail10_20261104.npz)、[`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)和[`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py)。这些是单个困难参数点的验证，不等同于全参数域认证。
