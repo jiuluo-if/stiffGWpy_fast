@@ -191,6 +191,24 @@ def test_prufer_reference_backend_fails_closed_on_ode_failure(monkeypatch):
             backend='prufer')
 
 
+def test_cartesian_tail_uses_event_state_without_dense_output(monkeypatch):
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
+    original_solve_ivp = REF.solve_ivp
+    dense_output_values = []
+
+    def record_solve_ivp(*args, **kwargs):
+        dense_output_values.append(kwargs.get('dense_output'))
+        return original_solve_ivp(*args, **kwargs)
+
+    monkeypatch.setattr(REF, 'solve_ivp', record_solve_ivp)
+    result = REF.solve_reference_mode(
+        m, -8.0, m.cosmo_param['DN_eff'], z_tail=5.0, rtol=1e-9)
+
+    assert result['used_tail']
+    assert dense_output_values == [False]
+    assert math.isfinite(result['Ogw_today'])
+
+
 def test_prufer_rhs_rejects_frequency_exponential_underflow():
     m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2)
     bg = REF._Background(m, m.cosmo_param['DN_eff'])

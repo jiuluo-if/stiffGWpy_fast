@@ -443,7 +443,7 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     result = solve_ivp(_tensor_orig, Nspan, (z0, 0.0, y0),
                        method='DOP853', rtol=rtol, atol=atol,
                        events=[_make_tail_event(z_tail)],
-                       args=(bg,), dense_output=True)
+                       args=(bg,), dense_output=False)
 
     if not result.success:
         raise RuntimeError("reference tensor integration failed: %s" % result.message)
@@ -460,7 +460,9 @@ def solve_reference_mode(m, freq, DN_eff, z_tail=6.0, z_start=-12.0,
     matching_error_rel = None
     if used_tail:
         t_event = float(result.t_events[0][0])
-        zf, xf, yf = result.sol(t_event)
+        if not result.y_events or result.y_events[0].shape != (1, 3):
+            raise RuntimeError('reference integration returned no tail event state')
+        zf, xf, yf = result.y_events[0][0]
         _, sig = _H2_and_sigma(bg, t_event)
         eps_handoff = abs(1.5 * sig - 1.0) / math.exp(zf)
         # Leading-order WKB defect of the frozen-amplitude approximation.
