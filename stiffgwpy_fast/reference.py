@@ -821,7 +821,9 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     comparing against a half-density PCHIP. Each quadrature is split at the
     knots of its own interpolant; the coarse estimate therefore avoids
     unnecessary splits at the fine-grid midpoints. The coarse grid includes the
-    final input node when an even point count would otherwise omit it.
+    final input node when an even point count would otherwise omit it. If the
+    spectrum contains nonzero subnormal values, the interpolation is positively
+    rescaled and the integral/error estimates are scaled back afterward.
 
     Returns ``(g2, quadrature_error, interpolation_error)``.
 
@@ -839,6 +841,18 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
     if x.size < 4:
         g2 = ln10v * np.trapezoid(y, x) if x.size >= 2 else 0.0
         return float(g2), None, None
+    # PCHIP's harmonic-mean derivative uses reciprocal secant slopes. For a
+    # tiny physical spectrum, subnormal y values can make those reciprocals
+    # overflow even when the final integral is representable. PCHIP is
+    # homogeneous under positive scaling, so normalize only this small-signal
+    # path and restore the scale to the integral and both error estimates.
+    y_abs = np.abs(y)
+    peak_y = float(np.max(y_abs))
+    y_scale = 1.0
+    if (0.0 < peak_y < 1.0
+            and np.any((y_abs > 0.0) & (y_abs < np.finfo(float).tiny))):
+        y_scale = peak_y
+        y = y / y_scale
     spl = interpolate.PchipInterpolator(x, y)
 
     def f_quad(ell):
@@ -856,7 +870,7 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
                         epsrel=1e-10, limit=limit, points=breakpoints)
 
     val, abserr = _quad(f_quad, x)
-    g2 = ln10v * val
+    g2 = y_scale * ln10v * val
     # Half-density interpolation error estimate: compare to a coarser PCHIP.
     # 隔点抽样构造较粗的 PCHIP，并以两次积分之差估计插值误差。
     half = x[::2]
@@ -870,7 +884,10 @@ def integrate_spectrum(freqs, Ogw, Oj, ln10v=ln10):
         interp_err = ln10v * abs(val - val_h)
     else:
         interp_err = None
-    return float(g2), float(ln10v * abs(abserr)), (None if interp_err is None else float(interp_err))
+    qerr = y_scale * ln10v * abs(abserr)
+    if interp_err is not None:
+        interp_err *= y_scale
+    return float(g2), float(qerr), (None if interp_err is None else float(interp_err))
 
 
 def _spectrum_at_dn(m, freqs, DN_eff, z_tail, rtol, workers=None,

@@ -974,3 +974,62 @@ accuracy certification; the four nonfinite results are not successes. These
 are deliberately broad pilots, not success-rate or parameter-boundary claims.
 Raw rows and run summaries are linked from
 [`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md#2026-11-05-256-point-sobol-and-latin-hypercube-pilots).
+
+## 2026-11-05 subnormal Reference integral and extreme-grid convergence
+
+The `sobol_20261105_0146` extreme sample had a Reference spectrum spanning
+subnormal floating-point values. SciPy PCHIP's harmonic-mean slope calculation
+emitted overflow warnings while evaluating reciprocal secant slopes. In
+`integrate_spectrum`, the spectrum is now divided by its peak only when a
+nonzero subnormal value is present and the peak is below one; the integral and
+both error estimates are restored by the same positive scale. A regression
+test makes RuntimeWarnings errors and checks scale equivalence. The focused
+Reference suite passes `57 passed, 1 deselected`.
+
+At this point's native 77-node map, Cartesian and Prüfer tail5 agree within
+`2.89e-7 dex` per mode and `3.28e-10` in `DN_gw`, so propagation backend error
+is much smaller than the bolometric grid error. Default Fast versus the
+independent tail10 modes has maximum spectrum difference `0.00645 dex` and
+`DN_gw` difference `1.47%`, outside the requested gates. The `sigma_exact` plus
+tail10 diagnostic reduces those same-grid differences to `0.000346 dex` and
+`5.09e-5` relative, but does not establish a resolved bolometric integral or
+justify a production change. A critical tail mode's tail10-to-tail12 change is
+`1.60e-5 dex`; the separate mode/tail files document that convergence check.
+These are fixed-map diagnostics for one deliberately extreme point.
+
+On the exact fixed background, independent Prüfer Reference maps used the same
+`rtol=1e-9`, `z_tail=5`, one worker, and frequency resolutions 1/2/4/8
+(295/590/1181/2362 nodes). Their `DN_gw` values are
+`6.174897172552e-106`, `6.114755710207e-106`, `6.109445931037e-106`, and
+`6.109049829317e-106`. The res=4 to res=8 change is `6.48e-5` relative, below
+the `2e-4` gate; res=1 to res=8 changes by `1.066e-2`, demonstrating material
+frequency-grid under-resolution at the coarser setting. The native 77-node
+Fast map's `DN_gw=1.127720207096e-105` is not a certified integral for this
+extreme point. After scaling, the res=1 integral differs from the archived
+pre-change result by about `5e-16` relative, and res=8 reproduces the
+pre-change result within `2e-15`; no PCHIP warnings were emitted in the final
+res=1/2/4/8 run. This is a single fixed-background Reference convergence check,
+not a self-consistent root or an expansion of the certified Fast domain.
+The archived native 77-mode Prüfer tail5/tail10 solutions were also reintegrated
+without rerunning the ODEs: both `DN_gw` values changed by only `1.74e-16`
+relative and emitted zero warnings. This isolates the integration fix from
+mode propagation; see the [re-integration record](qmc_sobol146_post_scale_reintegration_20261105.json)
+and [driver](../scripts/reintegrate_qmc_sobol146_post_scale.py).
+
+The full grids, spectra, frequency/source hashes, warnings, runtime and
+environment are recorded in
+[`qmc_sobol146_reference_grid_convergence_20261105.json`](qmc_sobol146_reference_grid_convergence_20261105.json);
+rerun with
+[`validate_qmc_extreme_reference_grid_convergence.py`](../scripts/validate_qmc_extreme_reference_grid_convergence.py).
+On a separate 800-node, normal-scale synthetic spectrum, 24 alternating
+integrator pairs returned bitwise-identical `g2` and error estimates. P50 was
+`0.079655 s` before and `0.079686 s` after scaling support (0.04% higher);
+P95 was `0.080338/0.080249 s`. This measures only the integrator overhead, not
+a cosmological Reference map; raw timings and inputs are in
+[`reference_integrate_spectrum_scale_ab_20261105.json`](reference_integrate_spectrum_scale_ab_20261105.json)
+and the [benchmark driver](../scripts/benchmark_reference_integrate_spectrum_scale.py).
+The same-native-grid backend, Fast-mode, and tail-depth records are
+[`qmc_sobol146_reference_crosscheck_20261105.json`](qmc_sobol146_reference_crosscheck_20261105.json),
+[`qmc_sobol146_full_prufer_tail_convergence_20261105.json`](qmc_sobol146_full_prufer_tail_convergence_20261105.json),
+[`qmc_sobol146_mode_tail_probe_20261105.json`](qmc_sobol146_mode_tail_probe_20261105.json),
+and [`qmc_sobol146_prufer_tail_depths_20261105.json`](qmc_sobol146_prufer_tail_depths_20261105.json).
