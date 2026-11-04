@@ -561,22 +561,25 @@ Unlike the earlier Kummer-after-fit prototype, the phase is obtained by
 solving the collocated Riccati residual directly. The implementation remains
 standalone and does not alter the Reference API or production path.
 
-For `r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`, `kappa10=.01`, `DN_re=10`,
-`DN_eff=.13373681817755848`, and `log10(f/Hz)=-12.6723`, DOP853 propagated the
-original production `z'=1.5*sigma-1` together with `(T,T')` from `z=-12` to
-`z=5`. Six phase intervals then reached `z=10`, with an exact split at the
-`nu=.1` background branch boundary, using the branch-specific formula on each
-side. Orders 16/24/32 agree in spectrum within `5.4e-15 dex`; maximum Riccati
-residual on dense checks was `2.72e-14`. The spectrum differs from current
-Cartesian Reference (`rtol=1e-11`) by `1.7461e-8 dex`. The latest run took
-`0.134 s` including the low-frequency DOP853 prefix, versus `12.43 s` Cartesian
-(`~93x`) on this one
-tail-using mode. This passes a single-mode screen only; no no-tail, full-grid,
-integral-map, self-consistency, or parameter-domain check has been completed.
-Reproduce with
-[`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py);
-the full sample, segment residuals and provenance are in
-[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json).
+For `r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`, `kappa10=.01`, `DN_re=10`, and
+`DN_eff=.13373681817755848`, DOP853 propagated production `z'=1.5*sigma-1`
+with `(T,T')` from `z=-12` to `z=5`; six local phase intervals then reached
+`z=10`. The `log10(f/Hz)=-12.6723` mode crosses the `nu=.1` background branch
+boundary, which is split exactly and uses the corresponding one-sided formula.
+The higher-frequency `log10(f/Hz)=-10.772906` mode reaches `z=10` before that
+boundary. Against current Cartesian Reference (`rtol=1e-11`), their spectrum
+errors are `1.7461e-8` and `4.1274e-9 dex`; dense Riccati residual maxima are
+`2.72e-14` and `2.25e-14`. The latest candidate times, including the low-prefix
+DOP853 solve, are `0.138 s` and `0.139 s`, versus `12.66 s` and `7.57 s`
+Cartesian (about `92x` and `54x`). Spline JIT warmup (`~0.31 s`) is measured
+separately. These are two tail-using modes at one parameter point; no no-tail,
+full-grid, integral-map, self-consistency, or parameter-domain check has been
+completed. Reproduce with
+[`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
+using `--frequency -12.6723` and `--frequency -10.772906114757099`; results are
+[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json)
+and
+[`nonosc_phase_res4_highfreq_mode_20261104.json`](nonosc_phase_res4_highfreq_mode_20261104.json).
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
