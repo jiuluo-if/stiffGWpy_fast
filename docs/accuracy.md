@@ -687,14 +687,14 @@ frequencies returned `DN_gw=2.29141186744725`, for relative fixed-point
 residual `-1.85e-10`. This is a fixed-background map at the archived root, not
 a new outer root solve.
 
-At `gamma_min=10`, the phase method completed 700/800 modes; with
-`gamma_min=0`, it completed 709/800. On the latter strict 16/24/32 set, maximum
-and P95 error are `8.668e-7` and `2.413e-7 dex`. The phase path took about
-`145 s` against `45 s` for Cartesian, so this is an accuracy cross-check, not
-a speed improvement. No tail-semantic mismatches remain after the handoff fix.
-The other 91 modes remain explicit: 88 residual-gate failures and three
-non-positive-`Q` failures. Because the candidate grid is incomplete, no phase
-integral map or candidate-root residual is claimed.
+Before the residual-based Newton stop fix, the `gamma_min=10` phase screen
+completed 700/800 modes; `gamma_min=0` completed 709/800. On the latter strict
+16/24/32 set, maximum and P95 error were `8.668e-7` and `2.413e-7 dex`. The
+phase path took about `145 s` against `45 s` for Cartesian. No tail-semantic
+mismatches remain after the handoff fix. The original 91 unsupported modes
+comprised 88 residual-gate failures and three non-positive-`Q` failures. The
+candidate grid was incomplete, so no phase integral map or candidate-root
+residual was claimed.
 
 An independent order replay of the 88 residual failures found 14 no-tail modes
 that pass two adjacent orders and Cartesian checks: 13 at 16/24 and one at
@@ -740,11 +740,21 @@ residual `-1.85e-10`. This is a fixed-background map at the archived root, not
 a new outer root solve.
 
 At `gamma_min=10`, the phase method completed 700/800 modes with maximum/P95
-error `8.668e-7/2.416e-7 dex`. At `gamma_min=0`, it completed 709/800, with
-maximum/P95 `8.668e-7/2.413e-7 dex`; the phase path used about `145 s` versus
-`45 s` for Cartesian Reference, so it is slower on this grid. It did not
-produce a complete candidate integral map because 91 modes remain unsupported
+error `8.668e-7/2.416e-7 dex`. At `gamma_min=0`, it completed 714/800, with
+maximum/P95 `8.668e-7/2.412e-7 dex`; the phase path used `141.6 s` versus
+`45.9 s` for Cartesian Reference, so it is slower on this grid. It did not
+produce a complete candidate integral map because 86 modes remain unsupported
 or fail the residual gates. The output keeps those failures explicit.
+
+The Newton solve now stops when the existing scaled collocation residual gate
+(`1e-10`) is first met, while still checking the existing dense residual gate
+(`1e-9`). The Newton iteration cap remains 20 and neither gate changed. A
+same-source comparison found five new strict three-order modes `[670, 710,
+725, 739, 752]`, no losses from the prior 709, and unchanged maximum spectral
+error. The gamma-zero phase runtime changed from `145.4 s` to `141.6 s`; this
+prototype remains slower than Cartesian. The focused mode-656 regression
+reproduces the old residual failure and now passes both residual and spectral
+checks.
 
 A tail-event audit found and fixed a semantic bug exposed by these modes: four
 frequencies crossed `z_tail=5` during propagation but later had `z_today<5`.
@@ -756,23 +766,30 @@ fails before the fix and passes after it; the corrected 800-bin run has no tail
 semantic mismatches and maximum spectral error below `1e-6 dex` on supported
 modes.
 
-Independent order replays of the 88 gamma-zero residual failures find 14
-no-tail modes with adjacent-order agreement and Cartesian validation: 13
-orders 16/24 pairs and one 24/32 pair. Their maximum adjacent-order difference
-is `2.54e-10 dex`, and maximum Cartesian error is `2.72e-8 dex`.
+Independent order replays of the 83 remaining gamma-zero residual failures find
+16 modes with adjacent-order agreement and Cartesian validation. Their maximum
+adjacent-order difference is `7.07e-10 dex`, and maximum Cartesian error is
+`1.96e-7 dex`.
 
-A follow-up independently validated every one of the 37 order-16 solutions
-that passed the existing collocation and dense-residual gates. Tight Cartesian
-(`rtol=1e-11`) and Prüfer (`rtol=1e-9`) references agree within `9.32e-8 dex`
-maximum; the order-16 spectrum differs from them by at most `1.59e-8` and
-`9.33e-8 dex`, respectively. Thirteen of these 37 already appear in the
-adjacent-order set; the 24/32 pair contributes one additional mode. Thus
-747/800 frequencies are validated across the three-order, dual-reference
-single-order, and adjacent-order checks, with 50 residual failures and three
-non-positive-`Q` modes unresolved. The phase spectrum remains incomplete, so
-no phase `DN_gw` map or root is claimed. Reproduce the dual-reference pass with
-[`validate_sample2_order16_reference.py`](../scripts/validate_sample2_order16_reference.py)
-and see [`sample2_phase_order16_dual_reference_20261105.json`](sample2_phase_order16_dual_reference_20261105.json).
+A follow-up independently validated all 51 completed order candidates (33 at
+order 16, 17 at order 24, one at order 32) across 35 residual-failure
+frequencies. Tight Cartesian (`rtol=1e-11`) and Prüfer (`rtol=1e-9`) references
+agree within `9.32e-8 dex` maximum; candidate differences are at most
+`1.59e-8` and `9.33e-8 dex`, respectively. All 16 adjacent-order modes are in
+this dual-reference set. The unique validated count is therefore 749/800,
+with 48 residual failures and three non-positive-`Q` modes unresolved. The
+phase spectrum remains incomplete, so no phase `DN_gw` map or root is claimed.
+Reproduce the dual-reference pass with
+[`validate_sample2_residual_orders.py`](../scripts/validate_sample2_residual_orders.py)
+and see [`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_phase_residual_orders_dual_reference_20261105.json).
+
+A lower-order screen of the same 83 remaining modes at orders 8/12/16 completed
+0/1/33 per order. Its one converged 12/16 pair (index 756) is already in the
+dual-reference-validated set, so this alternative adds no new unique
+frequency coverage. It is recorded as a negative coverage result and is not
+used to alter the candidate or its residual gates; see
+[`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json)
+and [`probe_sample2_lower_collocation_orders.py`](../scripts/probe_sample2_lower_collocation_orders.py).
 
 Raw Reference and phase arrays, exact 800-bin rows, and provenance hashes are
 in [`sample2_reference_root_res8_tail5_20261104.json`](sample2_reference_root_res8_tail5_20261104.json),
@@ -780,12 +797,20 @@ in [`sample2_reference_root_res8_tail5_20261104.json`](sample2_reference_root_re
 [`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
 and
 [`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json).
+Its isolated Reference inputs are
+[`sample2_reference_root_res8_tail5_gamma0_20261105.json`](sample2_reference_root_res8_tail5_gamma0_20261105.json)
+and [`sample2_reference_root_res8_tail5_gamma0_20261105.npz`](sample2_reference_root_res8_tail5_gamma0_20261105.npz).
+The same-code high-screen run is
+[`sample2_phase_reference_root_res8_tail5_gamma10_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma10_20261105.json);
+its isolated Reference JSON/NPZ inputs are archived as
+[`sample2_reference_root_res8_tail5_gamma10_20261105.json`](sample2_reference_root_res8_tail5_gamma10_20261105.json)
+and [`sample2_reference_root_res8_tail5_gamma10_20261105.npz`](sample2_reference_root_res8_tail5_gamma10_20261105.npz).
 Reproduce with
 [`benchmark_phase_sample2_reference_root_grid.py`](../scripts/benchmark_phase_sample2_reference_root_grid.py)
 and the residual probe
 [`analyze_sample2_root_phase_order_failures.py`](../scripts/analyze_sample2_root_phase_order_failures.py).
-The order-16 dual-reference validation record is
-[`sample2_phase_order16_dual_reference_20261105.json`](sample2_phase_order16_dual_reference_20261105.json).
+The multi-order dual-reference validation record is
+[`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_phase_residual_orders_dual_reference_20261105.json).
 
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave

@@ -366,13 +366,12 @@ and
 [`nonosc_phase_sample2_mid3_20261104.json`](nonosc_phase_sample2_mid3_20261104.json).
 At the sample2 `freq_res=8`, `z_tail=5` Reference root (`DN_eff=2.2914118670`),
 a fresh fixed Cartesian map over 800 frequencies closes to `-1.85e-10` relative
-root residual. Phase transfer matches 700/800 at `gamma_min=10` and 709/800 at
-0, with maximum error `8.668e-7 dex` on the strict three-order set, but takes
-about `145 s` versus `45 s` for Cartesian. It is not a speed win and no phase
-map is claimed because 91 modes remain unsupported. The initial residual-order
-replay added 14 adjacent-order plus Cartesian checks (723 modes at that stage);
-the follow-up dual-reference validation and updated unique count are recorded
-below. See
+root residual. The initial phase screen matched 700/800 at `gamma_min=10` and
+709/800 at0, with maximum error `8.668e-7 dex` on the strict three-order set,
+but took about `145 s` versus `45 s` for Cartesian. It was not a speed win and
+the 91 unsupported modes prevented a complete phase map. The initial
+residual-order replay added 14 adjacent-order plus Cartesian checks (723 modes
+at that stage); the follow-up results are recorded below. See
 [`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
 [`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
 and
@@ -384,19 +383,31 @@ model derives `n_t=-.00125`, and the tail/no-tail errors are `3.54e-8` and
 and
 [`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
 On the distinct minimized sample2 cosmology's full 800-node Reference-root
-grid, phase propagation passes 700/800 at `gamma_min=10` and709/800 at0, with
-maximum error `8.668e-7 dex` on either strict set; it is about3.2x slower than
-the Cartesian map and has no complete phase integral map. A tail-event
-classification regression corrected four `z_today<z_tail` cases. The 88
-residual-rejected modes were replayed by order: 14 pass adjacent-order and
-Cartesian checks, and 37 order-16 candidates pass both tighter Cartesian and
-Prüfer references. After accounting for 13 overlapping modes, the unique total
-is747/800; 50 residual failures and three non-positive-`Q` modes remain. These
-checks still do not provide a complete phase integral map or root. See
+grid, phase propagation passes 700/800 at `gamma_min=10` and714/800 at0, with
+maximum error `8.668e-7 dex` on either strict set; gamma0 takes141.6s versus
+45.9s for Cartesian and has no complete phase integral map. A tail-event
+classification regression corrected four `z_today<z_tail` cases. Stopping
+Newton once the unchanged collocation residual gate is met (while retaining
+the dense gate and 20-step cap) adds five strict modes `[670,710,725,739,752]`
+without losses or increased maximum error. Among 83 remaining residual
+failures, 16 pass adjacent-order checks and 51 completed orders across 35 modes
+pass tighter Cartesian/Prüfer references. All 16 adjacent-order modes are in
+that set, so 749/800 are validated and 48 residual failures plus three
+non-positive-`Q` modes remain. Lower orders8/12/16 add no unique coverage.
+These checks still do not provide a complete phase integral map or root. See
 [`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
 [`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
 [`sample2_phase_root_residual_order_probe_20261105.json`](sample2_phase_root_residual_order_probe_20261105.json),
-and [`sample2_phase_order16_dual_reference_20261105.json`](sample2_phase_order16_dual_reference_20261105.json).
+[`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_phase_residual_orders_dual_reference_20261105.json),
+[`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json),
+[`sample2_phase_reference_root_res8_tail5_gamma10_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma10_20261105.json),
+and [`sample2_reference_root_res8_tail5_gamma0_20261105.json`](sample2_reference_root_res8_tail5_gamma0_20261105.json).
+A separate orders8/12/16 probe completed0/2/37 of the same88 residual modes;
+the two accepted12/16 pairs overlap the dual-reference set and add no distinct
+coverage. Keep this as an exploratory result only; it does not change the
+order16 candidate or gates. See
+[`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json)
+and `scripts/probe_sample2_lower_collocation_orders.py`.
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import pytest
@@ -87,3 +88,56 @@ def test_fullgrid_driver_accepts_a_valid_zero_segment_tail_transfer(monkeypatch)
     assert result["orders"][2]["segments"] == []
     assert result["max_dense_residual_scaled"] is None
     assert result["orders"][2]["abs_dex_error_vs_cartesian"] < 1e-3
+
+
+def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch):
+    root_grid = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "docs"
+            / "sample2_phase_reference_root_res8_tail5_gamma0_20261105.json"
+        ).read_text(encoding="utf-8")
+    )
+    probe = json.loads(
+        (
+            Path(__file__).resolve().parents[1]
+            / "docs"
+            / "sample2_phase_root_residual_order_probe_20261105.json"
+        ).read_text(encoding="utf-8")
+    )
+    row = next(item for item in root_grid["rows"] if item["index"] == 656)
+    probe_row = next(item for item in probe["rows"] if item["index"] == 656)
+    module = phase
+    params = {key: value for key, value in root_grid["params"].items() if key != "DN_eff"}
+    monkeypatch.setattr(module, "PARAMS", params)
+    monkeypatch.setattr(module, "ZTAIL", root_grid["z_tail"])
+    monkeypatch.setattr(module, "PHASE_GAMMA_MIN", 0.0)
+    phase_start = probe_row["phase_start"]
+    module.configure_case(root_grid["params"]["DN_eff"], row["freq_log10_hz"], phase_start)
+    low = module.solve_ivp(
+        module.low_rhs,
+        (module.NSTART, module.bg.N_inf),
+        (module.Z0, 1.0, 0.0),
+        method="DOP853",
+        rtol=1e-12,
+        atol=[1e-12, 1e-13, 1e-13],
+        events=[module.low_event],
+        dense_output=False,
+    )
+    assert low.success and low.t_events[0].size
+
+    state, bounds, segments, _, tail_used, z_end = module.candidate(
+        24,
+        low.y_events[0][0].tolist(),
+        float(low.t_events[0][0]),
+        phase_start,
+    )
+    end_n = bounds[-1][0]
+    power = (
+        module.spectrum_from_tail(state, end_n, z_end)
+        if tail_used
+        else module.spectrum_today(state, z_end)
+    )
+    assert max(item["collocation_residual_scaled"] for item in segments) <= 1e-10
+    assert max(item["dense_residual_scaled"] for item in segments) <= 1e-9
+    assert abs(math.log10(power["OmegaGW"]) - row["reference_log10_omega"]) < 1e-3

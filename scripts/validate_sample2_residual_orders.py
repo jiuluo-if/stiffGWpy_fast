@@ -1,6 +1,6 @@
-"""Independently validate order-16 phase modes against Cartesian and Prüfer.
+"""Independently validate completed phase orders against Cartesian and Prüfer.
 
-中文：对原残差门槛通过的单阶相位结果执行双参考复核；失败项保留，不替换数值。
+中文：对原残差门槛通过的各阶相位结果执行双参考复核；失败项保留，不替换数值。
 """
 
 from __future__ import annotations
@@ -23,11 +23,19 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 PROBE = ROOT / "docs" / "sample2_phase_root_residual_order_probe_20261105.json"
 ROOT_GRID = ROOT / "docs" / "sample2_phase_reference_root_res8_tail5_gamma0_20261105.json"
-OUTPUT = ROOT / "docs" / "sample2_phase_order16_dual_reference_20261105.json"
+OUTPUT = ROOT / "docs" / "sample2_phase_residual_orders_dual_reference_20261105.json"
 COLLOCATION_TOL = 1e-10
 DENSE_TOL = 1e-9
 SPECTRUM_TOL_DEX = 1e-3
 REFERENCE_AGREEMENT_TOL_DEX = 1e-4
+
+
+def _residual_within_gate(candidate, key, tolerance):
+    try:
+        value = float(candidate[key])
+    except (KeyError, TypeError, ValueError, OverflowError):
+        return False
+    return math.isfinite(value) and 0.0 <= value <= tolerance
 
 
 def classify_candidate(candidate, cartesian, prufer):
@@ -35,13 +43,9 @@ def classify_candidate(candidate, cartesian, prufer):
     reasons = []
     if candidate.get("status") != "completed":
         reasons.append("candidate_not_completed")
-    if candidate.get("max_collocation_residual_scaled") is None or candidate.get(
-        "max_collocation_residual_scaled", math.inf
-    ) > COLLOCATION_TOL:
+    if not _residual_within_gate(candidate, "max_collocation_residual_scaled", COLLOCATION_TOL):
         reasons.append("collocation_residual_gate")
-    if candidate.get("max_dense_residual_scaled") is None or candidate.get(
-        "max_dense_residual_scaled", math.inf
-    ) > DENSE_TOL:
+    if not _residual_within_gate(candidate, "max_dense_residual_scaled", DENSE_TOL):
         reasons.append("dense_residual_gate")
 
     references = (cartesian, prufer)
@@ -76,6 +80,11 @@ def classify_candidate(candidate, cartesian, prufer):
         "candidate_cartesian_error_dex": cartesian_error if not reasons else None,
         "candidate_prufer_error_dex": prufer_error if not reasons else None,
     }
+
+
+def select_completed_candidates(order_rows):
+    """Return only phase orders with a recorded successful gated solve."""
+    return [row for row in order_rows if row.get("status") == "completed"]
 
 
 def _reference_value(model, freq, dn_eff, z_tail, z_start, rtol, backend):
@@ -114,21 +123,18 @@ def main(argv=None):
     phase_path = ROOT / "scripts" / "prototype_nonosc_phase_res4_mode.py"
     selected = []
     for row in probe["rows"]:
-        candidate = next(
-            (item for item in row["orders"] if item["order"] == 16 and item["status"] == "completed"),
-            None,
-        )
-        if candidate is not None:
-            selected.append((row, candidate))
+        candidates = select_completed_candidates(row["orders"])
+        if candidates:
+            selected.append((row, candidates))
 
     started = time.perf_counter()
     results = []
-    for row, candidate in selected:
+    for row, candidates in selected:
         item = {
             "index": int(row["index"]),
             "freq_log10_hz": float(row["freq_log10_hz"]),
             "phase_start": float(row["phase_start"]),
-            "candidate": candidate,
+            "candidate_orders": [],
         }
         for name, rtol, backend in (
             ("cartesian_tight", 1e-11, "cartesian"),
@@ -152,13 +158,29 @@ def main(argv=None):
                 }
         cartesian = item["cartesian_tight"] if "log10_omega" in item["cartesian_tight"] else None
         prufer = item["prufer"] if "log10_omega" in item["prufer"] else None
-        item["validation"] = classify_candidate(candidate, cartesian, prufer)
+        for candidate in candidates:
+            item["candidate_orders"].append(
+                {
+                    "order": int(candidate["order"]),
+                    "candidate": candidate,
+                    "validation": classify_candidate(candidate, cartesian, prufer),
+                }
+            )
+        item["validated"] = any(
+            candidate["validation"]["accepted"] for candidate in item["candidate_orders"]
+        )
         results.append(item)
 
-    accepted = [row for row in results if row["validation"]["accepted"]]
+    accepted_modes = [row for row in results if row["validated"]]
+    accepted_candidates = [
+        candidate
+        for row in results
+        for candidate in row["candidate_orders"]
+        if candidate["validation"]["accepted"]
+    ]
     payload = {
         "schema_version": 1,
-        "experiment": "sample2_residual_order16_dual_reference_validation",
+        "experiment": "sample2_residual_orders_dual_reference_validation",
         "source_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "worktree_dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip()),
         "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -170,7 +192,7 @@ def main(argv=None):
         "params": probe["params"],
         "z_tail": probe["z_tail"],
         "z_start": root_grid["z_start"],
-        "candidate_order": 16,
+        "candidate_orders": [16, 24, 32],
         "candidate_residual_gates": {
             "collocation_scaled_max": COLLOCATION_TOL,
             "dense_scaled_max": DENSE_TOL,
@@ -181,13 +203,32 @@ def main(argv=None):
             "tail_semantics_must_match": True,
             "requires_candidate_residual_gates": True,
         },
-        "candidate_count": len(selected),
-        "validated_count": len(accepted),
-        "failed_count": len(results) - len(accepted),
+        "mode_count_probed": len(results),
+        "candidate_count": sum(len(row["candidate_orders"]) for row in results),
+        "validated_candidate_count": len(accepted_candidates),
+        "validated_mode_count": len(accepted_modes),
+        "validated_mode_indices": sorted(row["index"] for row in accepted_modes),
+        "candidate_count_by_order": {
+            str(order): sum(
+                item["order"] == order
+                for row in results
+                for item in row["candidate_orders"]
+            )
+            for order in (16, 24, 32)
+        },
+        "validated_candidate_count_by_order": {
+            str(order): sum(
+                item["order"] == order and item["validation"]["accepted"]
+                for row in results
+                for item in row["candidate_orders"]
+            )
+            for order in (16, 24, 32)
+        },
+        "failed_mode_count": len(results) - len(accepted_modes),
         "total_wall_seconds": time.perf_counter() - started,
         "resources": telemetry(workers=1, threads=1),
         "limitations": [
-            "Validation is limited to order-16 residual-failure modes at this fixed sample2 root background.",
+            "Validation is limited to completed orders from residual-failure modes at this fixed sample2 root background.",
             "This does not complete the 800-frequency phase map, integral, or self-consistency root.",
         ],
         "rows": results,

@@ -148,6 +148,7 @@ def phase_segment(a, b, regime, k, state, z_left):
     r = 1j * scale * np.sqrt(q) - qp / (4.0 * q)
     iterations = 0
     newton_update_converged = False
+    newton_residual_converged = False
     last_relative_update = math.inf
     for iterations in range(1, 21):
         resid = Dt @ r + r * r + scale**2 * q
@@ -156,6 +157,10 @@ def phase_segment(a, b, regime, k, state, z_left):
         last_relative_update = float(np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0))
         if last_relative_update < 2e-14:
             newton_update_converged = True
+            break
+        resid = Dt @ r + r * r + scale**2 * q
+        if float(np.max(np.abs(resid)) / scale**2) <= 1e-10:
+            newton_residual_converged = True
             break
     resid = Dt @ r + r * r + scale**2 * q
     collocation_residual_scaled = float(np.max(np.abs(resid)) / scale**2)
@@ -211,6 +216,7 @@ def phase_segment(a, b, regime, k, state, z_left):
             "gamma_min": gamma_min,
             "newton_iterations": iterations,
             "newton_update_converged": newton_update_converged,
+            "newton_residual_converged": newton_residual_converged,
             "newton_last_relative_update": last_relative_update,
             "collocation_residual_scaled": collocation_residual_scaled,
             "dense_residual_scaled": dense_residual_scaled,

@@ -50,9 +50,13 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--minimum-gamma", type=float, default=10.0)
     parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--reference-json", type=Path, default=REF_JSON)
+    parser.add_argument("--reference-npz", type=Path, default=REF_NPZ)
     args = parser.parse_args(argv)
     if not math.isfinite(args.minimum_gamma) or args.minimum_gamma < 0.0:
         raise ValueError("minimum-gamma must be finite and nonnegative")
+    reference_json = args.reference_json
+    reference_npz = args.reference_npz
 
     phase = phase_grid.phase
     phase.PARAMS.update(PARAMS)
@@ -90,7 +94,7 @@ def main(argv=None):
         raise FloatingPointError("Reference grid or log spectrum contains non-finite values")
 
     np.savez_compressed(
-        REF_NPZ,
+        reference_npz,
         freqs=freqs,
         reference_log10OmegaGW=reference_logs,
         reference_used_tail=reference_used_tail,
@@ -120,15 +124,16 @@ def main(argv=None):
         "tail_count": int(reference_used_tail.sum()),
         "log10OmegaGW_min": float(reference_logs.min()),
         "log10OmegaGW_max": float(reference_logs.max()),
-        "npz": REF_NPZ.name,
-        "npz_sha256": hashlib.sha256(REF_NPZ.read_bytes()).hexdigest(),
+        "npz": reference_npz.name,
+        "npz_sha256": hashlib.sha256(reference_npz.read_bytes()).hexdigest(),
         "resources": telemetry(workers=1, threads=1),
         "limitations": [
             "DN_eff is the previously converged res8 tail5 Reference root anchor; this is a fixed-background map, not a fresh outer root solve.",
             "The 800-bin sampled spectrum does not certify interpolation between native nodes.",
         ],
     }
-    REF_JSON.write_text(json.dumps(reference_payload, indent=2) + "\n", encoding="utf-8")
+    reference_json.parent.mkdir(parents=True, exist_ok=True)
+    reference_json.write_text(json.dumps(reference_payload, indent=2) + "\n", encoding="utf-8")
 
     rows = []
     phase_started = time.perf_counter()
@@ -185,8 +190,8 @@ def main(argv=None):
         "phase_script_sha256": hashlib.sha256(Path(phase.__file__).read_bytes()).hexdigest(),
         "benchmark_driver_sha256": hashlib.sha256(Path(phase_grid.__file__).read_bytes()).hexdigest(),
         "reference_module_sha256": reference_module_sha,
-        "reference_json_sha256": hashlib.sha256(REF_JSON.read_bytes()).hexdigest(),
-        "reference_npz_sha256": hashlib.sha256(REF_NPZ.read_bytes()).hexdigest(),
+        "reference_json_sha256": hashlib.sha256(reference_json.read_bytes()).hexdigest(),
+        "reference_npz_sha256": hashlib.sha256(reference_npz.read_bytes()).hexdigest(),
         "params": {**PARAMS, "DN_eff": DN_ROOT},
         "frequency_res": FREQ_RES,
         "frequency_count": int(freqs.size),
