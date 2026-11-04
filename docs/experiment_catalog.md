@@ -383,18 +383,19 @@ model derives `n_t=-.00125`, and the tail/no-tail errors are `3.54e-8` and
 and
 [`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
 On the distinct minimized sample2 cosmology's full 800-node Reference-root
-grid, phase propagation passes 700/800 at `gamma_min=10` and718/800 at0, with
-maximum error `8.668e-7 dex` on either strict set; gamma0 takes132.7s versus
-43.3s for Cartesian and has no complete phase integral map. A tail-event
+grid, phase propagation passes 700/800 at `gamma_min=10` and737/800 at0, with
+maximum error `8.668e-7 dex` on either strict set; gamma0 takes132.2s versus
+43.0s for Cartesian and has no complete phase integral map. A tail-event
 classification regression corrected four `z_today<z_tail` cases. Stopping
-Newton at the unchanged collocation gate while retaining the dense gate and
-20-step cap adds five modes; backtracking only when a full step fails to lower
-the residual adds four more `[685,712,713,751]`. No prior strict mode is lost
-or exceeds the existing error bound. Among 79 remaining residual failures, 14
-pass adjacent-order checks and 46 completed order candidates across 32 modes pass
-tighter Cartesian/Prüfer references. All 14 adjacent-order modes overlap that
-set, so 750/800 are validated and 47 residual failures plus three non-positive-`Q`
-modes remain. Lower orders 8/12/16 add no unique coverage.
+Newton at the unchanged collocation gate and conditional backtracking add nine
+strict modes; least-squares fallback for steps that still fail to decrease the
+residual adds19 more, `[656,671,672,687,700,701,702,703,714,716,718,726,730,
+733,734,755,756,767,769]`. No prior strict mode is lost. Among57 remaining
+residual failures,20 pass adjacent-order checks and70 completed order
+candidates across44 modes pass tighter Cartesian/Prüfer references. All20
+adjacent-order modes overlap that set, so781/800 are validated and13 residual
+failures plus six non-positive-`Q` modes remain. Lower orders8/12/16 add no
+unique coverage.
 These checks still do not provide a complete phase integral map or root. See
 [`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
 [`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
@@ -403,10 +404,9 @@ These checks still do not provide a complete phase integral map or root. See
 [`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json),
 [`sample2_phase_reference_root_res8_tail5_gamma10_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma10_20261105.json),
 and [`sample2_reference_root_res8_tail5_gamma0_20261105.json`](sample2_reference_root_res8_tail5_gamma0_20261105.json).
-A separate orders8/12/16 probe completed0/2/37 of the same88 residual modes;
-the two accepted12/16 pairs overlap the dual-reference set and add no distinct
-coverage. Keep this as an exploratory result only; it does not change the
-order16 candidate or gates. See
+The lower-order probe completed0/0/15 of the latest57 residual modes at
+orders8/12/16 and found no adjacent-order pair; keep it as an exploratory
+result only. See
 [`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json)
 and `scripts/probe_sample2_lower_collocation_orders.py`.
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant

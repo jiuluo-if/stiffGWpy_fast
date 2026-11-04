@@ -90,7 +90,7 @@ def test_fullgrid_driver_accepts_a_valid_zero_segment_tail_transfer(monkeypatch)
     assert result["orders"][2]["abs_dex_error_vs_cartesian"] < 1e-3
 
 
-@pytest.mark.parametrize(("index", "order"), [(656, 24), (687, 16)])
+@pytest.mark.parametrize(("index", "order"), [(656, 24), (687, 16), (672, 16)])
 def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch, index, order):
     root_grid = json.loads(
         (
@@ -107,13 +107,13 @@ def test_phase_collocation_stops_once_existing_residual_gate_is_met(monkeypatch,
         ).read_text(encoding="utf-8")
     )
     row = next(item for item in root_grid["rows"] if item["index"] == index)
-    probe_row = next(item for item in probe["rows"] if item["index"] == index)
+    probe_row = next((item for item in probe["rows"] if item["index"] == index), None)
     module = phase
     params = {key: value for key, value in root_grid["params"].items() if key != "DN_eff"}
     monkeypatch.setattr(module, "PARAMS", params)
     monkeypatch.setattr(module, "ZTAIL", root_grid["z_tail"])
     monkeypatch.setattr(module, "PHASE_GAMMA_MIN", 0.0)
-    phase_start = probe_row["phase_start"]
+    phase_start = probe_row["phase_start"] if probe_row else row["phase_start"]
     module.configure_case(root_grid["params"]["DN_eff"], row["freq_log10_hz"], phase_start)
     low = module.solve_ivp(
         module.low_rhs,
