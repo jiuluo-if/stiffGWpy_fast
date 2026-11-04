@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "experiment": "author_ARDC_res4_full_grid_timeout",
+  "status": "resource_timeout_cancelled",
+  "source_sha": "95b643ddbc07bad53c143f8600c94a2dd5cdabd1",
+  "package": "riccati",
+  "package_version": "2.0.0",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "eps": 1e-09,
+  "epsh": 1e-09,
+  "frequency_count": 260,
+  "workers": 1,
+  "cpu_time_s_approx": 2709.8,
+  "cpu_limit_s": 2700.0,
+  "termination": "Cancelled with Ctrl+C after the 45 minute CPU budget; process was live and CPU active.",
+  "completed_modes": null,
+  "accuracy_result": null,
+  "reason": "The whole-grid script writes only after all 260 modes; no partial spectrum artifact exists. No correctness or failure-rate claim is made.",
+  "reproduction_script": "scripts/benchmark_ardc_reference_screen.py",
+  "output_path": "docs/reference_ardc_res4_screen_20261104.json",
+  "output_created": false
+}

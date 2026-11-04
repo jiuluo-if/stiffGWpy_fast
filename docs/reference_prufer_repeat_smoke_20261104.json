@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "experiment": "existing_prufer_candidate_against_archived_cartesian_res4",
+  "source_sha": "95b643ddbc07bad53c143f8600c94a2dd5cdabd1",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "candidate_rtol": 1e-09,
+  "cartesian_rtol": 1e-09,
+  "repeats_per_mode": 2,
+  "atol": [
+    1e-12,
+    1e-12,
+    1e-12
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": "workqueue",
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "reference_archive": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+  "frequency_count_full_grid": 260,
+  "selected_indices": [
+    0,
+    259
+  ],
+  "max_abs_dex_error": 4.383459861756478e-07,
+  "median_abs_dex_error": 2.2029817126067996e-07,
+  "sum_candidate_seconds": 5.7720385999418795,
+  "sum_cartesian_seconds": null,
+  "aggregate_speedup": null,
+  "per_mode_speedup_p50": null,
+  "per_mode_speedup_p95": null,
+  "rows": [
+    {
+      "index": 0,
+      "freq_log10_hz": -10.772906114757099,
+      "candidate_runtime_s": 2.8702941999654286,
+      "candidate_runtime_samples_s": [
+        2.7245088999625295,
+        3.0160794999683276
+      ],
+      "candidate_nfev": 419669,
+      "candidate_nfev_samples": [
+        419669,
+        419669
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": null,
+      "cartesian_runtime_samples_s": [],
+      "cartesian_nfev": null,
+      "speedup": null,
+      "speedup_samples": [],
+      "cartesian_log10_omega": null,
+      "cartesian_abs_dex_from_archive": null,
+      "reference_log10_omega": -5.484907380411613,
+      "candidate_log10_omega": -5.484907818757599,
+      "candidate_log10_omega_samples": [
+        -5.484907818757599,
+        -5.484907818757599
+      ],
+      "abs_dex_error": 4.383459861756478e-07
+    },
+    {
+      "index": 259,
+      "freq_log10_hz": -18.459378758443304,
+      "candidate_runtime_s": 0.015725100005511194,
+      "candidate_runtime_samples_s": [
+        0.016485200030729175,
+        0.014964999980293214
+      ],
+      "candidate_nfev": 914,
+      "candidate_nfev_samples": [
+        914,
+        914
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": null,
+      "cartesian_runtime_samples_s": [],
+      "cartesian_nfev": null,
+      "speedup": null,
+      "speedup_samples": [],
+      "cartesian_log10_omega": null,
+      "cartesian_abs_dex_from_archive": null,
+      "reference_log10_omega": -17.58935732939446,
+      "candidate_log10_omega": -17.589357331644816,
+      "candidate_log10_omega_samples": [
+        -17.589357331644816,
+        -17.589357331644816
+      ],
+      "abs_dex_error": 2.2503563457121345e-09
+    }
+  ],
+  "semantics": "candidate-only timings; compare to archived Cartesian same-input map"
+}

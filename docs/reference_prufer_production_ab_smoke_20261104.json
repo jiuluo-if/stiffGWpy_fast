@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "experiment": "production_prufer_backend_against_archived_cartesian_res4",
+  "source_sha": "95b643ddbc07bad53c143f8600c94a2dd5cdabd1",
+  "source_script_sha256": "1a5c713fa308f44239bb22ac0d4bd22fbaecdfee8866a8fd4705241bd1282352",
+  "reference_module_sha256": "9fd123572dfd6e7f7e38979b8ed41f4138ab961148138de795e49d08583afa3d",
+  "worktree_dirty": true,
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "candidate_rtol": 1e-09,
+  "cartesian_rtol": 1e-11,
+  "repeats_per_mode": 2,
+  "atol": [
+    1e-12,
+    1e-12,
+    1e-12
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "reference_archive": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+  "frequency_count_full_grid": 260,
+  "selected_indices": [
+    0,
+    65,
+    130,
+    259
+  ],
+  "max_abs_dex_error": 1.40091702505174e-05,
+  "median_abs_dex_error": 2.2201060234650072e-07,
+  "sum_candidate_seconds": 21.72233799973037,
+  "sum_cartesian_seconds": 92.73179089999758,
+  "aggregate_speedup": 4.268959948102668,
+  "per_mode_speedup_p50": 4.143920596133582,
+  "per_mode_speedup_p95": 4.7041529085799,
+  "rows": [
+    {
+      "index": 0,
+      "freq_log10_hz": -10.772906114757099,
+      "candidate_runtime_s": 2.8474764499696903,
+      "candidate_runtime_samples_s": [
+        2.4956260999897495,
+        3.199326799949631
+      ],
+      "candidate_nfev": 419669,
+      "candidate_nfev_samples": [
+        419669,
+        419669
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 9.997372500016354,
+      "cartesian_runtime_samples_s": [
+        9.846643100026995,
+        10.148101900005713
+      ],
+      "cartesian_nfev": 1350578,
+      "speedup": 3.558754688496622,
+      "speedup_samples": [
+        3.945560234390656,
+        3.1719491426025876
+      ],
+      "cartesian_log10_omega": -5.484907380411613,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -5.484907380411613,
+      "candidate_log10_omega": -5.484907818757599,
+      "candidate_log10_omega_samples": [
+        -5.484907818757599,
+        -5.484907818757599
+      ],
+      "abs_dex_error": 4.383459861756478e-07
+    },
+    {
+      "index": 65,
+      "freq_log10_hz": -12.701943650817343,
+      "candidate_runtime_s": 4.676842349930666,
+      "candidate_runtime_samples_s": [
+        4.688863699906506,
+        4.664820999954827
+      ],
+      "candidate_nfev": 466997,
+      "candidate_nfev_samples": [
+        466997,
+        466997
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 20.731673350033816,
+      "cartesian_runtime_samples_s": [
+        21.207383300061338,
+        20.255963400006294
+      ],
+      "cartesian_nfev": 1730276,
+      "speedup": 4.432603453484113,
+      "speedup_samples": [
+        4.522925949091718,
+        4.342280957876508
+      ],
+      "cartesian_log10_omega": -9.266168329391268,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -9.266168329391268,
+      "candidate_log10_omega": -9.26616832371605,
+      "candidate_log10_omega_samples": [
+        -9.26616832371605,
+        -9.26616832371605
+      ],
+      "abs_dex_error": 5.675218517353642e-09
+    },
+    {
+      "index": 130,
+      "freq_log10_hz": -14.630981186877587,
+      "candidate_runtime_s": 3.325056899979245,
+      "candidate_runtime_samples_s": [
+        3.390635099960491,
+        3.2594786999979988
+      ],
+      "candidate_nfev": 266894,
+      "candidate_nfev_samples": [
+        266894,
+        266894
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 15.612976799951866,
+      "cartesian_runtime_samples_s": [
+        16.022902099997737,
+        15.203051499905996
+      ],
+      "cartesian_nfev": 1306466,
+      "speedup": 4.694946525565063,
+      "speedup_samples": [
+        4.725634468947851,
+        4.664258582182277
+      ],
+      "cartesian_log10_omega": -13.121854706353078,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -13.121854706353078,
+      "candidate_log10_omega": -13.121868715523329,
+      "candidate_log10_omega_samples": [
+        -13.121868715523329,
+        -13.121868715523329
+      ],
+      "abs_dex_error": 1.40091702505174e-05
+    },
+    {
+      "index": 259,
+      "freq_log10_hz": -18.459378758443304,
+      "candidate_runtime_s": 0.011793299985583872,
+      "candidate_runtime_samples_s": [
+        0.01240669994149357,
+        0.011179900029674172
+      ],
+      "candidate_nfev": 914,
+      "candidate_nfev_samples": [
+        914,
+        914
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 0.023872799996752292,
+      "cartesian_runtime_samples_s": [
+        0.02318140002898872,
+        0.024564199964515865
+      ],
+      "cartesian_nfev": 2093,
+      "speedup": 2.0328167308647167,
+      "speedup_samples": [
+        1.8684581829419213,
+        2.1971752787875123
+      ],
+      "cartesian_log10_omega": -17.58935732939446,
+      "cartesian_abs_dex_from_archive": 0.0,
+      "reference_log10_omega": -17.58935732939446,
+      "candidate_log10_omega": -17.589357331644816,
+      "candidate_log10_omega_samples": [
+        -17.589357331644816,
+        -17.589357331644816
+      ],
+      "abs_dex_error": 2.2503563457121345e-09
+    }
+  ],
+  "semantics": "production Reference backend=prufer; compare to archived Cartesian same-input map",
+  "candidate_implementation": "stiffgwpy_fast.reference.solve_reference_mode(backend=\"prufer\")",
+  "source_script": "scripts/benchmark_res4_prufer_candidate.py",
+  "current_reproduction_script_sha256": "f6779931fff7172ba4b358aa358707c96f7eaaf49e68521313a1dffb4f96cc6b",
+  "current_reference_source_sha256": "df6a2995857588d9748112c2533950f61cdafce63c768c4903e61a0c6876bd72",
+  "provenance_note": "Run-time source hashes are preserved above. Current source hashes are also recorded. After the numeric run, only API z_start forwarding, explicit frequency-underflow guards, and benchmark log-floor/error bookkeeping changed; the res4 test points do not exercise underflow and the tensor equations are unchanged."
+}

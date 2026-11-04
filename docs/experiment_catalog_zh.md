@@ -125,3 +125,9 @@ res4 连续背景候选根上的精确输入 tail10 Reference map 也已完成�
 
 提交`671aa11`增加了受保护的标量终点步长路径：只有内部区间在浮点舍入容差内均匀时才使用；真实细化区间和极短物理锚点仍走完整步长数组。目标点输出相对之前数组路径根差`1.67e-15`、频谱最大差`6.04e-14 dex`。针对代码的测试为`61 passed, 1 deselected`，GitHub Actions 运行`41759168617`的9个 job 全部通过。完整点位结果、资源测量和原始 Reference 频谱见[`accuracy.md`](accuracy.md)以及
 [`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json)、原始闭合根映射[`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json)。复现实验使用[`res4_reference_secant_root_tail10_20261104.npz`](res4_reference_secant_root_tail10_20261104.npz)、[`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)和[`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py)。这些是单个困难参数点的验证，不等同于全参数域认证。
+
+## 2026-11-04 Reference Prüfer 后端筛选
+
+Reference 增加显式的 backend="prufer" 选项，默认仍为 Cartesian。该实现是对原张量系统的振幅/相位坐标变换，不改物理方程；固定 res4 根点、260 个频率、tail10 下，候选 DN_gw 相对 Cartesian map 差 1.34e-8，同输入谱最大差 4.28e-5 dex。4 个代表模态、每模两组交替 A/B 测得汇总 4.27x 加速；这是采样点证据，不能推广到整个参数域。
+
+结果文件与适用限制见 [accuracy.md](accuracy.md#2026-11-04-opt-in-reference-prufer-backend)；数学变换、论文条件和资源结果汇总见 [reference_optimization_20261104.md](reference_optimization_20261104.md)。ARDC 作者代码的 260 模尝试在 45 分钟 CPU 预算内未完成，状态是资源超时且没有精度结论，原始记录见 [reference_ardc_res4_timeout_20261104.json](reference_ardc_res4_timeout_20261104.json)。
