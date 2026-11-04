@@ -206,6 +206,12 @@ P50/P95 at `62.0/68.7 ms` versus `67.7/70.7 ms` default. The three-variant
 batch rate is `13.82 cases/s`; scalar-step vs array-step spectra differ by at
 most `2.85e-14 dex`.
 
+The second hard point, retained random sample11, also passes on the current
+h=.02 path: its exact-input tail10 Reference DN-map residual is `-9.48e-6`
+relative, and same-DN spectrum maximum error is `9.149e-5 dex` on 94 modes.
+Raw Fast/Reference arrays and a rerunnable driver are linked in
+[`accuracy.md`](accuracy.md).
+
 Commit `671aa11` adds a guarded scalar terminal-step path for transition grids
 whose interior intervals are uniform within floating-point roundoff. The
 previous exact interval-array path is retained for real refinements and tiny

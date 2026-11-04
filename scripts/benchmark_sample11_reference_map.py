@@ -34,14 +34,30 @@ PARAMS = dict(
 )
 
 
+def align_spectrum(fast_freqs, fast_log, reference_freqs):
+    fast_freqs = np.asarray(fast_freqs, dtype=float)
+    fast_log = np.asarray(fast_log, dtype=float)
+    reference_freqs = np.asarray(reference_freqs, dtype=float)
+    if fast_freqs.ndim != 1 or fast_log.shape != fast_freqs.shape:
+        raise ValueError("Fast frequencies and spectrum must be equal 1-D arrays")
+    order = np.argsort(fast_freqs)
+    sorted_freqs = fast_freqs[order]
+    indexes = np.searchsorted(sorted_freqs, reference_freqs)
+    if (np.any(indexes >= sorted_freqs.size)
+            or not np.array_equal(sorted_freqs[indexes], reference_freqs)):
+        raise RuntimeError("Fast and Reference frequency grids differ")
+    return fast_log[order][indexes]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dn-eff", type=float, default=4.857519441699757)
     parser.add_argument("--z-tail", type=float, default=10.0)
     parser.add_argument("--rtol", type=float, default=1e-11)
+    parser.add_argument("--workers", type=int, default=1)
     parser.add_argument(
         "--frequencies", type=Path,
-        default=ROOT / "docs" / "sample11_reference_tail10_20261030.npz",
+        default=ROOT / "docs" / "sample11_h02_fast_20261104.npz",
     )
     parser.add_argument(
         "--output", type=Path,
@@ -50,6 +66,8 @@ def main():
     parser.add_argument("--affinity", default=None,
                         help="optional comma-separated CPU IDs")
     args = parser.parse_args()
+    if args.workers < 1:
+        parser.error("workers must be positive")
     process = psutil.Process()
     available = list(process.cpu_affinity())
     if args.affinity:
@@ -67,8 +85,22 @@ def main():
     reference = run_reference(
         model, dn_eff=float(args.dn_eff), freq_subset=frequencies,
         z_tail=float(args.z_tail), rtol=float(args.rtol),
-        self_consistent=False, physical_guard=False,
+        self_consistent=False, workers=args.workers, physical_guard=False,
     )
+    spectrum_path = args.output.with_suffix(".npz")
+    reference_freqs = np.asarray(reference["freqs"], dtype=float)
+    reference_log = np.asarray(reference["log10OmegaGW"], dtype=float)
+    fast_log = None
+    spectrum_error = None
+    if "log10OmegaGW" in saved.files:
+        fast_log = align_spectrum(
+            saved["freqs"], saved["log10OmegaGW"], reference_freqs
+        )
+        delta = np.abs(fast_log - reference_log)
+        spectrum_error = {
+            "median_p95_max_dex": np.percentile(delta, [50, 95, 100]).tolist(),
+            "modes_over_5e-4_dex": int(np.count_nonzero(delta > 5e-4)),
+        }
     record = {
         "case": "sample11_h02_fast_root_reference_map",
         "source_sha": subprocess.check_output(
@@ -83,11 +115,20 @@ def main():
         ),
         "z_tail": float(args.z_tail),
         "rtol": float(args.rtol),
+        "workers": int(args.workers),
         "frequency_count": int(len(reference["freqs"])),
+        "spectrum_file": str(spectrum_path.resolve()),
+        "spectrum_error_vs_fast": spectrum_error,
         "quadrature_error": reference.get("quadrature_error"),
         "interpolation_error": reference.get("interpolation_error"),
     }
     args.output.write_text(json.dumps(record, indent=2), encoding="utf-8")
+    np.savez_compressed(
+        spectrum_path,
+        freqs=reference_freqs,
+        reference_log=reference_log,
+        **({"fast_log": fast_log} if fast_log is not None else {}),
+    )
     print(json.dumps(record, indent=2))
 
 

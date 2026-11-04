@@ -111,5 +111,7 @@ IPTA 和 NANOGrav 现在只在理论频点覆盖范围内插值，不再对范�
 
 在候选 DN 上重新运行260模态固定背景分解后，均匀快速原函数、均匀`sigma_exact`和转折细化路径的 tail9 最大谱误差均为`4.20e-4 dex`以内。因此当前完整根对照中的主要剩余差异来自外层 DN 映射/根，而非原函数、张量传播或旧的53模态解释。15组交替配对的8线程基准为：候选 P50/P95 `62.0/68.7 ms`，默认路径`67.7/70.7 ms`；三变体吞吐`13.82 cases/s`；标量步长和数组步长频谱最大差`2.85e-14 dex`。
 
+第二个困难点为保留的随机样本11。当前 h=.02 Fast 根在同一`DN_eff`的 tail10 Reference 映射相对残差为`-9.48e-6`；94个同 DN 模态的谱最大差为`9.149e-5 dex`。原始 Fast/Reference 数组和可复现脚本见[`accuracy.md`](accuracy.md)。
+
 提交`671aa11`增加了受保护的标量终点步长路径：只有内部区间在浮点舍入容差内均匀时才使用；真实细化区间和极短物理锚点仍走完整步长数组。目标点输出相对之前数组路径根差`1.67e-15`、频谱最大差`6.04e-14 dex`。针对代码的测试为`61 passed, 1 deselected`，GitHub Actions 运行`41759168617`的9个 job 全部通过。完整点位结果、资源测量和原始 Reference 频谱见[`accuracy.md`](accuracy.md)以及
 [`res4_scalar_step_profile_20261104.json`](res4_scalar_step_profile_20261104.json)、原始闭合根映射[`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json)。复现实验使用[`res4_reference_secant_root_tail10_20261104.npz`](res4_reference_secant_root_tail10_20261104.npz)、[`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)和[`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py)。这些是单个困难参数点的验证，不等同于全参数域认证。
