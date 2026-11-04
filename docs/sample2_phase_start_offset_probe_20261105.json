@@ -1,0 +1,4808 @@
+{
+  "schema_version": 1,
+  "experiment": "sample2_residual_failure_phase_start_offset_dual_reference",
+  "source_sha": "e2cc8e98201b3901c0b64045e8c05a0ae618327c",
+  "worktree_dirty": true,
+  "script_sha256": "c2d890ba730c2afc96d0959c39915ca690fbf18e65a3b15d972069cd09514e16",
+  "phase_script_sha256": "1d6296f1ac1394e05d89f97bbc548b62e0a293e8243b108f66e1fe88bd32c543",
+  "analyzer_script_sha256": "f719018e46b3f18f91e515cbed1fe4b4f885c710c4c2542d4275c572f7a5efd8",
+  "validation_script_sha256": "96a4fda39dbae0fc25bb394f706ec64943ee509ef85e7227afb55c4c34d26742",
+  "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "root_grid_artifact_sha256": "4c88a05634d88f17079956ca03b26c990548832aff651d00f9827633e3ff9357",
+  "residual_probe_artifact_sha256": "ae6c18ec53185d047f0c1c47dac925bd324887d65e48a812eb19351952996438",
+  "dual_reference_artifact_sha256": "9cf56c41ac818f4e6f2a887572a0f1660020455108ea119a2fe7b072b2ad1c2a",
+  "params": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0,
+    "DN_eff": 2.291411867022825
+  },
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "phase_start_offsets": [
+    -0.5,
+    -0.4375,
+    -0.375,
+    -0.3125,
+    -0.25,
+    -0.1875,
+    -0.125,
+    -0.0625,
+    0.0,
+    0.0625,
+    0.125,
+    0.1875,
+    0.25,
+    0.3125,
+    0.375,
+    0.4375
+  ],
+  "orders": [
+    16,
+    24,
+    32
+  ],
+  "candidate_residual_gates": {
+    "collocation_scaled_max": 1e-10,
+    "dense_scaled_max": 1e-09
+  },
+  "independent_reference_gates": {
+    "candidate_cartesian_prufer_error_dex_max": 0.001,
+    "cartesian_prufer_agreement_dex_max": 0.0001,
+    "tail_semantics_must_match": true
+  },
+  "mode_count_scanned": 13,
+  "mode_count_with_screened_candidate": 5,
+  "validated_mode_count": 5,
+  "validated_mode_indices": [
+    757,
+    759,
+    780,
+    782,
+    783
+  ],
+  "total_wall_seconds": 6.303132200147957,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "This refines only phase-start handoff on previously residual-rejected frequencies at one fixed sample2 root background.",
+    "The 800-bin phase map remains incomplete and no integral map or new root is claimed.",
+    "Fast production solver inputs and outputs are not changed by this prototype scan."
+  ],
+  "rows": [
+    {
+      "index": 757,
+      "freq_log10_hz": -17.871587982160907,
+      "base_phase_start": 1.0,
+      "reference_log10_omega": -14.98529778639708,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.0106971999630332,
+          "low_rhs_nfev": 1073,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.017975900089368224
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542047,
+              "log10_omega": -14.985297792190352,
+              "abs_dex_error_vs_cartesian": 5.793271640186504e-09,
+              "max_collocation_residual_scaled": 3.0787754171195736e-11,
+              "max_dense_residual_scaled": 3.0947520611169895e-11,
+              "phase_seconds": 0.018741499865427613,
+              "total_seconds": 0.01953479996882379
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.34e-08 exceeds the prototype gate on neutrino_spline branch N=[44.792128606204315, 46.370091635383844], last relative update=7.44e-05 after 20 steps",
+              "seconds": 0.005080500151962042
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.010765000013634562,
+          "low_rhs_nfev": 1085,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.017601599916815758
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542074,
+              "log10_omega": -14.985297792195233,
+              "abs_dex_error_vs_cartesian": 5.7981530687811755e-09,
+              "max_collocation_residual_scaled": 2.3572759806050858e-11,
+              "max_dense_residual_scaled": 2.349622334547569e-11,
+              "phase_seconds": 0.018824500031769276,
+              "total_seconds": 0.019721699878573418
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.42e-07 exceeds the prototype gate on neutrino_spline branch N=[44.916610378926478, 46.370091635383844], last relative update=0.000177 after 20 steps",
+              "seconds": 0.005059599876403809
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.010848999954760075,
+          "low_rhs_nfev": 1097,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.017465499928221107
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542054,
+              "log10_omega": -14.98529779219394,
+              "abs_dex_error_vs_cartesian": 5.796859881002092e-09,
+              "max_collocation_residual_scaled": 4.317234333749741e-12,
+              "max_dense_residual_scaled": 4.258824045167258e-12,
+              "phase_seconds": 0.018215099815279245,
+              "total_seconds": 0.018991600023582578
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.02e-07 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.000631 after 20 steps",
+              "seconds": 0.020630399929359555
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.011050899978727102,
+          "low_rhs_nfev": 1109,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.01747999992221594
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.43e-08 exceeds the prototype gate on neutrino_spline branch N=[45.166107413708744, 46.370091635383844], last relative update=3.65e-05 after 20 steps",
+              "seconds": 0.004154999973252416
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.71e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=4.26e-06 after 20 steps",
+              "seconds": 0.01995020010508597
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.011297200107946992,
+          "low_rhs_nfev": 1133,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.01746969996020198
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.7e-09 exceeds the prototype gate on neutrino_spline branch N=[45.291200456950961, 46.370091635383844], last relative update=6.92e-06 after 20 steps",
+              "seconds": 0.0040692000184208155
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542056,
+              "log10_omega": -14.98529779219802,
+              "abs_dex_error_vs_cartesian": 5.8009401726621945e-09,
+              "max_collocation_residual_scaled": 1.9579270359474535e-11,
+              "max_dense_residual_scaled": 1.9595478045609155e-11,
+              "phase_seconds": 0.020559899974614382,
+              "total_seconds": 0.02132940012961626
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.011487799929454923,
+          "low_rhs_nfev": 1145,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.017548099858686328
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.58e-08 exceeds the prototype gate on neutrino_spline branch N=[45.416615747426711, 46.370091635383844], last relative update=0.000147 after 20 steps",
+              "seconds": 0.004142099991440773
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.03e-06 exceeds the prototype gate on neutrino_spline branch N=[45.416615747426711, 46.370091635383844], last relative update=0.000141 after 20 steps",
+              "seconds": 0.005155300023034215
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.011735999956727028,
+          "low_rhs_nfev": 1169,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.018481799867004156
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.16e-08 exceeds the prototype gate on neutrino_spline branch N=[45.542470584628632, 46.370091635383844], last relative update=4.89e-05 after 20 steps",
+              "seconds": 0.004412200069054961
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.71e-06 exceeds the prototype gate on neutrino_spline branch N=[45.542470584628632, 46.370091635383844], last relative update=0.000948 after 20 steps",
+              "seconds": 0.005328400060534477
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.012148000067099929,
+          "low_rhs_nfev": 1181,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.018920599948614836
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.353458724954206,
+              "log10_omega": -14.985297792193316,
+              "abs_dex_error_vs_cartesian": 5.796236379751463e-09,
+              "max_collocation_residual_scaled": 1.9377464185944296e-13,
+              "max_dense_residual_scaled": 1.9394251546746508e-13,
+              "phase_seconds": 0.019018799997866154,
+              "total_seconds": 0.019853699952363968
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.1e-05 exceeds the prototype gate on neutrino_spline branch N=[45.668943396270059, 46.370091635383844], last relative update=0.00387 after 20 steps",
+              "seconds": 0.005296200048178434
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.0,
+          "low_seconds": 0.012432000134140253,
+          "low_rhs_nfev": 1205,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.018111199839040637
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.38e-06 exceeds the prototype gate on neutrino_spline branch N=[45.796305773203045, 46.370091635383844], last relative update=0.000219 after 20 steps",
+              "seconds": 0.004359999904409051
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 7.76e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=4.35e-06 after 20 steps",
+              "seconds": 0.020846099825575948
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.0625,
+          "low_seconds": 0.012754800030961633,
+          "low_rhs_nfev": 1229,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.01847740006633103
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542018,
+              "log10_omega": -14.985297792193219,
+              "abs_dex_error_vs_cartesian": 5.796138680125296e-09,
+              "max_collocation_residual_scaled": 1.1921811998862183e-13,
+              "max_dense_residual_scaled": 1.850984975940756e-13,
+              "phase_seconds": 0.0191943000536412,
+              "total_seconds": 0.01998370001092553
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.59e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=4.71e-06 after 20 steps",
+              "seconds": 0.0208489999640733
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.125,
+          "low_seconds": 0.013169399928301573,
+          "low_rhs_nfev": 1265,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.24e-06 exceeds the prototype gate on neutrino_spline branch N=[46.055604742459494, 46.370091635383844], last relative update=0.000178 after 20 steps",
+              "seconds": 0.0034527000971138477
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542052,
+              "log10_omega": -14.985297792193219,
+              "abs_dex_error_vs_cartesian": 5.796138680125296e-09,
+              "max_collocation_residual_scaled": 2.0316954741777075e-12,
+              "max_dense_residual_scaled": 1.9343385941518702e-12,
+              "phase_seconds": 0.018728499999269843,
+              "total_seconds": 0.019556900020688772
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542052,
+              "log10_omega": -14.985297792193142,
+              "abs_dex_error_vs_cartesian": 5.7960622967812014e-09,
+              "max_collocation_residual_scaled": 3.396167398929946e-13,
+              "max_dense_residual_scaled": 1.858907734378243e-12,
+              "phase_seconds": 0.02176439994946122,
+              "total_seconds": 0.022553300019353628
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.1875,
+          "low_seconds": 0.013523099943995476,
+          "low_rhs_nfev": 1289,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.01853210013359785
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.353458724954204,
+              "log10_omega": -14.985297792192473,
+              "abs_dex_error_vs_cartesian": 5.7953926102527475e-09,
+              "max_collocation_residual_scaled": 5.2822007762961574e-14,
+              "max_dense_residual_scaled": 1.5823177823730506e-13,
+              "phase_seconds": 0.01885350001975894,
+              "total_seconds": 0.019655499840155244
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.37e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.3e-05 after 20 steps",
+              "seconds": 0.020678899949416518
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.25,
+          "low_seconds": 0.013872500043362379,
+          "low_rhs_nfev": 1313,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.48e-09 exceeds the prototype gate",
+              "seconds": 0.01800930011086166
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249542058,
+              "log10_omega": -14.98529779219138,
+              "abs_dex_error_vs_cartesian": 5.794300150796516e-09,
+              "max_collocation_residual_scaled": 1.4442986660719515e-12,
+              "max_dense_residual_scaled": 1.256463757848953e-12,
+              "phase_seconds": 0.018754499964416027,
+              "total_seconds": 0.01953659998252988
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.23e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=1e-05 after 20 steps",
+              "seconds": 0.020407200092449784
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.3125,
+          "low_seconds": 0.016379800159484148,
+          "low_rhs_nfev": 1625,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.353458724952529,
+              "log10_omega": -14.985297792196405,
+              "abs_dex_error_vs_cartesian": 5.79932546429518e-09,
+              "max_collocation_residual_scaled": 6.319560749896979e-15,
+              "max_dense_residual_scaled": 6.573498689242643e-10,
+              "phase_seconds": 0.0014781998470425606,
+              "total_seconds": 0.0015765000134706497
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.353458724952529,
+              "log10_omega": -14.985297792196667,
+              "abs_dex_error_vs_cartesian": 5.7995865887505715e-09,
+              "max_collocation_residual_scaled": 1.6741864604967452e-13,
+              "max_dense_residual_scaled": 1.746653923575382e-13,
+              "phase_seconds": 0.0016212998889386654,
+              "total_seconds": 0.0017095999792218208
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.02e-08 exceeds the prototype gate on high_frequency branch N=[46.474359311755158, 47.645208933505074], last relative update=5.22e-05 after 20 steps",
+              "seconds": 0.0014592998195439577
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.375,
+          "low_seconds": 0.016464800108224154,
+          "low_rhs_nfev": 1661,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.353458724952528,
+              "log10_omega": -14.985297792195563,
+              "abs_dex_error_vs_cartesian": 5.798483471153304e-09,
+              "max_collocation_residual_scaled": 4.002765816073621e-15,
+              "max_dense_residual_scaled": 1.0758883902431385e-10,
+              "phase_seconds": 0.0014598001725971699,
+              "total_seconds": 0.0015517000574618578
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.353458724952528,
+              "log10_omega": -14.985297792195015,
+              "abs_dex_error_vs_cartesian": 5.797934576889929e-09,
+              "max_collocation_residual_scaled": 5.808363702746643e-12,
+              "max_dense_residual_scaled": 5.815515828656011e-12,
+              "phase_seconds": 0.0016233001369982958,
+              "total_seconds": 0.0017076998483389616
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.7e-08 exceeds the prototype gate on high_frequency branch N=[46.636468147284539, 47.645208933505074], last relative update=4.56e-05 after 20 steps",
+              "seconds": 0.0014946998562663794
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.4375,
+          "low_seconds": 0.016799400094896555,
+          "low_rhs_nfev": 1709,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.3534587249525343,
+              "log10_omega": -14.985297792197601,
+              "abs_dex_error_vs_cartesian": 5.800520952448096e-09,
+              "max_collocation_residual_scaled": 1.9867474218152477e-15,
+              "max_dense_residual_scaled": 3.337325668116815e-12,
+              "phase_seconds": 0.0014798999764025211,
+              "total_seconds": 0.0015755000058561563
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.71e-10 exceeds the prototype gate on high_frequency branch N=[46.836549995062406, 47.645208933505074], last relative update=1.73e-06 after 20 steps",
+              "seconds": 0.0016441999468952417
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.6e-07 exceeds the prototype gate on high_frequency branch N=[46.836549995062406, 47.645208933505074], last relative update=3.42e-05 after 20 steps",
+              "seconds": 0.0018553000409156084
+            }
+          ],
+          "status": "handoff_reached"
+        }
+      ],
+      "selected_candidate": {
+        "phase_start": 1.1875,
+        "candidate": {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "end_z": 1.353458724954204,
+          "log10_omega": -14.985297792192473,
+          "abs_dex_error_vs_cartesian": 5.7953926102527475e-09,
+          "max_collocation_residual_scaled": 5.2822007762961574e-14,
+          "max_dense_residual_scaled": 1.5823177823730506e-13,
+          "phase_seconds": 0.01885350001975894,
+          "total_seconds": 0.019655499840155244
+        },
+        "residual_merit": 1.5823177823730506e-13
+      },
+      "cartesian_tight": {
+        "log10_omega": -14.985297792546783,
+        "used_tail": false,
+        "n_steps": 2306,
+        "seconds": 0.022178499959409237
+      },
+      "prufer": {
+        "log10_omega": -14.98529783996825,
+        "used_tail": false,
+        "n_steps": 1274,
+        "seconds": 0.014038000022992492
+      },
+      "validation": {
+        "accepted": true,
+        "reasons": [],
+        "cartesian_prufer_difference_dex": 4.742146764158406e-08,
+        "candidate_cartesian_error_dex": 3.5431035882993456e-10,
+        "candidate_prufer_error_dex": 4.777577800041399e-08
+      },
+      "reference_seconds": 0.03622859995812178,
+      "validated": true
+    },
+    {
+      "index": 759,
+      "freq_log10_hz": -17.899578019126736,
+      "base_phase_start": 1.0,
+      "reference_log10_omega": -15.112778981693706,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.009826400084421039,
+          "low_rhs_nfev": 1073,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.018001000164076686
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.28900928300914,
+              "log10_omega": -15.11277899386857,
+              "abs_dex_error_vs_cartesian": 1.2174863783798173e-08,
+              "max_collocation_residual_scaled": 4.08036475441847e-11,
+              "max_dense_residual_scaled": 4.08945128401544e-11,
+              "phase_seconds": 0.01887689996510744,
+              "total_seconds": 0.01966110011562705
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.82e-08 exceeds the prototype gate on neutrino_spline branch N=[44.920495689453716, 46.370091635383844], last relative update=0.000109 after 20 steps",
+              "seconds": 0.005173900164663792
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.010008299956098199,
+          "low_rhs_nfev": 1085,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.018159300088882446
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.5e-09 exceeds the prototype gate on neutrino_spline branch N=[45.0451511722096, 46.370091635383844], last relative update=6.19e-06 after 20 steps",
+              "seconds": 0.004365399945527315
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.09e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=5.69e-05 after 20 steps",
+              "seconds": 0.02082669991068542
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.010239900089800358,
+          "low_rhs_nfev": 1097,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.018064300063997507
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.69e-09 exceeds the prototype gate on neutrino_spline branch N=[45.170005170276589, 46.370091635383844], last relative update=4.32e-06 after 20 steps",
+              "seconds": 0.004313600016757846
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.33e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.1e-06 after 20 steps",
+              "seconds": 0.020775600103661418
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.0107162999920547,
+          "low_rhs_nfev": 1121,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.017864700173959136
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.87e-09 exceeds the prototype gate on neutrino_spline branch N=[45.295106937289582, 46.370091635383844], last relative update=5.08e-06 after 20 steps",
+              "seconds": 0.004275100072845817
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.09e-06 exceeds the prototype gate on neutrino_spline branch N=[45.295106937289582, 46.370091635383844], last relative update=0.000167 after 20 steps",
+              "seconds": 0.005244000116363168
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.01074640010483563,
+          "low_rhs_nfev": 1133,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.01795249991118908
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.69e-08 exceeds the prototype gate on neutrino_spline branch N=[45.420533908896438, 46.370091635383844], last relative update=1.25e-05 after 20 steps",
+              "seconds": 0.004166000057011843
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.16e-05 exceeds the prototype gate on neutrino_spline branch N=[45.420533908896438, 46.370091635383844], last relative update=0.000496 after 20 steps",
+              "seconds": 0.005177800077944994
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.010831400053575635,
+          "low_rhs_nfev": 1145,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.01796999992802739
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.23e-06 exceeds the prototype gate on neutrino_spline branch N=[45.546404939158805, 46.370091635383844], last relative update=0.000114 after 20 steps",
+              "seconds": 0.004416299983859062
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.91e-08 exceeds the prototype gate on neutrino_spline branch N=[45.546404939158805, 46.370091635383844], last relative update=0.000208 after 20 steps",
+              "seconds": 0.005232699913904071
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.01122050010599196,
+          "low_rhs_nfev": 1169,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.01799580012448132
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830091373,
+              "log10_omega": -15.11277899386966,
+              "abs_dex_error_vs_cartesian": 1.2175954466897565e-08,
+              "max_collocation_residual_scaled": 1.4872242198679195e-13,
+              "max_dense_residual_scaled": 8.169674624907744e-14,
+              "phase_seconds": 0.019424700178205967,
+              "total_seconds": 0.020215099910274148
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.42e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.75e-06 after 20 steps",
+              "seconds": 0.021192000014707446
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.011405899887904525,
+          "low_rhs_nfev": 1181,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.19e-10 exceeds the prototype gate on neutrino_spline branch N=[45.800296690873495, 46.370091635383844], last relative update=4.18e-06 after 20 steps",
+              "seconds": 0.003493600059300661
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.39e-06 exceeds the prototype gate on neutrino_spline branch N=[45.800296690873495, 46.370091635383844], last relative update=0.000138 after 20 steps",
+              "seconds": 0.004374399781227112
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.28900928300914,
+              "log10_omega": -15.112778993870304,
+              "abs_dex_error_vs_cartesian": 1.2176597508073428e-08,
+              "max_collocation_residual_scaled": 2.7222707171588147e-14,
+              "max_dense_residual_scaled": 2.0821737589062887e-12,
+              "phase_seconds": 0.021227800054475665,
+              "total_seconds": 0.02202150016091764
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.0,
+          "low_seconds": 0.011606100015342236,
+          "low_rhs_nfev": 1205,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 7.03e-09 exceeds the prototype gate on neutrino_spline branch N=[45.929015657072412, 46.370091635383844], last relative update=1.14e-05 after 20 steps",
+              "seconds": 0.0035015998873859644
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.13e-05 exceeds the prototype gate on neutrino_spline branch N=[45.929015657072412, 46.370091635383844], last relative update=0.00148 after 20 steps",
+              "seconds": 0.004273199941962957
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.42e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.75e-06 after 20 steps",
+              "seconds": 0.020744599867612123
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.0625,
+          "low_seconds": 0.011987099889665842,
+          "low_rhs_nfev": 1229,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.34e-08 exceeds the prototype gate on neutrino_spline branch N=[46.059720794295892, 46.370091635383844], last relative update=0.000141 after 20 steps",
+              "seconds": 0.0034503000788390636
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830091378,
+              "log10_omega": -15.11277899386978,
+              "abs_dex_error_vs_cartesian": 1.2176073482805805e-08,
+              "max_collocation_residual_scaled": 1.9088353466025042e-13,
+              "max_dense_residual_scaled": 1.377554504542714e-13,
+              "phase_seconds": 0.01887959986925125,
+              "total_seconds": 0.019729299936443567
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830091378,
+              "log10_omega": -15.1127789938698,
+              "abs_dex_error_vs_cartesian": 1.2176093022731038e-08,
+              "max_collocation_residual_scaled": 4.965956655939128e-12,
+              "max_dense_residual_scaled": 4.946334241137393e-12,
+              "phase_seconds": 0.02105670003220439,
+              "total_seconds": 0.021843000082299113
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.125,
+          "low_seconds": 0.012486800085753202,
+          "low_rhs_nfev": 1265,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.018711599987000227
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.28900928300914,
+              "log10_omega": -15.112778993869153,
+              "abs_dex_error_vs_cartesian": 1.2175446428841497e-08,
+              "max_collocation_residual_scaled": 4.814226791993523e-13,
+              "max_dense_residual_scaled": 3.3613043096360335e-13,
+              "phase_seconds": 0.019176799803972244,
+              "total_seconds": 0.019966799998655915
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.28900928300914,
+              "log10_omega": -15.112778993869158,
+              "abs_dex_error_vs_cartesian": 1.2175451757912015e-08,
+              "max_collocation_residual_scaled": 1.0411769225716884e-12,
+              "max_dense_residual_scaled": 8.314853047179955e-13,
+              "phase_seconds": 0.020726399961858988,
+              "total_seconds": 0.02151009999215603
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.1875,
+          "low_seconds": 0.012613400118425488,
+          "low_rhs_nfev": 1289,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.55e-09 exceeds the prototype gate",
+              "seconds": 0.018884100019931793
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830091398,
+              "log10_omega": -15.112778993871503,
+              "abs_dex_error_vs_cartesian": 1.2177796548940023e-08,
+              "max_collocation_residual_scaled": 1.8122367913456979e-12,
+              "max_dense_residual_scaled": 9.154712189125842e-13,
+              "phase_seconds": 0.018889599945396185,
+              "total_seconds": 0.019704399863258004
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.33e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.1e-06 after 20 steps",
+              "seconds": 0.02050069998949766
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.25,
+          "low_seconds": 0.015064599923789501,
+          "low_rhs_nfev": 1565,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830115514,
+              "log10_omega": -15.112778993866215,
+              "abs_dex_error_vs_cartesian": 1.2172508334629129e-08,
+              "max_collocation_residual_scaled": 6.402448194757896e-15,
+              "max_dense_residual_scaled": 6.58176043154868e-10,
+              "phase_seconds": 0.0014577999245375395,
+              "total_seconds": 0.001555300084874034
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830115514,
+              "log10_omega": -15.112778993866273,
+              "abs_dex_error_vs_cartesian": 1.2172566954404829e-08,
+              "max_collocation_residual_scaled": 5.248331779821787e-13,
+              "max_dense_residual_scaled": 5.302440100394605e-13,
+              "phase_seconds": 0.0016042999923229218,
+              "total_seconds": 0.0016880999319255352
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.21e-08 exceeds the prototype gate on high_frequency branch N=[46.47912578643303, 47.645208933505074], last relative update=8.93e-06 after 20 steps",
+              "seconds": 0.0014816999901086092
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.3125,
+          "low_seconds": 0.015247099800035357,
+          "low_rhs_nfev": 1601,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.289009283011556,
+              "log10_omega": -15.112778993867874,
+              "abs_dex_error_vs_cartesian": 1.2174167451917128e-08,
+              "max_collocation_residual_scaled": 2.8776426010858535e-15,
+              "max_dense_residual_scaled": 1.016380965603348e-10,
+              "phase_seconds": 0.0014418000355362892,
+              "total_seconds": 0.0015325997956097126
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.289009283011556,
+              "log10_omega": -15.112778993866769,
+              "abs_dex_error_vs_cartesian": 1.2173062557963021e-08,
+              "max_collocation_residual_scaled": 9.426396282261103e-12,
+              "max_dense_residual_scaled": 9.429458687223204e-12,
+              "phase_seconds": 0.0015978999435901642,
+              "total_seconds": 0.0016815999988466501
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.289009283011556,
+              "log10_omega": -15.112778993867835,
+              "abs_dex_error_vs_cartesian": 1.2174128372066662e-08,
+              "max_collocation_residual_scaled": 5.4612476621636144e-12,
+              "max_dense_residual_scaled": 5.4883149043457235e-12,
+              "phase_seconds": 0.0023874000180512667,
+              "total_seconds": 0.002472899854183197
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.375,
+          "low_seconds": 0.015579799888655543,
+          "low_rhs_nfev": 1661,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830115554,
+              "log10_omega": -15.112778993865737,
+              "abs_dex_error_vs_cartesian": 1.217203049463933e-08,
+              "max_collocation_residual_scaled": 2.1179211455107366e-14,
+              "max_dense_residual_scaled": 3.0648276410978918e-12,
+              "phase_seconds": 0.0014745998196303844,
+              "total_seconds": 0.001568799838423729
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3e-08 exceeds the prototype gate on high_frequency branch N=[46.844131454411027, 47.645208933505074], last relative update=0.000157 after 20 steps",
+              "seconds": 0.0014799998607486486
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 1.2890092830115554,
+              "log10_omega": -15.112778993865737,
+              "abs_dex_error_vs_cartesian": 1.217203049463933e-08,
+              "max_collocation_residual_scaled": 1.0838499309830596e-13,
+              "max_dense_residual_scaled": 2.507464839680854e-13,
+              "phase_seconds": 0.0029399998020380735,
+              "total_seconds": 0.003027699887752533
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 1.4375,
+          "low_seconds": 0.01657879981212318,
+          "low_rhs_nfev": 1874,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": {
+        "phase_start": 0.875,
+        "candidate": {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "end_z": 1.2890092830091373,
+          "log10_omega": -15.11277899386966,
+          "abs_dex_error_vs_cartesian": 1.2175954466897565e-08,
+          "max_collocation_residual_scaled": 1.4872242198679195e-13,
+          "max_dense_residual_scaled": 8.169674624907744e-14,
+          "phase_seconds": 0.019424700178205967,
+          "total_seconds": 0.020215099910274148
+        },
+        "residual_merit": 1.4872242198679195e-13
+      },
+      "cartesian_tight": {
+        "log10_omega": -15.112778993884655,
+        "used_tail": false,
+        "n_steps": 2282,
+        "seconds": 0.021672500064596534
+      },
+      "prufer": {
+        "log10_omega": -15.112778908539717,
+        "used_tail": false,
+        "n_steps": 1250,
+        "seconds": 0.013558000093325973
+      },
+      "validation": {
+        "accepted": true,
+        "reasons": [],
+        "cartesian_prufer_difference_dex": 8.534493822764944e-08,
+        "candidate_cartesian_error_dex": 1.4994228081377514e-11,
+        "candidate_prufer_error_dex": 8.532994399956806e-08
+      },
+      "reference_seconds": 0.03524340013973415,
+      "validated": true
+    },
+    {
+      "index": 780,
+      "freq_log10_hz": -18.193473407267934,
+      "base_phase_start": 0.5,
+      "reference_log10_omega": -14.684484722760503,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.008988699875772,
+          "low_rhs_nfev": 977,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 5.16e-09 exceeds the prototype gate",
+              "seconds": 0.019025100162252784
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.39e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00211 after 20 steps",
+              "seconds": 0.019774800166487694
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.81e-05 exceeds the prototype gate on neutrino_spline branch N=[45.273507051824602, 46.370091635383844], last relative update=0.00173 after 20 steps",
+              "seconds": 0.005108699901029468
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.009248000103980303,
+          "low_rhs_nfev": 989,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 5.16e-09 exceeds the prototype gate",
+              "seconds": 0.01836760016158223
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.17e-06 exceeds the prototype gate on neutrino_spline branch N=[45.398870812176185, 46.370091635383844], last relative update=0.000189 after 20 steps",
+              "seconds": 0.0043299999088048935
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379162,
+              "log10_omega": -14.684484742518276,
+              "abs_dex_error_vs_cartesian": 1.9757772307116284e-08,
+              "max_collocation_residual_scaled": 7.269213777810287e-11,
+              "max_dense_residual_scaled": 7.27654848638692e-11,
+              "phase_seconds": 0.02083140006288886,
+              "total_seconds": 0.021642900072038174
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.00938279996626079,
+          "low_rhs_nfev": 1001,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.52e-10 exceeds the prototype gate on neutrino_spline branch N=[45.524654401809713, 46.370091635383844], last relative update=3.02e-06 after 20 steps",
+              "seconds": 0.003309299936518073
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.02e-06 exceeds the prototype gate on neutrino_spline branch N=[45.524654401809713, 46.370091635383844], last relative update=0.00138 after 20 steps",
+              "seconds": 0.004352099960669875
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379179,
+              "log10_omega": -14.684484742513604,
+              "abs_dex_error_vs_cartesian": 1.975310048862866e-08,
+              "max_collocation_residual_scaled": 2.3387088928627557e-11,
+              "max_dense_residual_scaled": 2.4779030707477286e-11,
+              "phase_seconds": 0.02101949998177588,
+              "total_seconds": 0.021802200004458427
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.009596799965947866,
+          "low_rhs_nfev": 1013,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.2e-09 exceeds the prototype gate on neutrino_spline branch N=[45.651026008432865, 46.370091635383844], last relative update=4.43e-05 after 20 steps",
+              "seconds": 0.003483300097286701
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.39e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00211 after 20 steps",
+              "seconds": 0.01903280010446906
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.09e-06 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=5.46e-05 after 20 steps",
+              "seconds": 0.020787500077858567
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.00976039981469512,
+          "low_rhs_nfev": 1025,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.11e-07 exceeds the prototype gate on neutrino_spline branch N=[45.778241475294756, 46.370091635383844], last relative update=5.34e-05 after 20 steps",
+              "seconds": 0.003653899999335408
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00134 exceeds the prototype gate on neutrino_spline branch N=[45.778241475294756, 46.370091635383844], last relative update=0.0157 after 20 steps",
+              "seconds": 0.004481799900531769
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379184,
+              "log10_omega": -14.684484742512634,
+              "abs_dex_error_vs_cartesian": 1.975213059779435e-08,
+              "max_collocation_residual_scaled": 2.1262683330551594e-12,
+              "max_dense_residual_scaled": 4.277322600412772e-12,
+              "phase_seconds": 0.021053799893707037,
+              "total_seconds": 0.021848700009286404
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.009882000042125583,
+          "low_rhs_nfev": 1037,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 8.2e-07 exceeds the prototype gate on neutrino_spline branch N=[45.906693177365497, 46.370091635383844], last relative update=7.93e-05 after 20 steps",
+              "seconds": 0.003515500109642744
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.39e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00211 after 20 steps",
+              "seconds": 0.019247799878939986
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379041,
+              "log10_omega": -14.684484742513325,
+              "abs_dex_error_vs_cartesian": 1.9752821600604875e-08,
+              "max_collocation_residual_scaled": 3.125570939205828e-13,
+              "max_dense_residual_scaled": 6.300369206197373e-12,
+              "phase_seconds": 0.021038200007751584,
+              "total_seconds": 0.021835900144651532
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.010078700026497245,
+          "low_rhs_nfev": 1049,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.18e-05 exceeds the prototype gate on neutrino_spline branch N=[46.036993579977953, 46.370091635383844], last relative update=0.00296 after 20 steps",
+              "seconds": 0.0033815999049693346
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.39e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00211 after 20 steps",
+              "seconds": 0.019651700044050813
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379063,
+              "log10_omega": -14.6844847425137,
+              "abs_dex_error_vs_cartesian": 1.975319641189799e-08,
+              "max_collocation_residual_scaled": 1.0283608914442599e-12,
+              "max_dense_residual_scaled": 4.1458893843055455e-12,
+              "phase_seconds": 0.021034299861639738,
+              "total_seconds": 0.021825799951329827
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.01027929992415011,
+          "low_rhs_nfev": 1061,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 5.16e-09 exceeds the prototype gate",
+              "seconds": 0.018570999847725034
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.39e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00212 after 20 steps",
+              "seconds": 0.019371100002899766
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.612290143537894,
+              "log10_omega": -14.684484742513622,
+              "abs_dex_error_vs_cartesian": 1.9753118252197055e-08,
+              "max_collocation_residual_scaled": 9.34814655232199e-13,
+              "max_dense_residual_scaled": 3.6435971280540586e-12,
+              "phase_seconds": 0.0214949999935925,
+              "total_seconds": 0.022286900086328387
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.010266000172123313,
+          "low_rhs_nfev": 1073,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 5.16e-09 exceeds the prototype gate",
+              "seconds": 0.018766800174489617
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.4e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00212 after 20 steps",
+              "seconds": 0.01982680009678006
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.57e-06 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.000114 after 20 steps",
+              "seconds": 0.020941099850460887
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.013210200006142259,
+          "low_rhs_nfev": 1397,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 2.34e-09 exceeds the prototype gate",
+              "seconds": 0.0015503999311476946
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.92e-10 exceeds the prototype gate on high_frequency branch N=[46.452939718912518, 47.645208933505074], last relative update=7.29e-06 after 20 steps",
+              "seconds": 0.0011968999169766903
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379527,
+              "log10_omega": -14.684484742513103,
+              "abs_dex_error_vs_cartesian": 1.975259955599995e-08,
+              "max_collocation_residual_scaled": 7.857254590913507e-14,
+              "max_dense_residual_scaled": 1.0943490179146887e-12,
+              "phase_seconds": 0.00254069990478456,
+              "total_seconds": 0.0026360999327152967
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.013099499978125095,
+          "low_rhs_nfev": 1421,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379422,
+              "log10_omega": -14.684484742514373,
+              "abs_dex_error_vs_cartesian": 1.975386965114012e-08,
+              "max_collocation_residual_scaled": 8.053138034290699e-12,
+              "max_dense_residual_scaled": 2.8940520471099026e-10,
+              "phase_seconds": 0.001709700096398592,
+              "total_seconds": 0.0018077997956424952
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.23e-06 exceeds the prototype gate on high_frequency branch N=[46.61211120487576, 47.645208933505074], last relative update=0.00134 after 20 steps",
+              "seconds": 0.0015137000009417534
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435379422,
+              "log10_omega": -14.68448474251409,
+              "abs_dex_error_vs_cartesian": 1.9753587210402657e-08,
+              "max_collocation_residual_scaled": 2.5666543219440256e-13,
+              "max_dense_residual_scaled": 1.2875491832454973e-12,
+              "phase_seconds": 0.002369499998167157,
+              "total_seconds": 0.002464399905875325
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.013566200155764818,
+          "low_rhs_nfev": 1469,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.6122901435380137,
+              "log10_omega": -14.684484742515863,
+              "abs_dex_error_vs_cartesian": 1.9755360014528378e-08,
+              "max_collocation_residual_scaled": 2.7900623959768802e-14,
+              "max_dense_residual_scaled": 1.9115550813410964e-11,
+              "phase_seconds": 0.001754899974912405,
+              "total_seconds": 0.0018587999511510134
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.17e-06 exceeds the prototype gate on high_frequency branch N=[46.803742267337988, 47.645208933505074], last relative update=0.00016 after 20 steps",
+              "seconds": 0.0014275000430643559
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.32e-06 exceeds the prototype gate on high_frequency branch N=[46.803742267337988, 47.645208933505074], last relative update=0.000278 after 20 steps",
+              "seconds": 0.0015405002050101757
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.014253600034862757,
+          "low_rhs_nfev": 1622,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.014190000016242266,
+          "low_rhs_nfev": 1622,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.014111099997535348,
+          "low_rhs_nfev": 1622,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.014081199886277318,
+          "low_rhs_nfev": 1622,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": {
+        "phase_start": 0.5625,
+        "candidate": {
+          "order": 32,
+          "status": "completed",
+          "tail_used": false,
+          "end_z": 0.6122901435379527,
+          "log10_omega": -14.684484742513103,
+          "abs_dex_error_vs_cartesian": 1.975259955599995e-08,
+          "max_collocation_residual_scaled": 7.857254590913507e-14,
+          "max_dense_residual_scaled": 1.0943490179146887e-12,
+          "phase_seconds": 0.00254069990478456,
+          "total_seconds": 0.0026360999327152967
+        },
+        "residual_merit": 1.0943490179146887e-12
+      },
+      "cartesian_tight": {
+        "log10_omega": -14.684484742528182,
+        "used_tail": false,
+        "n_steps": 1910,
+        "seconds": 0.017968999920412898
+      },
+      "prufer": {
+        "log10_omega": -14.684484825851548,
+        "used_tail": false,
+        "n_steps": 974,
+        "seconds": 0.010873900027945638
+      },
+      "validation": {
+        "accepted": true,
+        "reasons": [],
+        "cartesian_prufer_difference_dex": 8.332336598471102e-08,
+        "candidate_cartesian_error_dex": 1.5079493209668726e-11,
+        "candidate_prufer_error_dex": 8.333844547792069e-08
+      },
+      "reference_seconds": 0.028854699805378914,
+      "validated": true
+    },
+    {
+      "index": 782,
+      "freq_log10_hz": -18.221463444233763,
+      "base_phase_start": 0.5,
+      "reference_log10_omega": -14.828155735931952,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.009143699891865253,
+          "low_rhs_nfev": 977,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 6.73e-09 exceeds the prototype gate",
+              "seconds": 0.018617300083860755
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.2e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=1.74e-05 after 20 steps",
+              "seconds": 0.019415599992498755
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.56e-05 exceeds the prototype gate on neutrino_spline branch N=[45.402787092138496, 46.370091635383844], last relative update=0.00351 after 20 steps",
+              "seconds": 0.00537789985537529
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.009449400007724762,
+          "low_rhs_nfev": 989,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.4e-10 exceeds the prototype gate on neutrino_spline branch N=[45.528586117303526, 46.370091635383844], last relative update=7.21e-06 after 20 steps",
+              "seconds": 0.003347999881953001
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.85e-06 exceeds the prototype gate on neutrino_spline branch N=[45.528586117303526, 46.370091635383844], last relative update=0.000439 after 20 steps",
+              "seconds": 0.004346200032159686
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.9e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.000448 after 20 steps",
+              "seconds": 0.02101500006392598
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.009486700175330043,
+          "low_rhs_nfev": 989,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.68e-06 exceeds the prototype gate on neutrino_spline branch N=[45.654979620594744, 46.370091635383844], last relative update=0.000952 after 20 steps",
+              "seconds": 0.0035279998555779457
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015540188,
+              "log10_omega": -14.828155725789768,
+              "abs_dex_error_vs_cartesian": 1.0142183981542985e-08,
+              "max_collocation_residual_scaled": 9.280721451241878e-11,
+              "max_dense_residual_scaled": 9.304320912838717e-11,
+              "phase_seconds": 0.01931430003605783,
+              "total_seconds": 0.020112500060349703
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.27e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00235 after 20 steps",
+              "seconds": 0.020559199852868915
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.009686999954283237,
+          "low_rhs_nfev": 1001,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.59e-07 exceeds the prototype gate on neutrino_spline branch N=[45.782226837098506, 46.370091635383844], last relative update=3.2e-05 after 20 steps",
+              "seconds": 0.0034680000972002745
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.57e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=4.02e-06 after 20 steps",
+              "seconds": 0.019097500015050173
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.9e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00338 after 20 steps",
+              "seconds": 0.02041810005903244
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.009814399993047118,
+          "low_rhs_nfev": 1013,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.73e-06 exceeds the prototype gate on neutrino_spline branch N=[45.910725501822199, 46.370091635383844], last relative update=0.000154 after 20 steps",
+              "seconds": 0.003460099920630455
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.547840701554002,
+              "log10_omega": -14.828155725799924,
+              "abs_dex_error_vs_cartesian": 1.0132028549492134e-08,
+              "max_collocation_residual_scaled": 5.822663868673017e-11,
+              "max_dense_residual_scaled": 5.827249014050697e-11,
+              "phase_seconds": 0.019910699920728803,
+              "total_seconds": 0.020726899849250913
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 8.07e-06 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00193 after 20 steps",
+              "seconds": 0.0208172001875937
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.010147199966013432,
+          "low_rhs_nfev": 1037,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 6.73e-09 exceeds the prototype gate",
+              "seconds": 0.01855870010331273
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.547840701554,
+              "log10_omega": -14.82815572578544,
+              "abs_dex_error_vs_cartesian": 1.0146512963160603e-08,
+              "max_collocation_residual_scaled": 1.3604602034152754e-12,
+              "max_dense_residual_scaled": 1.6593851937478974e-12,
+              "phase_seconds": 0.019404900027438998,
+              "total_seconds": 0.020233700051903725
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.16e-06 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=7.84e-05 after 20 steps",
+              "seconds": 0.02087610005401075
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.010240199975669384,
+          "low_rhs_nfev": 1049,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 6.73e-09 exceeds the prototype gate",
+              "seconds": 0.0185952999163419
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015539846,
+              "log10_omega": -14.828155725775293,
+              "abs_dex_error_vs_cartesian": 1.0156659513427257e-08,
+              "max_collocation_residual_scaled": 7.356206793530837e-11,
+              "max_dense_residual_scaled": 7.381751841751886e-11,
+              "phase_seconds": 0.01980139990337193,
+              "total_seconds": 0.020598300034180284
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0385 exceeds the prototype gate on neutrino_spline branch N=[46.174341602055215, 46.370091635383844], last relative update=0.128 after 20 steps",
+              "seconds": 0.00536029995419085
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.01039179996587336,
+          "low_rhs_nfev": 1061,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 6.73e-09 exceeds the prototype gate",
+              "seconds": 0.019180299947038293
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015539969,
+              "log10_omega": -14.828155725769191,
+              "abs_dex_error_vs_cartesian": 1.0162761299170597e-08,
+              "max_collocation_residual_scaled": 8.999880196717713e-11,
+              "max_dense_residual_scaled": 9.048227041587927e-11,
+              "phase_seconds": 0.01956619997508824,
+              "total_seconds": 0.02037949999794364
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.63e-10 exceeds the prototype gate on neutrino_spline branch N=[46.312153119973601, 46.370091635383844], last relative update=2.15e-05 after 20 steps",
+              "seconds": 0.005625499878078699
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.01270329998806119,
+          "low_rhs_nfev": 1337,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 2.87e-09 exceeds the prototype gate",
+              "seconds": 0.0015609001275151968
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.65e-10 exceeds the prototype gate on high_frequency branch N=[46.457644172900906, 47.645208933505074], last relative update=1.72e-05 after 20 steps",
+              "seconds": 0.0011613001115620136
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.84e-06 exceeds the prototype gate on high_frequency branch N=[46.457644172900906, 47.645208933505074], last relative update=8.55e-05 after 20 steps",
+              "seconds": 0.0015887999907135963
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.012771599926054478,
+          "low_rhs_nfev": 1349,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015589246,
+              "log10_omega": -14.82815572575507,
+              "abs_dex_error_vs_cartesian": 1.017688333604383e-08,
+              "max_collocation_residual_scaled": 8.180551668066419e-11,
+              "max_dense_residual_scaled": 4.123609900681946e-10,
+              "phase_seconds": 0.0016560000367462635,
+              "total_seconds": 0.0017482999246567488
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000128 exceeds the prototype gate on high_frequency branch N=[46.617435467707494, 47.645208933505074], last relative update=0.00332 after 20 steps",
+              "seconds": 0.0012903001625090837
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015589246,
+              "log10_omega": -14.828155725772072,
+              "abs_dex_error_vs_cartesian": 1.015988004837709e-08,
+              "max_collocation_residual_scaled": 1.3697628778036088e-12,
+              "max_dense_residual_scaled": 2.5116153616237163e-12,
+              "phase_seconds": 0.002599900122731924,
+              "total_seconds": 0.0026877999771386385
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.013148699887096882,
+          "low_rhs_nfev": 1397,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015589236,
+              "log10_omega": -14.828155725773886,
+              "abs_dex_error_vs_cartesian": 1.0158066388044062e-08,
+              "max_collocation_residual_scaled": 1.6525453992114687e-12,
+              "max_dense_residual_scaled": 1.0072317432085482e-11,
+              "phase_seconds": 0.002127900021150708,
+              "total_seconds": 0.002220899797976017
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.84e-06 exceeds the prototype gate on high_frequency branch N=[46.810787564096174, 47.645208933505074], last relative update=0.000274 after 20 steps",
+              "seconds": 0.001263599842786789
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5478407015589236,
+              "log10_omega": -14.82815572577425,
+              "abs_dex_error_vs_cartesian": 1.0157702234891985e-08,
+              "max_collocation_residual_scaled": 5.672390459631304e-13,
+              "max_dense_residual_scaled": 5.051520651332076e-12,
+              "phase_seconds": 0.002920700004324317,
+              "total_seconds": 0.003011200111359358
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.013929599896073341,
+          "low_rhs_nfev": 1550,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.013923699967563152,
+          "low_rhs_nfev": 1550,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.013823100132867694,
+          "low_rhs_nfev": 1550,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.013821300119161606,
+          "low_rhs_nfev": 1550,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.013871399918571115,
+          "low_rhs_nfev": 1550,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": {
+        "phase_start": 0.3125,
+        "candidate": {
+          "order": 24,
+          "status": "completed",
+          "tail_used": false,
+          "end_z": 0.547840701554,
+          "log10_omega": -14.82815572578544,
+          "abs_dex_error_vs_cartesian": 1.0146512963160603e-08,
+          "max_collocation_residual_scaled": 1.3604602034152754e-12,
+          "max_dense_residual_scaled": 1.6593851937478974e-12,
+          "phase_seconds": 0.019404900027438998,
+          "total_seconds": 0.020233700051903725
+        },
+        "residual_merit": 1.6593851937478974e-12
+      },
+      "cartesian_tight": {
+        "log10_omega": -14.828155725753184,
+        "used_tail": false,
+        "n_steps": 1826,
+        "seconds": 0.016711600124835968
+      },
+      "prufer": {
+        "log10_omega": -14.828155728312842,
+        "used_tail": false,
+        "n_steps": 1142,
+        "seconds": 0.012542200041934848
+      },
+      "validation": {
+        "accepted": true,
+        "reasons": [],
+        "cartesian_prufer_difference_dex": 2.5596573749453455e-09,
+        "candidate_cartesian_error_dex": 3.225508748982975e-11,
+        "candidate_prufer_error_dex": 2.5274022874555158e-09
+      },
+      "reference_seconds": 0.029265800025314093,
+      "validated": true
+    },
+    {
+      "index": 783,
+      "freq_log10_hz": -18.23545846271668,
+      "base_phase_start": 0.5,
+      "reference_log10_omega": -14.900045207993672,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.009947999846190214,
+          "low_rhs_nfev": 1025,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 7.92e-09 exceeds the prototype gate",
+              "seconds": 0.01901319995522499
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.74e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=1.06e-05 after 20 steps",
+              "seconds": 0.019423300167545676
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00051 exceeds the prototype gate on neutrino_spline branch N=[45.467586456181706, 46.370091635383844], last relative update=0.00424 after 20 steps",
+              "seconds": 0.005400300025939941
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.010192499961704016,
+          "low_rhs_nfev": 1037,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.73e-09 exceeds the prototype gate on neutrino_spline branch N=[45.593665994261507, 46.370091635383844], last relative update=5.08e-06 after 20 steps",
+              "seconds": 0.0033367001451551914
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807642084,
+              "log10_omega": -14.900045190486953,
+              "abs_dex_error_vs_cartesian": 1.7506719629523104e-08,
+              "max_collocation_residual_scaled": 4.131164293384063e-11,
+              "max_dense_residual_scaled": 4.14986715608175e-11,
+              "phase_seconds": 0.019909899914637208,
+              "total_seconds": 0.02070420002564788
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.51e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00105 after 20 steps",
+              "seconds": 0.020576899871230125
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.010259300004690886,
+          "low_rhs_nfev": 1049,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3e-07 exceeds the prototype gate on neutrino_spline branch N=[45.720460029261794, 46.370091635383844], last relative update=0.000462 after 20 steps",
+              "seconds": 0.0033019999973475933
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807642,
+              "log10_omega": -14.90004519049781,
+              "abs_dex_error_vs_cartesian": 1.749586253652069e-08,
+              "max_collocation_residual_scaled": 4.183642704739958e-11,
+              "max_dense_residual_scaled": 4.1557825814759056e-11,
+              "phase_seconds": 0.019707700004801154,
+              "total_seconds": 0.020498800091445446
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.88e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.000945 after 20 steps",
+              "seconds": 0.020590299973264337
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.010535000124946237,
+          "low_rhs_nfev": 1061,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 7.91e-07 exceeds the prototype gate on neutrino_spline branch N=[45.848291293975173, 46.370091635383844], last relative update=6.44e-05 after 20 steps",
+              "seconds": 0.003584100166335702
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807641945,
+              "log10_omega": -14.90004519048535,
+              "abs_dex_error_vs_cartesian": 1.7508321903392243e-08,
+              "max_collocation_residual_scaled": 9.954548265058141e-11,
+              "max_dense_residual_scaled": 9.956364657806009e-11,
+              "phase_seconds": 0.019362199818715453,
+              "total_seconds": 0.020154899917542934
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.04e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00217 after 20 steps",
+              "seconds": 0.02128159999847412
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.010684799868613482,
+          "low_rhs_nfev": 1085,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 8.91e-06 exceeds the prototype gate on neutrino_spline branch N=[45.977658890392682, 46.370091635383844], last relative update=0.0013 after 20 steps",
+              "seconds": 0.0033862001728266478
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807642008,
+              "log10_omega": -14.90004519047889,
+              "abs_dex_error_vs_cartesian": 1.7514782513217142e-08,
+              "max_collocation_residual_scaled": 7.313646773296522e-11,
+              "max_dense_residual_scaled": 7.324632776243779e-11,
+              "phase_seconds": 0.019212499959394336,
+              "total_seconds": 0.020052599953487515
+            },
+            {
+              "order": 32,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807642008,
+              "log10_omega": -14.900045190491918,
+              "abs_dex_error_vs_cartesian": 1.750175471215698e-08,
+              "max_collocation_residual_scaled": 1.8118257392523471e-12,
+              "max_dense_residual_scaled": 6.5678196821288966e-12,
+              "phase_seconds": 0.02127989986911416,
+              "total_seconds": 0.02209779992699623
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.011073899921029806,
+          "low_rhs_nfev": 1109,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 7.92e-09 exceeds the prototype gate",
+              "seconds": 0.019060999853536487
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807641961,
+              "log10_omega": -14.900045190493135,
+              "abs_dex_error_vs_cartesian": 1.750053790772199e-08,
+              "max_collocation_residual_scaled": 1.126867156689669e-11,
+              "max_dense_residual_scaled": 1.1434286105555216e-11,
+              "phase_seconds": 0.01942509994842112,
+              "total_seconds": 0.020243900129571557
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.4e-05 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.00342 after 20 steps",
+              "seconds": 0.021476499969139695
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.011411200044676661,
+          "low_rhs_nfev": 1121,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 7.92e-09 exceeds the prototype gate",
+              "seconds": 0.018593499902635813
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.16e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.2e-06 after 20 steps",
+              "seconds": 0.02008439996279776
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.14e-06 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=9.78e-05 after 20 steps",
+              "seconds": 0.02095999987795949
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.013959500007331371,
+          "low_rhs_nfev": 1457,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 6.87e-09 exceeds the prototype gate",
+              "seconds": 0.0016197999939322472
+            },
+            {
+              "order": 24,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807349304,
+              "log10_omega": -14.90004519057665,
+              "abs_dex_error_vs_cartesian": 1.741702249091759e-08,
+              "max_collocation_residual_scaled": 9.894003773555982e-11,
+              "max_dense_residual_scaled": 9.900184028458511e-11,
+              "phase_seconds": 0.0021176000591367483,
+              "total_seconds": 0.002214200096204877
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000137 exceeds the prototype gate on high_frequency branch N=[46.38591671202348, 47.645208933505074], last relative update=0.00108 after 20 steps",
+              "seconds": 0.0014633000828325748
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.01406640000641346,
+          "low_rhs_nfev": 1481,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.25e-09 exceeds the prototype gate",
+              "seconds": 0.0016216998919844627
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000328 exceeds the prototype gate on high_frequency branch N=[46.537554789200399, 47.645208933505074], last relative update=0.00332 after 20 steps",
+              "seconds": 0.0014130000490695238
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.51e-05 exceeds the prototype gate on high_frequency branch N=[46.537554789200399, 47.645208933505074], last relative update=0.00274 after 20 steps",
+              "seconds": 0.0014410000294446945
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.014147099805995822,
+          "low_rhs_nfev": 1493,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.86e-06 exceeds the prototype gate on high_frequency branch N=[46.710408369215372, 47.645208933505074], last relative update=0.00154 after 20 steps",
+              "seconds": 0.0011579999700188637
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.25e-06 exceeds the prototype gate on high_frequency branch N=[46.710408369215372, 47.645208933505074], last relative update=0.00169 after 20 steps",
+              "seconds": 0.0012205999810248613
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000122 exceeds the prototype gate on high_frequency branch N=[46.710408369215372, 47.645208933505074], last relative update=0.00682 after 20 steps",
+              "seconds": 0.0015267999842762947
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.014434500131756067,
+          "low_rhs_nfev": 1553,
+          "orders": [
+            {
+              "order": 16,
+              "status": "completed",
+              "tail_used": false,
+              "end_z": 0.5156159807349381,
+              "log10_omega": -14.900045190565939,
+              "abs_dex_error_vs_cartesian": 1.7427733922659172e-08,
+              "max_collocation_residual_scaled": 1.708621382162689e-11,
+              "max_dense_residual_scaled": 1.8875414750226074e-11,
+              "phase_seconds": 0.001866400009021163,
+              "total_seconds": 0.0019624000415205956
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000569 exceeds the prototype gate on high_frequency branch N=[46.950674911503029, 47.645208933505074], last relative update=0.00586 after 20 steps",
+              "seconds": 0.0012397998943924904
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000483 exceeds the prototype gate on high_frequency branch N=[46.950674911503029, 47.645208933505074], last relative update=0.00346 after 20 steps",
+              "seconds": 0.001606999896466732
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.01487970002926886,
+          "low_rhs_nfev": 1670,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.014930800069123507,
+          "low_rhs_nfev": 1670,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.014969099778681993,
+          "low_rhs_nfev": 1670,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.014938200125470757,
+          "low_rhs_nfev": 1670,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.014966599876061082,
+          "low_rhs_nfev": 1670,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": {
+        "phase_start": 0.25,
+        "candidate": {
+          "order": 32,
+          "status": "completed",
+          "tail_used": false,
+          "end_z": 0.5156159807642008,
+          "log10_omega": -14.900045190491918,
+          "abs_dex_error_vs_cartesian": 1.750175471215698e-08,
+          "max_collocation_residual_scaled": 1.8118257392523471e-12,
+          "max_dense_residual_scaled": 6.5678196821288966e-12,
+          "phase_seconds": 0.02127989986911416,
+          "total_seconds": 0.02209779992699623
+        },
+        "residual_merit": 6.5678196821288966e-12
+      },
+      "cartesian_tight": {
+        "log10_omega": -14.900045190837039,
+        "used_tail": false,
+        "n_steps": 1886,
+        "seconds": 0.018073299899697304
+      },
+      "prufer": {
+        "log10_omega": -14.900045179475429,
+        "used_tail": false,
+        "n_steps": 950,
+        "seconds": 0.01096260012127459
+      },
+      "validation": {
+        "accepted": true,
+        "reasons": [],
+        "cartesian_prufer_difference_dex": 1.1361610319227111e-08,
+        "candidate_cartesian_error_dex": 3.4512126489971706e-10,
+        "candidate_prufer_error_dex": 1.1016489054327394e-08
+      },
+      "reference_seconds": 0.029047199990600348,
+      "validated": true
+    },
+    {
+      "index": 786,
+      "freq_log10_hz": -18.27744351816542,
+      "base_phase_start": 0.5,
+      "reference_log10_omega": -14.916053757043237,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.00979599985294044,
+          "low_rhs_nfev": 1037,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000308 exceeds the prototype gate on neutrino_spline branch N=[45.662889313117624, 46.370091635383844], last relative update=0.00857 after 20 steps",
+              "seconds": 0.0035591002088040113
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.94e-05 exceeds the prototype gate on neutrino_spline branch N=[45.662889313117624, 46.370091635383844], last relative update=0.000154 after 20 steps",
+              "seconds": 0.004556100117042661
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00243 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0248 after 20 steps",
+              "seconds": 0.0204328999388963
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.010133199859410524,
+          "low_rhs_nfev": 1049,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.29e-06 exceeds the prototype gate on neutrino_spline branch N=[45.790201175272834, 46.370091635383844], last relative update=0.000236 after 20 steps",
+              "seconds": 0.003419899847358465
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 9.63e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=1.61e-05 after 20 steps",
+              "seconds": 0.01931089977733791
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00173 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0124 after 20 steps",
+              "seconds": 0.020923699950799346
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.01022890000604093,
+          "low_rhs_nfev": 1061,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.96e-06 exceeds the prototype gate on neutrino_spline branch N=[45.918795551642411, 46.370091635383844], last relative update=4.86e-05 after 20 steps",
+              "seconds": 0.0036549000069499016
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.86e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=3.23e-05 after 20 steps",
+              "seconds": 0.018911999883130193
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00147 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0192 after 20 steps",
+              "seconds": 0.02047710004262626
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.01048410008661449,
+          "low_rhs_nfev": 1085,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.73e-08 exceeds the prototype gate",
+              "seconds": 0.019219100009649992
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.55e-10 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=1.22e-05 after 20 steps",
+              "seconds": 0.019174600020051003
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00262 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0258 after 20 steps",
+              "seconds": 0.02039439999498427
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.010847300058230758,
+          "low_rhs_nfev": 1109,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.73e-08 exceeds the prototype gate",
+              "seconds": 0.01921930001117289
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.02e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=2.86e-05 after 20 steps",
+              "seconds": 0.019284300040453672
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.87e-08 exceeds the prototype gate on neutrino_spline branch N=[46.182782131411678, 46.370091635383844], last relative update=0.000255 after 20 steps",
+              "seconds": 0.005553599912673235
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.011249099858105183,
+          "low_rhs_nfev": 1145,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.73e-08 exceeds the prototype gate",
+              "seconds": 0.019002299988642335
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.1e-09 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=2.9e-05 after 20 steps",
+              "seconds": 0.019460499985143542
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00169 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0206 after 20 steps",
+              "seconds": 0.02123129996471107
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.013447699835523963,
+          "low_rhs_nfev": 1421,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 8.3e-09 exceeds the prototype gate",
+              "seconds": 0.0017537998501211405
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.82e-08 exceeds the prototype gate on high_frequency branch N=[46.467092915802255, 47.645208933505074], last relative update=0.000125 after 20 steps",
+              "seconds": 0.0011131002102047205
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00222 exceeds the prototype gate on high_frequency branch N=[46.467092915802255, 47.645208933505074], last relative update=0.0226 after 20 steps",
+              "seconds": 0.0012661998625844717
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.013646400067955256,
+          "low_rhs_nfev": 1445,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 1.01e-09 exceeds the prototype gate",
+              "seconds": 0.0017830999568104744
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000188 exceeds the prototype gate on high_frequency branch N=[46.628171474973534, 47.645208933505074], last relative update=0.00712 after 20 steps",
+              "seconds": 0.0010945999529212713
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00353 exceeds the prototype gate on high_frequency branch N=[46.628171474973534, 47.645208933505074], last relative update=0.00531 after 20 steps",
+              "seconds": 0.0013987000565975904
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.013596500037238002,
+          "low_rhs_nfev": 1457,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.22e-09 exceeds the prototype gate on high_frequency branch N=[46.825201631895091, 47.645208933505074], last relative update=2.46e-05 after 20 steps",
+              "seconds": 0.0009592999704182148
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000692 exceeds the prototype gate on high_frequency branch N=[46.825201631895091, 47.645208933505074], last relative update=0.0129 after 20 steps",
+              "seconds": 0.0011191999074071646
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0028 exceeds the prototype gate on high_frequency branch N=[46.825201631895091, 47.645208933505074], last relative update=0.00162 after 20 steps",
+              "seconds": 0.0013922001235187054
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.014428999973461032,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.014409700175747275,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.014333299826830626,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.014261099975556135,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.014219699893146753,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.014213599963113666,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.014197600074112415,
+          "low_rhs_nfev": 1610,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 787,
+      "freq_log10_hz": -18.291438536648336,
+      "base_phase_start": 0.5,
+      "reference_log10_omega": -14.837693104321756,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.00995189999230206,
+          "low_rhs_nfev": 1037,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.12e-06 exceeds the prototype gate on neutrino_spline branch N=[45.728399971608894, 46.370091635383844], last relative update=0.000133 after 20 steps",
+              "seconds": 0.003599500050768256
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.49e-05 exceeds the prototype gate on neutrino_spline branch N=[45.728399971608894, 46.370091635383844], last relative update=0.000582 after 20 steps",
+              "seconds": 0.004611700074747205
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0242 exceeds the prototype gate on neutrino_spline branch N=[45.728399971608894, 46.370091635383844], last relative update=0.0216 after 20 steps",
+              "seconds": 0.005486099980771542
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.010174199938774109,
+          "low_rhs_nfev": 1049,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 2.45e-06 exceeds the prototype gate on neutrino_spline branch N=[45.856310179603589, 46.370091635383844], last relative update=0.00105 after 20 steps",
+              "seconds": 0.0034045001957565546
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00436 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0279 after 20 steps",
+              "seconds": 0.019425200065597892
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0095 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0344 after 20 steps",
+              "seconds": 0.020694199949502945
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.010413900017738342,
+          "low_rhs_nfev": 1061,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 3.11e-08 exceeds the prototype gate",
+              "seconds": 0.019177500158548355
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00437 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0279 after 20 steps",
+              "seconds": 0.019283700035884976
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00949 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0344 after 20 steps",
+              "seconds": 0.020983900176361203
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.010717299999669194,
+          "low_rhs_nfev": 1085,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 3.11e-08 exceeds the prototype gate",
+              "seconds": 0.018914699787274003
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00436 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0279 after 20 steps",
+              "seconds": 0.019156499998643994
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00948 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0343 after 20 steps",
+              "seconds": 0.02054860000498593
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.010903600137680769,
+          "low_rhs_nfev": 1109,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 3.11e-08 exceeds the prototype gate",
+              "seconds": 0.019180400064215064
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00436 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0279 after 20 steps",
+              "seconds": 0.019905300112441182
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00949 exceeds the prototype gate on high_frequency branch N=[46.370091635383844, 47.645208933505074], last relative update=0.0343 after 20 steps",
+              "seconds": 0.021024799905717373
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.013741699978709221,
+          "low_rhs_nfev": 1481,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 2.65e-08 exceeds the prototype gate",
+              "seconds": 0.0018279000651091337
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00411 exceeds the prototype gate on high_frequency branch N=[46.395006584996878, 47.645208933505074], last relative update=0.0269 after 20 steps",
+              "seconds": 0.0010983000975102186
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0116 exceeds the prototype gate on high_frequency branch N=[46.395006584996878, 47.645208933505074], last relative update=0.037 after 20 steps",
+              "seconds": 0.0012385998852550983
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.013774099992588162,
+          "low_rhs_nfev": 1493,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 5.8e-09 exceeds the prototype gate",
+              "seconds": 0.0017512000631541014
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0059 exceeds the prototype gate on high_frequency branch N=[46.547540886265821, 47.645208933505074], last relative update=0.0309 after 20 steps",
+              "seconds": 0.0010834001004695892
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.015 exceeds the prototype gate on high_frequency branch N=[46.547540886265821, 47.645208933505074], last relative update=0.0403 after 20 steps",
+              "seconds": 0.0012387000024318695
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.01398469996638596,
+          "low_rhs_nfev": 1517,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.066 exceeds the prototype gate on high_frequency branch N=[46.72244868213825, 47.645208933505074], last relative update=0.0566 after 20 steps",
+              "seconds": 0.0011078000534325838
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0077 exceeds the prototype gate on high_frequency branch N=[46.72244868213825, 47.645208933505074], last relative update=0.0332 after 20 steps",
+              "seconds": 0.0010708000045269728
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0117 exceeds the prototype gate on high_frequency branch N=[46.72244868213825, 47.645208933505074], last relative update=0.0332 after 20 steps",
+              "seconds": 0.001227000029757619
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5,
+          "low_seconds": 0.014208200154826045,
+          "low_rhs_nfev": 1553,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00109 exceeds the prototype gate on high_frequency branch N=[46.973170209747501, 47.645208933505074], last relative update=0.0155 after 20 steps",
+              "seconds": 0.0009451999794691801
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.48 exceeds the prototype gate on high_frequency branch N=[46.973170209747501, 47.645208933505074], last relative update=0.06 after 20 steps",
+              "seconds": 0.0012429000344127417
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "dense Riccati residual 5.28e+03 exceeds the prototype gate",
+              "seconds": 0.002491299994289875
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.5625,
+          "low_seconds": 0.014690399868413806,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.625,
+          "low_seconds": 0.014683200046420097,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.6875,
+          "low_seconds": 0.014657099964097142,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.75,
+          "low_seconds": 0.014730499824509025,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.8125,
+          "low_seconds": 0.014074200065806508,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.875,
+          "low_seconds": 0.014016099972650409,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.9375,
+          "low_seconds": 0.014300499809905887,
+          "low_rhs_nfev": 1658,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 788,
+      "freq_log10_hz": -18.30543355513125,
+      "base_phase_start": 0.0,
+      "reference_log10_omega": -14.740787307660973,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": -0.5,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.4375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.3125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.25,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.1875,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.0625,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.010327599942684174,
+          "low_rhs_nfev": 1097,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 6.21e-07 exceeds the prototype gate on neutrino_spline branch N=[45.794190181326989, 46.370091635383844], last relative update=8.14e-05 after 20 steps",
+              "seconds": 0.0036637999583035707
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01969070010818541
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.000753 exceeds the prototype gate on neutrino_spline branch N=[45.794190181326989, 46.370091635383844], last relative update=0.00818 after 20 steps",
+              "seconds": 0.005466599948704243
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.010537499794736505,
+          "low_rhs_nfev": 1097,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.52e-05 exceeds the prototype gate on neutrino_spline branch N=[45.922833323800489, 46.370091635383844], last relative update=0.00103 after 20 steps",
+              "seconds": 0.0035204999148845673
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018326699966564775
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019278999883681536
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.010532299987971783,
+          "low_rhs_nfev": 1109,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017346200067549944
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018165500136092305
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00396 exceeds the prototype gate on neutrino_spline branch N=[46.053423462218639, 46.370091635383844], last relative update=0.0178 after 20 steps",
+              "seconds": 0.005220399936661124
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.010931599885225296,
+          "low_rhs_nfev": 1133,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.016924200113862753
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01776470011100173
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018627699930220842
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.0111992999445647,
+          "low_rhs_nfev": 1157,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.016874399967491627
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017907399917021394
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01938239997252822
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.014255300164222717,
+          "low_rhs_nfev": 1481,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00032210000790655613
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036399997770786285
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044739991426467896
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.014261299977079034,
+          "low_rhs_nfev": 1505,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00031489995308220387
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004024000372737646
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044860015623271465
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.01431969995610416,
+          "low_rhs_nfev": 1529,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00031589996069669724
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036429986357688904
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004390000831335783
+            }
+          ],
+          "status": "handoff_reached"
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 789,
+      "freq_log10_hz": -18.31942857361416,
+      "base_phase_start": 0.0,
+      "reference_log10_omega": -14.640556026203749,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": -0.5,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.4375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.3125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.25,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.1875,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.0625,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.009389899903908372,
+          "low_rhs_nfev": 965,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 3.36e-07 exceeds the prototype gate on neutrino_spline branch N=[45.860321877157574, 46.370091635383844], last relative update=0.000372 after 20 steps",
+              "seconds": 0.0033809999004006386
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018579799914732575
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0227 exceeds the prototype gate on neutrino_spline branch N=[45.860321877157574, 46.370091635383844], last relative update=0.0158 after 20 steps",
+              "seconds": 0.005284900078549981
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.009491199860349298,
+          "low_rhs_nfev": 977,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.73e-05 exceeds the prototype gate on neutrino_spline branch N=[45.989867854832141, 46.370091635383844], last relative update=0.000938 after 20 steps",
+              "seconds": 0.003381500020623207
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0316 exceeds the prototype gate on neutrino_spline branch N=[45.989867854832141, 46.370091635383844], last relative update=0.00949 after 20 steps",
+              "seconds": 0.00456070015206933
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019760000053793192
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.009594399947673082,
+          "low_rhs_nfev": 989,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017436299938708544
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018866300117224455
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019559500040486455
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.009930099826306105,
+          "low_rhs_nfev": 1013,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017242199974134564
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019039500039070845
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.02038469980470836
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.012176200048997998,
+          "low_rhs_nfev": 1265,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00032810005359351635
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003675001207739115
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004488001577556133
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.012215299997478724,
+          "low_rhs_nfev": 1289,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003128000535070896
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003646998666226864
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004408999811857939
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.012374599929898977,
+          "low_rhs_nfev": 1313,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00031409994699060917
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036479998379945755
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004428001120686531
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.012584500014781952,
+          "low_rhs_nfev": 1349,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00032199989072978497
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003643999807536602
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004414999857544899
+            }
+          ],
+          "status": "handoff_reached"
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 790,
+      "freq_log10_hz": -18.333423592097077,
+      "base_phase_start": 0.0,
+      "reference_log10_omega": -14.54559530178781,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": -0.5,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.4375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.3125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.25,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.1875,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.0625,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.009435199899598956,
+          "low_rhs_nfev": 977,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 5.46e-06 exceeds the prototype gate on neutrino_spline branch N=[45.926872959550494, 46.370091635383844], last relative update=0.000289 after 20 steps",
+              "seconds": 0.003636999987065792
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00206 exceeds the prototype gate on neutrino_spline branch N=[45.926872959550494, 46.370091635383844], last relative update=0.0252 after 20 steps",
+              "seconds": 0.004659000085666776
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.02057940000668168
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.009821800049394369,
+          "low_rhs_nfev": 989,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 4.87e-06 exceeds the prototype gate on neutrino_spline branch N=[46.057537982023923, 46.370091635383844], last relative update=0.000344 after 20 steps",
+              "seconds": 0.003508599940687418
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019176699919626117
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.02025950001552701
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.00998070021159947,
+          "low_rhs_nfev": 1013,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017706099897623062
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018700800137594342
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00177 exceeds the prototype gate on neutrino_spline branch N=[46.191240547288245, 46.370091635383844], last relative update=0.00976 after 20 steps",
+              "seconds": 0.005162700079381466
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.010500899981707335,
+          "low_rhs_nfev": 1061,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017387500032782555
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01848470000550151
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "phase derivative is not positive at interval endpoints",
+              "seconds": 0.01817640010267496
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.012846299912780523,
+          "low_rhs_nfev": 1361,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00033379998058080673
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00038039986975491047
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00045689987018704414
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.012932199984788895,
+          "low_rhs_nfev": 1385,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00033210008405148983
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036940001882612705
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004406000953167677
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.013101499993354082,
+          "low_rhs_nfev": 1409,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003253000322729349
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003730999305844307
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004467000253498554
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.013590799877420068,
+          "low_rhs_nfev": 1538,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 792,
+      "freq_log10_hz": -18.361413629062902,
+      "base_phase_start": 0.0,
+      "reference_log10_omega": -14.383913942574148,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": -0.5,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.4375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.3125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.25,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.1875,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.0625,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.009848000016063452,
+          "low_rhs_nfev": 1013,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 1.83e-05 exceeds the prototype gate on neutrino_spline branch N=[46.061655400508975, 46.370091635383844], last relative update=0.000204 after 20 steps",
+              "seconds": 0.0035314999986439943
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018319099908694625
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.020275100134313107
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.010139500023797154,
+          "low_rhs_nfev": 1025,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01749490015208721
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01875409996137023
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01981350011192262
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.010270199971273541,
+          "low_rhs_nfev": 1049,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.017325500026345253
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019067800138145685
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019348599947988987
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.01256699999794364,
+          "low_rhs_nfev": 1349,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003284001722931862
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036969990469515324
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004501000512391329
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.012538299895823002,
+          "low_rhs_nfev": 1373,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00031509995460510254
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036720000207424164
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044899992644786835
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.01265310007147491,
+          "low_rhs_nfev": 1397,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00030990014784038067
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036390009336173534
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044450000859797
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.013462900184094906,
+          "low_rhs_nfev": 1514,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.013336899923160672,
+          "low_rhs_nfev": 1514,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 793,
+      "freq_log10_hz": -18.375408647545818,
+      "base_phase_start": 0.0,
+      "reference_log10_omega": -14.318201726464071,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": -0.5,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.4375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.3125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.25,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.1875,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.0625,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.010013299994170666,
+          "low_rhs_nfev": 1001,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.0125 exceeds the prototype gate on neutrino_spline branch N=[46.13017588478688, 46.370091635383844], last relative update=0.0578 after 20 steps",
+              "seconds": 0.003580200020223856
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018966899951919913
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019705899991095066
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.010198100004345179,
+          "low_rhs_nfev": 1013,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.01791849988512695
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00637 exceeds the prototype gate on neutrino_spline branch N=[46.266236098326274, 46.370091635383844], last relative update=0.0561 after 20 steps",
+              "seconds": 0.0044253000523895025
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019775199936702847
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.01245539984665811,
+          "low_rhs_nfev": 1313,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003198001068085432
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036800000816583633
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044800015166401863
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.012506800005212426,
+          "low_rhs_nfev": 1337,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003160999622195959
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036230008117854595
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.000439999857917428
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.012716899858787656,
+          "low_rhs_nfev": 1361,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00031429994851350784
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00037160003557801247
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004525999538600445
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.012940799817442894,
+          "low_rhs_nfev": 1409,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003255000337958336
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003713001497089863
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004437000025063753
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.013384100049734116,
+          "low_rhs_nfev": 1502,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.01334040006622672,
+          "low_rhs_nfev": 1502,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    },
+    {
+      "index": 794,
+      "freq_log10_hz": -18.389403666028734,
+      "base_phase_start": 0.0,
+      "reference_log10_omega": -14.261896926023406,
+      "reference_used_tail": false,
+      "phase_start_trials": [
+        {
+          "phase_start": -0.5,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.4375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.375,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.3125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.25,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.1875,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.125,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": -0.0625,
+          "status": "outside_scan_interval"
+        },
+        {
+          "phase_start": 0.0,
+          "low_seconds": 0.009374899789690971,
+          "low_rhs_nfev": 929,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "ArithmeticError",
+              "message": "collocated Riccati residual 0.00446 exceeds the prototype gate on neutrino_spline branch N=[46.199717400248396, 46.370091635383844], last relative update=0.00313 after 20 steps",
+              "seconds": 0.0035671000368893147
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019193599931895733
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.02045769989490509
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.0625,
+          "low_seconds": 0.00993719999678433,
+          "low_rhs_nfev": 977,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.018603899981826544
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.019706200109794736
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.02046689996495843
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.125,
+          "low_seconds": 0.01210459996946156,
+          "low_rhs_nfev": 1277,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003207998815923929
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00036729988642036915
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0004420999903231859
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.1875,
+          "low_seconds": 0.012173400027677417,
+          "low_rhs_nfev": 1313,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00031070015393197536
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003662998788058758
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044739991426467896
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.25,
+          "low_seconds": 0.01240440015681088,
+          "low_rhs_nfev": 1337,
+          "orders": [
+            {
+              "order": 16,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003166000824421644
+            },
+            {
+              "order": 24,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.0003744000568985939
+            },
+            {
+              "order": 32,
+              "status": "failed",
+              "exception_type": "FloatingPointError",
+              "message": "non-positive/non-finite normal-form Q",
+              "seconds": 0.00044579990208148956
+            }
+          ],
+          "status": "handoff_reached"
+        },
+        {
+          "phase_start": 0.3125,
+          "low_seconds": 0.012924999929964542,
+          "low_rhs_nfev": 1454,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.375,
+          "low_seconds": 0.012921399902552366,
+          "low_rhs_nfev": 1454,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        },
+        {
+          "phase_start": 0.4375,
+          "low_seconds": 0.012947799870744348,
+          "low_rhs_nfev": 1454,
+          "orders": [],
+          "status": "handoff_not_reached",
+          "message": "The solver successfully reached the end of the integration interval."
+        }
+      ],
+      "selected_candidate": null,
+      "validated": false,
+      "validation": {
+        "accepted": false,
+        "reasons": [
+          "no_screened_candidate"
+        ]
+      }
+    }
+  ]
+}

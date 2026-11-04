@@ -393,15 +393,24 @@ residual adds19 more, `[656,671,672,687,700,701,702,703,714,716,718,726,730,
 733,734,755,756,767,769]`. No prior strict mode is lost. Among57 remaining
 residual failures,20 pass adjacent-order checks and70 completed order
 candidates across44 modes pass tighter Cartesian/Prüfer references. All20
-adjacent-order modes overlap that set, so781/800 are validated and13 residual
-failures plus six non-positive-`Q` modes remain. Lower orders8/12/16 add no
-unique coverage.
-These checks still do not provide a complete phase integral map or root. See
+adjacent-order modes overlap that set, so781/800 are validated at the standard
+handoff. A separate internal phase-start scan dual-validates five more modes
+`[757,759,780,782,783]` against tighter Cartesian/Prüfer references, for786/800
+unique frequencies; eight residual failures and six non-positive-`Q` modes
+remain. Lower orders8/12/16 add no unique coverage.
+These checks still do not provide a complete phase integral map or root.
+The Windows phase archive records mode687 as a pass, while Linux CI reproduces
+an explicit order-16 residual rejection (`7.76e-10` vs the `1e-10` gate). This
+candidate is platform-sensitive and the `786/800` count is Windows-specific;
+no cross-platform count is claimed. The regression accepts either a result
+that meets the original gates or the explicit rejection, with no threshold
+change. See
 [`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
 [`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
 [`sample2_phase_root_residual_order_probe_20261105.json`](sample2_phase_root_residual_order_probe_20261105.json),
 [`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_phase_residual_orders_dual_reference_20261105.json),
 [`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json),
+[`sample2_phase_start_offset_probe_20261105.json`](sample2_phase_start_offset_probe_20261105.json),
 [`sample2_phase_reference_root_res8_tail5_gamma10_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma10_20261105.json),
 and [`sample2_reference_root_res8_tail5_gamma0_20261105.json`](sample2_reference_root_res8_tail5_gamma0_20261105.json).
 The lower-order probe completed0/0/15 of the latest57 residual modes at
@@ -409,6 +418,7 @@ orders8/12/16 and found no adjacent-order pair; keep it as an exploratory
 result only. See
 [`sample2_phase_root_lower_order_probe_20261105.json`](sample2_phase_root_lower_order_probe_20261105.json)
 and `scripts/probe_sample2_lower_collocation_orders.py`.
+The targeted start-offset replay is `scripts/probe_sample2_phase_start_offsets.py`.
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
