@@ -589,6 +589,33 @@ using `--frequency -12.6723`, `--frequency -10.772906114757099`, and
 [`nonosc_phase_res4_highfreq_mode_20261104.json`](nonosc_phase_res4_highfreq_mode_20261104.json),
 and
 [`nonosc_phase_res4_notail_mode_20261104.json`](nonosc_phase_res4_notail_mode_20261104.json).
+
+A fixed-background screen was then run on the complete archived 260-frequency
+res4 grid at the same `DN_eff` and tail depth. The Cartesian module digest was
+checked against the paired archive before propagation. The phase path completed
+213/260 modes (82.0%) with orders 16/24/32; 45 modes were rejected by the
+high-frequency interval screen and two had non-positive normal-form `Q`. The
+Newton iteration limit remains 20: when its update test is not met, the method
+now accepts only if the existing scaled collocation (`1e-10`) and dense
+residual (`1e-9`) gates both pass. This residual-based check covered 14 modes
+and 22 segments; their maximum observed collocation/dense residuals were
+`5.8e-14/1.7e-13`. On completed modes, order 32 has maximum/P95 error
+`1.548e-4/5.562e-8 dex`.
+Two modes near the tail threshold use different handoff semantics (phase to
+today, Cartesian to tail) and contribute the two largest errors, both below
+`1.55e-4 dex`. For the 213 completed modes, the single-run order-32 phase time
+has P50/P95 `0.206/0.337 s`; summed phase and archived Cartesian times are
+`43.33/1990.97 s` (`45.9x` on this supported subset). This is not an all-grid
+speedup claim or an interleaved benchmark; peak RSS was not measured. Failed
+modes are preserved as failures, not included in the accuracy statistics. The
+complete per-mode record, including phase-start attempts, residuals, branch
+segments, timings, and failure messages, is
+[`nonosc_phase_res4_fullgrid_20261104.json`](nonosc_phase_res4_fullgrid_20261104.json),
+reproduced with
+[`benchmark_nonosc_phase_res4_fullgrid.py`](../scripts/benchmark_nonosc_phase_res4_fullgrid.py).
+This remains one fixed parameter point and does not validate an integral map,
+self-consistency root, or parameter domain.
+
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
