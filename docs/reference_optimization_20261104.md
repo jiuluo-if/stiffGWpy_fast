@@ -168,6 +168,22 @@ paired full-grid Cartesian speed ratio; the full-grid Cartesian rerun and map
 slope/root-shift check remain open. Raw per-mode data and provenance are in
 [`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).
 
+## Archived Reference map secant sensitivity
+
+The two archived 260-frequency Cartesian tail10 maps at
+`DN_eff=0.133732083004284` and `0.13373681817755848` use byte-identical
+`reference.py` sources and bitwise-identical frequency arrays. Their secant
+slope is `d(DN_gw)/d(DN_eff) ~= 0.0211261`; applying the fixed-point correction
+`residual/(1-slope)` to the second map estimates a root shift of
+`-1.082e-10`. This helps quantify residual amplification for this res4 pair.
+It is an interval-average slope across two stored maps, not a local derivative,
+uncertainty bound, or rigorous root bracket. The second map's protocol metadata
+is less complete than the first map's, so this result remains a derived
+diagnostic rather than a new root certification. Reproduce with
+[`analyze_reference_map_sensitivity.py`](../scripts/analyze_reference_map_sensitivity.py);
+inputs, source hashes, and derived values are in
+[`res4_reference_map_sensitivity_20261104.json`](res4_reference_map_sensitivity_20261104.json).
+
 The crossover is a latency dispatch only. A fresh low-frequency single-mode
 call at `log10(f/Hz)=-18.4594` used the Python scalar evaluator, completed in
 `17.6 ms`, and left the Numba dispatcher uncompiled. A fresh expensive mode at

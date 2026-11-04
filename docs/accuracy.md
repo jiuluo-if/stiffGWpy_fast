@@ -289,6 +289,14 @@ On the blue-tilt res4 point (`r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`,
   residual `-7.92e-10`). The Fast root differs by `-5.77e-5` relative. At the
   Reference root, Fast's spectrum median/P95/maximum error is
   `6.109e-5 / 3.162e-4 / 3.4532e-4 dex`.
+- The two archived Cartesian tail10 maps around this root use the same
+  `reference.py` bytes and bitwise-identical 260-mode frequency arrays. Their
+  secant slope is `0.02113`, giving a first-order fixed-point shift estimate
+  `-1.08e-10` from the second map's residual. This is an interval secant, not a
+  local derivative or rigorous root enclosure. See
+  [`res4_reference_map_sensitivity_20261104.json`](res4_reference_map_sensitivity_20261104.json)
+  and reproduce with
+  [`analyze_reference_map_sensitivity.py`](../scripts/analyze_reference_map_sensitivity.py).
 - Reference tail9-to-tail10 spectrum change on the same 260 frequencies is
   median/P95/maximum `9.94e-8 / 7.282e-5 / 2.0604e-4 dex`. Reference estimates
   at the closed root are `1.84e-20` quadrature error and `1.82e-10`

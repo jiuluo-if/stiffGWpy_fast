@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "analysis": "res4_cartesian_reference_fixed_map_secant_sensitivity",
+  "source_sha": "d2960ba33ac0cde1998d8f97a2c0042d3e665a48",
+  "worktree_dirty": true,
+  "analysis_script_sha256": "f7a3802746a9246675f86ae217ad32f5a0520304dd4111695af8e65093967740",
+  "reference_source_sha256_both_maps": "b1e96fbba48dba0e48ee99aaebead6f248e98e899db9ca0b2fd7ea9c77d27814",
+  "reference_source_commits": [
+    "cda875a988326441d1f7a162c2988a8a6b4897b9",
+    "671aa11d52e97102c952041caf935e3b8f6b6329"
+  ],
+  "map_inputs_dn_eff": [
+    0.133732083004284,
+    0.13373681817755848
+  ],
+  "map_outputs_dn_gw": [
+    0.13373671803614506,
+    0.13373681807168084
+  ],
+  "map_residuals": [
+    4.63503186107217e-06,
+    -1.0587763998870514e-10
+  ],
+  "secant_slope_dDNgw_dDNeff": 0.021126056001098025,
+  "root_shift_estimate_at_second_map": -1.0816269105720921e-10,
+  "secant_corrected_root_estimate": 0.13373681806939577,
+  "frequency_count": 260,
+  "frequency_arrays_bitwise_equal": true,
+  "low_archive_npz_sha256": "58ea296add21663bb86b3701887e6c1764cf8c0dc34c630b6a4df4a4e6069205",
+  "high_archive_npz_sha256": "a62fbc394f8364b1e218098577c30e596e10010ff8a79a24d119822aa5891a5c",
+  "maps": [
+    {
+      "json": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.json",
+      "json_sha256": "9a6e9212926ef1ff8782dfdd88a1d4e40a0d01d40ee473ad1d495ee29e5d09ed",
+      "npz": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+      "npz_sha256": "58ea296add21663bb86b3701887e6c1764cf8c0dc34c630b6a4df4a4e6069205",
+      "source_commit": "cda875a988326441d1f7a162c2988a8a6b4897b9"
+    },
+    {
+      "json": "F:\\codex\\stiffGWpy\\docs\\res4_reference_secant_root_tail10_20261104.json",
+      "json_sha256": "bacd0f28dd1b3caf9b6ee7aa504ce05d50550ef0b5de1332f0171064da8fddc9",
+      "npz": "F:\\codex\\stiffGWpy\\docs\\res4_reference_secant_root_tail10_20261104.npz",
+      "npz_sha256": "a62fbc394f8364b1e218098577c30e596e10010ff8a79a24d119822aa5891a5c",
+      "source_commit": "671aa11d52e97102c952041caf935e3b8f6b6329"
+    }
+  ],
+  "protocol_note": "Both records identify the res4 tail10 Reference map; the first JSON records rtol=1e-11 explicitly, while the second is the archived tail10 secant-root map. The slope is a secant average over the two stored DN_eff inputs, not a local derivative or a rigorous root bracket."
+}

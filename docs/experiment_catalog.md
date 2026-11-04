@@ -302,3 +302,8 @@ The expanded eight-frequency A/B reports `3.626x` aggregate (`3.586x`
 including JIT warmup), per-mode P50/P95 `2.778x/4.174x`, and maximum same-input
 spectrum error `3.94e-6 dex`; see
 [`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).
+Two archived Cartesian tail10 maps also give a same-source, same-grid secant
+slope estimate of `0.02113` and a first-order root shift estimate of
+`-1.08e-10`. This is not a local derivative or root enclosure; see
+[`res4_reference_map_sensitivity_20261104.json`](res4_reference_map_sensitivity_20261104.json)
+and [`analyze_reference_map_sensitivity.py`](../scripts/analyze_reference_map_sensitivity.py).

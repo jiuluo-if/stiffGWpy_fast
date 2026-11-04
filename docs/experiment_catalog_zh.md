@@ -139,3 +139,5 @@ Reference 增加显式的 backend="prufer" 选项，默认仍为 Cartesian。该
 随后在独立 Cartesian Reference 根`DN_eff=0.13373681817755848`和相同 260 个频率上，完成更新后 Prüfer 的 candidate-only tail10 全谱映射：相对映射差`4.39e-7`，固定点残差`-4.39e-7`，最大谱差`5.25e-5 dex`，单 worker 模传播耗时`569.1 s`。该结果验证新背景插值下的候选全网格精度，不是与当前 Cartesian 全网格配对的速度比；根附近映射斜率仍未测。原始逐模数据见[reference_prufer_spline_res4_refroot_20261104.json](reference_prufer_spline_res4_refroot_20261104.json)。
 
 进一步用归档 260 点频网格的 8 个代表频率做两轮交替配对：Prüfer 对 Cartesian 的汇总加速`3.626`倍（含独立记录的 JIT 预热约`3.586`倍），逐模速度比 P50/P95 为`2.778/4.174`，最大谱差`3.94e-6 dex`。这是覆盖更宽频段的样本，不是全网格配对速度认证，原始数据见[reference_prufer_production_ab_8mode_20261104.json](reference_prufer_production_ab_8mode_20261104.json)。
+
+两份归档的 Cartesian tail10 映射具有相同 Reference 源码和逐位相同的 260 点频网格，由此得到区间差商斜率`0.02113`及一阶根位移估计`-1.08e-10`。这不是局部导数或严格根括区；输入哈希、源码哈希和限制见[灵敏度结果](res4_reference_map_sensitivity_20261104.json)，可用[分析脚本](../scripts/analyze_reference_map_sensitivity.py)复现。
