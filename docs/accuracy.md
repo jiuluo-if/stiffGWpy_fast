@@ -624,11 +624,24 @@ As a separate screen-sensitivity experiment, the same full grid was rerun with
 collocation and dense residual gates, and Cartesian comparison. It completed
 219/260 modes (six more than the default screen); 39 still failed the Riccati
 residual gate and two had non-positive `Q`. The maximum/P95 error remained
-`1.548e-4/5.525e-8 dex`. Since this only recovers six additional modes on one
-parameter point and leaves 43 failures, the default `gamma_min=10` screen is
+`1.548e-4/5.525e-8 dex`. The strict three-order screen recovers six additional
+modes on this one parameter point and leaves 41 failures, so the default `gamma_min=10` screen is
 retained pending broader validation. The separate raw record is
 [`nonosc_phase_res4_fullgrid_gamma0_20261104.json`](nonosc_phase_res4_fullgrid_gamma0_20261104.json),
 reproduced with `--minimum-gamma 0`.
+
+The 39 remaining residual failures were then replayed independently at orders
+16, 24, and 32 with the same recorded phase start. Order 16 completed 14,
+order 24 completed 7, and order 32 completed none. Five no-tail modes
+(`indices 212, 218, 224, 237, 244`) pass both 16 and 24; their maximum
+order-pair difference is `5.47e-11 dex`, and maximum Cartesian error is
+`3.28e-9 dex`. This raises the set of checked modes to 224/260 if these five
+two-order cases are counted separately from the 219 strict three-order
+results. The other 34 residual cases and two non-positive-`Q` modes remain
+unresolved. Full per-order failures, residuals, and reference errors are in
+[`nonosc_phase_res4_residual_order_probe_20261104.json`](nonosc_phase_res4_residual_order_probe_20261104.json),
+reproduced with
+[`analyze_phase_residual_order_failures.py`](../scripts/analyze_phase_residual_order_failures.py).
 
 A second fixed-background cross-check at `DN_eff=0.133732083004284` (same
 cosmological parameters, different background normalization) also passed at
