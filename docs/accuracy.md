@@ -678,6 +678,48 @@ and
 and
 [`nonosc_phase_sample2_mid3_20261104.json`](nonosc_phase_sample2_mid3_20261104.json).
 
+### Sample2 full native-grid check at the Reference root
+
+The sample2 cosmology was then compared on its full `freq_res=8` native grid at
+the previously converged `z_tail=5` Reference root anchor
+`DN_eff=2.291411867022825`. A fresh one-pass Cartesian map on the same 800
+frequencies returned `DN_gw=2.29141186744725`, for relative fixed-point
+residual `-1.85e-10`. This is a fixed-background map at the archived root, not
+a new outer root solve.
+
+At `gamma_min=10`, the phase method completed 700/800 modes; with
+`gamma_min=0`, it completed 709/800. On the latter strict 16/24/32 set, maximum
+and P95 error are `8.668e-7` and `2.413e-7 dex`. The phase path took about
+`145 s` against `45 s` for Cartesian, so this is an accuracy cross-check, not
+a speed improvement. No tail-semantic mismatches remain after the handoff fix.
+The other 91 modes remain explicit: 88 residual-gate failures and three
+non-positive-`Q` failures. Because the candidate grid is incomplete, no phase
+integral map or candidate-root residual is claimed.
+
+An independent order replay of the 88 residual failures found 14 no-tail modes
+that pass two adjacent orders and Cartesian checks: 13 at 16/24 and one at
+24/32. The maximum order-pair difference is `2.54e-10 dex`; maximum Cartesian
+error is `2.72e-8 dex`. Count these separately from the 709 strict three-order
+modes: 723/800 modes have at least one validated tier, with 77 still
+unresolved.
+
+The same grid exposed a tail-event bug: four modes crossed `z_tail=5` and later
+had `z_today<5`, while the phase code inferred tail usage only from today's
+`z`. It now uses the tail state at the phase endpoint when `z_phase=z_tail`;
+the regression in [`test_nonosc_phase_prototype.py`](../tests/test_nonosc_phase_prototype.py)
+failed before and passes after the change. Root-grid reference arrays and
+phase results are
+[`sample2_reference_root_res8_tail5_20261104.json`](sample2_reference_root_res8_tail5_20261104.json),
+[`sample2_reference_root_res8_tail5_20261104.npz`](sample2_reference_root_res8_tail5_20261104.npz),
+[`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
+[`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
+and
+[`sample2_phase_root_residual_order_probe_20261105.json`](sample2_phase_root_residual_order_probe_20261105.json).
+Reproduce with
+[`benchmark_phase_sample2_reference_root_grid.py`](../scripts/benchmark_phase_sample2_reference_root_grid.py)
+and
+[`analyze_sample2_root_phase_order_failures.py`](../scripts/analyze_sample2_root_phase_order_failures.py).
+
 The positive consistency-relation branch was also sampled with `cr=0.1` and
 `r=.01`, for which the model derives `n_t=-r/8=-.00125` (the supplied `n_t=2`
 does not control the spectrum on this branch). At the same res4 background
@@ -687,6 +729,52 @@ not a full grid or root; see
 [`nonosc_phase_cr_positive_tail_20261104.json`](nonosc_phase_cr_positive_tail_20261104.json)
 and
 [`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
+
+### Sample2 full native-grid check at the Reference root
+
+The minimized sample2 cosmology was then checked on the full `freq_res=8`
+native grid at the previously converged `z_tail=5` Reference root anchor
+`DN_eff=2.291411867022825`. A fresh one-pass Cartesian map over the same 800
+frequencies returned `DN_gw=2.29141186744725`, for relative fixed-point
+residual `-1.85e-10`. This is a fixed-background map at the archived root, not
+a new outer root solve.
+
+At `gamma_min=10`, the phase method completed 700/800 modes with maximum/P95
+error `8.668e-7/2.416e-7 dex`. At `gamma_min=0`, it completed 709/800, with
+maximum/P95 `8.668e-7/2.413e-7 dex`; the phase path used about `145 s` versus
+`45 s` for Cartesian Reference, so it is slower on this grid. It did not
+produce a complete candidate integral map because 91 modes remain unsupported
+or fail the residual gates. The output keeps those failures explicit.
+
+A tail-event audit found and fixed a semantic bug exposed by these modes: four
+frequencies crossed `z_tail=5` during propagation but later had `z_today<5`.
+The prototype had inferred tail use from `z_today`, causing up to
+`4.80e-3 dex` error against Reference. When the phase prefix ends exactly at
+the tail threshold, it now uses the tail state at that endpoint. The focused
+regression in [`test_nonosc_phase_prototype.py`](../tests/test_nonosc_phase_prototype.py)
+fails before the fix and passes after it; the corrected 800-bin run has no tail
+semantic mismatches and maximum spectral error below `1e-6 dex` on supported
+modes.
+
+Independent order replays of the 88 gamma-zero residual failures find 14 more
+no-tail modes with adjacent-order agreement and Cartesian validation: 13
+orders 16/24 pairs and one 24/32 pair. Their maximum adjacent-order difference
+is `2.54e-10 dex`, and maximum Cartesian error is `2.72e-8 dex`. Together with
+the 709 three-order modes this checks 723/800 modes in two separately stated
+tiers; 74 residual failures and three non-positive-`Q` modes remain. Since the
+candidate spectrum is still incomplete, no phase `DN_gw` map or new root claim
+is made.
+
+Raw Reference and phase arrays, exact 800-bin rows, and provenance hashes are
+in [`sample2_reference_root_res8_tail5_20261104.json`](sample2_reference_root_res8_tail5_20261104.json),
+[`sample2_reference_root_res8_tail5_20261104.npz`](sample2_reference_root_res8_tail5_20261104.npz),
+[`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
+and
+[`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json).
+Reproduce with
+[`benchmark_phase_sample2_reference_root_grid.py`](../scripts/benchmark_phase_sample2_reference_root_grid.py)
+and the residual probe
+[`analyze_sample2_root_phase_order_failures.py`](../scripts/analyze_sample2_root_phase_order_failures.py).
 
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
