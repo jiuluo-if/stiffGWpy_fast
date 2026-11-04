@@ -862,3 +862,71 @@ did not finish within a 45-minute CPU budget; it was cancelled without a
 partial spectrum or accuracy result. This is recorded as an incomplete resource
 screen, not as a full-grid method rejection, in
 [`reference_ardc_res4_timeout_20261104.json`](reference_ardc_res4_timeout_20261104.json).
+
+## 2026-11-05 Reference evaluation cost reduction
+
+The continuous-background Cartesian Reference now has a Numba path for the
+existing piecewise `H2`/`sigma` equations. It evaluates the same SciPy cubic
+coefficients and preserves the original Python evaluator as the cold path. A
+batch of at least 32 frequencies that includes a costly mode warms the compiled
+kernel; a one-frequency request does not pay this additional compilation.
+Exact-zero tensor amplitude also skips this warmup.
+
+On sample2's exact `freq_res=8`, 800-node Reference-root background
+(`DN_eff=2.291411867022825`, `z_tail=5`, `rtol=1e-9`, Cartesian DOP853, one
+worker), three alternating full-grid pairs gave Python P50/P95 `41.392/41.549 s`
+and compiled P50/P95 `27.513/27.652 s`. The compiled/Python median ratio is
+`0.6647` (33.53% lower warm runtime); first-call compile/warm cost was `0.579 s`
+and was measured separately. Every paired `DN_gw`, spectrum node, frequency,
+and tail mask is bitwise identical, including the archived Reference output;
+maximum spectrum difference is zero. This is one difficult fixed background,
+not a universal Reference speed claim. See
+[`reference_h2_numba_fullgrid_ab_20261105.json`](reference_h2_numba_fullgrid_ab_20261105.json)
+and reproduce with
+[`benchmark_reference_h2_numba_fullgrid.py`](../scripts/benchmark_reference_h2_numba_fullgrid.py).
+
+The `32`-frequency warmup threshold was measured on stratified sample2 batches.
+A cold 16-node batch left the H2 kernel uncompiled; a cold 32-node batch compiled
+it in `0.280 s`. Including that compile, the first 32-node candidate run took
+`1.347 s`, versus the warm Python P50 of `1.619 s` (0.272s lower); the warm
+compiled P50 was `1.072 s`. At 64 nodes, warm P50 was `2.188 s` versus `3.279 s`
+Python. All batch outputs match bitwise. This supports the current dispatch
+threshold on this hard background, not every workload. See
+[`reference_h2_numba_batch_crossover_20261105.json`](reference_h2_numba_batch_crossover_20261105.json)
+and [`benchmark_reference_h2_batch_crossover.py`](../scripts/benchmark_reference_h2_batch_crossover.py).
+
+The compiled background matches the Python evaluator bitwise on 2,017 sample2
+points, including nextafter probes at the reheating, thermal-table and neutrino
+branch boundaries. The targeted Reference suite passes all44 non-slow tests;
+the baseline profiler measured 4.32 million DOP853 RHS calls and 19.55s
+inclusive background time in a 45.16 s 800-mode propagation. The compiled profile
+measured 5.71 s in `_H2_and_sigma` and 30.63 s total instrumented propagation. Profile
+and scalar probe records are
+[`reference_fullgrid_profile_20261105.json`](reference_fullgrid_profile_20261105.json)
+and [`reference_fullgrid_profile_compiled_20261105.json`](reference_fullgrid_profile_compiled_20261105.json),
+plus [`reference_h2_numba_probe_20261105.json`](reference_h2_numba_probe_20261105.json).
+
+The same-day `_find_start_N` change reuses the fixed horizon normalization
+anchors and stops only after evaluating the first floating-point-stagnant
+midpoint. All 800 sample2 start coordinates and five complete representative
+mode outputs match the old code bitwise. After the H2/sigma optimization,
+three paired full maps show P50/P95 `27.853/27.895 s` before and
+`27.608/27.638 s` after (0.88% lower P50 runtime). See
+[`reference_start_search_fullgrid_ab_20261105.json`](reference_start_search_fullgrid_ab_20261105.json)
+and [`benchmark_reference_start_search_fullgrid.py`](../scripts/benchmark_reference_start_search_fullgrid.py).
+The 800-coordinate count and search-call reduction are reproduced with
+[`benchmark_reference_start_search.py`](../scripts/benchmark_reference_start_search.py).
+
+## 2026-11-05 256-point Fast domain pilots
+
+Fresh 256-point Sobol and 256-point Latin-hypercube pilots sampled the broad
+signed/log parameter mapping with alternating `cr` branches, seed `20261105`,
+two threads, and the existing `N_inf<=120` resource-only preflight. Sobol
+statuses were 6 success, 4 returned nonfinite, 14 solver failed, 60 exception,
+78 resource skip and 94 resource preflight reject. Latin statuses were 7
+success, 20 solver failed, 66 exception, 75 resource skip and 88 resource
+preflight reject. None of the 13 successful outputs has an independent
+accuracy certification; the four nonfinite results are not successes. These
+are deliberately broad pilots, not success-rate or parameter-boundary claims.
+Raw rows and run summaries are linked from
+[`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md#2026-11-05-256-point-sobol-and-latin-hypercube-pilots).

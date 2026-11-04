@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_h2_numba_batch_crossover",
+  "created_at": "2026-11-05T03:41:34.466537+08:00",
+  "source_commit": "644382006ec614fa23186b6e99f24cac6dc54107",
+  "branch": "fast_v0.2",
+  "reference_module_sha256": "c3a39cad161bea08cd207cf8bf0514e76bdfca12718236c40fd45fb90f664931",
+  "baseline_archive_sha256": "c970fbd101a324d8f102905fd9922669c30082e858f986b22065fe0c3705bd1a",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0
+  },
+  "DN_eff": 2.291411867022825,
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "rtol": 1e-09,
+  "backend": "cartesian",
+  "workers": 1,
+  "cold_path": {
+    "16": {
+      "cold_wall_s": 1.1104655999224633,
+      "reference_background_warm_s": 0.0,
+      "h2_kernel_ready_after_call": false,
+      "output_count": 16
+    },
+    "32": {
+      "cold_wall_s": 1.3471905998885632,
+      "reference_background_warm_s": 0.28037950000725687,
+      "h2_kernel_ready_after_call": true,
+      "output_count": 32
+    }
+  },
+  "paired_runs": 3,
+  "batch_sizes": [
+    {
+      "batch_size": 16,
+      "frequency_sha256": "25b1269e33cb43a4709ec1a74f770a37c2b3630b3c6f2e3b15b53b382303d2f2",
+      "python_runtime_s": [
+        0.8072653999552131,
+        0.8163115000352263,
+        0.8218696999829262
+      ],
+      "compiled_runtime_s": [
+        0.538390199886635,
+        0.5371365998871624,
+        0.5320118998643011
+      ],
+      "python_p50_s": 0.8163115000352263,
+      "python_p95_s": 0.8213138799881563,
+      "compiled_p50_s": 0.5371365998871624,
+      "compiled_p95_s": 0.5382648398866877,
+      "warm_candidate_over_python_p50": 0.6580044503403215,
+      "cold_batch_runtime_s": 1.1104655999224633,
+      "cold_candidate_vs_warm_python_delta_s": null,
+      "bitwise_outputs_match": true
+    },
+    {
+      "batch_size": 32,
+      "frequency_sha256": "600eec4a39d4fda66412338ddb82b9c1f9d57fd06dea64e1f3625b0cf7dd6a12",
+      "python_runtime_s": [
+        1.6193601000122726,
+        1.6193079000804573,
+        1.6145256999880075
+      ],
+      "compiled_runtime_s": [
+        1.0729580998886377,
+        1.0722529999911785,
+        1.0662365001626313
+      ],
+      "python_p50_s": 1.6193079000804573,
+      "python_p95_s": 1.6193548800190911,
+      "compiled_p50_s": 1.0722529999911785,
+      "compiled_p95_s": 1.0728875898988917,
+      "warm_candidate_over_python_p50": 0.6621674605168679,
+      "cold_batch_runtime_s": 1.3471905998885632,
+      "cold_candidate_vs_warm_python_delta_s": -0.2721173001918942,
+      "bitwise_outputs_match": true
+    },
+    {
+      "batch_size": 64,
+      "frequency_sha256": "b1dbae1df437388f7073c7fb439512b856fc047a67ce3297ec3d98789f422130",
+      "python_runtime_s": [
+        3.2554874001070857,
+        3.284673099871725,
+        3.278751599835232
+      ],
+      "compiled_runtime_s": [
+        2.1658413999248296,
+        2.187643300043419,
+        2.191318899858743
+      ],
+      "python_p50_s": 3.278751599835232,
+      "python_p95_s": 3.2840809498680756,
+      "compiled_p50_s": 2.187643300043419,
+      "compiled_p95_s": 2.1909513398772105,
+      "warm_candidate_over_python_p50": 0.6672183705997597,
+      "cold_batch_runtime_s": null,
+      "cold_candidate_vs_warm_python_delta_s": null,
+      "bitwise_outputs_match": true
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "Only one difficult cosmology/root and three batch sizes were checked.",
+    "The crossover is a workload dispatch guide, not a precision boundary."
+  ]
+}

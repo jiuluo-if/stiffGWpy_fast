@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_h2_sigma_numba_fullgrid_ab",
+  "created_at": "2026-11-05T03:28:08.038844+08:00",
+  "source_commit": "644382006ec614fa23186b6e99f24cac6dc54107",
+  "branch": "fast_v0.2",
+  "reference_module_sha256": "c3a39cad161bea08cd207cf8bf0514e76bdfca12718236c40fd45fb90f664931",
+  "candidate_kernel": "Reference._h2_sigma_numba_core via _H2_and_sigma dispatch",
+  "candidate_reference_sha256": "c3a39cad161bea08cd207cf8bf0514e76bdfca12718236c40fd45fb90f664931",
+  "baseline_archive_sha256": "c970fbd101a324d8f102905fd9922669c30082e858f986b22065fe0c3705bd1a",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0
+  },
+  "DN_eff": 2.291411867022825,
+  "frequency_res": 8.0,
+  "frequency_count": 800,
+  "frequency_sha256": "b363185747da99e0258d1924a3927bf01255266a2159cda247bf6a42ca0326dc",
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "rtol": 1e-09,
+  "backend": "cartesian",
+  "workers": 1,
+  "jit_compile_s_excluded": 0.578572099795565,
+  "paired_runs": 3,
+  "python_runtime_s": [
+    41.56624499987811,
+    41.2059491998516,
+    41.39194530015811
+  ],
+  "compiled_runtime_s": [
+    27.667503300122917,
+    27.340917099965736,
+    27.512766500003636
+  ],
+  "python_p50_s": 41.39194530015811,
+  "python_p95_s": 41.54881502990611,
+  "compiled_p50_s": 27.512766500003636,
+  "compiled_p95_s": 27.652029620110987,
+  "compiled_over_python_p50": 0.6646888978155501,
+  "archive_max_abs_spectrum_delta_dex": 0.0,
+  "pair_checks": [
+    {
+      "pair": 0,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    },
+    {
+      "pair": 1,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    },
+    {
+      "pair": 2,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "This is one fixed cosmology, DN_eff and 800-node grid; it does not certify the complete parameter domain.",
+    "It changes only the scalar H2/sigma evaluator; the ODE solver, equations, tolerances and frequency nodes are unchanged.",
+    "This run validates the integrated candidate only on the recorded fixed background; multi-background and cold-start checks remain required."
+  ]
+}

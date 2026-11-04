@@ -764,3 +764,26 @@ failure reason, runtime, and accuracy budget:
 [`fast_domain_pressure_sobol128_20261104.jsonl`](fast_domain_pressure_sobol128_20261104.jsonl)
 and
 [`fast_domain_pressure_latin128_20261104.jsonl`](fast_domain_pressure_latin128_20261104.jsonl).
+
+## 2026-11-05 256-point Sobol and Latin-hypercube pilots
+
+Two fresh QMC batches each sampled 256 points using the full signed/log
+parameter mapping, seed `20261105`, two threads, and the same resource-only
+`N_inf<=120` preflight. Their source commit is
+`644382006ec614fa23186b6e99f24cac6dc54107`. Sobol classified 6 success, 4
+returned nonfinite, 14 solver failed, 60 exception, 78 resource skip, and 94
+resource preflight reject. Latin classified 7 success, 20 solver failed, 66
+exception, 75 resource skip, and 88 resource preflight reject. Therefore only
+13/512 returned finite-positive success outputs, and none is accuracy-certified;
+four additional Sobol cases returned nonfinite output. Their local Fast error
+budget estimates are not measured Reference errors.
+
+The Sobol and Latin batches ran in 0.367s and 0.435s, with throughput 698 and 589
+cases/s and peak observed RSS 180.5 and 178.8 MiB. These time and throughput
+figures include cheap preflight and failure cases; they are not solver-only
+throughput. All per-point parameter vectors, statuses, reasons and diagnostics
+are retained in [`fast_domain_pressure_sobol_20261105_256.jsonl`](fast_domain_pressure_sobol_20261105_256.jsonl)
+and [`fast_domain_pressure_latin_20261105_256.jsonl`](fast_domain_pressure_latin_20261105_256.jsonl);
+summary records are in the matching `.summary.json` files. These broad pilots
+locate regions for follow-up and do not estimate global success probability or
+certify an expanded reliable domain.

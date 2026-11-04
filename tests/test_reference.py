@@ -57,6 +57,175 @@ def test_f_hor_abs_matches_public_horizon_frequency():
         )
 
 
+@pytest.mark.parametrize('freq', [-18.4, -15.0, -12.0, -7.0, 0.0])
+def test_find_start_n_reuses_horizon_anchors_and_stops_at_float_resolution(
+        model, monkeypatch, freq):
+    """Start search must preserve the old root while avoiding redundant H2 work."""
+    dn_eff = model.cosmo_param['DN_eff']
+    background = REF._Background(model, dn_eff)
+
+    def legacy_search():
+        lo, hi = 0.0, background.N_inf
+
+        def z_at(N):
+            return (freq - REF.f_hor_abs(background, N)) * math.log(10.0)
+
+        if z_at(lo) >= -12.0:
+            return 0.0
+        for _ in range(200):
+            mid = 0.5 * (lo + hi)
+            if z_at(mid) < -12.0:
+                lo = mid
+            else:
+                hi = mid
+        return hi
+
+    expected = legacy_search()
+    original = REF._H2_and_sigma
+    calls = 0
+
+    def counted_h2(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(REF, '_H2_and_sigma', counted_h2)
+    actual = REF._find_start_N(background, freq, -12.0)
+
+    assert actual == expected
+    assert calls < 100
+
+
+def test_numba_h2_sigma_matches_python_at_every_background_branch(model):
+    """Compiled continuous background preserves exact values and branch edges."""
+    dn_eff = model.cosmo_param['DN_eff']
+    background = REF._Background(model, dn_eff)
+    R_func = REF._H2_and_sigma_python
+    REF._warmup_numba_reference_background(background)
+
+    points = [
+        0.0,
+        np.nextafter(background.N_re_abs, -np.inf),
+        background.N_re_abs,
+        np.nextafter(background.N_re_abs, np.inf),
+        background.N_inf - background.N_fin,
+        np.nextafter(background.N_inf - background.N_fin, -np.inf),
+        np.nextafter(background.N_inf - background.N_fin, np.inf),
+        background.N_inf - background.N_max,
+        np.nextafter(background.N_inf - background.N_max, -np.inf),
+        np.nextafter(background.N_inf - background.N_max, np.inf),
+        background.N_inf,
+    ]
+    for nu_edge in (100.0, 0.1):
+        n_edge = background.N_inf + math.log(nu_edge / background.nu_today)
+        points.extend((
+            np.nextafter(n_edge, -np.inf),
+            n_edge,
+            np.nextafter(n_edge, np.inf),
+        ))
+    points.extend(np.random.default_rng(20261105).uniform(
+        0.0, background.N_inf, 2000
+    ))
+
+    for N in points:
+        expected = R_func(background, float(N))
+        actual = REF._H2_and_sigma(background, float(N))
+        assert actual == expected
+
+
+@pytest.mark.parametrize('freqs, expected_warmups', [
+    (np.array([-12.0]), 0),
+    (np.linspace(-18.0, -7.0, 32), 1),
+])
+def test_spectrum_reference_jit_warmup_is_batched(model, monkeypatch, freqs,
+                                                    expected_warmups):
+    """Do not pay the H2 JIT compile cost for a one-frequency reference call."""
+    calls = []
+    monkeypatch.setattr(REF, '_NUMBA_H2_SIGMA_READY', False)
+    monkeypatch.setattr(REF, '_warmup_numba_spline', lambda: None)
+    monkeypatch.setattr(
+        REF, '_warmup_numba_reference_background',
+        lambda bg: calls.append(bg),
+    )
+    monkeypatch.setattr(
+        REF, 'solve_reference_mode',
+        lambda *args, **kwargs: {
+            'Ogw_today': 1.0, 'Oj_today': 0.0, 'Opgw_today': 1.0,
+            'used_tail': False,
+        },
+    )
+
+    REF.spectrum_reference(
+        model, freqs, model.cosmo_param['DN_eff'], workers=1
+    )
+
+    assert len(calls) == expected_warmups
+
+
+def test_numba_h2_sigma_preserves_cr_positive_mode_solutions(monkeypatch):
+    """The compiled background also preserves a positive-cr Reference solve."""
+    dn_eff = 0.133732083004284
+    m = LCDM_SG(r=1e-2, cr=1, T_re=2e3, kappa10=1e-2, DN_eff=dn_eff)
+    background = REF._Background(m, dn_eff)
+    REF._warmup_numba_reference_background(background)
+    compiled = REF._H2_and_sigma
+    freqs = (-14.6013, -12.6723)
+
+    for freq in freqs:
+        actual = REF.solve_reference_mode(
+            m, freq, dn_eff, z_tail=10.0, rtol=1e-11
+        )
+        monkeypatch.setattr(REF, '_H2_and_sigma', REF._H2_and_sigma_python)
+        expected = REF.solve_reference_mode(
+            m, freq, dn_eff, z_tail=10.0, rtol=1e-11
+        )
+        monkeypatch.setattr(REF, '_H2_and_sigma', compiled)
+
+        for key in ('Ogw_today', 'Oj_today', 'Opgw_today', 'used_tail',
+                    'event_N', 'n_steps', 'z0'):
+            assert actual[key] == expected[key]
+
+
+def test_numba_h2_sigma_preserves_python_overflow_and_nonfinite_behavior(model):
+    """The compiled path keeps Python's explicit overflow failure behavior."""
+    dn_eff = model.cosmo_param['DN_eff']
+    background = REF._Background(model, dn_eff)
+    REF._warmup_numba_reference_background(background)
+
+    with np.errstate(all='ignore'):
+        expected = REF._H2_and_sigma_python(
+            background, background.N_inf + 1000.0
+        )
+        actual = REF._H2_and_sigma(
+            background, background.N_inf + 1000.0
+        )
+    assert np.isinf(expected[0]) and expected[1] == 0.0
+    assert np.isinf(actual[0]) and actual[1] == 0.0
+
+    background.N_re_abs = -1000.0
+    overflow_N = background.N_inf - 1000.0
+    with pytest.raises(OverflowError):
+        REF._H2_and_sigma_python(background, overflow_N)
+    with pytest.raises(OverflowError):
+        REF._H2_and_sigma(background, overflow_N)
+
+    singular = REF._Background(model, dn_eff)
+    singular.N_inf = 0.0
+    singular.N_re_abs = -1.0
+    singular.nu_today = 1000.0
+    singular.Omh2 = 1.0
+    singular.Omega_mnuh2 = 0.0
+    singular.Osh2 = 0.0
+    singular.Oerh2 = 0.0
+    singular.Omega_ph2 = 0.0
+    singular.Omega_nh2 = 0.0
+    singular.OLh2 = np.float64(-1.0)
+    with np.errstate(all='ignore'):
+        expected_zero = REF._H2_and_sigma_python(singular, 0.0)
+        actual_zero = REF._H2_and_sigma(singular, 0.0)
+    assert expected_zero == actual_zero == (0.0, math.inf)
+
+
 def test_integrate_spectrum_exponential():
     """integrate_spectrum reproduces a simple analytic integral."""
     freqs = np.linspace(-18.0, 6.0, 401)

@@ -1,0 +1,32 @@
+{
+  "commit": "644382006ec614fa23186b6e99f24cac6dc54107",
+  "suite": "sobol",
+  "case_count": 256,
+  "suite_total_count": 256,
+  "start_index": 0,
+  "status_counts": {
+    "preflight_reject": 94,
+    "exception": 60,
+    "preflight_skip": 78,
+    "failed": 14,
+    "success": 6,
+    "returned_nonfinite_output": 4
+  },
+  "fast_accuracy_status_counts": {
+    "uncertified-path-configuration": 10
+  },
+  "fast_dn_gw_error_estimate": {
+    "min": 0.004049690733864409,
+    "median": 1.0024478697887467,
+    "p95": 1.0331931040814784,
+    "max": 1.0348426467058236
+  },
+  "runtime_p50_s": 2.875004429370165e-05,
+  "runtime_p95_s": 0.0004897249746136367,
+  "sum_solver_runtime_s": 0.34093700163066387,
+  "batch_wall_s": 0.3667709999717772,
+  "batch_throughput_cases_per_s": 697.983210285707,
+  "process_rss_mb_peak_observed": 180.546875,
+  "process_rss_mb_end": 180.14453125,
+  "jsonl": "F:\\codex\\stiffGWpy\\docs\\fast_domain_pressure_sobol_20261105_256.jsonl"
+}

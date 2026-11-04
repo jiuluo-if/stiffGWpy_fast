@@ -430,3 +430,45 @@ slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
 [`res4_reference_map_sensitivity_20261104.json`](res4_reference_map_sensitivity_20261104.json)
 and [`analyze_reference_map_sensitivity.py`](../scripts/analyze_reference_map_sensitivity.py).
+
+## 2026-11-05 Reference cost experiments
+
+The Reference full-grid profile identified continuous `H2`/`sigma` evaluation
+as the main Python-level cost: 4.32M DOP853 RHS calls and 19.55s inclusive
+background time in a 45.16s sample2 run. A Numba implementation of the same
+piecewise equations and existing cubic coefficients matched 2,017 branch and
+random points bitwise. On the exact 800-node sample2 fixed background, three
+paired full-grid A/B runs matched the archived spectrum, tail mask and
+`DN_gw` bitwise while reducing warm P50 runtime from 41.392s to 27.513s (33.53%).
+The 0.579s JIT warm cost is separate; the candidate is batch-warmed only for
+32 or more frequencies that include costly modes, and single-frequency requests keep
+the no-new-JIT path. This is one cosmology/configuration only. Reproducible
+records: [`reference_h2_numba_fullgrid_ab_20261105.json`](reference_h2_numba_fullgrid_ab_20261105.json),
+[`reference_fullgrid_profile_20261105.json`](reference_fullgrid_profile_20261105.json),
+[`reference_fullgrid_profile_compiled_20261105.json`](reference_fullgrid_profile_compiled_20261105.json),
+[`reference_h2_numba_probe_20261105.json`](reference_h2_numba_probe_20261105.json),
+and driver [`benchmark_reference_h2_numba_fullgrid.py`](../scripts/benchmark_reference_h2_numba_fullgrid.py).
+
+The batch warmup crossover was also checked at 16, 32 and 64 stratified nodes.
+At 32 nodes, the cold compiled call including 0.280s H2 compile was 0.272s faster
+than the warm Python P50; all outputs matched bitwise. The 16-node path did not
+compile H2. See [`reference_h2_numba_batch_crossover_20261105.json`](reference_h2_numba_batch_crossover_20261105.json)
+and [`benchmark_reference_h2_batch_crossover.py`](../scripts/benchmark_reference_h2_batch_crossover.py).
+
+The `_find_start_N` anchor-reuse change produced bitwise-identical start
+coordinates across the full 800-node sample2 grid and bitwise-identical complete
+outputs on five modes; paired with the compiled H2 evaluator, full-map warm P50
+improved 0.88% (27.853s→27.608s). The result is recorded separately in
+[`reference_start_search_fullgrid_ab_20261105.json`](reference_start_search_fullgrid_ab_20261105.json)
+and [`benchmark_reference_start_search_fullgrid.py`](../scripts/benchmark_reference_start_search_fullgrid.py).
+The five-frequency Prüfer ODE screen remains mixed at0.86–1.57x and was not
+promoted to a full-grid speed claim.
+
+## 2026-11-05 broad Fast parameter pilot
+
+Two512-case combined Sobol/LHS pilots returned13 finite-positive success
+outputs and4 nonfinite outputs; all13 successes remain uncertified. Most
+samples were rejected by the resource preflight or ended in a failure or
+exception. This is a sampling screen, not a measured success rate or a global
+boundary. See the raw files and statuses listed in
+[`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md#2026-11-05-256-point-sobol-and-latin-hypercube-pilots).

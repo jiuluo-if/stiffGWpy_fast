@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_start_search_anchor_reuse",
+  "created_at": "2026-11-05T03:32:26.378076+08:00",
+  "baseline_commit": "644382006ec614fa23186b6e99f24cac6dc54107",
+  "branch": "fast_v0.2",
+  "worktree_dirty": true,
+  "baseline_reference_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "candidate_reference_sha256": "c3a39cad161bea08cd207cf8bf0514e76bdfca12718236c40fd45fb90f664931",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0
+  },
+  "DN_eff": 2.291411867022825,
+  "frequency_count": 800,
+  "frequency_sha256": "b363185747da99e0258d1924a3927bf01255266a2159cda247bf6a42ca0326dc",
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "rtol": 1e-09,
+  "backend": "cartesian",
+  "warm_jit_before_full_mode_pairs": true,
+  "full_grid_start_positions_bitwise_equal": true,
+  "full_grid_legacy_ms": [
+    2562.460800167173,
+    2573.0651998892426
+  ],
+  "full_grid_candidate_ms": [
+    328.37940007448196,
+    327.8276000637561
+  ],
+  "full_grid_start_p50_speedup": 7.82607622133649,
+  "representative_h2_evaluations": {
+    "0": {
+      "freq": -7.277358990594868,
+      "legacy_h2_evaluations": 602,
+      "candidate_h2_evaluations": 58
+    },
+    "200": {
+      "freq": -10.076362687177706,
+      "legacy_h2_evaluations": 602,
+      "candidate_h2_evaluations": 58
+    },
+    "400": {
+      "freq": -12.875366383760543,
+      "legacy_h2_evaluations": 602,
+      "candidate_h2_evaluations": 57
+    },
+    "600": {
+      "freq": -15.67437008034338,
+      "legacy_h2_evaluations": 602,
+      "candidate_h2_evaluations": 57
+    },
+    "799": {
+      "freq": -18.459378758443304,
+      "legacy_h2_evaluations": 602,
+      "candidate_h2_evaluations": 56
+    }
+  },
+  "representative_mode_pairs": [
+    {
+      "index": 0,
+      "freq": -7.277358990594868,
+      "bitwise_output_match": true,
+      "nfev": 4829,
+      "legacy_p50_s": 0.032988150138407946,
+      "legacy_p95_s": 0.03327965001808479,
+      "candidate_p50_s": 0.032402999815531075,
+      "candidate_p95_s": 0.0325557000702247,
+      "paired_p50_speedup": 1.018058523167858
+    },
+    {
+      "index": 200,
+      "freq": -10.076362687177706,
+      "bitwise_output_match": true,
+      "nfev": 5621,
+      "legacy_p50_s": 0.03614560002461076,
+      "legacy_p95_s": 0.036361054866574705,
+      "candidate_p50_s": 0.035781800048425794,
+      "candidate_p95_s": 0.036067684914451094,
+      "paired_p50_speedup": 1.0101671792836753
+    },
+    {
+      "index": 400,
+      "freq": -12.875366383760543,
+      "bitwise_output_match": true,
+      "nfev": 5561,
+      "legacy_p50_s": 0.03504609991796315,
+      "legacy_p95_s": 0.03508375997189432,
+      "candidate_p50_s": 0.034215599996969104,
+      "candidate_p95_s": 0.03434774006018415,
+      "paired_p50_speedup": 1.0242725517327655
+    },
+    {
+      "index": 600,
+      "freq": -15.67437008034338,
+      "bitwise_output_match": true,
+      "nfev": 8237,
+      "legacy_p50_s": 0.04943935002665967,
+      "legacy_p95_s": 0.05024478487903252,
+      "candidate_p50_s": 0.04883149988017976,
+      "candidate_p95_s": 0.04910035490756855,
+      "paired_p50_speedup": 1.0124479106308717
+    },
+    {
+      "index": 799,
+      "freq": -18.459378758443304,
+      "bitwise_output_match": true,
+      "nfev": 1178,
+      "legacy_p50_s": 0.007451049983501434,
+      "legacy_p95_s": 0.007500504970084876,
+      "candidate_p50_s": 0.00679115008097142,
+      "candidate_p95_s": 0.006840639968868345,
+      "paired_p50_speedup": 1.0971705667908933
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "Full-grid benchmark compares start searches only; complete ODE outputs are paired on five representative modes.",
+    "The frequency array is the archived sample2 res8 grid, not a global parameter-space certification."
+  ]
+}

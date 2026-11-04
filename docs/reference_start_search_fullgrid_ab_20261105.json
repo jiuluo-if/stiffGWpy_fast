@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_start_search_fullgrid_ab",
+  "created_at": "2026-11-05T03:31:21.138607+08:00",
+  "source_commit": "644382006ec614fa23186b6e99f24cac6dc54107",
+  "branch": "fast_v0.2",
+  "worktree_dirty": true,
+  "baseline_reference_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "candidate_reference_sha256": "c3a39cad161bea08cd207cf8bf0514e76bdfca12718236c40fd45fb90f664931",
+  "baseline_npz_sha256": "c970fbd101a324d8f102905fd9922669c30082e858f986b22065fe0c3705bd1a",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_re": 10.0
+  },
+  "DN_eff": 2.291411867022825,
+  "frequency_res": 8.0,
+  "frequency_count": 800,
+  "frequency_sha256": "b363185747da99e0258d1924a3927bf01255266a2159cda247bf6a42ca0326dc",
+  "z_tail": 5.0,
+  "z_start": -12.0,
+  "rtol": 1e-09,
+  "backend": "cartesian",
+  "workers": 1,
+  "jit_warmup_s_excluded": 0.5679464999120682,
+  "paired_runs": 3,
+  "legacy_runtime_s": [
+    27.899658600101247,
+    27.853165300097317,
+    27.850356800016016
+  ],
+  "candidate_runtime_s": [
+    27.279513500165194,
+    27.608228800119832,
+    27.641647200100124
+  ],
+  "legacy_p50_s": 27.853165300097317,
+  "legacy_p95_s": 27.895009270100854,
+  "candidate_p50_s": 27.608228800119832,
+  "candidate_p95_s": 27.638305360102095,
+  "candidate_over_legacy_p50": 0.9912061520714621,
+  "paired_checks": [
+    {
+      "pair": 0,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_grid": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    },
+    {
+      "pair": 1,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_grid": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    },
+    {
+      "pair": 2,
+      "bitwise_same_DN_gw": true,
+      "bitwise_same_spectrum": true,
+      "bitwise_same_grid": true,
+      "bitwise_same_tail_mask": true,
+      "DN_gw": 2.291411867447246
+    }
+  ],
+  "archive_max_abs_spectrum_delta_dex": 0.0,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "This is one fixed cosmology, DN_eff background and frequency grid, not a global speed claim.",
+    "The test holds the Cartesian Reference propagation and all solver tolerances fixed."
+  ]
+}
