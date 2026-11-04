@@ -369,3 +369,47 @@ The raw closed-root Reference map is saved in
 [`res4_reference_secant_root_tail10_20261104.json`](res4_reference_secant_root_tail10_20261104.json).
 These are two difficult parameter points, not global parameter-space
 certification.
+
+## 2026-11-04 continuous-background default for transition refinement
+
+When `sigma_exact` is omitted, `transition_refine=True` now recomputes the
+background primitive from continuous piecewise `sigma`. Explicit
+`sigma_exact=False` retains the previous node-based primitive. The regular
+Fast path remains on the same primitive: its res4 output fingerprint is
+bitwise identical to the pre-change benchmark.
+
+On res4, this gives a full Fast root `DN_eff=0.13373208300428413`, whose
+relative gap to the independently closed tail10 Reference root is
+`-3.54e-5`. Across all 260 frequencies the median/P95/maximum spectrum error
+is `3.914e-5 / 3.164e-4 / 3.456e-4 dex`, with zero modes above `5e-4 dex`.
+The prior default h=.005 result had 18 modes above that threshold and maximum
+error `6.455e-4 dex`. In 15 paired 8-thread runs, the refined continuous
+candidate measured P50/P95 `66.9/69.3 ms` versus `68.5/71.5 ms` for the
+default path; sampled post-call RSS maxima were `160.9/161.3 MiB`.
+
+On sample11, the transition-refined path retains the recovery of this
+historically nonfinite random case; continuous-background recomputation
+further reduces its spectrum error. The candidate full root is
+`DN_eff=4.857503279562753`; an independent
+94-mode tail10 Reference map at that exact input is `4.8574731267571964`, a
+relative residual of `-6.21e-6`. This Fast root is `6.31e-6` relative above
+the independently second-map-confirmed Reference root. The same-input spectrum error is
+`2.078e-5 / 5.743e-5 / 7.057e-5 dex` median/P95/maximum, with quadrature and
+interpolation estimates `6.68e-19` and `4.42e-7`. The Reference run used
+`rtol=1e-11` and took `2106 s` with four workers. In 15 paired 8-thread Fast
+runs, transition refinement with the continuous primitive measured P50/P95
+`35.7/39.5 ms`, within the `100 ms` difficult-point target.
+
+The exact sample11 map and raw Fast/Reference spectra are
+[`sample11_h02_sigma_exact_reference_map_20261104.json`](sample11_h02_sigma_exact_reference_map_20261104.json)
+and [`sample11_h02_sigma_exact_reference_map_20261104.npz`](sample11_h02_sigma_exact_reference_map_20261104.npz).
+The paired timing/error records are
+[`sample11_sigma_exact_benchmark_20261104.json`](sample11_sigma_exact_benchmark_20261104.json)
+and [`res4_sigma_exact_benchmark_20261104.json`](res4_sigma_exact_benchmark_20261104.json).
+Reproduce with [`benchmark_sample11_sigma_exact.py`](../scripts/benchmark_sample11_sigma_exact.py)
+and [`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py).
+For the exact-input sample11 comparison, pass
+`--reference docs/sample11_h02_sigma_exact_reference_map_20261104.npz`
+and `--reference-map docs/sample11_h02_sigma_exact_reference_map_20261104.json`.
+The prior sample11 nonfinite recovery and res4 error attribution are recorded
+in [`fast_domain_pressure_20261030.md`](fast_domain_pressure_20261030.md).

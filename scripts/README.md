@@ -66,7 +66,8 @@ per-mode spectrum errors, and saves the raw Reference spectrum beside its JSON.
 `benchmark_sample11_sigma_exact.py` alternates complete h=.02 transition-refined
 sample11 roots using the continuous-background primitive by default and the
 explicit node primitive. It records matched-grid errors against the saved
-tail10 Reference spectrum and warm P50/P95 timings.
+tail10 Reference spectrum and warm P50/P95 timings. Pass `--reference` and
+`--reference-map` to select the same-input map at the continuous-primitive root.
 `benchmark_background_primitive_guard.py` alternates six normal Fast regimes
 with the pre-kernel primitive finite check enabled/disabled to quantify its
 runtime overhead and confirm identical spectra.
