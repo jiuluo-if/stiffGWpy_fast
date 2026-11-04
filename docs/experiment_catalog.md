@@ -464,6 +464,13 @@ and [`benchmark_reference_start_search_fullgrid.py`](../scripts/benchmark_refere
 The five-frequency Prüfer ODE screen remains mixed at0.86–1.57x and was not
 promoted to a full-grid speed claim.
 
+A positive-`cr` cross-check extends the compiled-vs-Python exact-equality
+comparison to two modes and compares Cartesian with Prüfer propagation. Both
+formulations agree within `3.80e-8` relative in `Omega_GW` on the selected
+frequencies; the sample is not a full-grid or root result. Driver and raw
+record: [`validate_reference_h2_numba_cr_positive.py`](../scripts/validate_reference_h2_numba_cr_positive.py)
+and [`reference_h2_numba_cr_positive_20261105.json`](reference_h2_numba_cr_positive_20261105.json).
+
 ## 2026-11-05 broad Fast parameter pilot
 
 Two512-case combined Sobol/LHS pilots returned13 finite-positive success

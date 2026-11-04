@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "experiment": "reference_h2_numba_cr_positive_crosscheck",
+  "created_at": "2026-11-05T04:06:32.349110+08:00",
+  "source_commit": "a4761301d27e7afc65e09f9dfd680f9f7a31ebfe",
+  "branch": "fast_v0.2",
+  "reference_module_sha256": "c3a39cad161bea08cd207cf8bf0514e76bdfca12718236c40fd45fb90f664931",
+  "script_sha256": "62eb96cfedcfb328ed6352cb79d042d01a0096fca96f64451b12c094d28dc37d",
+  "parameters": {
+    "r": 0.01,
+    "cr": 1,
+    "T_re": 2000.0,
+    "kappa10": 0.01,
+    "DN_eff": 0.133732083004284
+  },
+  "frequency_log10_hz": [
+    -14.6013,
+    -12.6723
+  ],
+  "z_tail": 10.0,
+  "z_start": -12.0,
+  "rtol": 1e-11,
+  "atol": [
+    1e-12,
+    1e-22,
+    1e-22
+  ],
+  "compiled_warmup_s": 0.5983721001539379,
+  "results": [
+    {
+      "frequency_log10_hz": -14.6013,
+      "runs": {
+        "cartesian_python": {
+          "elapsed_s": 9.336298200068995,
+          "Ogw_today": 8.219002416208175e-17,
+          "Oj_today": 4.045140878054305e-20,
+          "Opgw_today": 1.0295100698531899e-16,
+          "Omega_GW_today": 8.214957275330121e-17,
+          "used_tail": false,
+          "event_N": null,
+          "n_steps_nfev": 1119326,
+          "z0": -12.0
+        },
+        "cartesian_compiled": {
+          "elapsed_s": 6.715048900106922,
+          "Ogw_today": 8.219002416208175e-17,
+          "Oj_today": 4.045140878054305e-20,
+          "Opgw_today": 1.0295100698531899e-16,
+          "Omega_GW_today": 8.214957275330121e-17,
+          "used_tail": false,
+          "event_N": null,
+          "n_steps_nfev": 1119326,
+          "z0": -12.0
+        },
+        "prufer_python": {
+          "elapsed_s": 4.476842999923974,
+          "Ogw_today": 8.219001603710987e-17,
+          "Oj_today": 4.0440162807301435e-20,
+          "Opgw_today": 1.0302926909142648e-16,
+          "Omega_GW_today": 8.214957587430257e-17,
+          "used_tail": false,
+          "event_N": null,
+          "n_steps_nfev": 536210,
+          "z0": -12.0
+        },
+        "prufer_compiled": {
+          "elapsed_s": 3.084721599938348,
+          "Ogw_today": 8.219001603710987e-17,
+          "Oj_today": 4.0440162807301435e-20,
+          "Opgw_today": 1.0302926909142648e-16,
+          "Omega_GW_today": 8.214957587430257e-17,
+          "used_tail": false,
+          "event_N": null,
+          "n_steps_nfev": 536210,
+          "z0": -12.0
+        }
+      },
+      "cartesian_vs_prufer_omega_relative_delta": 3.799169172695276e-08,
+      "cartesian_vs_prufer_omega_delta_dex": 1.6499580368645184e-08
+    },
+    {
+      "frequency_log10_hz": -12.6723,
+      "runs": {
+        "prufer_compiled": {
+          "elapsed_s": 4.484606700018048,
+          "Ogw_today": 8.125897920396357e-17,
+          "Oj_today": -8.665105141215983e-28,
+          "Opgw_today": 2.7086326401610027e-17,
+          "Omega_GW_today": 8.125897920483008e-17,
+          "used_tail": true,
+          "event_N": 61.40607003068001,
+          "n_steps_nfev": 780845,
+          "z0": -11.99999999999999
+        },
+        "prufer_python": {
+          "elapsed_s": 5.803926599910483,
+          "Ogw_today": 8.125897920396357e-17,
+          "Oj_today": -8.665105141215983e-28,
+          "Opgw_today": 2.7086326401610027e-17,
+          "Omega_GW_today": 8.125897920483008e-17,
+          "used_tail": true,
+          "event_N": 61.40607003068001,
+          "n_steps_nfev": 780845,
+          "z0": -11.99999999999999
+        },
+        "cartesian_compiled": {
+          "elapsed_s": 8.166003699880093,
+          "Ogw_today": 8.125897875214253e-17,
+          "Oj_today": -8.665105093035748e-28,
+          "Opgw_today": 2.7086326251003017e-17,
+          "Omega_GW_today": 8.125897875300905e-17,
+          "used_tail": true,
+          "event_N": 61.406070066230775,
+          "n_steps_nfev": 1366889,
+          "z0": -11.99999999999999
+        },
+        "cartesian_python": {
+          "elapsed_s": 10.616987499874085,
+          "Ogw_today": 8.125897875214253e-17,
+          "Oj_today": -8.665105093035748e-28,
+          "Opgw_today": 2.7086326251003017e-17,
+          "Omega_GW_today": 8.125897875300905e-17,
+          "used_tail": true,
+          "event_N": 61.406070066230775,
+          "n_steps_nfev": 1366889,
+          "z0": -11.99999999999999
+        }
+      },
+      "cartesian_vs_prufer_omega_relative_delta": 5.560259764335737e-09,
+      "cartesian_vs_prufer_omega_delta_dex": 2.414790145621737e-09
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "Two frequencies on one positive-cr cosmology only; not a full-grid certification.",
+    "Python and compiled H2/sigma paths are expected to be bitwise equivalent; Prüfer is a separate propagation formulation used as a cross-check, not exact truth.",
+    "Per-mode timings are diagnostic observations and are not a performance claim."
+  ]
+}

@@ -917,6 +917,26 @@ and [`benchmark_reference_start_search_fullgrid.py`](../scripts/benchmark_refere
 The 800-coordinate count and search-call reduction are reproduced with
 [`benchmark_reference_start_search.py`](../scripts/benchmark_reference_start_search.py).
 
+A second-background check used `cr=1`, `r=0.01`, `T_re=2000 GeV`,
+`kappa10=0.01`, `DN_eff=0.133732083004284`, `rtol=1e-11`, and two frequencies
+(`-14.6013`, `-12.6723`). Python and compiled `H2`/`sigma` paths returned
+bitwise-identical Cartesian and Prüfer outputs, event states, and `nfev` at
+both frequencies. Cartesian versus Prüfer `Omega_GW` differed by at most
+`3.80e-8` relative (`1.65e-8 dex`); this is a two-mode cross-formulation check,
+not a full-grid or root certification. Single paired timings ranged from
+`1.29x` to `1.45x` faster with the compiled evaluator, but these observations
+are not a timing distribution or a performance claim; the separate first
+compile/warm cost was `0.598 s`. See
+[`reference_h2_numba_cr_positive_20261105.json`](reference_h2_numba_cr_positive_20261105.json)
+and reproduce with
+[`validate_reference_h2_numba_cr_positive.py`](../scripts/validate_reference_h2_numba_cr_positive.py).
+
+The Reference focused suite now reports `49 passed, 1 deselected`, including
+pointwise branch/boundary checks across five backgrounds (`cr=0/1`, low/high
+reheating temperatures, and strong coupling). This broadens evaluator
+equivalence evidence but does not replace multi-background full-spectrum
+validation.
+
 ## 2026-11-05 256-point Fast domain pilots
 
 Fresh 256-point Sobol and 256-point Latin-hypercube pilots sampled the broad
