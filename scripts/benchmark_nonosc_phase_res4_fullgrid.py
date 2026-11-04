@@ -116,6 +116,23 @@ def run_mode(row, params):
                 {"phase_start": phase_start, "status": "value_error", "message": message}
             )
             break
+        except ArithmeticError as exc:
+            message = str(exc)
+            if "Riccati residual" in message:
+                result["attempts"].append(
+                    {"phase_start": phase_start, "status": "residual_rejected", "message": message}
+                )
+                phase_start += PHASE_STEP
+                continue
+            result["attempts"].append(
+                {
+                    "phase_start": phase_start,
+                    "status": "numerical_exception",
+                    "exception_type": type(exc).__name__,
+                    "message": message,
+                }
+            )
+            break
         except Exception as exc:  # persist unexpected numerical failures instead of hiding them
             result["attempts"].append(
                 {
@@ -136,8 +153,17 @@ def main(argv=None):
         "--indices",
         help="comma-separated archive indices for a reproducible subset; default runs all modes",
     )
+    parser.add_argument(
+        "--minimum-gamma",
+        type=float,
+        default=phase.PHASE_GAMMA_MIN,
+        help="minimum phase-span screen; use 0 only for a separately recorded residual-validation experiment",
+    )
     parser.add_argument("--output", type=Path, default=OUTPUT)
     args = parser.parse_args(argv)
+    if not math.isfinite(args.minimum_gamma) or args.minimum_gamma < 0.0:
+        raise ValueError("minimum-gamma must be finite and nonnegative")
+    phase.PHASE_GAMMA_MIN = args.minimum_gamma
     archive = json.loads(ARCHIVE.read_text(encoding="utf-8"))
     ref_module = ROOT / "stiffgwpy_fast" / "reference.py"
     module_sha = hashlib.sha256(ref_module.read_bytes()).hexdigest()
