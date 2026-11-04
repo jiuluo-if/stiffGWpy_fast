@@ -100,7 +100,8 @@ def run_mode(row, params):
                 low_seconds=low_s,
                 orders=orders,
                 max_dense_residual_scaled=max(
-                    seg["dense_residual_scaled"] for item in orders for seg in item["segments"]
+                    (seg["dense_residual_scaled"] for item in orders for seg in item["segments"]),
+                    default=None,
                 ),
             )
             return result

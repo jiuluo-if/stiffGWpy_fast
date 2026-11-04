@@ -364,12 +364,35 @@ See [`nonosc_phase_sample2_tail_cross_20261104.json`](nonosc_phase_sample2_tail_
 [`nonosc_phase_sample2_mid2_20261104.json`](nonosc_phase_sample2_mid2_20261104.json),
 and
 [`nonosc_phase_sample2_mid3_20261104.json`](nonosc_phase_sample2_mid3_20261104.json).
+At the sample2 `freq_res=8`, `z_tail=5` Reference root (`DN_eff=2.2914118670`),
+a fresh fixed Cartesian map over 800 frequencies closes to `-1.85e-10` relative
+root residual. Phase transfer matches 700/800 at `gamma_min=10` and 709/800 at
+0, with maximum error `8.668e-7 dex` on the strict three-order set, but takes
+about `145 s` versus `45 s` for Cartesian. It is not a speed win and no phase
+map is claimed because 91 modes remain unsupported. Fourteen additional
+no-tail modes pass adjacent-order plus Cartesian validation, for 723 checked
+modes in two tiers. See
+[`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
+[`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
+and
+[`sample2_phase_root_residual_order_probe_20261105.json`](sample2_phase_root_residual_order_probe_20261105.json).
 Two modes also exercise the positive `cr` branch; at `cr=.1`, `r=.01` the
 model derives `n_t=-.00125`, and the tail/no-tail errors are `3.54e-8` and
 `3.21e-9 dex`. See
 [`nonosc_phase_cr_positive_tail_20261104.json`](nonosc_phase_cr_positive_tail_20261104.json)
 and
 [`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
+On the distinct minimized sample2 cosmology's full 800-node Reference-root
+grid, phase propagation passes 700/800 at `gamma_min=10` and709/800 at0, with
+maximum error `8.668e-7 dex` on either strict set; it is about3.2x slower than
+the Cartesian map and has no complete phase integral map. A tail-event
+classification regression corrected four `z_today<z_tail` cases. Fourteen
+more no-tail modes pass adjacent-order (16/24 or24/32) and Cartesian checks,
+for723 checked modes in two validation tiers;77 remain unresolved. See
+[`sample2_phase_reference_root_res8_tail5_20261104.json`](sample2_phase_reference_root_res8_tail5_20261104.json),
+[`sample2_phase_reference_root_res8_tail5_gamma0_20261105.json`](sample2_phase_reference_root_res8_tail5_gamma0_20261105.json),
+and
+[`sample2_phase_root_residual_order_probe_20261105.json`](sample2_phase_root_residual_order_probe_20261105.json).
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see

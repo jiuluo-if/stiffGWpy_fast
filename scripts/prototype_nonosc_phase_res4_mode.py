@@ -257,7 +257,10 @@ def make_bounds(N5, z5):
     high_start = max(N5, NCUT100)
     high_zstart = zcut100 if NCUT100 > N5 else z5
     ztoday = _z_between(high_zstart, high_start, bg.N_inf, "high_frequency")
-    tail_used = ztoday >= ZTAIL
+    started_at_tail = abs(z5 - ZTAIL) <= 1e-10
+    if z5 > ZTAIL + 1e-10:
+        raise ValueError("phase handoff starts beyond the tail threshold; lower --phase-start")
+    tail_used = started_at_tail or ztoday >= ZTAIL
 
     def invert(target):
         if target < zcut - 1e-12 and N5 < NCUT:
@@ -268,7 +271,9 @@ def make_bounds(N5, z5):
             return _invert_z(target, high_zstart, high_start, bg.N_inf, "high_frequency"), "high_frequency"
         raise ValueError("requested phase node lies beyond the integrated z range")
 
-    if tail_used:
+    if started_at_tail:
+        nend, zend, end_regime = N5, ZTAIL, "phase_start"
+    elif tail_used:
         nend, end_regime = invert(ZTAIL)
         zend = ZTAIL
     else:
@@ -431,8 +436,10 @@ def main(argv=None):
                 "low_rhs_nfev": lo.nfev,
                 "low_seconds": low_seconds,
                 "segments_details": rows,
-                "gamma_min": min(x["gamma_min"] for x in rows),
-                "dense_residual_max": max(x["dense_residual_scaled"] for x in rows),
+                "gamma_min": min((x["gamma_min"] for x in rows), default=None),
+                "dense_residual_max": max(
+                    (x["dense_residual_scaled"] for x in rows), default=None
+                ),
             }
         )
 
