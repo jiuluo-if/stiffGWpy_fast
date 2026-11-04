@@ -1,4 +1,4 @@
-"""Standalone Newton–Kantorovich phase-transfer probe for one res4 mode.
+"""Standalone Newton–Kantorovich phase-transfer probes for res4 modes.
 
 中文：仅研究参考求解器的单模传播；保留生产 Cartesian 路径，不修改公开后端。
 """
@@ -30,30 +30,35 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 PARAMS = dict(r=0.01, cr=0.0, n_t=2.0, T_re=1e4, kappa10=0.01, DN_re=10.0)
 DEFAULT_DN = 0.13373681817755848
 DEFAULT_FREQ = -12.6723
+DEFAULT_PHASE = 5.0
 DN = DEFAULT_DN
 FREQ = DEFAULT_FREQ
 ZSTART = -12.0
-ZPHASE = 5.0
+ZPHASE = DEFAULT_PHASE
 ZTAIL = 10.0
+PHASE_GAMMA_MIN = 10.0
 model = None
 bg = None
 NSTART = None
 Z0 = None
 NCUT = None
+NCUT100 = None
 
 
-def configure_case(dn_eff, freq):
-    global DN, FREQ, model, bg, NSTART, Z0, NCUT
+def configure_case(dn_eff, freq, phase_start=DEFAULT_PHASE):
+    global DN, FREQ, ZPHASE, model, bg, NSTART, Z0, NCUT, NCUT100
     DN = float(dn_eff)
     FREQ = float(freq)
+    ZPHASE = float(phase_start)
     model = LCDM_SG(**PARAMS, DN_eff=DN)
     bg = R._Background(model, DN)
     NSTART = R._find_start_N(bg, FREQ, ZSTART)
     Z0 = (FREQ - R.f_hor_abs(bg, NSTART)) * math.log(10.0)
     NCUT = bg.N_inf - math.log(bg.nu_today / 0.1)
+    NCUT100 = bg.N_inf - math.log(bg.nu_today / 100.0)
 
 
-configure_case(DEFAULT_DN, DEFAULT_FREQ)
+configure_case(DEFAULT_DN, DEFAULT_FREQ, DEFAULT_PHASE)
 
 
 def p_and_prime(n, regime):
@@ -61,11 +66,16 @@ def p_and_prime(n, regime):
     E3 = E**3
     inv = 1.0 / E3
     Om, On, Oph, Oer, Osh, OL = (bg.Omh2, bg.Omega_nh2, bg.Omega_ph2, bg.Oerh2, bg.Osh2, bg.OLh2)
-    if regime == "radiation":
-        D = Om + bg.Otrh2 * E + Osh * E3 + OL * inv
-        S = Om + 4.0 / 3.0 * bg.Otrh2 * E + 2.0 * Osh * E3
-        Dp = -bg.Otrh2 * E - 3.0 * Osh * E3 + 3.0 * OL * inv
-        Sp = -4.0 / 3.0 * bg.Otrh2 * E - 6.0 * Osh * E3
+    if regime == "radiation" or regime == "high_frequency":
+        mass_term = Om
+        radiation = bg.Otrh2
+        if regime == "high_frequency":
+            mass_term += bg.Omega_mnuh2
+            radiation = Oph + 2.0 / 3.0 * On + Oer
+        D = mass_term + radiation * E + Osh * E3 + OL * inv
+        S = mass_term + 4.0 / 3.0 * radiation * E + 2.0 * Osh * E3
+        Dp = -radiation * E - 3.0 * Osh * E3 + 3.0 * OL * inv
+        Sp = -4.0 / 3.0 * radiation * E - 6.0 * Osh * E3
     else:
         nu = bg.nu_today / E
         ell = math.log10(nu)
@@ -115,6 +125,12 @@ def phase_segment(a, b, regime, k, state, z_left):
     Q = np.exp(2 * z_nodes) - 0.5 * pp - 0.25 * p * p
     if np.any(Q <= 0) or not np.all(np.isfinite(Q)):
         raise FloatingPointError("non-positive/non-finite normal-form Q")
+    gamma_min = math.sqrt(float(Q.min())) * (b - a)
+    if gamma_min < PHASE_GAMMA_MIN:
+        raise ValueError(
+            "phase interval is below the high-frequency screen: "
+            "gamma=%.6g < %.6g; increase --phase-start or refine the interval" % (gamma_min, PHASE_GAMMA_MIN)
+        )
     scale = math.sqrt(math.sqrt(float(Q.min() * Q.max())))
     q = Q / scale**2
     qp = Dt @ q
@@ -127,7 +143,11 @@ def phase_segment(a, b, regime, k, state, z_left):
         if np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0) < 2e-14:
             break
     else:
-        raise RuntimeError("Newton iteration did not converge")
+        raise RuntimeError(
+            "Newton iteration did not converge on %s branch N=[%.17g, %.17g], "
+            "Q range=[%.17g, %.17g], last relative update=%.3g"
+            % (regime, a, b, float(Q.min()), float(Q.max()), float(np.max(np.abs(h)) / max(np.max(np.abs(r)), 1.0)))
+        )
     resid = Dt @ r + r * r + scale**2 * q
     collocation_residual_scaled = float(np.max(np.abs(resid)) / scale**2)
     if collocation_residual_scaled > 1e-10:
@@ -177,7 +197,7 @@ def phase_segment(a, b, regime, k, state, z_left):
             "z": [z_left, z_right],
             "regime": regime,
             "order": k,
-            "gamma_min": math.sqrt(float(Q.min())) * (b - a),
+            "gamma_min": gamma_min,
             "newton_iterations": iterations,
             "collocation_residual_scaled": collocation_residual_scaled,
             "dense_residual_scaled": dense_residual_scaled,
@@ -185,80 +205,114 @@ def phase_segment(a, b, regime, k, state, z_left):
     )
 
 
-def make_bounds(N5, z5):
-    zcut = z5 + quad(lambda n: zprime(n, "radiation"), N5, NCUT, epsabs=1e-13, epsrel=1e-13)[0]
-    Ncut100 = bg.N_inf - math.log(bg.nu_today / 100.0)
-    zcut100 = (
-        zcut
+def _z_between(z0, n0, n1, regime):
+    return (
+        z0
         + quad(
-            lambda n: zprime(n, "neutrino_spline"),
-            NCUT,
-            Ncut100,
+            lambda value: zprime(value, regime),
+            n0,
+            n1,
             epsabs=1e-13,
             epsrel=1e-13,
         )[0]
     )
-    bounds = [(N5, z5, "radiation")]
-    if ZTAIL > zcut100:
-        raise ValueError("tail event lies beyond the prototype's supported nu=100 background boundary")
 
-    for z in (6.0, 7.0, 8.0, 9.0):
-        if abs(z - zcut) < 1e-12:
-            continue
-        if z < zcut:
-            regime = "radiation"
-            left, right = N5, NCUT
-            zbase = z5
-            nbase = N5
-        else:
-            regime = "neutrino_spline"
-            left, right = NCUT, Ncut100
-            zbase = zcut
-            nbase = NCUT
-        n = brentq(
-            lambda v: zbase + quad(lambda x: zprime(x, regime), nbase, v, epsabs=1e-13, epsrel=1e-13)[0] - z,
-            left,
-            right,
-            xtol=5e-14,
-            rtol=1e-14,
-        )
-        bounds.append((n, z, regime))
 
-    if ZTAIL < zcut:
-        n_tail = brentq(
-            lambda v: z5 + quad(lambda x: zprime(x, "radiation"), N5, v, epsabs=1e-13, epsrel=1e-13)[0] - ZTAIL,
-            N5,
-            NCUT,
-            xtol=5e-14,
-            rtol=1e-14,
-        )
-        bounds.append((n_tail, ZTAIL, "radiation"))
+def _invert_z(target, z0, n0, n1, regime):
+    return brentq(
+        lambda value: _z_between(z0, n0, value, regime) - target,
+        n0,
+        n1,
+        xtol=5e-14,
+        rtol=1e-14,
+    )
+
+
+def make_bounds(N5, z5):
+    if N5 < NCUT:
+        zcut = _z_between(z5, N5, NCUT, "radiation")
     else:
+        zcut = z5
+
+    spline_start = max(N5, NCUT)
+    spline_zstart = zcut if N5 < NCUT else z5
+    if spline_start < NCUT100:
+        zcut100 = _z_between(spline_zstart, spline_start, NCUT100, "neutrino_spline")
+    else:
+        zcut100 = spline_zstart
+
+    high_start = max(N5, NCUT100)
+    high_zstart = zcut100 if NCUT100 > N5 else z5
+    ztoday = _z_between(high_zstart, high_start, bg.N_inf, "high_frequency")
+    tail_used = ztoday >= ZTAIL
+
+    def invert(target):
+        if target < zcut - 1e-12 and N5 < NCUT:
+            return _invert_z(target, z5, N5, NCUT, "radiation"), "radiation"
+        if target < zcut100 - 1e-12 and spline_start < NCUT100:
+            return _invert_z(target, spline_zstart, spline_start, NCUT100, "neutrino_spline"), "neutrino_spline"
+        if target <= ztoday:
+            return _invert_z(target, high_zstart, high_start, bg.N_inf, "high_frequency"), "high_frequency"
+        raise ValueError("requested phase node lies beyond the integrated z range")
+
+    if tail_used:
+        nend, end_regime = invert(ZTAIL)
+        zend = ZTAIL
+    else:
+        nend, zend, end_regime = bg.N_inf, ztoday, "high_frequency"
+
+    bounds = [(N5, z5, "")]
+    for target in (6.0, 7.0, 8.0, 9.0):
+        if target >= zend - 1e-12 or abs(target - zcut) < 1e-12 or abs(target - zcut100) < 1e-12:
+            continue
+        n, regime = invert(target)
+        bounds.append((n, target, regime))
+
+    if N5 < NCUT < nend:
         bounds.append((NCUT, zcut, "radiation"))
-        n_tail = brentq(
-            lambda v: (
-                zcut + quad(lambda x: zprime(x, "neutrino_spline"), NCUT, v, epsabs=1e-13, epsrel=1e-13)[0] - ZTAIL
-            ),
-            NCUT,
-            Ncut100,
-            xtol=5e-14,
-            rtol=1e-14,
-        )
-        bounds.append((n_tail, ZTAIL, "neutrino_spline"))
-    return sorted(bounds, key=lambda row: row[0])
+    if N5 < NCUT100 < nend:
+        bounds.append((NCUT100, zcut100, "neutrino_spline"))
+    bounds.append((nend, zend, end_regime))
+    bounds.sort(key=lambda row: row[0])
+
+    deduplicated = []
+    for index, bound in enumerate(bounds):
+        if not deduplicated or bound[0] - deduplicated[-1][0] > 1e-13:
+            deduplicated.append(bound)
+        elif index == len(bounds) - 1:
+            # 中文：终点即使与分段点几乎重合，也必须覆盖保留为最后边界。
+            deduplicated[-1] = bound
+    return deduplicated, tail_used, zend
 
 
 def candidate(k, low_state, N5, z5):
-    bounds = make_bounds(N5, z5)
+    bounds, tail_used, zend = make_bounds(N5, z5)
     state = np.array(low_state[1:3], dtype=float)
     z = z5
     rows = []
     t = time.perf_counter()
-    for (a, _, _), (b, zb, reg) in zip(bounds[:-1], bounds[1:]):
-        state, z, row = phase_segment(a, b, reg, k, state, z)
+    for (a, _, _), (b, zb, _) in zip(bounds[:-1], bounds[1:]):
+        midpoint = 0.5 * (a + b)
+        if midpoint < NCUT:
+            regime = "radiation"
+        elif midpoint < NCUT100:
+            regime = "neutrino_spline"
+        else:
+            regime = "high_frequency"
+        state, z, row = phase_segment(a, b, regime, k, state, z)
         row["z_target_right"] = zb
         rows.append(row)
-    return state, bounds, rows, time.perf_counter() - t
+    return state, bounds, rows, time.perf_counter() - t, tail_used, zend
+
+
+def spectrum_today(state, z):
+    T, Tp = state
+    x, y = Tp, math.exp(z) * T
+    pt = model.derived_param["A_t"] * (10.0**FREQ / gp.f_piv) ** model.derived_param["nt"]
+    oj = x * T / 3.0 * pt
+    ogw = (x * x + y * y) / 24.0 * pt + oj
+    opgw = (-5.0 * x * x + 7.0 * y * y) / 72.0 * pt
+    return {"OmegaGW": ogw - oj, "Ogw": ogw, "Oj": oj, "Opgw": opgw}
 
 
 def spectrum_from_tail(state, Ntail, z):
@@ -296,11 +350,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dn-eff", type=float, default=DEFAULT_DN)
     parser.add_argument("--frequency", type=float, default=DEFAULT_FREQ)
+    parser.add_argument("--phase-start", type=float, default=DEFAULT_PHASE)
     parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args(argv)
-    configure_case(args.dn_eff, args.frequency)
+    configure_case(args.dn_eff, args.frequency, args.phase_start)
     if args.output is None:
-        if FREQ == DEFAULT_FREQ and DN == DEFAULT_DN:
+        if FREQ == DEFAULT_FREQ and DN == DEFAULT_DN and ZPHASE == DEFAULT_PHASE:
             args.output = ROOT / "docs" / "nonosc_phase_res4_mode_20261104.json"
         else:
             args.output = ROOT / "docs" / ("nonosc_phase_res4_mode_freq_%+.4f_20261104.json" % FREQ)
@@ -323,17 +378,19 @@ def main(argv=None):
     results = []
     for k in (16, 24, 32):
         candidate_start = time.perf_counter()
-        state, bounds, rows, phase_s = candidate(k, low_state, N5, ZPHASE)
-        Ntail = bounds[-1][0]
-        power = spectrum_from_tail(state, Ntail, ZTAIL)
+        state, bounds, rows, phase_s, tail_used, zend = candidate(k, low_state, N5, ZPHASE)
+        Nend = bounds[-1][0]
+        power = spectrum_from_tail(state, Nend, zend) if tail_used else spectrum_today(state, zend)
         candidate_s = time.perf_counter() - candidate_start + low_seconds
         results.append(
             {
                 "order": k,
                 "segments": len(rows),
                 "state_T_Tprime": state.tolist(),
-                "tail_N": Ntail,
-                "tail_state_spectrum": power,
+                "tail_used": tail_used,
+                "end_N": Nend,
+                "end_z": zend,
+                "end_state_spectrum": power,
                 "phase_seconds": phase_s,
                 "total_candidate_seconds": candidate_s,
                 "low_rhs_nfev": lo.nfev,
@@ -354,8 +411,10 @@ def main(argv=None):
     refpower = float(ref["Ogw_today"] - ref["Oj_today"])
     ref_log = math.log10(refpower)
     for row in results:
-        row["spectrum_abs_dex_error_vs_cartesian"] = abs(math.log10(row["tail_state_spectrum"]["OmegaGW"]) - ref_log)
+        row["spectrum_abs_dex_error_vs_cartesian"] = abs(math.log10(row["end_state_spectrum"]["OmegaGW"]) - ref_log)
         row["runtime_ratio_cartesian_over_candidate"] = ref_s / row["total_candidate_seconds"]
+    if bool(ref["used_tail"]) != bool(results[0]["tail_used"]):
+        raise ArithmeticError("phase and Cartesian paths disagree on tail usage")
     source = ROOT / "stiffgwpy_fast" / "reference.py"
     payload = {
         "schema_version": 1,
@@ -376,8 +435,10 @@ def main(argv=None):
             "phase_chebyshev_orders": [16, 24, 32],
             "phase_newton_relative_update_tolerance": 2e-14,
             "phase_newton_max_iterations": 20,
+            "phase_high_frequency_gamma_min": PHASE_GAMMA_MIN,
             "phase_dense_residual_points_per_segment": 201,
-            "background_segment_split": "nu=0.1 with branch-specific analytic p prime",
+            "background_segment_splits": ["nu=0.1", "nu=100"],
+            "background_branch_derivatives": "analytic, branch-specific p prime",
             "candidate_spline_callback": "Python scalar CubicSpline fallback",
             "cartesian_reference_backend": "cartesian",
             "cartesian_reference_rtol": 1e-11,
@@ -387,9 +448,10 @@ def main(argv=None):
         "z0": Z0,
         "N_phase_start": N5,
         "low_state_z_T_Tprime": low_state,
-        "nu_branch_boundary_N": NCUT,
-        "nu_branch_z_left": make_bounds(N5, ZPHASE)[-2][1],
-        "N_tail_production_z": results[0]["tail_N"],
+        "nu_branch_boundary_N": [NCUT, NCUT100],
+        "tail_used": results[0]["tail_used"],
+        "N_end_production_z": results[0]["end_N"],
+        "z_end_production": results[0]["end_z"],
         "reference_cartesian": {
             "spline_jit_warmup_s": cartesian_spline_warmup_s,
             "runtime_s": ref_s,
@@ -402,9 +464,9 @@ def main(argv=None):
         "resources": telemetry(workers=1, threads=1),
         "limitations": [
             "Standalone single-mode research prototype; not a production backend.",
-            "Only one res4 parameter point and one tail-using frequency are checked.",
+            "Only one res4 parameter point and three frequencies are checked.",
             "No full-grid integral map, self-consistency root, or parameter-domain validation is included.",
-            "The method uses a DOP853 low-frequency prefix and local Chebyshev phase transfers on smooth positive-Q branches.",
+            "The method uses a configurable DOP853 prefix and local Chebyshev phase transfers on smooth positive-Q branches.",
         ],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

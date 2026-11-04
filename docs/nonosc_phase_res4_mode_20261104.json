@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "experiment": "newton_kantorovich_phase_transfer_production_z_single_mode",
-  "source_sha": "180881f6cdb90a17061e76d7917dff36f75405e5",
+  "source_sha": "9426031c2803b7d7d293a44930793a287cb1fc91",
   "worktree_dirty": true,
-  "prototype_script_sha256": "956cdad470caa5af6f258f458a2520f6d9ecf58c5a0169e91427f6dc12596ed7",
+  "prototype_script_sha256": "054b3f2b4922079311f8dd80557cf3c06051a1ece3c5fbbcae6c66afa1319146",
   "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
   "params": {
     "r": 0.01,
@@ -33,8 +33,13 @@
     ],
     "phase_newton_relative_update_tolerance": 2e-14,
     "phase_newton_max_iterations": 20,
+    "phase_high_frequency_gamma_min": 10.0,
     "phase_dense_residual_points_per_segment": 201,
-    "background_segment_split": "nu=0.1 with branch-specific analytic p prime",
+    "background_segment_splits": [
+      "nu=0.1",
+      "nu=100"
+    ],
+    "background_branch_derivatives": "analytic, branch-specific p prime",
     "candidate_spline_callback": "Python scalar CubicSpline fallback",
     "cartesian_reference_backend": "cartesian",
     "cartesian_reference_rtol": 1e-11,
@@ -52,12 +57,16 @@
     -0.0058180813836427574,
     -0.48974742497410295
   ],
-  "nu_branch_boundary_N": 41.19940098231656,
-  "nu_branch_z_left": 9.449131560429198,
-  "N_tail_production_z": 41.974503995973485,
+  "nu_branch_boundary_N": [
+    41.19940098231656,
+    48.1071562612987
+  ],
+  "tail_used": true,
+  "N_end_production_z": 41.974503995973485,
+  "z_end_production": 10.0,
   "reference_cartesian": {
-    "spline_jit_warmup_s": 0.3142859998624772,
-    "runtime_s": 13.155731700127944,
+    "spline_jit_warmup_s": 0.32233519991859794,
+    "runtime_s": 10.934640299994498,
     "nfev": 1367033,
     "log10OmegaGW": -9.206949707910397,
     "event_N": 41.97450397138496,
@@ -71,17 +80,19 @@
         2.2138055648091543e-05,
         0.30315086435183974
       ],
-      "tail_N": 41.974503995973485,
-      "tail_state_spectrum": {
+      "tail_used": true,
+      "end_N": 41.974503995973485,
+      "end_z": 10.0,
+      "end_state_spectrum": {
         "OmegaGW": 6.209409611193257e-10,
         "Ogw": 6.209409611127042e-10,
         "Oj": -6.621445121804879e-21,
         "Opgw": 2.0698032037310855e-10
       },
-      "phase_seconds": 0.02551609999500215,
-      "total_candidate_seconds": 0.1389833001885563,
+      "phase_seconds": 0.02594730001874268,
+      "total_candidate_seconds": 0.1378714998718351,
       "low_rhs_nfev": 13349,
-      "low_seconds": 0.1002432000823319,
+      "low_seconds": 0.09923359984531999,
       "segments_details": [
         {
           "N": [
@@ -189,7 +200,7 @@
       "gamma_min": 149.41409524539932,
       "dense_residual_max": 2.6000962279546247e-14,
       "spectrum_abs_dex_error_vs_cartesian": 1.74605840896902e-08,
-      "runtime_ratio_cartesian_over_candidate": 94.6569241216735
+      "runtime_ratio_cartesian_over_candidate": 79.31037458908696
     },
     {
       "order": 24,
@@ -198,17 +209,19 @@
         2.2138055723634515e-05,
         0.3031508616753503
       ],
-      "tail_N": 41.974503995973485,
-      "tail_state_spectrum": {
+      "tail_used": true,
+      "end_N": 41.974503995973485,
+      "end_z": 10.0,
+      "end_state_spectrum": {
         "OmegaGW": 6.209409611193173e-10,
         "Ogw": 6.209409611126958e-10,
         "Oj": -6.621445121804791e-21,
         "Opgw": 2.0698032037310576e-10
       },
-      "phase_seconds": 0.02492090011946857,
-      "total_candidate_seconds": 0.13789510005153716,
+      "phase_seconds": 0.026082700118422508,
+      "total_candidate_seconds": 0.13832739973440766,
       "low_rhs_nfev": 13349,
-      "low_seconds": 0.1002432000823319,
+      "low_seconds": 0.09923359984531999,
       "segments_details": [
         {
           "N": [
@@ -316,7 +329,7 @@
       "gamma_min": 149.41409524539932,
       "dense_residual_max": 1.3213603793342313e-14,
       "spectrum_abs_dex_error_vs_cartesian": 1.7460578760619683e-08,
-      "runtime_ratio_cartesian_over_candidate": 95.40390989390558
+      "runtime_ratio_cartesian_over_candidate": 79.0489832165522
     },
     {
       "order": 32,
@@ -325,17 +338,19 @@
         2.2138055710908333e-05,
         0.30315086212624
       ],
-      "tail_N": 41.974503995973485,
-      "tail_state_spectrum": {
+      "tail_used": true,
+      "end_N": 41.974503995973485,
+      "end_z": 10.0,
+      "end_state_spectrum": {
         "OmegaGW": 6.209409611193196e-10,
         "Ogw": 6.209409611126981e-10,
         "Oj": -6.621445121804814e-21,
         "Opgw": 2.069803203731065e-10
       },
-      "phase_seconds": 0.02670289995148778,
-      "total_candidate_seconds": 0.13914670003578067,
+      "phase_seconds": 0.027939600171521306,
+      "total_candidate_seconds": 0.13943439978174865,
       "low_rhs_nfev": 13349,
-      "low_seconds": 0.1002432000823319,
+      "low_seconds": 0.09923359984531999,
       "segments_details": [
         {
           "N": [
@@ -443,7 +458,7 @@
       "gamma_min": 149.41409524539932,
       "dense_residual_max": 2.7146625530326096e-14,
       "spectrum_abs_dex_error_vs_cartesian": 1.7460578760619683e-08,
-      "runtime_ratio_cartesian_over_candidate": 94.54576857909697
+      "runtime_ratio_cartesian_over_candidate": 78.42139613402485
     }
   ],
   "resources": {
@@ -471,8 +486,8 @@
   },
   "limitations": [
     "Standalone single-mode research prototype; not a production backend.",
-    "Only one res4 parameter point and one tail-using frequency are checked.",
+    "Only one res4 parameter point and three frequencies are checked.",
     "No full-grid integral map, self-consistency root, or parameter-domain validation is included.",
-    "The method uses a DOP853 low-frequency prefix and local Chebyshev phase transfers on smooth positive-Q branches."
+    "The method uses a configurable DOP853 prefix and local Chebyshev phase transfers on smooth positive-Q branches."
   ]
 }

@@ -563,23 +563,32 @@ standalone and does not alter the Reference API or production path.
 
 For `r=.01`, `cr=0`, `n_t=2`, `T_re=1e4 GeV`, `kappa10=.01`, `DN_re=10`, and
 `DN_eff=.13373681817755848`, DOP853 propagated production `z'=1.5*sigma-1`
-with `(T,T')` from `z=-12` to `z=5`; six local phase intervals then reached
-`z=10`. The `log10(f/Hz)=-12.6723` mode crosses the `nu=.1` background branch
-boundary, which is split exactly and uses the corresponding one-sided formula.
-The higher-frequency `log10(f/Hz)=-10.772906` mode reaches `z=10` before that
-boundary. Against current Cartesian Reference (`rtol=1e-11`), their spectrum
-errors are `1.7461e-8` and `4.1274e-9 dex`; dense Riccati residual maxima are
-`2.72e-14` and `2.25e-14`. The latest candidate times, including the low-prefix
-DOP853 solve, are `0.138 s` and `0.139 s`, versus `12.66 s` and `7.57 s`
-Cartesian (about `92x` and `54x`). Spline JIT warmup (`~0.31 s`) is measured
-separately. These are two tail-using modes at one parameter point; no no-tail,
-full-grid, integral-map, self-consistency, or parameter-domain check has been
-completed. Reproduce with
+with `(T,T')` from `z=-12` to the configured phase start. The phase path splits
+the background at `nu=.1` and `nu=100`, using the matching radiation, FD-spline,
+and high-frequency branches. At order 24, the `log10(f/Hz)=-12.6723` mode
+crosses `nu=.1` and reaches the `z=10` tail; the `-10.772906` mode reaches the
+tail before `nu=.1`. Their errors against current Cartesian Reference
+(`rtol=1e-11`) are `1.7461e-8` and `4.1274e-9 dex`. A no-tail mode at
+`log10(f/Hz)=-14.6013`, with phase start `z=6`, crosses both background
+boundaries and is propagated to today without a tail approximation; its error
+is `1.1137e-7 dex`. Order-24 dense Riccati residual maxima for the three cases
+are `1.32e-14`, `8.68e-15`, and `2.66e-14`.
+
+In fresh single runs, total candidate times including the DOP853 prefix were
+`0.138`, `0.137`, and `0.499 s`, against `10.935`, `6.457`, and `9.520 s` for
+Cartesian Reference. These timing ratios (`79.1x`, `47.3x`, `19.1x`) are
+single-run prototype observations, not P50/P95 benchmarks; spline JIT warmup
+(`~0.3 s`) is recorded separately. The no-tail case requires the later phase
+start to pass the high-frequency screen. These are still only three modes at
+one parameter point: no full-grid integral map, self-consistency, or
+parameter-domain check has been completed. Reproduce with
 [`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
-using `--frequency -12.6723` and `--frequency -10.772906114757099`; results are
-[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json)
+using `--frequency -12.6723`, `--frequency -10.772906114757099`, and
+`--frequency -14.6013 --phase-start 6`; results are
+[`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json),
+[`nonosc_phase_res4_highfreq_mode_20261104.json`](nonosc_phase_res4_highfreq_mode_20261104.json),
 and
-[`nonosc_phase_res4_highfreq_mode_20261104.json`](nonosc_phase_res4_highfreq_mode_20261104.json).
+[`nonosc_phase_res4_notail_mode_20261104.json`](nonosc_phase_res4_notail_mode_20261104.json).
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95

@@ -314,13 +314,16 @@ the secant estimate is not a rigorous root bracket.
 
 The standalone Newton–Kantorovich phase-transfer screen is also recorded at
 [`nonosc_phase_res4_mode_20261104.json`](nonosc_phase_res4_mode_20261104.json).
-On two tail-using res4 modes, the DOP853 low-frequency prefix plus six phase
-intervals matched current Cartesian within `1.7461e-8` and `4.1274e-9 dex`.
-The latest runs took `0.138/0.139 s` versus `12.66/7.57 s` Cartesian. It has
-not passed full-grid or parameter-domain tests and remains a research prototype.
-Reproduce with
+Three res4 modes cover two tail handoffs and one no-tail propagation across the
+`nu=.1` and `nu=100` background boundaries. At order 24 they match current
+Cartesian within `1.7461e-8`, `4.1274e-9`, and `1.1137e-7 dex`; single-run
+candidate times are `0.138/0.137/0.499 s` versus `10.935/6.457/9.520 s`.
+These are exploratory single-mode timings, not distributional benchmarks. The
+method has not passed full-grid, integral-map, self-consistency, or
+parameter-domain tests and remains a research prototype. Reproduce with
 [`prototype_nonosc_phase_res4_mode.py`](../scripts/prototype_nonosc_phase_res4_mode.py)
-and `--frequency -10.772906114757099`.
+and `--frequency -10.772906114757099` or
+`--frequency -14.6013 --phase-start 6`.
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
