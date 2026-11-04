@@ -68,6 +68,12 @@ def _fd_splines():
 
 
 _FD_NU, _FD_RHO_CS, _FD_P_CS = _fd_splines()
+_FD_RHO_X, _FD_RHO_C = _FD_RHO_CS.x, _FD_RHO_CS.c
+_FD_P_X, _FD_P_C = _FD_P_CS.x, _FD_P_CS.c
+_THERMAL_RHO_X, _THERMAL_RHO_C = gp.spl_rho.x, gp.spl_rho.c
+_THERMAL_RHOP_X, _THERMAL_RHOP_C = gp.spl_rhop.x, gp.spl_rhop.c
+_NUMBA_H2_SIGMA_READY = False
+_NUMBA_H2_SIGMA_MIN_BATCH_SIZE = 32
 
 
 @njit(cache=False)
@@ -137,6 +143,71 @@ def _warmup_numba_spline():
             gp.spl_rho.x, gp.spl_rho.c, float(gp.spl_rho.x[0]))
 
 
+@njit(cache=False, error_model='numpy')
+def _h2_sigma_numba_core(
+        N, Omh2, Osh2, Oerh2, Otrh2, Otreh2, OLh2,
+        N_inf, N_re_abs, N_fin, N_max, nu_today,
+        Omega_ph2, Omega_nh2, Omega_mnuh2):
+    """Compiled equivalent of the continuous piecewise background equations."""
+    if N < N_re_abs:
+        return 0.0, 1.0
+    eN = math.exp(N_inf - N)
+    e3N = eN * eN * eN
+    nu = nu_today / eN
+    if nu > 100.0:
+        H2 = (Omh2 + Omega_mnuh2
+              + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
+              + Osh2 * e3N + OLh2 / e3N)
+        sigma = (Omh2 + Omega_mnuh2
+                 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
+                 + 2.0 * Osh2 * e3N) / H2
+    elif nu >= 0.1:
+        lognu = math.log10(nu)
+        rho_nu = _cubic_spline_eval(_FD_RHO_X, _FD_RHO_C, lognu)
+        p_nu = _cubic_spline_eval(_FD_P_X, _FD_P_C, lognu)
+        H2 = (Omh2
+              + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2 + Oerh2) * eN
+              + Osh2 * e3N + OLh2 / e3N)
+        sigma = (Omh2
+                 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
+                 + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN
+                 + 2.0 * Osh2 * e3N) / H2
+    elif N > N_inf - N_fin:
+        H2 = Omh2 + Otrh2 * eN + Osh2 * e3N + OLh2 / e3N
+        sigma = (Omh2 + 4.0 / 3.0 * Otrh2 * eN + 2.0 * Osh2 * e3N) / H2
+    elif N >= N_inf - N_max:
+        Nl = N_inf - N
+        rho_i = _cubic_spline_eval(_THERMAL_RHO_X, _THERMAL_RHO_C, Nl)
+        rhop_i = _cubic_spline_eval(_THERMAL_RHOP_X, _THERMAL_RHOP_C, Nl)
+        H2 = (Omh2 + (Omega_ph2 * rho_i + Oerh2) * eN
+              + Osh2 * e3N + OLh2 / e3N)
+        sigma = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN
+                 + 2.0 * Osh2 * e3N) / H2
+    else:
+        H2 = Omh2 + Otreh2 * eN + Osh2 * e3N + OLh2 / e3N
+        sigma = (Omh2 + 4.0 / 3.0 * Otreh2 * eN + 2.0 * Osh2 * e3N) / H2
+    return H2, sigma
+
+
+def _h2_sigma_numba_args(bg):
+    return (
+        bg.Omh2, bg.Osh2, bg.Oerh2, bg.Otrh2, bg.Otreh2, bg.OLh2,
+        bg.N_inf, bg.N_re_abs, bg.N_fin, bg.N_max, bg.nu_today,
+        bg.Omega_ph2, bg.Omega_nh2, bg.Omega_mnuh2,
+    )
+
+
+def _H2_and_sigma_numba(bg, N):
+    return _h2_sigma_numba_core(float(N), *_h2_sigma_numba_args(bg))
+
+
+def _warmup_numba_reference_background(bg):
+    global _NUMBA_H2_SIGMA_READY
+    _warmup_numba_spline()
+    _H2_and_sigma_numba(bg, bg.N_inf)
+    _NUMBA_H2_SIGMA_READY = True
+
+
 class _Background:
     """Store model-dependent densities and boundaries for exact background evaluation.
 
@@ -181,7 +252,7 @@ class _Background:
                             else spline_eval)
 
 
-def _H2_and_sigma(bg, N):
+def _H2_and_sigma_python(bg, N):
     """Return exact ``H^2`` and ``sigma`` at absolute ``N``.
 
     中文：返回绝对 e-fold 坐标 ``N`` 处的连续 ``H^2`` 和 ``sigma``。
@@ -229,6 +300,29 @@ def _H2_and_sigma(bg, N):
         H2 = bg.Omh2 + bg.Otreh2 * eN + bg.Osh2 * e3N + bg.OLh2 / e3N
         sigma = (bg.Omh2 + 4.0 / 3.0 * bg.Otreh2 * eN + 2.0 * bg.Osh2 * e3N) / H2
     return H2, sigma
+
+
+def _H2_and_sigma(bg, N):
+    """Evaluate the exact background, using compiled algebra when warmed."""
+    N = float(N)
+    # Preserve the zero-cost analytic reheating branch, especially for cold
+    # low-frequency single-mode calls. The compiled path is warmed by a batch
+    # Reference request and then reuses the same SciPy spline coefficients.
+    if N < bg.N_re_abs:
+        return 0.0, 1.0
+    if _NUMBA_H2_SIGMA_READY:
+        # Python ``math.exp`` raises when the exponent overflows, while Numba's
+        # NumPy error model returns infinity. Route only this extreme boundary
+        # back through Python to preserve Reference failure semantics.
+        if bg.N_inf - N > 700.0:
+            return _H2_and_sigma_python(bg, N)
+        return _h2_sigma_numba_core(
+            N, bg.Omh2, bg.Osh2, bg.Oerh2, bg.Otrh2,
+            bg.Otreh2, bg.OLh2, bg.N_inf, bg.N_re_abs,
+            bg.N_fin, bg.N_max, bg.nu_today, bg.Omega_ph2,
+            bg.Omega_nh2, bg.Omega_mnuh2,
+        )
+    return _H2_and_sigma_python(bg, N)
 
 
 def background_at(m, N, DN_eff):
@@ -425,18 +519,37 @@ def _find_start_N(bg, freq, z_start):
     中文：利用单调递增的 ``z(N)`` 二分搜索最早满足 ``z >= z_start`` 的绝对坐标 ``N``。
     """
     Nlast = bg.N_inf
+    H2_last, _ = _H2_and_sigma(bg, Nlast)
+    raw_last = -0.5 * Nlast + 0.5 * math.log(H2_last)
+    Delta_f = math.log(2.0 * math.pi / bg.H_0)
+    if bg.N_re_abs < Nlast:
+        H2_re, _ = _H2_and_sigma(bg, bg.N_re_abs)
+        raw_re = -0.5 * bg.N_re_abs + 0.5 * math.log(H2_re)
+    else:
+        raw_re = raw_last
+
     lo, hi = 0.0, Nlast
+
     def z_at(N):
-        fh = f_hor_abs(bg, N)
+        if N < bg.N_re_abs:
+            raw = raw_re - 0.5 * (N - bg.N_re_abs)
+        else:
+            H2, _ = _H2_and_sigma(bg, N)
+            raw = -0.5 * N + 0.5 * math.log(H2)
+        fh = (raw - raw_last - Delta_f) / ln10
         return (freq - fh) * ln10
+
     if z_at(lo) >= z_start:
         return 0.0
     for _ in range(200):
         mid = 0.5 * (lo + hi)
+        stagnant = mid == lo or mid == hi
         if z_at(mid) < z_start:
             lo = mid
         else:
             hi = mid
+        if stagnant:
+            break
     return hi
 
 
@@ -604,9 +717,16 @@ def spectrum_reference(m, freqs, DN_eff, z_tail=6.0, rtol=1e-12, workers=None,
         raise ValueError("reference backend must be 'cartesian' or 'prufer'")
     freqs = np.asarray(freqs, dtype=float)
     n = freqs.size
-    if (n and not _has_exact_zero_tensor_amplitude(m.cosmo_param)
-            and np.any(freqs >= _NUMBA_SPLINE_CROSSOVER_FREQ)):
-        _warmup_numba_spline()
+    has_compiled_cost_mode = bool(
+        n and np.any(freqs >= _NUMBA_SPLINE_CROSSOVER_FREQ)
+    )
+    if n and not _has_exact_zero_tensor_amplitude(m.cosmo_param):
+        if has_compiled_cost_mode:
+            if (not _NUMBA_H2_SIGMA_READY
+                    and n >= _NUMBA_H2_SIGMA_MIN_BATCH_SIZE):
+                _warmup_numba_reference_background(_Background(m, DN_eff))
+            else:
+                _warmup_numba_spline()
     Ogw = np.empty(n)
     Oj = np.empty(n)
     Opgw = np.empty(n)
