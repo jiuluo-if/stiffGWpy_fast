@@ -740,20 +740,22 @@ residual `-1.85e-10`. This is a fixed-background map at the archived root, not
 a new outer root solve.
 
 At `gamma_min=10`, the phase method completed 700/800 modes with maximum/P95
-error `8.668e-7/2.416e-7 dex`. At `gamma_min=0`, it completed 714/800, with
-maximum/P95 `8.668e-7/2.412e-7 dex`; the phase path used `141.6 s` versus
-`45.9 s` for Cartesian Reference, so it is slower on this grid. It did not
-produce a complete candidate integral map because 86 modes remain unsupported
+error `8.668e-7/2.416e-7 dex`. At `gamma_min=0`, it completed 718/800, with
+maximum/P95 `8.668e-7/2.411e-7 dex`; the phase path used `132.7 s` versus
+`43.3 s` for Cartesian Reference, so it is slower on this grid. It did not
+produce a complete candidate integral map because 82 modes remain unsupported
 or fail the residual gates. The output keeps those failures explicit.
 
-The Newton solve now stops when the existing scaled collocation residual gate
-(`1e-10`) is first met, while still checking the existing dense residual gate
-(`1e-9`). The Newton iteration cap remains 20 and neither gate changed. A
-same-source comparison found five new strict three-order modes `[670, 710,
-725, 739, 752]`, no losses from the prior 709, and unchanged maximum spectral
-error. The gamma-zero phase runtime changed from `145.4 s` to `141.6 s`; this
-prototype remains slower than Cartesian. The focused mode-656 regression
-reproduces the old residual failure and now passes both residual and spectral
+The Newton solve stops when the existing scaled collocation residual gate
+(`1e-10`) is first met and still checks the existing dense residual gate
+(`1e-9`). When a full Newton step does not lower the residual, it tries up to
+eight halvings; if none lowers it, the original full step is retained. The
+20-step cap and both gates remain unchanged. Residual stopping added five
+strict modes to the prior gamma-zero count of709; conditional damping added
+four more, `[685, 712, 713, 751]`, with no losses. Maximum spectral error is
+unchanged. The gamma-zero prototype runtime changed from `141.6 s` to `132.7 s`
+and the gamma-10 run from `144.0 s` to `129.5 s`; both remain slower than
+Cartesian. Focused modes `656` and `687` now pass residual, dense, and spectrum
 checks.
 
 A tail-event audit found and fixed a semantic bug exposed by these modes: four
@@ -766,25 +768,25 @@ fails before the fix and passes after it; the corrected 800-bin run has no tail
 semantic mismatches and maximum spectral error below `1e-6 dex` on supported
 modes.
 
-Independent order replays of the 83 remaining gamma-zero residual failures find
-16 modes with adjacent-order agreement and Cartesian validation. Their maximum
-adjacent-order difference is `7.07e-10 dex`, and maximum Cartesian error is
+Independent order replays of the 79 remaining gamma-zero residual failures find
+14 modes with adjacent-order agreement and Cartesian validation. Their maximum
+adjacent-order difference is `7.09e-10 dex`, and maximum Cartesian error is
 `1.96e-7 dex`.
 
-A follow-up independently validated all 51 completed order candidates (33 at
-order 16, 17 at order 24, one at order 32) across 35 residual-failure
+A follow-up independently validated all 46 completed order candidates (29 at
+order 16, 16 at order 24, one at order 32) across 32 residual-failure
 frequencies. Tight Cartesian (`rtol=1e-11`) and Prüfer (`rtol=1e-9`) references
 agree within `9.32e-8 dex` maximum; candidate differences are at most
-`1.59e-8` and `9.33e-8 dex`, respectively. All 16 adjacent-order modes are in
-this dual-reference set. The unique validated count is therefore 749/800,
-with 48 residual failures and three non-positive-`Q` modes unresolved. The
+`1.59e-8` and `9.33e-8 dex`, respectively. All 14 adjacent-order modes are in
+this dual-reference set. The unique validated count is therefore 750/800,
+with 47 residual failures and three non-positive-`Q` modes unresolved. The
 phase spectrum remains incomplete, so no phase `DN_gw` map or root is claimed.
 Reproduce the dual-reference pass with
 [`validate_sample2_residual_orders.py`](../scripts/validate_sample2_residual_orders.py)
 and see [`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_phase_residual_orders_dual_reference_20261105.json).
 
-A lower-order screen of the same 83 remaining modes at orders 8/12/16 completed
-0/1/33 per order. Its one converged 12/16 pair (index 756) is already in the
+A lower-order screen of the same 79 remaining modes at orders 8/12/16 completed
+0/1/29 per order. Its one converged 12/16 pair (index 756) is already in the
 dual-reference-validated set, so this alternative adds no new unique
 frequency coverage. It is recorded as a negative coverage result and is not
 used to alter the candidate or its residual gates; see
