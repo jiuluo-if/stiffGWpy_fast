@@ -1,0 +1,533 @@
+{
+  "schema_version": 1,
+  "experiment": "newton_kantorovich_phase_transfer_production_z_single_mode",
+  "source_sha": "0cb0828274c5e8961d0bf5719b36bb8fcb87bcc8",
+  "worktree_dirty": false,
+  "prototype_script_sha256": "410a15958fd9fb74f63ca832a5cd9b7fdd8be1f039db7385ae265cf1fbc278f2",
+  "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "params": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "cr": 0.1,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.13373681817755848
+  },
+  "freq_log10_hz": -12.6723,
+  "z_start": -12.0,
+  "z_phase_start": 5.0,
+  "z_tail": 10.0,
+  "solver_settings": {
+    "low_frequency_method": "DOP853",
+    "low_frequency_rtol": 1e-12,
+    "low_frequency_atol": [
+      1e-12,
+      1e-13,
+      1e-13
+    ],
+    "phase_chebyshev_orders": [
+      16,
+      24,
+      32
+    ],
+    "phase_newton_relative_update_tolerance": 2e-14,
+    "phase_newton_max_iterations": 20,
+    "phase_high_frequency_gamma_min": 10.0,
+    "phase_dense_residual_points_per_segment": 201,
+    "background_segment_splits": [
+      "nu=0.1",
+      "nu=100"
+    ],
+    "background_branch_derivatives": "analytic, branch-specific p prime",
+    "candidate_spline_callback": "Python scalar CubicSpline fallback",
+    "cartesian_reference_backend": "cartesian",
+    "cartesian_reference_rtol": 1e-11,
+    "cartesian_reference_atol": [
+      1e-12,
+      1e-22,
+      1e-22
+    ]
+  },
+  "N_start": 38.214704874489584,
+  "z0": -11.99999999999999,
+  "N_phase_start": 54.245765259038976,
+  "low_state_z_T_Tprime": [
+    5.000000000000003,
+    -0.005818081389302086,
+    -0.4897474232204793
+  ],
+  "nu_branch_boundary_N": [
+    59.02103491998032,
+    65.92879019896246
+  ],
+  "tail_used": true,
+  "N_end_production_z": 59.79613794350068,
+  "z_end_production": 10.0,
+  "reference_cartesian": {
+    "spline_jit_warmup_s": 0.3051857000682503,
+    "runtime_s": 11.221478900173679,
+    "nfev": 1367081,
+    "log10OmegaGW": -16.090128431953314,
+    "event_N": 59.79613789019054,
+    "used_tail": true
+  },
+  "runs": [
+    {
+      "order": 16,
+      "segments": 6,
+      "state_T_Tprime": [
+        2.2138520095173587e-05,
+        0.3031344054210769
+      ],
+      "tail_used": true,
+      "end_N": 59.79613794350068,
+      "end_z": 10.0,
+      "end_state_spectrum": {
+        "OmegaGW": 8.125902432686271e-17,
+        "Ogw": 8.12590243259962e-17,
+        "Oj": -8.66510995283386e-28,
+        "Opgw": 2.708634144228757e-17
+      },
+      "phase_seconds": 0.023256200132891536,
+      "total_candidate_seconds": 0.13700000010430813,
+      "low_rhs_nfev": 13673,
+      "low_seconds": 0.10122449998743832,
+      "segments_details": [
+        {
+          "N": [
+            54.245765259038976,
+            55.25251531624155
+          ],
+          "z": [
+            5.0,
+            6.0000000000000355
+          ],
+          "regime": "radiation",
+          "order": 16,
+          "gamma_min": 149.41409525196897,
+          "newton_iterations": 3,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.900741387490969e-16,
+          "collocation_residual_scaled": 5.409379251041324e-16,
+          "dense_residual_scaled": 9.998997064359748e-15,
+          "z_target_right": 6.0
+        },
+        {
+          "N": [
+            55.25251531624155,
+            56.27086052623141
+          ],
+          "z": [
+            6.0000000000000355,
+            6.999999999999998
+          ],
+          "regime": "radiation",
+          "order": 16,
+          "gamma_min": 410.8294506680718,
+          "newton_iterations": 3,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 9.823073024809227e-17,
+          "collocation_residual_scaled": 5.263850886610734e-16,
+          "dense_residual_scaled": 8.439693300643562e-15,
+          "z_target_right": 7.0
+        },
+        {
+          "N": [
+            56.27086052623141,
+            57.320660926510165
+          ],
+          "z": [
+            6.999999999999998,
+            7.999999999999997
+          ],
+          "regime": "radiation",
+          "order": 16,
+          "gamma_min": 1151.2457958041955,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.993997299562144e-15,
+          "collocation_residual_scaled": 5.725115983554313e-16,
+          "dense_residual_scaled": 6.839444109938227e-15,
+          "z_target_right": 8.0
+        },
+        {
+          "N": [
+            57.320660926510165,
+            58.454713522067166
+          ],
+          "z": [
+            7.999999999999997,
+            9.000000000000004
+          ],
+          "regime": "radiation",
+          "order": 16,
+          "gamma_min": 3380.5630817841893,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.1435914094205733e-16,
+          "collocation_residual_scaled": 3.0852975561903094e-16,
+          "dense_residual_scaled": 1.0179297437768313e-14,
+          "z_target_right": 9.0
+        },
+        {
+          "N": [
+            58.454713522067166,
+            59.02103491998032
+          ],
+          "z": [
+            9.000000000000004,
+            9.449131553870709
+          ],
+          "regime": "radiation",
+          "order": 16,
+          "gamma_min": 4588.94980326554,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.1247523194954913e-16,
+          "collocation_residual_scaled": 2.897155497330182e-16,
+          "dense_residual_scaled": 6.227769689193644e-15,
+          "z_target_right": 9.44913155387071
+        },
+        {
+          "N": [
+            59.02103491998032,
+            59.79613794350068
+          ],
+          "z": [
+            9.449131553870709,
+            9.999999999999574
+          ],
+          "regime": "neutrino_spline",
+          "order": 16,
+          "gamma_min": 9841.586705370843,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 7.79066818651702e-17,
+          "collocation_residual_scaled": 2.1313351582778982e-16,
+          "dense_residual_scaled": 2.621408510441468e-14,
+          "z_target_right": 10.0
+        }
+      ],
+      "gamma_min": 149.41409525196897,
+      "dense_residual_max": 2.621408510441468e-14,
+      "spectrum_abs_dex_error_vs_cartesian": 3.542237436704454e-08,
+      "runtime_ratio_cartesian_over_candidate": 81.90860504839377
+    },
+    {
+      "order": 24,
+      "segments": 6,
+      "state_T_Tprime": [
+        2.2138520170688204e-05,
+        0.3031344027453907
+      ],
+      "tail_used": true,
+      "end_N": 59.79613794350068,
+      "end_z": 10.0,
+      "end_state_spectrum": {
+        "OmegaGW": 8.125902432686163e-17,
+        "Ogw": 8.125902432599511e-17,
+        "Oj": -8.665109952833746e-28,
+        "Opgw": 2.708634144228721e-17
+      },
+      "phase_seconds": 0.024264399893581867,
+      "total_candidate_seconds": 0.13764169998466969,
+      "low_rhs_nfev": 13673,
+      "low_seconds": 0.10122449998743832,
+      "segments_details": [
+        {
+          "N": [
+            54.245765259038976,
+            55.25251531624155
+          ],
+          "z": [
+            5.0,
+            6.0000000000000355
+          ],
+          "regime": "radiation",
+          "order": 24,
+          "gamma_min": 149.41409525196897,
+          "newton_iterations": 3,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 2.507086872384144e-16,
+          "collocation_residual_scaled": 4.882181086084188e-16,
+          "dense_residual_scaled": 7.531874169373238e-15,
+          "z_target_right": 6.0
+        },
+        {
+          "N": [
+            55.25251531624155,
+            56.27086052623141
+          ],
+          "z": [
+            6.0000000000000355,
+            6.999999999999998
+          ],
+          "regime": "radiation",
+          "order": 24,
+          "gamma_min": 410.8294506680718,
+          "newton_iterations": 3,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.0966361098066656e-16,
+          "collocation_residual_scaled": 5.380682966878874e-16,
+          "dense_residual_scaled": 3.1578152379374397e-15,
+          "z_target_right": 7.0
+        },
+        {
+          "N": [
+            56.27086052623141,
+            57.320660926510165
+          ],
+          "z": [
+            6.999999999999998,
+            7.999999999999997
+          ],
+          "regime": "radiation",
+          "order": 24,
+          "gamma_min": 1151.2457958041955,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.9959339595003605e-15,
+          "collocation_residual_scaled": 5.74067816505432e-16,
+          "dense_residual_scaled": 4.273406648306695e-15,
+          "z_target_right": 8.0
+        },
+        {
+          "N": [
+            57.320660926510165,
+            58.454713522067166
+          ],
+          "z": [
+            7.999999999999997,
+            9.000000000000004
+          ],
+          "regime": "radiation",
+          "order": 24,
+          "gamma_min": 3380.5630817841893,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.1544905998821302e-16,
+          "collocation_residual_scaled": 3.0846066349478803e-16,
+          "dense_residual_scaled": 8.9456176635933e-15,
+          "z_target_right": 9.0
+        },
+        {
+          "N": [
+            58.454713522067166,
+            59.02103491998032
+          ],
+          "z": [
+            9.000000000000004,
+            9.449131553870709
+          ],
+          "regime": "radiation",
+          "order": 24,
+          "gamma_min": 4588.94980326554,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.085004370671321e-16,
+          "collocation_residual_scaled": 2.901471660031319e-16,
+          "dense_residual_scaled": 6.372602675488245e-15,
+          "z_target_right": 9.44913155387071
+        },
+        {
+          "N": [
+            59.02103491998032,
+            59.79613794350068
+          ],
+          "z": [
+            9.449131553870709,
+            10.000000000000101
+          ],
+          "regime": "neutrino_spline",
+          "order": 24,
+          "gamma_min": 9841.586705370843,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 7.868406178474782e-17,
+          "collocation_residual_scaled": 2.1312277881019484e-16,
+          "dense_residual_scaled": 1.108237744179158e-14,
+          "z_target_right": 10.0
+        }
+      ],
+      "gamma_min": 149.41409525196897,
+      "dense_residual_max": 1.108237744179158e-14,
+      "spectrum_abs_dex_error_vs_cartesian": 3.542236726161718e-08,
+      "runtime_ratio_cartesian_over_candidate": 81.52673863679037
+    },
+    {
+      "order": 32,
+      "segments": 6,
+      "state_T_Tprime": [
+        2.213852015799796e-05,
+        0.3031344031950419
+      ],
+      "tail_used": true,
+      "end_N": 59.79613794350068,
+      "end_z": 10.0,
+      "end_state_spectrum": {
+        "OmegaGW": 8.125902432686207e-17,
+        "Ogw": 8.125902432599556e-17,
+        "Oj": -8.665109952833793e-28,
+        "Opgw": 2.7086341442287356e-17
+      },
+      "phase_seconds": 0.026441100053489208,
+      "total_candidate_seconds": 0.13971669995225966,
+      "low_rhs_nfev": 13673,
+      "low_seconds": 0.10122449998743832,
+      "segments_details": [
+        {
+          "N": [
+            54.245765259038976,
+            55.25251531624155
+          ],
+          "z": [
+            5.0,
+            6.0000000000000355
+          ],
+          "regime": "radiation",
+          "order": 32,
+          "gamma_min": 149.41409525196897,
+          "newton_iterations": 3,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 5.819531679708241e-16,
+          "collocation_residual_scaled": 9.723587270893724e-16,
+          "dense_residual_scaled": 1.9066623389132854e-14,
+          "z_target_right": 6.0
+        },
+        {
+          "N": [
+            55.25251531624155,
+            56.27086052623141
+          ],
+          "z": [
+            6.0000000000000355,
+            6.999999999999998
+          ],
+          "regime": "radiation",
+          "order": 32,
+          "gamma_min": 410.8294506680718,
+          "newton_iterations": 3,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.7463610833033177e-16,
+          "collocation_residual_scaled": 1.0526939026459318e-15,
+          "dense_residual_scaled": 2.068757949234282e-14,
+          "z_target_right": 7.0
+        },
+        {
+          "N": [
+            56.27086052623141,
+            57.320660926510165
+          ],
+          "z": [
+            6.999999999999998,
+            7.999999999999997
+          ],
+          "regime": "radiation",
+          "order": 32,
+          "gamma_min": 1151.2457958041955,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 2.01818364309373e-15,
+          "collocation_residual_scaled": 5.701494013403794e-16,
+          "dense_residual_scaled": 1.3844885954205337e-14,
+          "z_target_right": 8.0
+        },
+        {
+          "N": [
+            57.320660926510165,
+            58.454713522067166
+          ],
+          "z": [
+            7.999999999999997,
+            9.000000000000004
+          ],
+          "regime": "radiation",
+          "order": 32,
+          "gamma_min": 3380.5630817841893,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.139049423775314e-16,
+          "collocation_residual_scaled": 3.0848473685639695e-16,
+          "dense_residual_scaled": 2.0376693355381588e-14,
+          "z_target_right": 9.0
+        },
+        {
+          "N": [
+            58.454713522067166,
+            59.02103491998032
+          ],
+          "z": [
+            9.000000000000004,
+            9.449131553870709
+          ],
+          "regime": "radiation",
+          "order": 32,
+          "gamma_min": 4588.94980326554,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 1.4066095529687055e-16,
+          "collocation_residual_scaled": 2.90553241741001e-16,
+          "dense_residual_scaled": 1.0443069488866076e-14,
+          "z_target_right": 9.44913155387071
+        },
+        {
+          "N": [
+            59.02103491998032,
+            59.79613794350068
+          ],
+          "z": [
+            9.449131553870709,
+            10.000000000000005
+          ],
+          "regime": "neutrino_spline",
+          "order": 32,
+          "gamma_min": 9841.586705370843,
+          "newton_iterations": 2,
+          "newton_update_converged": true,
+          "newton_last_relative_update": 7.691537302861793e-17,
+          "collocation_residual_scaled": 2.1327989307107673e-16,
+          "dense_residual_scaled": 1.3429675576965023e-14,
+          "z_target_right": 10.0
+        }
+      ],
+      "gamma_min": 149.41409525196897,
+      "dense_residual_max": 2.068757949234282e-14,
+      "spectrum_abs_dex_error_vs_cartesian": 3.542237081433086e-08,
+      "runtime_ratio_cartesian_over_candidate": 80.31594579608586
+    }
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "limitations": [
+    "Standalone single-mode research prototype; not a production backend.",
+    "Only one res4 parameter point and three frequencies are checked.",
+    "No full-grid integral map, self-consistency root, or parameter-domain validation is included.",
+    "The method uses a configurable DOP853 prefix and local Chebyshev phase transfers on smooth positive-Q branches."
+  ]
+}

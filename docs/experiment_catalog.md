@@ -353,6 +353,12 @@ See [`nonosc_phase_sample2_tail_cross_20261104.json`](nonosc_phase_sample2_tail_
 [`nonosc_phase_sample2_high_20261104.json`](nonosc_phase_sample2_high_20261104.json),
 and
 [`nonosc_phase_sample2_notail_20261104.json`](nonosc_phase_sample2_notail_20261104.json).
+Two modes also exercise the positive `cr` branch; at `cr=.1`, `r=.01` the
+model derives `n_t=-.00125`, and the tail/no-tail errors are `3.54e-8` and
+`3.21e-9 dex`. See
+[`nonosc_phase_cr_positive_tail_20261104.json`](nonosc_phase_cr_positive_tail_20261104.json)
+and
+[`nonosc_phase_cr_positive_notail_20261104.json`](nonosc_phase_cr_positive_notail_20261104.json).
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
