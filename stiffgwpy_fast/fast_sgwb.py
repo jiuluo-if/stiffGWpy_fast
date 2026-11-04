@@ -1262,6 +1262,33 @@ def prep_fast(m, Nv, freqs, h, variable_grid=False):
 
 
 # ================= stepping, assembly and kernel / 步进、组装与计算核 =================
+def _uniform_step_terminal_width(Nv, h):
+    """Return the final interval if all preceding grid steps equal ``h``.
+
+    A transition grid whose kink lands on the base grid can use the scalar
+    step path; any genuine interior refinement or tiny physical interval keeps
+    the full width array. The tolerance only absorbs multiplication
+    roundoff in the uniform ``arange`` nodes.
+
+    中文：若转折网格除最后的当前时刻短区间外均为 ``h``，返回终点实际步长以走标量快路；
+    存在真实内部细化或极短物理区间时返回零并保留完整步长数组。容差只吸收均匀网格乘法舍入误差。
+    """
+    Nv = np.asarray(Nv, dtype=np.float64)
+    h = float(h)
+    if Nv.ndim != 1 or Nv.size < 2 or not math.isfinite(h) or h <= 0.0:
+        return 0.0
+    steps = np.diff(Nv)
+    tol = 64.0 * np.finfo(np.float64).eps * max(1.0, abs(float(Nv[-1])), abs(h))
+    if steps.size > 1 and (
+        np.any(steps[:-1] <= tol)
+        or np.any(np.abs(steps[:-1] - h) > tol)
+    ):
+        return 0.0
+    if steps[-1] <= 0.0:
+        return 0.0
+    return float(steps[-1])
+
+
 @njit(cache=True)
 def scaled_step(xh, yh, z_mid, h):
     w = math.exp(z_mid)
@@ -2252,6 +2279,7 @@ def _SGWB_iter_fast_impl(
                 W_support_last = Ws[Ns - 1].copy()
                 Ogw = Oj = Opgw = None
             first = False
+            h_final = 0.0
             if transition_refine:
                 # The refined grid is nonuniform and already contains N_re as
                 # an exact node; its interval widths must reach solve_kernel.
@@ -2272,6 +2300,9 @@ def _SGWB_iter_fast_impl(
                         m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
                     )
                     h_arr = np.diff(Nv)
+                h_final = _uniform_step_terminal_width(Nv, h)
+                if h_final > 0.0:
+                    h_arr = None
             elif kink_split:
                 # The interior kink stays in one fractional interval and the
                 # final N_inf anchor creates at most one short terminal step.
@@ -2380,8 +2411,11 @@ def _SGWB_iter_fast_impl(
                 phase_max,
                 handoff_eps,
             )
-            if kink_split:
-                h_final = float(Nv[-1] - Nv[-2]) if h_arr is None else 0.0
+            if kink_split or (transition_refine and h_arr is None):
+                if h_arr is None and h_final <= 0.0:
+                    h_final = float(Nv[-1] - Nv[-2])
+                elif h_arr is not None:
+                    h_final = 0.0
                 solve_args += (kink_index, kink_fraction, phi_re, h_final)
             # 只有背景与频率/时间网格都稳定时才可复用传播缓冲；网格变化会清空缓冲。
             # Recompute propagation when grid-dependent buffers were rebuilt.
