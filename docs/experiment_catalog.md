@@ -394,10 +394,11 @@ residual adds19 more, `[656,671,672,687,700,701,702,703,714,716,718,726,730,
 residual failures,20 pass adjacent-order checks and70 completed order
 candidates across44 modes pass tighter Cartesian/Prüfer references. All20
 adjacent-order modes overlap that set, so781/800 are validated at the standard
-handoff. A separate internal phase-start scan dual-validates five more modes
-`[757,759,780,782,783]` against tighter Cartesian/Prüfer references, for786/800
-unique frequencies; eight residual failures and six non-positive-`Q` modes
-remain. Lower orders8/12/16 add no unique coverage.
+handoff. A separate phase-start scan with 1/128 spacing dual-validates six more
+modes `[757,759,780,782,783,786]` against tighter Cartesian/Prüfer references,
+for787/800 unique frequencies; seven residual failures and six non-positive-`Q`
+modes remain; refining from 1/64 to 1/128 adds no further modes. Lower
+orders 8/12/16 add no unique coverage.
 These checks still do not provide a complete phase integral map or root.
 The Windows phase archive records mode687 as a pass, while Linux CI reproduces
 an explicit order-16 residual rejection (`7.76e-10` vs the `1e-10` gate). This

@@ -800,13 +800,14 @@ and see [`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_p
 
 A targeted phase-start scan then refined the internal handoff position for the
 13 residual modes not yet checked. It tried offsets from `-0.5` through
-`+0.4375` in `0.0625` increments around each recorded start, kept candidates
+`+0.4921875` in `0.0078125` increments around each recorded start, kept candidates
 that passed the unchanged residual gates, tail semantics, and `1e-3 dex`
 archived Cartesian check, then cross-checked the best candidate with tighter
-Cartesian and Prüfer references. Five modes `[757, 759, 780, 782, 783]` pass;
-their maximum candidate errors are `3.55e-10 dex` vs tight Cartesian and
-`8.54e-8 dex` vs Prüfer. Unique validated coverage is now786/800, with eight
-residual failures and six non-positive-`Q` modes unresolved. No complete phase
+Cartesian and Prüfer references. Six modes `[757, 759, 780, 782, 783, 786]`
+pass; their maximum candidate errors are `3.51e-10 dex` vs tight Cartesian
+and `8.54e-8 dex` vs Prüfer. Refining the scan from 1/64 to 1/128 spacing
+found no additional modes. Unique validated coverage is now787/800, with
+seven residual failures and six non-positive-`Q` modes unresolved. No complete phase
 map or root is claimed. Reproduce with
 [`probe_sample2_phase_start_offsets.py`](../scripts/probe_sample2_phase_start_offsets.py)
 and see [`sample2_phase_start_offset_probe_20261105.json`](sample2_phase_start_offset_probe_20261105.json).

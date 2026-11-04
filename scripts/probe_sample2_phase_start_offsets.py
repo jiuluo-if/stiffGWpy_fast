@@ -26,7 +26,7 @@ ROOT_GRID = ROOT / "docs" / "sample2_phase_reference_root_res8_tail5_gamma0_2026
 RESIDUAL_PROBE = ROOT / "docs" / "sample2_phase_root_residual_order_probe_20261105.json"
 DUAL_REFERENCE = ROOT / "docs" / "sample2_phase_residual_orders_dual_reference_20261105.json"
 OUTPUT = ROOT / "docs" / "sample2_phase_start_offset_probe_20261105.json"
-START_OFFSETS = tuple(index / 16.0 for index in range(-8, 8))
+START_OFFSETS = tuple(index / 128.0 for index in range(-64, 64))
 ORDERS = (16, 24, 32)
 
 
