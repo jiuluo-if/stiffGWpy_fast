@@ -478,6 +478,11 @@ res4 modes at `rtol=1e-11`, `z_tail=10`, and identical backgrounds, all
 `29.4/35.2 MB`. This scoped A/B does not establish a full-grid speed ratio.
 See [`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json)
 and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).
+Rechecking the Prüfer candidate against this faster Cartesian baseline gives
+`3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
+ratios `3.085x/3.990x` and maximum spectrum error `1.401e-5 dex`; the endpoint
+mode is only `1.736x` faster. The updated paired samples are in
+[`reference_prufer_production_ab_postdense_20261104.json`](reference_prufer_production_ab_postdense_20261104.json).
 
 The public author ARDC package `riccati==2.0.0` was also screened on one mode.
 At `eps=epsh=1e-9`, its spectrum error was `3.585e-4 dex` in `0.145 s`, and
