@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "experiment": "cartesian_dop853_dense_output_storage_overhead",
+  "source_sha": "97b8ef8caf56651463e90939ea3ff76de03d4fd9",
+  "worktree_dirty": true,
+  "source_script_sha256": "3633923d9214a754529a2fe056e8754479eef661a22e9a8a559092995ff23215",
+  "reference_module_sha256": "93f34a72bc153d57e330deea841756d0417aac644ae66e424179465aae3f2153",
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "rtol": 1e-11,
+  "atol": [
+    1e-12,
+    1e-22,
+    1e-22
+  ],
+  "pairs_per_case": 2,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "summaries": {
+    "no_tail": {
+      "freq_log10_hz": -14.6013,
+      "used_tail": false,
+      "dense_runtime_s": {
+        "p50": 18.542172650108114,
+        "p95": 18.55478925504722
+      },
+      "nodense_runtime_s": {
+        "p50": 14.54613699996844,
+        "p95": 14.564876530063339
+      },
+      "median_speedup": 1.2747145616838578,
+      "dense_nfev": 1398878,
+      "nodense_nfev": 1119218,
+      "nfev_reduction": 279660,
+      "dense_rss_peak_delta_bytes": 81514496,
+      "nodense_rss_peak_delta_bytes": 29356032,
+      "bitwise_output_match": true
+    },
+    "tail": {
+      "freq_log10_hz": -12.6723,
+      "used_tail": true,
+      "dense_runtime_s": {
+        "p50": 21.15302410000004,
+        "p95": 21.39665742991492
+      },
+      "nodense_runtime_s": {
+        "p50": 16.368112349882722,
+        "p95": 16.410155894886703
+      },
+      "median_speedup": 1.2923313115059112,
+      "dense_nfev": 1708436,
+      "nodense_nfev": 1366937,
+      "nfev_reduction": 341499,
+      "dense_rss_peak_delta_bytes": 93970432,
+      "nodense_rss_peak_delta_bytes": 35229696,
+      "bitwise_output_match": true
+    }
+  },
+  "samples": [
+    {
+      "case": "no_tail",
+      "pair": 0,
+      "variant": "dense",
+      "runtime_s": 18.528154200175777,
+      "nfev": 1398878,
+      "used_tail": false,
+      "output": [
+        8.661368043345985e-14,
+        4.2608079620183644e-17,
+        1.0863484886839431e-13
+      ],
+      "rss_peak_delta_bytes": 81514496
+    },
+    {
+      "case": "no_tail",
+      "pair": 0,
+      "variant": "nodense",
+      "runtime_s": 14.566958700073883,
+      "nfev": 1119218,
+      "used_tail": false,
+      "output": [
+        8.661368043345985e-14,
+        4.2608079620183644e-17,
+        1.0863484886839431e-13
+      ],
+      "rss_peak_delta_bytes": 26726400
+    },
+    {
+      "case": "no_tail",
+      "pair": 1,
+      "variant": "nodense",
+      "runtime_s": 14.525315299862996,
+      "nfev": 1119218,
+      "used_tail": false,
+      "output": [
+        8.661368043345985e-14,
+        4.2608079620183644e-17,
+        1.0863484886839431e-13
+      ],
+      "rss_peak_delta_bytes": 29356032
+    },
+    {
+      "case": "no_tail",
+      "pair": 1,
+      "variant": "dense",
+      "runtime_s": 18.55619110004045,
+      "nfev": 1398878,
+      "used_tail": false,
+      "output": [
+        8.661368043345985e-14,
+        4.2608079620183644e-17,
+        1.0863484886839431e-13
+      ],
+      "rss_peak_delta_bytes": 76365824
+    },
+    {
+      "case": "tail",
+      "pair": 0,
+      "variant": "dense",
+      "runtime_s": 21.423727799905464,
+      "nfev": 1708436,
+      "used_tail": true,
+      "output": [
+        6.20940586903035e-10,
+        -6.6214411313952515e-21,
+        2.0698019563655217e-10
+      ],
+      "rss_peak_delta_bytes": 93970432
+    },
+    {
+      "case": "tail",
+      "pair": 0,
+      "variant": "nodense",
+      "runtime_s": 16.3213972998783,
+      "nfev": 1366937,
+      "used_tail": true,
+      "output": [
+        6.20940586903035e-10,
+        -6.6214411313952515e-21,
+        2.0698019563655217e-10
+      ],
+      "rss_peak_delta_bytes": 35229696
+    },
+    {
+      "case": "tail",
+      "pair": 1,
+      "variant": "nodense",
+      "runtime_s": 16.414827399887145,
+      "nfev": 1366937,
+      "used_tail": true,
+      "output": [
+        6.20940586903035e-10,
+        -6.6214411313952515e-21,
+        2.0698019563655217e-10
+      ],
+      "rss_peak_delta_bytes": 28270592
+    },
+    {
+      "case": "tail",
+      "pair": 1,
+      "variant": "dense",
+      "runtime_s": 20.882320400094613,
+      "nfev": 1708436,
+      "used_tail": true,
+      "output": [
+        6.20940586903035e-10,
+        -6.6214411313952515e-21,
+        2.0698019563655217e-10
+      ],
+      "rss_peak_delta_bytes": 80179200
+    }
+  ],
+  "method": "same process alternating DOP853 dense_output True versus False; y_events supplies event state"
+}

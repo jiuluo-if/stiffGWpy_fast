@@ -260,3 +260,13 @@ and the benchmark drivers are
 [`benchmark_res4_scalar_step.py`](../scripts/benchmark_res4_scalar_step.py)
 and [`benchmark_res4_reference_root.py`](../scripts/benchmark_res4_reference_root.py).
 These are sampled hard-point results, not global domain certification.
+
+## 2026-11-04 Reference DOP853 dense-output removal
+
+The Cartesian Reference now uses event states from `y_events` and disables
+global DOP853 dense output. Two fixed res4 hard modes matched bitwise and ran
+`1.275x/1.292x` faster with reduced sampled peak RSS. Raw paired samples and
+reproduction instructions are in
+[`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json),
+[`reference_optimization_20261104.md`](reference_optimization_20261104.md),
+and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).

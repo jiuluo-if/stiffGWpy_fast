@@ -467,6 +467,18 @@ using `--reference docs/res4_reference_secant_root_tail10_20261104.npz`,
 The older experimental Prüfer helper produced the initial screening artifacts;
 these current figures come from the package backend.
 
+### Cartesian DOP853 dense-output removal
+
+The Cartesian Reference path now disables global `dense_output` and consumes
+the DOP853 event state from `y_events`. This preserves the event handoff while
+avoiding a dense interpolant at every accepted integration step. On two fixed
+res4 modes at `rtol=1e-11`, `z_tail=10`, and identical backgrounds, all
+`Ogw/Oj/Opgw` outputs matched bitwise. The no-tail/tail modes improved by
+`1.275x/1.292x`; sampled peak RSS deltas fell from `81.5/94.0 MB` to
+`29.4/35.2 MB`. This scoped A/B does not establish a full-grid speed ratio.
+See [`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json)
+and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).
+
 The public author ARDC package `riccati==2.0.0` was also screened on one mode.
 At `eps=epsh=1e-9`, its spectrum error was `3.585e-4 dex` in `0.145 s`, and
 tightening the tolerance did not reduce the observed offset. The 260-mode run

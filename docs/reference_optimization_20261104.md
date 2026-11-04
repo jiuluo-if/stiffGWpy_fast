@@ -85,6 +85,29 @@ produced. The timeout record is
 [`reference_ardc_res4_timeout_20261104.json`](reference_ardc_res4_timeout_20261104.json).
 It is an incomplete resource screen, not a full-grid numerical rejection.
 
+## DOP853 dense-output overhead
+
+The Cartesian Reference solver requested `dense_output=True` and used the
+interpolant only once, to recover the tail-event state. SciPy 1.17.1's local
+DOP853 implementation builds a dense interpolant at every accepted step; that
+construction evaluates three additional RHS stages. With a terminal event,
+`solve_ivp` still computes the event interpolant and exposes the event state
+through `y_events` when global dense output is disabled. The Cartesian path now
+uses that state and requests `dense_output=False`.
+
+The alternating same-process A/B used the same res4 background, frequencies,
+`z_tail=10`, `rtol=1e-11`, and Cartesian equations. A no-tail mode and a
+tail-handoff mode were run twice per variant. All output triplets matched
+bitwise. The no-tail mode improved from `18.54/18.55 s` P50/P95 to
+`14.55/14.56 s` (`1.275x`); its `nfev` fell from `1,398,878` to `1,119,218`.
+The tail mode improved from `21.15/21.40 s` to `16.37/16.41 s` (`1.292x`);
+`nfev` fell from `1,708,436` to `1,366,937`. Sampled peak RSS delta fell from
+`81.5` to `29.4 MB` and `94.0` to `35.2 MB`, respectively. These are two
+difficult modes, not a full-grid speed guarantee. The paired record and
+reproduction driver are
+[`reference_dense_output_benchmark_20261104.json`](reference_dense_output_benchmark_20261104.json)
+and [`benchmark_reference_dense_output.py`](../scripts/benchmark_reference_dense_output.py).
+
 ## Original papers read so far
 
 The task attachment says a 37-paper appendix exists, but the attached file
