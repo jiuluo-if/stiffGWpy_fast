@@ -298,3 +298,7 @@ independent Reference root had map difference `4.39e-7` relative and maximum
 spectrum error `5.25e-5 dex`; runtime was `569.1 s` on one worker. It is not a
 paired full-grid Cartesian speed comparison. See
 [`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).
+The expanded eight-frequency A/B reports `3.626x` aggregate (`3.586x`
+including JIT warmup), per-mode P50/P95 `2.778x/4.174x`, and maximum same-input
+spectrum error `3.94e-6 dex`; see
+[`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).

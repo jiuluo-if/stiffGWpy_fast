@@ -502,6 +502,12 @@ aggregate with maximum spectrum error `5.22e-7 dex`; see
 [`reference_prufer_production_ab_post_spline_20261104.json`](reference_prufer_production_ab_post_spline_20261104.json).
 The full-grid run record is
 [`reference_prufer_spline_res4_refroot_20261104.json`](reference_prufer_spline_res4_refroot_20261104.json).
+An expanded 8-frequency paired A/B (two alternating pairs per mode across
+indices `0,65,100,130,160,195,220,259`) measured `3.626x` aggregate speedup,
+or `3.586x` including JIT warmup, with per-mode P50/P95 `2.778x/4.174x` and
+maximum error `3.94e-6 dex`. This remains a frequency sample rather than a
+full-grid paired timing; raw data are in
+[`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95

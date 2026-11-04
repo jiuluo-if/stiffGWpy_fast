@@ -187,6 +187,15 @@ low-frequency endpoint is `1.69x` faster. The four-mode result does not
 replace the full-grid map result above. Raw samples are in
 [`reference_prufer_production_ab_post_spline_20261104.json`](reference_prufer_production_ab_post_spline_20261104.json).
 
+An expanded frequency-spread A/B used indices `[0,65,100,130,160,195,220,259]`
+from the same 260-mode archive and two alternating pairs at each index. The
+aggregate speedup is `3.626x` excluding the separately logged `0.334 s` JIT
+warmup (`3.59x` including it); per-mode speedup P50/P95 is `2.778x/4.174x`.
+The maximum same-input spectrum error is `3.94e-6 dex`. This supports a roughly
+3.6x gain for this sampled eight-mode workload; the lower P50 and endpoint
+speedups show it is not a per-frequency guarantee. Raw samples are in
+[`reference_prufer_production_ab_8mode_20261104.json`](reference_prufer_production_ab_8mode_20261104.json).
+
 ## Original papers read so far
 
 The task attachment says a 37-paper appendix exists, but the attached file

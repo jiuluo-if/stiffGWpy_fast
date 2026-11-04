@@ -1,0 +1,352 @@
+{
+  "schema_version": 1,
+  "experiment": "production_prufer_backend_against_archived_cartesian_res4",
+  "source_sha": "0f9bcde01503c3dd92df38d826678dafa5b75068",
+  "source_script_sha256": "53a1ea445bb24959dffb4cf4a6464b4a04911be3442117b3a9ff1a7ed4e7ce4d",
+  "reference_module_sha256": "22315b7a447c1c889fe2cc1f5d8a6ad16101ec582214f897ac2831ba0b1d358c",
+  "worktree_dirty": false,
+  "parameters": {
+    "r": 0.01,
+    "cr": 0.0,
+    "n_t": 2.0,
+    "T_re": 10000.0,
+    "kappa10": 0.01,
+    "DN_re": 10.0,
+    "DN_eff": 0.133732083004284
+  },
+  "z_tail": 10.0,
+  "candidate_rtol": 1e-09,
+  "cartesian_rtol": 1e-11,
+  "repeats_per_mode": 2,
+  "atol": [
+    1e-12,
+    1e-12,
+    1e-12
+  ],
+  "spline_jit_warmup_seconds": 0.334337699925527,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 32,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "default",
+    "blas_threads": {
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "VECLIB_MAXIMUM_THREADS": null,
+      "NUMEXPR_NUM_THREADS": null
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "reference_archive": "F:\\codex\\stiffGWpy\\docs\\res4_sigma_exact_reference_map_20261104.npz",
+  "frequency_count_full_grid": 260,
+  "selected_indices": [
+    0,
+    65,
+    100,
+    130,
+    160,
+    195,
+    220,
+    259
+  ],
+  "max_abs_dex_error": 3.935241181807214e-06,
+  "median_abs_dex_error": 1.7490833226219138e-07,
+  "sum_candidate_seconds": 29.405106199672446,
+  "sum_cartesian_seconds": 106.63349399971776,
+  "aggregate_speedup": 3.6263597647168364,
+  "per_mode_speedup_p50": 2.778309984405796,
+  "per_mode_speedup_p95": 4.173583777183177,
+  "rows": [
+    {
+      "index": 0,
+      "freq_log10_hz": -10.772906114757099,
+      "candidate_runtime_s": 2.810766899958253,
+      "candidate_runtime_samples_s": [
+        2.7276589998509735,
+        2.8938748000655323
+      ],
+      "candidate_nfev": 419873,
+      "candidate_nfev_samples": [
+        419873,
+        419873
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 7.681773449992761,
+      "cartesian_runtime_samples_s": [
+        7.700598200084642,
+        7.6629486999008805
+      ],
+      "cartesian_nfev": 1080701,
+      "speedup": 2.735570921190713,
+      "speedup_samples": [
+        2.8231528209740904,
+        2.6479890214073363
+      ],
+      "cartesian_log10_omega": -5.48490738062006,
+      "cartesian_abs_dex_from_archive": 2.084465933194224e-10,
+      "reference_log10_omega": -5.484907380411613,
+      "candidate_log10_omega": -5.4849077877577725,
+      "candidate_log10_omega_samples": [
+        -5.4849077877577725,
+        -5.4849077877577725
+      ],
+      "abs_dex_error": 4.073461594700234e-07
+    },
+    {
+      "index": 65,
+      "freq_log10_hz": -12.701943650817343,
+      "candidate_runtime_s": 3.538821949972771,
+      "candidate_runtime_samples_s": [
+        3.547697599977255,
+        3.5299462999682873
+      ],
+      "candidate_nfev": 465953,
+      "candidate_nfev_samples": [
+        465953,
+        465953
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 12.017169199883938,
+      "cartesian_runtime_samples_s": [
+        12.23927679983899,
+        11.795061599928886
+      ],
+      "cartesian_nfev": 1384445,
+      "speedup": 3.395674576630757,
+      "speedup_samples": [
+        3.44992109809964,
+        3.3414280551618734
+      ],
+      "cartesian_log10_omega": -9.266168332487336,
+      "cartesian_abs_dex_from_archive": 3.096067402452718e-09,
+      "reference_log10_omega": -9.266168329391268,
+      "candidate_log10_omega": -9.266168511039542,
+      "candidate_log10_omega_samples": [
+        -9.266168511039542,
+        -9.266168511039542
+      ],
+      "abs_dex_error": 1.8164827331190736e-07
+    },
+    {
+      "index": 100,
+      "freq_log10_hz": -13.740656170234399,
+      "candidate_runtime_s": 5.564244050066918,
+      "candidate_runtime_samples_s": [
+        5.687511800089851,
+        5.440976300043985
+      ],
+      "candidate_nfev": 498113,
+      "candidate_nfev_samples": [
+        498113,
+        498113
+      ],
+      "used_tail": true,
+      "cartesian_runtime_s": 23.519486450008117,
+      "cartesian_runtime_samples_s": [
+        23.420029799919575,
+        23.618943100096658
+      ],
+      "cartesian_nfev": 2006285,
+      "speedup": 4.229368660384351,
+      "speedup_samples": [
+        4.117798893982003,
+        4.3409384267867
+      ],
+      "cartesian_log10_omega": -11.342835326370922,
+      "cartesian_abs_dex_from_archive": 2.8226025960975676e-09,
+      "reference_log10_omega": -11.342835329193525,
+      "candidate_log10_omega": -11.342839264434707,
+      "candidate_log10_omega_samples": [
+        -11.342839264434707,
+        -11.342839264434707
+      ],
+      "abs_dex_error": 3.935241181807214e-06
+    },
+    {
+      "index": 130,
+      "freq_log10_hz": -14.630981186877587,
+      "candidate_runtime_s": 2.2824897000100464,
+      "candidate_runtime_samples_s": [
+        2.283964900067076,
+        2.2810144999530166
+      ],
+      "candidate_nfev": 267794,
+      "candidate_nfev_samples": [
+        267794,
+        267794
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 8.78632039995864,
+      "cartesian_runtime_samples_s": [
+        8.805667700013146,
+        8.766973099904135
+      ],
+      "cartesian_nfev": 1045298,
+      "speedup": 3.849441934279185,
+      "speedup_samples": [
+        3.85543039639293,
+        3.8434534721654394
+      ],
+      "cartesian_log10_omega": -13.121854687124939,
+      "cartesian_abs_dex_from_archive": 1.9228139080951223e-08,
+      "reference_log10_omega": -13.121854706353078,
+      "candidate_log10_omega": -13.121854185209866,
+      "candidate_log10_omega_samples": [
+        -13.121854185209866,
+        -13.121854185209866
+      ],
+      "abs_dex_error": 5.211432121399184e-07
+    },
+    {
+      "index": 160,
+      "freq_log10_hz": -15.521306203520776,
+      "candidate_runtime_s": 0.4114934999961406,
+      "candidate_runtime_samples_s": [
+        0.41086009982973337,
+        0.4121269001625478
+      ],
+      "candidate_nfev": 48482,
+      "candidate_nfev_samples": [
+        48482,
+        48482
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 1.1432519500376657,
+      "cartesian_runtime_samples_s": [
+        1.1444478000048548,
+        1.1420561000704765
+      ],
+      "cartesian_nfev": 136058,
+      "speedup": 2.778309984405796,
+      "speedup_samples": [
+        2.785492678600651,
+        2.771127290210942
+      ],
+      "cartesian_log10_omega": -14.89097310154269,
+      "cartesian_abs_dex_from_archive": 2.5002222514558525e-10,
+      "reference_log10_omega": -14.890973101792712,
+      "candidate_log10_omega": -14.89097293362432,
+      "candidate_log10_omega_samples": [
+        -14.89097293362432,
+        -14.89097293362432
+      ],
+      "abs_dex_error": 1.681683912124754e-07
+    },
+    {
+      "index": 195,
+      "freq_log10_hz": -16.560018722937834,
+      "candidate_runtime_s": 0.06296270003076643,
+      "candidate_runtime_samples_s": [
+        0.06267570005729795,
+        0.06324970000423491
+      ],
+      "candidate_nfev": 7082,
+      "candidate_nfev_samples": [
+        7082,
+        7082
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 0.11933479993604124,
+      "cartesian_runtime_samples_s": [
+        0.11894019995816052,
+        0.11972939991392195
+      ],
+      "cartesian_nfev": 13982,
+      "speedup": 1.8953361387791943,
+      "speedup_samples": [
+        1.8977083598496025,
+        1.8929639177087862
+      ],
+      "cartesian_log10_omega": -16.84374001485612,
+      "cartesian_abs_dex_from_archive": 2.3959501049830578e-11,
+      "reference_log10_omega": -16.84374001488008,
+      "candidate_log10_omega": -16.84374006486343,
+      "candidate_log10_omega_samples": [
+        -16.84374006486343,
+        -16.84374006486343
+      ],
+      "abs_dex_error": 4.998334901529233e-08
+    },
+    {
+      "index": 220,
+      "freq_log10_hz": -17.301956236807158,
+      "candidate_runtime_s": 0.022845049970783293,
+      "candidate_runtime_samples_s": [
+        0.02284019999206066,
+        0.022849899949505925
+      ],
+      "candidate_nfev": 2474,
+      "candidate_nfev_samples": [
+        2474,
+        2474
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 0.033921049907803535,
+      "cartesian_runtime_samples_s": [
+        0.03396369982510805,
+        0.03387839999049902
+      ],
+      "cartesian_nfev": 3890,
+      "speedup": 1.4848319672999373,
+      "speedup_samples": [
+        1.4870141170792708,
+        1.482649817520604
+      ],
+      "cartesian_log10_omega": -17.796244990130713,
+      "cartesian_abs_dex_from_archive": 2.561506562415161e-12,
+      "reference_log10_omega": -17.796244990133275,
+      "candidate_log10_omega": -17.79624487453645,
+      "candidate_log10_omega_samples": [
+        -17.79624487453645,
+        -17.79624487453645
+      ],
+      "abs_dex_error": 1.1559682633333068e-07
+    },
+    {
+      "index": 259,
+      "freq_log10_hz": -18.459378758443304,
+      "candidate_runtime_s": 0.008929249830543995,
+      "candidate_runtime_samples_s": [
+        0.008950099814683199,
+        0.008908399846404791
+      ],
+      "candidate_nfev": 914,
+      "candidate_nfev_samples": [
+        914,
+        914
+      ],
+      "used_tail": false,
+      "cartesian_runtime_s": 0.015489700133912265,
+      "cartesian_runtime_samples_s": [
+        0.014932400081306696,
+        0.016047000186517835
+      ],
+      "cartesian_nfev": 1754,
+      "speedup": 1.7348698040155242,
+      "speedup_samples": [
+        1.6684059832281601,
+        1.8013336248028882
+      ],
+      "cartesian_log10_omega": -17.589357329394435,
+      "cartesian_abs_dex_from_archive": 2.4868995751603507e-14,
+      "reference_log10_omega": -17.58935732939446,
+      "candidate_log10_omega": -17.589357331644866,
+      "candidate_log10_omega_samples": [
+        -17.589357331644866,
+        -17.589357331644866
+      ],
+      "abs_dex_error": 2.2504060837036377e-09
+    }
+  ],
+  "semantics": "production Reference backend=prufer; compare to archived Cartesian same-input map"
+}
