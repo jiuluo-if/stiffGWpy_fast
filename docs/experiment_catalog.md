@@ -627,3 +627,11 @@ fixed-background result; the Reference self-consistent root remains open. See
 [`fast_cr1_lowT_res4_prufer_20261105.json`](fast_cr1_lowT_res4_prufer_20261105.json),
 [`fast_cr1_lowT_res8_prufer_20261105.json`](fast_cr1_lowT_res8_prufer_20261105.json),
 and [`validate_fast_cr1_lowT_fullgrid.py`](../scripts/validate_fast_cr1_lowT_fullgrid.py).
+
+The follow-up fixed-point screen estimates adaptive and native res4 secant
+roots that differ by `7.258e-5`; the Fast value differs from the res4 estimate
+by `7.229e-5`. An adaptive map at the res4 candidate gives a corrected
+relative residual `7.258e-5`. The two grids do not share a sign-changing
+bracket, so this is a two-grid secant screen, not a formal root enclosure. See
+[`fast_cr1_lowT_root_secant_20261105.json`](fast_cr1_lowT_root_secant_20261105.json)
+and [`probe_fast_cr1_lowT_root_secant.py`](../scripts/probe_fast_cr1_lowT_root_secant.py).
