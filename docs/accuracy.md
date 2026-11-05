@@ -1240,3 +1240,22 @@ resource data, staged drivers, and the initial res2 near-miss are retained in
 [`fast_cr1_lowT_fullgrid_prufer_20261105.json`](fast_cr1_lowT_fullgrid_prufer_20261105.json),
 [`fast_cr1_lowT_res4_prufer_20261105.json`](fast_cr1_lowT_res4_prufer_20261105.json),
 and [`fast_cr1_lowT_res8_prufer_20261105.json`](fast_cr1_lowT_res8_prufer_20261105.json).
+
+For the same positive-cr low-T point, a fixed-point sensitivity screen used
+`x = DN_eff_input + DN_gw(x)` with a `+1e-3` relative probe. The adaptive-grid
+interval secant estimates `x=3.1059995117e-9`; native res4 estimates
+`x=3.1062249717e-9`. Their relative difference is `7.2583e-5`, and Fast
+differs from the native res4 estimate by `7.2285e-5`. At the native-res4
+secant candidate, an additional adaptive-grid map gives a slope-corrected
+relative residual of `7.2582e-5`. The res4 map changes sign between sampled
+endpoints; adaptive residuals remain positive at both endpoints, so the grids
+do not share a sign-changing bracket. The independent res8 map at Fast `x0`
+also has positive residual and is consistent with the adaptive screen.
+
+This meets the `2e-4` two-grid secant screening gate at this point. Secant
+slopes are finite-interval estimates, and there is no common grid bracket, so
+this is not a rigorous root enclosure or a full iterative Reference solution.
+Raw maps and calculations are in
+[`fast_cr1_lowT_root_secant_20261105.json`](fast_cr1_lowT_root_secant_20261105.json),
+reproduced by
+[`probe_fast_cr1_lowT_root_secant.py`](../scripts/probe_fast_cr1_lowT_root_secant.py).
