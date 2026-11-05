@@ -1029,6 +1029,28 @@
   "status": "adaptive_fast_grid_prufer_complete",
   "limitations": [
     "Fixed-background validation only; it does not solve or certify the self-consistent Reference root.",
-    "The tail8 option is an explicit hard-point configuration; this does not change or certify the default tail5 profile globally."
-  ]
+    "The tail8 option is an explicit hard-point configuration; this does not change or certify the default tail5 profile globally.",
+    "Native res2 convergence was not run in this artifact checkpoint; a separate target=1e-5 res2 validation is archived and passes, while the target=1e-4 res2 negative result is recorded in fast_ninf122_tail8_native_res2_20261105.json."
+  ],
+  "hashes": {
+    "fast_sgwb_py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
+    "stiff_SGWB_py": "256b28289455588c712920f5b13c0ff7af5d26aecb9b238b78d695d9b0843de8",
+    "reference_py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "driver_py": "5cec7ad062e5d2a8eb3604af606d6532bad5904bda40dbd8b91adbc607e0416f",
+    "capture_note": "Added after the full adaptive-grid map checkpoint was completed; no numeric code or result was changed."
+  },
+  "continuation_state": {
+    "native_res2": "not completed",
+    "stop_reason": "user requested report before continuing work; no numeric result inferred"
+  },
+  "resources": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "reference_backend": "prufer",
+    "reference_rtol": 1e-09,
+    "reference_z_tail": 8.0,
+    "reference_workers": 1,
+    "adaptive_map_runtime_s": 83.04517729999498,
+    "memory_peak": "not measured"
+  }
 }
