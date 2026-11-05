@@ -1159,3 +1159,31 @@ The six-configuration tail/sigma/transition screen is in
 [`fast_ninf122_tail_sensitivity_20261105.json`](fast_ninf122_tail_sensitivity_20261105.json),
 with driver
 [`probe_fast_ninf122_tail_sensitivity.py`](../scripts/probe_fast_ninf122_tail_sensitivity.py).
+
+## 2026-11-05 Fast self-consistent root screen above `N_inf=120`
+
+The tail8/target-`1e-5` Fast result at `N_inf=122.502` gives
+`DN_eff_final=6.4131520531e-9`. To check whether the fixed-background map
+accuracy carries through the self-consistent equation
+`x = DN_eff_input + DN_gw(x)`, two additional Prüfer maps were evaluated at
+the native res2 grid: one at the Fast value and one at a `+1e-3` relative
+offset. Their residuals bracket a native-grid secant root at
+`6.4138866031e-9`; the root is `1.1454e-4` relative from Fast. The secant
+residual at that candidate is `4.55e-8` relative after correction. On the
+299-node adaptive Fast grid, a separate interval secant gives
+`6.4133122911e-9`; the two grid-specific estimates differ by `8.9542e-5`
+relative. The adaptive-grid residual changes sign between the Fast value and
+the native-grid secant candidate over a `1.1454e-4` relative interval.
+
+This meets the `2e-4` root-error screening threshold for this one point using
+two frequency grids and two interval secants. It is not a rigorous interval
+enclosure, a formal quadrature bound, or a full iterative Reference solve;
+the secant slopes are finite-interval estimates. The artifact also records
+that the native-grid residual does not change sign over the narrower
+Fast-to-native-secant interval, so the two grids do not share one common
+bracket. Do not generalize this result into a global root guarantee or an
+automatic tail/grid dispatch rule. The exact maps, residuals, grid hashes,
+resource metadata, and derivation are in
+[`fast_ninf122_reference_root_secant_20261105.json`](fast_ninf122_reference_root_secant_20261105.json),
+reproduced by
+[`probe_fast_ninf122_reference_root_secant.py`](../scripts/probe_fast_ninf122_reference_root_secant.py).
