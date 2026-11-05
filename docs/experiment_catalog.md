@@ -655,3 +655,10 @@ res4 candidate is `8.114e-5`. This is not a formal root enclosure; the sampled
 grids do not share a sign-changing bracket. See
 [`fast_high_blue_root_secant_20261105.json`](fast_high_blue_root_secant_20261105.json)
 and [`probe_fast_high_blue_root_secant.py`](../scripts/probe_fast_high_blue_root_secant.py).
+
+The joint `r=10,n_t=2,kappa10=100` point at `N_inf=222.502` also passes the
+target-`1e-7` fixed-background spectrum and res2/res4 map screens: maximum
+spectrum error `1.472e-4 dex`, res2→res4 difference `1.717e-4`, and
+Fast→res4 difference `6.248e-5`. Its self-consistent root remains open. See
+[`fast_high_blue_kappa100_prufer_20261105.json`](fast_high_blue_kappa100_prufer_20261105.json)
+and [`validate_fast_high_blue_kappa100.py`](../scripts/validate_fast_high_blue_kappa100.py).

@@ -1307,3 +1307,21 @@ resource metadata are in
 [`fast_high_blue_root_secant_20261105.json`](fast_high_blue_root_secant_20261105.json),
 reproduced by
 [`probe_fast_high_blue_root_secant.py`](../scripts/probe_fast_high_blue_root_secant.py).
+
+## 2026-11-05 Joint high-blue, strong-coupling Fast screen
+
+The joint point `cr=0`, `r=10`, `n_t=2`, `kappa10=100`, `T_re=1e-3`,
+`DN_re=200` is also directly evaluable at `N_inf=222.502`. With adaptive
+target `1e-7`, Fast uses 73 nodes and takes `0.356 s`. The exact-array Prüfer
+map gives maximum spectrum error `1.4720e-4 dex`, P95 `1.4230e-4 dex`, and
+same-grid `DN_gw` difference `1.681e-5` relative. Native res2→res4 changes
+`DN_gw` by `1.717e-4`; Fast differs from res4 by `6.248e-5`. All fixed
+background spectrum/map gates pass.
+
+This adds a joint high-`r`/blue-tilt/large-`kappa10` fixed-background point.
+Its independent self-consistent root is not checked, and the target selection
+is not generalized to other parameter combinations. Full arrays, maps, source
+hashes, and resource data are in
+[`fast_high_blue_kappa100_prufer_20261105.json`](fast_high_blue_kappa100_prufer_20261105.json),
+reproduced by
+[`validate_fast_high_blue_kappa100.py`](../scripts/validate_fast_high_blue_kappa100.py).
