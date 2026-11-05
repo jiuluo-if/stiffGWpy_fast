@@ -1732,3 +1732,10 @@ the diagnostic artifacts are retained.
 - The main useful condition is explicit: the greedy method inherits polynomial decay only when the solution manifold already has matching Kolmogorov-width decay and the practical residual selection is uniformly `γ`-weak; bounded snapshot errors create an error floor. This does not certify the project’s spectrum or self-consistent root.
 - Added the source hash and project mapping to `docs/research/phase_function_papers_batch1_20261105.md`. No code or production source changed; no numerical reproduction was attempted.
 - Four of sixteen named first-batch papers and six of eight named open-source projects remain unaudited; continuous-region algorithm and accuracy/speed gates remain open.
+
+## 2026-11-05 adjoint sparse-grid error literature screen
+
+- Downloaded and parsed the full Sandia/OSTI author manuscript for Jakeman–Wildey and read the weighted-residual identity, sparse-grid sample estimator, dimension/local refinement indicators, estimator surrogate, cost discussion, and numerical examples. Cross-checked DOI and final JCP metadata.
+- The estimator targets a chosen QoI of a parameterized PDE/ODE and can reduce redundant sparse-grid model solves, but requires forward/adjoint state surrogates and nontrivial residual work; its own error is approximate and tied to smoothness and forward/adjoint accuracy.
+- Compared the proposal with the existing project scalar-adjoint screen: 65.1 ms versus 2.68 ms baseline (24.3×), nonfinite output, and no full-spectrum reconstruction. Thus no direct production candidate is justified without a fundamentally cheaper and validated discrete-adjoint path through frequency integration and the fixed-point root.
+- Added source PDF/hash and applicability/deduplication notes. No production source changed and no new numerical reproduction was claimed. Three of sixteen named first-batch papers and six of eight named open-source projects remain unaudited; broad Fast-domain gates remain open.
