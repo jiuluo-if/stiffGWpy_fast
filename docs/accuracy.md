@@ -1259,3 +1259,51 @@ Raw maps and calculations are in
 [`fast_cr1_lowT_root_secant_20261105.json`](fast_cr1_lowT_root_secant_20261105.json),
 reproduced by
 [`probe_fast_cr1_lowT_root_secant.py`](../scripts/probe_fast_cr1_lowT_root_secant.py).
+
+## 2026-11-05 High-blue Fast integration screen at `N_inf=222.502`
+
+A nonphysical stress point with `cr=0`, `r=10`, `n_t=2`, `kappa10=0.01`,
+`T_re=1e-3`, and `DN_re=200` is directly evaluable. Fast returns
+`DN_gw=0.1580247` on 51 adaptive nodes at target `1e-5`; its same-grid Prüfer
+map passes the spectrum gate (`1.4542e-4 dex` max), but the Fast map differs
+from native res4 by `7.575e-4`. Tightening the target to `1e-6` gives 57 nodes
+and reduces Fast-to-res4 to `2.329e-4`, still just outside the `2e-4` gate.
+
+At target `1e-7`, Fast uses 73 nodes and returns `DN_gw=0.1579128211` in
+`0.353 s`. The exact-array Prüfer map has maximum spectrum error
+`1.4639e-4 dex` and `DN_gw` map difference `1.525e-5`; native res2→res4
+changes the map by `1.712e-4`, and Fast differs from res4 by `6.416e-5`. All
+four fixed-background spectrum/map gates pass. The local panel indicator's
+maximum is `9.32e-8`, while the diagnostic sum of those panels is `1.10e-6`;
+the sum is not a rigorous error bound. This point shows that the looser target
+can underresolve the bolometric integral even when the exact-grid spectrum
+check passes.
+
+The result is specific to this extreme blue point and does not define an
+automatic target rule or certify its self-consistent Reference root. The raw
+target `1e-5`, `1e-6`, and `1e-7` maps and drivers are retained in
+[`fast_high_blue_fullgrid_prufer_20261105.json`](fast_high_blue_fullgrid_prufer_20261105.json),
+[`fast_high_blue_target1e6_prufer_20261105.json`](fast_high_blue_target1e6_prufer_20261105.json),
+[`fast_high_blue_target1e7_prufer_20261105.json`](fast_high_blue_target1e7_prufer_20261105.json),
+[`validate_fast_high_blue_fullgrid_prufer.py`](../scripts/validate_fast_high_blue_fullgrid_prufer.py),
+[`validate_fast_high_blue_target1e6.py`](../scripts/validate_fast_high_blue_target1e6.py),
+and [`validate_fast_high_blue_target1e7.py`](../scripts/validate_fast_high_blue_target1e7.py).
+
+## 2026-11-05 High-blue Fast root sensitivity screen
+
+At the target-`1e-7` Fast fixed point, `x0=0.1579128211`. A `+1e-3`
+relative `DN_eff` probe gives adaptive-grid and native-res4 interval secant
+root estimates `0.1579152800` and `0.1579024733`, respectively; their
+relative difference is `8.110e-5`. Fast differs from the res4 estimate by
+`6.553e-5`. A further adaptive-grid map at the res4 candidate gives a
+slope-corrected relative residual `8.114e-5`. The adaptive interval brackets
+the residual sign change; the res4 interval does not, so there is no shared
+sign-changing bracket.
+
+This passes the `2e-4` two-grid secant screen for this point. The secant
+slopes are interval estimates, not rigorous local derivatives, and this is not
+a full iterative Reference root solve. Raw maps, residuals, hashes, and
+resource metadata are in
+[`fast_high_blue_root_secant_20261105.json`](fast_high_blue_root_secant_20261105.json),
+reproduced by
+[`probe_fast_high_blue_root_secant.py`](../scripts/probe_fast_high_blue_root_secant.py).
