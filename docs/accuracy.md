@@ -1337,3 +1337,37 @@ Reference solve. Maps and provenance are in
 [`fast_high_blue_kappa100_root_secant_20261105.json`](fast_high_blue_kappa100_root_secant_20261105.json),
 reproduced by
 [`probe_fast_high_blue_kappa100_root.py`](../scripts/probe_fast_high_blue_kappa100_root.py).
+
+## 2026-11-05 High-r strongly red positive-cr fixed-background screen
+
+The consistency branch was also tested with `r=10`, `cr=1`, input `n_t=2`,
+`T_re=1e-3`, and `kappa10=100`; it derives `n_t=-1.25`, effective
+`DN_re=60.1927`, and `N_inf=82.6947`. Fast returns finite positive output on
+743 adaptive nodes at target `1e-7` in `0.978 s`, with `DN_gw=0.00177722518`.
+On the full same-grid Prüfer comparison, maximum spectrum error is
+`1.4761e-4 dex`, P95 `1.4530e-4 dex`, and the `DN_gw` map difference is
+`1.779e-6` relative. Native res2 is under-resolved: res2→res4 changes the map
+by `9.663e-4`. The denser res4→res8 change is `6.437e-5`; Fast→res8 differs
+by `4.526e-6`, and the adaptive-grid map→res8 difference is `2.748e-6`.
+The fixed-background Fast spectrum/map passes against the res4/res8 pair while
+the coarse res2 failure remains recorded.
+
+The fixed-background spectrum/integral is followed by a two-grid fixed-point
+secant screen. Adaptive and native res4 root estimates differ by `6.712e-5`;
+Fast differs from the res4 estimate by `6.890e-5`, and the corrected adaptive
+residual at the native secant candidate is `6.713e-5`. Both sampled endpoint
+residuals stay positive, so no sign-changing bracket is established. The
+native res4 frequency-grid hash changes with `DN_eff` while the grid size
+remains 786; maps are compared as scalar integrals at the same nominal
+`freq_res`, not as pointwise-matched arrays. This is a secant screen, not a
+formal root enclosure or full iterative Reference solve.
+
+The input `n_t` and `DN_re` are replaced by the `cr>0` consistency derivation;
+all reported values use the effective parameters above. Full arrays and resource metadata
+are in [`fast_cr1_red_extreme_fullgrid_prufer_20261105.json`](fast_cr1_red_extreme_fullgrid_prufer_20261105.json)
+and [`fast_cr1_red_extreme_res8_prufer_20261105.json`](fast_cr1_red_extreme_res8_prufer_20261105.json),
+with drivers [`validate_fast_cr1_red_extreme_modes.py`](../scripts/validate_fast_cr1_red_extreme_modes.py),
+[`validate_fast_cr1_red_extreme_fullgrid.py`](../scripts/validate_fast_cr1_red_extreme_fullgrid.py),
+[`probe_fast_cr1_red_extreme_res8.py`](../scripts/probe_fast_cr1_red_extreme_res8.py), and
+[`fast_cr1_red_extreme_root_secant_20261105.json`](fast_cr1_red_extreme_root_secant_20261105.json)
+with driver [`probe_fast_cr1_red_extreme_root.py`](../scripts/probe_fast_cr1_red_extreme_root.py).
