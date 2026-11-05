@@ -1187,3 +1187,28 @@ resource metadata, and derivation are in
 [`fast_ninf122_reference_root_secant_20261105.json`](fast_ninf122_reference_root_secant_20261105.json),
 reproduced by
 [`probe_fast_ninf122_reference_root_secant.py`](../scripts/probe_fast_ninf122_reference_root_secant.py).
+
+## 2026-11-05 Fast full-grid screen at `N_inf=222.502`
+
+Increasing `DN_re` from `100` to `200` at the same other inputs gives a
+derived `N_inf=222.502`. The tail8/adaptive-target-`1e-5` Fast solve completed
+with finite positive output on the same 299-node frequency array as the
+`N_inf=122.502` point. The full 299-node Prüfer comparison at the Fast fixed
+background has maximum spectrum error `1.4962e-4 dex` (P95
+`1.4563e-4 dex`) and same-grid `DN_gw` difference `2.50e-5` relative. Native
+451-node `freq_res=2` Prüfer changes the map by `8.95e-5` relative; Fast differs
+from this denser map by `1.1453e-4`. All four pointwise spectrum/map screens
+pass. The Fast runtime is `0.623 s`; Prüfer took `90.39 s` on the exact Fast
+grid and `160.15 s` on the native grid. On the same 299 modes, the candidate
+Prüfer spectrum differs from the parent point by at most `2.03e-5 dex`,
+consistent with an e-fold coordinate shift for this particular parameter
+change.
+
+This extends full fixed-background Fast validation to `N_inf=222.502`. It does
+not certify the independent self-consistent root at the new point or prove
+global invariance under `DN_re` shifts. The original 12-mode early screen and
+the full Fast/Prüfer arrays, map convergence, source hashes, and resource data
+are in [`fast_ninf222_selected_prufer_20261105.json`](fast_ninf222_selected_prufer_20261105.json)
+and [`fast_ninf222_fullgrid_prufer_20261105.json`](fast_ninf222_fullgrid_prufer_20261105.json),
+with drivers [`validate_fast_ninf222_selected_prufer.py`](../scripts/validate_fast_ninf222_selected_prufer.py)
+and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py).
