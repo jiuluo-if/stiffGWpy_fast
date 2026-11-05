@@ -1236,3 +1236,8 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 
 - [x] Read the full paper and record its small-parameter contract, algorithm, cost claim, and `O(ε)` accuracy limitation.
 - [ ] Derive whether the project’s linear time-varying mode can be split into a fixed skew-symmetric fast operator plus a uniformly small remainder across a smooth horizon segment; reject if not.
+
+### Literature continuation: Arnold–Ben Abdallah–Negulescu 2011
+
+- [x] Read and document full author manuscript, transform, Theorem 3.1, assumptions, and phase integration limitation.
+- [ ] Determine whether a strict positive lower bound can be established on a reusable subhorizon segment after an exact horizon handoff; reject if the segment has no useful accuracy/runtime benefit.

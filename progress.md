@@ -1701,3 +1701,8 @@ the diagnostic artifacts are retained.
 
 - Read and archived the full Rosemeier–Klein 2026 preprint; the method uses short micro-simulations to fit slow modal amplitude/phase and extrapolate larger steps under a fixed skew-symmetric fast operator plus weak nonlinear remainder.
 - The project’s time-varying frequency, horizon turn, and reheating kink do not yet meet that model contract. No code was imported or run; next derive whether a local constant-operator split with bounded residual exists before any prototype.
+
+## 2026-11-05 semiclassical WKB paper
+
+- Read the complete 2010 author manuscript for the required 2011 SIAM WKB-based scheme; logged its transformed system, second-order error bounds, positive-coefficient assumption, and phase-quadrature floor.
+- A deep-subhorizon mapping might exist after removing damping, but it is not uniform at horizon entry and has not been shown to beat the exact phase transfer. Keep this as an unproven inference; no production edits.

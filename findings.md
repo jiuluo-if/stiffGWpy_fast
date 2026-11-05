@@ -3260,3 +3260,9 @@ remote matrix run.
 - Read Rosemeier–Klein (arXiv:2606.13807v1) §§2–6 and the algorithm appendix; downloaded the full PDF. Its method assumes a fixed real skew-symmetric fast operator plus a weak remainder, recovers modal amplitude/phase from short RK4 micro-runs, smooths/fits slow trends, then extrapolates a macro-step.
 - Applicability is not established for the Fast tensor equation: the coefficient matrix changes with the background, includes a horizon turn, and reheating is piecewise. The paper’s van der Pol tests also retain `O(ε)` fast terms and report an `O(ε)` accuracy floor without a higher-order transform.
 - Classified as a distinct research direction but no prototype yet: first derive a local constant-operator split with a uniform residual and exact event matching; compare its micro-simulation cost with the batched transfer.
+
+### Semiclassical WKB finite-difference source — 2026-11-05
+
+- Read Arnold–Ben Abdallah–Negulescu (2011) from the coauthor-hosted author manuscript; SIAM confirms journal metadata/DOI. The WKB transformation gives a second-order asymptotic-preserving scheme for `ε²u''+a(x)u=0` with fixed smooth `a≥a₀>0`.
+- Mapping to the tensor equation after damping removal is only an inference: the scaled positive-frequency lower bound fails uniformly near horizon entry, and the exact reheating breakpoint must remain. This is not a drop-in expansion across the hard region.
+- Source PDF and theorem/error assumptions are recorded in `docs/research/phase_function_papers_batch1_20261105.md`; no code was run or imported.
