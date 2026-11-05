@@ -609,3 +609,11 @@ data and reproduction files:
 [`validate_fast_ninf122_tail8_target1e5.py`](../scripts/validate_fast_ninf122_tail8_target1e5.py),
 [`fast_ninf122_tail_sensitivity_20261105.json`](fast_ninf122_tail_sensitivity_20261105.json),
 and [`probe_fast_ninf122_tail_sensitivity.py`](../scripts/probe_fast_ninf122_tail_sensitivity.py).
+
+With `DN_re=200`, the same Fast settings reach `N_inf=222.502`. The full
+299-node same-grid Prüfer spectrum passes at `1.4962e-4 dex` maximum; the
+451-node native res2 map changes by `8.95e-5` relative, and Fast differs from
+the native map by `1.1453e-4`. This is a fixed-background validation only; the
+independent self-consistent root at this second point remains unchecked. See
+[`fast_ninf222_fullgrid_prufer_20261105.json`](fast_ninf222_fullgrid_prufer_20261105.json)
+and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py).
