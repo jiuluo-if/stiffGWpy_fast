@@ -1244,10 +1244,10 @@ map-to-res8 difference is `1.713e-5`. Thus the fixed-background spectrum and
 map gates pass against the denser converged Prüfer pair even though the
 intermediate res2 result does not.
 
-This validates this fixed background only. It does not solve the independent
-self-consistent Reference root, and the `cr>0` input coordinates must be
-reported with their derived effective values. Full arrays, grid hashes,
-resource data, staged drivers, and the initial res2 near-miss are retained in
+This validates the fixed background; the independent self-consistent root is
+reported below. The `cr>0` input coordinates must be reported with their
+derived effective values. Full arrays, grid hashes, resource data, staged
+drivers, and the initial res2 near-miss are retained in
 [`fast_cr1_lowT_fullgrid_prufer_20261105.json`](fast_cr1_lowT_fullgrid_prufer_20261105.json),
 [`fast_cr1_lowT_res4_prufer_20261105.json`](fast_cr1_lowT_res4_prufer_20261105.json),
 and [`fast_cr1_lowT_res8_prufer_20261105.json`](fast_cr1_lowT_res8_prufer_20261105.json).
@@ -1270,6 +1270,19 @@ Raw maps and calculations are in
 [`fast_cr1_lowT_root_secant_20261105.json`](fast_cr1_lowT_root_secant_20261105.json),
 reproduced by
 [`probe_fast_cr1_lowT_root_secant.py`](../scripts/probe_fast_cr1_lowT_root_secant.py).
+
+The subsequent self-consistent Prüfer Reference solve on the validated
+339-frequency adaptive Fast grid converged in 2 fixed-point iterations plus
+the returned-spectrum map: `DN_eff=3.105999512133371e-9`, with residual `0` at
+stored precision. Fast differs by `3.032e-7` relative; the adaptive secant
+estimate differs by `1.45e-10`, while the native-res4 secant estimate differs
+by `7.259e-5`. The run took `218.81 s`, one worker, with no warnings. Existing
+res4/res8 convergence maps are at the nearly identical Fast root (relative
+shift `3.032e-7`); no res4/res8 propagation was repeated at the iterative root.
+This is a sampled root/grid check, not a root enclosure or a separate
+frequency-convergence proof at the iterative root. Full map history and
+hashes: [`fast_cr1_lowT_reference_root_20261105.json`](fast_cr1_lowT_reference_root_20261105.json),
+runner [`solve_fast_cr1_lowT_reference_root.py`](../scripts/solve_fast_cr1_lowT_reference_root.py).
 
 ## 2026-11-05 High-blue Fast integration screen at `N_inf=222.502`
 

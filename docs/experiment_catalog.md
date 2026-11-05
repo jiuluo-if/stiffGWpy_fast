@@ -628,8 +628,8 @@ and [`solve_fast_ninf222_reference_root.py`](../scripts/solve_fast_ninf222_refer
 The low-temperature positive-cr point (`T_re=1e-3`) has derived `N_inf=80.4482`,
 `n_t=-0.00125`, and effective `DN_re=57.9462`. Fast passes the full spectrum
 screen (`1.5079e-4 dex` max); native res2 narrowly misses the DN gate, while
-res4/res8 converge within `8.971e-5` and Fast-to-res8 is `1.743e-5`. This is a
-fixed-background result; the Reference self-consistent root remains open. See
+res4/res8 converge within `8.971e-5` and Fast-to-res8 is `1.743e-5`. This
+fixed-background report predates the independent root check below. See
 [`fast_cr1_lowT_fullgrid_prufer_20261105.json`](fast_cr1_lowT_fullgrid_prufer_20261105.json),
 [`fast_cr1_lowT_res4_prufer_20261105.json`](fast_cr1_lowT_res4_prufer_20261105.json),
 [`fast_cr1_lowT_res8_prufer_20261105.json`](fast_cr1_lowT_res8_prufer_20261105.json),
@@ -642,6 +642,16 @@ relative residual `7.258e-5`. The two grids do not share a sign-changing
 bracket, so this is a two-grid secant screen, not a formal root enclosure. See
 [`fast_cr1_lowT_root_secant_20261105.json`](fast_cr1_lowT_root_secant_20261105.json)
 and [`probe_fast_cr1_lowT_root_secant.py`](../scripts/probe_fast_cr1_lowT_root_secant.py).
+
+The subsequent self-consistent Prüfer Reference solve on the validated
+339-frequency adaptive Fast grid converged in 2 iterations to
+`DN_eff=3.105999512133371e-9` (Fast relative root difference `3.032e-7`). The
+existing res4/res8 maps are reused at Fast's nearly identical root; no native
+res4/res8 propagation was repeated at the iterative root. This closes the
+fixed-grid root check, not a formal root enclosure or frequency-convergence
+proof at the iterative root. See
+[`fast_cr1_lowT_reference_root_20261105.json`](fast_cr1_lowT_reference_root_20261105.json)
+and [`solve_fast_cr1_lowT_reference_root.py`](../scripts/solve_fast_cr1_lowT_reference_root.py).
 
 The high-blue fixed-background point `cr=0, r=10, n_t=2, kappa10=.01`,
 `T_re=.001`, `DN_re=200` passes the full spectrum and res4 integral screens
