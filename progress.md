@@ -1676,3 +1676,11 @@ the diagnostic artifacts are retained.
 - Confirmed nonzero high-blue nested-grid changes across three target settings (`6.5255e-4`, `2.4525e-4`, `8.1061e-5`). Current curvature-ranked subset remains a research candidate only.
 - Read four phase-function papers and recorded methods, assumptions, limitations, project mapping, citations, and local PDF hashes in `docs/research/phase_function_papers_batch1_20261105.md`.
 - Production solver unchanged. Remaining: resolve selector cost and false-safe behavior, update phase status from complete evidence, then commit/push the verified research artifacts.
+
+## 2026-11-05 small panel-budget continuation
+
+- Screened curvature-ranked 5%, 10%, and 15% midpoint budgets against all eight exact nested Prüfer fixed-background maps. 10% passed the `2e-4 DN_gw` and `1e-3 dex` pointwise screens; 5% missed on two maps.
+- Replayed 10% candidate grids through the public Fast outer solve with the archived coarse grid fixed. Warm P50 ratio was `1.014–1.125`, P95 ratio up to `1.129`: rejected against the `5%` speed budget.
+- A coarse summed-curvature trigger would select every screened case, including two with nested integral changes below `4e-6`, so it is not a selective general trigger.
+- Read-only Prüfer root secants on base and 10% grids passed `2e-4` at high-blue targets `1e-5`/`1e-6`; target `1e-5` root discrepancy worsened from `4.91e-5` to `7.80e-5`, target `1e-6` improved from `3.63e-5` to `9.28e-6`. No rigorous root enclosure.
+- Scripts and artifacts: `screen_adaptive_panel_fraction_budget.py` / `adaptive_panel_fraction_budget_20261105.json`, `screen_adaptive_panel_candidate_roots.py` / `adaptive_panel_candidate_root_screen_20261105.json`. Production sources unchanged; fresh Ruff, compile, JSON validation, and diff checks remain before commit.

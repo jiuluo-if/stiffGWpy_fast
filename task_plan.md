@@ -1212,3 +1212,10 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 - [x] Read and document the first four phase-function sources and their project-specific applicability/limits.
 - [ ] Continue F2: determine whether the nested evidence supports a safe online panel-selection rule at acceptable Fast-only cost; no production change until it does.
 - [ ] Fresh verification, bilingual commit, push to `fast/fast_v0.2`, and confirm remote CI.
+
+### F2 follow-up — small curvature-ranked budgets
+
+- [x] Screen 5/10/15% panel fractions against all eight nested fixed-background references; 5% false-safe on two cases, 10% meets fixed-map accuracy gates.
+- [x] Measure the 10% grid through the full Fast outer solve and two high-blue Reference secants. It exceeds the 5% runtime budget in several cases and is diagnostic-only; target `1e-5` root discrepancy is not improved.
+- [x] Reject the summed coarse-curvature trigger as nonselective on the screened cases. Keep production untouched.
+- [ ] Continue the original goal: work through the full source audit, remaining literature and open-source projects, and identify a different broad mechanism that can pass accuracy and speed gates. Recover the referenced 37-paper list if available in repository/history; the supplied file itself did not include it.
