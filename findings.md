@@ -3166,3 +3166,47 @@ acceptance), retaining exact metadata equality. This is not a fast-path
 tolerance change and does not weaken any production correctness gate. Focused
 verification is `3 passed` and Ruff is clean; the fix is ready for a new
 remote matrix run.
+
+## Fast-domain continuation — 2026-11-05
+
+- Scope: Reference is verification-only; no Reference performance work. Continue Fast-specific failure classification and trustworthy domain expansion.
+- Current baseline verified live: branch `fast_v0.2`, local/remote HEAD `16787b798902ebfcad54e85701a573ea27da31c4`, clean worktree, latest Actions `41969511573` all nine jobs successful.
+- Known recent evidence: high-blue `cr=0` fixed-background validation passes at adaptive target `1e-7` (Fast vs native res4 `DN_gw` relative delta `6.416e-5`), while `1e-5` and `1e-6` fail this integral comparison. Positive-cr high-red point passes res4/res8 fixed-background comparison; res2 is underresolved. Root outcomes are two-grid secant screens, not certified roots.
+- Next evidence needed: inspect current pressure scripts/artifacts, exact failing points and Fast adaptation/error-control implementation; identify whether local max contribution can fail to bound global bolometric error and whether an already tested approach resolves it.
+- A first append patch failed because its context belonged to another ledger; no file was changed by that failed patch. Subsequent append is scoped to the end of the three legacy ledgers.
+
+### F1 evidence — high-blue adaptive integral stop criterion
+
+- Read `docs/accuracy.md`, `docs/experiment_catalog.md`, `docs/fast_domain_pressure_20261030.md`, `docs/numerical_method.md`, `stiffgwpy_fast/freq_adaptive.py`, the Fast adaptive-grid branch in `stiffgwpy_fast/fast_sgwb.py`, pressure tests, and the retained target-sweep artifacts.
+- The adaptive Fast stop quantity is `max_i(curvature_i * h_i^2 / 8 * normalized_panel_weight_i)` where curvature is sampled at existing PCHIP nodes; only panels whose individual quantity exceeds the target are refined. There is no global integration-error estimate or embedded midpoint evaluation in this stop decision.
+- Reproducible high-blue point: `cr=0,r=10,n_t=2,kappa10=.01,T_re=1e-3,DN_re=200`, `N_inf=222.502`, `z_tail=8`. Existing Fast targets `1e-5/1e-6/1e-7` use 51/57/73 nodes and return `.1580247273/.1579400573/.1579128211`; res4 comparison errors are `7.5805e-4/2.3295e-4/6.4162e-5`. Exact-grid Fast-vs-Prüfer map errors are `4.811e-5/3.552e-5/1.525e-5`, so propagation is not the dominant discrepancy at the coarsest targets.
+- Stronger same-background nested evidence from the exact Prüfer spectra already stored on the finer grids: restricting the `1e-6` Prüfer spectrum to the nested 51-node `1e-5` grid changes the PCHIP integral by `5.3763e-4`; restricting the `1e-7` Prüfer spectrum to the nested 57-node `1e-6` grid changes it by `1.8918e-4`. The corresponding re-evaluated node-curvature indicator sums on those coarse subsets are only `6.5206e-5` and `7.4549e-5`. These are two-grid convergence differences, not rigorous error bounds, but they confirm the existing local indicator can materially understate global integral change.
+- Initial analysis snippets had two execution typos (invalid Python conditional expression; then a mask of the wrong grid length). Both attempts failed before producing results; corrected scripts ran read-only and generated the numbers above. No production source has been changed.
+- F1 conclusion: selected bottleneck is under-controlled frequency discretization/integral error on the opt-in adaptive Fast path. This is not a claim that all Fast outputs are inaccurate; the default goal grid remains separate.
+
+### Fast adaptive-grid audit result
+
+- Confirmed the high-blue target sweep grids are nested (`51 ⊂ 57 ⊂ 73` frequencies).
+- Recomputed same-background Prüfer/PCHIP nested-grid integral differences: coarse-to-next-fine `5.3763e-4` (`1e-5→1e-6`) and `1.8918e-4` (`1e-6→1e-7`). Coarse node-curvature indicator sums are `6.5206e-5` and `7.4549e-5`, respectively. The diagnostic misses these nested changes by factors of about 8.2 and 2.5.
+- This supports a failure of the stopping indicator as a global proxy; it does not yet justify a production fix. Next: derive and test an embedded, globally summed midpoint/PCHIP integral delta on a deterministic regression fixture, estimate adaptive-path cost, and compare to the existing criterion.
+
+### Adaptive-integral candidate boundary clarification — 2026-11-05
+
+- The formal `SGWB_iter_fast(..., freq_grid="adaptive")` branch in `fast_sgwb.py` still stops using only the maximum curvature-times-panel-share proxy; it does not evaluate interval midpoints. `freq_adaptive.adapt_refine_grid` is a separate helper that samples midpoint interpolation residuals and is not that formal Fast branch.
+- This means the prior high-blue target sweep remains a valid reproduction of the production stopping behavior. Any candidate must test a *global integral delta* and account for midpoint propagation cost, rather than simply transplanting the helper's pointwise residual condition.
+- The candidate is not yet justified: check the archived pressure report for prior midpoint/refinement attempts and estimate cost before adding a test or production code.
+
+### Embedded global-integral feasibility probe — 2026-11-05
+
+- Read-only diagnostic used the archived 256-node adaptive-grid Prüfer spectrum and 484-node `freq_res=2` Prüfer spectrum on the same fixed background. The grids are nonnested, so I interpolated the denser spectrum to the 255 coarse interval midpoints; these are not direct midpoint solves.
+- PCHIP integration in `log10(f)` gave an embedded coarse-to-midpoint-refined relative delta of `1.7701e-4`. The independently archived two-grid Prüfer `DN_gw` relative delta was `9.9973e-5`, so this one probe is conservative by about `1.77x` in relative scale.
+- This is only a candidate feasibility signal: it is one point, midpoint values came from interpolation on a nonnested grid, and it is not a calibrated bound or independent validation of an estimator. It does not justify production adoption.
+- Next test must obtain actual midpoint spectra at Fast cost on the same fixed background and compare the estimator against a direct denser-grid `DN_gw` change, then record added propagation work. Do not rerun the canceled expensive `freq_res=4` Reference stage.
+
+### Actual Fast midpoint probe — fixed-background replay parity
+
+- Added and ran `scripts/probe_adaptive_embedded_integral.py` on two archived adaptive Fast cases. The diagnostic first replays the public Fast adaptive solve, verifies its archived frequency grid and final `DN_eff`, then freezes the converged model background and uses the production `solve_kernel` for the base grid and actual log-frequency midpoints.
+- Positive-cr case: 256 base nodes + 255 actual midpoints; embedded global `DN_gw` delta `8.5425e-5`, versus `9.9973e-5` between archived adaptive and 484-node Prüfer maps (ratio `0.8545`). The base map matches archived Fast `DN_gw` within `6.90e-10` relative and spectrum within `5.30e-4 dex` max. Warm kernel median/p95 rose from `145.5/166.2 ms` to `300.6/375.1 ms` (`2.07x` median).
+- High-blue cr=0 case: 73 base nodes + 72 actual midpoints; embedded delta `7.2628e-5`, versus `7.9403e-5` between archived adaptive and 200-node Prüfer maps (ratio `0.9147`). Base spectrum replay max difference `1.60e-5 dex`; kernel median `8.55→16.49 ms` (`1.93x`).
+- Interpretation: both embedded differences are near, but systematically below, the observed Reference grid changes; two points cannot calibrate a safe factor or prove a bound. Full midpoint probing approximately doubles propagation work. Do not enter production yet. Next distinguish a panel-integral selection rule (refine only intervals that account for the global embedded delta) from the old pointwise midpoint-residual helper, and test its false-safe rate/cost on more than these two points.
+- Two harness setup errors were found and corrected before the retained runs: the first used module defaults instead of the archived z-tail/primitive configuration; the generalized positive-cr run then omitted metadata fields that are stored in the paired Reference section. Final artifacts use a public Fast replay and pass frequency-grid/fixed-background parity checks.

@@ -1623,3 +1623,32 @@ the diagnostic artifacts are retained.
 - Actions run `36084129180` completed successfully: canonical, static, package, Cobaya, and all Python 3.9–3.13 compatibility jobs passed.
 - At this first-pass checkpoint, the full prose review was still underway. The local audit matrix tracks all 46 tracked Markdown files and the local-only comparison dossier; raw JSON/JSONL and numeric `.txt` evidence remains unchanged.
 - Existing uncommitted `findings.md` entries and local performance artifacts were not staged. The upstream comparison dossier was refreshed to HEAD `5165ec7` and remains local-only.
+
+## Session continuation — 2026-11-05
+
+- Read the user-referenced research specification and current skill/planning instructions.
+- Confirmed repository branch `fast_v0.2`, clean HEAD `16787b798902ebfcad54e85701a573ea27da31c4`, remote branch equality, and final CI run `41969511573` success (9/9 jobs).
+- Applied latest user steering: do not optimize Reference; use it only as an independent validator while continuing Fast-domain work.
+- Restored cumulative plan/findings/progress and added a Fast-only continuation checkpoint. Next: inspect pressure artifacts and current Fast implementation, then isolate one unresolved failure.
+
+- Fast-only root cause narrowed: adaptive grid termination uses max node-local curvature contribution; high-blue same-background nested Prüfer data show global PCHIP integral changes exceeding both the requested target and the sum of the local indicators.
+- No source change yet. Next action: use systematic debugging and TDD to test a proposed embedded global integral estimator before modifying solver behavior.
+
+## 2026-11-05 — adaptive integral stopping-rule continuation
+
+- Re-read the current Fast adaptive production branch, generic midpoint helper, pressure report, and archived positive-cr full-grid validation artifact.
+- Clarified that formal Fast adaptation has no actual midpoint check; the generic helper does, but its previous Reference experiments were expensive and remained uncertified. The candidate under consideration is a global integral delta, not pointwise interpolation-error refinement.
+- No source or test changes made. No tests run. Reference implementation remains untouched. Existing modifications in `task_plan.md`, `findings.md`, and `progress.md` were preserved and extended.
+- Next: test the global-integral estimator contract and measure its expected propagation work before any production implementation.
+
+- Ran a read-only embedded global-integral probe on the archived positive-cr Prüfer spectra. Using the denser nonnested map to interpolate 255 midpoint values gave a `1.7701e-4` relative PCHIP integral change; the archived independent two-grid `DN_gw` change is `9.9973e-5`. The single-point estimate is conservative here, but the midpoint values are interpolated, not direct, and the grids are nonnested; no accuracy guarantee follows.
+- Next action: run a small actual-Fast midpoint propagation diagnostic and measure its cost before implementing the estimator. No production source changed and no test was run.
+
+## 2026-11-05 — actual Fast midpoint probe
+
+- Added standalone diagnostic `scripts/probe_adaptive_embedded_integral.py`; it replays the public adaptive Fast solve, checks the archived grid/root, freezes that converged model background, then propagates true interval midpoints through the production Fast kernel.
+- Reproduced both existing artifacts. Positive-cr: 8.5425e-5 embedded global relative delta vs 9.9973e-5 archived Prüfer adaptive-to-res2 change; 256→511 frequencies raised kernel median from 145.5 ms to 300.6 ms (2.07x). High-blue cr=0: 7.2628e-5 vs 7.9403e-5; 73→145 frequencies raised median 8.55 ms to 16.49 ms (1.93x). Base spectra match the stored Fast results within 5.30e-4 dex and 1.60e-5 dex, respectively.
+- Both probes show slight underestimation and roughly doubled kernel work. This is candidate evidence only, not a bound or production acceptance. Reference code was not changed; no production solver code changed.
+- `ruff check scripts/probe_adaptive_embedded_integral.py` and `python -m py_compile scripts/probe_adaptive_embedded_integral.py` passed. The script itself was run on both fixed-background cases.
+- Harness errors (wrong module-default config; missing optional artifact metadata) were corrected; final runs verify archived frequency grid and `DN_eff` replay before measuring.
+- Next: test an integral-contribution panel selector for reducing midpoint propagation cost while preserving the global delta signal; then evaluate additional held-out cases and decide accept/reject.

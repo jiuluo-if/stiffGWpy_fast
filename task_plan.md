@@ -1125,3 +1125,61 @@ Phase 3: Implementation and evidence-driven optimization
 - [x] Focused tests and Ruff pass locally.
 - [ ] Commit/push with the required identity and recheck the complete remote
   matrix before resuming the next math experiment.
+
+## Fast-domain continuation — 2026-11-05
+
+### Scope and user steering
+
+- Reference performance optimization is closed by the user's later instruction. Reference propagation may be used only as an independent correctness cross-check; it must not be optimized in this continuation.
+- Continue the numeric goal through Fast reliability and domain extension. Do not infer a larger certified domain from a finite return or from a secant root screen.
+- Preserve existing Fast behavior, interfaces, precision gates (`DN_gw` relative error `2e-4`; spectrum `1e-3 dex`), and normal-path performance budget (`5%`).
+- Use current branch/worktree as authority. User requires bilingual commit subjects and `2966684515@qq.com` for pushed work.
+
+### Phases
+
+- [x] F0: Read the referenced research specification and re-establish repository state. HEAD is `16787b798902ebfcad54e85701a573ea27da31c4`; remote `fast/fast_v0.2` matches; worktree was clean; Actions run `41969511573` passed all nine jobs.
+- [ ] F1: Audit current Fast pressure artifacts, core solver/error paths, accuracy and experiment records; deduplicate historical successes/failures and identify one unresolved Fast-specific numerical bottleneck. Do not profile or optimize Reference runtime.
+- [ ] F2: Reproduce the selected Fast failure with the smallest deterministic case; classify it as a guard/limit, numerical defect, accuracy failure, resource limit, or mathematical nonexistence.
+- [ ] F3: If a concrete root cause and safe minimal fix exist, add a focused regression first, implement a minimal Fast-only fix, and verify against independent references or convergence/residual evidence. Otherwise retain a reproducible classified failure artifact and make no speculative production edit.
+- [ ] F4: Run affected regressions, numerical acceptance checks and canonical CI; document scope, exact parameters, source SHA, precision, runtime, resource usage and residual failures; review and push only verified changes.
+
+### Next Step
+
+Read the current Fast pressure-screen docs/artifacts and solver call path, then select one unresolved Fast-domain failure without repeating prior rejected oracle or propagation experiments.
+
+### F1 continuation result — adaptive integral stopping rule
+
+- [x] Re-read the live production adaptive branch and its surrounding call path. Formal Fast adaptation uses only `max_i(|y''(x_i)| h_i^2 / 8 * w_i / sum(w))`; it does not sample true midpoints. The separate generic `adapt_refine_grid` helper does sample midpoint interpolation residuals and is not used by this branch.
+- [x] Cross-checked the archived history before proposing a midpoint mechanism. The prior curvature-only Reference experiment was false-safe; the generic midpoint helper fixed one narrow synthetic Gaussian but remained expensive and uncertified on a difficult spectrum (1822 nodes still had `9.09e-3 dex` sampled error; 3467 nodes cost 655 s and still differed by `9.43e-3 dex`). Do not simply port that local-error strategy.
+- [x] Confirmed the high-blue Fast reproduction also has a same-background Prüfer nested-grid integral change larger than both the target and the summed node-curvature indicator. This establishes a stopping-indicator defect on the opt-in adaptive path, not a production-domain accuracy claim.
+- [ ] F2 candidate screen: test whether an embedded *global PCHIP integral delta using actual midpoint spectra* predicts final `DN_gw` change across the stored high-blue and positive-cr cases at Fast-comparable cost. Separate this from old pointwise midpoint residual refinement; reject it if the estimator is false-safe, misses broad smooth error, or needs disproportionate propagation work.
+
+### Next Step
+
+Write one minimal failing estimator-contract test and run it against a small analytic spectrum plus the stored same-background high-blue grid before adding any production branch. Preserve all current working-tree changes.
+
+- [x] F2 preliminary offline screen: the embedded global integral delta is in the right relative scale on one archived positive-cr point (`1.77e-4` estimated vs `1.00e-4` observed), with a nonnested/interpolated-midpoint limitation recorded. This is not validation.
+- [ ] F2 direct probe: evaluate true midpoint spectra with the Fast kernel on a fixed background and measure whether the embedded delta catches the actual denser-grid integral change at tolerable additional work.
+
+### Next Step
+
+Trace the existing fixed-background Fast frequency-evaluation entry point and build a bounded diagnostic that samples actual midpoint spectra; compare its embedded global integral delta and runtime against the archived dense Prüfer result. Keep production code untouched until this gate is informative.
+
+### F2 actual-midpoint probe outcome — 2026-11-05
+
+- [x] Built a standalone diagnostic that replays the public adaptive Fast run, checks archived grid/final `DN_eff`, freezes the resulting background, and evaluates actual midpoint spectra with production `solve_kernel`.
+- [x] Positive-cr screen: embedded global relative change `8.5425e-5` vs archived adaptive-to-res2 Prüfer `DN_gw` change `9.9973e-5`; median kernel work rose `2.07x` for 256→511 frequencies.
+- [x] High-blue cr=0 screen: embedded change `7.2628e-5` vs adaptive-to-res4 Prüfer change `7.9403e-5`; median kernel work rose `1.93x` for 73→145 frequencies.
+- [x] Baseline replay parity passed the archived spectrum gate (`5.30e-4 dex` positive-cr, `1.60e-5 dex` high-blue) and `DN_eff` parity (`6.90e-10` relative and `1.71e-6` relative, respectively).
+- [ ] Candidate remains unaccepted: both one-step estimates underpredict independent grid changes by 8.5–14.6%, and midpoint-all-panels roughly doubles kernel work. Next test contribution-ranked panel selection with an explicit safety margin, then measure false-safe behavior and cost on held-out parameters. No production change without a broader pass.
+
+### Errors Encountered
+
+| Error | Attempt | Resolution |
+|---|---|---|
+| Initial direct kernel probe used module-default `h`/`z_tail` and node-based primitives, so its `DN_gw` did not match the archived high-blue run. | First standalone probe | Read the archived validation call; use the named Fast config, exact primitive and a public Fast replay before freezing the background. |
+| Positive-cr archive lacked `z_tail` and `sigma_exact` in its `fast` subobject. | First generalized positive-cr replay | Use the archived Reference `z_tail` and the known exact-background validation path; rerun and verify grid/root parity. |
+
+### Next Step
+
+Develop a diagnostic-only, panel-integral contribution selector that spends midpoint propagation on the largest estimated contributions first; compare its estimate against both archived dense Prüfer changes and record the node/work tradeoff. Keep production Fast untouched.
