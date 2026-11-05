@@ -1706,3 +1706,8 @@ the diagnostic artifacts are retained.
 
 - Read the complete 2010 author manuscript for the required 2011 SIAM WKB-based scheme; logged its transformed system, second-order error bounds, positive-coefficient assumption, and phase-quadrature floor.
 - A deep-subhorizon mapping might exist after removing damping, but it is not uniform at horizon entry and has not been shown to beat the exact phase transfer. Keep this as an unproven inference; no production edits.
+
+## 2026-11-05 Neumann–Filon paper
+
+- Read and recorded Perczyński–Madejski’s Neumann-series/Filon scheme and local error bounds. It treats a finite Fourier time forcing multiplying an elliptic spatial generator; this does not directly match the homogeneous, time-varying tensor-mode matrix equation.
+- Existing Duhamel defect correction is already rejected by project accuracy/runtime evidence. Continue literature review without relabeling that method.

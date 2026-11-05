@@ -1241,3 +1241,9 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 
 - [x] Read and document full author manuscript, transform, Theorem 3.1, assumptions, and phase integration limitation.
 - [ ] Determine whether a strict positive lower bound can be established on a reusable subhorizon segment after an exact horizon handoff; reject if the segment has no useful accuracy/runtime benefit.
+
+### Literature continuation: Neumann–Filon integrator
+
+- [x] Read the paper and source the local error/regularity assumptions and resonant negative-frequency treatment.
+- [x] Deduplicate against the existing rejected Duhamel defect correction; identify the PDE forcing/operator mismatch.
+- [ ] Continue the remaining seven first-batch papers and project-code audits.

@@ -3266,3 +3266,8 @@ remote matrix run.
 - Read Arnold–Ben Abdallah–Negulescu (2011) from the coauthor-hosted author manuscript; SIAM confirms journal metadata/DOI. The WKB transformation gives a second-order asymptotic-preserving scheme for `ε²u''+a(x)u=0` with fixed smooth `a≥a₀>0`.
 - Mapping to the tensor equation after damping removal is only an inference: the scaled positive-frequency lower bound fails uniformly near horizon entry, and the exact reheating breakpoint must remain. This is not a drop-in expansion across the hard region.
 - Source PDF and theorem/error assumptions are recorded in `docs/research/phase_function_papers_batch1_20261105.md`; no code was run or imported.
+
+### Neumann–Filon literature screen — 2026-11-05
+
+- Read Perczyński–Madejski (2025) sections 1–7 and theorem/error analysis; downloaded the full arXiv PDF. The scheme is a truncated Duhamel/Neumann expansion with Filon quadrature for oscillatory multiplicative forcing of elliptic PDEs.
+- The cosmological tensor mode has no such spatial operator or finite Fourier forcing; an interaction-picture split would overlap earlier Magnus/Duhamel work. Round 64 already rejected Duhamel correction on accuracy/runtime. No direct reuse proposed.
