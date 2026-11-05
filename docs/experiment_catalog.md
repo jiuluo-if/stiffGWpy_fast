@@ -613,10 +613,17 @@ and [`probe_fast_ninf122_tail_sensitivity.py`](../scripts/probe_fast_ninf122_tai
 With `DN_re=200`, the same Fast settings reach `N_inf=222.502`. The full
 299-node same-grid Prüfer spectrum passes at `1.4962e-4 dex` maximum; the
 451-node native res2 map changes by `8.95e-5` relative, and Fast differs from
-the native map by `1.1453e-4`. This is a fixed-background validation only; the
-independent self-consistent root at this second point remains unchecked. See
+the native map by `1.1453e-4`. The follow-up independent Prüfer root iteration
+on the same 299-point frequency set converges to `DN_eff=6.4133123576436025e-9`
+in 2 iterations; Fast's relative root difference is `2.500e-5`. The existing
+adaptive map at Fast's root is within `6.9e-10` relative of the iterative root;
+the native res2 map change remains `8.95e-5`, reused at the nearly identical
+Fast root. No native res2 propagation was repeated at the iterative root; this
+is a sampled root/grid screen, not a formal enclosure. See
 [`fast_ninf222_fullgrid_prufer_20261105.json`](fast_ninf222_fullgrid_prufer_20261105.json)
-and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py).
+and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py), plus
+[`fast_ninf222_reference_root_20261105.json`](fast_ninf222_reference_root_20261105.json)
+and [`solve_fast_ninf222_reference_root.py`](../scripts/solve_fast_ninf222_reference_root.py).
 
 The low-temperature positive-cr point (`T_re=1e-3`) has derived `N_inf=80.4482`,
 `n_t=-0.00125`, and effective `DN_re=57.9462`. Fast passes the full spectrum

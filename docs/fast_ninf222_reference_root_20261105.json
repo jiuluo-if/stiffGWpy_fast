@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "experiment": "self-consistent Prüfer Reference root on validated N_inf=222 Fast grid",
+  "status": "complete",
+  "source_commit": "dcc1e42d4ab6e001ddb9d57493024f6ff8935d33",
+  "branch": "fast_v0.2",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "n_t": 0.5,
+    "cr": 0.0,
+    "T_re": 0.001,
+    "DN_re": 200.0,
+    "kappa10": 0.01
+  },
+  "parent_artifact": "fast_ninf222_fullgrid_prufer_20261105.json",
+  "parent_artifact_sha256": "3c162b7c256f5f1983e95415518016ba2159ed06c3571750414a7ae922417679",
+  "frequency_count": 299,
+  "frequency_sha256": "452defe8bd52306e437f114fd87e2a9008beee0d7e5922bb5703ade712441c00",
+  "reference": {
+    "backend": "prufer",
+    "rtol": 1e-09,
+    "z_tail": 8.0,
+    "root_tolerance": 1e-09,
+    "workers": 1,
+    "self_consistent": true,
+    "physical_guard": false
+  },
+  "fast_root": 6.41315205305673e-09,
+  "map_history": [
+    {
+      "DN_eff_input": 0.0,
+      "DN_gw_map": 6.413312293214803e-09,
+      "fixed_point_residual": -6.413312293214803e-09,
+      "quadrature_error": 8.823486374031708e-28,
+      "interpolation_error": 8.807656991768407e-19,
+      "used_tail_fraction": 0.7357859531772575,
+      "runtime_s": 98.49750859988853
+    },
+    {
+      "DN_eff_input": 6.413312293214803e-09,
+      "DN_gw_map": 6.4133123576436025e-09,
+      "fixed_point_residual": -6.44287992995542e-17,
+      "quadrature_error": 8.823486462673367e-28,
+      "interpolation_error": 8.809770784699077e-19,
+      "used_tail_fraction": 0.7357859531772575,
+      "runtime_s": 92.45532590011135
+    },
+    {
+      "DN_eff_input": 6.4133123576436025e-09,
+      "DN_gw_map": 6.4133123576436025e-09,
+      "fixed_point_residual": 0.0,
+      "quadrature_error": 8.823486462673367e-28,
+      "interpolation_error": 8.809770784699077e-19,
+      "used_tail_fraction": 0.7357859531772575,
+      "runtime_s": 94.44476579991169
+    }
+  ],
+  "run_reference_signature": "(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11, z_start=-12.0, tol=1e-07, max_iter=60, freq_subset=None, self_consistent=True, workers=None, physical_guard=False, backend='cartesian')",
+  "runner_sha256": "e66e42be15107856bfdade47e969f3164f54c70a282cc2b055c00972f8b987f8",
+  "reference_root_DN_eff": 6.4133123576436025e-09,
+  "reference_DN_gw_at_root": 6.4133123576436025e-09,
+  "fixed_point_residual_at_root": 0.0,
+  "reference_iterations": 2,
+  "fast_to_reference_root_relative_error": 2.4995599455184988e-05,
+  "final_quadrature_error": 8.823486462673367e-28,
+  "final_interpolation_error": 8.809770784699077e-19,
+  "warnings": [],
+  "total_runtime_s": 285.5914425998926,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "source_hashes": {
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "runner.py": "e66e42be15107856bfdade47e969f3164f54c70a282cc2b055c00972f8b987f8"
+  },
+  "limitation": "Self-consistent Reference root on the validated 299-point adaptive Fast frequency set; native 451-point fixed-background maps were evaluated at Fast DN_eff, not this root. This is not a root enclosure or an independent frequency-convergence proof at the root."
+}
