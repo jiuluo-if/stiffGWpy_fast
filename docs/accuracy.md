@@ -1205,13 +1205,24 @@ consistent with an e-fold coordinate shift for this particular parameter
 change.
 
 This extends full fixed-background Fast validation to `N_inf=222.502`. It does
-not certify the independent self-consistent root at the new point or prove
-global invariance under `DN_re` shifts. The original 12-mode early screen and
-the full Fast/Prüfer arrays, map convergence, source hashes, and resource data
-are in [`fast_ninf222_selected_prufer_20261105.json`](fast_ninf222_selected_prufer_20261105.json)
+not prove global invariance under `DN_re` shifts. A follow-up self-consistent
+Prüfer iteration on the same validated 299-frequency set converged in 2 fixed-
+point iterations plus the returned-spectrum map: Reference root
+`DN_eff=6.4133123576436025e-9`, with residual `0` at stored precision. Fast
+differs by `2.500e-5` relative. The existing adaptive fixed-background map at
+Fast's root differs from the iterative root by about `6.9e-10` relative;
+reusing the native 451-node map shows the same `8.95e-5` grid-change screen.
+The native res2 propagation was not repeated at the iterative root. These
+results are a sampled root/grid check, not a root enclosure or continuous-
+domain certificate. The original 12-mode early screen and the full Fast/Prüfer
+arrays, map convergence, source hashes, and resource data are in
+[`fast_ninf222_selected_prufer_20261105.json`](fast_ninf222_selected_prufer_20261105.json)
 and [`fast_ninf222_fullgrid_prufer_20261105.json`](fast_ninf222_fullgrid_prufer_20261105.json),
 with drivers [`validate_fast_ninf222_selected_prufer.py`](../scripts/validate_fast_ninf222_selected_prufer.py)
 and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py).
+The root history and runner are in
+[`fast_ninf222_reference_root_20261105.json`](fast_ninf222_reference_root_20261105.json)
+and [`solve_fast_ninf222_reference_root.py`](../scripts/solve_fast_ninf222_reference_root.py).
 
 ## 2026-11-05 Fast low-temperature positive-cr cross-check
 
