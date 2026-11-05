@@ -669,3 +669,20 @@ interval brackets the residual sign change, but native res4 does not, so the
 result is a screening check rather than a formal root enclosure. See
 [`fast_high_blue_kappa100_root_secant_20261105.json`](fast_high_blue_kappa100_root_secant_20261105.json)
 and [`probe_fast_high_blue_kappa100_root.py`](../scripts/probe_fast_high_blue_kappa100_root.py).
+
+The high-r strongly red positive-cr point (`r=10`, derived `n_t=-1.25`,
+`kappa10=100`, `N_inf=82.6947`) passes fixed-background spectrum and res4/res8
+map checks at target `1e-7`: maximum spectral error `1.476e-4 dex`, res4→res8
+`6.437e-5`, and Fast→res8 `4.526e-6`. Native res2 is under-resolved by
+`9.663e-4`; the self-consistent Reference root remains open. See
+[`fast_cr1_red_extreme_fullgrid_prufer_20261105.json`](fast_cr1_red_extreme_fullgrid_prufer_20261105.json),
+[`fast_cr1_red_extreme_res8_prufer_20261105.json`](fast_cr1_red_extreme_res8_prufer_20261105.json),
+and [`validate_fast_cr1_red_extreme_fullgrid.py`](../scripts/validate_fast_cr1_red_extreme_fullgrid.py).
+
+Its two-grid secant root estimates differ by `6.712e-5`; Fast-to-res4-root
+shift is `6.890e-5` and the corrected adaptive residual at the res4 candidate
+is `6.713e-5`. Neither grid shows a sampled endpoint sign change, and the
+native res4 frequency hash shifts with `DN_eff`; this is a scalar-map secant
+screen, not a root enclosure. See
+[`fast_cr1_red_extreme_root_secant_20261105.json`](fast_cr1_red_extreme_root_secant_20261105.json)
+and [`probe_fast_cr1_red_extreme_root.py`](../scripts/probe_fast_cr1_red_extreme_root.py).

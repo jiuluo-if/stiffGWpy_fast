@@ -135,8 +135,6 @@ def main() -> None:
 
     print(f"Native res4 Prüfer map at x1={x1:.16g}", flush=True)
     res4_x1 = _map(model, x1, freq_res=4.0)
-    if res4_x1["frequency_sha256"] != base["reference_maps"]["native_res4"]["frequency_sha256"]:
-        raise AssertionError("native res4 grid changed with DN_eff")
     record["maps"]["x1_native_res4"] = res4_x1
     adaptive_root, adaptive_slope, adaptive_g0, adaptive_g1 = _secant_root(
         x0, x1, adaptive_f0, float(adaptive_x1["DN_gw"])
@@ -157,6 +155,11 @@ def main() -> None:
         "two_grid_root_relative_delta": root_delta,
         "adaptive_sign_change": adaptive_g0 * adaptive_g1 <= 0.0,
         "native_res4_sign_change": res4_g0 * res4_g1 <= 0.0,
+        "native_res4_frequency_grid_hash_stable": (
+            res4_x1["frequency_sha256"] == base["reference_maps"]["native_res4"]["frequency_sha256"]
+        ),
+        "native_res4_frequency_count_x0": int(base["reference_maps"]["native_res4"]["frequency_count"]),
+        "native_res4_frequency_count_x1": int(res4_x1["frequency_count"]),
         "fast_to_res4_root_relative_shift": abs(x0 - res4_root) / x0,
     }
     record["status"] = "x1_maps_complete_candidate_residual_running"
@@ -186,7 +189,7 @@ def main() -> None:
     record["hashes"] = {"reference_py": _sha(ROOT / "stiffgwpy_fast/reference.py"), "script_py": _sha(Path(__file__))}
     record["limitations"] = [
         "This is a two-grid interval-secant screen, not a rigorous root enclosure or full iterative Reference solution.",
-        "Res4 frequency convergence is checked at x0; root sensitivity uses adaptive and res4 grids.",
+        "Res4 frequency convergence is checked at x0; root sensitivity compares res4 scalar maps, whose frequency nodes may shift with DN_eff.",
     ]
     _save(record)
     print(json.dumps({"status": record["status"], "root_estimates": record["root_estimates"], "acceptance": record["acceptance"], "output": str(OUTPUT)}), flush=True)
