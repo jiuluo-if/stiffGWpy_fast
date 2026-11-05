@@ -71,8 +71,20 @@ def main() -> int:
         params = parent[params_key]
         model = LCDM_SG(**params)
         ref_root = float(root["reference_root_DN_eff"])
+        fast_root = float(fast["DN_eff_final"])
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
+            same_fast_root_result = R.run_reference(
+                model,
+                dn_eff=fast_root,
+                freq_subset=freqs,
+                self_consistent=False,
+                z_tail=Z_TAIL,
+                rtol=RTOL,
+                workers=1,
+                physical_guard=False,
+                backend="prufer",
+            )
             result = R.run_reference(
                 model,
                 dn_eff=ref_root,
@@ -89,6 +101,31 @@ def main() -> int:
         if not np.array_equal(freqs, ref_freqs):
             raise RuntimeError(f"{name}: Reference changed frequency nodes")
         fast_omega = np.asarray(fast["omega_gw"], dtype=np.float64)
+        same_fast_root_integrand = (
+            np.asarray(same_fast_root_result["Ogw"], dtype=np.float64)
+            - np.asarray(same_fast_root_result["Oj"], dtype=np.float64)
+        )
+        same_fast_root_positive = (fast_omega > 0.0) & (same_fast_root_integrand > 0.0)
+        same_fast_root_abs_dex = np.abs(
+            np.log10(fast_omega[same_fast_root_positive])
+            - np.log10(same_fast_root_integrand[same_fast_root_positive])
+        )
+        same_fast_root_ref_tail = np.asarray(same_fast_root_result["used_tail"], dtype=bool)
+        same_fast_root_tail_error = {}
+        for label, mask in (("reference_tail", same_fast_root_ref_tail), ("reference_no_tail", ~same_fast_root_ref_tail)):
+            valid_group = mask & same_fast_root_positive
+            group_error = np.abs(
+                np.log10(fast_omega[valid_group]) - np.log10(same_fast_root_integrand[valid_group])
+            )
+            same_fast_root_tail_error[label] = {
+                "mode_count": int(np.count_nonzero(mask)),
+                "positive_mode_count": int(np.count_nonzero(valid_group)),
+                "max_abs_dex": float(np.max(group_error)) if group_error.size else None,
+                "p95_abs_dex": float(np.percentile(group_error, 95)) if group_error.size else None,
+            }
+        same_fast_root_map_error = abs(
+            float(fast["DN_gw"]) - float(same_fast_root_result["DN_gw"])
+        ) / max(abs(float(same_fast_root_result["DN_gw"])), np.finfo(float).tiny)
         ref_integrand = np.asarray(result["Ogw"], dtype=np.float64) - np.asarray(result["Oj"], dtype=np.float64)
         ref_logs = np.asarray(result["log10OmegaGW"], dtype=np.float64)
         fast_logs = np.log10(np.maximum(fast_omega, np.finfo(float).tiny))
@@ -97,7 +134,6 @@ def main() -> int:
         abs_dex = np.abs(fast_logs[jointly_positive] - np.log10(ref_integrand[jointly_positive]))
         abs_linear = np.abs(fast_omega[valid_reference] - ref_integrand[valid_reference])
         relative_linear = abs_linear / np.maximum(np.abs(ref_integrand[valid_reference]), np.finfo(float).tiny)
-        fast_root = float(fast["DN_eff_final"])
         rows[name] = {
             "parameters": params,
             "frequency_count": int(freqs.size),
@@ -108,6 +144,15 @@ def main() -> int:
             "fixed_point_residual_at_reference_root": float(root["fixed_point_residual_at_root"]),
             "reference_DN_gw_at_root": float(result["DN_gw"]),
             "reference_map_residual_at_root": float(ref_root - params["DN_eff"] - float(result["DN_gw"])),
+            "same_fast_root_reference_DN_gw": float(same_fast_root_result["DN_gw"]),
+            "same_fast_root_map_relative_error": float(same_fast_root_map_error),
+            "same_fast_root_spectrum_max_abs_error_dex": float(np.max(same_fast_root_abs_dex)) if same_fast_root_abs_dex.size else None,
+            "same_fast_root_spectrum_p95_abs_error_dex": float(np.percentile(same_fast_root_abs_dex, 95)) if same_fast_root_abs_dex.size else None,
+            "same_fast_root_joint_positive_node_count": int(np.count_nonzero(same_fast_root_positive)),
+            "same_fast_root_spectrum_error_by_reference_tail_status": same_fast_root_tail_error,
+            "same_fast_root_fixed_point_residual": float(fast_root - params["DN_eff"] - float(same_fast_root_result["DN_gw"])),
+            "same_fast_root_reference_log10_omega": np.log10(np.maximum(same_fast_root_integrand, np.finfo(float).tiny)).tolist(),
+            "same_fast_root_reference_used_tail": same_fast_root_ref_tail.tolist(),
             "reference_positive_node_count": int(np.count_nonzero(valid_reference)),
             "joint_positive_node_count": int(np.count_nonzero(jointly_positive)),
             "fast_nonpositive_on_reference_positive_count": int(np.count_nonzero(valid_reference & (fast_omega <= 0.0))),
@@ -153,7 +198,7 @@ def main() -> int:
     OUTPUT.write_text(json.dumps(record, indent=2, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps({
         "status": record["status"],
-        "cases": {k: {key: v[key] for key in ("fast_to_reference_root_relative_error", "spectrum_max_abs_error_dex_on_positive_nodes", "spectrum_p95_abs_error_dex_on_positive_nodes", "reference_positive_node_count", "fast_nonpositive_on_reference_positive_count", "reference_map_residual_at_root")} for k, v in rows.items()},
+        "cases": {k: {key: v[key] for key in ("fast_to_reference_root_relative_error", "same_fast_root_map_relative_error", "same_fast_root_spectrum_max_abs_error_dex", "spectrum_max_abs_error_dex_on_positive_nodes", "spectrum_p95_abs_error_dex_on_positive_nodes", "reference_positive_node_count", "fast_nonpositive_on_reference_positive_count", "reference_map_residual_at_root")} for k, v in rows.items()},
         "runtime_s": record["total_runtime_s"],
         "output": str(OUTPUT),
     }, indent=2))
