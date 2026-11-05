@@ -1,11 +1,11 @@
 {
   "experiment": "reheating-aligned normalized-coordinate and full-Fast probe",
-  "source_head_before_probe": "619172f461d5da1e2f02f01cd8a641f6214cd29c",
+  "source_head_before_probe": "4cffd8cfdc6d684e0cd0d54cbc1be53d9995d917",
   "source_sha256": {
     "LCDM_stiff_Neff.py": "7df1f842aacf7a06a76569ddb18aa4b4330fe13deabd7ba1c080174152d40f91",
     "exact_background.py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
     "fast_sgwb.py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
-    "probe_script.py": "da84af2fe4c44e667798a04014d9da8e8acebeed4c843ca07d844f03ac1496ce"
+    "probe_script.py": "decfda60e83f9417eeffbba247b528b68dcac5d448a10343d23c294344fc179d"
   },
   "environment": {
     "platform": "Windows-10-10.0.26200-SP0",
@@ -108,7 +108,7 @@
       },
       "fast": {
         "success": true,
-        "runtime_s": 0.2854726000223309,
+        "runtime_s": 0.2772846999578178,
         "failure_reason": null,
         "n_frequency": 68,
         "frequency_range": [
@@ -195,7 +195,7 @@
       },
       "fast": {
         "success": true,
-        "runtime_s": 0.007591499947011471,
+        "runtime_s": 0.00603419984690845,
         "failure_reason": null,
         "n_frequency": 70,
         "frequency_range": [
@@ -227,6 +227,94 @@
       }
     }
   ],
+  "fixed_DN_eff_complete_kernel": [
+    {
+      "DN_eff_fixed": 0.0,
+      "frequency_log10_hz": [
+        -7.84823434311952,
+        -5.84823434311952,
+        -3.84823434311952,
+        -2.84823434311952,
+        -1.84823434311952,
+        0.9017656568804799
+      ],
+      "j0_indices": [
+        2751,
+        2290,
+        1830,
+        1600,
+        678,
+        0
+      ],
+      "j0_normalized_s": [
+        0.15236016101606348,
+        0.09133667341536388,
+        0.03044555780512129,
+        0.0,
+        -0.1220469752013992,
+        -0.21179518473127848
+      ],
+      "starts_after_reheating": [
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+      ],
+      "log10_OmegaGW": [
+        -15.507414473103822,
+        -13.539061773313934,
+        -11.539312353581861,
+        -10.538782764665656,
+        -9.539384936665265,
+        -9.396511013351894
+      ]
+    },
+    {
+      "DN_eff_fixed": 0.0,
+      "frequency_log10_hz": [
+        -7.84823434311952,
+        -5.84823434311952,
+        -3.84823434311952,
+        -2.84823434311952,
+        -1.84823434311952,
+        0.9017656568804799
+      ],
+      "j0_indices": [
+        3551,
+        3090,
+        2630,
+        2400,
+        1478,
+        0
+      ],
+      "j0_normalized_s": [
+        0.15236016101606342,
+        0.09133667341536388,
+        0.03044555780512129,
+        0.0,
+        -0.1220469752013992,
+        -0.31769277709691773
+      ],
+      "starts_after_reheating": [
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+      ],
+      "log10_OmegaGW": [
+        -15.507414473103822,
+        -13.53906177331393,
+        -11.539312353581868,
+        -10.538782764665665,
+        -9.539384936665265,
+        -9.402583873394608
+      ]
+    }
+  ],
   "comparison": {
     "N_re_abs_shift": 4.0,
     "max_abs_sigma_difference": 0.0,
@@ -235,6 +323,11 @@
     "max_abs_Phi_after_0p5DNre_shift": 4.334310688136611e-13,
     "max_abs_logS2_after_DNre_shift": 8.739675649849232e-13,
     "max_abs_log10_spectrum_difference_at_shared_probe_frequencies": 0.006072860098830901,
+    "fixed_map_max_abs_log10_spectrum_difference_all": 0.006072860042714012,
+    "fixed_map_max_abs_log10_spectrum_difference_when_both_start_after_reheating": 8.881784197001252e-15,
+    "fixed_map_after_reheating_mode_count": 4,
+    "fixed_map_interior_start_mode_count": 5,
+    "fixed_map_max_abs_log10_spectrum_difference_for_interior_starts": 8.881784197001252e-15,
     "interpretation_limit": "Cross-parameter output differences are physical sensitivity, not numerical error; this is not an independent accuracy or parameter-domain certification.",
     "timing_limit": "Sequential single-call wall times are recorded per case; the first call can include JIT cost and must not be compared as a performance result."
   }
