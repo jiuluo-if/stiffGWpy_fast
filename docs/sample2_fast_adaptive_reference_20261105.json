@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "experiment": "same-frequency self-consistent Prüfer checks for sample2 Fast adaptive grids",
+  "status": "complete",
+  "source_commit": "b58e90c6b8bf84653ed84ab91010d1f3d8b7025c",
+  "branch": "fast_v0.2",
+  "sweep_artifact": "sample2_fast_adaptive_sweep_20261105.json",
+  "sweep_sha256": "5d5fe6fbd14276bef0bfd10088d9097fbad3e5ea86e78ab9a9555cf0281db30d",
+  "full_reference_root_artifact": "sample2_reference_root_res8_tail5_gamma0_20261105.json",
+  "full_reference_root_sha256": "0c3e4202c433fb487384e7b746ab3f71f72d457d95a39840fb3b6637bc0e002c",
+  "full_reference_root_DN_eff": 2.291411867022825,
+  "reference": {
+    "backend": "prufer",
+    "rtol": 1e-09,
+    "z_tail": 5.0,
+    "root_tolerance": 1e-09,
+    "workers": 1
+  },
+  "targets": [
+    {
+      "target_dex": 1e-05,
+      "frequency_count": 108,
+      "frequency_sha256": "8981f871b69d60f1bc977a79568ba7b5a0b32bae7ec6f82844fd6cb093538183",
+      "fast_root": 2.29247067397062,
+      "reference_root_on_same_grid": 2.2921053412323618,
+      "reference_iterations": 7,
+      "fast_to_same_grid_reference_root_relative_error": 0.0001593874119510604,
+      "same_grid_reference_root_to_800_point_root_relative_error": 0.000302640576980862,
+      "max_abs_dex_spectrum_error_at_native_nodes": 0.003144993001457763,
+      "p95_abs_dex_spectrum_error_at_native_nodes": 0.0031190764142055905,
+      "fast_freq_grid_error": 9.304294651149706e-06,
+      "reference_fixed_point_residual_at_root": 5.199840558134383e-12,
+      "reference_quadrature_error": 3.1534968704954967e-19,
+      "reference_interpolation_error": 7.879196888776574e-09,
+      "reference_runtime_s": 35.566401900025085,
+      "reference_map_history": [
+        {
+          "DN_eff_input": 0.0,
+          "DN_gw_map": 2.2408632831749817,
+          "fixed_point_residual": -2.2408632831749817,
+          "quadrature_error": 3.082997636974762e-19,
+          "interpolation_error": 4.5801547448712905e-08,
+          "runtime_s": 4.597739800112322
+        },
+        {
+          "DN_eff_input": 2.2408632831749817,
+          "DN_gw_map": 2.2907726735528775,
+          "fixed_point_residual": -0.04990939037789577,
+          "quadrature_error": 3.1516633756448563e-19,
+          "interpolation_error": 7.582141419324206e-09,
+          "runtime_s": 4.527330299839377
+        },
+        {
+          "DN_eff_input": 2.2907726735528775,
+          "DN_gw_map": 2.292070623248015,
+          "fixed_point_residual": -0.0012979496951373015,
+          "quadrature_error": 3.153449105221964e-19,
+          "interpolation_error": 7.870931289349366e-09,
+          "runtime_s": 4.176157200010493
+        },
+        {
+          "DN_eff_input": 2.292070623248015,
+          "DN_gw_map": 2.2921044392454184,
+          "fixed_point_residual": -3.3815997403596754e-05,
+          "quadrature_error": 3.1534956295417963e-19,
+          "interpolation_error": 7.879014794826649e-09,
+          "runtime_s": 4.251135500147939
+        },
+        {
+          "DN_eff_input": 2.2921044392454184,
+          "DN_gw_map": 2.2921053180019593,
+          "fixed_point_residual": -8.787565408674425e-07,
+          "quadrature_error": 3.1534968385420776e-19,
+          "interpolation_error": 7.87919298031055e-09,
+          "runtime_s": 4.449097799835727
+        },
+        {
+          "DN_eff_input": 2.2921053180019593,
+          "DN_gw_map": 2.292105340622504,
+          "fixed_point_residual": -2.262054454860163e-08,
+          "quadrature_error": 3.1534968696636037e-19,
+          "interpolation_error": 7.879195740405305e-09,
+          "runtime_s": 4.122164500178769
+        },
+        {
+          "DN_eff_input": 2.292105340622504,
+          "DN_gw_map": 2.2921053412323618,
+          "fixed_point_residual": -6.098579419244743e-10,
+          "quadrature_error": 3.153496870502652e-19,
+          "interpolation_error": 7.879195600369067e-09,
+          "runtime_s": 4.325960400048643
+        },
+        {
+          "DN_eff_input": 2.2921053412323618,
+          "DN_gw_map": 2.292105341227162,
+          "fixed_point_residual": 5.199840558134383e-12,
+          "quadrature_error": 3.1534968704954967e-19,
+          "interpolation_error": 7.879196888776574e-09,
+          "runtime_s": 5.0106156000401825
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "target_dex": 1e-06,
+      "frequency_count": 131,
+      "frequency_sha256": "2609cd4a430a85896aa402fb6c0f65fee45b5fe8f44fc595fb5b1b4370aa0036",
+      "fast_root": 2.292219556207401,
+      "reference_root_on_same_grid": 2.291461226437657,
+      "reference_iterations": 7,
+      "fast_to_same_grid_reference_root_relative_error": 0.0003309372032983,
+      "same_grid_reference_root_to_800_point_root_relative_error": 2.154104879276618e-05,
+      "max_abs_dex_spectrum_error_at_native_nodes": 0.0031626729283384947,
+      "p95_abs_dex_spectrum_error_at_native_nodes": 0.0031224248202965654,
+      "fast_freq_grid_error": 9.614519115272216e-07,
+      "reference_fixed_point_residual_at_root": 1.9179324795004504e-10,
+      "reference_quadrature_error": 3.1526106919498485e-19,
+      "reference_interpolation_error": 7.742145151435446e-09,
+      "reference_runtime_s": 40.202713100006804,
+      "reference_map_history": [
+        {
+          "DN_eff_input": 0.0,
+          "DN_gw_map": 2.240979073635551,
+          "fixed_point_residual": -2.240979073635551,
+          "quadrature_error": 3.083156942416998e-19,
+          "interpolation_error": 1.4732340946298977e-09,
+          "runtime_s": 5.436791199957952
+        },
+        {
+          "DN_eff_input": 2.240979073635551,
+          "DN_gw_map": 2.2901427030361665,
+          "fixed_point_residual": -0.049163629400615694,
+          "quadrature_error": 3.1507966571667736e-19,
+          "interpolation_error": 7.811810056633412e-09,
+          "runtime_s": 4.942871900042519
+        },
+        {
+          "DN_eff_input": 2.2901427030361665,
+          "DN_gw_map": 2.291426703497928,
+          "fixed_point_residual": -0.0012840004617613587,
+          "quadrature_error": 3.152563195276978e-19,
+          "interpolation_error": 7.744283534995597e-09,
+          "runtime_s": 5.041278900112957
+        },
+        {
+          "DN_eff_input": 2.291426703497928,
+          "DN_gw_map": 2.291460323599478,
+          "fixed_point_residual": -3.362010155028017e-05,
+          "quadrature_error": 3.1526094500817277e-19,
+          "interpolation_error": 7.742190109617307e-09,
+          "runtime_s": 5.120761399855837
+        },
+        {
+          "DN_eff_input": 2.291460323599478,
+          "DN_gw_map": 2.2914612028150363,
+          "fixed_point_residual": -8.792155581360817e-07,
+          "quadrature_error": 3.152610659713528e-19,
+          "interpolation_error": 7.742149000524545e-09,
+          "runtime_s": 4.954161700094119
+        },
+        {
+          "DN_eff_input": 2.2914612028150363,
+          "DN_gw_map": 2.291461225535988,
+          "fixed_point_residual": -2.27209517866811e-08,
+          "quadrature_error": 3.1526106909731955e-19,
+          "interpolation_error": 7.742144264569175e-09,
+          "runtime_s": 4.917998899938539
+        },
+        {
+          "DN_eff_input": 2.291461225535988,
+          "DN_gw_map": 2.291461226437657,
+          "fixed_point_residual": -9.016689617169504e-10,
+          "quadrature_error": 3.1526106922137177e-19,
+          "interpolation_error": 7.742149106132932e-09,
+          "runtime_s": 4.856723899953067
+        },
+        {
+          "DN_eff_input": 2.291461226437657,
+          "DN_gw_map": 2.291461226245864,
+          "fixed_point_residual": 1.9179324795004504e-10,
+          "quadrature_error": 3.1526106919498485e-19,
+          "interpolation_error": 7.742145151435446e-09,
+          "runtime_s": 4.807621400104836
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "target_dex": 1e-07,
+      "frequency_count": 183,
+      "frequency_sha256": "aaa6fd4656b2593b572b56c5399d411b57b1d49b096fba4f8d7588b697be05fa",
+      "fast_root": 2.2922005847488895,
+      "reference_root_on_same_grid": 2.291412815288464,
+      "reference_iterations": 7,
+      "fast_to_same_grid_reference_root_relative_error": 0.00034379202872979376,
+      "same_grid_reference_root_to_800_point_root_relative_error": 4.138346547591372e-07,
+      "max_abs_dex_spectrum_error_at_native_nodes": 0.0031640266149999263,
+      "p95_abs_dex_spectrum_error_at_native_nodes": 0.0030659089903526397,
+      "fast_freq_grid_error": 9.317940819069181e-08,
+      "reference_fixed_point_residual_at_root": 4.2314862724879276e-10,
+      "reference_quadrature_error": 3.15254408718509e-19,
+      "reference_interpolation_error": 6.214549963476377e-10,
+      "reference_runtime_s": 52.53192079998553,
+      "reference_map_history": [
+        {
+          "DN_eff_input": 0.0,
+          "DN_gw_map": 2.2409286885022612,
+          "fixed_point_residual": -2.2409286885022612,
+          "quadrature_error": 3.083087622147424e-19,
+          "interpolation_error": 6.480299304022183e-10,
+          "runtime_s": 6.511908800108358
+        },
+        {
+          "DN_eff_input": 2.2409286885022612,
+          "DN_gw_map": 2.2900953160404325,
+          "fixed_point_residual": -0.04916662753817125,
+          "quadrature_error": 3.1507314617588395e-19,
+          "interpolation_error": 6.08007989177903e-10,
+          "runtime_s": 6.7020021001808345
+        },
+        {
+          "DN_eff_input": 2.2900953160404325,
+          "DN_gw_map": 2.291378345251726,
+          "fixed_point_residual": -0.0012830292112933073,
+          "quadrature_error": 3.1524966636148763e-19,
+          "interpolation_error": 6.211257817649979e-10,
+          "runtime_s": 6.6469550000038
+        },
+        {
+          "DN_eff_input": 2.291378345251726,
+          "DN_gw_map": 2.291411913309546,
+          "fixed_point_residual": -3.356805782006589e-05,
+          "quadrature_error": 3.1525428468174456e-19,
+          "interpolation_error": 6.214461179174969e-10,
+          "runtime_s": 6.487562899943441
+        },
+        {
+          "DN_eff_input": 2.291411913309546,
+          "DN_gw_map": 2.2914127911706186,
+          "fixed_point_residual": -8.778610727233627e-07,
+          "quadrature_error": 3.152544054585736e-19,
+          "interpolation_error": 6.214544470662194e-10,
+          "runtime_s": 6.738814600044861
+        },
+        {
+          "DN_eff_input": 2.2914127911706186,
+          "DN_gw_map": 2.291412814450207,
+          "fixed_point_residual": -2.3279588479141466e-08,
+          "quadrature_error": 3.15254408661398e-19,
+          "interpolation_error": 6.214507466456761e-10,
+          "runtime_s": 6.48510989989154
+        },
+        {
+          "DN_eff_input": 2.291412814450207,
+          "DN_gw_map": 2.291412815288464,
+          "fixed_point_residual": -8.382570193532501e-10,
+          "quadrature_error": 3.1525440877672604e-19,
+          "interpolation_error": 6.214569521623963e-10,
+          "runtime_s": 6.3001103000715375
+        },
+        {
+          "DN_eff_input": 2.291412815288464,
+          "DN_gw_map": 2.2914128148653155,
+          "fixed_point_residual": 4.2314862724879276e-10,
+          "quadrature_error": 3.15254408718509e-19,
+          "interpolation_error": 6.214549963476377e-10,
+          "runtime_s": 6.486725399969146
+        }
+      ],
+      "warnings": []
+    }
+  ],
+  "runner_sha256": "4a404a16a31a6b309b5cebf005f730b0b0720935ba09ccb1e6d5abb5e205afdc",
+  "source_hashes": {
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "fast_sgwb.py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
+    "runner.py": "4a404a16a31a6b309b5cebf005f730b0b0720935ba09ccb1e6d5abb5e205afdc"
+  },
+  "limitations": [
+    "Each Reference root uses the corresponding Fast frequency subset, so it is an exact-node cross-check but still inherits that grid's discretization error.",
+    "The target sweep is not a same-grid paired P50/P95 performance study; Fast timings are from the prior sequential feasibility sweep.",
+    "This tests the existing adaptive path and does not change production defaults or add a dispatch rule."
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  }
+}
