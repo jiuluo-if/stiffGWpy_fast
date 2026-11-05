@@ -1212,3 +1212,31 @@ are in [`fast_ninf222_selected_prufer_20261105.json`](fast_ninf222_selected_pruf
 and [`fast_ninf222_fullgrid_prufer_20261105.json`](fast_ninf222_fullgrid_prufer_20261105.json),
 with drivers [`validate_fast_ninf222_selected_prufer.py`](../scripts/validate_fast_ninf222_selected_prufer.py)
 and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py).
+
+## 2026-11-05 Fast low-temperature positive-cr cross-check
+
+For the independent `cr=1` branch, the input `n_t=0.5` and `DN_re=200` are
+not independent: the consistency branch derives `n_t=-0.00125` and overwrites
+`DN_re` with `57.9462`. At `T_re=1e-3`, the resulting `N_inf=80.4482` Fast
+solve completes on 339 adaptive nodes (`target=1e-5`, `z_tail=8`,
+`sigma_exact=True`) in `0.568 s`; its local grid estimate is `9.621e-6` and
+`DN_gw=3.10600045e-9`.
+
+The full same-grid 339-node Prüfer map gives maximum spectrum error
+`1.5079e-4 dex`, P95 `1.4550e-4 dex`, and `DN_gw` difference `3.03e-7`
+relative. The first native `freq_res=2` grid (383 nodes) misses the integral
+screen narrowly: adaptive-to-res2 difference `2.038e-4`, Fast-to-res2
+`2.041e-4`. Refinement shows res2 is under-resolved: res2-to-res4 (765 nodes)
+changes `DN_gw` by `2.764e-4`. The converged pair res4→res8 (1530 nodes)
+differs by `8.971e-5`; Fast-to-res8 differs by `1.743e-5`, and the adaptive
+map-to-res8 difference is `1.713e-5`. Thus the fixed-background spectrum and
+map gates pass against the denser converged Prüfer pair even though the
+intermediate res2 result does not.
+
+This validates this fixed background only. It does not solve the independent
+self-consistent Reference root, and the `cr>0` input coordinates must be
+reported with their derived effective values. Full arrays, grid hashes,
+resource data, staged drivers, and the initial res2 near-miss are retained in
+[`fast_cr1_lowT_fullgrid_prufer_20261105.json`](fast_cr1_lowT_fullgrid_prufer_20261105.json),
+[`fast_cr1_lowT_res4_prufer_20261105.json`](fast_cr1_lowT_res4_prufer_20261105.json),
+and [`fast_cr1_lowT_res8_prufer_20261105.json`](fast_cr1_lowT_res8_prufer_20261105.json).

@@ -617,3 +617,13 @@ the native map by `1.1453e-4`. This is a fixed-background validation only; the
 independent self-consistent root at this second point remains unchecked. See
 [`fast_ninf222_fullgrid_prufer_20261105.json`](fast_ninf222_fullgrid_prufer_20261105.json)
 and [`validate_fast_ninf222_fullgrid_prufer.py`](../scripts/validate_fast_ninf222_fullgrid_prufer.py).
+
+The low-temperature positive-cr point (`T_re=1e-3`) has derived `N_inf=80.4482`,
+`n_t=-0.00125`, and effective `DN_re=57.9462`. Fast passes the full spectrum
+screen (`1.5079e-4 dex` max); native res2 narrowly misses the DN gate, while
+res4/res8 converge within `8.971e-5` and Fast-to-res8 is `1.743e-5`. This is a
+fixed-background result; the Reference self-consistent root remains open. See
+[`fast_cr1_lowT_fullgrid_prufer_20261105.json`](fast_cr1_lowT_fullgrid_prufer_20261105.json),
+[`fast_cr1_lowT_res4_prufer_20261105.json`](fast_cr1_lowT_res4_prufer_20261105.json),
+[`fast_cr1_lowT_res8_prufer_20261105.json`](fast_cr1_lowT_res8_prufer_20261105.json),
+and [`validate_fast_cr1_lowT_fullgrid.py`](../scripts/validate_fast_cr1_lowT_fullgrid.py).
