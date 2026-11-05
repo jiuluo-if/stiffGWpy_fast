@@ -848,6 +848,28 @@ and the residual probe
 The multi-order dual-reference validation record is
 [`sample2_phase_residual_orders_dual_reference_20261105.json`](sample2_phase_residual_orders_dual_reference_20261105.json).
 
+### Phase candidate integral completeness and Fast-cost audit
+
+A source-bound union of the 737 gamma-zero full-grid modes, 44 separately
+dual-reference-validated residual modes, and six phase-start candidates covers
+787/800 frequencies. Seven residual failures and six non-positive/non-finite
+normal-form `Q` modes remain unresolved. Their Reference trapezoid nodal mass
+is only `6.58e-11` of the total, but this is observed Reference weight, not an
+a-priori bound for a missing Phase spectrum. Filling those 13 modes with
+Reference values gives a hybrid map only `7.72e-9` relative from the Reference
+root; that is a sensitivity analysis, not a Phase candidate map.
+
+The measured gamma-zero Phase run costs `132.21 s` for the 800-mode screen,
+versus `43.01 s` for Cartesian Reference. The formal Fast public solve on the
+same sample returns in `0.354 s` on 64 nodes: the Phase run is `373x` slower.
+Even a lower-bound sum for the single order-32 work on its 737 completed modes
+is `182.63 s` (`515x` Fast), excluding failed-mode retries and recovery. The
+Chebyshev/Riccati prototype is therefore rejected as a Fast-path expansion
+candidate under the current cost gate; no production dispatch was added. The
+reproducible union, oracle-fill sensitivity, mode failures, and timing are in
+[`sample2_phase_integral_completeness_20261105.json`](sample2_phase_integral_completeness_20261105.json),
+from [`analyze_sample2_phase_integral_completeness.py`](../scripts/analyze_sample2_phase_integral_completeness.py).
+
 Before the scalar-spline optimization, rechecking Prüfer against the
 dense-output-optimized Cartesian baseline gave
 `3.349x` aggregate speedup on the same four modes, with per-mode P50/P95
