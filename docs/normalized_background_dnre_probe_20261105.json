@@ -1,0 +1,241 @@
+{
+  "experiment": "reheating-aligned normalized-coordinate and full-Fast probe",
+  "source_head_before_probe": "619172f461d5da1e2f02f01cd8a641f6214cd29c",
+  "source_sha256": {
+    "LCDM_stiff_Neff.py": "7df1f842aacf7a06a76569ddb18aa4b4330fe13deabd7ba1c080174152d40f91",
+    "exact_background.py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+    "fast_sgwb.py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
+    "probe_script.py": "da84af2fe4c44e667798a04014d9da8e8acebeed4c843ca07d844f03ac1496ce"
+  },
+  "environment": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "numpy": "2.4.4",
+    "numba": "0.67.0",
+    "numba_thread_limit": 2,
+    "numba_threads_before_solve": 2,
+    "configured_threads": 1,
+    "numba_threads_after_solve": 2,
+    "thread_environment": {
+      "NUMBA_NUM_THREADS": "2",
+      "NUMBA_THREADING_LAYER": "workqueue",
+      "FAST_THREADS": "2"
+    }
+  },
+  "configuration": {
+    "h": 0.005,
+    "col_step": 8,
+    "z_tail": 5.0,
+    "phase_max": 0.25,
+    "freq_grid": "goal",
+    "freq_res": 0.25,
+    "tol": 1e-06,
+    "physical_guard": true,
+    "frequency_quadrature": "pchip"
+  },
+  "normalized_coordinate": "s=(N-N_re_abs)/N_re on N>=N_re_abs; N_inf-N=(1-s)N_re",
+  "s_samples": [
+    0.05,
+    0.25,
+    0.5,
+    0.75,
+    0.95
+  ],
+  "probe_frequencies_log10_hz": [
+    -0.5982343431195201,
+    -0.34823434311952,
+    -0.09823434311952,
+    0.05176565688047999,
+    0.25176565688048,
+    0.40176565688048,
+    0.6517656568804799,
+    0.9017656568804799
+  ],
+  "cases": [
+    {
+      "input": {
+        "r": 0.01,
+        "cr": 0.0,
+        "n_t": 0.0,
+        "T_re": 2000.0,
+        "kappa10": 0.01,
+        "DN_re": 8.0,
+        "DN_eff_initial": 0.0
+      },
+      "derived": {
+        "N_re": 37.7723412841054,
+        "N_inf": 45.7723412841054,
+        "N_re_abs": 8.0
+      },
+      "background": {
+        "sigma_s": [
+          1.9999999594534321,
+          1.8153491034694662,
+          1.3332633926953892,
+          1.2624803618081382,
+          0.9931265950013349
+        ],
+        "H2_s": [
+          1.0318697243927533e+18,
+          196284529.78745455,
+          6661.9814912172305,
+          0.6703567351438812,
+          0.1444511724082736
+        ],
+        "Phi_s": [
+          7.777234098731404,
+          22.74589113539606,
+          32.61330663974862,
+          41.93691144704813,
+          46.48160501614672
+        ],
+        "log_S2_s": [
+          -4.22276593094773,
+          10.605611628739425,
+          11.454271995391847,
+          11.215310967938157,
+          5.195761592493182
+        ],
+        "f_hor_s": [
+          -1.488666269055233,
+          -7.989466965502805,
+          -12.274648856642997,
+          -16.323837443971545,
+          -18.297561858273053
+        ],
+        "f_re": 0.15176565688072532,
+        "fmax": 1.8889435844934872
+      },
+      "fast": {
+        "success": true,
+        "runtime_s": 0.2854726000223309,
+        "failure_reason": null,
+        "n_frequency": 68,
+        "frequency_range": [
+          -18.459378758443304,
+          1.8889435844937341
+        ],
+        "DN_gw_final": 0.002371714042691462,
+        "DN_eff_final": 0.002371714042691462,
+        "matched_probe_frequencies": [
+          -0.5982343431195201,
+          -0.34823434311952,
+          -0.09823434311952,
+          0.05176565688047999,
+          0.25176565688048,
+          0.40176565688048,
+          0.6517656568804799,
+          0.9017656568804799
+        ],
+        "probe_log10_OmegaGW": [
+          -8.30385845662154,
+          -8.081734116709494,
+          -7.913074374812845,
+          -7.875254734902004,
+          -8.000637399028227,
+          -8.34359381073846,
+          -8.864354640838547,
+          -9.396506906807458
+        ]
+      }
+    },
+    {
+      "input": {
+        "r": 0.01,
+        "cr": 0.0,
+        "n_t": 0.0,
+        "T_re": 2000.0,
+        "kappa10": 0.01,
+        "DN_re": 12.0,
+        "DN_eff_initial": 0.0
+      },
+      "derived": {
+        "N_re": 37.7723412841054,
+        "N_inf": 49.7723412841054,
+        "N_re_abs": 12.0
+      },
+      "background": {
+        "sigma_s": [
+          1.9999999594534321,
+          1.8153491034694662,
+          1.3332633926953892,
+          1.2624803618081382,
+          0.9931265950013349
+        ],
+        "H2_s": [
+          1.0318697243927533e+18,
+          196284529.78745455,
+          6661.9814912172305,
+          0.6703567351438812,
+          0.1444511724082736
+        ],
+        "Phi_s": [
+          9.777234098731533,
+          24.74589113539622,
+          34.61330663974841,
+          43.93691144704853,
+          48.48160501614716
+        ],
+        "log_S2_s": [
+          -8.222765930947475,
+          6.605611628739743,
+          7.454271995391422,
+          7.215310967938957,
+          1.1957615924940557
+        ],
+        "f_hor_s": [
+          -1.488666269055233,
+          -7.989466965502805,
+          -12.274648856642997,
+          -16.323837443971545,
+          -18.297561858273053
+        ],
+        "f_re": 0.15176565688072377,
+        "fmax": 2.7575325482999906
+      },
+      "fast": {
+        "success": true,
+        "runtime_s": 0.007591499947011471,
+        "failure_reason": null,
+        "n_frequency": 70,
+        "frequency_range": [
+          -18.459378758443304,
+          2.7575325483002344
+        ],
+        "DN_gw_final": 0.0023694699999392606,
+        "DN_eff_final": 0.0023694699999392606,
+        "matched_probe_frequencies": [
+          -0.5982343431195201,
+          -0.34823434311952,
+          -0.09823434311952,
+          0.05176565688047999,
+          0.25176565688048,
+          0.40176565688048,
+          0.6517656568804799,
+          0.9017656568804799
+        ],
+        "probe_log10_OmegaGW": [
+          -8.3038640330298,
+          -8.081752980404515,
+          -7.913134700107305,
+          -7.875375090191614,
+          -8.000939756023806,
+          -8.344197295034352,
+          -8.866265925332577,
+          -9.402579766906289
+        ]
+      }
+    }
+  ],
+  "comparison": {
+    "N_re_abs_shift": 4.0,
+    "max_abs_sigma_difference": 0.0,
+    "max_relative_H2_difference": 0.0,
+    "max_abs_f_hor_difference": 0.0,
+    "max_abs_Phi_after_0p5DNre_shift": 4.334310688136611e-13,
+    "max_abs_logS2_after_DNre_shift": 8.739675649849232e-13,
+    "max_abs_log10_spectrum_difference_at_shared_probe_frequencies": 0.006072860098830901,
+    "interpretation_limit": "Cross-parameter output differences are physical sensitivity, not numerical error; this is not an independent accuracy or parameter-domain certification.",
+    "timing_limit": "Sequential single-call wall times are recorded per case; the first call can include JIT cost and must not be compared as a performance result."
+  }
+}

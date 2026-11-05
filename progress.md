@@ -1759,3 +1759,11 @@ the diagnostic artifacts are retained.
 - Derived an exact normalized coordinate for the `N >= N_re_abs` background branch: `s=(N-N_re_abs)/N_re`, so `N_inf-N=(1-s)N_re`. This removes the independent inflation-length offset from the `sigma_vec`/`H2_vec` expressions within that segment while preserving the event boundary explicitly.
 - Replayed `sigma_vec` and `H2_vec` at five common `s` values for otherwise identical `cr=0` models with `DN_re=8` and `12`: same `N_re`, bitwise-identical `sigma` and `H²` arrays. The exact kink still causes a finite jump when represented in native fixed-`N` coordinates, so this suggests branch alignment rather than smoothing.
 - This is background-level evidence only; it says nothing yet about `Phi/S2`, the transfer state, frequency support, `DN_gw`, self-consistent root or runtime. Next determine whether the normalized invariance survives the complete kernel and whether it reduces EIM derivative bounds/cost enough to matter.
+
+## 2026-11-05 complete Fast normalized-coordinate probe
+
+- [x] Added a reproducible diagnostic script and raw JSON output covering the aligned background, primitive shifts, frequency support, physical-guarded Fast roots, and eight common-frequency spectrum samples for `DN_re=8` and `12`.
+- [x] Corrected resource-budget import order so Numba imports only after environment defaults are installed; reran both cases successfully with one Fast thread and captured the restored thread budget.
+- [x] Recorded that post-event `sigma`, `H²`, and `f_hor` match, but full spectra differ by up to `0.006073 dex` at common frequencies and the upper support changes. Cross-parameter differences are physical sensitivity, not a numerical accuracy estimate.
+- [x] `ruff check`, `py_compile`, `git diff --check`, and the standalone probe pass. No production source or Reference implementation changed.
+- [ ] Commit/push the reviewed research artifact, then test whether a branch-aligned coordinate offers a useful general Fast mechanism; current evidence is only two parameter points and does not meet regional accuracy/speed gates.
