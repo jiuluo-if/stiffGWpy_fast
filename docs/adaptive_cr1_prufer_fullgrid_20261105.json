@@ -1079,13 +1079,14 @@
       "relative_DN_gw_error_vs_fast": 9.919352369479194e-06
     }
   },
-  "status": "partial_resource_limited",
+  "status": "fixed_background_two_grid_screen_pass_root_unverified",
   "limitations": [
-    "Fixed-background validation only; it does not independently solve the self-consistent Reference root.",
+    "Fixed-background validation only; it does not independently solve or bracket the self-consistent Reference root.",
     "A separate Cartesian full-grid result and 32-bin Prüfer cross-check are archived in adaptive_standard_background_validation_20261105.json.",
-    "The freq_res=4 Reference convergence map exceeded the 1200 s CPU budget and was cancelled; frequency-quadrature convergence remains uncertified for this point.",
-    "The Fast grid-target sweep is only a solver-configuration sensitivity check; because these are Fast self-consistent runs, it does not replace the missing independent Reference convergence map.",
-    "This artifact certifies fixed-background propagation and same-grid integration for the positive-cr point only; it does not certify the Reference self-consistent root."
+    "The 256-node adaptive Prüfer map and the denser 484-node native freq_res=2 Prüfer map differ by 9.9973e-5 relative in DN_gw, below the 2e-4 screen. This two-grid check is not a formal quadrature error bound.",
+    "The stronger freq_res=4 Prüfer map and alternate Cartesian freq_res=2 map exceeded the 1200 s process CPU budget and were cancelled without numeric results.",
+    "The Fast grid-target sweep is configuration sensitivity evidence only; the independent Prüfer native-grid result provides the separate frequency-grid screen for this point.",
+    "This point has fixed-background propagation and two-grid integration evidence, but no self-consistent Reference root certification."
   ],
   "resource_limit": {
     "stage": "Reference Prüfer native frequency grid freq_res=4 at fixed DN_eff",
@@ -1147,7 +1148,7 @@
     "fast_vs_cartesian_p95_abs_dex": 0.0003909339834236269,
     "relative_DN_gw_error_vs_fast": 8.858397929466724e-06,
     "same_grid_cartesian_vs_prufer_subset_max_abs_dex": 2.1403507366993628e-05,
-    "artifact_sha256": "a5f163ed5e841f5c7f816966b93cfefe8567ab4751ac4bf921a1d25b3336af57",
+    "artifact_sha256": "30e413fc74e429132f315471ab33bf1b3568e94ecb03661cf2e2122e4d14274b",
     "driver_hash_note": "Current reproduction driver hash; post-run changes add raw vector persistence, stage labels, and acceptance-matched early stop only."
   },
   "workers_ab_subset": {
@@ -1212,7 +1213,19 @@
     "same_grid_DN_gw_relative_error_le_2e-4": true,
     "cartesian_same_grid_spectrum_max_abs_dex_le_1e-3": true,
     "cartesian_vs_prufer_subset_max_abs_dex_le_1e-3": true,
-    "independent_frequency_grid_convergence": "not_verified_resource_timeout",
-    "self_consistent_reference_root": "not_run"
+    "independent_frequency_grid_convergence": "two_grid_prufer_screen_pass_res4_unfinished",
+    "self_consistent_reference_root": "not_run",
+    "adaptive_reference_grid_delta_le_2e-4": true,
+    "fast_DN_gw_vs_dense_reference_map_le_2e-4": true
+  },
+  "native_res2_reference": {
+    "artifact": "adaptive_cr1_prufer_res2_20261105.json",
+    "artifact_sha256": "f5dc35ab0f15fecf37cac3dc79297372e9d35de13ccbf9d96829da4b1539794c",
+    "frequency_count": 484,
+    "frequency_sha256": "e4b76020fc6b188c8509f57af70d8f67e95dfa5e6ff78c9de90ade563b42b4e5",
+    "DN_gw": 0.0022622765590586493,
+    "runtime_s": 1627.4985121001955,
+    "relative_DN_gw_delta_vs_adaptive_256_node_prufer": 9.99728030397026e-05,
+    "relative_DN_gw_delta_vs_fast_output": 0.00010989116374372108
   }
 }

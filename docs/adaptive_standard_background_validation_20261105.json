@@ -100,9 +100,9 @@
     "interpretation": "Resource limit only; no numerical failure or pass inferred."
   },
   "limitations": [
-    "This records a full same-grid Cartesian spectrum comparison at fixed DN_eff and an independent 32-bin Prüfer subset, but no dense Reference frequency-grid convergence result.",
-    "The Reference freq_res=2 map exceeded the 1200 s CPU budget and was cancelled; no frequency-quadrature convergence claim is made.",
-    "Frequency and spectrum vectors are archived in the companion adaptive_cr1_prufer_fullgrid_20261105.json; the Cartesian raw vector was not persisted in this run."
+    "This records a full same-grid Cartesian spectrum comparison at fixed DN_eff and an independent 32-bin Prüfer subset; the companion 484-node native-grid Prüfer comparison is in adaptive_cr1_prufer_res2_20261105.json.",
+    "The alternate Cartesian freq_res=2 convergence map exceeded the 1200 s CPU budget and was cancelled; the Prüfer native-grid screen passed separately.",
+    "The Cartesian raw spectrum vector was not persisted in this run; the exact frequency grid and full Fast/Prüfer raw vectors are archived in adaptive_cr1_prufer_fullgrid_20261105.json."
   ],
   "hashes": {
     "fast_sgwb_py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
@@ -116,6 +116,6 @@
     "fast_vs_cartesian_spectrum_max_abs_dex_le_1e-3": true,
     "fast_vs_cartesian_DN_gw_relative_error_le_2e-4": true,
     "cartesian_vs_prufer_subset_max_abs_dex_le_1e-3": true,
-    "frequency_grid_convergence_certified": false
+    "frequency_grid_convergence_certified": "two-grid Prüfer screen passed; Cartesian alternate-grid cross-check resource-limited"
   }
 }

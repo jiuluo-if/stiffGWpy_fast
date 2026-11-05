@@ -561,12 +561,18 @@ Full Fast and Prüfer raw arrays and environment/source hashes are in
 driven by
 [`validate_adaptive_cr1_prufer_fullgrid.py`](../scripts/validate_adaptive_cr1_prufer_fullgrid.py).
 
-Frequency-grid convergence and a self-consistent Reference root remain
-unverified: Prüfer `freq_res=4` and Cartesian `freq_res=2` convergence maps
-were cancelled at the 1200 s process CPU budget without numerical results.
-The independent exact-frequency propagation check is a positive result, but
-the Fast target sweep is non-monotone and does not close the integration-grid
-question. See the scoped partial record
+The 484-node native Prüfer `freq_res=2` map differs by `9.9973e-5` relative in
+`DN_gw` from the exact 256-node adaptive-grid Prüfer map, and the Fast output
+differs from the dense map by `1.0989e-4`; both are within the `2e-4` gate.
+Full native-grid arrays are in
+[`adaptive_cr1_prufer_res2_20261105.json`](adaptive_cr1_prufer_res2_20261105.json),
+driven by
+[`validate_adaptive_cr1_prufer_res2.py`](../scripts/validate_adaptive_cr1_prufer_res2.py).
+This is a two-grid convergence screen, not a formal error bound or self-consistent
+Reference root certification. The higher Prüfer `freq_res=4` and alternate
+Cartesian `freq_res=2` maps were cancelled at the 1200 s CPU budget without
+results; these are resource timeouts, not numerical failures. The Fast target
+sweep is also non-monotone. See the scoped partial record
 [`adaptive_standard_background_validation_20261105.json`](adaptive_standard_background_validation_20261105.json)
 and the detailed [accuracy note](accuracy.md#2026-11-05-adaptive-fast-positive-cr-fixed-background-cross-check).
 Reference workers=4 were slower than workers=1 (132.56 s versus 84.36 s on

@@ -1093,16 +1093,25 @@ and raw positive spectra, exact parameters, hashes, and timing are in
 reproduce with
 [`validate_adaptive_cr1_prufer_fullgrid.py`](../scripts/validate_adaptive_cr1_prufer_fullgrid.py).
 
-The independent frequency-quadrature convergence check is **incomplete**.
-The Prüfer `freq_res=4` map and a Cartesian `freq_res=2` follow-up each reached
-the 1200-second process CPU budget without a saved result. These are resource
-timeouts, not accuracy failures. The Fast-only target sweep is non-monotone:
-the `1e-4` and `1e-6` outputs differ by `1.12e-4` relative in `DN_gw`, while
-the `3e-5` and `1e-6` outputs differ by `2.94e-4`; this cannot replace an
-independent Reference grid-convergence result. Accordingly this point has
-full-grid fixed-background propagation evidence, but its bolometric frequency
-resolution and Reference self-consistent root are not certified. The partial
-Cartesian run and explicit resource outcome are recorded in
+The same Prüfer Reference on a denser native `freq_res=2` grid (484 nodes)
+returns `DN_gw=0.0022622765591`, a `9.9973e-5` relative change from the
+256-node adaptive-grid Prüfer map. The Fast output differs from that dense map
+by `1.0989e-4` relative. Both are within the `2e-4` DN gate and provide a
+two-grid convergence screen for this fixed background. The raw 484-node
+frequencies and spectrum, environment, and hashes are in
+[`adaptive_cr1_prufer_res2_20261105.json`](adaptive_cr1_prufer_res2_20261105.json);
+reproduce with
+[`validate_adaptive_cr1_prufer_res2.py`](../scripts/validate_adaptive_cr1_prufer_res2.py).
+
+This two-grid difference is not a formal quadrature-error bound or a
+self-consistent Reference root certification. The higher Prüfer `freq_res=4`
+map and an alternate Cartesian `freq_res=2` map each reached the 1200-second
+process CPU budget without a saved result; these are resource timeouts, not
+accuracy failures. The Fast-only target sweep is non-monotone: the `1e-4` and
+`1e-6` outputs differ by `1.12e-4` relative in `DN_gw`, while the `3e-5` and
+`1e-6` outputs differ by `2.94e-4`. Keep this target sweep separate from the
+independent Reference result. The partial Cartesian run and resource outcome
+are recorded in
 [`adaptive_standard_background_validation_20261105.json`](adaptive_standard_background_validation_20261105.json).
 
 On 32 stratified modes, Reference `workers=1` took `84.36 s` and `workers=4`
