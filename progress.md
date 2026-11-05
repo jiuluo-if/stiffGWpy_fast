@@ -1718,3 +1718,10 @@ the diagnostic artifacts are retained.
 - Recorded the sufficient `∫||A||<π` convergence condition, local-series limitation, structure preservation, step splitting, and exponential costs in `docs/research/phase_function_papers_batch1_20261105.md`.
 - Cross-checked against project experiments: linear-z closed 2×2 Magnus took 1.8–2.0× baseline time; CF4 took 1.42–1.63× baseline time in the unfiltered kernel screen and showed no meaningful independent-oracle accuracy gain. No new Magnus or CF4 production candidate is justified without a substantive error-control/cost change.
 - No production source changed. Six named first-batch papers and six of eight named open-source projects remain unaudited; broader domain algorithm and region gates remain open.
+
+## 2026-11-05 reduced-basis literature screen
+
+- Downloaded and checked Ballani–Kressner's complete author-hosted EPFL PDF; read the reduced-basis error estimator, affine operator representation, rbTensor algorithm, numerical setup/results, and stated limitations. Verified journal metadata and DOI with SIAM.
+- Recorded that the proposed many-query reduced basis / low-rank tensor method depends on parameter separability, greedy training, and a posteriori residual bounds; the paper's experiments use finite parameter grids and note limitations in black-box reliability and continuous-domain control.
+- Project fit remains a research hypothesis only: no certified conversion of nonnormal tensor-mode propagation, spectrum integration, and self-consistent-root errors follows from the paper's elliptic coercivity bounds. No code or production source changed; no reproduction was claimed.
+- Five of the sixteen named first-batch papers and six of eight named open-source projects remain unaudited; broad Fast-domain and performance gates remain open.
