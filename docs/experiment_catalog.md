@@ -635,3 +635,23 @@ relative residual `7.258e-5`. The two grids do not share a sign-changing
 bracket, so this is a two-grid secant screen, not a formal root enclosure. See
 [`fast_cr1_lowT_root_secant_20261105.json`](fast_cr1_lowT_root_secant_20261105.json)
 and [`probe_fast_cr1_lowT_root_secant.py`](../scripts/probe_fast_cr1_lowT_root_secant.py).
+
+The high-blue fixed-background point `cr=0, r=10, n_t=2, kappa10=.01`,
+`T_re=.001`, `DN_re=200` passes the full spectrum and res4 integral screens
+only at the tighter adaptive target `1e-7`: maximum spectrum error is
+`1.464e-4 dex`, Fast-to-res4 DN difference `6.416e-5`. Targets `1e-5` and
+`1e-6` miss the Fast-to-res4 integral gate despite passing the same-grid
+spectrum check. The cumulative panel indicator is recorded as a diagnostic,
+not a certified error bound. See
+[`fast_high_blue_fullgrid_prufer_20261105.json`](fast_high_blue_fullgrid_prufer_20261105.json),
+[`fast_high_blue_target1e6_prufer_20261105.json`](fast_high_blue_target1e6_prufer_20261105.json),
+[`fast_high_blue_target1e7_prufer_20261105.json`](fast_high_blue_target1e7_prufer_20261105.json),
+and the three corresponding validation scripts in `scripts/`.
+
+The target-`1e-7` high-blue point also passes a two-grid secant root screen:
+adaptive and native-res4 estimates differ by `8.110e-5`, Fast differs from
+the res4 estimate by `6.553e-5`, and the corrected adaptive residual at the
+res4 candidate is `8.114e-5`. This is not a formal root enclosure; the sampled
+grids do not share a sign-changing bracket. See
+[`fast_high_blue_root_secant_20261105.json`](fast_high_blue_root_secant_20261105.json)
+and [`probe_fast_high_blue_root_secant.py`](../scripts/probe_fast_high_blue_root_secant.py).
