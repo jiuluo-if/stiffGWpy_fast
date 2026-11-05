@@ -662,3 +662,10 @@ spectrum error `1.472e-4 dex`, res2→res4 difference `1.717e-4`, and
 Fast→res4 difference `6.248e-5`. Its self-consistent root remains open. See
 [`fast_high_blue_kappa100_prufer_20261105.json`](fast_high_blue_kappa100_prufer_20261105.json)
 and [`validate_fast_high_blue_kappa100.py`](../scripts/validate_fast_high_blue_kappa100.py).
+
+Its two-grid secant root estimates differ by `8.098e-5`; the corrected
+adaptive residual at the native res4 candidate is `8.099e-5`. The adaptive
+interval brackets the residual sign change, but native res4 does not, so the
+result is a screening check rather than a formal root enclosure. See
+[`fast_high_blue_kappa100_root_secant_20261105.json`](fast_high_blue_kappa100_root_secant_20261105.json)
+and [`probe_fast_high_blue_kappa100_root.py`](../scripts/probe_fast_high_blue_kappa100_root.py).

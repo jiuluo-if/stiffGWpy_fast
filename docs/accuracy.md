@@ -1325,3 +1325,15 @@ hashes, and resource data are in
 [`fast_high_blue_kappa100_prufer_20261105.json`](fast_high_blue_kappa100_prufer_20261105.json),
 reproduced by
 [`validate_fast_high_blue_kappa100.py`](../scripts/validate_fast_high_blue_kappa100.py).
+
+For the joint point, the adaptive and native res4 interval-secant root
+estimates are `0.1579794948` and `0.1579667014`; their relative difference is
+`8.098e-5`. Fast differs from the native res4 estimate by `6.381e-5`, and an
+adaptive map at that candidate gives a slope-corrected relative residual
+`8.099e-5`. The adaptive interval brackets a residual sign change; res4 does
+not, so no common two-grid bracket exists. This passes the `2e-4` secant
+screen but remains short of a formal root enclosure or a full iterative
+Reference solve. Maps and provenance are in
+[`fast_high_blue_kappa100_root_secant_20261105.json`](fast_high_blue_kappa100_root_secant_20261105.json),
+reproduced by
+[`probe_fast_high_blue_kappa100_root.py`](../scripts/probe_fast_high_blue_kappa100_root.py).
