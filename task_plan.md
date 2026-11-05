@@ -1194,3 +1194,14 @@ Develop a diagnostic-only, panel-integral contribution selector that spends midp
 ### Next Step
 
 Build a deterministic held-out panel-selection screen spanning cr=0 and cr>0, neighboring target points, and at least one boundary case. Use only the current coarse curvature×weight ranking to select actual Fast midpoint solves; report the global `DN_gw` and spectrum changes, rank concentration, kernel work, and the independent dense-grid comparison. Keep production Fast unchanged until the screen supports an online rule.
+
+### Expanded region screen outcome — 2026-11-05
+
+- [x] Ran the fixed-background actual-midpoint and current-curvature-ranked selector on seven archived cases across frequency-target variation, `cr=0`/`cr>0`, high `kappa10`, low temperature, extreme red tilt and high `N_inf`.
+- [x] Found systematic gains on the high-blue target sweep and standard positive-cr/kappa case; e.g. dense-reference `DN_gw` delta moved `7.56e-4→6.88e-5` and `1.10e-4→2.38e-5`.
+- [x] Found counterexamples: low-T positive-cr worsened `2.04e-4→2.17e-4`; extreme-red changed `6.89e-5→6.98e-5`; high-`N_inf` improved only `1.15e-4→1.03e-4`. Embedded deltas were weak relative to Reference grid changes for these cases.
+- [ ] Do not promote to production. F2 remains incomplete: explain whether counterexamples reflect frequency-grid interpolation, propagation, tail, or Reference grid convergence; evaluate spectrum error and online selector cost.
+
+### Next Step
+
+Read the low-T and extreme-red full-grid validation maps and error decomposition, then run paired same-background Fast/Prüfer comparisons on the exact base and candidate-selected frequencies. Decide whether these counterexamples are adaptive-grid failures or a different error component before changing the selector.

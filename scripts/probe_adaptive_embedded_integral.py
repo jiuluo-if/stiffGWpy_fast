@@ -40,9 +40,9 @@ SOURCE = ROOT / "docs" / SOURCE_NAME
 OUTPUT_NAME = (
     "adaptive_embedded_integral_fast_midpoints_20261105.json"
     if SOURCE_NAME == "fast_high_blue_target1e7_prufer_20261105.json"
-    else "adaptive_cr1_prufer_embedded_midpoints_20261105.json"
+    else f"embedded_midpoint_{Path(SOURCE_NAME).stem}.json"
 )
-OUTPUT = ROOT / "docs" / OUTPUT_NAME
+OUTPUT = ROOT / "docs" / os.environ.get("ADAPTIVE_EMBEDDED_OUTPUT", OUTPUT_NAME)
 REPEATS = 7
 _SOURCE_DATA = json.loads(SOURCE.read_text(encoding="utf-8"))
 SOURCE_Z_TAIL = float(
@@ -113,7 +113,9 @@ def main() -> None:
     FS.apply_accuracy_mode("fast")
     FS.set_threads(2)
     source = _SOURCE_DATA
-    params = source["parameters"]
+    params = source.get("parameters", source.get("parameters_input"))
+    if not isinstance(params, dict):
+        raise RuntimeError("source artifact does not contain a parameter mapping")
     dn_eff = float(source.get("fixed_DN_eff", source["fast"]["DN_eff_final"]))
     base_freqs = np.asarray(source["fast"]["frequencies_log10_hz"], dtype=np.float64)
     x = np.sort(base_freqs)
@@ -167,6 +169,8 @@ def main() -> None:
         "native_res4"
         if "native_res4" in ref_maps
         else "native_res2_reference"
+        if "native_res2_reference" in ref_maps or "native_res2_reference" in source
+        else "native_res2"
     )
     archived_ref = ref_maps[adaptive_ref_key]["DN_gw"]
     archived_dense = (

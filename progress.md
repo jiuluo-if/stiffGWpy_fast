@@ -1661,3 +1661,11 @@ the diagnostic artifacts are retained.
 - The run's one-off Fast map checks passed; Ruff and `py_compile` passed. No production source changed.
 - CI for commit `67b73910ddaa3fe2049412b78af8af8f634141d3` passed all nine jobs in run `41972973367`.
 - Next: test cumulative curvature-budget selection on more held-out points, including neighboring and boundary cases, and track spectrum error as well as `DN_gw`. If it stays promising, implement behind the opt-in adaptive path with a focused regression first.
+
+## 2026-11-05 — expanded panel-selection screens
+
+- Replayed the diagnostic across seven archived cases: high-blue at three grid targets, high-blue `kappa10=100`, standard positive-cr, low-T positive-cr, extreme-red positive-cr, and high-`N_inf` blue. Each run matched its archived Fast grid and fixed-point background.
+- Top-quarter curvature-ranked midpoints improved dense-Prüfer `DN_gw` discrepancies substantially in the high-blue target sweep and standard positive-cr/kappa corner (e.g. `7.56e-4→6.88e-5` at high-blue target `1e-5`; `1.10e-4→2.38e-5` standard positive-cr).
+- It did not help uniformly: low-T positive-cr `2.04e-4→2.17e-4`, extreme-red positive-cr `6.89e-5→6.98e-5`, and high-`N_inf` only `1.15e-4→1.03e-4`. Embedded deltas were very small relative to the archived reference-grid changes on the first two cases, suggesting a different dominant error source or reference-grid behavior.
+- No production change. Ruff, `py_compile`, and `git diff --check` pass. Commit `39c0343` is pushed; CI run `41973818558` is still in progress at the last query.
+- Next: trace Fast-versus-Reference residuals and background/tail/propagation contributions for low-T and extreme-red, and prototype an online cumulative selector using only accessible coarse-grid signals. Require `DN_gw`, spectrum, cost, and held-out checks before production work.

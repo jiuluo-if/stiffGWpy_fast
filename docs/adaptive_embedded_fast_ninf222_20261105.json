@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "experiment": "fixed_background_fast_actual_midpoint_embedded_integral_probe",
+  "source_commit": "39c0343319b235bb4f77c5207286bfdc2a2330e9",
+  "created_at": "2026-11-05T13:28:13.983162+08:00",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "n_t": 0.5,
+    "cr": 0.0,
+    "T_re": 0.001,
+    "DN_re": 200.0,
+    "kappa10": 0.01
+  },
+  "fixed_DN_eff": 6.41315205305673e-09,
+  "fast_config": {
+    "h": 0.005,
+    "z_tail": 8.0,
+    "col_step": 8,
+    "phase_max": 0.25,
+    "sigma_exact": true
+  },
+  "fast_outer_replay_seconds": 0.6593140000477433,
+  "source_artifact": "fast_ninf222_fullgrid_prufer_20261105.json",
+  "adaptive_reference_key": "adaptive_exact_fast_grid",
+  "dense_reference_key": "native_res2",
+  "source_artifact_sha256": "3c162b7c256f5f1983e95415518016ba2159ed06c3571750414a7ae922417679",
+  "base_frequency_count": 299,
+  "actual_midpoint_count": 298,
+  "refined_frequency_count": 597,
+  "base_DN_gw": 6.413152052605418e-09,
+  "refined_DN_gw": 6.413349105077521e-09,
+  "archived_fast_DN_gw": 6.41315205305673e-09,
+  "base_relative_delta_vs_archived_fast": 7.037291803110431e-11,
+  "base_spectrum_max_abs_dex_vs_archived_fast": 1.0218386560185724e-09,
+  "base_spectrum_p95_abs_dex_vs_archived_fast": 8.656133341267839e-10,
+  "embedded_global_relative_delta": 3.07253618780313e-05,
+  "archived_reference_adaptive_DN_gw": 6.413312362103822e-09,
+  "archived_dense_reference_DN_gw": 6.41388664381794e-09,
+  "archived_reference_grid_relative_delta": 8.953724099126265e-05,
+  "embedded_to_archived_grid_delta_ratio": 0.3431573447860604,
+  "panel_integral_delta": {
+    "sum_signed_relative": 3.07253618794146e-05,
+    "sum_absolute_relative": 0.00032382141716857796,
+    "largest_panel_fraction_of_absolute_delta": 0.13598286468329496,
+    "selection_results": [
+      {
+        "selected_fraction": 0.25,
+        "selected_midpoint_count": 75,
+        "frequency_count": 374,
+        "DN_gw": 6.413388370882909e-09,
+        "relative_delta_vs_base": 3.68476480489041e-05,
+        "relative_delta_vs_all_midpoints": 6.122474286110828e-06,
+        "relative_delta_vs_archived_dense_reference": 7.768658267622308e-05,
+        "kernel_median_s": 0.06315729999914765,
+        "kernel_p95_s": 0.06323973999824375
+      },
+      {
+        "selected_fraction": 0.5,
+        "selected_midpoint_count": 149,
+        "frequency_count": 448,
+        "DN_gw": 6.413354546954841e-09,
+        "relative_delta_vs_base": 3.157385856977688e-05,
+        "relative_delta_vs_all_midpoints": 8.485227629145329e-07,
+        "relative_delta_vs_archived_dense_reference": 8.296012895887241e-05,
+        "kernel_median_s": 0.07902359985746443,
+        "kernel_p95_s": 0.08995157987810672
+      },
+      {
+        "selected_fraction": 0.75,
+        "selected_midpoint_count": 224,
+        "frequency_count": 523,
+        "DN_gw": 6.413349105077539e-09,
+        "relative_delta_vs_base": 3.072536188073975e-05,
+        "relative_delta_vs_all_midpoints": 2.708536924936907e-15,
+        "relative_delta_vs_archived_dense_reference": 8.38085813255208e-05,
+        "kernel_median_s": 0.10613279999233782,
+        "kernel_p95_s": 0.107082299888134
+      }
+    ],
+    "curvature_ranked_selection_results": [
+      {
+        "selected_fraction": 0.25,
+        "selected_midpoint_count": 75,
+        "frequency_count": 374,
+        "absolute_panel_delta_share_captured": 0.5536681881717578,
+        "DN_gw": 6.413224038127888e-09,
+        "relative_delta_vs_base": 1.1224545102822167e-05,
+        "relative_delta_vs_all_midpoints": 1.950103566546351e-05,
+        "relative_delta_vs_archived_dense_reference": 0.00010330798263955906,
+        "kernel_median_s": 0.07713490002788603,
+        "kernel_p95_s": 0.07770882989279926
+      },
+      {
+        "selected_fraction": 0.5,
+        "selected_midpoint_count": 149,
+        "frequency_count": 448,
+        "absolute_panel_delta_share_captured": 0.9976884193108747,
+        "DN_gw": 6.4133681048129925e-09,
+        "relative_delta_vs_base": 3.368779150735651e-05,
+        "relative_delta_vs_all_midpoints": 2.9625206538443706e-06,
+        "relative_delta_vs_archived_dense_reference": 8.084630018321881e-05,
+        "kernel_median_s": 0.09048450016416609,
+        "kernel_p95_s": 0.0979941898258403
+      },
+      {
+        "selected_fraction": 0.75,
+        "selected_midpoint_count": 224,
+        "frequency_count": 523,
+        "absolute_panel_delta_share_captured": 0.9999999999960476,
+        "DN_gw": 6.4133491050775255e-09,
+        "relative_delta_vs_base": 3.072536187867617e-05,
+        "relative_delta_vs_all_midpoints": 6.448897440325982e-16,
+        "relative_delta_vs_archived_dense_reference": 8.380858132758426e-05,
+        "kernel_median_s": 0.10656389989890158,
+        "kernel_p95_s": 0.11941653001122177
+      }
+    ],
+    "limitation": "Panels are ranked using all midpoint values; this is an upper-bound feasibility screen, not the work of an online selector."
+  },
+  "kernel_seconds": {
+    "base_median": 0.06502960016950965,
+    "base_p95": 0.07492889994755388,
+    "refined_median": 0.12419130001217127,
+    "refined_p95": 0.14424075009301304,
+    "median_ratio_refined_over_base": 1.9097657019026344,
+    "paired_repeats": 7,
+    "warmup_excluded": true
+  },
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": "workqueue",
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "hashes": {
+    "script_py": "2c3e2a0f440a7c0ce94520158ccad2861d4f593e70a72a87bbd6e930e0511f55",
+    "fast_sgwb_py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
+    "exact_background_py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c"
+  },
+  "limitations": [
+    "Fixed-background, one-parameter-point probe only; not a root-level accuracy result.",
+    "The midpoint values are actual Fast propagation outputs; no interpolated midpoint values are used.",
+    "The archived independent reference grids are nonnested and provide a convergence comparison, not a rigorous bound.",
+    "Kernel-only timing excludes background preparation and full adaptive-loop orchestration."
+  ]
+}
