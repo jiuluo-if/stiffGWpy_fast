@@ -3248,3 +3248,9 @@ remote matrix run.
 - Curvature-ranked top-quarter midpoint selection reduced the high-blue dense-Prüfer discrepancy from `7.56e-4` to `6.88e-5` at target `1e-5`, and from `2.31e-4` to `5.85e-5` at target `1e-6`. At target `1e-7` and `kappa10=100`, it reduced about `6.25e-5` to `2.56e-5` and `6.24e-5` to `2.55e-5`; positive-cr standard reduced `1.10e-4` to `2.38e-5`.
 - The method did not generalize uniformly: low-T positive-cr was `2.04e-4` at baseline and `2.17e-4` after top-quarter refinement; high-`N_inf` changed only `1.15e-4` to `1.03e-4`; extreme red positive-cr changed `6.89e-5` to `6.98e-5`. In those cases the midpoint embedded deltas were respectively only 1.7%, 34%, and 2.0% of the archived Reference grid changes. Treat these as evidence of a different dominant error or Reference grid behavior, not as a reason to force more points.
 - Result: promising for a connected high-blue/standard positive-cr set, but not a broad-domain Fast improvement. Do not add this ranking to the production adaptive solver yet. Next diagnose the low-T/extreme-red discrepancy components and test an online cumulative budget on held-out points, including output spectrum errors and true end-to-end cost.
+
+### Official `riccati` source reproduction — 2026-11-05
+
+- Audited official repository commit `dc9d370a0a51e4c30e8eadd941214e543eb0545e` (Apache-2.0, pure Python/NumPy; latest visible tag `v2.0.0`) and traced `evolve.py`, `step.py`, `stepsize.py`, `solversetup.py`, tests, and notebooks.
+- Official Airy and high-frequency burst checks: `2 passed`, 8 invalid-escape deprecation warnings, 0.94 s. An exact constant-frequency oscillator smoke test also passed in one Riccati step with zero reported state/derivative error.
+- This confirms the upstream ARDC implementation only; it shares the Phase 6c method family and supplies no full cosmological map/root/speed result. Keep dependency adoption and Fast-domain success unclaimed.

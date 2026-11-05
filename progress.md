@@ -1690,3 +1690,9 @@ the diagnostic artifacts are retained.
 - Read full Agocs–Barnett (2024) and Piron–Tacu (2025) algorithm sections and downloaded/validated both source PDFs; updated `docs/research/phase_function_papers_batch1_20261105.md` with equations, assumptions, failure modes, and prior-experiment deduplication.
 - Source-audited `oscode` at `4dd643b`; it uses adaptive WKB/RK local steps, C++17/Eigen, and interpolated coefficient arrays. Local execution was unavailable because `pyoscode` is absent and no C++ compiler is installed; a pip build-dependency attempt was stopped, with no package or project source changed.
 - Previous CI run `41979029318` passed. Remaining: commit/push this research record and continue the original broad literature/open-source and domain algorithm work.
+
+## 2026-11-05 official `riccati` reproduction
+
+- Read the upstream Python implementation and executed its official Airy and high-frequency burst tests: 2 passed, 8 invalid-escape warnings, 0.94 s.
+- A separate analytic constant-frequency oscillator (`ω=40`, `[0,10]`) used one Riccati step and had zero reported endpoint-state and derivative relative error.
+- This is only an ARDC implementation reproduction, not project-domain validation; next continue the remaining named papers and repositories and complete the current Phase 6c gates.

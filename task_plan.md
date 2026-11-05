@@ -1225,3 +1225,9 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 - [x] Read and record papers 5–6; deduplicate them against the current Phase 6c Riccati/Appell work.
 - [x] Inspect `oscode` source, tests, examples, version, and license; document why execution is unavailable on this host.
 - [ ] Continue the remaining named papers and seven open-source repositories, prioritizing a materially distinct method with domain-level evidence.
+
+### Official ARDC source reproduction
+
+- [x] Run targeted upstream `riccati` Airy and burst examples/tests plus an analytic constant-frequency oscillator.
+- [x] Record that this is the same ARDC family as Phase 6c, with no Fast full-map/root/speed conclusion.
+- [ ] Continue the remaining named projects and literature; preserve the full task scope.
