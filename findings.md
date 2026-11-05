@@ -3254,3 +3254,9 @@ remote matrix run.
 - Audited official repository commit `dc9d370a0a51e4c30e8eadd941214e543eb0545e` (Apache-2.0, pure Python/NumPy; latest visible tag `v2.0.0`) and traced `evolve.py`, `step.py`, `stepsize.py`, `solversetup.py`, tests, and notebooks.
 - Official Airy and high-frequency burst checks: `2 passed`, 8 invalid-escape deprecation warnings, 0.94 s. An exact constant-frequency oscillator smoke test also passed in one Riccati step with zero reported state/derivative error.
 - This confirms the upstream ARDC implementation only; it shares the Phase 6c method family and supplies no full cosmological map/root/speed result. Keep dependency adoption and Fast-domain success unclaimed.
+
+### WKB micro-window literature screen — 2026-11-05
+
+- Read Rosemeier–Klein (arXiv:2606.13807v1) §§2–6 and the algorithm appendix; downloaded the full PDF. Its method assumes a fixed real skew-symmetric fast operator plus a weak remainder, recovers modal amplitude/phase from short RK4 micro-runs, smooths/fits slow trends, then extrapolates a macro-step.
+- Applicability is not established for the Fast tensor equation: the coefficient matrix changes with the background, includes a horizon turn, and reheating is piecewise. The paper’s van der Pol tests also retain `O(ε)` fast terms and report an `O(ε)` accuracy floor without a higher-order transform.
+- Classified as a distinct research direction but no prototype yet: first derive a local constant-operator split with a uniform residual and exact event matching; compare its micro-simulation cost with the batched transfer.

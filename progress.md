@@ -1696,3 +1696,8 @@ the diagnostic artifacts are retained.
 - Read the upstream Python implementation and executed its official Airy and high-frequency burst tests: 2 passed, 8 invalid-escape warnings, 0.94 s.
 - A separate analytic constant-frequency oscillator (`ω=40`, `[0,10]`) used one Riccati step and had zero reported endpoint-state and derivative relative error.
 - This is only an ARDC implementation reproduction, not project-domain validation; next continue the remaining named papers and repositories and complete the current Phase 6c gates.
+
+## 2026-11-05 WKB micro-window paper
+
+- Read and archived the full Rosemeier–Klein 2026 preprint; the method uses short micro-simulations to fit slow modal amplitude/phase and extrapolate larger steps under a fixed skew-symmetric fast operator plus weak nonlinear remainder.
+- The project’s time-varying frequency, horizon turn, and reheating kink do not yet meet that model contract. No code was imported or run; next derive whether a local constant-operator split with bounded residual exists before any prototype.

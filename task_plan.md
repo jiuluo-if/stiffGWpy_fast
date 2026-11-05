@@ -1231,3 +1231,8 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 - [x] Run targeted upstream `riccati` Airy and burst examples/tests plus an analytic constant-frequency oscillator.
 - [x] Record that this is the same ARDC family as Phase 6c, with no Fast full-map/root/speed conclusion.
 - [ ] Continue the remaining named projects and literature; preserve the full task scope.
+
+### Literature continuation: Rosemeier–Klein 2026
+
+- [x] Read the full paper and record its small-parameter contract, algorithm, cost claim, and `O(ε)` accuracy limitation.
+- [ ] Derive whether the project’s linear time-varying mode can be split into a fixed skew-symmetric fast operator plus a uniformly small remainder across a smooth horizon segment; reject if not.
