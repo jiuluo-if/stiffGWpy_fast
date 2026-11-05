@@ -578,3 +578,25 @@ and the detailed [accuracy note](accuracy.md#2026-11-05-adaptive-fast-positive-c
 Reference workers=4 were slower than workers=1 (132.56 s versus 84.36 s on
 the 32-bin subset) with bitwise-identical output; no parallel acceleration is
 claimed.
+
+## 2026-11-05 Fast tail-depth repair above `N_inf=120`
+
+A standard-positive-density Fast point at `N_inf=122.502` was skipped by the
+old pressure harness's `N_inf>120` resource cutoff but runs directly. Default
+75-node and adaptive target-`1e-4` 242-node Fast maps differ by about `1.11%`;
+both are finite but initially lacked accuracy certification. Same-frequency
+Cartesian and Prüfer agree, locating the `z_tail=5` spectral error in Fast's
+tail handoff: the selected-bin maximum is `2.89e-3 dex`; raising `z_tail` to8
+reduces it to `1.46e-4 dex`. The full tail8/target-`1e-4` map passed its
+same-grid spectrum screen but failed the dense res2 DN screen at `3.84e-4`.
+
+The tail8/target-`1e-5` Fast configuration uses299 nodes and passes the
+same-grid Prufer spectrum check (`1.656e-4 dex` max), the `DN_gw` map screen
+(`2.50e-5` relative), and the 451-node native res2 screen (`8.95e-5` grid
+change; `1.145e-4` Fast-to-dense map difference). This is one fixed-background
+Fast configuration, not a Reference root or a global dispatch rule. Full raw
+data and reproduction files:
+[`fast_ninf122_tail8_target1e5_validation_20261105.json`](fast_ninf122_tail8_target1e5_validation_20261105.json),
+[`validate_fast_ninf122_tail8_target1e5.py`](../scripts/validate_fast_ninf122_tail8_target1e5.py),
+[`fast_ninf122_tail_sensitivity_20261105.json`](fast_ninf122_tail_sensitivity_20261105.json),
+and [`probe_fast_ninf122_tail_sensitivity.py`](../scripts/probe_fast_ninf122_tail_sensitivity.py).

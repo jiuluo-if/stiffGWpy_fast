@@ -1118,3 +1118,44 @@ On 32 stratified modes, Reference `workers=1` took `84.36 s` and `workers=4`
 took `132.56 s`; outputs were bitwise equal. Four workers are not retained as
 a speed path for this workload. Timings, the five-target Fast sensitivity
 screen, and sampled-memory limitations are recorded in the full-grid JSON.
+
+## 2026-11-05 Fast validation above the former `N_inf=120` pilot cutoff
+
+The earlier Sobol/LHS harness skipped `N_inf>120` points as a resource policy;
+this is not a Fast code limit. A standard-positive-density point with
+`T_re=1e-3`, `DN_re=100`, `r=0.01`, `n_t=0.5`, `cr=0`, and `N_inf=122.502`
+is directly evaluable. The default 75-node grid returns `DN_gw=6.4825083e-9`;
+adaptive target `1e-4` uses 242 nodes and returns `6.4111361e-9` with an
+internal frequency-grid estimate `7.3651e-5`. The two Fast outputs differ by
+about `1.11%`, so neither finite output nor that estimator alone certifies the
+bolometric value.
+
+On eight stratified bins at `z_tail=5`, same-background Cartesian and Prüfer
+References agree within `1.3e-7 dex`, while both differ from Fast by up to
+`2.89e-3 dex`. `sigma_exact=True` leaves this discrepancy essentially
+unchanged; transition refinement also does not remove it. Tail sensitivity
+identifies the dominant error: the selected-bin maximum falls to
+`1.46e-4 dex` at `z_tail=8` and `1.61e-5 dex` at `z_tail=10`.
+
+The tail8, target `1e-4` candidate passed full 242-bin same-grid Prüfer
+comparison (`1.587e-4 dex` maximum, `4.52e-5` relative `DN_gw` map error),
+but failed the dense-grid integral check: adaptive 242 versus native res2 451
+Prüfer maps differed by `3.84e-4` relative. Tightening the adaptive target to
+`1e-5` produced 299 bins; full same-grid Prüfer comparison then gave maximum
+spectral error `1.656e-4 dex` and `2.50e-5` relative `DN_gw` error. Native res2
+Prüfer changed `DN_gw` by `8.95e-5` relative from the adaptive-grid map; Fast
+versus this dense map differs by `1.145e-4` relative. These pass the stated
+fixed-background spectrum/map screens for this one point. They do not certify
+the self-consistent Reference root or imply a global automatic tail rule.
+
+Fast runtime was `0.667 s` for the tail8/target `1e-5` candidate; Reference
+Prüfer took `97.22 s` on the 299-node exact Fast grid and `175.84 s` on the
+451-node native res2 grid. Raw frequencies, spectra, source hashes, tolerance,
+tail depth, and resource data are in
+[`fast_ninf122_tail8_target1e5_validation_20261105.json`](fast_ninf122_tail8_target1e5_validation_20261105.json);
+reproduce with
+[`validate_fast_ninf122_tail8_target1e5.py`](../scripts/validate_fast_ninf122_tail8_target1e5.py).
+The six-configuration tail/sigma/transition screen is in
+[`fast_ninf122_tail_sensitivity_20261105.json`](fast_ninf122_tail_sensitivity_20261105.json),
+with driver
+[`probe_fast_ninf122_tail_sensitivity.py`](../scripts/probe_fast_ninf122_tail_sensitivity.py).
