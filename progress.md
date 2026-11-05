@@ -1725,3 +1725,10 @@ the diagnostic artifacts are retained.
 - Recorded that the proposed many-query reduced basis / low-rank tensor method depends on parameter separability, greedy training, and a posteriori residual bounds; the paper's experiments use finite parameter grids and note limitations in black-box reliability and continuous-domain control.
 - Project fit remains a research hypothesis only: no certified conversion of nonnormal tensor-mode propagation, spectrum integration, and self-consistent-root errors follows from the paper's elliptic coercivity bounds. No code or production source changed; no reproduction was claimed.
 - Five of the sixteen named first-batch papers and six of eight named open-source projects remain unaudited; broad Fast-domain and performance gates remain open.
+
+## 2026-11-05 greedy reduced-basis theory screen
+
+- Retrieved the complete author manuscript from the RWTH Aachen IGPM publication archive and cross-checked the final SIAM metadata. Read the weak-greedy definition, polynomial/exponential width-rate theorems, noisy-snapshot robustness result, and exact-greedy sharpness example.
+- The main useful condition is explicit: the greedy method inherits polynomial decay only when the solution manifold already has matching Kolmogorov-width decay and the practical residual selection is uniformly `γ`-weak; bounded snapshot errors create an error floor. This does not certify the project’s spectrum or self-consistent root.
+- Added the source hash and project mapping to `docs/research/phase_function_papers_batch1_20261105.md`. No code or production source changed; no numerical reproduction was attempted.
+- Four of sixteen named first-batch papers and six of eight named open-source projects remain unaudited; continuous-region algorithm and accuracy/speed gates remain open.
