@@ -579,6 +579,15 @@ Reference workers=4 were slower than workers=1 (132.56 s versus 84.36 s on
 the 32-bin subset) with bitwise-identical output; no parallel acceleration is
 claimed.
 
+The follow-up Fast fixed-point screen at `N_inf=122.502` evaluates native-grid
+Reference maps around the Fast self-consistent value. Native and adaptive-grid
+interval secant roots differ by `8.95e-5` relative, and the native secant
+estimate differs from Fast by `1.15e-4`. This passes the `2e-4` pointwise root
+screen, but is not a formal bound or a full iterative Reference root solve; the
+two grids do not share a common narrow sign-changing bracket. See
+[`fast_ninf122_reference_root_secant_20261105.json`](fast_ninf122_reference_root_secant_20261105.json)
+and [`probe_fast_ninf122_reference_root_secant.py`](../scripts/probe_fast_ninf122_reference_root_secant.py).
+
 ## 2026-11-05 Fast tail-depth repair above `N_inf=120`
 
 A standard-positive-density Fast point at `N_inf=122.502` was skipped by the
