@@ -1075,3 +1075,37 @@ The same-native-grid backend, Fast-mode, and tail-depth records are
 [`qmc_sobol146_full_prufer_tail_convergence_20261105.json`](qmc_sobol146_full_prufer_tail_convergence_20261105.json),
 [`qmc_sobol146_mode_tail_probe_20261105.json`](qmc_sobol146_mode_tail_probe_20261105.json),
 and [`qmc_sobol146_prufer_tail_depths_20261105.json`](qmc_sobol146_prufer_tail_depths_20261105.json).
+
+## 2026-11-05 adaptive Fast positive-cr fixed-background cross-check
+
+On the standard density/Hubble background with `r=0.01`, input `n_t=2`,
+`cr=1`, `T_re=2000 GeV`, `kappa10=0.01`, and `DN_eff_input=0`, the positive-cr
+consistency branch derives `n_t=-0.00125`. The opt-in Fast adaptive grid at
+target `1e-4`, `sigma_exact`, and `z_tail=10` returned 256 frequencies,
+`frequency_grid_error=9.2055e-5`, and a self-consistent `DN_gw=0.00226202795`
+in `0.736 s`. Its fixed-background spectrum was checked on the exact same
+array by both Cartesian DOP853 and the independent Prüfer Reference (`rtol=1e-9`, one worker). Fast versus Cartesian and Prüfer have maximum positive-bin
+errors `5.3041e-4` and `5.3030e-4 dex`; `DN_gw` map differences are
+`8.86e-6` and `9.92e-6` relative. Cartesian versus Prüfer also agrees within
+`2.14e-5 dex` on a stratified 32-bin subset. The full Fast/Prüfer frequencies
+and raw positive spectra, exact parameters, hashes, and timing are in
+[`adaptive_cr1_prufer_fullgrid_20261105.json`](adaptive_cr1_prufer_fullgrid_20261105.json);
+reproduce with
+[`validate_adaptive_cr1_prufer_fullgrid.py`](../scripts/validate_adaptive_cr1_prufer_fullgrid.py).
+
+The independent frequency-quadrature convergence check is **incomplete**.
+The Prüfer `freq_res=4` map and a Cartesian `freq_res=2` follow-up each reached
+the 1200-second process CPU budget without a saved result. These are resource
+timeouts, not accuracy failures. The Fast-only target sweep is non-monotone:
+the `1e-4` and `1e-6` outputs differ by `1.12e-4` relative in `DN_gw`, while
+the `3e-5` and `1e-6` outputs differ by `2.94e-4`; this cannot replace an
+independent Reference grid-convergence result. Accordingly this point has
+full-grid fixed-background propagation evidence, but its bolometric frequency
+resolution and Reference self-consistent root are not certified. The partial
+Cartesian run and explicit resource outcome are recorded in
+[`adaptive_standard_background_validation_20261105.json`](adaptive_standard_background_validation_20261105.json).
+
+On 32 stratified modes, Reference `workers=1` took `84.36 s` and `workers=4`
+took `132.56 s`; outputs were bitwise equal. Four workers are not retained as
+a speed path for this workload. Timings, the five-target Fast sensitivity
+screen, and sampled-memory limitations are recorded in the full-grid JSON.

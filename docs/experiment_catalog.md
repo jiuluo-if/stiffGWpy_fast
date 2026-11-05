@@ -548,3 +548,27 @@ and [normal-path benchmark](fast_pchip_stable_slopes_ab_20261105.json).
 The public wrapper reproduces the same frequency hash and `DN_gw`; its
 continuity check and spectrum-copy limitation are recorded in
 [`qmc_sobol146_adaptive_api_continuity_20261105.json`](qmc_sobol146_adaptive_api_continuity_20261105.json).
+
+## 2026-11-05 positive-cr adaptive Fast fixed-background validation
+
+The opt-in adaptive Fast grid was evaluated on a standard-parameter
+`cr=1` background (effective `n_t=-0.00125`) at target `1e-4`. All 256
+positive spectrum bins agree with same-array Cartesian and Prüfer Reference
+within `5.3041e-4 dex`; the fixed-map `DN_gw` differences are below `1.0e-5`
+relative. A stratified Cartesian/Prüfer subset agrees within `2.14e-5 dex`.
+Full Fast and Prüfer raw arrays and environment/source hashes are in
+[`adaptive_cr1_prufer_fullgrid_20261105.json`](adaptive_cr1_prufer_fullgrid_20261105.json),
+driven by
+[`validate_adaptive_cr1_prufer_fullgrid.py`](../scripts/validate_adaptive_cr1_prufer_fullgrid.py).
+
+Frequency-grid convergence and a self-consistent Reference root remain
+unverified: Prüfer `freq_res=4` and Cartesian `freq_res=2` convergence maps
+were cancelled at the 1200 s process CPU budget without numerical results.
+The independent exact-frequency propagation check is a positive result, but
+the Fast target sweep is non-monotone and does not close the integration-grid
+question. See the scoped partial record
+[`adaptive_standard_background_validation_20261105.json`](adaptive_standard_background_validation_20261105.json)
+and the detailed [accuracy note](accuracy.md#2026-11-05-adaptive-fast-positive-cr-fixed-background-cross-check).
+Reference workers=4 were slower than workers=1 (132.56 s versus 84.36 s on
+the 32-bin subset) with bitwise-identical output; no parallel acceleration is
+claimed.

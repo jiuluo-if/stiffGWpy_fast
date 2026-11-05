@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "experiment": "adaptive_fast_cr1_standard_background_same_grid_and_reference_convergence",
+  "created_at": "2026-11-05T07:30:39.697581+08:00",
+  "source_commit": "66c2e72bdf831e59d1549d9ed411e14a27c69819",
+  "branch": "fast_v0.2",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "n_t": 2.0,
+    "cr": 1.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "fast": {
+    "grid": "adaptive",
+    "target": 0.0001,
+    "max_points": 1500,
+    "sigma_exact": true,
+    "z_tail": 10.0,
+    "threads": 2,
+    "runtime_s": 0.7418229000177234,
+    "frequency_count": 256,
+    "frequency_sha256": "da027a66450eaedbc99aa7da4d521f434f70df6b236f9f68211ad80751bbabae",
+    "DN_eff_final": 0.0022620279548548642,
+    "DN_gw": 0.0022620279548548642,
+    "frequency_grid_error": 9.205471341565618e-05,
+    "warnings": []
+  },
+  "same_grid_reference": {
+    "cartesian": {
+      "DN_gw": 0.0022620479929761216,
+      "runtime_s": 661.3733421999495,
+      "positive_bins": 256
+    },
+    "fixed_DN_eff": 0.0022620279548548642,
+    "rtol": 1e-09,
+    "frequency_sha256": "da027a66450eaedbc99aa7da4d521f434f70df6b236f9f68211ad80751bbabae",
+    "positive_common_bins": 256,
+    "cartesian_vs_fast_max_abs_dex": 0.0005304032074183084,
+    "cartesian_vs_fast_p95_abs_dex": 0.0003909339834236269,
+    "positive_fast_cartesian_bins": 256,
+    "prufer_subset": {
+      "frequency_indices": [
+        0,
+        8,
+        16,
+        24,
+        32,
+        41,
+        49,
+        57,
+        65,
+        74,
+        82,
+        90,
+        98,
+        106,
+        115,
+        123,
+        131,
+        139,
+        148,
+        156,
+        164,
+        172,
+        180,
+        189,
+        197,
+        205,
+        213,
+        222,
+        230,
+        238,
+        246,
+        255
+      ],
+      "frequency_count": 32,
+      "DN_gw": 0.0023357214299755966,
+      "runtime_s": 41.62615269981325,
+      "common_positive_bins": 32,
+      "max_cartesian_vs_prufer_abs_dex": 2.1403507366993628e-05,
+      "max_fast_vs_prufer_abs_dex": 0.00038664103000094933
+    },
+    "cartesian_relative_DN_gw_error_vs_fast": 8.858397929466724e-06
+  },
+  "reference_frequency_grid_convergence": [],
+  "status": "partial_resource_limited",
+  "resource_limit": {
+    "stage": "Reference Cartesian native freq_res=2 convergence map",
+    "status": "resource_timeout_cancelled",
+    "cpu_seconds_observed": 1205.0,
+    "cpu_budget_seconds": 1200,
+    "result_captured": false,
+    "interpretation": "Resource limit only; no numerical failure or pass inferred."
+  },
+  "limitations": [
+    "This records a full same-grid Cartesian spectrum comparison at fixed DN_eff and an independent 32-bin Prüfer subset, but no dense Reference frequency-grid convergence result.",
+    "The Reference freq_res=2 map exceeded the 1200 s CPU budget and was cancelled; no frequency-quadrature convergence claim is made.",
+    "Frequency and spectrum vectors are archived in the companion adaptive_cr1_prufer_fullgrid_20261105.json; the Cartesian raw vector was not persisted in this run."
+  ],
+  "hashes": {
+    "fast_sgwb_py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
+    "stiff_SGWB_py": "256b28289455588c712920f5b13c0ff7af5d26aecb9b238b78d695d9b0843de8",
+    "reference_py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "experiment_driver_py": "97f18600107150044c1ea6137340b42c91de3e7ea7c2137975305253fe1957b5",
+    "hash_capture_note": "Current reproduction driver hash; post-run changes add raw vector persistence, stage labels, and acceptance-matched early stop only."
+  },
+  "derived_fast_n_t": -0.00125,
+  "acceptance_screen": {
+    "fast_vs_cartesian_spectrum_max_abs_dex_le_1e-3": true,
+    "fast_vs_cartesian_DN_gw_relative_error_le_2e-4": true,
+    "cartesian_vs_prufer_subset_max_abs_dex_le_1e-3": true,
+    "frequency_grid_convergence_certified": false
+  }
+}
