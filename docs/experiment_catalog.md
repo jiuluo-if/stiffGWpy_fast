@@ -425,6 +425,19 @@ raw evidence is in
 [`sample2_phase_residual_segment_split_probe_20261105.json`](sample2_phase_residual_segment_split_probe_20261105.json)
 and `scripts/probe_sample2_residual_segment_splits.py`.
 The targeted start-offset replay is `scripts/probe_sample2_phase_start_offsets.py`.
+
+The follow-up completeness audit merges only independently validated modes:
+737 gamma-zero full-grid outputs, 44 dual-reference residual modes, and six
+phase-start candidates (`787/800` unique). The remaining 13 modes contribute
+`6.58e-11` of the Reference trapezoid nodal weight, but this observed share is
+not an a-priori bound. An oracle-filled hybrid map is `7.72e-9` relative from
+the Reference root; it is not a candidate result because the missing modes use
+Reference values. The gamma-zero phase run takes `132.21 s` versus `43.01 s`
+for Cartesian Reference and `0.354 s` for the formal Fast solve; it fails the
+Fast cost gate and is rejected for production use. See
+[`sample2_phase_integral_completeness_20261105.json`](sample2_phase_integral_completeness_20261105.json)
+and [`analyze_sample2_phase_integral_completeness.py`](../scripts/analyze_sample2_phase_integral_completeness.py).
+
 Two archived Cartesian tail10 maps also give a same-source, same-grid secant
 slope estimate of `0.02113` and a first-order root shift estimate of
 `-1.08e-10`. This is not a local derivative or root enclosure; see
