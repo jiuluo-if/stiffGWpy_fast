@@ -1669,3 +1669,10 @@ the diagnostic artifacts are retained.
 - It did not help uniformly: low-T positive-cr `2.04e-4→2.17e-4`, extreme-red positive-cr `6.89e-5→6.98e-5`, and high-`N_inf` only `1.15e-4→1.03e-4`. Embedded deltas were very small relative to the archived reference-grid changes on the first two cases, suggesting a different dominant error source or reference-grid behavior.
 - No production change. Ruff, `py_compile`, and `git diff --check` pass. Commit `39c0343` is pushed; CI run `41973818558` is still in progress at the last query.
 - Next: trace Fast-versus-Reference residuals and background/tail/propagation contributions for low-T and extreme-red, and prototype an online cumulative selector using only accessible coarse-grid signals. Require `DN_gw`, spectrum, cost, and held-out checks before production work.
+# 2026-11-05 midday continuation
+
+- Replaced the misleading nonnested-grid comparison with exact Prüfer evaluations at every Fast adaptive midpoint for eight fixed-background cases.
+- Confirmed the previous low-T/extreme-red apparent discrepancies were interpolation artifacts; true nested integral changes are only `3.39e-6` and `1.36e-6`.
+- Confirmed nonzero high-blue nested-grid changes across three target settings (`6.5255e-4`, `2.4525e-4`, `8.1061e-5`). Current curvature-ranked subset remains a research candidate only.
+- Read four phase-function papers and recorded methods, assumptions, limitations, project mapping, citations, and local PDF hashes in `docs/research/phase_function_papers_batch1_20261105.md`.
+- Production solver unchanged. Remaining: resolve selector cost and false-safe behavior, update phase status from complete evidence, then commit/push the verified research artifacts.

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "experiment": "fixed_background_fast_actual_midpoint_embedded_integral_probe",
-  "source_commit": "39c0343319b235bb4f77c5207286bfdc2a2330e9",
-  "created_at": "2026-11-05T13:27:53.910025+08:00",
+  "source_commit": "aadc12d91db4584e94dde1fe4f2c339198c666ab",
+  "created_at": "2026-11-05T13:44:01.950579+08:00",
   "parameters": {
     "Omega_bh2": 0.0223828,
     "Omega_ch2": 0.1201075,
@@ -24,7 +24,7 @@
     "phase_max": 0.25,
     "sigma_exact": true
   },
-  "fast_outer_replay_seconds": 0.3354728000704199,
+  "fast_outer_replay_seconds": 0.30751090007834136,
   "source_artifact": "fast_high_blue_fullgrid_prufer_20261105.json",
   "adaptive_reference_key": "adaptive_exact_fast_grid",
   "dense_reference_key": "native_res4",
@@ -32,6 +32,119 @@
   "base_frequency_count": 51,
   "actual_midpoint_count": 50,
   "refined_frequency_count": 101,
+  "midpoint_reference_comparison": {
+    "reference_grid": "native_res4",
+    "max_abs_dex_fast_vs_interpolated_reference": 0.060023242783049824,
+    "p95_abs_dex_fast_vs_interpolated_reference": 0.044129533534435855,
+    "median_abs_dex_fast_vs_interpolated_reference": 0.00016947032395941974,
+    "limitation": "Reference midpoint values are PCHIP-interpolated from a nonnested native grid, not direct Reference solves at these exact frequencies."
+  },
+  "actual_fast_midpoint_samples": {
+    "frequencies_log10_hz": [
+      -18.396251486568957,
+      -18.269996942820256,
+      -18.143742399071556,
+      -18.017487855322862,
+      -17.89123331157416,
+      -17.76497876782547,
+      -17.638724224076768,
+      -17.512469680328067,
+      -17.386215136579374,
+      -17.259960592830673,
+      -17.133706049081972,
+      -17.00745150533328,
+      -16.88119696158458,
+      -16.754942417835878,
+      -16.628687874087184,
+      -16.502433330338484,
+      -16.376178786589783,
+      -16.24992424284109,
+      -16.12366969909239,
+      -15.997415155343692,
+      -15.871160611594995,
+      -15.744906067846296,
+      -15.618651524097597,
+      -15.4923969803489,
+      -15.366142436600201,
+      -15.239887892851502,
+      -15.113633349102805,
+      -14.987378805354108,
+      -14.86112426160541,
+      -14.73486971785671,
+      -14.608615174108014,
+      -14.482360630359315,
+      -14.356106086610616,
+      -14.229851542861919,
+      -14.103596999113222,
+      -13.977342455364523,
+      -13.851087911615824,
+      -13.724833367867127,
+      -13.598578824118428,
+      -13.47232428036973,
+      -13.346069736621033,
+      -13.219815192872336,
+      -13.093560649123637,
+      -12.967306105374938,
+      -12.84105156162624,
+      -12.714797017877542,
+      -12.588542474128843,
+      -12.462287930380146,
+      -12.367597022568624,
+      -12.304469750694274
+    ],
+    "omega_gw": [
+      2.1166012900072412e-15,
+      5.460289428144815e-16,
+      1.6381206220253575e-15,
+      9.099057824216947e-16,
+      8.761143079720307e-16,
+      1.2954393148879363e-15,
+      1.0435983144030269e-15,
+      1.4147329345811609e-15,
+      1.6260506259996928e-15,
+      1.959835028583414e-15,
+      2.2805375415329416e-15,
+      3.1804184137784272e-15,
+      4.600654607771975e-15,
+      7.035678745117078e-15,
+      1.1021403269241243e-14,
+      1.8099145370656677e-14,
+      3.0020047329903094e-14,
+      5.1454984677762913e-14,
+      8.784573567058673e-14,
+      1.527611586005887e-13,
+      2.6747261332121714e-13,
+      4.694251015513747e-13,
+      8.301849696025359e-13,
+      1.4674722260929135e-12,
+      2.6082439427341926e-12,
+      4.640111719292719e-12,
+      8.27473812814438e-12,
+      1.4751145276023685e-11,
+      2.6326660988588196e-11,
+      4.701103800601397e-11,
+      8.39815596036844e-11,
+      1.500729802348827e-10,
+      2.682370608643868e-10,
+      4.795197847708111e-10,
+      8.573381904303164e-10,
+      1.532978917776594e-09,
+      2.741298873836324e-09,
+      4.9022607157298404e-09,
+      8.766998140086482e-09,
+      1.5678917980025062e-08,
+      2.8040574819030193e-08,
+      5.014841022953395e-08,
+      8.968494748552015e-08,
+      1.603842137253785e-07,
+      2.8678969633671375e-07,
+      5.127322441592042e-07,
+      9.163959419837322e-07,
+      1.6369479041625525e-06,
+      2.5277585484784327e-06,
+      3.3755833801418905e-06
+    ]
+  },
   "base_DN_gw": 0.1580244571974302,
   "refined_DN_gw": 0.15791536488874666,
   "archived_fast_DN_gw": 0.1580247273232481,
@@ -56,8 +169,8 @@
         "relative_delta_vs_base": 0.0006892852661390472,
         "relative_delta_vs_all_midpoints": 1.0662576646846629e-06,
         "relative_delta_vs_archived_dense_reference": 6.65294563231141e-05,
-        "kernel_median_s": 0.0081044000107795,
-        "kernel_p95_s": 0.008523709955625236
+        "kernel_median_s": 0.007995199877768755,
+        "kernel_p95_s": 0.008135059894993902
       },
       {
         "selected_fraction": 0.5,
@@ -67,8 +180,8 @@
         "relative_delta_vs_base": 0.0006903496950604916,
         "relative_delta_vs_all_midpoints": 1.0945431595187397e-09,
         "relative_delta_vs_archived_dense_reference": 6.546436293064833e-05,
-        "kernel_median_s": 0.010436300188302994,
-        "kernel_p95_s": 0.010752469976432621
+        "kernel_median_s": 0.009776900056749582,
+        "kernel_p95_s": 0.00990514988079667
       },
       {
         "selected_fraction": 0.75,
@@ -78,8 +191,8 @@
         "relative_delta_vs_base": 0.0006903507193514518,
         "relative_delta_vs_all_midpoints": 6.954459202314906e-11,
         "relative_delta_vs_archived_dense_reference": 6.54633379991806e-05,
-        "kernel_median_s": 0.012215299997478724,
-        "kernel_p95_s": 0.014573119929991663
+        "kernel_median_s": 0.012269000057131052,
+        "kernel_p95_s": 0.01235170995350927
       }
     ],
     "curvature_ranked_selection_results": [
@@ -92,8 +205,8 @@
         "relative_delta_vs_base": 0.0006870558897658181,
         "relative_delta_vs_all_midpoints": 3.297164418448734e-06,
         "relative_delta_vs_archived_dense_reference": 6.876021703443044e-05,
-        "kernel_median_s": 0.00838569994084537,
-        "kernel_p95_s": 0.00903693987056613
+        "kernel_median_s": 0.007968199905008078,
+        "kernel_p95_s": 0.00801850997377187
       },
       {
         "selected_fraction": 0.5,
@@ -104,8 +217,8 @@
         "relative_delta_vs_base": 0.0006903408593457559,
         "relative_delta_vs_all_midpoints": 9.936361754230515e-09,
         "relative_delta_vs_archived_dense_reference": 6.54732041704287e-05,
-        "kernel_median_s": 0.010433099931105971,
-        "kernel_p95_s": 0.01055505012627691
+        "kernel_median_s": 0.009941200027242303,
+        "kernel_p95_s": 0.010569490096531808
       },
       {
         "selected_fraction": 0.75,
@@ -116,18 +229,18 @@
         "relative_delta_vs_base": 0.0006903508126558216,
         "relative_delta_vs_all_midpoints": 2.3824235002070847e-11,
         "relative_delta_vs_archived_dense_reference": 6.54632446364658e-05,
-        "kernel_median_s": 0.012966600013896823,
-        "kernel_p95_s": 0.013020420004613698
+        "kernel_median_s": 0.012287499848753214,
+        "kernel_p95_s": 0.012413950078189373
       }
     ],
     "limitation": "Panels are ranked using all midpoint values; this is an upper-bound feasibility screen, not the work of an online selector."
   },
   "kernel_seconds": {
-    "base_median": 0.007626599865034223,
-    "base_p95": 0.008051629946567117,
-    "refined_median": 0.01497599994763732,
-    "refined_p95": 0.015422899974510074,
-    "median_ratio_refined_over_base": 1.963653556324358,
+    "base_median": 0.007432400016114116,
+    "base_p95": 0.007808839902281761,
+    "refined_median": 0.013927299994975328,
+    "refined_p95": 0.014689519908279181,
+    "median_ratio_refined_over_base": 1.873863081209257,
     "paired_repeats": 7,
     "warmup_excluded": true
   },
@@ -155,7 +268,7 @@
     "threads_argument": 2
   },
   "hashes": {
-    "script_py": "2c3e2a0f440a7c0ce94520158ccad2861d4f593e70a72a87bbd6e930e0511f55",
+    "script_py": "d58898e05c5b68755a8d54f34add2f60e729333cb597e09cbd5bc735a9b50ebb",
     "fast_sgwb_py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
     "exact_background_py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c"
   },

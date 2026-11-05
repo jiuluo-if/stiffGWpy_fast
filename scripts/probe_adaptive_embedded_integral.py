@@ -159,6 +159,10 @@ def main() -> None:
     if archived_spectrum.size != base_spectrum.size:
         raise RuntimeError("archived Fast spectrum length does not match archived frequency grid")
     spectrum_abs_dex = np.abs(np.log10(base_spectrum / archived_spectrum))
+    midpoint_indices = np.searchsorted(-refined_freqs, -mids)
+    if not np.array_equal(refined_freqs[midpoint_indices], mids):
+        raise RuntimeError("refined Fast grid is missing an expected actual midpoint")
+    midpoint_spectrum = refined_spectrum[midpoint_indices]
     ref_maps = source["reference_maps"]
     adaptive_ref_key = (
         "adaptive_exact_fast_grid"
@@ -178,6 +182,24 @@ def main() -> None:
         if dense_ref_key in ref_maps
         else source[dense_ref_key]["DN_gw"]
     )
+    dense_reference = ref_maps.get(dense_ref_key, source.get(dense_ref_key))
+    if not isinstance(dense_reference, dict):
+        raise RuntimeError(f"missing dense Reference map {dense_ref_key!r}")
+    if "frequencies_log10_hz" not in dense_reference:
+        dense_artifact = dense_reference.get("artifact")
+        if not isinstance(dense_artifact, str):
+            raise RuntimeError(f"dense Reference map {dense_ref_key!r} has no frequency data")
+        dense_reference = json.loads((ROOT / "docs" / dense_artifact).read_text(encoding="utf-8"))
+    dense_freqs = np.asarray(dense_reference["frequencies_log10_hz"], dtype=np.float64)
+    dense_spectrum = np.asarray(dense_reference["omega_gw"], dtype=np.float64)
+    dense_order = np.argsort(dense_freqs)
+    reference_midpoint_log = np.asarray(
+        PchipInterpolator(
+            dense_freqs[dense_order], np.log10(dense_spectrum[dense_order]), extrapolate=False
+        )(mids),
+        dtype=np.float64,
+    )
+    midpoint_abs_dex_vs_dense_interp = np.abs(np.log10(midpoint_spectrum) - reference_midpoint_log)
     _, coarse_panel_integrals = FS.pchip_integral_breakdown(base_freqs, base_spectrum)
     _, refined_panel_integrals = FS.pchip_integral_breakdown(refined_freqs, refined_spectrum)
     if refined_panel_integrals.size != 2 * coarse_panel_integrals.size:
@@ -286,6 +308,17 @@ def main() -> None:
         "base_frequency_count": int(base_freqs.size),
         "actual_midpoint_count": int(mids.size),
         "refined_frequency_count": int(refined_freqs.size),
+        "midpoint_reference_comparison": {
+            "reference_grid": dense_ref_key,
+            "max_abs_dex_fast_vs_interpolated_reference": float(np.max(midpoint_abs_dex_vs_dense_interp)),
+            "p95_abs_dex_fast_vs_interpolated_reference": float(np.quantile(midpoint_abs_dex_vs_dense_interp, 0.95)),
+            "median_abs_dex_fast_vs_interpolated_reference": float(np.median(midpoint_abs_dex_vs_dense_interp)),
+            "limitation": "Reference midpoint values are PCHIP-interpolated from a nonnested native grid, not direct Reference solves at these exact frequencies.",
+        },
+        "actual_fast_midpoint_samples": {
+            "frequencies_log10_hz": mids.tolist(),
+            "omega_gw": midpoint_spectrum.tolist(),
+        },
         "base_DN_gw": base_dn,
         "refined_DN_gw": refined_dn,
         "archived_fast_DN_gw": float(source["fast"]["DN_gw"]),

@@ -1205,3 +1205,10 @@ Build a deterministic held-out panel-selection screen spanning cr=0 and cr>0, ne
 ### Next Step
 
 Read the low-T and extreme-red full-grid validation maps and error decomposition, then run paired same-background Fast/Prüfer comparisons on the exact base and candidate-selected frequencies. Decide whether these counterexamples are adaptive-grid failures or a different error component before changing the selector.
+# 2026-11-05 midday update
+
+- [x] Re-run the disputed low-T/extreme-red midpoint comparisons on a nested exact Prüfer grid; withdraw the nonnested interpolation counterexamples.
+- [x] Record the eight-case nested fixed-background accuracy screen and high-blue target sweep.
+- [x] Read and document the first four phase-function sources and their project-specific applicability/limits.
+- [ ] Continue F2: determine whether the nested evidence supports a safe online panel-selection rule at acceptable Fast-only cost; no production change until it does.
+- [ ] Fresh verification, bilingual commit, push to `fast/fast_v0.2`, and confirm remote CI.

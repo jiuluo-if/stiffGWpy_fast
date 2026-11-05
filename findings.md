@@ -3169,6 +3169,14 @@ remote matrix run.
 
 ## Fast-domain continuation — 2026-11-05
 
+### Nested reference correction and literature screen — 2026-11-05
+
+- The all-midpoint nested Prüfer screen covers eight fixed-background cases. Maximum Fast-vs-nested-Prüfer error was `8.68e-5` in `DN_gw` relative and `5.30e-4 dex` in spectrum. These are fixed-background checks, not end-to-end domain certification.
+- The earlier low-temperature and extreme-red apparent midpoint changes (`2.04e-4` and `6.89e-5`) came from comparing against PCHIP interpolation on nonnested dense Reference grids. Exact nested midpoint solves reduce the base-to-midpoint Reference integral changes to `3.39e-6` and `1.36e-6`; the prior counterexamples are withdrawn as evidence of Fast adaptive failure.
+- The high-blue target sweep retains genuine nested-grid changes: `6.5255e-4`, `2.4525e-4`, and `8.1061e-5` for targets `1e-5`, `1e-6`, and `1e-7`. The curvature-ranked top-quarter midpoint candidate stays within about `8.35e-5` of the full nested integral across the screened cases, but remains diagnostic-only and has no online cost/false-safe acceptance gate.
+- Read and documented four phase-function papers, their assumptions and relation to prior rejected Kummer/Appell/Airy prototypes in `docs/research/phase_function_papers_batch1_20261105.md`; archived source PDFs and hashes are recorded there. This is a first batch, not a complete literature review, and motivates no production edit.
+- Production Fast and Reference sources remain unchanged. Next: assess whether a bounded online panel rule can be justified from the nested evidence and cost; preserve the independent Reference strictly as a correctness oracle.
+
 - Scope: Reference is verification-only; no Reference performance work. Continue Fast-specific failure classification and trustworthy domain expansion.
 - Current baseline verified live: branch `fast_v0.2`, local/remote HEAD `16787b798902ebfcad54e85701a573ea27da31c4`, clean worktree, latest Actions `41969511573` all nine jobs successful.
 - Known recent evidence: high-blue `cr=0` fixed-background validation passes at adaptive target `1e-7` (Fast vs native res4 `DN_gw` relative delta `6.416e-5`), while `1e-5` and `1e-6` fail this integral comparison. Positive-cr high-red point passes res4/res8 fixed-background comparison; res2 is underresolved. Root outcomes are two-grid secant screens, not certified roots.
