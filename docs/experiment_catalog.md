@@ -674,7 +674,8 @@ The high-r strongly red positive-cr point (`r=10`, derived `n_t=-1.25`,
 `kappa10=100`, `N_inf=82.6947`) passes fixed-background spectrum and res4/res8
 map checks at target `1e-7`: maximum spectral error `1.476e-4 dex`, res4→res8
 `6.437e-5`, and Fast→res8 `4.526e-6`. Native res2 is under-resolved by
-`9.663e-4`; the self-consistent Reference root remains open. See
+`9.663e-4`; the self-consistent Reference root was not yet checked in this
+fixed-background report. See
 [`fast_cr1_red_extreme_fullgrid_prufer_20261105.json`](fast_cr1_red_extreme_fullgrid_prufer_20261105.json),
 [`fast_cr1_red_extreme_res8_prufer_20261105.json`](fast_cr1_red_extreme_res8_prufer_20261105.json),
 and [`validate_fast_cr1_red_extreme_fullgrid.py`](../scripts/validate_fast_cr1_red_extreme_fullgrid.py).
@@ -686,3 +687,18 @@ native res4 frequency hash shifts with `DN_eff`; this is a scalar-map secant
 screen, not a root enclosure. See
 [`fast_cr1_red_extreme_root_secant_20261105.json`](fast_cr1_red_extreme_root_secant_20261105.json)
 and [`probe_fast_cr1_red_extreme_root.py`](../scripts/probe_fast_cr1_red_extreme_root.py).
+
+The subsequent self-consistent Prüfer Reference solve on the same validated
+743-frequency Fast grid converged in 3 iterations. Its root is
+`DN_eff=0.0017772220202209284` (fixed-point residual `-7.35e-14`); Fast is
+`1.779e-6` relative away. The solve took `331.16 s`, one worker, with no
+warnings. This closes the fixed-grid root check only; res4/res8 convergence at
+the iterative root was subsequently checked with a direct native res4 map:
+`DN_gw=0.0017771027289385473`, relative root residual `6.712e-5`, and only
+`1.47e-9` relative change from the x0 res4 map. The 1,572-point res8 map is
+reused at the nearly identical Fast root; no res8 propagation was repeated at
+the iterative root. See
+[`fast_cr1_red_extreme_reference_root_20261105.json`](fast_cr1_red_extreme_reference_root_20261105.json)
+and [`solve_fast_cr1_red_extreme_reference_root.py`](../scripts/solve_fast_cr1_red_extreme_reference_root.py), plus
+[`fast_cr1_red_extreme_root_res4_20261105.json`](fast_cr1_red_extreme_root_res4_20261105.json)
+and [`validate_fast_cr1_red_extreme_root_res4.py`](../scripts/validate_fast_cr1_red_extreme_root_res4.py).

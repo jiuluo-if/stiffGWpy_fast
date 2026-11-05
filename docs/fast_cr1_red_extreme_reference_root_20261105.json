@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "experiment": "self-consistent Prüfer Reference root on validated Fast frequency grid",
+  "status": "complete",
+  "source_commit": "52fa044720241e50990531206224b49dc2b931fb",
+  "branch": "fast_v0.2",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 10.0,
+    "n_t": 2.0,
+    "cr": 1.0,
+    "T_re": 0.001,
+    "DN_re": 200.0,
+    "kappa10": 100.0
+  },
+  "parent_artifact": "fast_cr1_red_extreme_fullgrid_prufer_20261105.json",
+  "parent_artifact_sha256": "d28ef299019a30e35f4e87fad016b69b6def8e25268ea66e3022c04d01b007ff",
+  "frequency_count": 743,
+  "frequency_sha256": "6b19e3f2dfca931ea25dc47f8fc43fd8039f3a20fde6fde0232028030a4b2a59",
+  "reference": {
+    "backend": "prufer",
+    "rtol": 1e-09,
+    "z_tail": 8.0,
+    "root_tolerance": 1e-09,
+    "workers": 1,
+    "self_consistent": true,
+    "physical_guard": false
+  },
+  "fast_root": 0.0017772251814822857,
+  "secant_root_estimates": {
+    "adaptive_secant_root": 0.0017772220203015636,
+    "native_res4_secant_root": 0.001777102731366095,
+    "adaptive_secant_slope": 3.0250976480500952e-06,
+    "native_res4_secant_slope": 1.4631815989385542e-06,
+    "adaptive_g_x0": 3.1611711592566955e-09,
+    "adaptive_g_x1": 1.7803809763616233e-06,
+    "native_res4_g_x0": 1.2244993702380594e-07,
+    "native_res4_g_x1": 1.8996725181027064e-06,
+    "two_grid_root_relative_delta": 6.712100913999605e-05,
+    "adaptive_sign_change": false,
+    "native_res4_sign_change": false,
+    "native_res4_frequency_grid_hash_stable": false,
+    "native_res4_frequency_count_x0": 786,
+    "native_res4_frequency_count_x1": 786,
+    "fast_to_res4_root_relative_shift": 6.889960679516779e-05,
+    "adaptive_residual_at_native_res4_candidate": -1.1928866246722382e-07,
+    "adaptive_corrected_relative_root_residual": 6.712556411213651e-05
+  },
+  "map_history": [
+    {
+      "DN_eff_input": 0.0,
+      "DN_gw_map": 0.0017772166565832954,
+      "fixed_point_residual": -0.0017772166565832954,
+      "quadrature_error": 2.445108897886587e-22,
+      "interpolation_error": 5.1368001942870775e-14,
+      "used_tail_fraction": 0.2193808882907133,
+      "runtime_s": 83.49454479990527
+    },
+    {
+      "DN_eff_input": 0.0017772166565832954,
+      "DN_gw_map": 0.0017772220197820657,
+      "fixed_point_residual": -5.363198770291441e-09,
+      "quadrature_error": 2.445116276618367e-22,
+      "interpolation_error": 5.133544800480205e-14,
+      "used_tail_fraction": 0.2193808882907133,
+      "runtime_s": 80.39726959983818
+    },
+    {
+      "DN_eff_input": 0.0017772220197820657,
+      "DN_gw_map": 0.0017772220202209284,
+      "fixed_point_residual": -4.38862704857379e-13,
+      "quadrature_error": 2.445116277222156e-22,
+      "interpolation_error": 5.132825711409415e-14,
+      "used_tail_fraction": 0.2193808882907133,
+      "runtime_s": 82.1296980001498
+    },
+    {
+      "DN_eff_input": 0.0017772220202209284,
+      "DN_gw_map": 0.0017772220202944776,
+      "fixed_point_residual": -7.354923961533366e-14,
+      "quadrature_error": 2.4451162773233473e-22,
+      "interpolation_error": 5.13257843364173e-14,
+      "used_tail_fraction": 0.2193808882907133,
+      "runtime_s": 84.40750620001927
+    }
+  ],
+  "runner_sha256": "082d81a99e05353470e67a18d1fc892e24e2062b1cd73fecca940d22a11ad139",
+  "run_reference_signature": "(m, dn_eff=None, freq_res=1.0, z_tail=5.0, rtol=1e-11, z_start=-12.0, tol=1e-07, max_iter=60, freq_subset=None, self_consistent=True, workers=None, physical_guard=False, backend='cartesian')",
+  "reference_root_DN_eff": 0.0017772220202209284,
+  "reference_DN_gw_at_root": 0.0017772220202944776,
+  "fixed_point_residual_at_root": -7.354923961533366e-14,
+  "reference_iterations": 3,
+  "fast_to_reference_root_relative_error": 1.7787655798317484e-06,
+  "adaptive_secant_to_reference_root_relative_error": 4.5371456360756815e-11,
+  "native_res4_secant_to_reference_root_relative_error": 6.712096377158506e-05,
+  "final_quadrature_error": 2.4451162773233473e-22,
+  "final_interpolation_error": 5.13257843364173e-14,
+  "warnings": [],
+  "total_runtime_s": 331.160652999999,
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": null,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": null,
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "source_hashes": {
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "runner.py": "082d81a99e05353470e67a18d1fc892e24e2062b1cd73fecca940d22a11ad139"
+  },
+  "limitation": "Self-consistent Reference root on the validated 743-point Fast frequency set; the fixed-background res4/res8 convergence checks were anchored at Fast DN_eff, so this is not a root enclosure or a frequency-convergence proof at the root."
+}

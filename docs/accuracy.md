@@ -1371,3 +1371,25 @@ with drivers [`validate_fast_cr1_red_extreme_modes.py`](../scripts/validate_fast
 [`probe_fast_cr1_red_extreme_res8.py`](../scripts/probe_fast_cr1_red_extreme_res8.py), and
 [`fast_cr1_red_extreme_root_secant_20261105.json`](fast_cr1_red_extreme_root_secant_20261105.json)
 with driver [`probe_fast_cr1_red_extreme_root.py`](../scripts/probe_fast_cr1_red_extreme_root.py).
+
+The follow-up independently iterated the self-consistent Prüfer Reference on
+the validated 743-frequency adaptive Fast grid (`z_tail=8`, `rtol=1e-9`,
+root tolerance `1e-9`). It converged in 3 fixed-point iterations plus the
+returned-spectrum map: `DN_eff=0.0017772220202209284`, with final fixed-point
+residual `-7.35e-14`. The Fast root differs by `1.779e-6` relative; the
+adaptive and native-res4 secant estimates differ from this iterative root by
+`4.54e-11` and `6.71e-5` relative. Runtime was `331.16 s`, with no warnings.
+This closes the root check on that fixed 743-frequency set; the res4/res8
+frequency-convergence maps remain close to the iterative root. A direct native
+res4 map at the iterative root gives `DN_gw=0.0017771027289385473` and a
+relative fixed-point residual of `6.712e-5`; it differs from the x0 res4 map by
+`1.47e-9` relative. The res8 map is reused at the Fast root, only `1.779e-6`
+relative away, and the res4-at-root to res8-at-Fast-root map difference is
+`6.437e-5`. No res8 propagation was repeated at the iterative root, so this
+remains a sampled convergence check rather than a rigorous root enclosure.
+Full history and hashes are in
+[`fast_cr1_red_extreme_reference_root_20261105.json`](fast_cr1_red_extreme_reference_root_20261105.json),
+reproduced by [`solve_fast_cr1_red_extreme_reference_root.py`](../scripts/solve_fast_cr1_red_extreme_reference_root.py).
+The root-point native res4 result is in
+[`fast_cr1_red_extreme_root_res4_20261105.json`](fast_cr1_red_extreme_root_res4_20261105.json)
+with driver [`validate_fast_cr1_red_extreme_root_res4.py`](../scripts/validate_fast_cr1_red_extreme_root_res4.py).
