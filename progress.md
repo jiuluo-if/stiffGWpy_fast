@@ -1711,3 +1711,10 @@ the diagnostic artifacts are retained.
 
 - Read and recorded Perczyński–Madejski’s Neumann-series/Filon scheme and local error bounds. It treats a finite Fourier time forcing multiplying an elliptic spatial generator; this does not directly match the homogeneous, time-varying tensor-mode matrix equation.
 - Existing Duhamel defect correction is already rejected by project accuracy/runtime evidence. Continue literature review without relabeling that method.
+
+## 2026-11-05 Magnus review and deduplication
+
+- Downloaded and validated the arXiv PDF for Blanes–Casas–Oteo–Ros, *The Magnus expansion and some of its applications*; read the Magnus theorem/convergence sections, integrator construction, matrix-exponential cost, commutator-free methods, and oscillatory Schrödinger application. Verified journal metadata and DOI against the publisher record.
+- Recorded the sufficient `∫||A||<π` convergence condition, local-series limitation, structure preservation, step splitting, and exponential costs in `docs/research/phase_function_papers_batch1_20261105.md`.
+- Cross-checked against project experiments: linear-z closed 2×2 Magnus took 1.8–2.0× baseline time; CF4 took 1.42–1.63× baseline time in the unfiltered kernel screen and showed no meaningful independent-oracle accuracy gain. No new Magnus or CF4 production candidate is justified without a substantive error-control/cost change.
+- No production source changed. Six named first-batch papers and six of eight named open-source projects remain unaudited; broader domain algorithm and region gates remain open.
