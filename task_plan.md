@@ -1219,3 +1219,9 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 - [x] Measure the 10% grid through the full Fast outer solve and two high-blue Reference secants. It exceeds the 5% runtime budget in several cases and is diagnostic-only; target `1e-5` root discrepancy is not improved.
 - [x] Reject the summed coarse-curvature trigger as nonselective on the screened cases. Keep production untouched.
 - [ ] Continue the original goal: work through the full source audit, remaining literature and open-source projects, and identify a different broad mechanism that can pass accuracy and speed gates. Recover the referenced 37-paper list if available in repository/history; the supplied file itself did not include it.
+
+### Literature/source audit continuation
+
+- [x] Read and record papers 5–6; deduplicate them against the current Phase 6c Riccati/Appell work.
+- [x] Inspect `oscode` source, tests, examples, version, and license; document why execution is unavailable on this host.
+- [ ] Continue the remaining named papers and seven open-source repositories, prioritizing a materially distinct method with domain-level evidence.

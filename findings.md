@@ -3177,6 +3177,13 @@ remote matrix run.
 - Read and documented four phase-function papers, their assumptions and relation to prior rejected Kummer/Appell/Airy prototypes in `docs/research/phase_function_papers_batch1_20261105.md`; archived source PDFs and hashes are recorded there. This is a first batch, not a complete literature review, and motivates no production edit.
 - Production Fast and Reference sources remain unchanged. Next: assess whether a bounded online panel rule can be justified from the nested evidence and cost; preserve the independent Reference strictly as a correctness oracle.
 
+### First-batch literature and `oscode` source audit — 2026-11-05
+
+- Extended the audited literature record to six papers, downloading and validating the full PDFs for Agocs–Barnett 2024 and Piron–Tacu 2025. ARDC is the same Riccati/Chebyshev family already under Phase 6c validation; the Milne paper supplies a specific Numerov discretization of the already explored Appell equation. Neither is a new accepted Fast algorithm.
+- Audited `oscode` at repository commit `4dd643b48596138861aca7fa8ad4b75e07f35c38` (2025-05-21): BSD-3-Clause, C++17 extension with Eigen, adaptive embedded WKB/RK stepping, local truncation/quadrature estimates, and coefficient interpolation. PyPI's latest listed version is `1.1.2`, while the cloned master setup says `1.3.0`.
+- Could not run `oscode` examples or tests here: Python 3.11.9 has no installed `pyoscode`, and no C++ compiler (`cl`, `g++`, `clang++`, `gcc`) is on PATH. The API documents `atol` as unimplemented. Do not claim an upstream runtime reproduction.
+- Exact-SHA Actions run `41979029318` passed. New literature PDFs and the source audit note remain to be committed/pushed. Ten named first-batch papers, seven other required repository audits, and broad-domain algorithm validation remain open.
+
 ### Curvature-ranked small-budget and root screen — 2026-11-05
 
 - Added a fixed-background 5/10/15% panel-fraction screen using the existing production-accessible curvature×weight ranking. At 10%, all eight Fast candidates stay within `1.24e-4` relative `DN_gw` of the full nested Prüfer map and `4.49e-4 dex` maximum spectrum difference, inside the specified `2e-4` / `1e-3 dex` screens. A 5% budget is false-safe on high-blue target `1e-5` (`2.67e-4`) and the standard positive-cr map (`2.92e-4`).

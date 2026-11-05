@@ -1684,3 +1684,9 @@ the diagnostic artifacts are retained.
 - A coarse summed-curvature trigger would select every screened case, including two with nested integral changes below `4e-6`, so it is not a selective general trigger.
 - Read-only Prüfer root secants on base and 10% grids passed `2e-4` at high-blue targets `1e-5`/`1e-6`; target `1e-5` root discrepancy worsened from `4.91e-5` to `7.80e-5`, target `1e-6` improved from `3.63e-5` to `9.28e-6`. No rigorous root enclosure.
 - Scripts and artifacts: `screen_adaptive_panel_fraction_budget.py` / `adaptive_panel_fraction_budget_20261105.json`, `screen_adaptive_panel_candidate_roots.py` / `adaptive_panel_candidate_root_screen_20261105.json`. Production sources unchanged; fresh Ruff, compile, JSON validation, and diff checks remain before commit.
+
+## 2026-11-05 literature/project audit continuation
+
+- Read full Agocs–Barnett (2024) and Piron–Tacu (2025) algorithm sections and downloaded/validated both source PDFs; updated `docs/research/phase_function_papers_batch1_20261105.md` with equations, assumptions, failure modes, and prior-experiment deduplication.
+- Source-audited `oscode` at `4dd643b`; it uses adaptive WKB/RK local steps, C++17/Eigen, and interpolated coefficient arrays. Local execution was unavailable because `pyoscode` is absent and no C++ compiler is installed; a pip build-dependency attempt was stopped, with no package or project source changed.
+- Previous CI run `41979029318` passed. Remaining: commit/push this research record and continue the original broad literature/open-source and domain algorithm work.
