@@ -1652,3 +1652,12 @@ the diagnostic artifacts are retained.
 - `ruff check scripts/probe_adaptive_embedded_integral.py` and `python -m py_compile scripts/probe_adaptive_embedded_integral.py` passed. The script itself was run on both fixed-background cases.
 - Harness errors (wrong module-default config; missing optional artifact metadata) were corrected; final runs verify archived frequency grid and `DN_eff` replay before measuring.
 - Next: test an integral-contribution panel selector for reducing midpoint propagation cost while preserving the global delta signal; then evaluate additional held-out cases and decide accept/reject.
+
+## 2026-11-05 — panel-ranked midpoint feasibility
+
+- Extended the fixed-background diagnostic with per-panel PCHIP integral changes and a comparison between oracle ranking (actual midpoint panel deltas) and the existing curvature×panel-weight ranking (available before midpoint solves).
+- Signed cancellation is material: absolute panel-change mass is 1.65× the net delta on high-blue and 9.20× on positive-cr. Ranking by current curvature×weight and sampling the top quarter captured 80.36% and 99.989% of the oracle absolute mass, respectively.
+- In those diagnostic subsets, `DN_gw` discrepancy vs archived dense Prüfer fell to `2.56e-5` (high-blue) and `2.38e-5` (positive-cr); kernel medians were about 1.17× and 1.43× base. Oracle ranking is explicitly offline/optimistic because it uses all midpoint values.
+- The run's one-off Fast map checks passed; Ruff and `py_compile` passed. No production source changed.
+- CI for commit `67b73910ddaa3fe2049412b78af8af8f634141d3` passed all nine jobs in run `41972973367`.
+- Next: test cumulative curvature-budget selection on more held-out points, including neighboring and boundary cases, and track spectrum error as well as `DN_gw`. If it stays promising, implement behind the opt-in adaptive path with a focused regression first.

@@ -1183,3 +1183,14 @@ Trace the existing fixed-background Fast frequency-evaluation entry point and bu
 ### Next Step
 
 Develop a diagnostic-only, panel-integral contribution selector that spends midpoint propagation on the largest estimated contributions first; compare its estimate against both archived dense Prüfer changes and record the node/work tradeoff. Keep production Fast untouched.
+
+### Curvature-ranked panel screen — 2026-11-05
+
+- [x] Measured per-panel PCHIP integral changes from actual Fast midpoint spectra on the high-blue and positive-cr artifacts.
+- [x] Compared oracle top-panel ranking against the existing production curvature×panel-weight ranking. The latter's top quarter captured `80.36%` and `99.989%` of oracle absolute panel-change mass; selected-grid `DN_gw` discrepancy vs archived dense Prüfer was `2.56e-5` and `2.38e-5`.
+- [x] Recorded cancellation ratios of `1.65x` and `9.20x` between absolute summed panel changes and net global integral change; this warns against relying only on signed global delta.
+- [ ] Candidate still needs region-level held-out screens, spectrum error, and cost/selection stability; oracle ranking is not online and cannot count as an implementation.
+
+### Next Step
+
+Build a deterministic held-out panel-selection screen spanning cr=0 and cr>0, neighboring target points, and at least one boundary case. Use only the current coarse curvature×weight ranking to select actual Fast midpoint solves; report the global `DN_gw` and spectrum changes, rank concentration, kernel work, and the independent dense-grid comparison. Keep production Fast unchanged until the screen supports an online rule.

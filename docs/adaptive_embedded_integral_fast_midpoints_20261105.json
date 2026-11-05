@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "experiment": "fixed_background_fast_actual_midpoint_embedded_integral_probe",
-  "source_commit": "16787b798902ebfcad54e85701a573ea27da31c4",
-  "created_at": "2026-11-05T13:14:41.346473+08:00",
+  "source_commit": "67b73910ddaa3fe2049412b78af8af8f634141d3",
+  "created_at": "2026-11-05T13:23:58.351099+08:00",
   "parameters": {
     "Omega_bh2": 0.0223828,
     "Omega_ch2": 0.1201075,
@@ -24,7 +24,7 @@
     "phase_max": 0.25,
     "sigma_exact": true
   },
-  "fast_outer_replay_seconds": 0.3386349000502378,
+  "fast_outer_replay_seconds": 0.3404465999919921,
   "source_artifact": "fast_high_blue_target1e7_prufer_20261105.json",
   "adaptive_reference_key": "adaptive_exact_fast_grid",
   "dense_reference_key": "native_res4",
@@ -43,12 +43,91 @@
   "archived_dense_reference_DN_gw": 0.15790268973045984,
   "archived_reference_grid_relative_delta": 7.940331392219545e-05,
   "embedded_to_archived_grid_delta_ratio": 0.9146720671315569,
+  "panel_integral_delta": {
+    "sum_signed_relative": 7.262799328222694e-05,
+    "sum_absolute_relative": 0.00011967203248471277,
+    "largest_panel_fraction_of_absolute_delta": 0.48205015663203216,
+    "selection_results": [
+      {
+        "selected_fraction": 0.25,
+        "selected_midpoint_count": 18,
+        "frequency_count": 91,
+        "DN_gw": 0.15790233090106182,
+        "relative_delta_vs_base": 6.47250621176773e-05,
+        "relative_delta_vs_all_midpoints": 7.903442715453848e-06,
+        "relative_delta_vs_archived_dense_reference": 2.2724717269912238e-06,
+        "kernel_median_s": 0.010384300025179982,
+        "kernel_p95_s": 0.010780480108223855
+      },
+      {
+        "selected_fraction": 0.5,
+        "selected_midpoint_count": 36,
+        "frequency_count": 109,
+        "DN_gw": 0.1579020618633959,
+        "relative_delta_vs_base": 6.642877510853901e-05,
+        "relative_delta_vs_all_midpoints": 6.199630007598969e-06,
+        "relative_delta_vs_archived_dense_reference": 3.976291126029769e-06,
+        "kernel_median_s": 0.01189150009304285,
+        "kernel_p95_s": 0.011949730012565852
+      },
+      {
+        "selected_fraction": 0.75,
+        "selected_midpoint_count": 54,
+        "frequency_count": 127,
+        "DN_gw": 0.15790108294008529,
+        "relative_delta_vs_base": 7.262792330444797e-05,
+        "relative_delta_vs_all_midpoints": 6.998294517837208e-11,
+        "relative_delta_vs_archived_dense_reference": 1.017582649986191e-05,
+        "kernel_median_s": 0.013889800058677793,
+        "kernel_p95_s": 0.014238099986687302
+      }
+    ],
+    "curvature_ranked_selection_results": [
+      {
+        "selected_fraction": 0.25,
+        "selected_midpoint_count": 18,
+        "frequency_count": 91,
+        "absolute_panel_delta_share_captured": 0.8035705291997218,
+        "DN_gw": 0.15790673151397056,
+        "relative_delta_vs_base": 3.685765792113916e-05,
+        "relative_delta_vs_all_midpoints": 3.5771653820551065e-05,
+        "relative_delta_vs_archived_dense_reference": 2.5596017800883607e-05,
+        "kernel_median_s": 0.009875500109046698,
+        "kernel_p95_s": 0.01021974990144372
+      },
+      {
+        "selected_fraction": 0.5,
+        "selected_midpoint_count": 36,
+        "frequency_count": 109,
+        "absolute_panel_delta_share_captured": 0.9945835962467443,
+        "DN_gw": 0.15790167222650042,
+        "relative_delta_vs_base": 6.889619705205797e-05,
+        "relative_delta_vs_all_midpoints": 3.732053354535795e-06,
+        "relative_delta_vs_archived_dense_reference": 6.443867176415271e-06,
+        "kernel_median_s": 0.011761500034481287,
+        "kernel_p95_s": 0.012305730092339217
+      },
+      {
+        "selected_fraction": 0.75,
+        "selected_midpoint_count": 54,
+        "frequency_count": 127,
+        "absolute_panel_delta_share_captured": 0.9999972331638989,
+        "DN_gw": 0.157901082928807,
+        "relative_delta_vs_base": 7.26279947255208e-05,
+        "relative_delta_vs_all_midpoints": 1.4433151891830534e-12,
+        "relative_delta_vs_archived_dense_reference": 1.0175897925395457e-05,
+        "kernel_median_s": 0.013924499973654747,
+        "kernel_p95_s": 0.014417249849066139
+      }
+    ],
+    "limitation": "Panels are ranked using all midpoint values; this is an upper-bound feasibility screen, not the work of an online selector."
+  },
   "kernel_seconds": {
-    "base_median": 0.008549900026991963,
-    "base_p95": 0.008782170014455914,
-    "refined_median": 0.016488600056618452,
-    "refined_p95": 0.016877970099449156,
-    "median_ratio_refined_over_base": 1.9285137843207616,
+    "base_median": 0.008572099963203073,
+    "base_p95": 0.00882508996874094,
+    "refined_median": 0.0160691998898983,
+    "refined_p95": 0.0163520700763911,
+    "median_ratio_refined_over_base": 1.8745931520721373,
     "paired_repeats": 7,
     "warmup_excluded": true
   },
@@ -76,7 +155,7 @@
     "threads_argument": 2
   },
   "hashes": {
-    "script_py": "0bb70049b9301a681346e11c77127e51cb033e67d49a143acb9232a1ce757ec6",
+    "script_py": "54efb81e782700334650de97b6ea8be5868b7b5606014a4119ec372d870be325",
     "fast_sgwb_py": "905df3b8c798cf712a80b677e820f8f8d7c3aebc8be28da0a6b17b3ddbf140fc",
     "exact_background_py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c"
   },

@@ -19,6 +19,7 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+from scipy.interpolate import PchipInterpolator
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -156,15 +157,6 @@ def main() -> None:
     if archived_spectrum.size != base_spectrum.size:
         raise RuntimeError("archived Fast spectrum length does not match archived frequency grid")
     spectrum_abs_dex = np.abs(np.log10(base_spectrum / archived_spectrum))
-    base_times, refined_times = [], []
-    for _ in range(REPEATS):
-        start = time.perf_counter()
-        _evaluate(base_args, base_outputs)
-        base_times.append(time.perf_counter() - start)
-        start = time.perf_counter()
-        _evaluate(refined_args, refined_outputs)
-        refined_times.append(time.perf_counter() - start)
-
     ref_maps = source["reference_maps"]
     adaptive_ref_key = (
         "adaptive_exact_fast_grid"
@@ -182,6 +174,92 @@ def main() -> None:
         if dense_ref_key in ref_maps
         else source[dense_ref_key]["DN_gw"]
     )
+    _, coarse_panel_integrals = FS.pchip_integral_breakdown(base_freqs, base_spectrum)
+    _, refined_panel_integrals = FS.pchip_integral_breakdown(refined_freqs, refined_spectrum)
+    if refined_panel_integrals.size != 2 * coarse_panel_integrals.size:
+        raise RuntimeError("midpoint grid does not split every base panel exactly once")
+    panel_delta = refined_panel_integrals.reshape(-1, 2).sum(axis=1) - coarse_panel_integrals
+    if not np.isclose(
+        float(np.sum(panel_delta)),
+        float(np.sum(refined_panel_integrals) - np.sum(coarse_panel_integrals)),
+        rtol=1e-10,
+        atol=1e-18,
+    ):
+        raise RuntimeError("panel integral deltas do not sum to the global integral delta")
+    panel_order = np.argsort(np.abs(panel_delta))[::-1]
+    panel_selection = []
+    for fraction in (0.25, 0.5, 0.75):
+        count = max(1, int(np.ceil(fraction * mids.size)))
+        selected_mids = mids[panel_order[:count]]
+        candidate_freqs = np.sort(np.concatenate((x, selected_mids)))[::-1].copy()
+        candidate_args, _ = _prepared(model, candidate_freqs, dn_eff)
+        candidate_outputs = [candidate_args[16], candidate_args[17], candidate_args[18]]
+        candidate_spectrum = _evaluate(candidate_args, candidate_outputs)
+        candidate_dn = _dn_gw(candidate_freqs, candidate_spectrum, model)
+        candidate_times = []
+        for _ in range(3):
+            start = time.perf_counter()
+            _evaluate(candidate_args, candidate_outputs)
+            candidate_times.append(time.perf_counter() - start)
+        panel_selection.append({
+            "selected_fraction": fraction,
+            "selected_midpoint_count": int(count),
+            "frequency_count": int(candidate_freqs.size),
+            "DN_gw": candidate_dn,
+            "relative_delta_vs_base": abs(candidate_dn - base_dn) / max(abs(candidate_dn), abs(base_dn)),
+            "relative_delta_vs_all_midpoints": abs(candidate_dn - refined_dn) / max(abs(candidate_dn), abs(refined_dn)),
+            "relative_delta_vs_archived_dense_reference": abs(candidate_dn - float(archived_dense)) / max(abs(candidate_dn), abs(float(archived_dense))),
+            "kernel_median_s": statistics.median(candidate_times),
+            "kernel_p95_s": float(np.percentile(candidate_times, 95)),
+        })
+    base_order = np.argsort(base_freqs)
+    x_base = base_freqs[base_order]
+    y_base = np.log10(base_spectrum[base_order])
+    curvature = np.abs(np.asarray(PchipInterpolator(x_base, y_base).derivative(2)(x_base)))
+    widths = np.diff(x_base)
+    omega_base = base_spectrum[base_order]
+    panel_weights = 0.5 * (omega_base[:-1] + omega_base[1:]) * widths
+    curvature_score = curvature[:-1] * widths * widths / 8.0 * panel_weights
+    curvature_order = np.argsort(curvature_score)[::-1]
+    curvature_selection = []
+    for fraction in (0.25, 0.5, 0.75):
+        count = max(1, int(np.ceil(fraction * mids.size)))
+        selected_indices = curvature_order[:count]
+        selected_mids = mids[selected_indices]
+        candidate_freqs = np.sort(np.concatenate((x, selected_mids)))[::-1].copy()
+        candidate_args, _ = _prepared(model, candidate_freqs, dn_eff)
+        candidate_outputs = [candidate_args[16], candidate_args[17], candidate_args[18]]
+        candidate_spectrum = _evaluate(candidate_args, candidate_outputs)
+        candidate_dn = _dn_gw(candidate_freqs, candidate_spectrum, model)
+        candidate_times = []
+        for _ in range(3):
+            start = time.perf_counter()
+            _evaluate(candidate_args, candidate_outputs)
+            candidate_times.append(time.perf_counter() - start)
+        true_abs_delta_share = float(
+            np.sum(np.abs(panel_delta[selected_indices])) / np.sum(np.abs(panel_delta))
+        )
+        curvature_selection.append({
+            "selected_fraction": fraction,
+            "selected_midpoint_count": int(count),
+            "frequency_count": int(candidate_freqs.size),
+            "absolute_panel_delta_share_captured": true_abs_delta_share,
+            "DN_gw": candidate_dn,
+            "relative_delta_vs_base": abs(candidate_dn - base_dn) / max(abs(candidate_dn), abs(base_dn)),
+            "relative_delta_vs_all_midpoints": abs(candidate_dn - refined_dn) / max(abs(candidate_dn), abs(refined_dn)),
+            "relative_delta_vs_archived_dense_reference": abs(candidate_dn - float(archived_dense)) / max(abs(candidate_dn), abs(float(archived_dense))),
+            "kernel_median_s": statistics.median(candidate_times),
+            "kernel_p95_s": float(np.percentile(candidate_times, 95)),
+        })
+    base_times, refined_times = [], []
+    for _ in range(REPEATS):
+        start = time.perf_counter()
+        _evaluate(base_args, base_outputs)
+        base_times.append(time.perf_counter() - start)
+        start = time.perf_counter()
+        _evaluate(refined_args, refined_outputs)
+        refined_times.append(time.perf_counter() - start)
+
     record = {
         "schema_version": 1,
         "experiment": "fixed_background_fast_actual_midpoint_embedded_integral_probe",
@@ -218,6 +296,14 @@ def main() -> None:
             abs(refined_dn - base_dn) / max(abs(refined_dn), abs(base_dn))
             / (abs(archived_dense - archived_ref) / max(abs(archived_dense), abs(archived_ref)))
         ),
+        "panel_integral_delta": {
+            "sum_signed_relative": abs(float(np.sum(panel_delta)) * FS.ln10 * gp.Neff0 / (gp.Omega_nh2 / model.derived_param["h"] ** 2)) / max(abs(base_dn), abs(refined_dn)),
+            "sum_absolute_relative": float(np.sum(np.abs(panel_delta)) * FS.ln10 * gp.Neff0 / (gp.Omega_nh2 / model.derived_param["h"] ** 2)) / max(abs(base_dn), abs(refined_dn)),
+            "largest_panel_fraction_of_absolute_delta": float(np.max(np.abs(panel_delta)) / np.sum(np.abs(panel_delta))),
+            "selection_results": panel_selection,
+            "curvature_ranked_selection_results": curvature_selection,
+            "limitation": "Panels are ranked using all midpoint values; this is an upper-bound feasibility screen, not the work of an online selector.",
+        },
         "kernel_seconds": {
             "base_median": statistics.median(base_times),
             "base_p95": float(np.percentile(base_times, 95)),
