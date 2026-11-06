@@ -214,6 +214,29 @@ def test_resolve_config_is_immutable_and_does_not_mutate_module_state(fast_setti
     assert FS.get_settings() == before
 
 
+def test_parallel_chunksize_config_is_optional_and_validated():
+    config = FS.resolve_config('fast', parallel_chunksize=1)
+
+    assert config.parallel_chunksize == 1
+    assert FS.FastSolverConfig().parallel_chunksize is None
+    assert FS.FastSolverConfig(parallel_chunksize=2**32 - 1).parallel_chunksize == 2**32 - 1
+    with pytest.raises(ValueError, match='parallel_chunksize'):
+        FS.FastSolverConfig(parallel_chunksize=-1)
+    with pytest.raises(ValueError, match='parallel_chunksize'):
+        FS.FastSolverConfig(parallel_chunksize=1.5)
+    with pytest.raises(ValueError, match='parallel_chunksize'):
+        FS.FastSolverConfig(parallel_chunksize=True)
+    with pytest.raises(ValueError, match='parallel_chunksize'):
+        FS.FastSolverConfig(parallel_chunksize=2**32)
+
+
+def test_parallel_chunksize_preserves_legacy_positional_config_fields():
+    config = FS.FastSolverConfig(0.01, 4, 8.0, 0.5, "construct", None, True)
+
+    assert config.kink_split is True
+    assert config.parallel_chunksize is None
+
+
 def test_default_engine_uses_plain_grid(monkeypatch, fast_settings):
     captured = {}
 
