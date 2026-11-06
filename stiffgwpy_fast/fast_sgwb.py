@@ -32,7 +32,15 @@ from threading import RLock
 
 import numpy as np
 from numba import config as numba_config
-from numba import get_num_threads, njit, prange, set_num_threads, threading_layer
+from numba import (
+    get_num_threads,
+    get_parallel_chunksize,
+    njit,
+    prange,
+    set_num_threads,
+    set_parallel_chunksize,
+    threading_layer,
+)
 from scipy import integrate, interpolate
 
 from . import global_param as gp
@@ -485,6 +493,7 @@ def get_config():
             phase_max=_PHASE_MAX,
             freq_grid=_FREQ_GRID,
             threads=_THREADS,
+            parallel_chunksize=None,
             kink_split=_KINK_SPLIT,
         )
 
@@ -520,6 +529,7 @@ def resolve_config(name=None, base=None, **overrides):
             phase_max=preset.get("phase_max", 0.0),
             freq_grid=preset.get("freq_grid", "construct"),
             threads=min(int(preset["threads"]), _MAX_THREADS),
+            parallel_chunksize=None,
             kink_split=bool(preset.get("kink_split", False)),
             transition_refine_radius=preset.get("transition_refine_radius", 2.0),
             transition_refine_factor=preset.get("transition_refine_factor", 8),
@@ -2167,6 +2177,7 @@ def _SGWB_iter_fast_impl(
     outer_f_hor_prev = None
     first = True
     thread_before = get_num_threads()
+    parallel_chunksize_before = get_parallel_chunksize()
     if config.threads is not None:
         if config.threads > _MAX_THREADS:
             raise ValueError("thread count must be in [1, %d], got %d" % (_MAX_THREADS, config.threads))
@@ -2185,6 +2196,8 @@ def _SGWB_iter_fast_impl(
     m._fast_background_failure_detail = None
     m._fast_background_failure_log_scale = None
     try:
+        if config.parallel_chunksize is not None:
+            set_parallel_chunksize(config.parallel_chunksize)
         for _iter in range(MAX_ITER):
             n_inf = m.derived_param["N_inf"]
             if n_inf is None or not math.isfinite(float(n_inf)) or n_inf <= 0.0:
@@ -2580,6 +2593,8 @@ def _SGWB_iter_fast_impl(
             m.fast_failure_reason = "max_iter"
             print("SGWB_iter_fast: did not converge within %d iterations." % MAX_ITER)
     finally:
+        if config.parallel_chunksize is not None:
+            set_parallel_chunksize(parallel_chunksize_before)
         if derived_cache_was_enabled:
             m._fast_derived_cache_enabled = True
         else:

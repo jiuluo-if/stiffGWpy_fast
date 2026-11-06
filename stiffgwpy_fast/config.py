@@ -14,6 +14,8 @@ from math import ceil, isfinite
 from typing import Optional
 
 _MAX_TRANSITION_REFINE_NODES = 500_000
+# Numba 0.67 forwards this setting through a ctypes ``c_uint`` wrapper.
+_MAX_PARALLEL_CHUNKSIZE = (1 << 32) - 1
 
 
 @dataclass(frozen=True)
@@ -26,12 +28,16 @@ class FastSolverConfig:
     ``transition_refine_factor`` control only the optional validation path:
     the radius is measured in e-folds on either side of reheating and the
     factor is an integer in [1, 128]. Their combination is bounded to an
-    estimated 500,000 refined nodes per solve.
+    estimated 500,000 refined nodes per solve. ``parallel_chunksize`` is an
+    opt-in Numba scheduling setting; positive values use dynamic scheduling
+    only with the TBB threading layer, must fit in an unsigned 32-bit value,
+    and ``None`` preserves the caller's current Numba setting.
 
     中文：创建时校验参数范围，之后不可修改。直接构造使用的是旧手动设置默认值，并非正式
     ``fast`` 预设；需要具名档位时用 ``resolve_config('fast')`` 生成配置快照。
     ``transition_refine_radius`` 和 ``transition_refine_factor`` 只控制可选的验证路径，
     其中半径表示再加热转折点两侧的 e-fold 范围、倍数为 [1, 128] 内的整数；两者组合后最多估算生成 500,000 个细化节点。
+    ``parallel_chunksize`` 是可选的 Numba 调度参数；只有 TBB 线程层支持正值动态分块，范围为 [0, 2^32-1]；``None`` 保留调用线程现有设置。
     """
 
     h: float = 0.01
@@ -43,10 +49,12 @@ class FastSolverConfig:
     kink_split: bool = False
     transition_refine_radius: float = 2.0
     transition_refine_factor: int = 8
+    parallel_chunksize: Optional[int] = None
 
     def __post_init__(self) -> None:
         raw_col_step = self.col_step
         raw_threads = self.threads
+        raw_parallel_chunksize = self.parallel_chunksize
         raw_transition_refine_factor = self.transition_refine_factor
         h = float(self.h)
         z_tail = float(self.z_tail)
@@ -54,6 +62,9 @@ class FastSolverConfig:
         transition_refine_radius = float(self.transition_refine_radius)
         col_step = int(self.col_step)
         threads = None if self.threads is None else int(self.threads)
+        parallel_chunksize = (
+            None if self.parallel_chunksize is None else int(self.parallel_chunksize)
+        )
         transition_refine_factor = int(self.transition_refine_factor)
         if not isinstance(self.kink_split, bool):
             raise TypeError("kink_split must be a bool, got %r" % self.kink_split)
@@ -96,11 +107,30 @@ class FastSolverConfig:
             raise ValueError("threads must be a positive integer, got %r" % raw_threads)
         if threads is not None and threads < 1:
             raise ValueError("threads must be a positive integer, got %r" % self.threads)
+        if raw_parallel_chunksize is not None and (
+            isinstance(raw_parallel_chunksize, bool)
+            or float(raw_parallel_chunksize) != parallel_chunksize
+        ):
+            raise ValueError(
+                "parallel_chunksize must be a nonnegative integer or None, got %r"
+                % raw_parallel_chunksize
+            )
+        if parallel_chunksize is not None and parallel_chunksize < 0:
+            raise ValueError(
+                "parallel_chunksize must be a nonnegative integer or None, got %r"
+                % raw_parallel_chunksize
+            )
+        if parallel_chunksize is not None and parallel_chunksize > _MAX_PARALLEL_CHUNKSIZE:
+            raise ValueError(
+                "parallel_chunksize must be <= %d, got %r"
+                % (_MAX_PARALLEL_CHUNKSIZE, raw_parallel_chunksize)
+            )
         object.__setattr__(self, "h", h)
         object.__setattr__(self, "z_tail", z_tail)
         object.__setattr__(self, "phase_max", phase_max)
         object.__setattr__(self, "col_step", col_step)
         object.__setattr__(self, "threads", threads)
+        object.__setattr__(self, "parallel_chunksize", parallel_chunksize)
         object.__setattr__(self, "kink_split", kink_split)
         object.__setattr__(self, "transition_refine_radius", transition_refine_radius)
         object.__setattr__(self, "transition_refine_factor", transition_refine_factor)
