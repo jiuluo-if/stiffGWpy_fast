@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "experiment": "exact order-3/2 Bessel propagation over the sigma=1 prefix",
+  "source_commit": "f1568eb1397cf53cd245685dfe567eeb9ff09465",
+  "branch": "fast_v0.2",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "n_t": 0.0,
+    "cr": 1,
+    "T_re": 2000.0,
+    "DN_re": 31.041498487849346,
+    "kappa10": 0.01
+  },
+  "N_inf": 68.81383977195475,
+  "N_re_abs": 31.041498487849346,
+  "background_nodes": 13765,
+  "frequency_nodes": 76,
+  "pre_event_modes": 37,
+  "threads": 1,
+  "per_mode": [
+    {
+      "mode": 0,
+      "frequency_log10_hz": 6.892341408521031,
+      "j0": 0,
+      "N0": 0.0,
+      "z0": -4.090212778241035e-15,
+      "N_re_abs": 31.041498487849346,
+      "prefix_stop_N": 10.000000000000009,
+      "coarse_targets": 251,
+      "baseline_vs_closed_form_state_max_rel": 3.424860060534427e-05,
+      "closed_form_vs_dop853_final_rel": 1.927232824526783e-10,
+      "baseline_timing": {
+        "p50_s": 4.349998198449612e-05,
+        "p95_s": 5.859998054802418e-05
+      },
+      "closed_form_timing": {
+        "p50_s": 7.500173524022102e-06,
+        "p95_s": 1.0199961252510548e-05
+      },
+      "closed_form_over_baseline_p50": 0.172417853568198,
+      "limitations": [
+        "single-mode prefix microbenchmark, not full solve or end-to-end speed",
+        "does not yet splice the exact state into post-event kernel or assemble all history columns",
+        "baseline is the Fast midpoint transfer, not an independent self-consistent root"
+      ]
+    },
+    {
+      "mode": 18,
+      "frequency_log10_hz": 0.7767656568804799,
+      "j0": 2869,
+      "N0": 14.345,
+      "z0": -6.9091335608033955,
+      "N_re_abs": 31.041498487849346,
+      "prefix_stop_N": 31.041498487849346,
+      "coarse_targets": 419,
+      "baseline_vs_closed_form_state_max_rel": 2.4598903862030313e-06,
+      "closed_form_vs_dop853_final_rel": 3.71412969746322e-12,
+      "baseline_timing": {
+        "p50_s": 5.0999922677874565e-05,
+        "p95_s": 5.4450007155537605e-05
+      },
+      "closed_form_timing": {
+        "p50_s": 1.0200077667832375e-05,
+        "p95_s": 1.0449904948472977e-05
+      },
+      "closed_form_over_baseline_p50": 0.20000182612546394,
+      "limitations": [
+        "single-mode prefix microbenchmark, not full solve or end-to-end speed",
+        "does not yet splice the exact state into post-event kernel or assemble all history columns",
+        "baseline is the Fast midpoint transfer, not an independent self-consistent root"
+      ]
+    },
+    {
+      "mode": 36,
+      "frequency_log10_hz": -2.78549367596328,
+      "j0": 6150,
+      "N0": 30.75,
+      "z0": -6.909038797988351,
+      "N_re_abs": 31.041498487849346,
+      "prefix_stop_N": 31.041498487849346,
+      "coarse_targets": 9,
+      "baseline_vs_closed_form_state_max_rel": 1.6046965290345145e-09,
+      "closed_form_vs_dop853_final_rel": 2.5748892072225735e-15,
+      "baseline_timing": {
+        "p50_s": 1.400010660290718e-06,
+        "p95_s": 1.700012944638729e-06
+      },
+      "closed_form_timing": {
+        "p50_s": 1.00000761449337e-06,
+        "p95_s": 1.350068487226963e-06
+      },
+      "closed_form_over_baseline_p50": 0.7142857142857143,
+      "limitations": [
+        "single-mode prefix microbenchmark, not full solve or end-to-end speed",
+        "does not yet splice the exact state into post-event kernel or assemble all history columns",
+        "baseline is the Fast midpoint transfer, not an independent self-consistent root"
+      ]
+    }
+  ],
+  "summary": {
+    "max_baseline_state_relative_difference": 3.424860060534427e-05,
+    "median_candidate_over_baseline_prefix_p50": 0.20000182612546394
+  },
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 1,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": "workqueue",
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 1
+  },
+  "source_hashes": {
+    "fast_sgwb.py": "766c1d7325c0501bf91cb809bf35a12ec601f1cb1f2969112a12aba9f8b769e5",
+    "probe_script": "37f2df1448fb0fbfe0a025c4a610baad894f357b28ec2f2cf37da9604833cab5"
+  }
+}
