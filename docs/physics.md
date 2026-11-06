@@ -15,9 +15,11 @@ tensor background. The stiff component is parameterized by
 single-field consistency relation determines the tensor tilt and reheating
 duration.
 
-The expansion variable is `N = ln(a)`. The background quantity
-`sigma(N) = d ln(H) / dN` sources the tensor-mode equation, and
-`f_hor(N) = log10(aH/(2 pi))` tracks horizon crossing.
+The expansion coordinate `N` increases forward from the inflation-end anchor
+`N=0` to the present-day value `N=N_inf`; with the present scale factor
+normalized to one, `a(N) = exp(N - N_inf)`. The background quantity
+`sigma(N) = (rho + p) / rho = -(2/3) d ln(H) / dN` sources the tensor-mode
+equation, and `f_hor(N) = log10(aH/(2 pi))` tracks horizon crossing.
 
 ## Tensor-mode equation
 
