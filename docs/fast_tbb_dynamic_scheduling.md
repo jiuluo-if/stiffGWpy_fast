@@ -29,6 +29,26 @@ and benchmark the exact workload and thread count before opting in. This
 scheduling option changes runtime only; it does not expand the independently
 validated accuracy domain.
 
+## Higher-thread follow-up
+
+The exact committed source was also measured at 16 and 20 threads on the same
+26 cases. At 16 threads, 25 alternating pairs per case were bitwise identical;
+TBB dynamic chunk size 1 had median P50/P95 ratios of `0.901/0.881` versus
+workqueue, and no case exceeded the 5% regression limit. At 20 threads, an
+initial 25-pair screen had two marginal outliers (one P50 and one P95). A
+targeted 100-pair replay of both outliers put them below 5%, and a 50-pair
+full-matrix replay was bitwise identical with median P50/P95 ratios
+`0.944/0.929`; no case exceeded 5%. These are Windows 10 measurements with
+Numba 0.67.0 and TBB, so they support opt-in use at 16/20 threads on this host
+but do not establish cross-platform performance.
+
+Artifacts:
+
+- [`fast_tbb_dynamic_candidate_16threads_25pairs.json`](fast_tbb_dynamic_candidate_16threads_25pairs.json)
+- [`fast_tbb_dynamic_candidate_20threads_25pairs.json`](fast_tbb_dynamic_candidate_20threads_25pairs.json) — noisy initial screen with two marginal outliers
+- [`fast_tbb_dynamic_candidate_20threads_outliers_100pairs.json`](fast_tbb_dynamic_candidate_20threads_outliers_100pairs.json)
+- [`fast_tbb_dynamic_candidate_20threads_50pairs.json`](fast_tbb_dynamic_candidate_20threads_50pairs.json)
+
 ## Reproduction
 
 Set the backend before starting Python, then run the benchmark driver:

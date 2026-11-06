@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "experiment": "Fast full-solve comparison of workqueue static versus TBB scheduling via FastSolverConfig",
+  "decision": "SCREEN_PASS",
+  "source_commit": "49deb02df9156bfd543b2e0663fdd45f7f3d8949",
+  "branch": "",
+  "case_count": 2,
+  "pairs_per_case_per_variant": 100,
+  "threads": 20,
+  "variants": {
+    "workqueue_static": [
+      "workqueue",
+      0
+    ],
+    "tbb_static": [
+      "tbb",
+      0
+    ],
+    "tbb_dynamic_1": [
+      "tbb",
+      1
+    ]
+  },
+  "resources": {
+    "workqueue_static": {
+      "logical_cpu_count": 32,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "numba_threads": 20,
+      "numba_threads_configured": 20,
+      "numba_threading_layer": "workqueue",
+      "numba_threading_layer_requested": "workqueue",
+      "blas_threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      },
+      "workers": 1,
+      "concurrent_processes": 1,
+      "python": "3.11.9",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "numpy": "2.4.4",
+      "scipy": "1.17.1",
+      "numba": "0.67.0",
+      "threads_argument": 20
+    },
+    "tbb_static": {
+      "logical_cpu_count": 32,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "numba_threads": 20,
+      "numba_threads_configured": 20,
+      "numba_threading_layer": "tbb",
+      "numba_threading_layer_requested": "tbb",
+      "blas_threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      },
+      "workers": 1,
+      "concurrent_processes": 1,
+      "python": "3.11.9",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "numpy": "2.4.4",
+      "scipy": "1.17.1",
+      "numba": "0.67.0",
+      "threads_argument": 20
+    },
+    "tbb_dynamic_1": {
+      "logical_cpu_count": 32,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "numba_threads": 20,
+      "numba_threads_configured": 20,
+      "numba_threading_layer": "tbb",
+      "numba_threading_layer_requested": "tbb",
+      "blas_threads": {
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      },
+      "workers": 1,
+      "concurrent_processes": 1,
+      "python": "3.11.9",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "numpy": "2.4.4",
+      "scipy": "1.17.1",
+      "numba": "0.67.0",
+      "threads_argument": 20
+    }
+  },
+  "source_hashes": {
+    "fast_sgwb": "fbaa8ee313f61fafc3f4d502f5b1f30e270cea4f0cb35be9d23ddd927bb876ba",
+    "config": "d1eebc361ae0506deb676e09db01b13e3347684dd3dfc79f3817ad8ef3e802d3",
+    "exact_background": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+    "freq_adaptive": "2abb0781d043339091c96a4ce0bab6035b7ae4d877686034bacf3e1f70e78c19",
+    "region_input": "cba304f47991c329570bf9d72da6a71d93d67b207760158d092d0d1e2e0a24a8",
+    "benchmark_script": "0b1f028a535ea40567b9eb597423d6a2a6165f0686bf58f7a4fb97391b2615fd"
+  },
+  "cases": {
+    "cr1_region/train_sobol_01": {
+      "parameters": {
+        "r": 0.011275133731840947,
+        "cr": 1,
+        "T_re": 34.1234602444709,
+        "kappa10": 0.02448798773261647,
+        "DN_eff": 0.0
+      },
+      "warmups": {
+        "workqueue_static": {
+          "ok": true,
+          "runtime_s": 0.07712909998372197,
+          "root": 1.6192554241026341e-06,
+          "frequency_count": 75,
+          "frequency_sha256": "ef44722120f6cf8d63c501af04610ffc5d55b2d4b91aa856d52b3287d8178fa8",
+          "spectrum_sha256": "09f362294a75784a5fcb56b2d7abf55cf23c4f588811c961a639ea9777ceca95",
+          "result_sha256": "24dbe5bc6fb5ff8417daecc5d0cb9a8fd82c9ef5bdb895ab8905f07d6d1f957e",
+          "warnings": [],
+          "rss_after_mb": 170.38671875,
+          "rss_peak_mb": 170.38671875
+        },
+        "tbb_static": {
+          "ok": true,
+          "runtime_s": 0.08468180010095239,
+          "root": 1.6192554241026341e-06,
+          "frequency_count": 75,
+          "frequency_sha256": "ef44722120f6cf8d63c501af04610ffc5d55b2d4b91aa856d52b3287d8178fa8",
+          "spectrum_sha256": "09f362294a75784a5fcb56b2d7abf55cf23c4f588811c961a639ea9777ceca95",
+          "result_sha256": "24dbe5bc6fb5ff8417daecc5d0cb9a8fd82c9ef5bdb895ab8905f07d6d1f957e",
+          "warnings": [],
+          "rss_after_mb": 172.96875,
+          "rss_peak_mb": 172.96875
+        },
+        "tbb_dynamic_1": {
+          "ok": true,
+          "runtime_s": 0.08121569990180433,
+          "root": 1.6192554241026341e-06,
+          "frequency_count": 75,
+          "frequency_sha256": "ef44722120f6cf8d63c501af04610ffc5d55b2d4b91aa856d52b3287d8178fa8",
+          "spectrum_sha256": "09f362294a75784a5fcb56b2d7abf55cf23c4f588811c961a639ea9777ceca95",
+          "result_sha256": "24dbe5bc6fb5ff8417daecc5d0cb9a8fd82c9ef5bdb895ab8905f07d6d1f957e",
+          "warnings": [],
+          "rss_after_mb": 173.0703125,
+          "rss_peak_mb": 173.0703125
+        }
+      },
+      "timing": {
+        "workqueue_static": {
+          "p50_s": 0.0034244999988004565,
+          "p95_s": 0.0038850848912261424
+        },
+        "tbb_static": {
+          "p50_s": 0.0036449999315664172,
+          "p95_s": 0.004071940027642995
+        },
+        "tbb_dynamic_1": {
+          "p50_s": 0.003486650064587593,
+          "p95_s": 0.003940605069510638
+        }
+      },
+      "ratios": {
+        "tbb_static_over_workqueue_static_p50": 1.0643889422815587,
+        "tbb_static_over_workqueue_static_p95": 1.0480955092741566,
+        "tbb_dynamic_1_over_tbb_static_p50": 0.9565569629761902,
+        "tbb_dynamic_1_over_tbb_static_p95": 0.9677463427160594,
+        "tbb_dynamic_1_over_workqueue_static_p50": 1.0181486540542872,
+        "tbb_dynamic_1_over_workqueue_static_p95": 1.0142905959171908
+      },
+      "memory": {
+        "workqueue_static": {
+          "warm_rss_after_mb": 170.38671875,
+          "peak_rss_mb": 170.76171875
+        },
+        "tbb_static": {
+          "warm_rss_after_mb": 172.96875,
+          "peak_rss_mb": 176.7421875
+        },
+        "tbb_dynamic_1": {
+          "warm_rss_after_mb": 173.0703125,
+          "peak_rss_mb": 176.71484375
+        }
+      },
+      "bitwise_result_match": {
+        "workqueue_static": true,
+        "tbb_static": true,
+        "tbb_dynamic_1": true
+      },
+      "candidate_same_as_workqueue": true
+    },
+    "cr1_region/train_sobol_06": {
+      "parameters": {
+        "r": 0.014085328452237079,
+        "cr": 1,
+        "T_re": 551.9594897542745,
+        "kappa10": 0.08869888030672625,
+        "DN_eff": 0.0
+      },
+      "warmups": {
+        "workqueue_static": {
+          "ok": true,
+          "runtime_s": 0.0047154000494629145,
+          "root": 0.002117299859681422,
+          "frequency_count": 76,
+          "frequency_sha256": "52f64cc270a9f8cbda5c7e44ab293d5f5051567e8eb3c15522d1bd5f72fbbaef",
+          "spectrum_sha256": "aebd8ba0cb04c00550ff7b7cd434f29e13e96ad4048568c9914ec44e4b09bb11",
+          "result_sha256": "8ac420b30b288c0eeefeba8f79078ddf1ce6ad3a08d6e75d0eee0698c923334d",
+          "warnings": [],
+          "rss_after_mb": 170.6953125,
+          "rss_peak_mb": 170.6953125
+        },
+        "tbb_static": {
+          "ok": true,
+          "runtime_s": 0.005141800036653876,
+          "root": 0.002117299859681422,
+          "frequency_count": 76,
+          "frequency_sha256": "52f64cc270a9f8cbda5c7e44ab293d5f5051567e8eb3c15522d1bd5f72fbbaef",
+          "spectrum_sha256": "aebd8ba0cb04c00550ff7b7cd434f29e13e96ad4048568c9914ec44e4b09bb11",
+          "result_sha256": "8ac420b30b288c0eeefeba8f79078ddf1ce6ad3a08d6e75d0eee0698c923334d",
+          "warnings": [],
+          "rss_after_mb": 173.57421875,
+          "rss_peak_mb": 173.57421875
+        },
+        "tbb_dynamic_1": {
+          "ok": true,
+          "runtime_s": 0.004529800033196807,
+          "root": 0.002117299859681422,
+          "frequency_count": 76,
+          "frequency_sha256": "52f64cc270a9f8cbda5c7e44ab293d5f5051567e8eb3c15522d1bd5f72fbbaef",
+          "spectrum_sha256": "aebd8ba0cb04c00550ff7b7cd434f29e13e96ad4048568c9914ec44e4b09bb11",
+          "result_sha256": "8ac420b30b288c0eeefeba8f79078ddf1ce6ad3a08d6e75d0eee0698c923334d",
+          "warnings": [],
+          "rss_after_mb": 173.48828125,
+          "rss_peak_mb": 173.48828125
+        }
+      },
+      "timing": {
+        "workqueue_static": {
+          "p50_s": 0.004219150054268539,
+          "p95_s": 0.004689484962727875
+        },
+        "tbb_static": {
+          "p50_s": 0.004456850118003786,
+          "p95_s": 0.004874209966510534
+        },
+        "tbb_dynamic_1": {
+          "p50_s": 0.004364499938674271,
+          "p95_s": 0.004876374849118292
+        }
+      },
+      "ratios": {
+        "tbb_static_over_workqueue_static_p50": 1.0563383763738774,
+        "tbb_static_over_workqueue_static_p95": 1.0393913202091183,
+        "tbb_dynamic_1_over_tbb_static_p50": 0.9792790475595177,
+        "tbb_dynamic_1_over_tbb_static_p95": 1.0004441504618458,
+        "tbb_dynamic_1_over_workqueue_static_p50": 1.034450039115978,
+        "tbb_dynamic_1_over_workqueue_static_p95": 1.0398529663440277
+      },
+      "memory": {
+        "workqueue_static": {
+          "warm_rss_after_mb": 170.6953125,
+          "peak_rss_mb": 171.1171875
+        },
+        "tbb_static": {
+          "warm_rss_after_mb": 173.57421875,
+          "peak_rss_mb": 179.90625
+        },
+        "tbb_dynamic_1": {
+          "warm_rss_after_mb": 173.48828125,
+          "peak_rss_mb": 179.7421875
+        }
+      },
+      "bitwise_result_match": {
+        "workqueue_static": true,
+        "tbb_static": true,
+        "tbb_dynamic_1": true
+      },
+      "candidate_same_as_workqueue": true
+    }
+  },
+  "gate_summary": {
+    "tbb_static_over_workqueue_static": {
+      "p50_over_1_05": [
+        "cr1_region/train_sobol_01",
+        "cr1_region/train_sobol_06"
+      ],
+      "p95_over_1_05": []
+    },
+    "tbb_dynamic_1_over_tbb_static": {
+      "p50_over_1_05": [],
+      "p95_over_1_05": []
+    },
+    "tbb_dynamic_1_over_workqueue_static": {
+      "p50_over_1_05": [],
+      "p95_over_1_05": []
+    }
+  },
+  "limitations": [
+    "TBB must be selected before importing Numba; the current project resource helper defaults to workqueue.",
+    "This benchmark changes scheduling only. All solver outputs are required to match bitwise.",
+    "The case set is five standard profiles plus one fixed sampled cr=1 region panel, not a mathematical proof for every valid parameter.",
+    "Only two Numba threads and this Windows host are covered."
+  ]
+}
