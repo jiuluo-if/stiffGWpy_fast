@@ -28,14 +28,14 @@ def test_chart_mapping_keeps_pre_event_slots_unmapped_and_post_nodes_exact():
     np.testing.assert_array_equal(mapping, np.array([-1, -1, 0, 2, 3]))
 
 
-def test_tail_history_includes_sample_at_the_anchor():
-    outputs = [np.zeros((1, 1), dtype=np.float64) for _ in range(3)]
+def test_tail_history_preserves_main_sample_at_the_anchor():
+    outputs = [np.full((1, 2), value, dtype=np.float64) for value in (0.1, 0.2, 0.3)]
 
     _assemble_tail_history(
         *outputs,
         0,
-        np.array([0], dtype=np.int64),
-        np.array([0.0]),
+        np.array([0, 1], dtype=np.int64),
+        np.array([0.0, 0.1]),
         0.0,
         0.0,
         1.0,
@@ -46,8 +46,11 @@ def test_tail_history_includes_sample_at_the_anchor():
         1.0,
         np.array([1.0]),
         np.array([1.0]),
-        1,
+        2,
     )
 
-    assert all(np.isfinite(channel[0, 0]) for channel in outputs)
-    assert any(channel[0, 0] != 0.0 for channel in outputs)
+    np.testing.assert_array_equal(
+        [channel[0, 0] for channel in outputs], np.array([0.1, 0.2, 0.3])
+    )
+    assert all(np.isfinite(channel[0, 1]) for channel in outputs)
+    assert any(channel[0, 1] != channel[0, 0] for channel in outputs)

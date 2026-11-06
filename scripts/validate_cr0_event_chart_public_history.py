@@ -104,7 +104,7 @@ def _assemble_tail_history(
     e_nz = math.exp(anchor_tau - last_z)
     for slot in range(stop_slot):
         chart_index = sample_chart_indices[slot]
-        if chart_index >= 0 and sample_tau[slot] >= anchor_tau:
+        if chart_index >= 0 and sample_tau[slot] > anchor_tau:
             FS.assemble_tail(
                 Ogw, Oj, Opgw, mode, slot, chart_index, coeff, e_nz,
                 fp_freq, P_t, ev_minus, fp_minus,
@@ -143,7 +143,7 @@ def _candidate_history_kernel(
             terminal_y[mode] = 0.0
             for slot in range(len(sample_chart_indices)):
                 chart_index = sample_chart_indices[slot]
-                if chart_index >= 0 and sample_tau[slot] >= tau_anchor:
+                if chart_index >= 0 and sample_tau[slot] > tau_anchor:
                     FS.assemble_tail(
                         Ogw, Oj, Opgw, mode, slot, chart_index, coeff, e_nz,
                         fp_freq[mode], P_t[mode], ev_minus, fp_minus,
