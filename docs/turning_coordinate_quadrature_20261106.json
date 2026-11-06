@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "experiment": "present-horizon turning coordinate for low-frequency spectrum integration",
+  "coordinate": "u=ln(f/f_min), omega=sqrt(exp(2u)-1), s=ln(1+omega), du/ds=omega*(1+omega)/(1+omega^2)",
+  "script_sha256": "d56d92b04029c7be1f09f6edb7d7c317f49f1fac70840d51878a2198b6633dea",
+  "cases": {
+    "lowT": {
+      "case": "corner_r1_T0_k0",
+      "parameters": {
+        "r": 0.1,
+        "cr": 1,
+        "T_re": 10.0,
+        "kappa10": 0.01,
+        "DN_eff": 0.0
+      },
+      "reference_tail_convention": 10.0,
+      "base_grid_count": 76,
+      "nested_grid_count": 151,
+      "base_grid_sha256": "7593b022e1cde15024bf3ec258f7b5329c3e9b06ce0e8a0b5e33d28978120060",
+      "nested_grid_sha256": "415a4faebf7131d459cb7e4dcca1469094151fe6e3275df5be14e1554b1e7bd4",
+      "base_pchip_map_relative_difference_vs_nested_reference": 0.03972531335325713,
+      "base_pchip_map_relative_difference_vs_reference_301_root": 0.03979447085030602,
+      "sweep": [
+        {
+          "turning_chart_panel_count": 1,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.4702741516858122,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.029386672243490786,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.029386672243490786,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.02945514206415753,
+          "transformed_boundary_integral": 4.391219555817887e-13,
+          "ordinary_pchip_remainder_integral": 4.602209954486357e-12
+        },
+        {
+          "turning_chart_panel_count": 2,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.33434081115693637,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.012229532827435108,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.01222953282743533,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.012296861438204174,
+          "transformed_boundary_integral": 4.3481869540043996e-13,
+          "ordinary_pchip_remainder_integral": 4.522487613058606e-12
+        },
+        {
+          "turning_chart_panel_count": 4,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.33434081115693637,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.01262253938307678,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.012622539383077003,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.012689894134740325,
+          "transformed_boundary_integral": 4.469123130958478e-13,
+          "ordinary_pchip_remainder_integral": 4.512318710869281e-12
+        },
+        {
+          "turning_chart_panel_count": 8,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.33434081115693637,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.012644096412766093,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.012644096412766093,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.012711452598298773,
+          "transformed_boundary_integral": 4.506569039756078e-13,
+          "ordinary_pchip_remainder_integral": 4.508679693671975e-12
+        },
+        {
+          "turning_chart_panel_count": 16,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.33434081115693637,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.012644421355653579,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.012644421355653579,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.012711777562799922,
+          "transformed_boundary_integral": 4.558683132747921e-13,
+          "ordinary_pchip_remainder_integral": 4.503469875752388e-12
+        },
+        {
+          "turning_chart_panel_count": 32,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.33434081115693637,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.012671043510735558,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.012671043510735558,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.012738401488658919,
+          "transformed_boundary_integral": 4.926595326251163e-13,
+          "ordinary_pchip_remainder_integral": 4.466809036096642e-12
+        },
+        {
+          "turning_chart_panel_count": 75,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.33434081115693637,
+          "p95_midpoint_error_dex_positive_only": 0.042983802862832474,
+          "integral_relative_difference_vs_nested_151_reference": 0.01264444743460258,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.01264444743460258,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.012711803643483578,
+          "transformed_boundary_integral": 4.95933831674657e-12,
+          "ordinary_pchip_remainder_integral": 0.0
+        }
+      ],
+      "limitations": [
+        "This is a quadrature-only screen on stored z_tail=10 Reference samples, not a Fast production solve.",
+        "The chart changes only the endpoint interpolation variable; it does not add mode evaluations.",
+        "Panel counts are diagnostic sensitivity values, not a proposed input-dependent selector."
+      ],
+      "source_hashes": {
+        "panel_artifact": "6a2cd528d8e497e62c64287993ebdb05387efcdccdd47ff853b53267d8612341",
+        "raw_reference_array": "1f6b14dbdc4d01c51dd9498de2164a738586de2a02f7693f0c3d20799b202b9d"
+      }
+    },
+    "holdout01": {
+      "case": "holdout_sobol_01",
+      "parameters": {
+        "r": 0.06722976160536379,
+        "cr": 1,
+        "T_re": 34.90224575565676,
+        "kappa10": 0.820389679208206,
+        "DN_eff": 0.0
+      },
+      "reference_tail_convention": 10.0,
+      "base_grid_count": 76,
+      "nested_grid_count": 151,
+      "base_grid_sha256": "31293f6785fd7abd4ceda1d36f503e81a7d101d7be71af4e162827b850fd36b2",
+      "nested_grid_sha256": "9594f6cf95236711a86b06e2c1ff07ea047063a4607eb8788c58ad9373ca78fe",
+      "base_pchip_map_relative_difference_vs_nested_reference": 0.0004305024628685761,
+      "base_pchip_map_relative_difference_vs_reference_301_root": 0.0004718373738575504,
+      "sweep": [
+        {
+          "turning_chart_panel_count": 1,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.635504501006869,
+          "p95_midpoint_error_dex_positive_only": 0.04782582585390282,
+          "integral_relative_difference_vs_nested_151_reference": 0.0004260261737463189,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.00042602617374609686,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.0004673608997877388,
+          "transformed_boundary_integral": 3.3641462644171434e-13,
+          "ordinary_pchip_remainder_integral": 3.3730124065240286e-09
+        },
+        {
+          "turning_chart_panel_count": 2,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.35163357928856875,
+          "p95_midpoint_error_dex_positive_only": 0.04782582585390282,
+          "integral_relative_difference_vs_nested_151_reference": 0.0003913714504597543,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.0003913714504597543,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.00043270474466793307,
+          "transformed_boundary_integral": 2.344274534444613e-13,
+          "ordinary_pchip_remainder_integral": 3.3729975410093837e-09
+        },
+        {
+          "turning_chart_panel_count": 4,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.35163357928856875,
+          "p95_midpoint_error_dex_positive_only": 0.04728775747138765,
+          "integral_relative_difference_vs_nested_151_reference": 0.0003915332869353083,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.00039153328693508627,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.00043286658782988363,
+          "transformed_boundary_integral": 2.4241048106863717e-13,
+          "ordinary_pchip_remainder_integral": 3.3729901036801613e-09
+        },
+        {
+          "turning_chart_panel_count": 8,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.35163357928856875,
+          "p95_midpoint_error_dex_positive_only": 0.04728775747138765,
+          "integral_relative_difference_vs_nested_151_reference": 0.0003915492593407066,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.0003915492593407066,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.00043288256089536227,
+          "transformed_boundary_integral": 2.44738077505315e-13,
+          "ordinary_pchip_remainder_integral": 3.372987829941275e-09
+        },
+        {
+          "turning_chart_panel_count": 16,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.35163357928856875,
+          "p95_midpoint_error_dex_positive_only": 0.04728775747138765,
+          "integral_relative_difference_vs_nested_151_reference": 0.0003915493155171035,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.0003915493155171035,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.0004328826170739628,
+          "transformed_boundary_integral": 2.484228611134932e-13,
+          "ordinary_pchip_remainder_integral": 3.3729841453470885e-09
+        },
+        {
+          "turning_chart_panel_count": 32,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.35163357928856875,
+          "p95_midpoint_error_dex_positive_only": 0.04728775747138765,
+          "integral_relative_difference_vs_nested_151_reference": 0.0003926825507085674,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.0003926825507085674,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.0004340158990874373,
+          "transformed_boundary_integral": 1.1257258003311504e-12,
+          "ordinary_pchip_remainder_integral": 3.37211066357755e-09
+        },
+        {
+          "turning_chart_panel_count": 75,
+          "positive_midpoint_predictions": 75,
+          "midpoint_count": 75,
+          "max_midpoint_error_dex_positive_only": 0.35163357928856875,
+          "p95_midpoint_error_dex_positive_only": 0.04728775747139262,
+          "integral_relative_difference_vs_nested_151_reference": 0.00039154934125185115,
+          "dn_gw_map_relative_difference_vs_nested_151_reference": 0.00039154934125185115,
+          "dn_gw_map_relative_difference_vs_reference_301_root": 0.0004328826428097783,
+          "transformed_boundary_integral": 3.3732325682949773e-09,
+          "ordinary_pchip_remainder_integral": 0.0
+        }
+      ],
+      "limitations": [
+        "This is a quadrature-only screen on stored z_tail=10 Reference samples, not a Fast production solve.",
+        "The chart changes only the endpoint interpolation variable; it does not add mode evaluations.",
+        "Panel counts are diagnostic sensitivity values, not a proposed input-dependent selector."
+      ],
+      "source_hashes": {
+        "panel_artifact": "00412e57b361397eb2b6a0700df8f338c19c96ad4ddbb4f6131d82a45302349b",
+        "raw_reference_array": "0b1fe34cb42f6365c362644a32021803bdfb74e7c4cae08ec86cea55dcbaa779"
+      }
+    }
+  },
+  "panel_accuracy_passes_by_case": {
+    "lowT": false,
+    "holdout01": false
+  },
+  "decision": "REJECTED_AT_QUADRATURE_FEASIBILITY_SCREEN"
+}
