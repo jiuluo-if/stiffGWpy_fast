@@ -3,6 +3,8 @@
 import numpy as np
 
 from scripts.prototype_frequency_tangent import (
+    hermite_panel_integral,
+    hermite_panel_midpoint,
     phase_segment_tangent,
     propagate_frequency_grid,
     propagate_mode_with_tangent,
@@ -65,6 +67,15 @@ def test_terminal_log_spectrum_slope_includes_transfer_and_primordial_tilt():
     actual = terminal_log_spectrum_slope(x, y, vx, vy, nt)
 
     assert actual == expected
+
+
+def test_hermite_converts_log_spectrum_slopes_to_spectrum_derivatives():
+    # G(u)=1+u**3 on [0,1]: its exact midpoint is 1.125 and integral 1.25.
+    midpoint = hermite_panel_midpoint(1.0, 2.0, 0.0, 1.5, 1.0)
+    integral = hermite_panel_integral(1.0, 2.0, 0.0, 1.5, 1.0)
+
+    assert midpoint == 1.125
+    assert integral == 1.25
 
 
 def test_full_mode_tangent_matches_production_exact_endpoint_spectrum():

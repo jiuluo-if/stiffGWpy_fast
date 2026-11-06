@@ -20,21 +20,21 @@
     "max_abs_dex": 0.0
   },
   "hermite_prediction_of_nested_midpoints": {
-    "positive_prediction_count": 38,
-    "nonpositive_prediction_count": 37,
-    "max_abs_dex_on_positive_predictions": 22.721216924774406,
-    "p95_abs_dex_on_positive_predictions": 19.94171351778058,
+    "positive_prediction_count": 75,
+    "nonpositive_prediction_count": 0,
+    "max_abs_dex_on_positive_predictions": 0.698881323274744,
+    "p95_abs_dex_on_positive_predictions": 0.32331941753232424,
     "midpoint_count": 75
   },
   "map_comparison": {
     "base_76_dn_gw_map": 4.1088457461488303e-07,
-    "hermite_76_to_151_dn_gw_map": -25837.255991575363,
+    "hermite_76_to_151_dn_gw_map": 4.0661979947124465e-07,
     "nested_151_dn_gw_map": 3.9518677808649524e-07,
     "reference_301_root": 3.9517572868948036e-07,
     "base_76_vs_nested_151_relative": 0.03972247402708393,
-    "hermite_76_vs_nested_151_relative": 65379859409.96109,
-    "hermite_76_vs_reference_root_relative": 65381687477.75711,
-    "nonpositive_hermite_panel_count": 37
+    "hermite_76_vs_nested_151_relative": 0.028930677893902166,
+    "hermite_76_vs_reference_root_relative": 0.02895944753417983,
+    "nonpositive_hermite_panel_count": 0
   },
   "branch_screen": {
     "base_adjacent_j0_changes": 67,
@@ -50,15 +50,15 @@
     "threads": 2,
     "alternating": true,
     "baseline": {
-      "p50_s": 0.0023621998261660337,
-      "p95_s": 0.0028330001048743722
+      "p50_s": 0.002400399884209037,
+      "p95_s": 0.003082959959283471
     },
     "tangent": {
-      "p50_s": 0.003613299923017621,
-      "p95_s": 0.004075299948453903
+      "p50_s": 0.003680200083181262,
+      "p95_s": 0.004183000093325972
     },
-    "tangent_over_baseline_p50": 1.5296334725763587,
-    "tangent_over_baseline_p95": 1.4385103415428995
+    "tangent_over_baseline_p50": 1.5331612484200465,
+    "tangent_over_baseline_p95": 1.356812981216327
   },
   "resources": {
     "logical_cpu_count": 32,
@@ -86,7 +86,7 @@
   "source_hashes": {
     "fast_sgwb": "88f3b2bfc77a11d54b7c386d3b72c8c4bc3df1e3ea0c0c567703149e3de571b9",
     "freq_adaptive": "c628f592bbc72392a37b3e9eebeb8846b749c12dcc7212a48a70826a3c2682a3",
-    "tangent_prototype": "adcf4bc63c8bebcebde41e1095b0eac4c1f0171b722ca6b2ebef67c8924253aa",
+    "tangent_prototype": "cc5b9d40e70c915587a8905a8caa18fd37ebe5ebe2edabce34d4e3a0e26a4e9f",
     "panel": "40b0ae6bf2d1d90d8ea34dfd2e411291a140d2827f4d1c459362f1fabbe40a1a",
     "reference_root": "bc260450807e637c3ea77f6b1c6f15c85475875eaf05143b49626476263eaafe"
   },

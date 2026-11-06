@@ -202,6 +202,25 @@ def terminal_log_spectrum_slope(x, y, vx, vy, n_t):
     return n_t + 2.0 * (x * vx + y * vy) / norm2
 
 
+@njit(cache=True, inline="always")
+def hermite_panel_midpoint(y0, y1, log_slope0, log_slope1, width):
+    """Evaluate a cubic Hermite midpoint from endpoint log-spectrum slopes."""
+    derivative0 = y0 * log_slope0
+    derivative1 = y1 * log_slope1
+    return 0.5 * (y0 + y1) + width * (derivative0 - derivative1) / 8.0
+
+
+@njit(cache=True, inline="always")
+def hermite_panel_integral(y0, y1, log_slope0, log_slope1, width):
+    """Integrate a cubic Hermite panel from endpoint log-spectrum slopes."""
+    derivative0 = y0 * log_slope0
+    derivative1 = y1 * log_slope1
+    return (
+        0.5 * width * (y0 + y1)
+        + width * width * (derivative0 - derivative1) / 12.0
+    )
+
+
 def initial_frequency_tangent(x: float, y: float) -> tuple[float, float]:
     """Derivative of the production start state for fixed `j0` and background."""
     return 0.0, float(y)

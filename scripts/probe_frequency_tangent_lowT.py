@@ -91,7 +91,8 @@ def _hermite_screen(base_freq, base_spectrum, base_slope, mid_spectrum):
     order = np.argsort(base_freq)
     u = np.log(np.power(10.0, base_freq[order]))
     y = base_spectrum[order]
-    m = base_slope[order]
+    # `base_slope` is d ln(G)/d ln(f); Hermite needs dG/d ln(f).
+    m = y * base_slope[order]
     h = np.diff(u)
     predicted_mid = 0.5 * (y[:-1] + y[1:]) + h * (m[:-1] - m[1:]) / 8.0
     panel_integrals = (
