@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "experiment": "cr0 event-chart public history reconstruction on the branch-valid final-root profile",
+  "source_commit": "fb3e48802da98d51dcfd28c21b8f3df16090a43e",
+  "branch": "fast_v0.2",
+  "input_artifact": "docs\\endpoint_admissible_wkb_tail_20261105.json",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.19649188544593907,
+    "cr": 0.0,
+    "n_t": 1.0622501865308032,
+    "T_re": 1761.314039059193,
+    "kappa10": 0.011598483151630803,
+    "DN_eff": 2.2922005847485827,
+    "DN_re": 10.0
+  },
+  "final_root_dn_eff": 2.2922005847485827,
+  "frequency_count": 183,
+  "frequency_sha256": "aaa6fd4656b2593b572b56c5399d411b57b1d49b096fba4f8d7588b697be05fa",
+  "history_layout": {
+    "idx_out_count": 1193,
+    "idx_out_sha256": "8f79a3f66fe81dc6f493a9963c3ce43176f150636352bc27d4f1c2c9c8445008",
+    "idx_out_exact_match": true,
+    "j0_exact_match": true,
+    "j_hi_exact_match": true,
+    "history_shape": [
+      183,
+      1193
+    ],
+    "zero_prefix_failures": [],
+    "all_channel_values_finite": true,
+    "deferred_mode_count": 24,
+    "deferred_crossing_count": 4,
+    "deferred_no_crossing_count": 20,
+    "deferred_mode_indices": [
+      159,
+      160,
+      161,
+      162,
+      163,
+      164,
+      165,
+      166,
+      167,
+      168,
+      169,
+      170,
+      171,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182
+    ],
+    "deferred_direct_tail_count": 0
+  },
+  "spectrum_and_map_gates": {
+    "max_abs_spectrum_delta_dex_vs_full_fast": 7.815970093361102e-14,
+    "spectrum_gate_1e-3_dex_pass": true,
+    "candidate_dn_gw_endpoint": 2.292227667360444,
+    "baseline_dn_gw_endpoint": 2.2922276673604016,
+    "candidate_vs_baseline_map_relative_difference": 1.8405010783391243e-14,
+    "root_relative_gate_2e-4_pass": true,
+    "fixed_point_residual_relative_at_saved_baseline_dn_eff": 1.1815114279843641e-05,
+    "fixed_point_residual_definition": "abs(candidate DN_gw endpoint map - saved baseline DN_eff root) / abs(saved baseline DN_eff root); the candidate outer root solver was not run",
+    "fixed_point_residual_gate_2e-4_pass": true,
+    "candidate_self_consistent_root_solve_executed": false,
+    "candidate_root_error_vs_independent_reference": null,
+    "Omega_nu": 3.77217862177712e-05
+  },
+  "reference_gates": {
+    "tail_conventions_separate": true,
+    "z_tail_5_frozen_default": {
+      "positive_mode_count": 183,
+      "max_abs_dex": 0.003120626187831377,
+      "p95_abs_dex": 0.003043474915732425,
+      "warnings": [],
+      "runtime_s": 6.494068499887362,
+      "map_relative_difference": 0.0003466132647816645
+    },
+    "z_tail_8_deep_reference": {
+      "positive_mode_count": 183,
+      "max_abs_dex": 0.0008265822343833662,
+      "p95_abs_dex": 0.0003162537135375843,
+      "warnings": [],
+      "runtime_s": 64.09997070021927,
+      "map_relative_difference": 2.0856011827233242e-05
+    },
+    "separate_artifacts": {
+      "z5": {
+        "path": "docs\\cr0_event_chart_public_history_reference_z5_20261106.json",
+        "sha256": "7f5b44f4601f5f9f62f2f12d0f23a8efea19cc238269f9cde5e751f582332fa5"
+      },
+      "z8": {
+        "path": "docs\\cr0_event_chart_public_history_reference_z8_20261106.json",
+        "sha256": "3a0b9da5f4a13aded94502415a53acd88ca3364b1e5d8d3ab184184226fbe73c"
+      }
+    }
+  },
+  "history_differences": {
+    "Ogw": {
+      "max_abs": 0.00463000432677646,
+      "max_relative_with_global_1e-12_floor": 0.020437831086167865,
+      "nonzero_difference_count": 124904,
+      "worst": {
+        "mode": 85,
+        "frequency": -8.632755326091647,
+        "frequency_offset_from_f_re": -8.706295824573832,
+        "coarse_slot": 636,
+        "original_idx_out": 5088,
+        "N": 25.44,
+        "baseline": 0.0018735406116275374,
+        "candidate": 0.0018352495050740182,
+        "delta": -3.829110655351924e-05
+      }
+    },
+    "Oj": {
+      "max_abs": 0.006394812808944734,
+      "max_relative_with_global_1e-12_floor": 1.1668143933681412,
+      "nonzero_difference_count": 124903,
+      "worst": {
+        "mode": 5,
+        "frequency": -7.347952549735325,
+        "frequency_offset_from_f_re": -7.42149304821751,
+        "coarse_slot": 562,
+        "original_idx_out": 4496,
+        "N": 22.48,
+        "baseline": 0.00042184945734445974,
+        "candidate": -7.037056131959565e-05,
+        "delta": -0.0004922200186640554
+      }
+    },
+    "Opgw": {
+      "max_abs": 0.7729861567530278,
+      "max_relative_with_global_1e-12_floor": 1.2812046569691518,
+      "nonzero_difference_count": 124853,
+      "worst": {
+        "mode": 69,
+        "frequency": -8.251550106733179,
+        "frequency_offset_from_f_re": -8.325090605215363,
+        "coarse_slot": 614,
+        "original_idx_out": 4912,
+        "N": 24.560000000000002,
+        "baseline": -0.008488922272886551,
+        "candidate": 0.0023871244757848542,
+        "delta": 0.010876046748671406
+      }
+    },
+    "g2c": {
+      "max_abs": 3.824873585805966e-05,
+      "max_relative_with_global_1e-12_floor": 0.0001418065659868519,
+      "worst_index": 566,
+      "baseline": 0.26972471684848515,
+      "candidate": 0.2696864681126271,
+      "terminal_relative": 1.8368583386901505e-14
+    },
+    "w2c": {
+      "max_abs": 0.016752947211475903,
+      "max_relative_with_global_1e-12_floor": 0.773040994263963,
+      "worst_index": 562,
+      "baseline": 0.021671486164103002,
+      "candidate": 0.004918538952627099,
+      "terminal_relative": 1.717582970440454e-14
+    },
+    "g2": {
+      "max_abs": 4.321788347400046e-05,
+      "max_relative_with_global_1e-12_floor": 0.0001602158031622392,
+      "worst_index": 4527,
+      "baseline": 0.26974794384194906,
+      "candidate": 0.26970472595847506,
+      "terminal_relative": 1.8368583386901505e-14
+    },
+    "w2": {
+      "max_abs": 0.016752947211475903,
+      "max_relative_with_global_1e-12_floor": 0.773040994263963,
+      "worst_index": 4496,
+      "baseline": 0.021671486164103002,
+      "candidate": 0.004918538952627099,
+      "terminal_relative": 1.717582970440454e-14
+    },
+    "DN_gw": {
+      "max_abs": 0.00036728319396095443,
+      "max_relative_with_global_1e-12_floor": 0.00016021580316228663,
+      "worst_index": 4527,
+      "baseline": 2.2924280046764425,
+      "candidate": 2.2920607214824815,
+      "terminal_relative": 1.8405010783391243e-14
+    }
+  },
+  "candidate_states": {
+    "missing_tail_anchor_semantics": "null means this mode did not cross z_tail and has no WKB anchor",
+    "tail_anchor_z_range": [
+      4.995090461464713,
+      4.99995824231074
+    ],
+    "tail_anchor_state_examples": [
+      {
+        "mode": 159,
+        "frequency": -15.861535782074474,
+        "z": 4.9989764248346376,
+        "x": 1.1838329379474702e-05,
+        "y": 7.30627443978221e-05,
+        "terminal_z": 5.981774906958101,
+        "terminal_x": 1.5336100523901384e-05,
+        "terminal_y": -7.252959212786728e-05
+      },
+      {
+        "mode": 163,
+        "frequency": -16.313334560573402,
+        "z": 4.999368636672386,
+        "x": -7.786621794457024e-05,
+        "y": -5.34542337190551e-06,
+        "terminal_z": 4.941469774553617,
+        "terminal_x": -7.174279338822935e-05,
+        "terminal_y": -3.03171696350323e-05
+      },
+      {
+        "mode": 167,
+        "frequency": -16.765133339072328,
+        "z": null,
+        "x": null,
+        "y": null,
+        "terminal_z": 3.9011646421491406,
+        "terminal_x": 6.43351615385364e-05,
+        "terminal_y": -6.506371392024299e-05
+      },
+      {
+        "mode": 171,
+        "frequency": -17.216932117571254,
+        "z": null,
+        "x": null,
+        "y": null,
+        "terminal_z": 2.860859509744678,
+        "terminal_x": -4.948862494903157e-05,
+        "terminal_y": -0.00012069638385693953
+      },
+      {
+        "mode": 175,
+        "frequency": -17.66873089607018,
+        "z": null,
+        "x": null,
+        "y": null,
+        "terminal_z": 1.8205543773401232,
+        "terminal_x": 0.00026263294815580534,
+        "terminal_y": -0.00013490242492034354
+      },
+      {
+        "mode": 179,
+        "frequency": -18.120529674569106,
+        "z": null,
+        "x": null,
+        "y": null,
+        "terminal_z": 0.7802492449355327,
+        "terminal_x": 0.0006960864321765273,
+        "terminal_y": -0.0005588115661797406
+      }
+    ]
+  },
+  "limitations": [
+    "The baseline uses production full assembly and endpoint-deferred exact continuation; candidate public history is reconstructed in this independent harness.",
+    "Internal baseline x/y states are not exposed by solve_kernel; state comparisons report candidate tail anchors/terminal states and compare the three resulting public channels column-by-column.",
+    "The input is one branch-valid fixed background at a saved final-root DN_eff, not a self-consistent root solve over parameters.",
+    "z_tail=5 frozen-default and z_tail=8 deep Reference results are separate conventions."
+  ],
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": "workqueue",
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "source_hashes": {
+    "script": "5d05c0c49683347243b88fcf956c13fe27f9743cdcfeefddfb1e411882b44ae2",
+    "prototype": "addf5b778ba92dd7e160dd6f700d82b806eaefa9294aa96118e20d1a3d1ec686",
+    "fast_sgwb": "88f3b2bfc77a11d54b7c386d3b72c8c4bc3df1e3ea0c0c567703149e3de571b9",
+    "exact_background": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+    "reference": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "elapsed_s": 75.76620519999415
+}
