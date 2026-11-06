@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "experiment": "fixed-background low-T discrete frequency tangent versus nested Fast midpoint grid",
+  "candidate_decision": "REJECTED_AT_LOW_T_FEASIBILITY_SCREEN",
+  "case": "corner_r1_T0_k0",
+  "parameters": {
+    "r": 0.1,
+    "cr": 1,
+    "T_re": 10.0,
+    "kappa10": 0.01,
+    "DN_eff": 3.9517572868948036e-07
+  },
+  "base_frequency_count": 76,
+  "nested_frequency_count": 151,
+  "base_frequency_sha256": "7593b022e1cde15024bf3ec258f7b5329c3e9b06ce0e8a0b5e33d28978120060",
+  "nested_frequency_sha256": "415a4faebf7131d459cb7e4dcca1469094151fe6e3275df5be14e1554b1e7bd4",
+  "tangent_vs_production_base_spectrum": {
+    "max_relative": 2.4820249183310685e-15,
+    "max_abs_dex": 0.0
+  },
+  "hermite_prediction_of_nested_midpoints": {
+    "positive_prediction_count": 38,
+    "nonpositive_prediction_count": 37,
+    "max_abs_dex_on_positive_predictions": 22.721216924774406,
+    "p95_abs_dex_on_positive_predictions": 19.94171351778058,
+    "midpoint_count": 75
+  },
+  "map_comparison": {
+    "base_76_dn_gw_map": 4.1088457461488303e-07,
+    "hermite_76_to_151_dn_gw_map": -25837.255991575363,
+    "nested_151_dn_gw_map": 3.9518677808649524e-07,
+    "reference_301_root": 3.9517572868948036e-07,
+    "base_76_vs_nested_151_relative": 0.03972247402708393,
+    "hermite_76_vs_nested_151_relative": 65379859409.96109,
+    "hermite_76_vs_reference_root_relative": 65381687477.75711,
+    "nonpositive_hermite_panel_count": 37
+  },
+  "branch_screen": {
+    "base_adjacent_j0_changes": 67,
+    "midpoint_j0_matches_an_endpoint_count": 8,
+    "interval_count": 75,
+    "limitations": [
+      "j0 changes are counted but not segmented in the Hermite prediction",
+      "phase-substep ceil changes are not yet counted"
+    ]
+  },
+  "kernel_timing": {
+    "pairs": 25,
+    "threads": 2,
+    "alternating": true,
+    "baseline": {
+      "p50_s": 0.0023621998261660337,
+      "p95_s": 0.0028330001048743722
+    },
+    "tangent": {
+      "p50_s": 0.003613299923017621,
+      "p95_s": 0.004075299948453903
+    },
+    "tangent_over_baseline_p50": 1.5296334725763587,
+    "tangent_over_baseline_p95": 1.4385103415428995
+  },
+  "resources": {
+    "logical_cpu_count": 32,
+    "affinity": [],
+    "numba_threads": 2,
+    "numba_threads_configured": 2,
+    "numba_threading_layer": "workqueue",
+    "numba_threading_layer_requested": "workqueue",
+    "blas_threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "workers": 1,
+    "concurrent_processes": 1,
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "threads_argument": 2
+  },
+  "source_hashes": {
+    "fast_sgwb": "88f3b2bfc77a11d54b7c386d3b72c8c4bc3df1e3ea0c0c567703149e3de571b9",
+    "freq_adaptive": "c628f592bbc72392a37b3e9eebeb8846b749c12dcc7212a48a70826a3c2682a3",
+    "tangent_prototype": "adcf4bc63c8bebcebde41e1095b0eac4c1f0171b722ca6b2ebef67c8924253aa",
+    "panel": "40b0ae6bf2d1d90d8ea34dfd2e411291a140d2827f4d1c459362f1fabbe40a1a",
+    "reference_root": "bc260450807e637c3ea77f6b1c6f15c85475875eaf05143b49626476263eaafe"
+  },
+  "limitations": [
+    "One fixed cr=1 low-temperature background; this is only a feasibility screen.",
+    "The Hermite map uses exact derivatives of the implemented discrete step on each local fixed path but does not split all j0, substep, or tail branch boundaries.",
+    "This is a kernel timing, not full public Fast end-to-end timing or acceptance evidence.",
+    "No candidate self-consistent root or independent z_tail=5/deep Reference spectrum was solved here."
+  ]
+}
