@@ -1,0 +1,1969 @@
+{
+  "environment": {
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9"
+  },
+  "experiment": "Fast nonzero tensor amplitude underflow with unit-amplitude scaled Reference",
+  "fast": {
+    "DN_gw": 0.26565739656277515,
+    "converged": true,
+    "failure_reason": null,
+    "finite_log_spectrum_count": 235,
+    "frequency_count": 235,
+    "frequency_sha256": "6b9952cda3e7b80b72c031da131414669d112b86017178b8030827b811207409",
+    "linear_spectrum_sha256": "67f45e3569ba600010483742d465ef5021c902a6b346e03bb848dc95d7d13361",
+    "linear_spectrum_zero_count": 14,
+    "log_spectrum_sha256": "456f7aac8455e76a33afe158d721355239d3ed52f9923413fa1f5650ea4a705e",
+    "root_DN_eff": 0.26565739656277515,
+    "runtime_s": 0.35310600000229897
+  },
+  "fast_frequency_grid": "construct",
+  "fast_tail": 5.0,
+  "float_A_t": 0.0,
+  "frequency_rows": [
+    {
+      "delta_dex": -0.00013486813288388078,
+      "fast_log10_OmegaGW": -4.235066956851016,
+      "log10_P_t": -3.2896378772155854,
+      "log10_hz": 2.3232380664243157,
+      "reference_log10_OmegaGW": -4.234932088718132,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -5.1123814191811334e-05,
+      "fast_log10_OmegaGW": -4.25288621972677,
+      "log10_P_t": -3.3070878772156242,
+      "log10_hz": 2.322238066424316,
+      "reference_log10_OmegaGW": -4.2528350959125785,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 8.294416021659146e-05,
+      "fast_log10_OmegaGW": -4.270702827265684,
+      "log10_P_t": -3.3245378772155645,
+      "log10_hz": 2.321238066424316,
+      "reference_log10_OmegaGW": -4.270785771425901,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001437139481463845,
+      "fast_log10_OmegaGW": -4.288521351692854,
+      "log10_P_t": -3.3419878772156033,
+      "log10_hz": 2.3202380664243156,
+      "reference_log10_OmegaGW": -4.288665065641,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 6.800826449637754e-05,
+      "fast_log10_OmegaGW": -4.306334375236017,
+      "log10_P_t": -3.359437877215593,
+      "log10_hz": 2.3192380664243157,
+      "reference_log10_OmegaGW": -4.306402383500513,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -7.31279934464979e-05,
+      "fast_log10_OmegaGW": -4.32412846495594,
+      "log10_P_t": -3.3768878772155824,
+      "log10_hz": 2.318238066424316,
+      "reference_log10_OmegaGW": -4.324055336962494,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014165795063281195,
+      "fast_log10_OmegaGW": -4.341910137713993,
+      "log10_P_t": -3.394337877215621,
+      "log10_hz": 2.317238066424316,
+      "reference_log10_OmegaGW": -4.34176847976336,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.21423703705193e-05,
+      "fast_log10_OmegaGW": -4.359711952540319,
+      "log10_P_t": -3.4117878772156107,
+      "log10_hz": 2.3162380664243156,
+      "reference_log10_OmegaGW": -4.359629810169949,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 5.691821590669832e-05,
+      "fast_log10_OmegaGW": -4.377515491365684,
+      "log10_P_t": -3.4292378772156002,
+      "log10_hz": 2.3152380664243157,
+      "reference_log10_OmegaGW": -4.377572409581591,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013580623011133497,
+      "fast_log10_OmegaGW": -4.395302187600548,
+      "log10_P_t": -3.44668787721559,
+      "log10_hz": 2.314238066424316,
+      "reference_log10_OmegaGW": -4.395437993830659,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.174477781304091e-05,
+      "fast_log10_OmegaGW": -4.413049337177657,
+      "log10_P_t": -3.4641378772155793,
+      "log10_hz": 2.313238066424316,
+      "reference_log10_OmegaGW": -4.41314108195547,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -3.801376571033188e-05,
+      "fast_log10_OmegaGW": -4.430792604519714,
+      "log10_P_t": -3.481587877215618,
+      "log10_hz": 2.3122380664243156,
+      "reference_log10_OmegaGW": -4.430754590754003,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013935266071829489,
+      "fast_log10_OmegaGW": -4.448566918574026,
+      "log10_P_t": -3.4990378772156077,
+      "log10_hz": 2.3112380664243157,
+      "reference_log10_OmegaGW": -4.448427565913308,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011634043610619926,
+      "fast_log10_OmegaGW": -4.466350714642626,
+      "log10_P_t": -3.516487877215597,
+      "log10_hz": 2.310238066424316,
+      "reference_log10_OmegaGW": -4.46623437420652,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 1.5382854537726587e-05,
+      "fast_log10_OmegaGW": -4.484099728502593,
+      "log10_P_t": -3.5339378772155863,
+      "log10_hz": 2.309238066424316,
+      "reference_log10_OmegaGW": -4.484115111357131,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00012467916477643115,
+      "fast_log10_OmegaGW": -4.501824006776682,
+      "log10_P_t": -3.551387877215576,
+      "log10_hz": 2.3082380664243156,
+      "reference_log10_OmegaGW": -4.501948685941459,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00012622491659630697,
+      "fast_log10_OmegaGW": -4.519537985709903,
+      "log10_P_t": -3.5688378772156146,
+      "log10_hz": 2.3072380664243157,
+      "reference_log10_OmegaGW": -4.519664210626499,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 1.2070843509626172e-05,
+      "fast_log10_OmegaGW": -4.537275399214103,
+      "log10_P_t": -3.586287877215604,
+      "log10_hz": 2.306238066424316,
+      "reference_log10_OmegaGW": -4.5372874700576125,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011017576727745393,
+      "fast_log10_OmegaGW": -4.555016743128609,
+      "log10_P_t": -3.6037378772155937,
+      "log10_hz": 2.305238066424316,
+      "reference_log10_OmegaGW": -4.554906567361331,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013448259958614983,
+      "fast_log10_OmegaGW": -4.572738470381448,
+      "log10_P_t": -3.621187877215583,
+      "log10_hz": 2.3042380664243156,
+      "reference_log10_OmegaGW": -4.572603987781862,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -4.2567411425942225e-05,
+      "fast_log10_OmegaGW": -4.590442096037712,
+      "log10_P_t": -3.6386378772155727,
+      "log10_hz": 2.3032380664243157,
+      "reference_log10_OmegaGW": -4.590399528626286,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.116909637363335e-05,
+      "fast_log10_OmegaGW": -4.6081397459291,
+      "log10_P_t": -3.6560878772156116,
+      "log10_hz": 2.302238066424316,
+      "reference_log10_OmegaGW": -4.608230915025474,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001358992255644509,
+      "fast_log10_OmegaGW": -4.62585655919874,
+      "log10_P_t": -3.673537877215601,
+      "log10_hz": 2.301238066424316,
+      "reference_log10_OmegaGW": -4.625992458424305,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 6.71923010990838e-05,
+      "fast_log10_OmegaGW": -4.643554468022319,
+      "log10_P_t": -3.69098787721564,
+      "log10_hz": 2.3002380664243156,
+      "reference_log10_OmegaGW": -4.643621660323418,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -6.265275836270234e-05,
+      "fast_log10_OmegaGW": -4.66122904807102,
+      "log10_P_t": -3.70843787721558,
+      "log10_hz": 2.2992380664243157,
+      "reference_log10_OmegaGW": -4.661166395312657,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00010359672800053232,
+      "fast_log10_OmegaGW": -4.696582700152492,
+      "log10_P_t": -3.7433378772156085,
+      "log10_hz": 2.297238066424316,
+      "reference_log10_OmegaGW": -4.696479103424491,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00012947739698621064,
+      "fast_log10_OmegaGW": -4.731945421412016,
+      "log10_P_t": -3.778237877215637,
+      "log10_hz": 2.2952380664243157,
+      "reference_log10_OmegaGW": -4.732074898809002,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.810768118789781e-06,
+      "fast_log10_OmegaGW": -4.767209133153521,
+      "log10_P_t": -3.8131378772155666,
+      "log10_hz": 2.293238066424316,
+      "reference_log10_OmegaGW": -4.76721894392164,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001361693280870213,
+      "fast_log10_OmegaGW": -4.802518553551687,
+      "log10_P_t": -3.848037877215595,
+      "log10_hz": 2.2912380664243157,
+      "reference_log10_OmegaGW": -4.8023823842236,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 7.969835172616513e-05,
+      "fast_log10_OmegaGW": -4.837790134028517,
+      "log10_P_t": -3.882937877215574,
+      "log10_hz": 2.289238066424316,
+      "reference_log10_OmegaGW": -4.837869832380243,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 8.48727646252101e-05,
+      "fast_log10_OmegaGW": -4.872997491215246,
+      "log10_P_t": -3.9178378772156024,
+      "log10_hz": 2.2872380664243157,
+      "reference_log10_OmegaGW": -4.873082363979871,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001359553579440842,
+      "fast_log10_OmegaGW": -4.908239715386853,
+      "log10_P_t": -3.9527378772156307,
+      "log10_hz": 2.285238066424316,
+      "reference_log10_OmegaGW": -4.908103760028909,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.25396546755286e-06,
+      "fast_log10_OmegaGW": -4.943405889881345,
+      "log10_P_t": -3.98763787721556,
+      "log10_hz": 2.2832380664243157,
+      "reference_log10_OmegaGW": -4.943397635915877,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00014039371701546344,
+      "fast_log10_OmegaGW": -4.97857980483351,
+      "log10_P_t": -4.022537877215589,
+      "log10_hz": 2.281238066424316,
+      "reference_log10_OmegaGW": -4.978720198550525,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -6.935322334999938e-05,
+      "fast_log10_OmegaGW": -5.013714218875333,
+      "log10_P_t": -4.057437877215617,
+      "log10_hz": 2.2792380664243157,
+      "reference_log10_OmegaGW": -5.013644865651983,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00010411420194067489,
+      "fast_log10_OmegaGW": -5.048818668715256,
+      "log10_P_t": -4.092337877215596,
+      "log10_hz": 2.277238066424316,
+      "reference_log10_OmegaGW": -5.048714554513316,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00011971924345832718,
+      "fast_log10_OmegaGW": -5.0839466076082624,
+      "log10_P_t": -4.127237877215625,
+      "log10_hz": 2.2752380664243157,
+      "reference_log10_OmegaGW": -5.084066326851721,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 3.880858886162741e-05,
+      "fast_log10_OmegaGW": -5.118966225795292,
+      "log10_P_t": -4.162137877215554,
+      "log10_hz": 2.273238066424316,
+      "reference_log10_OmegaGW": -5.119005034384154,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001258843604743376,
+      "fast_log10_OmegaGW": -5.162448494347236,
+      "log10_P_t": -4.205426895351449,
+      "log10_hz": 2.2707573203993383,
+      "reference_log10_OmegaGW": -5.162322609986762,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.971896436589134e-05,
+      "fast_log10_OmegaGW": -5.200227462234345,
+      "log10_P_t": -4.243082406759443,
+      "log10_hz": 2.2685994114361305,
+      "reference_log10_OmegaGW": -5.200327181198711,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 4.2200882879761537e-05,
+      "fast_log10_OmegaGW": -5.239503108560056,
+      "log10_P_t": -4.2822862415381575,
+      "log10_hz": 2.2663527733399316,
+      "reference_log10_OmegaGW": -5.239545309442936,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014226263487149282,
+      "fast_log10_OmegaGW": -5.280408522910203,
+      "log10_P_t": -4.323102063814483,
+      "log10_hz": 2.2640137577367025,
+      "reference_log10_OmegaGW": -5.280266260275331,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.767677435412736e-05,
+      "fast_log10_OmegaGW": -5.322910380336261,
+      "log10_P_t": -4.365596155463879,
+      "log10_hz": 2.2615785662381676,
+      "reference_log10_OmegaGW": -5.3230080571106155,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 1.8823001112444615e-05,
+      "fast_log10_OmegaGW": -5.3671614571973505,
+      "log10_P_t": -4.409837523747114,
+      "log10_hz": 2.259043244273512,
+      "reference_log10_OmegaGW": -5.367180280198463,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011492525883394222,
+      "fast_log10_OmegaGW": -5.413145655254617,
+      "log10_P_t": -4.455898013372806,
+      "log10_hz": 2.256403674667454,
+      "reference_log10_OmegaGW": -5.413030729995783,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001364432264630011,
+      "fast_log10_OmegaGW": -5.461048839092933,
+      "log10_P_t": -4.503852423168153,
+      "log10_hz": 2.253655570954255,
+      "reference_log10_OmegaGW": -5.461185282319396,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00010339360455802193,
+      "fast_log10_OmegaGW": -5.510772143728786,
+      "log10_P_t": -4.55377862754649,
+      "log10_hz": 2.2507944704168166,
+      "reference_log10_OmegaGW": -5.510668750124228,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 3.117952738040941e-05,
+      "fast_log10_OmegaGW": -5.5625903152502705,
+      "log10_P_t": -4.605757702969587,
+      "log10_hz": 2.247815726839559,
+      "reference_log10_OmegaGW": -5.562621494777651,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 3.1798248004477614e-05,
+      "fast_log10_OmegaGW": -5.616396561326098,
+      "log10_P_t": -4.6598740596101615,
+      "log10_hz": 2.2447145029633084,
+      "reference_log10_OmegaGW": -5.616428359574103,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -9.125662359288356e-05,
+      "fast_log10_OmegaGW": -5.672404024527478,
+      "log10_P_t": -4.716215578427313,
+      "log10_hz": 2.2414857626299507,
+      "reference_log10_OmegaGW": -5.672312767903885,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00011792627298490288,
+      "fast_log10_OmegaGW": -5.730636707739704,
+      "log10_P_t": -4.77487375387875,
+      "log10_hz": 2.238124262604078,
+      "reference_log10_OmegaGW": -5.730754634012689,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013098490865903756,
+      "fast_log10_OmegaGW": -5.791149143128377,
+      "log10_P_t": -4.835943842501443,
+      "log10_hz": 2.2346245440583656,
+      "reference_log10_OmegaGW": -5.7910181582197175,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013306282031777528,
+      "fast_log10_OmegaGW": -5.854147486435616,
+      "log10_P_t": -4.899525017600694,
+      "log10_hz": 2.2309809237088394,
+      "reference_log10_OmegaGW": -5.854280549255934,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013303251089791246,
+      "fast_log10_OmegaGW": -5.91959096169757,
+      "log10_P_t": -4.965720530300437,
+      "log10_hz": 2.2271874845856425,
+      "reference_log10_OmegaGW": -5.919457929186672,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00012725150546000208,
+      "fast_log10_OmegaGW": -5.9876313550177525,
+      "log10_P_t": -5.034637877215621,
+      "log10_hz": 2.2232380664243157,
+      "reference_log10_OmegaGW": -5.9877586065232125,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00010146318187054248,
+      "fast_log10_OmegaGW": -6.09808466874206,
+      "log10_P_t": -5.146683008108552,
+      "log10_hz": 2.2168171420178435,
+      "reference_log10_OmegaGW": -6.0981861319239306,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -4.385587630828525e-06,
+      "fast_log10_OmegaGW": -6.21536748467619,
+      "log10_P_t": -5.265922472157248,
+      "log10_hz": 2.2099839349090344,
+      "reference_log10_OmegaGW": -6.2153630990885596,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.928863703072665e-05,
+      "fast_log10_OmegaGW": -6.339886824292654,
+      "log10_P_t": -5.392818212055224,
+      "log10_hz": 2.2027119727372315,
+      "reference_log10_OmegaGW": -6.339797535655623,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011988472265223038,
+      "fast_log10_OmegaGW": -6.472004840756153,
+      "log10_P_t": -5.5278618314870664,
+      "log10_hz": 2.1949730833715098,
+      "reference_log10_OmegaGW": -6.471884956033501,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.000123891776596885,
+      "fast_log10_OmegaGW": -6.61220783947955,
+      "log10_P_t": -5.671576499638401,
+      "log10_hz": 2.1867372857697145,
+      "reference_log10_OmegaGW": -6.612083947702953,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00010749807213272788,
+      "fast_log10_OmegaGW": -6.761072472496815,
+      "log10_P_t": -5.82451897799274,
+      "log10_hz": 2.177972673829638,
+      "reference_log10_OmegaGW": -6.760964974424683,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -5.5570245131697504e-05,
+      "fast_log10_OmegaGW": -6.918923640660468,
+      "log10_P_t": -5.987281777267622,
+      "log10_hz": 2.168645292782368,
+      "reference_log10_OmegaGW": -6.9188680704153365,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 5.138142523275491e-05,
+      "fast_log10_OmegaGW": -7.086440721144278,
+      "log10_P_t": -6.160495452845762,
+      "log10_hz": 2.1587190076489495,
+      "reference_log10_OmegaGW": -7.086492102569511,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013690076703021248,
+      "fast_log10_OmegaGW": -7.2640432562825215,
+      "log10_P_t": -6.344831047594414,
+      "log10_hz": 2.1481553632507433,
+      "reference_log10_OmegaGW": -7.264180157049552,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 6.448977590700622e-05,
+      "fast_log10_OmegaGW": -7.452474849097255,
+      "log10_P_t": -6.541002691536196,
+      "log10_hz": 2.13691343523116,
+      "reference_log10_OmegaGW": -7.452539338873162,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013150067264877663,
+      "fast_log10_OmegaGW": -7.6521856780188005,
+      "log10_P_t": -6.7497703684423715,
+      "log10_hz": 2.1249496715116085,
+      "reference_log10_OmegaGW": -7.652054177346152,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -2.304826321797293e-05,
+      "fast_log10_OmegaGW": -7.863973207614938,
+      "log10_P_t": -6.971942860067822,
+      "log10_hz": 2.112217723567456,
+      "reference_log10_OmegaGW": -7.86395015935172,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013438931140186128,
+      "fast_log10_OmegaGW": -8.088517430774441,
+      "log10_P_t": -7.208380879432521,
+      "log10_hz": 2.0986682668703383,
+      "reference_log10_OmegaGW": -8.088651820085843,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00012883508036232172,
+      "fast_log10_OmegaGW": -8.326510760762114,
+      "log10_P_t": -7.460000405288787,
+      "log10_hz": 2.0842488098012106,
+      "reference_log10_OmegaGW": -8.326381925681751,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.022249116874548e-05,
+      "fast_log10_OmegaGW": -8.578749636358394,
+      "log10_P_t": -7.727776230692267,
+      "log10_hz": 2.0689034902938506,
+      "reference_log10_OmegaGW": -8.578839858849562,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -5.490402291918883e-05,
+      "fast_log10_OmegaGW": -8.846033742940772,
+      "log10_P_t": -8.012745739423625,
+      "log10_hz": 2.0525728594209918,
+      "reference_log10_OmegaGW": -8.845978838917853,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 4.6210368660482004e-05,
+      "fast_log10_OmegaGW": -9.129346290246762,
+      "log10_P_t": -8.316012924892174,
+      "log10_hz": 2.035193651084686,
+      "reference_log10_OmegaGW": -9.129392500615422,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -6.29850453748304e-05,
+      "fast_log10_OmegaGW": -9.429569066380525,
+      "log10_P_t": -8.638752667089257,
+      "log10_hz": 2.016698536918663,
+      "reference_log10_OmegaGW": -9.42950608133515,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.82183320665797e-05,
+      "fast_log10_OmegaGW": -9.747797479421102,
+      "log10_P_t": -8.982215284162438,
+      "log10_hz": 1.9970158654531487,
+      "reference_log10_OmegaGW": -9.747895697753169,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013914667163383854,
+      "fast_log10_OmegaGW": -10.085040977667745,
+      "log10_P_t": -9.347731376242454,
+      "log10_hz": 1.9760693845316597,
+      "reference_log10_OmegaGW": -10.084901830996111,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013273343753006372,
+      "fast_log10_OmegaGW": -10.442492538219815,
+      "log10_P_t": -9.73671698028838,
+      "log10_hz": 1.9537779459043856,
+      "reference_log10_OmegaGW": -10.442625271657345,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.675198497165582e-05,
+      "fast_log10_OmegaGW": -10.821379228812084,
+      "log10_P_t": -10.150679055922168,
+      "log10_hz": 1.930055190853739,
+      "reference_log10_OmegaGW": -10.821292476827113,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001379238004464156,
+      "fast_log10_OmegaGW": -12.405627267860908,
+      "log10_P_t": -11.895679055922155,
+      "log10_hz": 1.8300551908537388,
+      "reference_log10_OmegaGW": -12.405489344060461,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 2.8903138630909098e-05,
+      "fast_log10_OmegaGW": -13.97435455682981,
+      "log10_P_t": -13.64067905592219,
+      "log10_hz": 1.7300551908537387,
+      "reference_log10_OmegaGW": -13.974383459968442,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00012840511093692442,
+      "fast_log10_OmegaGW": -15.534097089937092,
+      "log10_P_t": -15.385679055922177,
+      "log10_hz": 1.6300551908537386,
+      "reference_log10_OmegaGW": -15.534225495048029,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00010604111285417162,
+      "fast_log10_OmegaGW": -17.088302844307798,
+      "log10_P_t": -17.130679055922165,
+      "log10_hz": 1.5300551908537385,
+      "reference_log10_OmegaGW": -17.08840888542065,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 1.775625509026213e-05,
+      "fast_log10_OmegaGW": -18.63832791371665,
+      "log10_P_t": -18.87567905592215,
+      "log10_hz": 1.4300551908537384,
+      "reference_log10_OmegaGW": -18.63834566997174,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001248961852908792,
+      "fast_log10_OmegaGW": -20.188852300998548,
+      "log10_P_t": -20.620679055922135,
+      "log10_hz": 1.3300551908537384,
+      "reference_log10_OmegaGW": -20.18897719718384,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013237422641410035,
+      "fast_log10_OmegaGW": -21.736552089311303,
+      "log10_P_t": -22.36567905592222,
+      "log10_hz": 1.2300551908537383,
+      "reference_log10_OmegaGW": -21.73641971508489,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -1.6279659188711548e-05,
+      "fast_log10_OmegaGW": -23.277999451192663,
+      "log10_P_t": -24.11067905592221,
+      "log10_hz": 1.1300551908537382,
+      "reference_log10_OmegaGW": -23.277983171533474,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -7.962144782069913e-05,
+      "fast_log10_OmegaGW": -24.82539321682925,
+      "log10_P_t": -25.855679055922195,
+      "log10_hz": 1.030055190853738,
+      "reference_log10_OmegaGW": -24.82531359538143,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013208767215644457,
+      "fast_log10_OmegaGW": -25.601212221506845,
+      "log10_P_t": -26.728179055922162,
+      "log10_hz": 0.980055190853738,
+      "reference_log10_OmegaGW": -25.601344309179,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001169124500215446,
+      "fast_log10_OmegaGW": -26.369389314952457,
+      "log10_P_t": -27.600679055922182,
+      "log10_hz": 0.930055190853738,
+      "reference_log10_OmegaGW": -26.369272402502435,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -3.451889591588042e-05,
+      "fast_log10_OmegaGW": -27.153850366111865,
+      "log10_P_t": -28.4731790559222,
+      "log10_hz": 0.880055190853738,
+      "reference_log10_OmegaGW": -27.15381584721595,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.000142243363907113,
+      "fast_log10_OmegaGW": -27.905210546612377,
+      "log10_P_t": -29.34567905592217,
+      "log10_hz": 0.8300551908537379,
+      "reference_log10_OmegaGW": -27.905352789976284,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 3.1279389961724746e-05,
+      "fast_log10_OmegaGW": -28.695590885316147,
+      "log10_P_t": -30.218179055922185,
+      "log10_hz": 0.7800551908537379,
+      "reference_log10_OmegaGW": -28.69562216470611,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001327240926372042,
+      "fast_log10_OmegaGW": -29.479788496867982,
+      "log10_P_t": -31.090679055922152,
+      "log10_hz": 0.7300551908537378,
+      "reference_log10_OmegaGW": -29.479655772775345,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -9.778664321302699e-05,
+      "fast_log10_OmegaGW": -30.22026692729367,
+      "log10_P_t": -31.963179055922172,
+      "log10_hz": 0.6800551908537378,
+      "reference_log10_OmegaGW": -30.22016914065046,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 2.5024137176643535e-05,
+      "fast_log10_OmegaGW": -30.982098810622094,
+      "log10_P_t": -32.83567905592219,
+      "log10_hz": 0.6300551908537377,
+      "reference_log10_OmegaGW": -30.98212383475927,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00012129947154448928,
+      "fast_log10_OmegaGW": -31.789346469472893,
+      "log10_P_t": -33.70817905592221,
+      "log10_hz": 0.5800551908537377,
+      "reference_log10_OmegaGW": -31.789467768944437,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013559097100568351,
+      "fast_log10_OmegaGW": -31.95309270640518,
+      "log10_P_t": -33.8826790559222,
+      "log10_hz": 0.5700551908537377,
+      "reference_log10_OmegaGW": -31.953228297376185,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001466951128534788,
+      "fast_log10_OmegaGW": -32.116432280131455,
+      "log10_P_t": -34.0571790559222,
+      "log10_hz": 0.5600551908537377,
+      "reference_log10_OmegaGW": -32.11657897524431,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00014029169548024356,
+      "fast_log10_OmegaGW": -32.278850328618375,
+      "log10_P_t": -34.231679055922186,
+      "log10_hz": 0.5500551908537377,
+      "reference_log10_OmegaGW": -32.278990620313856,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00014136655651242336,
+      "fast_log10_OmegaGW": -32.43983552520955,
+      "log10_P_t": -34.40617905592218,
+      "log10_hz": 0.5400551908537377,
+      "reference_log10_OmegaGW": -32.439976891766065,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00013946706922496332,
+      "fast_log10_OmegaGW": -32.59898822755786,
+      "log10_P_t": -34.580679055922225,
+      "log10_hz": 0.5300551908537376,
+      "reference_log10_OmegaGW": -32.599127694627086,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00011975870643965436,
+      "fast_log10_OmegaGW": -32.75601869402158,
+      "log10_P_t": -34.75517905592222,
+      "log10_hz": 0.5200551908537376,
+      "reference_log10_OmegaGW": -32.75613845272802,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00010952778733752666,
+      "fast_log10_OmegaGW": -32.910721284611725,
+      "log10_P_t": -34.929679055922215,
+      "log10_hz": 0.5100551908537376,
+      "reference_log10_OmegaGW": -32.91083081239906,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 9.644723728996496e-05,
+      "fast_log10_OmegaGW": -33.0630648515406,
+      "log10_P_t": -35.10417905592221,
+      "log10_hz": 0.5000551908537376,
+      "reference_log10_OmegaGW": -33.06316129877789,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 6.982923284937215e-05,
+      "fast_log10_OmegaGW": -33.21314668109523,
+      "log10_P_t": -35.2786790559222,
+      "log10_hz": 0.4900551908537376,
+      "reference_log10_OmegaGW": -33.21321651032808,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 5.3834995505042116e-05,
+      "fast_log10_OmegaGW": -33.36114228374846,
+      "log10_P_t": -35.45317905592219,
+      "log10_hz": 0.4800551908537376,
+      "reference_log10_OmegaGW": -33.36119611874396,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 3.608323545734038e-05,
+      "fast_log10_OmegaGW": -33.507350965078814,
+      "log10_P_t": -35.62767905592219,
+      "log10_hz": 0.4700551908537376,
+      "reference_log10_OmegaGW": -33.50738704831427,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 1.0279744067531738e-05,
+      "fast_log10_OmegaGW": -33.652123213636706,
+      "log10_P_t": -35.80217905592218,
+      "log10_hz": 0.4600551908537376,
+      "reference_log10_OmegaGW": -33.652133493380774,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -5.177111866316864e-06,
+      "fast_log10_OmegaGW": -33.79581247315522,
+      "log10_P_t": -35.976679055922176,
+      "log10_hz": 0.4500551908537376,
+      "reference_log10_OmegaGW": -33.79580729604336,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -2.1739612485305315e-05,
+      "fast_log10_OmegaGW": -33.9388038770241,
+      "log10_P_t": -36.15117905592222,
+      "log10_hz": 0.44005519085373757,
+      "reference_log10_OmegaGW": -33.938782137411614,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -3.9959467898142975e-05,
+      "fast_log10_OmegaGW": -34.081453487522126,
+      "log10_P_t": -36.32567905592221,
+      "log10_hz": 0.43005519085373756,
+      "reference_log10_OmegaGW": -34.08141352805423,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -5.405633496025075e-05,
+      "fast_log10_OmegaGW": -34.224079188675674,
+      "log10_P_t": -36.5001790559222,
+      "log10_hz": 0.42005519085373755,
+      "reference_log10_OmegaGW": -34.224025132340714,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -6.654612262479986e-05,
+      "fast_log10_OmegaGW": -34.36696745152734,
+      "log10_P_t": -36.6746790559222,
+      "log10_hz": 0.41005519085373754,
+      "reference_log10_OmegaGW": -34.36690090540471,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.069854840897506e-05,
+      "fast_log10_OmegaGW": -34.5103626813614,
+      "log10_P_t": -36.84917905592219,
+      "log10_hz": 0.40005519085373753,
+      "reference_log10_OmegaGW": -34.51028198281299,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.863866612074389e-05,
+      "fast_log10_OmegaGW": -34.65445567551176,
+      "log10_P_t": -37.02367905592219,
+      "log10_hz": 0.3900551908537375,
+      "reference_log10_OmegaGW": -34.65436703684564,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -9.710993708011983e-05,
+      "fast_log10_OmegaGW": -34.79941201739478,
+      "log10_P_t": -37.19817905592218,
+      "log10_hz": 0.3800551908537375,
+      "reference_log10_OmegaGW": -34.7993149074577,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00010759604440835346,
+      "fast_log10_OmegaGW": -34.945356146921526,
+      "log10_P_t": -37.37267905592218,
+      "log10_hz": 0.3700551908537375,
+      "reference_log10_OmegaGW": -34.94524855087712,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011094117494536704,
+      "fast_log10_OmegaGW": -35.09237050324578,
+      "log10_P_t": -37.547179055922165,
+      "log10_hz": 0.3600551908537375,
+      "reference_log10_OmegaGW": -35.092259562070836,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011632964979213511,
+      "fast_log10_OmegaGW": -35.24052909904134,
+      "log10_P_t": -37.72167905592221,
+      "log10_hz": 0.3500551908537375,
+      "reference_log10_OmegaGW": -35.24041276939155,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00012409789325573684,
+      "fast_log10_OmegaGW": -35.38987470388978,
+      "log10_P_t": -37.896179055922204,
+      "log10_hz": 0.3400551908537375,
+      "reference_log10_OmegaGW": -35.389750605996525,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013268829989954156,
+      "fast_log10_OmegaGW": -35.54042977216736,
+      "log10_P_t": -38.0706790559222,
+      "log10_hz": 0.33005519085373747,
+      "reference_log10_OmegaGW": -35.54029708386746,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00012882965926763745,
+      "fast_log10_OmegaGW": -35.6921901011346,
+      "log10_P_t": -38.24517905592219,
+      "log10_hz": 0.32005519085373746,
+      "reference_log10_OmegaGW": -35.69206127147533,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001335659779897469,
+      "fast_log10_OmegaGW": -35.84517387737315,
+      "log10_P_t": -38.41967905592219,
+      "log10_hz": 0.31005519085373745,
+      "reference_log10_OmegaGW": -35.84504031139516,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014045022301445442,
+      "fast_log10_OmegaGW": -35.99936240632336,
+      "log10_P_t": -38.594179055922176,
+      "log10_hz": 0.30005519085373744,
+      "reference_log10_OmegaGW": -35.99922195610034,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013511522517006824,
+      "fast_log10_OmegaGW": -36.154721794305715,
+      "log10_P_t": -38.76867905592217,
+      "log10_hz": 0.29005519085373743,
+      "reference_log10_OmegaGW": -36.154586679080545,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013852504079636674,
+      "fast_log10_OmegaGW": -36.31124794833442,
+      "log10_P_t": -38.943179055922165,
+      "log10_hz": 0.2800551908537374,
+      "reference_log10_OmegaGW": -36.31110942329362,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014428457257764649,
+      "fast_log10_OmegaGW": -36.468905311179036,
+      "log10_P_t": -39.11767905592216,
+      "log10_hz": 0.2700551908537374,
+      "reference_log10_OmegaGW": -36.46876102660646,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013818352545058588,
+      "fast_log10_OmegaGW": -36.62764756029473,
+      "log10_P_t": -39.292179055922205,
+      "log10_hz": 0.2600551908537374,
+      "reference_log10_OmegaGW": -36.62750937676928,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014067076443780024,
+      "fast_log10_OmegaGW": -36.7874610143771,
+      "log10_P_t": -39.4666790559222,
+      "log10_hz": 0.2500551908537374,
+      "reference_log10_OmegaGW": -36.78732034361266,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014567524484476735,
+      "fast_log10_OmegaGW": -36.948304194019485,
+      "log10_P_t": -39.641179055922194,
+      "log10_hz": 0.2400551908537374,
+      "reference_log10_OmegaGW": -36.94815851877464,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00015104522963582667,
+      "fast_log10_OmegaGW": -37.11013885380027,
+      "log10_P_t": -39.81567905592218,
+      "log10_hz": 0.23005519085373738,
+      "reference_log10_OmegaGW": -37.10998780857064,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014243815672898563,
+      "fast_log10_OmegaGW": -37.272914341562505,
+      "log10_P_t": -39.99017905592218,
+      "log10_hz": 0.22005519085373737,
+      "reference_log10_OmegaGW": -37.272771903405776,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014557506976586865,
+      "fast_log10_OmegaGW": -37.43662020223904,
+      "log10_P_t": -40.16467905592217,
+      "log10_hz": 0.21005519085373736,
+      "reference_log10_OmegaGW": -37.436474627169275,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00015058104001042238,
+      "fast_log10_OmegaGW": -37.60121080608149,
+      "log10_P_t": -40.339179055922166,
+      "log10_hz": 0.20005519085373735,
+      "reference_log10_OmegaGW": -37.60106022504148,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001418750072090802,
+      "fast_log10_OmegaGW": -37.76663545927048,
+      "log10_P_t": -40.51367905592216,
+      "log10_hz": 0.19005519085373734,
+      "reference_log10_OmegaGW": -37.76649358426327,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014458887800117282,
+      "fast_log10_OmegaGW": -37.93288496949801,
+      "log10_P_t": -40.688179055922156,
+      "log10_hz": 0.18005519085373733,
+      "reference_log10_OmegaGW": -37.93274038062001,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014934610677386218,
+      "fast_log10_OmegaGW": -38.09991654446389,
+      "log10_P_t": -40.86267905592219,
+      "log10_hz": 0.17005519085373733,
+      "reference_log10_OmegaGW": -38.099767198357114,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014074570844258005,
+      "fast_log10_OmegaGW": -38.267682362572174,
+      "log10_P_t": -41.03717905592219,
+      "log10_hz": 0.16005519085373732,
+      "reference_log10_OmegaGW": -38.26754161686373,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001430954111398819,
+      "fast_log10_OmegaGW": -38.43617535949662,
+      "log10_P_t": -41.21167905592218,
+      "log10_hz": 0.1500551908537373,
+      "reference_log10_OmegaGW": -38.43603226408548,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014766247364406127,
+      "fast_log10_OmegaGW": -38.60535650965286,
+      "log10_P_t": -41.38617905592218,
+      "log10_hz": 0.1400551908537373,
+      "reference_log10_OmegaGW": -38.60520884717921,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00015172507094973753,
+      "fast_log10_OmegaGW": -38.77519389853852,
+      "log10_P_t": -41.56067905592217,
+      "log10_hz": 0.1300551908537373,
+      "reference_log10_OmegaGW": -38.77504217346757,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014134168940671543,
+      "fast_log10_OmegaGW": -38.94564548887152,
+      "log10_P_t": -41.73517905592217,
+      "log10_hz": 0.12005519085373728,
+      "reference_log10_OmegaGW": -38.94550414718211,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014572962896153285,
+      "fast_log10_OmegaGW": -39.11671349812992,
+      "log10_P_t": -41.90967905592216,
+      "log10_hz": 0.11005519085373727,
+      "reference_log10_OmegaGW": -39.11656776850096,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00015028562891927777,
+      "fast_log10_OmegaGW": -39.28835739741844,
+      "log10_P_t": -42.08417905592215,
+      "log10_hz": 0.10005519085373726,
+      "reference_log10_OmegaGW": -39.28820711178952,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014083870552639155,
+      "fast_log10_OmegaGW": -39.460538150158875,
+      "log10_P_t": -42.258679055922144,
+      "log10_hz": 0.09005519085373725,
+      "reference_log10_OmegaGW": -39.46039731145335,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014368498391093,
+      "fast_log10_OmegaGW": -39.63325821676047,
+      "log10_P_t": -42.43317905592219,
+      "log10_hz": 0.08005519085373725,
+      "reference_log10_OmegaGW": -39.633114531776556,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014825773221360805,
+      "fast_log10_OmegaGW": -39.806484194229476,
+      "log10_P_t": -42.60767905592218,
+      "log10_hz": 0.07005519085373724,
+      "reference_log10_OmegaGW": -39.80633593649726,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013899071986855915,
+      "fast_log10_OmegaGW": -39.980178652094175,
+      "log10_P_t": -42.78217905592218,
+      "log10_hz": 0.06005519085373723,
+      "reference_log10_OmegaGW": -39.980039661374306,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014161394744149902,
+      "fast_log10_OmegaGW": -40.15434639233592,
+      "log10_P_t": -42.95667905592222,
+      "log10_hz": 0.05005519085373722,
+      "reference_log10_OmegaGW": -40.154204778388475,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014617346310075163,
+      "fast_log10_OmegaGW": -40.32895743837463,
+      "log10_P_t": -43.13117905592221,
+      "log10_hz": 0.04005519085373721,
+      "reference_log10_OmegaGW": -40.32881126491153,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.000137218741066647,
+      "fast_log10_OmegaGW": -40.50397718528406,
+      "log10_P_t": -43.305679055922205,
+      "log10_hz": 0.0300551908537372,
+      "reference_log10_OmegaGW": -40.50383996654299,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013957683496812479,
+      "fast_log10_OmegaGW": -40.679412143007454,
+      "log10_P_t": -43.4801790559222,
+      "log10_hz": 0.020055190853737193,
+      "reference_log10_OmegaGW": -40.679272566172486,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014408047027814064,
+      "fast_log10_OmegaGW": -40.85523562807259,
+      "log10_P_t": -43.654679055922195,
+      "log10_hz": 0.010055190853737184,
+      "reference_log10_OmegaGW": -40.85509154760231,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014849591934051887,
+      "fast_log10_OmegaGW": -41.03142866180232,
+      "log10_P_t": -43.82917905592224,
+      "log10_hz": 5.5190853737174805e-05,
+      "reference_log10_OmegaGW": -41.03128016588298,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013896075220287685,
+      "fast_log10_OmegaGW": -41.207961374710095,
+      "log10_P_t": -44.003679055922234,
+      "log10_hz": -0.009944809146262834,
+      "reference_log10_OmegaGW": -41.20782241395789,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014201520734502537,
+      "fast_log10_OmegaGW": -41.384844998302114,
+      "log10_P_t": -44.17817905592222,
+      "log10_hz": -0.019944809146262843,
+      "reference_log10_OmegaGW": -41.38470298309477,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014655291004572746,
+      "fast_log10_OmegaGW": -41.56205380529863,
+      "log10_P_t": -44.352679055922216,
+      "log10_hz": -0.029944809146262852,
+      "reference_log10_OmegaGW": -41.561907252388586,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001371228656452672,
+      "fast_log10_OmegaGW": -41.73955836002466,
+      "log10_P_t": -44.52717905592221,
+      "log10_hz": -0.03994480914626286,
+      "reference_log10_OmegaGW": -41.739421237159014,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001400033985561322,
+      "fast_log10_OmegaGW": -41.917371576732634,
+      "log10_P_t": -44.701679055922206,
+      "log10_hz": -0.04994480914626287,
+      "reference_log10_OmegaGW": -41.91723157333408,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014460194680765426,
+      "fast_log10_OmegaGW": -42.095470093327144,
+      "log10_P_t": -44.8761790559222,
+      "log10_hz": -0.05994480914626288,
+      "reference_log10_OmegaGW": -42.095325491380336,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014523439243419034,
+      "fast_log10_OmegaGW": -42.48821614172451,
+      "log10_P_t": -45.26007905592221,
+      "log10_hz": -0.08194480914626287,
+      "reference_log10_OmegaGW": -42.48807090733207,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013874170284822185,
+      "fast_log10_OmegaGW": -42.84628927709741,
+      "log10_P_t": -45.6090790559222,
+      "log10_hz": -0.10194480914626287,
+      "reference_log10_OmegaGW": -42.846150535394564,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013425602723060592,
+      "fast_log10_OmegaGW": -43.20526761359242,
+      "log10_P_t": -45.95807905592224,
+      "log10_hz": -0.12194480914626288,
+      "reference_log10_OmegaGW": -43.20513335756519,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014152628923369548,
+      "fast_log10_OmegaGW": -43.56508522565204,
+      "log10_P_t": -46.30707905592223,
+      "log10_hz": -0.1419448091462629,
+      "reference_log10_OmegaGW": -43.56494369936281,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001364886316537195,
+      "fast_log10_OmegaGW": -43.9256488998968,
+      "log10_P_t": -46.65607905592221,
+      "log10_hz": -0.16194480914626289,
+      "reference_log10_OmegaGW": -43.925512411265146,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014426621189755906,
+      "fast_log10_OmegaGW": -44.28692049525382,
+      "log10_P_t": -47.0050790559222,
+      "log10_hz": -0.18194480914626288,
+      "reference_log10_OmegaGW": -44.28677622904192,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013793138451489995,
+      "fast_log10_OmegaGW": -44.648815188599876,
+      "log10_P_t": -47.35407905592219,
+      "log10_hz": -0.2019448091462629,
+      "reference_log10_OmegaGW": -44.64867725721536,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013339171147208617,
+      "fast_log10_OmegaGW": -45.01129593876169,
+      "log10_P_t": -47.703079055922224,
+      "log10_hz": -0.22194480914626288,
+      "reference_log10_OmegaGW": -45.01116254705022,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014091531013349368,
+      "fast_log10_OmegaGW": -45.37432453890153,
+      "log10_P_t": -48.05207905592221,
+      "log10_hz": -0.2419448091462629,
+      "reference_log10_OmegaGW": -45.3741836235914,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001359150202802084,
+      "fast_log10_OmegaGW": -45.73783200809043,
+      "log10_P_t": -48.4010790559222,
+      "log10_hz": -0.26194480914626295,
+      "reference_log10_OmegaGW": -45.73769609307015,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014378009834103977,
+      "fast_log10_OmegaGW": -46.10180308906326,
+      "log10_P_t": -48.750079055922185,
+      "log10_hz": -0.2819448091462629,
+      "reference_log10_OmegaGW": -46.10165930896492,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013758098492644422,
+      "fast_log10_OmegaGW": -46.466173613801374,
+      "log10_P_t": -49.099079055922225,
+      "log10_hz": -0.30194480914626287,
+      "reference_log10_OmegaGW": -46.46603603281645,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013298853767196306,
+      "fast_log10_OmegaGW": -46.83092513515394,
+      "log10_P_t": -49.448079055922214,
+      "log10_hz": -0.3219448091462629,
+      "reference_log10_OmegaGW": -46.83079214661627,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001407007284797146,
+      "fast_log10_OmegaGW": -47.196037078434074,
+      "log10_P_t": -49.7970790559222,
+      "log10_hz": -0.3419448091462629,
+      "reference_log10_OmegaGW": -47.195896377705594,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013428226114342579,
+      "fast_log10_OmegaGW": -48.11013201233577,
+      "log10_P_t": -50.66957905592222,
+      "log10_hz": -0.3919448091462629,
+      "reference_log10_OmegaGW": -48.109997730074625,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014077676312496124,
+      "fast_log10_OmegaGW": -49.025856338754565,
+      "log10_P_t": -51.54207905592219,
+      "log10_hz": -0.4419448091462629,
+      "reference_log10_OmegaGW": -49.02571556199144,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013444164590481478,
+      "fast_log10_OmegaGW": -49.94287282939403,
+      "log10_P_t": -52.414579055922204,
+      "log10_hz": -0.4919448091462629,
+      "reference_log10_OmegaGW": -49.94273838774812,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014106391784451944,
+      "fast_log10_OmegaGW": -50.86095609812334,
+      "log10_P_t": -53.28707905592217,
+      "log10_hz": -0.5419448091462629,
+      "reference_log10_OmegaGW": -50.860815034205494,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013479285482276282,
+      "fast_log10_OmegaGW": -51.779877654851354,
+      "log10_P_t": -54.159579055922194,
+      "log10_hz": -0.5919448091462629,
+      "reference_log10_OmegaGW": -51.77974286199653,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014150532005885452,
+      "fast_log10_OmegaGW": -52.69949976346509,
+      "log10_P_t": -55.03207905592216,
+      "log10_hz": -0.6419448091462628,
+      "reference_log10_OmegaGW": -52.69935825814503,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001352674780790153,
+      "fast_log10_OmegaGW": -53.619664372125854,
+      "log10_P_t": -55.90457905592218,
+      "log10_hz": -0.6919448091462628,
+      "reference_log10_OmegaGW": -53.619529104647775,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001419247058791484,
+      "fast_log10_OmegaGW": -54.54029059772284,
+      "log10_P_t": -56.777079055922194,
+      "log10_hz": -0.7419448091462628,
+      "reference_log10_OmegaGW": -54.54014867301696,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013570469073442837,
+      "fast_log10_OmegaGW": -55.461266406153484,
+      "log10_P_t": -57.64957905592221,
+      "log10_hz": -0.7919448091462629,
+      "reference_log10_OmegaGW": -55.46113070146275,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014245716383243234,
+      "fast_log10_OmegaGW": -56.38254797719684,
+      "log10_P_t": -58.522079055922234,
+      "log10_hz": -0.8419448091462628,
+      "reference_log10_OmegaGW": -56.38240552003301,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014404605702367235,
+      "fast_log10_OmegaGW": -60.06960025698257,
+      "log10_P_t": -62.0120790559222,
+      "log10_hz": -1.0419448091462629,
+      "reference_log10_OmegaGW": -60.069456210925544,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001462576382351699,
+      "fast_log10_OmegaGW": -63.758354200531834,
+      "log10_P_t": -65.50207905592218,
+      "log10_hz": -1.2419448091462628,
+      "reference_log10_OmegaGW": -63.7582079428936,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014915509676427519,
+      "fast_log10_OmegaGW": -67.44782926452439,
+      "log10_P_t": -68.99207905592215,
+      "log10_hz": -1.4419448091462628,
+      "reference_log10_OmegaGW": -67.44768010942762,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013926970299849017,
+      "fast_log10_OmegaGW": -71.13759568416027,
+      "log10_P_t": -72.48207905592223,
+      "log10_hz": -1.6419448091462627,
+      "reference_log10_OmegaGW": -71.13745641445728,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014223720329198386,
+      "fast_log10_OmegaGW": -74.82750370400268,
+      "log10_P_t": -75.9720790559222,
+      "log10_hz": -1.8419448091462627,
+      "reference_log10_OmegaGW": -74.82736146679939,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001411111796443265,
+      "fast_log10_OmegaGW": -78.5174656433046,
+      "log10_P_t": -79.46207905592216,
+      "log10_hz": -2.041944809146263,
+      "reference_log10_OmegaGW": -78.51732453212496,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00012522045732055176,
+      "fast_log10_OmegaGW": -82.20745016987605,
+      "log10_P_t": -82.95207905592218,
+      "log10_hz": -2.2419448091462626,
+      "reference_log10_OmegaGW": -82.20732494941873,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -6.941081677780403e-05,
+      "fast_log10_OmegaGW": -85.89744411031641,
+      "log10_P_t": -86.44207905592216,
+      "log10_hz": -2.4419448091462623,
+      "reference_log10_OmegaGW": -85.89737469949964,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 5.528688431866158e-05,
+      "fast_log10_OmegaGW": -89.58744183984606,
+      "log10_P_t": -89.93207905592219,
+      "log10_hz": -2.6419448091462625,
+      "reference_log10_OmegaGW": -89.58749712673038,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00014317670201080546,
+      "fast_log10_OmegaGW": -93.27743928601107,
+      "log10_P_t": -93.42207905592215,
+      "log10_hz": -2.8419448091462627,
+      "reference_log10_OmegaGW": -93.27758246271308,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001188168126589062,
+      "fast_log10_OmegaGW": -111.72744162968512,
+      "log10_P_t": -110.87207905592221,
+      "log10_hz": -3.8419448091462627,
+      "reference_log10_OmegaGW": -111.72756044649778,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00011267487684563093,
+      "fast_log10_OmegaGW": -130.17740598168388,
+      "log10_P_t": -128.3220790559222,
+      "log10_hz": -4.841944809146263,
+      "reference_log10_OmegaGW": -130.17729330680703,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 2.1434824191146618e-05,
+      "fast_log10_OmegaGW": -148.6271656657718,
+      "log10_P_t": -145.7720790559222,
+      "log10_hz": -5.841944809146263,
+      "reference_log10_OmegaGW": -148.627187100596,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.575636883279003e-05,
+      "fast_log10_OmegaGW": -167.0745096939408,
+      "log10_P_t": -163.2220790559222,
+      "log10_hz": -6.841944809146263,
+      "reference_log10_OmegaGW": -167.07442393757196,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 1.2644858969679262e-05,
+      "fast_log10_OmegaGW": -170.76272875792506,
+      "log10_P_t": -166.71207905592217,
+      "log10_hz": -7.041944809146263,
+      "reference_log10_OmegaGW": -170.76274140278403,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001300009409987979,
+      "fast_log10_OmegaGW": -174.4498635278383,
+      "log10_P_t": -170.2020790559222,
+      "log10_hz": -7.241944809146263,
+      "reference_log10_OmegaGW": -174.4497335268973,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00012337451931898613,
+      "fast_log10_OmegaGW": -178.13509950624245,
+      "log10_P_t": -173.6920790559222,
+      "log10_hz": -7.441944809146263,
+      "reference_log10_OmegaGW": -178.13497613172314,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00014416649815984783,
+      "fast_log10_OmegaGW": -181.81740568608387,
+      "log10_P_t": -177.1820790559222,
+      "log10_hz": -7.641944809146263,
+      "reference_log10_OmegaGW": -181.8172615195857,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00010954812125874014,
+      "fast_log10_OmegaGW": -185.49376678414467,
+      "log10_P_t": -180.6720790559222,
+      "log10_hz": -7.841944809146264,
+      "reference_log10_OmegaGW": -185.4936572360234,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00013379072737507158,
+      "fast_log10_OmegaGW": -189.1575559811703,
+      "log10_P_t": -184.16207905592222,
+      "log10_hz": -8.041944809146264,
+      "reference_log10_OmegaGW": -189.15742219044293,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.00012014156720852043,
+      "fast_log10_OmegaGW": -192.8009433286409,
+      "log10_P_t": -187.65207905592223,
+      "log10_hz": -8.241944809146265,
+      "reference_log10_OmegaGW": -192.8008231870737,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -5.951788182301243e-07,
+      "fast_log10_OmegaGW": -196.4177552257966,
+      "log10_P_t": -191.1420790559222,
+      "log10_hz": -8.441944809146264,
+      "reference_log10_OmegaGW": -196.4177546306178,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 7.133854296625941e-05,
+      "fast_log10_OmegaGW": -200.00291326584463,
+      "log10_P_t": -194.63207905592222,
+      "log10_hz": -8.641944809146263,
+      "reference_log10_OmegaGW": -200.0029846043876,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001376091434508453,
+      "fast_log10_OmegaGW": -203.55397393947274,
+      "log10_P_t": -198.1220790559222,
+      "log10_hz": -8.841944809146264,
+      "reference_log10_OmegaGW": -203.5538363303293,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0001435999637351415,
+      "fast_log10_OmegaGW": -207.0742099677464,
+      "log10_P_t": -201.61207905592224,
+      "log10_hz": -9.041944809146266,
+      "reference_log10_OmegaGW": -207.07435356771015,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -0.0001445078661390653,
+      "fast_log10_OmegaGW": -210.57460350905814,
+      "log10_P_t": -205.10207905592222,
+      "log10_hz": -9.241944809146265,
+      "reference_log10_OmegaGW": -210.574459001192,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -9.543660840449775e-05,
+      "fast_log10_OmegaGW": -214.06734946264623,
+      "log10_P_t": -208.59207905592223,
+      "log10_hz": -9.441944809146264,
+      "reference_log10_OmegaGW": -214.06725402603783,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00014468654799770775,
+      "fast_log10_OmegaGW": -217.55830904412753,
+      "log10_P_t": -212.08207905592224,
+      "log10_hz": -9.641944809146265,
+      "reference_log10_OmegaGW": -217.55845373067552,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 8.264779100386477e-05,
+      "fast_log10_OmegaGW": -221.0488517261398,
+      "log10_P_t": -215.57207905592225,
+      "log10_hz": -9.841944809146266,
+      "reference_log10_OmegaGW": -221.0489343739308,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -9.200123236041691e-05,
+      "fast_log10_OmegaGW": -224.5391676151317,
+      "log10_P_t": -219.06207905592223,
+      "log10_hz": -10.041944809146266,
+      "reference_log10_OmegaGW": -224.53907561389934,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -8.071000399922923e-05,
+      "fast_log10_OmegaGW": -228.02928730642392,
+      "log10_P_t": -222.55207905592218,
+      "log10_hz": -10.241944809146265,
+      "reference_log10_OmegaGW": -228.02920659641993,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 3.9088181182478365e-05,
+      "fast_log10_OmegaGW": -231.51919040100447,
+      "log10_P_t": -226.04207905592222,
+      "log10_hz": -10.441944809146266,
+      "reference_log10_OmegaGW": -231.51922948918565,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 4.725235859837085e-05,
+      "fast_log10_OmegaGW": -235.00871915581058,
+      "log10_P_t": -229.53207905592228,
+      "log10_hz": -10.641944809146267,
+      "reference_log10_OmegaGW": -235.00876640816918,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0003270510154607109,
+      "fast_log10_OmegaGW": -252.41422770399313,
+      "log10_P_t": -246.98207905592224,
+      "log10_hz": -11.641944809146267,
+      "reference_log10_OmegaGW": -252.4145547550086,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00038934623029263093,
+      "fast_log10_OmegaGW": -269.8324468718421,
+      "log10_P_t": -264.43207905592226,
+      "log10_hz": -12.641944809146267,
+      "reference_log10_OmegaGW": -269.8328362180724,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.0003668331181074791,
+      "fast_log10_OmegaGW": -287.28176594532044,
+      "log10_P_t": -281.88207905592225,
+      "log10_hz": -13.641944809146267,
+      "reference_log10_OmegaGW": -287.28213277843855,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": -1.1216343182240962e-05,
+      "fast_log10_OmegaGW": -304.730259346926,
+      "log10_P_t": -299.3320790559223,
+      "log10_hz": -14.641944809146267,
+      "reference_log10_OmegaGW": -304.7302481305828,
+      "reference_used_tail": true
+    },
+    {
+      "delta_dex": 0.00023313981347428125,
+      "fast_log10_OmegaGW": -322.1652655193883,
+      "log10_P_t": -316.7820790559222,
+      "log10_hz": -15.641944809146267,
+      "reference_log10_OmegaGW": -322.1654986592018,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -3.899759201431152e-05,
+      "fast_log10_OmegaGW": -325.6453275908189,
+      "log10_P_t": -320.27207905592223,
+      "log10_hz": -15.841944809146266,
+      "reference_log10_OmegaGW": -325.6452885932269,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": 0.0004196926113877453,
+      "fast_log10_OmegaGW": -329.12071269373166,
+      "log10_P_t": -323.7620790559222,
+      "log10_hz": -16.041944809146266,
+      "reference_log10_OmegaGW": -329.12113238634305,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -0.0005032963428561743,
+      "fast_log10_OmegaGW": -332.58278356975967,
+      "log10_P_t": -327.2520790559222,
+      "log10_hz": -16.241944809146265,
+      "reference_log10_OmegaGW": -332.5822802734168,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": 2.6937693178297195e-06,
+      "fast_log10_OmegaGW": -336.03903315585853,
+      "log10_P_t": -330.7420790559222,
+      "log10_hz": -16.441944809146264,
+      "reference_log10_OmegaGW": -336.03903584962785,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -3.202051232165104e-06,
+      "fast_log10_OmegaGW": -339.46963657437794,
+      "log10_P_t": -334.23207905592216,
+      "log10_hz": -16.641944809146263,
+      "reference_log10_OmegaGW": -339.4696333723267,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -2.347755355458503e-06,
+      "fast_log10_OmegaGW": -342.84565957475155,
+      "log10_P_t": -337.7220790559222,
+      "log10_hz": -16.841944809146263,
+      "reference_log10_OmegaGW": -342.8456572269962,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": 3.727175396761595e-06,
+      "fast_log10_OmegaGW": -346.2159317045625,
+      "log10_P_t": -341.21207905592223,
+      "log10_hz": -17.041944809146262,
+      "reference_log10_OmegaGW": -346.2159354317379,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -1.023406792910464e-05,
+      "fast_log10_OmegaGW": -349.49677540948653,
+      "log10_P_t": -344.7020790559222,
+      "log10_hz": -17.24194480914626,
+      "reference_log10_OmegaGW": -349.4967651754186,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": 4.809350855339289e-06,
+      "fast_log10_OmegaGW": -352.74110521166085,
+      "log10_P_t": -348.19207905592214,
+      "log10_hz": -17.44194480914626,
+      "reference_log10_OmegaGW": -352.7411100210117,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -1.9049237494073168e-06,
+      "fast_log10_OmegaGW": -355.933730745491,
+      "log10_P_t": -351.68207905592215,
+      "log10_hz": -17.64194480914626,
+      "reference_log10_OmegaGW": -355.93372884056726,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -6.180798663990572e-07,
+      "fast_log10_OmegaGW": -358.90085732518935,
+      "log10_P_t": -355.17207905592215,
+      "log10_hz": -17.84194480914626,
+      "reference_log10_OmegaGW": -358.9008567071095,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -2.7213022804062348e-06,
+      "fast_log10_OmegaGW": -362.2752928364772,
+      "log10_P_t": -358.6620790559221,
+      "log10_hz": -18.04194480914626,
+      "reference_log10_OmegaGW": -362.2752901151749,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": -5.014141208903311e-06,
+      "fast_log10_OmegaGW": -365.43354630264537,
+      "log10_P_t": -362.1520790559221,
+      "log10_hz": -18.241944809146258,
+      "reference_log10_OmegaGW": -365.43354128850416,
+      "reference_used_tail": false
+    },
+    {
+      "delta_dex": 6.370036089720088e-07,
+      "fast_log10_OmegaGW": -367.9040254517529,
+      "log10_P_t": -365.64207905592207,
+      "log10_hz": -18.441944809146257,
+      "reference_log10_OmegaGW": -367.9040260887565,
+      "reference_used_tail": false
+    }
+  ],
+  "log10_A_t_from_inputs": -324.9800000115394,
+  "params": {
+    "A_s": 2.100549e-09,
+    "DN_eff": 0.0,
+    "DN_re": 10.0,
+    "H0": 67.32117,
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "T_re": 2000.0,
+    "cr": 0.0,
+    "kappa10": 0.01,
+    "n_t": 17.45,
+    "r": 4.985023e-317
+  },
+  "reference_root_iterations": 3,
+  "reference_rtol": 1e-09,
+  "reference_tail": 8.0,
+  "scaled_reference": {
+    "backend": "cartesian unit A_t=1, n_t=0; exact log-power scaling by target inputs",
+    "estimated_self_consistent_root_DN_gw": 0.2656571711145387,
+    "fast_weighted_transfer_pchip_map": 0.2656565769050167,
+    "interpolation_error": 5.261258206503852e-11,
+    "map_DN_gw_at_fast_root": 0.26565717111453785,
+    "map_relative_residual_at_fast_root": -8.486428016608977e-07,
+    "quadrature_error": 3.654932618785584e-20,
+    "reference_weighted_transfer_pchip_map": 0.26565631666097556,
+    "relative_root_difference_vs_fast": -8.486427985265326e-07,
+    "root_iteration_history": [
+      {
+        "input_DN_eff": 0.26565739656277515,
+        "mapped_DN_gw": 0.26565717111453785
+      },
+      {
+        "input_DN_eff": 0.26565717111453785,
+        "mapped_DN_gw": 0.2656571711145387
+      },
+      {
+        "input_DN_eff": 0.2656571711145387,
+        "mapped_DN_gw": 0.2656571711145387
+      }
+    ],
+    "runtime_s": 193.3987505000041,
+    "spectrum_comparison_count": 235,
+    "spectrum_max_abs_delta_dex": 0.0005032963428561743,
+    "spectrum_p95_abs_delta_dex": 0.00014869367256764576,
+    "used_tail_count": 220,
+    "weighted_transfer_pchip_map_at_fast_root": 0.26565631666097556,
+    "weighted_transfer_pchip_relative_root_residual": -4.0650168734872885e-06,
+    "worst_spectrum_delta_dex": 0.0005032963428561743,
+    "worst_spectrum_frequency_log10_hz": -16.241944809146265
+  },
+  "schema_version": 1,
+  "source_sha256": {
+    "LCDM_stiff_Neff.py": "c89a158dd57137b24abeda3a90ec08ecbffb8c8b1f0cd5515565339d6b793aaf",
+    "exact_background.py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+    "global_param.py": "c9e8907b32a9bc800fb7a7d4c46c262f5677a94f39e31c162abbb99af9610f8c",
+    "probe_fast_log_amplitude_underflow.py": "35255de11665d8c58eee297a3872f1d445cc9e790cc2b16675e59bbf2dac1735",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "stiff_SGWB.py": "dbeae7c2a10d77586f0809fd88f45ae60830d431efddcb2ae5935403c0b9cbfb"
+  },
+  "status": "complete"
+}
