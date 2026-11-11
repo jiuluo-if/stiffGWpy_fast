@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "experiment": "current e13 Fast vs z8 Cartesian Reference on nested 235/469 underflow holdout",
+  "source_sha256": {
+    "fast_sgwb.py": {
+      "raw_sha256": "e13d3efb455fb3ce93419b086634c136b13d303f3f996463450417abfaf2c80c",
+      "normalized_sha256": "b592acea41a02618902dcdb21f553c9357a61b8a70fb3b1d2fa38508a52dd81c",
+      "head_sha256": "f67acf1c132a52a34a72c616f0b3b92049d9bb2af23968a8ee2a37bd78399858",
+      "same_as_head": false
+    },
+    "freq_adaptive.py": {
+      "raw_sha256": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+      "normalized_sha256": "a627a357497b07532e9316f88a27d73186355fe130e0a6661368cce1603bbfc8",
+      "head_sha256": "23b37f67d93d51fdadd0a0d231174e47c6d1fee48a84549d9f4cb2c17df891b1",
+      "same_as_head": false
+    },
+    "reference.py": {
+      "raw_sha256": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+      "normalized_sha256": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+      "head_sha256": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+      "same_as_head": true
+    },
+    "exact_background.py": {
+      "raw_sha256": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+      "normalized_sha256": "5497fd030c2a9996e7774fcb184ee429a9873317b28286bbaf7dd60e31e7240e",
+      "head_sha256": "5497fd030c2a9996e7774fcb184ee429a9873317b28286bbaf7dd60e31e7240e",
+      "same_as_head": true
+    },
+    "stiff_SGWB.py": {
+      "raw_sha256": "dbeae7c2a10d77586f0809fd88f45ae60830d431efddcb2ae5935403c0b9cbfb",
+      "normalized_sha256": "256b28289455588c712920f5b13c0ff7af5d26aecb9b238b78d695d9b0843de8",
+      "head_sha256": "256b28289455588c712920f5b13c0ff7af5d26aecb9b238b78d695d9b0843de8",
+      "same_as_head": true
+    },
+    "global_param.py": {
+      "raw_sha256": "c9e8907b32a9bc800fb7a7d4c46c262f5677a94f39e31c162abbb99af9610f8c",
+      "normalized_sha256": "22b561fbec5716f96ad2026d86d573d80becf26d54e3a44e5bd0b9b83e1882d8",
+      "head_sha256": "22b561fbec5716f96ad2026d86d573d80becf26d54e3a44e5bd0b9b83e1882d8",
+      "same_as_head": true
+    }
+  },
+  "candidate_fast_source_expected": "e13d3efb455fb3ce93419b086634c136b13d303f3f996463450417abfaf2c80c",
+  "stale_reference_artifact_fast_sha_not_reused": "9ed30c67f4ad890c8fdba76359a3c9ebe3fb6dec1aea1794b70a07f81621b748",
+  "reference_configuration": {
+    "backend": "cartesian",
+    "z_tail": 8.0,
+    "rtol": 1e-09,
+    "workers": 1,
+    "frozen_DN_eff": 0.027412234497731135
+  },
+  "parameters": {
+    "A_s": 2.100549e-09,
+    "DN_eff": 0.0,
+    "DN_re": 10.0,
+    "H0": 67.32117,
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "T_re": 2000.0,
+    "cr": 0.0,
+    "kappa10": 0.01,
+    "n_t": 17.38,
+    "r": 1e-316
+  },
+  "frequency_grids": {
+    "construction": "current candidate 235 goal grid plus one log-frequency midpoint per interval",
+    "frequency_count_235": 235,
+    "frequency_sha256_235": "f0dae6e2ef8b34c0e0fb2022d087296ec31adbe7d9de5f6b537af019e18f4870",
+    "frequency_count_469": 469,
+    "frequency_sha256_469": "e767948068e2e12b595b3b0fbb387ee915b93697f9549265b3b9da379fcd354a",
+    "shared_original_nodes": 235,
+    "inserted_midpoint_count": 234,
+    "exact_nested": true,
+    "candidate_actual_equals_requested": true
+  },
+  "roots_and_maps": {
+    "fast_DN_gw_at_469_root": 0.027412234497731135,
+    "reference_map_DN_gw_at_same_root": 0.0274121609890446,
+    "reference_map_relative_residual_vs_fast": -2.6816014046462297e-06,
+    "absolute_root_relative_error": 2.6816014046462297e-06,
+    "root_gate_2e-4_pass": true,
+    "fast_235_root_DN_eff": 0.027412228089634092,
+    "fast_469_root_DN_eff": 0.027412234497731135
+  },
+  "spectrum_errors_dex": {
+    "all_469": {
+      "max": 0.000647546072627847,
+      "p95": 0.00014864913028418412,
+      "count": 469
+    },
+    "new_234_midpoints": {
+      "max": 0.000647546072627847,
+      "p95": 0.00014822110338172934,
+      "count": 234
+    },
+    "shared_235_nodes": {
+      "max": 0.00048157265871395794,
+      "p95": 0.0001496240661140291,
+      "count": 235
+    },
+    "max_gate_1e-3_dex_pass": true
+  },
+  "reference_diagnostics": {
+    "used_tail_count": 439,
+    "quadrature_error": 3.771387044811382e-21,
+    "interpolation_error": 5.477726747494478e-13,
+    "warnings": 4
+  },
+  "timing_s": {
+    "fast_235": null,
+    "fast_469": 0.10726920003071427,
+    "reference_469_spectrum": 121.06105320015922,
+    "reference_469_integrate": 0.05486069992184639
+  },
+  "failure_classification": "passes sampled 469-node same-background spectrum/root gates",
+  "reference_frequency_convergence": {
+    "tail_convention": "z_tail=8",
+    "rtol": 1e-09,
+    "backend": "cartesian",
+    "root_map_iterations_per_grid": 3,
+    "common_initial_DN_eff": 0.027412228089634092,
+    "first_map_at_common_DN_eff": {
+      "DN_gw_235": 0.027412205192148476,
+      "DN_gw_469": 0.0274121609890447,
+      "relative_469_minus_235": -1.612536267832924e-06,
+      "runtime_s_235": 60.34492679988034,
+      "runtime_s_469": 118.02339019998908,
+      "quadrature_error_235": 3.771393126309785e-21,
+      "quadrature_error_469": 3.771387044811396e-21,
+      "interpolation_error_235": 5.432856704546249e-12,
+      "interpolation_error_469": 5.477726776651925e-13,
+      "shared_node_reference_max_abs_dex": 0.0,
+      "new_midpoint_vs_235_pchip_max_abs_dex": 0.46155391601797646,
+      "new_midpoint_vs_235_pchip_p95_abs_dex": 0.005830045310412756,
+      "new_midpoint_count": 234
+    },
+    "converged_roots": {
+      "DN_gw_235": 0.027412205192148237,
+      "DN_gw_469": 0.027412160989044775,
+      "relative_469_minus_235": -1.6125362564419818e-06,
+      "last_map_relative_step_235": 0.0,
+      "last_map_relative_step_469": 0.0,
+      "root_iterations_235": [
+        {
+          "input_DN_eff": 0.027412228089634092,
+          "mapped_DN_gw": 0.027412205192148476,
+          "runtime_s": 60.34492679988034
+        },
+        {
+          "input_DN_eff": 0.027412205192148476,
+          "mapped_DN_gw": 0.027412205192148237,
+          "runtime_s": 60.94590940000489
+        },
+        {
+          "input_DN_eff": 0.027412205192148237,
+          "mapped_DN_gw": 0.027412205192148237,
+          "runtime_s": 60.2840026000049
+        }
+      ],
+      "root_iterations_469": [
+        {
+          "input_DN_eff": 0.027412228089634092,
+          "mapped_DN_gw": 0.0274121609890447,
+          "runtime_s": 118.02339019998908
+        },
+        {
+          "input_DN_eff": 0.0274121609890447,
+          "mapped_DN_gw": 0.027412160989044775,
+          "runtime_s": 118.21141820005141
+        },
+        {
+          "input_DN_eff": 0.027412160989044775,
+          "mapped_DN_gw": 0.027412160989044775,
+          "runtime_s": 119.27733770012856
+        }
+      ],
+      "reference_runtime_total_s": 537.0869849000592,
+      "captured_warning_count": 24
+    },
+    "interpretation": "Reference root is frequency-converged to 1.61e-6 relative between the nested grids. The 235-node PCHIP spectrum does not resolve all new midpoints (max 0.462 dex, P95 0.00583 dex); the direct current Fast 469-node comparison is reported separately."
+  },
+  "scope_limit": "One underflow holdout only; this does not establish a continuous multidimensional trusted region or performance acceptance."
+}

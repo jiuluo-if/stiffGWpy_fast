@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "status": "complete_offline_fixed_background_reweighting",
+  "experiment": "z8 Reference 235/469 PCHIP tilt reweighting",
+  "parameters_inherited_from_convergence": {
+    "A_s": 2.100549e-09,
+    "DN_eff": 0.0,
+    "DN_re": 10.0,
+    "H0": 67.32117,
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "T_re": 2000.0,
+    "cr": 0.0,
+    "kappa10": 0.01,
+    "n_t": 17.38,
+    "r": 1e-316
+  },
+  "background_scope": {
+    "fixed_DN_eff": 0.027412234497731135,
+    "tail_convention": "z_tail=8",
+    "only_parameter_varied": "n_t",
+    "tilts": [
+      17.3,
+      17.38,
+      17.45
+    ]
+  },
+  "frequency_grid_hashes": {
+    "469_source_order_sha256": "e767948068e2e12b595b3b0fbb387ee915b93697f9549265b3b9da379fcd354a",
+    "235_source_order_sha256": "f0dae6e2ef8b34c0e0fb2022d087296ec31adbe7d9de5f6b537af019e18f4870"
+  },
+  "method": {
+    "input": "saved unit Reference Ogw-Oj arrays; no new propagation",
+    "coarse_grid": "every other point of the nested 469 grid (235 nodes)",
+    "fine_grid": "all 469 saved points",
+    "integral": "Reference integrate_spectrum (PCHIP in log10 f, dln f)",
+    "panel_delta": "sum fine two-subpanel PCHIP integrals minus coarse PCHIP integral per parent panel",
+    "normalization": "subtract max log integrand; positive constants r*A_s/f_piv**n_t cancel relative metrics"
+  },
+  "reproduction_check": {
+    "n_t": 17.38,
+    "saved_nested_root_relative_469_minus_235": -1.6125362564419818e-06,
+    "reweighted_fixed_background_relative_469_minus_235": -1.612536261221411e-06,
+    "absolute_difference": 4.7794291446615414e-15
+  },
+  "results": [
+    {
+      "n_t": 17.3,
+      "normalized_integral_235": 0.0570340673100502,
+      "normalized_integral_469": 0.057033974926365416,
+      "fine_minus_coarse_relative": -1.6198009152396116e-06,
+      "sum_absolute_panel_delta_relative": 1.7695273223030456e-05,
+      "panel_cancellation_ratio": 10.924350675782186,
+      "signed_panel_delta_relative": -1.6198009152743368e-06,
+      "quadrature_error_235_normalized": 6.332053471563871e-16,
+      "quadrature_error_469_normalized": 6.332043214914476e-16,
+      "interpolation_error_235_normalized": 9.129472713330255e-07,
+      "interpolation_error_469_normalized": 9.238368478292892e-08,
+      "weighted_nodes_underflowed_to_zero": 24,
+      "scipy_warning_messages": [
+        "overflow encountered in divide"
+      ]
+    },
+    {
+      "n_t": 17.38,
+      "normalized_integral_235": 0.0567726658910217,
+      "normalized_integral_469": 0.05677257434318693,
+      "fine_minus_coarse_relative": -1.612536261221411e-06,
+      "sum_absolute_panel_delta_relative": 1.7555746263119307e-05,
+      "panel_cancellation_ratio": 10.887039681093285,
+      "signed_panel_delta_relative": -1.6125362611639919e-06,
+      "quadrature_error_235_normalized": 6.303032084156357e-16,
+      "quadrature_error_469_normalized": 6.303021920304954e-16,
+      "interpolation_error_235_normalized": 9.079793319817562e-07,
+      "interpolation_error_469_normalized": 9.154783476696793e-08,
+      "weighted_nodes_underflowed_to_zero": 25,
+      "scipy_warning_messages": [
+        "overflow encountered in divide"
+      ]
+    },
+    {
+      "n_t": 17.45,
+      "normalized_integral_235": 0.05654591478498347,
+      "normalized_integral_469": 0.05654582393937237,
+      "fine_minus_coarse_relative": -1.606583913262587e-06,
+      "sum_absolute_panel_delta_relative": 1.74350508746262e-05,
+      "panel_cancellation_ratio": 10.852250374659727,
+      "signed_panel_delta_relative": -1.606583912837275e-06,
+      "quadrature_error_235_normalized": 6.277857654278068e-16,
+      "quadrature_error_469_normalized": 6.277847568389155e-16,
+      "interpolation_error_235_normalized": 9.037173167339767e-07,
+      "interpolation_error_469_normalized": 9.084561109974932e-08,
+      "weighted_nodes_underflowed_to_zero": 25,
+      "scipy_warning_messages": [
+        "overflow encountered in divide"
+      ]
+    }
+  ],
+  "runtime": {
+    "python": "3.11.9",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1"
+  },
+  "interpretation": "The fixed-background 235/469 signed integral delta stays near 1.61e-6 relative over this saved one-dimensional tilt line, while the sum of absolute panel deltas is about 10.9 times larger. Global normalization underflows 24-25 negligible-weight nodes to zero and SciPy reports an overflow warning while forming PCHIP slopes. This is a narrow reweighting robustness screen only; it is not a Fast error bound, root certificate, or multidimensional region result.",
+  "source_hashes": {
+    "script_sha256": "b77cfe60d0e40c3e082f3c42b12da7538b4bb6c6ea2a8ae23bb3771ec86f3a69",
+    "input_npz_sha256": "0fcfe73cbf743e7811bd5e0c1d70491dbae01ec6309d1d038ac8a98f76cefd9c",
+    "convergence_json_sha256": "6c600f52602dc93e0c24ea4db050f09bc294f6487826ad1fab5ce055331efeb3",
+    "reference_py_sha256": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  }
+}
