@@ -14,6 +14,8 @@ can include requested ``eval_freqs``. See ``docs/numerical_method.md`` and
 ``docs/numerical_method.md`` 与 ``docs/accuracy.md``。
 """
 
+import math
+
 import numpy as np
 from scipy.interpolate import PchipInterpolator
 
@@ -21,6 +23,98 @@ from .LCDM_stiff_Neff import _has_exact_zero_tensor_amplitude
 
 __all__ = ['adapt_refine_grid', 'adaptive_spectrum_reference',
            'grid_independent_freqs', 'goal_oriented_freqs']
+
+
+def _log_tensor_amplitude(cosmo_param, derived_param):
+    """Return log(r*A_s) without losing a nonzero product to underflow.
+
+    The free-tilt branch has a background independent of the tensor amplitude,
+    so its primitive inputs can be logged separately.  The consistency branch
+    uses ``A_t`` in the derived background and therefore keeps the stored
+    product contract.
+    """
+    if _has_exact_zero_tensor_amplitude(cosmo_param):
+        return -math.inf
+    amplitude = float(derived_param['A_t'])
+    if math.isfinite(amplitude) and amplitude > 0.0:
+        return math.log(amplitude)
+    if float(cosmo_param['cr']) <= 0.0:
+        r = float(cosmo_param['r'])
+        scalar_amplitude = float(cosmo_param['A_s'])
+        if (math.isfinite(r) and math.isfinite(scalar_amplitude)
+                and r > 0.0 and scalar_amplitude > 0.0):
+            return math.log(r) + math.log(scalar_amplitude)
+    return -math.inf
+
+
+def _requires_log_tensor_power(log_amplitude, n_t, freqs, f_piv):
+    """Select log-domain power evaluation only when float64 cannot form it."""
+    freqs = np.asarray(freqs, dtype=np.float64)
+    log_frequency = math.log(10.0) * freqs
+    log_ratio = log_frequency - math.log(float(f_piv))
+    log_power = float(n_t) * log_ratio
+    log_pt = float(log_amplitude) + log_power
+    log_max = math.log(np.finfo(np.float64).max)
+    log_min = math.log(np.nextafter(0.0, 1.0))
+    return bool(
+        np.any(log_frequency > log_max)
+        or np.any(log_frequency < log_min)
+        or np.any(log_ratio > log_max)
+        or np.any(log_ratio < log_min)
+        or np.any(log_power > log_max)
+        or np.any(log_power < log_min)
+        or np.any(log_pt > log_max)
+        or np.any(log_pt < log_min)
+    )
+
+
+def construct_fast_frequency_grid(m, freq_res=1.0, log_amplitude=None):
+    """Build the legacy Fast grid with a log-domain blue-tilt cutoff.
+
+    This Fast-local copy is used only when the stored ``r*A_s`` product has
+    underflowed. The shared model method remains unchanged for Reference and
+    LSODA callers.
+    """
+    from . import global_param as gp
+
+    r = float(freq_res)
+    if not 0.25 <= r <= 8.0:
+        raise ValueError("freq_res must be in [0.25, 8.0], got %r" % freq_res)
+    fmax = float(m.f_hor[0])
+    fmin = float(np.min(m.f_hor))
+    fcmb = math.log10(gp.f_piv)
+    nt = float(m.derived_param['nt'])
+    if nt > 0.0 and log_amplitude is not None:
+        fmax = min(fmax, -(float(log_amplitude) / math.log(10.0)) / nt + fcmb)
+
+    f = np.array([fmax], dtype=np.float64)
+    f = np.concatenate((f, f[-1] - np.linspace(1.0, 24.0, int(24 * r)) * 1e-3 / r))
+    f = np.concatenate((f, f[-1] - np.linspace(1.0, 13.0, int(13 * r)) * 2e-3 / r))
+    f = np.concatenate((f, f[-1] + 5e-2 - np.logspace(-1.28, -1.0, num=max(2, int(17 * r)))))
+    f = np.concatenate((f, f[-1] + 1e-1 - np.logspace(-1.0, 0.0, num=max(2, int(38 * r)))[1:]))
+    f = np.concatenate((f, f[-1] - np.linspace(1.0, 10.0, int(10 * r)) * 0.2 / r))
+
+    if fmax >= m.f_re:
+        f = f[np.logical_or(f >= m.f_re + 0.2, f >= fmax)]
+        f = f[f >= fmax - 0.4]
+        f = np.concatenate((f, np.arange(f[-1] - 0.5, m.f_re + 1.5, -0.5 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.1, m.f_re + 0.8, -0.1 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.05, m.f_re + 0.4, -0.05 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.01, m.f_re - 0.22, -0.01 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.022, m.f_re - 0.5, -0.02 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.05, m.f_re - 1.0, -0.05 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.2, m.f_re - 3.0, -0.2 / r)))
+
+    if m.rhostiff_re > m.rhorad_re:
+        stiff_offset = math.log10(m.rhostiff_re / m.rhorad_re)
+        f = np.concatenate((f, np.arange(f[-1] - 1.0, m.f_re - stiff_offset + 1.0, -1.0 / r)))
+        f = np.concatenate((f, np.arange(f[-1] - 0.2, m.f_re - stiff_offset - 2.0, -0.2 / r)))
+
+    f = f[f >= fcmb]
+    f = np.concatenate((f, np.arange(f[-1] - 1.0, fcmb, -1.0 / r)))
+    f = np.concatenate((f, np.arange(f[-1] - 0.2, fmin - 1.0, -0.2 / r)))
+    m.f = f[f >= fmin]
+    return m.f
 
 
 def _local_curvature(x, y):
@@ -136,7 +230,7 @@ def adaptive_spectrum_reference(m, dn_eff, fmin, fmax, target_dex=1e-3,
     return logf, lo, n_solves
 
 
-def grid_independent_freqs(m, freq_res=1.0):
+def grid_independent_freqs(m, freq_res=1.0, *, allow_log_amplitude=False):
     """A log-frequency grid built only from continuous background quantities.
 
     ``construct_f`` reads ``m.f_hor`` (the *grid* array), so its sampling can
@@ -159,8 +253,14 @@ def grid_independent_freqs(m, freq_res=1.0):
     N_re_abs = N_inf - d['N_re']
     dn = m.cosmo_param['DN_eff']
     zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
-    if d['A_t'] == 0.0 and not zero_tensor_limit:
-        raise FloatingPointError('tensor amplitude underflowed to zero')
+    if allow_log_amplitude:
+        log_A_t = _log_tensor_amplitude(m.cosmo_param, d)
+        if not math.isfinite(log_A_t) and not zero_tensor_limit:
+            raise FloatingPointError('tensor amplitude underflowed to zero')
+    else:
+        if d['A_t'] == 0.0 and not zero_tensor_limit:
+            raise FloatingPointError('tensor amplitude underflowed to zero')
+        log_A_t = None
     # 与 N 无关的连续背景量只求值一次；原实现每次调用 f_hor_cont 都重算它们。
     h2_cache = {}
 
@@ -191,7 +291,11 @@ def grid_independent_freqs(m, freq_res=1.0):
     fmin = f_hor_cont(N_inf)
     fcmb = _m.log10(gp.f_piv)
     if d['nt'] > 0 and not zero_tensor_limit:
-        fmax = min(fmax, (-_m.log10(d['A_t'])) / d['nt'] + _m.log10(gp.f_piv))
+        if allow_log_amplitude:
+            log10_A_t = log_A_t / ln10v
+            fmax = min(fmax, -log10_A_t / d['nt'] + _m.log10(gp.f_piv))
+        else:
+            fmax = min(fmax, (-_m.log10(d['A_t'])) / d['nt'] + _m.log10(gp.f_piv))
     # Uniform-in-log10 frequency grid scaled by freq_res (density tuned to be
     # comparable to the model's empirical grid at freq_res=1), capped at the
     # CMB pivot.  Chosen so freq_res=1 gives ~246 points (same order as
@@ -205,7 +309,7 @@ def grid_independent_freqs(m, freq_res=1.0):
 
 def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
                         eval_freqs=None, feature_half_width=1.0,
-                        feature_n=17):
+                        feature_n=17, allow_log_amplitude=False):
     """Construct a sparse grid around the reheating spectral feature.
 
     The broad seed is deliberately small for the MCMC path.  A fixed local
@@ -225,7 +329,9 @@ def goal_oriented_freqs(m, freq_res=1.0, seed_n=64, max_points=120,
     seed_n = max(2, int(seed_n))
     max_points = max(seed_n, int(max_points))
     feature_n = max(3, int(feature_n))
-    base, fmin, fmax = grid_independent_freqs(m, freq_res)
+    base, fmin, fmax = grid_independent_freqs(
+        m, freq_res, allow_log_amplitude=allow_log_amplitude
+    )
     if base.size <= seed_n:
         seed = base
     else:

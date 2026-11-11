@@ -1284,6 +1284,31 @@ def _first_nonfinite_primitive(arrays):
     return None
 
 
+def _scale_frequency_rows_by_log(values, log_scale):
+    """Scale each frequency row without materializing an underflowed factor."""
+    log_max = math.log(np.finfo(np.float64).max)
+    log_min = math.log(np.nextafter(0.0, 1.0))
+    for i in range(values.shape[0]):
+        row = values[i]
+        nonzero = row != 0.0
+        if not np.any(nonzero):
+            continue
+        selected = row[nonzero]
+        finite = np.isfinite(selected)
+        log_abs = np.full(selected.shape, np.nan, dtype=np.float64)
+        log_abs[finite] = np.log(np.abs(selected[finite])) + log_scale[i]
+        scaled = np.zeros_like(selected)
+        overflow = log_abs > log_max
+        representable = (log_abs >= log_min) & ~overflow
+        with np.errstate(over="ignore", under="ignore", invalid="raise"):
+            scaled[representable] = np.copysign(
+                np.exp(log_abs[representable]), selected[representable]
+            )
+        scaled[overflow] = np.copysign(np.inf, selected[overflow])
+        scaled[~finite] = selected[~finite]
+        row[nonzero] = scaled
+
+
 # ================= stepping, assembly and kernel / 步进、组装与计算核 =================
 def _uniform_step_terminal_width(Nv, h):
     """Return the final interval if all preceding grid steps equal ``h``.
@@ -1381,6 +1406,171 @@ def _tail_match_gamma(sigma):
     return 1.0
 
 
+@njit(cache=True, inline="always")
+def _phase_resolved_wkb_tail_state(xh, yh, z_h, z_end, delta_n, delta_phase):
+    """Propagate one leading WKB mode while retaining its endpoint phase.
+
+    ``x=h_N`` and ``y=exp(z) h`` at the handoff determine the two real
+    oscillatory quadratures for ``h ~= A exp(-N) cos(theta)``.  The analytic
+    phase average used by :func:`assemble_tail` discards these quadratures;
+    this helper advances them by a supplied WKB phase increment instead.
+
+    This is a research primitive.  It assumes a smooth, adiabatic tail and
+    does not itself estimate the phase-integral or WKB remainder.
+    """
+    omega_h = math.exp(z_h)
+    omega_end = math.exp(z_end)
+    h_h = yh / omega_h
+    amplitude = math.hypot(h_h, (xh + h_h) / omega_h)
+    if amplitude == 0.0:
+        return 0.0, 0.0
+
+    cos_h = h_h / amplitude
+    sin_h = -(xh + h_h) / (omega_h * amplitude)
+    cos_delta = math.cos(delta_phase)
+    sin_delta = math.sin(delta_phase)
+    cos_end = cos_h * cos_delta - sin_h * sin_delta
+    sin_end = sin_h * cos_delta + cos_h * sin_delta
+    amplitude_end = amplitude * math.exp(-delta_n)
+    h_end = amplitude_end * cos_end
+    x_end = amplitude_end * (-cos_end - omega_end * sin_end)
+    y_end = omega_end * h_end
+    return x_end, y_end
+
+
+@njit(cache=True, inline="always")
+def _requires_phase_resolved_tail(z_today):
+    """Use phase-resolved output when the leading endpoint ripple exceeds 1e-3 dex."""
+    if z_today > 350.0:
+        return False
+    if z_today < -350.0:
+        return True
+    inv_omega = math.exp(-z_today)
+    relative_ripple_bound = inv_omega + inv_omega * inv_omega
+    return math.log1p(relative_ripple_bound) / math.log(10.0) > 1.0e-3
+
+
+@njit(cache=True, inline="always")
+def _phase_resolved_tail_weight(z_today):
+    """Taper the phase correction so the remaining leading ripple is <= 5e-4 dex."""
+    if z_today > 350.0:
+        return 0.0
+    if z_today < -350.0:
+        return 1.0
+    inv_omega = math.exp(-z_today)
+    ripple_bound_dex = math.log1p(inv_omega + inv_omega * inv_omega) / math.log(10.0)
+    if ripple_bound_dex <= 5.0e-4:
+        return 0.0
+    return 1.0 - 5.0e-4 / ripple_bound_dex
+
+
+def _phase_resolved_tail_weights(z_today, z_tail, enabled):
+    """Build ripple weights for the underflow path: 为下溢路径构造相位纹波权重。"""
+    values = np.asarray(z_today, dtype=np.float64)
+    weights = np.zeros_like(values)
+    if not enabled:
+        return weights
+    inv_omega = np.exp(np.minimum(-values, 350.0))
+    ripple_bound = np.log1p(inv_omega + inv_omega * inv_omega) / ln10
+    active = (values > float(z_tail)) & (ripple_bound > 5.0e-4)
+    weights[active] = 1.0 - 5.0e-4 / ripple_bound[active]
+    return weights
+
+
+@njit(cache=True)
+def _phase_integral_suffix(Nv, Phi_grid):
+    """Return normalized suffix integrals of exp(Phi_grid) over N intervals."""
+    suffix = np.zeros(Phi_grid.size, dtype=np.float64)
+    phi_end = Phi_grid[-1]
+    for i in range(Phi_grid.size - 2, -1, -1):
+        delta_phi = Phi_grid[i + 1] - Phi_grid[i]
+        if abs(delta_phi) < 1.0e-8:
+            ratio = 1.0 + 0.5 * delta_phi + delta_phi * delta_phi / 6.0
+        else:
+            ratio = math.expm1(delta_phi) / delta_phi
+        segment = (
+            math.exp(Phi_grid[i] - phi_end)
+            * (Nv[i + 1] - Nv[i])
+            * ratio
+        )
+        suffix[i] = suffix[i + 1] + segment
+    return suffix
+
+
+@njit(cache=True, inline="always")
+def _phase_tail_effective_weight(leading_weight, phase_after_tail):
+    """Taper the phase correction by the fraction of one cycle after tail entry."""
+    if leading_weight <= 0.0 or phase_after_tail <= 0.0:
+        return 0.0
+    cycle_fraction = phase_after_tail / (2.0 * math.pi)
+    if cycle_fraction >= 1.0:
+        cycle_fraction = 1.0
+    return leading_weight * cycle_fraction
+
+
+@njit(cache=True)
+def _phase_after_tail_entry(
+    Nv, Phi_grid, j0, z0, z_tail, kend, phase_start, phase_suffix
+):
+    """Integrate exp(z) only after the exact z=z_tail crossing."""
+    if kend < 0 or kend >= len(Nv) - 1:
+        return 0.0
+    z_end = z0 + Phi_grid[-1] - Phi_grid[j0]
+    if z_end <= z_tail:
+        return 0.0
+    for i in range(kend, len(Nv) - 1):
+        z_left = z0 + Phi_grid[i] - Phi_grid[j0]
+        z_right = z0 + Phi_grid[i + 1] - Phi_grid[j0]
+        if z_right < z_tail:
+            continue
+        delta_phi = Phi_grid[i + 1] - Phi_grid[i]
+        if delta_phi <= 0.0:
+            return 0.0
+        fraction = (z_tail - z_left) / delta_phi
+        if fraction < 0.0:
+            fraction = 0.0
+        elif fraction > 1.0:
+            fraction = 1.0
+        remaining = 1.0 - fraction
+        partial = 0.0
+        if remaining > 0.0:
+            partial_dphi = delta_phi * remaining
+            if abs(partial_dphi) < 1.0e-8:
+                ratio = 1.0 + 0.5 * partial_dphi + partial_dphi * partial_dphi / 6.0
+            else:
+                ratio = math.expm1(partial_dphi) / partial_dphi
+            partial = (
+                math.exp(z_tail)
+                * (Nv[i + 1] - Nv[i])
+                * remaining
+                * ratio
+            )
+        suffix_index = i + 1 - phase_start
+        if suffix_index < 0 or suffix_index >= phase_suffix.size:
+            return 0.0
+        return partial + math.exp(z_end) * phase_suffix[suffix_index]
+    return 0.0
+
+
+@njit(cache=True, inline="always")
+def _blend_phase_tail_moments(
+    avg_g, avg_oj, avg_op, phase_g, phase_oj, phase_op, weight
+):
+    """Mix all terminal quadratic moments with the same phase weight."""
+    remaining = 1.0 - weight
+    return (
+        remaining * avg_g + weight * phase_g,
+        remaining * avg_oj + weight * phase_oj,
+        remaining * avg_op + weight * phase_op,
+    )
+
+
+def _terminal_base_signal(Ogw, Oj, Opgw, handoff_eps):
+    """Recover terminal G without subtracting the analytic-tail cancellation."""
+    analytic_tail = np.asarray(handoff_eps) >= 0.0
+    return np.where(analytic_tail, 3.0 * np.asarray(Opgw), np.asarray(Ogw) - np.asarray(Oj))
+
+
 @njit(cache=True)
 def assemble_main(Ogw, Oj, Opgw, m, slot, s2, xh, yh, zz, Pt):
     ss = math.sqrt(s2)
@@ -1390,6 +1580,52 @@ def assemble_main(Ogw, Oj, Opgw, m, slot, s2, xh, yh, zz, Pt):
     Oj[m, slot] = oj
     Ogw[m, slot] = P / 24.0 * Pt + oj
     Opgw[m, slot] = s2 * (-5.0 * xh * xh + 7.0 * yh * yh) / 72.0 * Pt
+
+
+@njit(cache=True)
+def _apply_phase_resolved_terminal(
+    Ogw, Oj, Opgw, phase_weight, tail_state, S2, Nv, Phi_grid,
+    z_tail, j0s, z0s, log10_base_today, phase_start, phase_suffix,
+):
+    """Blend the tail-average and endpoint quadratic moments consistently."""
+    for mode in range(len(j0s)):
+        leading_weight = phase_weight[mode]
+        kend = int(tail_state[mode, 3])
+        if leading_weight <= 0.0 or kend < 0 or kend >= len(Nv) - 1:
+            continue
+        z_end = z0s[mode] + Phi_grid[-1] - Phi_grid[j0s[mode]]
+        phase_after_tail = _phase_after_tail_entry(
+            Nv, Phi_grid, j0s[mode], z0s[mode], z_tail,
+            kend, phase_start, phase_suffix,
+        )
+        weight = _phase_tail_effective_weight(leading_weight, phase_after_tail)
+        if weight <= 0.0:
+            continue
+        phase = math.exp(z_end) * phase_suffix[kend - phase_start]
+        scale = math.sqrt(S2[kend])
+        x_end, y_end = _phase_resolved_wkb_tail_state(
+            scale * tail_state[mode, 0],
+            scale * tail_state[mode, 1],
+            tail_state[mode, 2],
+            z_end,
+            Nv[-1] - Nv[kend],
+            phase,
+        )
+        phase_g = (x_end * x_end + y_end * y_end) / 24.0
+        phase_oj = x_end * y_end * math.exp(-z_end) / 3.0
+        phase_op = (-5.0 * x_end * x_end + 7.0 * y_end * y_end) / 72.0
+        avg_base = 3.0 * Opgw[mode, -1]
+        if avg_base <= 0.0 or phase_g <= 0.0:
+            continue
+        avg_oj = Oj[mode, -1]
+        avg_op = Opgw[mode, -1]
+        blend_g, blend_oj, blend_op = _blend_phase_tail_moments(
+            avg_base, avg_oj, avg_op, phase_g, phase_oj, phase_op, weight
+        )
+        Oj[mode, -1] = blend_oj
+        Opgw[mode, -1] = blend_op
+        Ogw[mode, -1] = blend_oj + blend_g
+        log10_base_today[mode] = math.log10(blend_g)
 
 
 @njit(cache=True)
@@ -1432,6 +1668,8 @@ def solve_kernel(
     kink_fraction=0.0,
     phi_re=0.0,
     h_final=0.0,
+    phase_weight=None,
+    tail_state=None,
 ):
     """Integrate independent modes and write their coarse output rows.
 
@@ -1495,7 +1733,7 @@ def solve_kernel(
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k == next_assembly_k:
-                    if assemble:
+                    if assemble or k == nv - 1:
                         slot = k // col_step
                         if slot >= n_coarse - 1:
                             slot = n_coarse - 1
@@ -1515,6 +1753,11 @@ def solve_kernel(
                     kend = j0
         else:
             kend = j0
+        if tail_state is not None and phase_weight[m] > 0.0 and kend < nv - 1:
+            tail_state[m, 0] = lxh
+            tail_state[m, 1] = lyh
+            tail_state[m, 2] = last_z
+            tail_state[m, 3] = kend
         if kend < nv - 1:
             s2k = S2[kend]
             e_z = math.exp(-last_z)
@@ -1732,6 +1975,15 @@ def _pchip_integrals_vectorized(freqs, integrand):
     hk = xa[1:] - xa[:-1]
     dk = _pchip_slopes(xa, ya)
     return hk * 0.5 * (ya[:-1] + ya[1:]) + hk * hk * (dk[:-1] - dk[1:]) / 12.0
+
+
+def _rebuild_pchip_terminal_map(Ogw, Oj, integration_indices, integration_freqs):
+    """Rebuild the terminal PCHIP map after spectrum edits: 谱更新后重建终端 PCHIP 积分映射。"""
+    integrand = Ogw[integration_indices, -1] - Oj[integration_indices, -1]
+    if not np.isfinite(integrand).all():
+        return float("nan"), None
+    local = _pchip_integrals_vectorized(integration_freqs, integrand)
+    return float(np.sum(local)), local
 
 
 def integrate_frequency_quadrature(freqs, integrand, method="simpson"):
@@ -2104,7 +2356,17 @@ def _SGWB_iter_fast_impl(
         m.fast_failure_reason = "invalid_cutoff"
         print("High-end cutoff frequency has not been set properly.")
         return None
-    if derived["A_t"] == 0.0 and not zero_tensor_limit:
+    from .freq_adaptive import _log_tensor_amplitude
+
+    log_A_t = _log_tensor_amplitude(m.cosmo_param, derived)
+    log_amplitude_mode = (
+        (derived["A_t"] == 0.0 or not math.isfinite(derived["A_t"]))
+        and not zero_tensor_limit
+        and float(m.cosmo_param["cr"]) <= 0.0
+        and math.isfinite(log_A_t)
+    )
+    log_amplitude_candidate = math.isfinite(log_A_t)
+    if not math.isfinite(log_A_t) and not zero_tensor_limit:
         m.fast_failure_reason = "tensor_amplitude_underflow"
         return None
 
@@ -2139,6 +2401,8 @@ def _SGWB_iter_fast_impl(
         freq_grid = config.freq_grid
     if freq_grid not in ("construct", "grid_independent", "adaptive", "goal"):
         raise ValueError("freq_grid must be construct/grid_independent/adaptive/goal, got %r" % freq_grid)
+    freq_grid_requested = freq_grid
+    freq_grid_effective = freq_grid
     valid_quadratures = ("simpson", "pchip", "log_pchip", "gauss2", "gauss3", "gauss5", "natural_cubic", "chebyshev")
     if frequency_quadrature not in valid_quadratures:
         raise ValueError("unknown frequency quadrature method: %r" % (frequency_quadrature,))
@@ -2160,9 +2424,12 @@ def _SGWB_iter_fast_impl(
     idx_out = None
     n_coarse = 0
     ev_minus = P_t = fp_freq = Wmat = None
+    log_P_t = None
+    log10_base_signal_today = None
     integration_freqs = integration_indices = W_support_last = None
     pchip_breakdown = None
     Ogw = Oj = Opgw = None
+    tail_state = None
     adaptive_grid = None
     adaptive_done = freq_grid != "adaptive"
     freq_grid_error = 0.0
@@ -2246,22 +2513,51 @@ def _SGWB_iter_fast_impl(
             if freq_grid == "grid_independent":
                 from .freq_adaptive import grid_independent_freqs
 
-                m.f = grid_independent_freqs(m, freq_res)[0]
+                m.f = grid_independent_freqs(
+                    m, freq_res, allow_log_amplitude=log_amplitude_mode
+                )[0]
                 support_grid = np.asarray(m.f, dtype=float)
             elif freq_grid == "adaptive":
                 from .freq_adaptive import grid_independent_freqs
 
                 if adaptive_grid is None:
-                    adaptive_grid = grid_independent_freqs(m, freq_res)[0]
+                    adaptive_grid = grid_independent_freqs(
+                        m, freq_res, allow_log_amplitude=log_amplitude_mode
+                    )[0]
                 m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
                 support_grid = np.asarray(m.f, dtype=float)
             elif freq_grid == "goal":
-                from .freq_adaptive import goal_oriented_freqs
+                from .freq_adaptive import (
+                    _requires_log_tensor_power,
+                    construct_fast_frequency_grid,
+                    goal_oriented_freqs,
+                )
 
-                support_grid = goal_oriented_freqs(m, freq_res, seed_n=64, max_points=120, eval_freqs=None)
+                support_grid = goal_oriented_freqs(
+                    m, freq_res, seed_n=64, max_points=120, eval_freqs=None,
+                    allow_log_amplitude=log_amplitude_mode,
+                )
+                if (
+                    log_amplitude_candidate
+                    and _requires_log_tensor_power(
+                        log_A_t, m.derived_param["nt"], support_grid, gp.f_piv
+                    )
+                ):
+                    support_grid = np.asarray(
+                        construct_fast_frequency_grid(
+                            m, freq_res, log_amplitude=log_A_t
+                        ),
+                        dtype=np.float64,
+                    )
+                    freq_grid_effective = "construct"
                 m.f = support_grid
             else:
-                m.construct_f(freq_res)
+                if log_amplitude_mode:
+                    from .freq_adaptive import construct_fast_frequency_grid
+
+                    construct_fast_frequency_grid(m, freq_res, log_amplitude=log_A_t)
+                else:
+                    m.construct_f(freq_res)
             if support_grid is None:
                 support_grid = np.asarray(m.f, dtype=float)
             if not all(
@@ -2312,7 +2608,31 @@ def _SGWB_iter_fast_impl(
                 A_t = m.derived_param["A_t"]
                 if zero_tensor_limit:
                     P_t = np.zeros(freqs.shape, dtype=np.float64)
+                    log_P_t = None
+                elif log_amplitude_candidate:
+                    from .freq_adaptive import _requires_log_tensor_power
+
+                    candidate_log_P_t = log_A_t + m.derived_param["nt"] * (
+                        math.log(10.0) * freqs - math.log(gp.f_piv)
+                    )
+                    log_amplitude_mode = (
+                        A_t == 0.0
+                        or not math.isfinite(A_t)
+                        or _requires_log_tensor_power(
+                            log_A_t, m.derived_param["nt"], freqs, gp.f_piv
+                        )
+                    )
+                    if log_amplitude_mode:
+                        log_P_t = candidate_log_P_t
+                        # The equation is linear in primordial power. Propagate
+                        # unit power and restore the physical scale in log space.
+                        P_t = np.ones(freqs.shape, dtype=np.float64)
+                    else:
+                        log_P_t = None
+                        P_t = A_t * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
                 else:
+                    log_amplitude_mode = False
+                    log_P_t = None
                     P_t = A_t * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
                 fp_freq = np.power(10.0, freqs)
                 Xf = np.flip(freqs)
@@ -2429,6 +2749,18 @@ def _SGWB_iter_fast_impl(
                         -(Phi_grid[index] - Nv[index] - Nv[0])
                     )
                 break
+            z_today_by_mode = z0s + Phi_grid[-1] - Phi_grid[j0s]
+            phase_weight = None
+            if log_amplitude_mode:
+                phase_weight = _phase_resolved_tail_weights(
+                    z_today_by_mode, z_tail, enabled=True
+                )
+                # Allocate capture rows only when float64 amplitude scaling fails.
+                # 仅在 float64 振幅缩放失效时分配相位捕获行。
+                if np.any(phase_weight > 0.0):
+                    if tail_state is None or tail_state.shape[0] != Nf:
+                        tail_state = np.zeros((Nf, 4), dtype=np.float64)
+                        tail_state[:, 3] = -1.0
             _fresh_buffers = False
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
@@ -2485,10 +2817,22 @@ def _SGWB_iter_fast_impl(
                     h_final = float(Nv[-1] - Nv[-2])
                 elif h_arr is not None:
                     h_final = 0.0
-                solve_args += (kink_index, kink_fraction, phi_re, h_final)
+            else:
+                kink_index, kink_fraction, phi_re, h_final = -1, 0.0, 0.0, 0.0
+            solve_args += (
+                kink_index,
+                kink_fraction,
+                phi_re,
+                h_final,
+                phase_weight,
+                _phase_tail_state_for_weights(phase_weight, tail_state),
+            )
             # 只有背景与频率/时间网格都稳定时才可复用传播缓冲；网格变化会清空缓冲。
             # Recompute propagation when grid-dependent buffers were rebuilt.
-            if not (outer_background_stable and grid_same and _iter > 0):
+            if (
+                log_amplitude_mode
+                or not (outer_background_stable and grid_same and _iter > 0)
+            ):
                 # 刚由 np.zeros 分配的全零缓冲无需再次清零。
                 if assemble and not _fresh_buffers:
                     # 外层背景更新后 horizon 起点可能发生微小移动；清空起点之前的列，
@@ -2496,7 +2840,47 @@ def _SGWB_iter_fast_impl(
                     Ogw.fill(0.0)
                     Oj.fill(0.0)
                     Opgw.fill(0.0)
+                if tail_state is not None:
+                    tail_state[:, 3] = -1.0
                 solve_kernel(*solve_args)
+            if log_amplitude_mode:
+                if not (
+                    np.isfinite(Ogw).all()
+                    and np.isfinite(Oj).all()
+                    and np.isfinite(Opgw).all()
+                ):
+                    m.fast_failure_reason = "nonfinite"
+                    break
+                base_signal_today = _terminal_base_signal(
+                    Ogw[:, -1], Oj[:, -1], Opgw[:, -1], handoff_eps
+                )
+                if not np.isfinite(base_signal_today).all():
+                    m.fast_failure_reason = "nonfinite"
+                    break
+                if np.any(base_signal_today <= 0.0):
+                    # A nonzero transfer must stay positive in log scaling:
+                    # 非零张量传递量进入对数缩放前必须保持正值。
+                    m.fast_failure_reason = "nonpositive_log_amplitude_transfer"
+                    break
+                log10_base_signal_today = np.full(Nf, -np.inf, dtype=np.float64)
+                log10_base_signal_today[:] = np.log10(base_signal_today)
+            if phase_weight is not None and tail_state is not None:
+                active_phase_modes = (phase_weight > 0.0) & (tail_state[:, 3] >= 0.0)
+                if np.any(active_phase_modes):
+                    phase_start = int(np.min(tail_state[active_phase_modes, 3]))
+                    phase_suffix = _phase_integral_suffix(
+                        Nv[phase_start:], Phi_grid[phase_start:]
+                    )
+                    # Blend before the fixed-point map: 映射求根前混合尾部相位。
+                    _apply_phase_resolved_terminal(
+                        Ogw, Oj, Opgw, phase_weight, tail_state, S2, Nv,
+                        Phi_grid, z_tail, j0s, z0s, log10_base_signal_today,
+                        phase_start, phase_suffix,
+                    )
+            if log_amplitude_mode:
+                _scale_frequency_rows_by_log(Ogw, log_P_t)
+                _scale_frequency_rows_by_log(Oj, log_P_t)
+                _scale_frequency_rows_by_log(Opgw, log_P_t)
             if frequency_quadrature == "simpson":
                 g2_last = (
                     np.dot(W_support_last, (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
@@ -2506,14 +2890,21 @@ def _SGWB_iter_fast_impl(
                 # 循环后的 g2c[-1] 与局部求积 estimator 复用同一次拟合。
                 # 热路径使用向量化封闭式积分核，参考实现仍是 scipy 拟合。
                 _pchip_integrand = Ogw[integration_indices, -1] - Oj[integration_indices, -1]
-                if np.isfinite(_pchip_integrand).all():
-                    _pchip_local = _pchip_integrals_vectorized(integration_freqs, _pchip_integrand)
+                if phase_weight is not None:
+                    pchip_breakdown = _rebuild_pchip_terminal_map(
+                        Ogw, Oj, integration_indices, integration_freqs
+                    )
+                    g2_last = pchip_breakdown[0] * ln10
+                elif np.isfinite(_pchip_integrand).all():
+                    # Preserve the original common-path shape: 保持普通路径的原始热路径结构。
+                    _pchip_local = _pchip_integrals_vectorized(
+                        integration_freqs, _pchip_integrand
+                    )
                     pchip_breakdown = (float(np.sum(_pchip_local)), _pchip_local)
                     g2_last = pchip_breakdown[0] * ln10
                 else:
                     # 非有限输入会让向量化核 fail-loud；这里改为让 NaN 传播到
-                    # 下方统一的 isfinite(DN_gw_new) guard，与 Simpson 路径保持
-                    # 相同的非有限失败语义。
+                    # 下方统一 guard，与 Simpson 路径保持相同失败语义。
                     g2_last = float("nan")
             else:
                 g2_last = (
@@ -2528,6 +2919,9 @@ def _SGWB_iter_fast_impl(
             if not math.isfinite(DN_gw_new):
                 m.fast_failure_reason = "nonfinite"
                 print("SGWB_iter_fast: non-finite DN_gw_new, aborting.")
+                break
+            if log_amplitude_mode and DN_gw_new == 0.0:
+                m.fast_failure_reason = "tensor_amplitude_underflow"
                 break
             if physical_guard and DN_eff_orig + DN_gw_new > 5:
                 m.fast_failure_reason = "shared_Neff_guard"
@@ -2648,6 +3042,8 @@ def _SGWB_iter_fast_impl(
     m.Oj_today = Oj[:, -1].copy()
     if zero_tensor_limit:
         m.log10OmegaGW = np.full(m.Ogw_today.shape, -np.inf, dtype=np.float64)
+    elif log_amplitude_mode and log10_base_signal_today is not None:
+        m.log10OmegaGW = log10_base_signal_today + log_P_t / math.log(10.0)
     else:
         m.log10OmegaGW = np.log10(m.Ogw_today - m.Oj_today)
     m.kappa_r = m.cosmo_param["DN_eff"] * 7 / 8 * (4 / 11) ** (4 / 3) * gp.z_ratio**4
@@ -2717,7 +3113,8 @@ def _SGWB_iter_fast_impl(
     m.handoff_eps = np.asarray(handoff_eps)
     m.z_tail_used = z_tail
     m.phase_max_used = phase_max
-    m.freq_grid_used = freq_grid
+    m.freq_grid_requested = freq_grid_requested
+    m.freq_grid_used = freq_grid_effective
     m.freq_grid_error = float(freq_grid_error)
     m.freq_grid_n = int(Nf)
     m.freq_res_used = float(freq_res)
@@ -2797,3 +3194,8 @@ def SGWB_iter_fast(
             frequency_quadrature=frequency_quadrature,
             physical_guard=physical_guard,
         )
+
+
+def _phase_tail_state_for_weights(phase_weight, tail_state):
+    """Pass tail capture storage only when its phase weights are available."""
+    return tail_state if phase_weight is not None else None

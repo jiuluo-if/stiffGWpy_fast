@@ -1,0 +1,351 @@
+{
+  "schema_version": 1,
+  "experiment": "underflow Fast T_re line screen after terminal coarse-sample fix",
+  "fast_source_sha256": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+  "script_sha256": "fe1524183dec1c71ace7db5fadaae93d889d59ac49c4195281ce5cf39274002a",
+  "fixed_params": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 4.985023e-317,
+    "n_t": 17.375,
+    "cr": 0.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "T_re_grid_GeV": "41-point log-spaced [10, 2000]",
+  "threads": 2,
+  "points": [
+    {
+      "T_re_GeV": 10.0,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.4064981403717118e-88,
+      "frequency_count": 227,
+      "runtime_s": 0.3200998000011168
+    },
+    {
+      "T_re_GeV": 11.41630991416694,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.8059536266661753e-86,
+      "frequency_count": 228,
+      "runtime_s": 0.04014429999915592
+    },
+    {
+      "T_re_GeV": 13.033213205630634,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.346547390227712e-84,
+      "frequency_count": 229,
+      "runtime_s": 0.040017100000113714
+    },
+    {
+      "T_re_GeV": 14.879120113289247,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 3.1035214814911655e-82,
+      "frequency_count": 229,
+      "runtime_s": 0.03993359999913082
+    },
+    {
+      "T_re_GeV": 16.986464646342473,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 4.1962716599692274e-80,
+      "frequency_count": 230,
+      "runtime_s": 0.03975489999902493
+    },
+    {
+      "T_re_GeV": 19.39227447486858,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 5.824951798885838e-78,
+      "frequency_count": 230,
+      "runtime_s": 0.040459899999405025
+    },
+    {
+      "T_re_GeV": 22.138821534568862,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 8.33791148370552e-76,
+      "frequency_count": 231,
+      "runtime_s": 0.041272499998740386
+    },
+    {
+      "T_re_GeV": 25.2743647773071,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.2361915495986499e-73,
+      "frequency_count": 232,
+      "runtime_s": 0.04147200000079465
+    },
+    {
+      "T_re_GeV": 28.853998118144272,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.9066694462322624e-71,
+      "frequency_count": 228,
+      "runtime_s": 0.039501700000982964
+    },
+    {
+      "T_re_GeV": 32.94061847795246,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 3.0591455684693946e-69,
+      "frequency_count": 229,
+      "runtime_s": 0.04044450000037614
+    },
+    {
+      "T_re_GeV": 37.60603093086394,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 5.0956874367803386e-67,
+      "frequency_count": 229,
+      "runtime_s": 0.039656599999943865
+    },
+    {
+      "T_re_GeV": 42.93221037484905,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 8.744855016453914e-65,
+      "frequency_count": 230,
+      "runtime_s": 0.040256399999634596
+    },
+    {
+      "T_re_GeV": 49.01274189394899,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.5335193430020774e-62,
+      "frequency_count": 231,
+      "runtime_s": 0.04065649999938614
+    },
+    {
+      "T_re_GeV": 55.954465120439515,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.5289572608456006e-60,
+      "frequency_count": 231,
+      "runtime_s": 0.041091499999311054
+    },
+    {
+      "T_re_GeV": 63.87935148963818,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 4.105660676835696e-58,
+      "frequency_count": 232,
+      "runtime_s": 0.04104809999989811
+    },
+    {
+      "T_re_GeV": 72.92664737217109,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 6.579714316509474e-56,
+      "frequency_count": 232,
+      "runtime_s": 0.040936199999123346
+    },
+    {
+      "T_re_GeV": 83.25532074018732,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.0358343297805652e-53,
+      "frequency_count": 229,
+      "runtime_s": 0.040106799999193754
+    },
+    {
+      "T_re_GeV": 95.04685435733488,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.606567275459607e-51,
+      "frequency_count": 230,
+      "runtime_s": 0.040469300000040676
+    },
+    {
+      "T_re_GeV": 108.50843457100233,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.4225396972401073e-49,
+      "frequency_count": 230,
+      "runtime_s": 0.04057020000072953
+    },
+    {
+      "T_re_GeV": 123.87659173636685,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 3.607870671634336e-47,
+      "frequency_count": 231,
+      "runtime_s": 0.04103129999930388
+    },
+    {
+      "T_re_GeV": 141.4213562373095,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 5.0820554570310366e-45,
+      "frequency_count": 231,
+      "runtime_s": 0.04056910000144853
+    },
+    {
+      "T_re_GeV": 161.45100312869312,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 7.067421082124132e-43,
+      "frequency_count": 232,
+      "runtime_s": 0.04138760000023467
+    },
+    {
+      "T_re_GeV": 184.31746876702965,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 9.35997911048707e-41,
+      "frequency_count": 233,
+      "runtime_s": 0.04232099999899219
+    },
+    {
+      "T_re_GeV": 210.42253460391956,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.2229243916208812e-38,
+      "frequency_count": 233,
+      "runtime_s": 0.041277599999375525
+    },
+    {
+      "T_re_GeV": 240.22488679628626,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.596156128969427e-36,
+      "frequency_count": 230,
+      "runtime_s": 0.04096699999900011
+    },
+    {
+      "T_re_GeV": 274.2481756762073,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.082441083724837e-34,
+      "frequency_count": 230,
+      "runtime_s": 0.04083399999944959
+    },
+    {
+      "T_re_GeV": 313.09021669144823,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.7157886049497706e-32,
+      "frequency_count": 231,
+      "runtime_s": 0.041141999998217216
+    },
+    {
+      "T_re_GeV": 357.43349448432554,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 3.5413541650683945e-30,
+      "frequency_count": 231,
+      "runtime_s": 0.04119569999966188
+    },
+    {
+      "T_re_GeV": 408.05715467367395,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 4.617273792699405e-28,
+      "frequency_count": 232,
+      "runtime_s": 0.04194810000080906
+    },
+    {
+      "T_re_GeV": 465.85069404478156,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 6.018234047522052e-26,
+      "frequency_count": 233,
+      "runtime_s": 0.04155899999932444
+    },
+    {
+      "T_re_GeV": 531.829589694499,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 7.844559196735733e-24,
+      "frequency_count": 233,
+      "runtime_s": 0.04180350000024191
+    },
+    {
+      "T_re_GeV": 607.1531417476643,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.0223512046982924e-21,
+      "frequency_count": 234,
+      "runtime_s": 0.041998300001068856
+    },
+    {
+      "T_re_GeV": 693.1448431551464,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.332318876941827e-19,
+      "frequency_count": 234,
+      "runtime_s": 0.04181309999876248
+    },
+    {
+      "T_re_GeV": 791.3156344865787,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 1.7360167831970145e-17,
+      "frequency_count": 231,
+      "runtime_s": 0.04152389999944717
+    },
+    {
+      "T_re_GeV": 903.3904523224429,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.2618878656833024e-15,
+      "frequency_count": 231,
+      "runtime_s": 0.04119899999932386
+    },
+    {
+      "T_re_GeV": 1031.338537721246,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 2.946989418204802e-13,
+      "frequency_count": 232,
+      "runtime_s": 0.04144049999922572
+    },
+    {
+      "T_re_GeV": 1177.4080373049494,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 3.839100577938464e-11,
+      "frequency_count": 233,
+      "runtime_s": 0.0420696000001044
+    },
+    {
+      "T_re_GeV": 1344.1655049304331,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 5.00127206985118e-09,
+      "frequency_count": 233,
+      "runtime_s": 0.04196629999933066
+    },
+    {
+      "T_re_GeV": 1534.5409980218512,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 6.515065575663358e-07,
+      "frequency_count": 234,
+      "runtime_s": 0.04206469999917317
+    },
+    {
+      "T_re_GeV": 1751.8795609412489,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 8.486726021254263e-05,
+      "frequency_count": 234,
+      "runtime_s": 0.04183329999978014
+    },
+    {
+      "T_re_GeV": 2000.0000000000002,
+      "converged": true,
+      "failure_reason": null,
+      "root_DN_gw": 0.011055058477580707,
+      "frequency_count": 235,
+      "runtime_s": 0.04228709999915736
+    }
+  ],
+  "scope_limit": "Fast convergence/failure screen only; no Reference accuracy claim."
+}

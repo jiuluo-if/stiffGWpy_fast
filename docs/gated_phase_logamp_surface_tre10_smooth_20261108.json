@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "experiment": "momentblend Fast verification on frozen 3D underflow reference surfaces",
+  "tre_GeV": 10,
+  "fast_source_sha256": "b1ce824cc9ad0e4b28bc7f27254f47b4ff6d5acfac2cb7cd6e775de935e8b3f8",
+  "frequency_source_sha256": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+  "threads": 2,
+  "points": [
+    {
+      "point": "tre10_rlo_ntlo",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.3,
+        "r": 4.985023e-317
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.2968988998327404,
+      "fast_root": 1.3121397200686337e-89,
+      "reference_root_z5": 1.3125401908510553e-89,
+      "reference_root_z8": 1.3121610786327155e-89,
+      "root_relative_error_z5": -0.0003051112531357483,
+      "root_relative_error_z8": -1.6277394924775882e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rlo_ntlo_z5_20261108.json",
+          "sha256": "699007b6898f0be48880d31e3f09ea4b11f540303b8d7240c6ff395a49960707"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rlo_ntlo_z8_20261108.json",
+          "sha256": "8cfc6242bf362586e668a8feb6d45888b18652ebaba075ba834b2b71bef3c463"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rlo_ntmid",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.375,
+        "r": 4.985023e-317
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.040495599852874875,
+      "fast_root": 1.4064981403717118e-88,
+      "reference_root_z5": 1.4069271371402613e-88,
+      "reference_root_z8": 1.4065210110135955e-88,
+      "root_relative_error_z5": -0.0003049175449280761,
+      "root_relative_error_z8": -1.626043386815456e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rlo_ntmid_z5_20261108.json",
+          "sha256": "81c6c2f6b50042bf84c97fa13cc99914c5a97675ae241942d79972212d354f6f"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rlo_ntmid_z8_20261108.json",
+          "sha256": "c4d0a94b0d13150b26c71564d5e23de2d55af4be90f5192b225ee017592faf39"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rlo_nthi",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.45,
+        "r": 4.985023e-317
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.039987799944356084,
+      "fast_root": 1.5076703995258837e-87,
+      "reference_root_z5": 1.5081299925811857e-87,
+      "reference_root_z8": 1.5076948912879593e-87,
+      "root_relative_error_z5": -0.00030474366106555647,
+      "root_relative_error_z8": -1.6244508233811175e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rlo_nthi_z5_20261108.json",
+          "sha256": "710b3c9f4f61e9d1b96fba3d4b8968a9ec2e4406d130cf6345ce7b49d9954a71"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rlo_nthi_z8_20261108.json",
+          "sha256": "1b74a3210907dbc643177f5d2d28444708667465d91b8d556c7a5de815012987"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rmid_ntlo",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.3,
+        "r": 9.946429e-317
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.03980319993570447,
+      "fast_root": 2.6180629730997027e-89,
+      "reference_root_z5": 2.618862017371612e-89,
+      "reference_root_z8": 2.6181055890383307e-89,
+      "root_relative_error_z5": -0.0003051112531354698,
+      "root_relative_error_z8": -1.6277394924945655e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rmid_ntlo_z5_20261108.json",
+          "sha256": "d82a1bc631190881f13143264fecb511c6ee270e7bb5c88b02387e514a306e6a"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rmid_ntlo_z8_20261108.json",
+          "sha256": "f85af49711296a462f4a0ea7b5fa25f4861d93a7318fc964a681f9b13a884e17"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rmid_ntmid",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.375,
+        "r": 9.946429e-317
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.03998990007676184,
+      "fast_root": 2.80633277593956e-88,
+      "reference_root_z5": 2.8071887370374074e-88,
+      "reference_root_z8": 2.8063784088700867e-88,
+      "root_relative_error_z5": -0.000304917544928157,
+      "root_relative_error_z8": -1.6260433868269288e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rmid_ntmid_z5_20261108.json",
+          "sha256": "b09dbfb3a229d855b35df37e0655161f9515eead117e46d5696444f6f2fc5d4e"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rmid_ntmid_z8_20261108.json",
+          "sha256": "bf30f6ff53314ff6164e916c5e8179d5d154f4a2b494d69cd1cdccae835449fd"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rmid_nthi",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.45,
+        "r": 9.946429e-317
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.041116599924862385,
+      "fast_root": 3.0081979748549104e-87,
+      "reference_root_z5": 3.00911498357157e-87,
+      "reference_root_z8": 3.0082468423455087e-87,
+      "root_relative_error_z5": -0.00030474366106521635,
+      "root_relative_error_z8": -1.6244508233311626e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rmid_nthi_z5_20261108.json",
+          "sha256": "6f5b96f309002ea95b263c8a413a998463e3b8a5cbe1390e4454f78cc904fbff"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rmid_nthi_z8_20261108.json",
+          "sha256": "39510a6194e074abd62bbcba2df1bf4df37839e63871d4f19bc1912144f15ca1"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rhi_ntlo",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.3,
+        "r": 1.98457346e-316
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.03979259985499084,
+      "fast_root": 5.223722402558942e-89,
+      "reference_root_z5": 5.225316705486986e-89,
+      "reference_root_z8": 5.223807432535534e-89,
+      "root_relative_error_z5": -0.0003051112531361888,
+      "root_relative_error_z8": -1.627739492513814e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rhi_ntlo_z5_20261108.json",
+          "sha256": "4b7d2982b512156be794336ff19b673e124af1496e2b4e9042eece50580d413a"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rhi_ntlo_z8_20261108.json",
+          "sha256": "18d737850e1d9b26a7d37168b35e087f7e4ff498a2a98edf0c5089d78e8fe2d9"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rhi_ntmid",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.375,
+        "r": 1.98457346e-316
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.0397940999828279,
+      "fast_root": 5.599370046227164e-88,
+      "reference_root_z5": 5.601077913153394e-88,
+      "reference_root_z8": 5.599461095894011e-88,
+      "root_relative_error_z5": -0.000304917544928106,
+      "root_relative_error_z8": -1.6260433868130005e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rhi_ntmid_z5_20261108.json",
+          "sha256": "06823d20000c1dab8fce1537c224f7c06a1fb08eed48260dad4e4889b46c9eff"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rhi_ntmid_z8_20261108.json",
+          "sha256": "c591e7ef0fe6b0038a809653d33c7262fac3ed134da00cf46014ef4cfca500a1"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    },
+    {
+      "point": "tre10_rhi_nthi",
+      "params": {
+        "A_s": 2.100549e-09,
+        "DN_eff": 0.0,
+        "DN_re": 10.0,
+        "H0": 67.32117,
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "T_re": 10.0,
+        "cr": 0.0,
+        "kappa10": 0.01,
+        "n_t": 17.45,
+        "r": 1.98457346e-316
+      },
+      "frequency_count": 227,
+      "frequency_sha256": "2488eea9482d8647010f56d931b8e0bdf168228c829a3d228ae9d621277768c0",
+      "runtime_s": 0.039645600132644176,
+      "fast_root": 6.002144071415201e-87,
+      "reference_root_z5": 6.003973744354998e-87,
+      "reference_root_z8": 6.002241574877885e-87,
+      "root_relative_error_z5": -0.0003047436610655871,
+      "root_relative_error_z8": -1.624450823369392e-05,
+      "max_spectrum_error_dex_z5": 0.0030712274692348274,
+      "max_spectrum_error_dex_z8": 0.0006560289758681392,
+      "p95_spectrum_error_dex_z5": 0.0029147553964591565,
+      "p95_spectrum_error_dex_z8": 0.00015288488985873983,
+      "reference_files": {
+        "z5": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rhi_nthi_z5_20261108.json",
+          "sha256": "550599b4e761f971c793530637dac9bd275a0a82253f58117f22e74e6a05ecfa"
+        },
+        "z8": {
+          "path": "F:\\codex\\stiffGWpy_underflow_phase_taper_a5c7afd\\docs\\fast_momentblend_3d_tre10_rhi_nthi_z8_20261108.json",
+          "sha256": "fa6461f8646c03713c6420c81fbe79b5de888a09bfb66148711945bec7f103ca"
+        }
+      },
+      "reference_root_method_limit": "single Reference map iteration at Fast root; not a converged Reference root certificate"
+    }
+  ],
+  "scope_limit": "Reference roots use one map update; finite grid samples do not certify every point in the continuous box."
+}
