@@ -23,12 +23,15 @@ Fast 每个根的显式固定映射闭合残差约 `−3.18e-13`。根从 235 �
 
 谱差最大值出现在很小的低频谱值，但它们仍是有限、可表示的对数谱节点。三个网格均超过项目 `1e-3 dex` 最大谱差门槛。积分映射很接近不能抵消这个谱门槛失败；此样本不支持将当前 Fast 精度扩展到相邻参数区域。
 
+Fast 的对数谱在三个网格上均为全有限值；物理线性 `(Ogw−Oj)` 却分别有 14、28、55 个精确零值。零值节点的对数谱范围为 `−323.64` 至 `−367.44 dex`。正次正规数节点中，线性相减与专用正值对数基础量最多相差 `0.00253 dex`；937 点最差正次正规节点差 `0.0514 dex`，其线性值只有 `1.5e-323`。这说明终端日志保留了线性数组无法表示的尾部信息，而 `DN_gw` 仍由线性数组积分；两种输出在尾部不能逐点互换。
+
 ## 插值、Reference 警告和尾部
 
 - Reference 的全局归一化被积函数有 13、25、49 个节点在 235、469、937 网格下舍入为精确零；每次 `integrate_spectrum` 均重现 4 条 `overflow encountered in divide` 警告。该函数的缩放分支只处理非零次正规数，不能恢复这些由对数归一化产生的零。
 - 直接 Reference 积分在 937 点的估计相对求积误差约 `1.1e-14`，半密度插值差估计约 `2.83e-7`。二者不消除斜率警告，也不是对插值真误差的证明。
 - 作为明确标记的诊断，线性 PCHIP 对新增节点分别有 12/24/36 个零预测（235→469、469→937、235→937）；有限可比节点的最大绝对误差分别为 `8.59`、`3.99`、`12.58 dex`。因此 235 点插值完全不能冒充 469/937 点直接频谱。极小归一化值上的这些 dex 比值应视为表示范围诊断，不作为显著积分误差。
 - 在同一 235 点和固定根上把 Fast `z_tail` 从 5 提高到 8，谱最大变化 `4.74e-4 dex`，但最大 Fast/Reference 误差仍约 `0.00205 dex`，根映射变化约 `1.15e-6` 相对。单纯加深 Fast 尾部没有修复该谱偏差。
+- 固定频率/背景的额外 falsifier：`sigma_exact=True` 将最大 / P95 谱差从 `0.002056/0.001463` 变为 `0.002056/0.001460 dex`；再将时间步从 `0.01` 收紧至 `0.005/0.0025`，最大差仅降至 `0.002047/0.002045 dex`。这些变化远不足以通过谱门槛，故“背景插值或标称步长单独主导该误差”的简单解释不成立。
 - Reference 自身 `z_tail=8→10` 的 235 点映射变化 `5.31e-6` 相对，谱最大 / P95 差 `2.07e-4 / 1.42e-4 dex`，仍有相同 4 条 PCHIP 警告。这支持 z8 尾部在此样本上足够用于区分当前 `~2e-3 dex` Fast 偏差，但不构成其他参数下的 Reference 尾部误差界。
 
 PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割线时导数置零。正数整体缩放具有齐次性，但不能让已在构造归一化数组时舍入为零的节点恢复。可研究的下一步是直接从 log 样本稳定计算割线与调和平均，并验证得到的同一线性 PCHIP 曲线及积分；log-PCHIP 是不同插值器，必须用这些直接细网格数据另行衡量偏差。算法公式见 SciPy [`PchipInterpolator`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html) 和 Fritsch–Butland [原始论文](https://doi.org/10.1137/0905021)。
@@ -45,6 +48,7 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 
 - 主复现实验：[脚本](../../scripts/underflow_grid_convergence_20261115.py)、[原始 235/469/937 JSON](results/underflow_grid_235_469_937_20261115.json)
 - 尾深对照：[脚本](../../scripts/underflow_tail_z5_z8_compare_20261115.py)、[JSON](results/underflow_tail_z5_z8_compare_20261115.json)
+- 背景与步长 falsifier：[脚本](../../scripts/underflow_fast_background_step_falsifier_20261115.py)、[JSON](results/underflow_fast_background_step_falsifier_20261115.json)
 - Reference 尾部复核：[脚本](../../scripts/underflow_reference_tail_z8_z10_20261115.py)、[JSON](results/underflow_reference_tail_z8_z10_20261115.json)
 
 三份原始 JSON 记录参数、频率节点、固定根映射、逐点对数谱、运行环境、Warning、运行时间和源码 SHA-256。只接受脚本记录的直接频率求解。当前没有候选数值改进达到验收门槛；未修改 Fast 或 Reference 生产路径，未声称性能提升或连续区域认证。
