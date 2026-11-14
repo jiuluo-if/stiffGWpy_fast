@@ -41,14 +41,6 @@ def propagate_mode_with_tangent(
     z_tail_mode = z_tail
     phase_max_mode = phase_max
     deferred = False
-    if Sv is not None:
-        endpoint_z = z0 + Phi_grid[terminal] - phi0
-        endpoint_defect = FS._endpoint_wkb_defect(Sv[terminal], endpoint_z)
-        if endpoint_defect > FS._WKB_TAIL_ENDPOINT_EPS_LIMIT:
-            z_tail_mode = math.inf
-            deferred = True
-            if 0.25 <= phase_max <= FS._WKB_TAIL_DEFERRED_PHASE_MAX:
-                phase_max_mode = FS._WKB_TAIL_DEFERRED_PHASE_MAX
 
     while k < terminal and zz < z_tail_mode:
         h_step = h_arr[k]

@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from scripts.validate_cr0_event_chart_public_history import (
+from scripts.cr0_event_chart_public_history import (
     _assemble_tail_history,
     chart_history_indices,
     public_history_indices,

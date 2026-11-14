@@ -17,7 +17,7 @@ def test_parallel_chunksize_is_applied_and_restored_after_failed_solve(monkeypat
         fp_minus, fp_freq, assemble, n_coarse, col_step, h, z_tail,
         Ogw, Oj, Opgw, h_arr=None, Sv=None, phase_max=0.0,
         handoff_eps=None, kink_index=-1, kink_fraction=0.0,
-        phi_re=0.0, h_final=0.0,
+        phi_re=0.0, h_final=0.0, phase_weight=None, tail_state=None,
     ):
         observed.append(get_parallel_chunksize())
         Ogw[...] = np.nan
