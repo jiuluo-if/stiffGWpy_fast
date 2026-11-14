@@ -30,6 +30,7 @@ Fast 的对数谱在三个网格上均为全有限值；物理线性 `(Ogw−Oj)
 - Reference 的全局归一化被积函数有 13、25、49 个节点在 235、469、937 网格下舍入为精确零；每次 `integrate_spectrum` 均重现 4 条 `overflow encountered in divide` 警告。该函数的缩放分支只处理非零次正规数，不能恢复这些由对数归一化产生的零。
 - 直接 Reference 积分在 937 点的估计相对求积误差约 `1.1e-14`，半密度插值差估计约 `2.83e-7`。二者不消除斜率警告，也不是对插值真误差的证明。
 - 作为明确标记的诊断，线性 PCHIP 对新增节点分别有 12/24/36 个零预测（235→469、469→937、235→937）；有限可比节点的最大绝对误差分别为 `8.59`、`3.99`、`12.58 dex`。因此 235 点插值完全不能冒充 469/937 点直接频谱。极小归一化值上的这些 dex 比值应视为表示范围诊断，不作为显著积分误差。
+- 对 log-PCHIP 进行了直接新增节点偏差检查。它不再发出除法溢出，但 235→469 新节点最大/P95 谱差为 `0.462/0.00583 dex`，469→937 为 `0.185/0.00295 dex`，仍超过最大谱差门槛。对应映射积分偏差只有 `−3.07e-6` 和 `−3.53e-7`，显示积分吻合不能替代谱准确性。**拒绝直接将 log-PCHIP 用作 Reference 修复。**
 - 在同一 235 点和固定根上把 Fast `z_tail` 从 5 提高到 8，谱最大变化 `4.74e-4 dex`，但最大 Fast/Reference 误差仍约 `0.00205 dex`，根映射变化约 `1.15e-6` 相对。单纯加深 Fast 尾部没有修复该谱偏差。
 - 固定频率/背景的额外 falsifier：`sigma_exact=True` 将最大 / P95 谱差从 `0.002056/0.001463` 变为 `0.002056/0.001460 dex`；再将时间步从 `0.01` 收紧至 `0.005/0.0025`，最大差仅降至 `0.002047/0.002045 dex`。这些变化远不足以通过谱门槛，故“背景插值或标称步长单独主导该误差”的简单解释不成立。
 - Reference 自身 `z_tail=8→10` 的 235 点映射变化 `5.31e-6` 相对，谱最大 / P95 差 `2.07e-4 / 1.42e-4 dex`，仍有相同 4 条 PCHIP 警告。这支持 z8 尾部在此样本上足够用于区分当前 `~2e-3 dex` Fast 偏差，但不构成其他参数下的 Reference 尾部误差界。
@@ -50,5 +51,6 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 尾深对照：[脚本](../../scripts/underflow_tail_z5_z8_compare_20261115.py)、[JSON](results/underflow_tail_z5_z8_compare_20261115.json)
 - 背景与步长 falsifier：[脚本](../../scripts/underflow_fast_background_step_falsifier_20261115.py)、[JSON](results/underflow_fast_background_step_falsifier_20261115.json)
 - Reference 尾部复核：[脚本](../../scripts/underflow_reference_tail_z8_z10_20261115.py)、[JSON](results/underflow_reference_tail_z8_z10_20261115.json)
+- log-PCHIP 候选偏差诊断：[脚本](../../scripts/underflow_pchip_log_candidate_20261115.py)、[JSON](results/underflow_pchip_log_candidate_20261115.json)
 
 三份原始 JSON 记录参数、频率节点、固定根映射、逐点对数谱、运行环境、Warning、运行时间和源码 SHA-256。只接受脚本记录的直接频率求解。当前没有候选数值改进达到验收门槛；未修改 Fast 或 Reference 生产路径，未声称性能提升或连续区域认证。

@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "status": "complete_log_pchip_bias_diagnostic_not_adopted",
+  "experiment": "Log-PCHIP versus direct nested Reference nodes; linear PCHIP retained as baseline",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 1e-316,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "background": {
+    "common_DN_eff": 0.027412228089632874,
+    "scope": "cr=0, DN_re=10; unit Reference surrogate matches Nv and f_hor exactly",
+    "fast_tail": 5.0,
+    "reference_tail": 8.0,
+    "reference_rtol": 1e-09
+  },
+  "frequency_grid_hashes_f64le": {
+    "235": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+    "469": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+    "937": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee"
+  },
+  "comparisons": {
+    "235_to_469": {
+      "new_node_count": 234,
+      "log_pchip_new_node_error_dex": {
+        "max_abs_error_dex": 0.46155391601072604,
+        "p95_abs_error_dex": 0.005830044926224251,
+        "count": 234
+      },
+      "linear_pchip_zero_prediction_count": 12,
+      "linear_pchip_positive_new_node_error_dex": {
+        "max_abs_error_dex": 8.588111025307741,
+        "p95_abs_error_dex": 1.3046864154384796,
+        "count": 222
+      },
+      "linear_pchip_runtime_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "log_pchip_integral_relative_to_direct_coarse_map": -3.0666945908574644e-06,
+      "direct_fine_map_relative_to_direct_coarse_map": -1.612852315147073e-06,
+      "log_pchip_quadrature_relative_error": 1.1102230246251565e-14
+    },
+    "469_to_937": {
+      "new_node_count": 468,
+      "log_pchip_new_node_error_dex": {
+        "max_abs_error_dex": 0.1846108787740358,
+        "p95_abs_error_dex": 0.0029464171617510568,
+        "count": 468
+      },
+      "linear_pchip_zero_prediction_count": 24,
+      "linear_pchip_positive_new_node_error_dex": {
+        "max_abs_error_dex": 3.9931059595969622,
+        "p95_abs_error_dex": 0.3997191953654194,
+        "count": 444
+      },
+      "linear_pchip_runtime_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "log_pchip_integral_relative_to_direct_coarse_map": -3.528050051471882e-07,
+      "direct_fine_map_relative_to_direct_coarse_map": -2.826097553754181e-07,
+      "log_pchip_quadrature_relative_error": 1.110223024625157e-14
+    },
+    "235_to_937": {
+      "new_node_count": 702,
+      "log_pchip_new_node_error_dex": {
+        "max_abs_error_dex": 0.46155391601072604,
+        "p95_abs_error_dex": 0.004622470400047941,
+        "count": 702
+      },
+      "linear_pchip_zero_prediction_count": 36,
+      "linear_pchip_positive_new_node_error_dex": {
+        "max_abs_error_dex": 12.581061922827283,
+        "p95_abs_error_dex": 1.554755261649729,
+        "count": 666
+      },
+      "linear_pchip_runtime_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "log_pchip_integral_relative_to_direct_coarse_map": -3.0666945908574644e-06,
+      "direct_fine_map_relative_to_direct_coarse_map": -1.8954616147759396e-06,
+      "log_pchip_quadrature_relative_error": 1.1102230246251565e-14
+    }
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1"
+  },
+  "source_sha256": {
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "input_json": "54429643837acd9e86adce9cf8994bc821ade6436f9165530650c7263d1781cb",
+    "diagnostic_script": "ba8f0ef7293b71907ab68b3fcd02b672fc45b6690a07e75b34b0d80fbb3d39eb"
+  }
+}
