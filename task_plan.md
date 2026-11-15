@@ -1387,7 +1387,8 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Test the physical-amplitude `cr>0` sample: threshold 5 fails the spectrum gate (`0.001429 dex`), while threshold 6 reaches `0.000374 dex` max / `0.000283 dex` P95 with `9.21%` z8 rows; map error is `−4.96e-6` vs direct Reference z10.
 - [x] Threshold 6 passes the five recorded discrete `cr=0/cr>0` samples at spectrum and map/root screening limits.
 - [x] Actual per-mode kernel and one-thread same-root/grid warm A/B are complete; scalar/default dispatch remains unchanged.
-- [ ] Reject production-default adoption until Reference z10 tails close for newer holdouts, additional `cr>0` points and grids pass, phase-resolved boundaries are validated, and multi-resource A/B is measured.
+- [x] Reference z10 tails now close for the low-T/high-tilt, `n_t=17.30`, minimum-subnormal, and normal-amplitude `cr>0` discrete points.
+- [ ] Reject production-default adoption until changed-root frequency grids and multi-resource A/B pass, additional `cr>0` samples are checked, and phase-resolved boundaries are validated.
 
 ## Autonomous continuation: Round 42 — per-mode WKB handoff prototype
 
@@ -1398,4 +1399,5 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Warm one-thread 12-pair same-root/grid A/B at 937 nodes: z5/per-mode/z8 P50 `0.2270/0.2283/0.3079s`, P95 `0.2471/0.2341/0.3563s`; per-mode max error `0.0004855 dex` vs Reference z10, repeat spectra bitwise stable.
 - [ ] Performance and accuracy still cover one full z10 A/B point; keep this path private and opt-in pending multi-grid, multi-resource, additional `cr>0`, and Reference tail checks.
 - [x] Complete direct Reference z8/z10 for the low-T/high-tilt 221-node holdout; z8→z10 max/P95 `1.648e-4/1.598e-4 dex`, map shift `−1.245e-5`; actual per-mode vs z10 max error `5.692e-4 dex`, root residual `−2.22e-16`.
-- [ ] Still need z8→z10 closure at the `n_t=17.30` holdout and Reference z10 on independent frequency grids for the new background cases.
+- [x] z8→z10 closure at the `n_t=17.30` holdout completed; per-mode max error vs Reference z10 is `0.0004746 dex`, map error `−4.48e-6`.
+- [ ] Still need changed-root 469/937 grids and multi-resource benchmarking for the per-mode path.
