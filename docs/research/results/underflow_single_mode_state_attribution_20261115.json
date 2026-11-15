@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "status": "complete_fixed_mode_pre_handoff_state_attribution",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 1e-316,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "frequency_count": 235,
+  "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+  "frequency_index": 215,
+  "frequency_log10_hz": -10.641944809173847,
+  "frozen_DN_eff": 0.027412228089632874,
+  "tail_z": 5.0,
+  "reference_state_rtol": 1e-09,
+  "variants": [
+    {
+      "h": 0.01,
+      "sigma_exact": false,
+      "time_node_count": 4779,
+      "frequency_start_index": 1900,
+      "frequency_start_N": 19.0,
+      "frequency_start_z": -6.910939141481947,
+      "grid_f_hor_start": -7.640562075259041,
+      "last_node_before_tail_index": 3012,
+      "last_node_before_tail_N": 30.12,
+      "last_node_before_tail_z": 4.991826141328438,
+      "fast_state_scaled": [
+        -0.007615429690885083,
+        -0.0025120729260564266
+      ],
+      "fast_state_physical": [
+        -0.865182303367146,
+        -0.2853944069621038
+      ],
+      "fast_S2_at_handoff": 12907.033273916973,
+      "grid_sigma_at_handoff": 1.3333089402386653,
+      "loop_exit_z": 5.00182577359643,
+      "reference_state": {
+        "z": 4.991826110512389,
+        "state_physical": [
+          -0.8650171035887729,
+          -0.2859207275475273
+        ],
+        "nfev": 5366,
+        "runtime_s": 0.05194219999248162
+      },
+      "z_difference": 3.081604926791215e-08,
+      "relative_state_vector_difference": 0.0006054992960096244,
+      "relative_quadratic_norm_difference": -1.7911160744343846e-05
+    },
+    {
+      "h": 0.01,
+      "sigma_exact": true,
+      "time_node_count": 4779,
+      "frequency_start_index": 1900,
+      "frequency_start_N": 19.0,
+      "frequency_start_z": -6.910939141481947,
+      "grid_f_hor_start": -7.640562075259041,
+      "last_node_before_tail_index": 3012,
+      "last_node_before_tail_N": 30.12,
+      "last_node_before_tail_z": 4.9918261755187245,
+      "fast_state_scaled": [
+        -0.007672746772439926,
+        -0.002531024013687405
+      ],
+      "fast_state_physical": [
+        -0.8651807993354662,
+        -0.28539888572433325
+      ],
+      "fast_S2_at_handoff": 12714.872660003868,
+      "grid_sigma_at_handoff": 1.3333089402386653,
+      "loop_exit_z": 5.001825807786673,
+      "reference_state": {
+        "z": 4.991826110512389,
+        "state_physical": [
+          -0.8650171035887729,
+          -0.2859207275475273
+        ],
+        "nfev": 5366,
+        "runtime_s": 0.05133720001322217
+      },
+      "z_difference": 6.500633542572132e-08,
+      "relative_state_vector_difference": 0.0006003144690350669,
+      "relative_quadratic_norm_difference": -1.7966670614599778e-05
+    },
+    {
+      "h": 0.000625,
+      "sigma_exact": true,
+      "time_node_count": 76437,
+      "frequency_start_index": 30402,
+      "frequency_start_N": 19.00125,
+      "frequency_start_z": -6.908587211397694,
+      "grid_f_hor_start": -7.641583505516454,
+      "last_node_before_tail_index": 48205,
+      "last_node_before_tail_N": 30.128125,
+      "last_node_before_tail_z": 4.999950824036915,
+      "fast_state_scaled": [
+        -0.0003608155480241532,
+        -0.008085196880605987
+      ],
+      "fast_state_physical": [
+        -0.04068563714337912,
+        -0.9116885021127075
+      ],
+      "fast_S2_at_handoff": 12714.865069818421,
+      "grid_sigma_at_handoff": 1.3333087412369702,
+      "loop_exit_z": 5.00057580097463,
+      "reference_state": {
+        "z": 4.999950908455558,
+        "state_physical": [
+          -0.040671944648708,
+          -0.9116891815050907
+        ],
+        "nfev": 5510,
+        "runtime_s": 0.05305659997975454
+      },
+      "z_difference": -8.441864274288946e-08,
+      "relative_state_vector_difference": 1.5022353854864194e-05,
+      "relative_quadratic_norm_difference": -1.498510493469496e-07
+    }
+  ],
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "exact_background.py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "input_json": "54429643837acd9e86adce9cf8994bc821ade6436f9165530650c7263d1781cb",
+    "diagnostic_script": "10c89de480aa612e5cffb8060d0a0c46131320d2804827129ce8dc5808bc1d75"
+  }
+}

@@ -1767,3 +1767,10 @@ the diagnostic artifacts are retained.
 - [x] Recorded that post-event `sigma`, `H²`, and `f_hor` match, but full spectra differ by up to `0.006073 dex` at common frequencies and the upper support changes. Cross-parameter differences are physical sensitivity, not a numerical accuracy estimate.
 - [x] `ruff check`, `py_compile`, `git diff --check`, and the standalone probe pass. No production source or Reference implementation changed.
 - [ ] Commit/push the reviewed research artifact, then test whether a branch-aligned coordinate offers a useful general Fast mechanism; current evidence is only two parameter points and does not meet regional accuracy/speed gates.
+
+## 2026-11-15 underflow mode-state attribution
+
+- Added a standalone same-start Fast/Cartesian Reference diagnostic and raw JSON at `z≈5`; compiled and executed successfully.
+- The z5 state discrepancy falls strongly with time-step refinement, but the refined discrepancy does not yet account for the approximately `1.94e-3 dex` final spectrum mismatch. A direct high-accuracy z12 Cartesian solve was too costly (>2 min with no result), so the deep propagation attribution remains open.
+- Logged the abandoned high-cost integration attempt and revised the diagnostic threshold to a tractable z5 node. No production Fast or Reference source changed.
+- Next: independently assemble terminal moments from saved states and then assess bounded z8 Reference cost.

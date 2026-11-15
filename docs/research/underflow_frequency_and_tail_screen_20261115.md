@@ -36,6 +36,7 @@ Fast 的对数谱在三个网格上均为全有限值；物理线性 `(Ogw−Oj)
 - 在最差频点直接读交接遥测并将 Reference 加深到 z10：`log10(f/Hz)=−10.642` 时 Fast eps 从 z5 的 `6.75e-3` 降到 z8 `3.36e-4`、z12 `5.92e-6`；Reference eps 从 z8 `3.35e-4` 降到 z10 `4.52e-5`（DOP853 RHS 调用约 `8.3e4→6.1e5`）。但 Fast z12 对 z10 Reference 的谱差仍为 `0.001939 dex`，整谱 max/P95 为 `0.001939/0.001573 dex`。在旧最差频点 `−9.442`，Fast z8 与 z12 对数谱只差 `7.8e-11 dex`，对 z10 Reference 仍差 `0.001896 dex`。因此单纯加深尾部不能消除残差；需继续检查尾前传播状态和终端组装。
 - 固定频率/背景的额外 falsifier：`sigma_exact=True` 将最大 / P95 谱差从 `0.00205557/0.00146344` 变为 `0.00205557/0.00146006 dex`；再把均匀步长从 `0.01` 逐步缩至 `0.000625`，最大差收敛到约 `0.00204589 dex`（P95 `0.00145175 dex`）。时间网格从 4,779 增至 76,437 个节点，最大误差仅减少约 `9.7e-6 dex`，仍未通过谱门槛；这不支持背景原函数或二阶时间步误差是该偏差的主因。
 - Reference 自身 `z_tail=8→10` 的 235 点映射变化 `5.31e-6` 相对，谱最大 / P95 差 `2.07e-4 / 1.42e-4 dex`，仍有相同 4 条 PCHIP 警告。这支持 z8 尾部在此样本上足够用于区分当前 `~2e-3 dex` Fast 偏差，但不构成其他参数下的 Reference 尾部误差界。
+- 最差频点尾前状态归因诊断固定 `DN_eff=0.027412228089632874`，以 Reference Cartesian `DOP853` 从 Fast 同一频率起点传播至 Fast 首个 `z≈5` 以下节点。`h=0.01` 的 Fast/Reference 相对状态差为 `6.05e-4`（sigma 精确原函数时 `6.00e-4`），但二次范数差均约 `−1.8e-5`；`h=0.000625` 时两者降为 `1.50e-5` 和 `−1.50e-7`。本频点起始 `N=19`、尾前 `N≈30.12`，reheating kink 在 `N=10`，传播区间不跨 kink。该证据表明粗步长下相位传播误差可见，而精细步长的 z5 状态差远小于最终约 `1.94e-3 dex` 的 Fast/Reference 谱差；由于 Reference 在 `z≈12` 的 Cartesian 直接积分成本急剧上升，这尚未证明该谱差属于尾部传播或终端矩组装。曾尝试以 `rtol=1e-11` 积分到 `z≈12`，运行逾两分钟未完成，已停止；较浅 `z≈5`、`rtol=1e-9` 诊断约 0.05 秒/模式，脚本和完整状态保留在原始 JSON。
 
 PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割线时导数置零。正数整体缩放具有齐次性，但不能让已在构造归一化数组时舍入为零的节点恢复。可研究的下一步是直接从 log 样本稳定计算割线与调和平均，并验证得到的同一线性 PCHIP 曲线及积分；log-PCHIP 是不同插值器，必须用这些直接细网格数据另行衡量偏差。算法公式见 SciPy [`PchipInterpolator`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html) 和 Fritsch–Butland [原始论文](https://doi.org/10.1137/0905021)。
 
@@ -53,6 +54,7 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 尾深对照：[脚本](../../scripts/underflow_tail_z5_z8_compare_20261115.py)、[JSON](results/underflow_tail_z5_z8_compare_20261115.json)
 - 背景与步长 falsifier：[脚本](../../scripts/underflow_fast_background_step_falsifier_20261115.py)、[JSON](results/underflow_fast_background_step_falsifier_20261115.json)
 - 最差频点交接遥测：[脚本](../../scripts/underflow_handoff_pair_diagnostic_20261115.py)、[JSON](results/underflow_handoff_pair_diagnostic_20261115.json)
+- 同起点尾前状态对照：[脚本](../../scripts/underflow_single_mode_state_attribution_20261115.py)、[JSON](results/underflow_single_mode_state_attribution_20261115.json)
 - Reference 尾部复核：[脚本](../../scripts/underflow_reference_tail_z8_z10_20261115.py)、[JSON](results/underflow_reference_tail_z8_z10_20261115.json)
 - log-PCHIP 候选偏差诊断：[脚本](../../scripts/underflow_pchip_log_candidate_20261115.py)、[JSON](results/underflow_pchip_log_candidate_20261115.json)
 - 同线性 PCHIP 稳定算术：[实现](../../scripts/stable_log_pchip.py)、[测试](../../tests/test_stable_log_pchip.py)、[诊断脚本](../../scripts/underflow_stable_linear_pchip_20261115.py)、[JSON](results/underflow_stable_linear_pchip_20261115.json)

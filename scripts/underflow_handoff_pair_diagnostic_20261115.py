@@ -70,6 +70,9 @@ def _fast_fixed(data: dict, freqs: np.ndarray, frozen_dn: float, z_tail: float) 
         "mapped_DN_gw": float(model.DN_gw[-1]),
         "fixed_map_residual": float(model.DN_gw[-1] - frozen_dn),
         "log10_OmegaGW": np.asarray(model.log10OmegaGW, dtype=np.float64).tolist(),
+        "Ogw_today": np.asarray(model.Ogw_today, dtype=np.float64).tolist(),
+        "Oj_today": np.asarray(model.Oj_today, dtype=np.float64).tolist(),
+        "Opgw_today": np.asarray(model.Opgw_today, dtype=np.float64).tolist(),
         "linear_OmegaGW": np.asarray(model.Ogw_today - model.Oj_today, dtype=np.float64).tolist(),
         "handoff_eps": np.asarray(model.handoff_eps, dtype=np.float64).tolist(),
     }
@@ -115,6 +118,22 @@ def main() -> int:
     ref_max_z10, ref_max_log_z10 = reference_mode_log(frequency, 10.0)
     old_frequency = float(freqs[old_worst_index])
     ref_old_z10, ref_old_log_z10 = reference_mode_log(old_frequency, 10.0)
+
+    def reference_unit_moments(mode: dict, freq: float) -> dict:
+        power_log = _log_tensor_amplitude(data["parameters"], {"A_t": 0.0}) + float(
+            data["parameters"]["n_t"]
+        ) * (math.log(10.0) * freq - math.log(REF.gp.f_piv))
+        scale = math.exp(power_log)
+        return {
+            "unit_Ogw": float(mode["Ogw_today"]),
+            "unit_Oj": float(mode["Oj_today"]),
+            "unit_Opgw": float(mode["Opgw_today"]),
+            "scaled_Ogw": float(mode["Ogw_today"] * scale),
+            "scaled_Oj": float(mode["Oj_today"] * scale),
+            "scaled_Opgw": float(mode["Opgw_today"] * scale),
+            "log_P_t": float(power_log),
+        }
+
     output = {
         "schema_version": 1,
         "status": "complete_single_mode_handoff_diagnostic",
@@ -140,6 +159,17 @@ def main() -> int:
             "Fast_z5_handoff_eps": fast5["handoff_eps"][max_index],
             "Fast_z8_handoff_eps": fast8["handoff_eps"][max_index],
             "Fast_z12_handoff_eps": fast12["handoff_eps"][max_index],
+            "Fast_z5_terminal_moments": {
+                name: fast5[name][max_index] for name in ("Ogw_today", "Oj_today", "Opgw_today")
+            },
+            "Fast_z8_terminal_moments": {
+                name: fast8[name][max_index] for name in ("Ogw_today", "Oj_today", "Opgw_today")
+            },
+            "Fast_z12_terminal_moments": {
+                name: fast12[name][max_index] for name in ("Ogw_today", "Oj_today", "Opgw_today")
+            },
+            "Reference_z8_unit_terminal_moments": reference_unit_moments(ref_max_z8, frequency),
+            "Reference_z10_unit_terminal_moments": reference_unit_moments(ref_max_z10, frequency),
             "Fast_z5_abs_error_vs_Reference_z10_dex": float(error5[max_index]),
             "Fast_z8_abs_error_vs_Reference_z10_dex": float(error8[max_index]),
             "Fast_z12_abs_error_vs_Reference_z10_dex": float(error12[max_index]),
@@ -160,6 +190,13 @@ def main() -> int:
             "Fast_z12_log10_OmegaGW": fast12["log10_OmegaGW"][old_worst_index],
             "Fast_z8_handoff_eps": fast8["handoff_eps"][old_worst_index],
             "Fast_z12_handoff_eps": fast12["handoff_eps"][old_worst_index],
+            "Fast_z8_terminal_moments": {
+                name: fast8[name][old_worst_index] for name in ("Ogw_today", "Oj_today", "Opgw_today")
+            },
+            "Fast_z12_terminal_moments": {
+                name: fast12[name][old_worst_index] for name in ("Ogw_today", "Oj_today", "Opgw_today")
+            },
+            "Reference_z10_unit_terminal_moments": reference_unit_moments(ref_old_z10, old_frequency),
         },
         "fast_z5": fast5,
         "fast_z8": fast8,

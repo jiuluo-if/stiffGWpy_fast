@@ -1247,3 +1247,26 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 - [x] Read the paper and source the local error/regularity assumptions and resonant negative-frequency treatment.
 - [x] Deduplicate against the existing rejected Duhamel defect correction; identify the PDE forcing/operator mismatch.
 - [ ] Continue the remaining seven first-batch papers and project-code audits.
+
+## Autonomous continuation: Round 32 — underflow discrepancy attribution
+
+### Current hypothesis
+
+The remaining fixed-background Fast/Reference spectrum mismatch near `2e-3 dex` is not caused solely by the deep-tail cutoff. Compare the propagation state before handoff and the terminal moment mapping to determine which contribution remains.
+
+### Gates
+
+- Direct same-frequency, same-`DN_eff`, same-start Cartesian Reference state comparison at a tractable pre-tail `z`.
+- Keep the direct-reference solve within a documented runtime and tolerance; do not extrapolate a shallow-state agreement into a deep-tail error bound.
+- Compute terminal moments from the same state independently before changing production code.
+- Retain the existing `1e-3 dex` spectral and `2e-4` root screens; reject any candidate that does not pass.
+
+### Progress
+
+- [x] Confirm the worst mode starts at `N=19`, after the `N_re=10` kink; current single-mode replay does not cross the reheating discontinuity.
+- [x] Compare Fast and Cartesian Reference states at the same handoff-grid node near `z=5` for three time-grid variants.
+- [ ] Determine whether the residual is high-frequency propagation phase/amplitude error or terminal-moment assembly; do not alter production Fast/Reference before attribution.
+
+### Next Step
+
+Use saved z5 states to compare each terminal moment formula in isolation, then run a bounded direct Reference state check at z8 only if its measured cost is acceptable.
