@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import math
@@ -25,7 +26,6 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 BOUNDARY_INPUT = ROOT / "docs" / "research" / "results" / "cr_positive_cutoff_amplitude_boundary_20261116.json"
 OUTPUT = ROOT / "docs" / "research" / "results" / "cr_positive_cutoff_valid_sample_20261116.json"
 RATIO_ABOVE_CUTOFF = 1.1
-CASE = {"T_re": 2000.0, "kappa10": 0.01}
 BASE = {
     "Omega_bh2": 0.0223828,
     "Omega_ch2": 0.1201075,
@@ -47,13 +47,20 @@ def digest(values: np.ndarray) -> str:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--t-re", type=float, default=2000.0)
+    parser.add_argument("--kappa10", type=float, default=0.01)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    case = {"T_re": args.t_re, "kappa10": args.kappa10}
+    output_path = args.output or OUTPUT
     boundary = json.loads(BOUNDARY_INPUT.read_text(encoding="utf-8"))
     boundary_case = next(
         row for row in boundary["cases"]
-        if row["T_re"] == CASE["T_re"] and row["kappa10"] == CASE["kappa10"]
+        if row["T_re"] == case["T_re"] and row["kappa10"] == case["kappa10"]
     )
     r_cutoff = float(boundary_case["cutoff_root_r"])
-    params = {**BASE, **CASE, "r": r_cutoff * RATIO_ABOVE_CUTOFF}
+    params = {**BASE, **case, "r": r_cutoff * RATIO_ABOVE_CUTOFF}
 
     root_model = LCDM_SG(**params)
     initial = root_model.derived_param
@@ -155,7 +162,7 @@ def main() -> int:
     output = {
         "schema_version": 1,
         "status": "complete_cr_positive_valid_cutoff_direct_reference_comparison",
-        "scope": "One physical-amplitude cr>0 sample at 10% above the analytically derived cutoff for T_re=2000 and kappa10=.01. Fast self-consistency and same-root Fast-vs-direct-Reference z8/z10 comparison use the exact newly generated Fast frequency grid. This is a discrete point, not a domain certification.",
+        "scope": f"One physical-amplitude cr>0 sample at 10% above the analytically derived cutoff for T_re={case['T_re']} and kappa10={case['kappa10']}. Fast self-consistency and same-root Fast-vs-direct-Reference z8/z10/z12 comparison use the exact newly generated Fast frequency grid. This is a discrete point, not a domain certification.",
         "parameters": params,
         "cutoff": {
             "input_artifact": str(BOUNDARY_INPUT.relative_to(ROOT)).replace("\\", "/"),
@@ -261,9 +268,10 @@ def main() -> int:
             }.items()
         },
     }
-    OUTPUT.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps({
-        "output": str(OUTPUT),
+        "output": str(output_path),
         "r": params["r"],
         "initial_Delta_N": initial_delta_n,
         "DN_eff": root,

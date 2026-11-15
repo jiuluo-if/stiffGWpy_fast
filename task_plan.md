@@ -1490,4 +1490,16 @@ Test physical-amplitude `cr>0` just above one derived cutoff root, and compare i
 
 ### Next Step
 
-Select an independent low- or high-temperature `cr>0` cutoff-valid point to check whether the same-root and raw-spectrum comparison remains stable when the reheating background changes; preserve discrete-only scope.
+Select a high-temperature/high-`kappa10` cutoff-valid `cr>0` point to complete a low/mid/high discrete matrix, then assess whether any broader sample design is justified.
+
+## Autonomous continuation: Round 49 — low-temperature cutoff-valid holdout
+
+- [x] Reuse the analytic boundary at `T_re=10,kappa10=.001` and choose `r=1.1*r_cut`, with positive initial cutoff margin and normal stored `A_t`.
+- [x] Run current Fast self-consistency and direct same-root Reference z8/z10/z12 on the exact 76-node Fast grid; do not propagate any invalid-cutoff point.
+- [x] Compare raw `Ogw-Oj` log spectra because Reference's public log output floors all 76 nodes at `−40`; retain no-warning and positive-finite raw-signal checks.
+- [x] Fast z8 vs Reference z12 max/P95 spectrum error is `5.693e-4/4.881e-4 dex`; fixed-root map difference is `+2.571e-6`; Reference z10→z12 map change is `+3.389e-6`.
+- [ ] Commit/push the parameterized runner and low-temperature artifact, then verify CI.
+
+### Next Step
+
+Choose the high-temperature/high-`kappa10` cutoff-valid matrix corner and test it with the same direct-root, raw-spectrum, and z12-tail protocol.
