@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "status": "complete_same_linear_pchip_stability_diagnostic_not_adopted",
+  "experiment": "Log-scaled arithmetic for SciPy's linear PCHIP, validated against ordinary-range parity and direct 469/937 nodes",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 1e-316,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "background": {
+    "common_DN_eff": 0.027412228089632874,
+    "scope": "cr=0, DN_re=10; unit Reference surrogate matches Nv and f_hor exactly",
+    "fast_tail": 5.0,
+    "reference_tail": 8.0,
+    "reference_rtol": 1e-09
+  },
+  "frequency_grid_hashes_f64le": {
+    "235": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+    "469": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+    "937": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee"
+  },
+  "same_grid_integrals": {
+    "235": {
+      "same_grid_map_DN_gw": 0.02741220519514213,
+      "baseline_reference_map_DN_gw": 0.02741220519514218,
+      "relative_map_difference": -1.7763568394002505e-15,
+      "log_pchip_nodes_finite": true,
+      "stable_log_pchip_warnings": [],
+      "linear_normalized_zero_nodes": 13,
+      "linear_pchip_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    },
+    "469": {
+      "same_grid_map_DN_gw": 0.02741216098330361,
+      "baseline_reference_map_DN_gw": 0.027412160983303565,
+      "relative_map_difference": 1.5543122344752192e-15,
+      "log_pchip_nodes_finite": true,
+      "stable_log_pchip_warnings": [],
+      "linear_normalized_zero_nodes": 25,
+      "linear_pchip_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    },
+    "937": {
+      "same_grid_map_DN_gw": 0.02741215323635941,
+      "baseline_reference_map_DN_gw": 0.027412153236359454,
+      "relative_map_difference": -1.6653345369377348e-15,
+      "log_pchip_nodes_finite": true,
+      "stable_log_pchip_warnings": [],
+      "linear_normalized_zero_nodes": 49,
+      "linear_pchip_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    }
+  },
+  "new_node_interpolation": {
+    "235_to_469": {
+      "new_node_count": 234,
+      "stable_same_pchip_error_dex": {
+        "max_abs_error_dex": 8.588111025307741,
+        "p95_abs_error_dex": 1.236405377010034,
+        "count": 234
+      },
+      "linear_pchip_zero_predictions": 12,
+      "linear_pchip_positive_error_dex": {
+        "max_abs_error_dex": 8.588111025307741,
+        "p95_abs_error_dex": 1.3046864154384796,
+        "count": 222
+      },
+      "linear_pchip_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    },
+    "469_to_937": {
+      "new_node_count": 468,
+      "stable_same_pchip_error_dex": {
+        "max_abs_error_dex": 3.9931059595969867,
+        "p95_abs_error_dex": 0.3470738411220847,
+        "count": 468
+      },
+      "linear_pchip_zero_predictions": 24,
+      "linear_pchip_positive_error_dex": {
+        "max_abs_error_dex": 3.9931059595969622,
+        "p95_abs_error_dex": 0.3997191953654194,
+        "count": 444
+      },
+      "linear_pchip_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    },
+    "235_to_937": {
+      "new_node_count": 702,
+      "stable_same_pchip_error_dex": {
+        "max_abs_error_dex": 12.581061922827283,
+        "p95_abs_error_dex": 1.5543368112447442,
+        "count": 702
+      },
+      "linear_pchip_zero_predictions": 36,
+      "linear_pchip_positive_error_dex": {
+        "max_abs_error_dex": 12.581061922827283,
+        "p95_abs_error_dex": 1.554755261649729,
+        "count": 666
+      },
+      "linear_pchip_warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ]
+    }
+  },
+  "ordinary_range_parity_tests": {
+    "command": "python -m pytest -q tests/test_stable_log_pchip.py",
+    "passed": 3
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1"
+  },
+  "source_sha256": {
+    "stable_log_pchip.py": "786987447004ecb9710d59b805399c5b33f2d98ed822be0cf0e72df279c1ddc3",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "input_json": "54429643837acd9e86adce9cf8994bc821ade6436f9165530650c7263d1781cb",
+    "diagnostic_script": "498d097dbb8d43dafc89f3cb8258942900873bb250f74824583852494b333001"
+  }
+}
