@@ -1252,7 +1252,7 @@ Read the low-T and extreme-red full-grid validation maps and error decomposition
 
 ### Current hypothesis
 
-The remaining fixed-background Fast/Reference spectrum mismatch near `2e-3 dex` is not caused solely by the deep-tail cutoff. Compare the propagation state before handoff and the terminal moment mapping to determine which contribution remains.
+The previously reported `~1.94e-3 dex` mismatch was contaminated by a fixed-background experiment harness error: Fast propagated its first iterate with `DN_eff=0`, while Reference used the frozen root. After seeding the frozen value before expansion, the residual is smaller; the 937-node z5 outlier is tail-depth-sensitive, while local 1873-equivalent midpoint solves agree closely at z8.
 
 ### Gates
 
@@ -1264,9 +1264,13 @@ The remaining fixed-background Fast/Reference spectrum mismatch near `2e-3 dex` 
 ### Progress
 
 - [x] Confirm the worst mode starts at `N=19`, after the `N_re=10` kink; current single-mode replay does not cross the reheating discontinuity.
-- [x] Compare Fast and Cartesian Reference states at matching handoff-grid nodes near `z=5` and `z=8` for three time-grid variants, replaying the formal `phase_max=0.5` substep setting.
-- [ ] Determine whether the residual is high-frequency propagation phase/amplitude error or terminal-moment assembly; do not alter production Fast/Reference before attribution.
+- [x] Identify and correct frozen-background initialization in the grid, step-falsifier, and handoff scripts; regenerate the 235/469/937 direct results and dependent tail/step/PCHIP artifacts.
+- [x] Replay the actual `fast` profile (`h=.005`, `phase_max=.25`, `kink_split=True`, `fast_phi_s2_split`) and directly compare three tail depths at the 937-node outlier.
+- [x] Reconstruct one production `assemble_tail` output from its matched z8 state; physical `Opgw_today` agrees to `6.5e-14` relative.
+- [x] Directly solve 15 local 1873-equivalent frequencies with Fast and Reference; do not substitute interpolation for these nodes.
+- [x] Finish Reference z10 on all 235/469/937 nodes and compare full Fast z8 spectra against it; maximum discrepancies are `0.000353`, `0.000380`, and `0.000391 dex`, with Reference z8→z10 maximum shift `0.000207 dex`.
+- [ ] Measure same fixed background/root/grid/thread z5-versus-z8 runtime with warmups and repeated alternating A/B; keep z8 validation-only until cost and other parameter regimes are evaluated.
 
 ### Next Step
 
-Derive the Fast and Reference closed-form post-handoff scale mappings at the matched z8 state. The direct Cartesian state checks at z8 already completed within budget; do not repeat them without a changed hypothesis.
+Run alternating repeated z5/z8 timing at fixed 937 grid/root/thread, then expand tail accuracy to an independent parameter point before considering profile changes.

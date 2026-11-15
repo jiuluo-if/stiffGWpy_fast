@@ -1,0 +1,277 @@
+{
+  "schema_version": 1,
+  "status": "complete_direct_local_refinement_1873_equivalent_nodes",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 1e-316,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "frozen_DN_eff": 0.027412228089632874,
+  "base_grid_count": 937,
+  "base_grid_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+  "window_937_indices_inclusive": [
+    886,
+    901
+  ],
+  "candidate_count": 15,
+  "candidate_log10_hz": [
+    -15.966944809173846,
+    -16.016944809173843,
+    -16.066944809173847,
+    -16.116944809173845,
+    -16.16694480917384,
+    -16.216944809173846,
+    -16.266944809173843,
+    -16.316944809173847,
+    -16.366944809173845,
+    -16.41694480917384,
+    -16.466944809173846,
+    -16.516944809173843,
+    -16.56694480917384,
+    -16.616944809173845,
+    -16.66694480917384
+  ],
+  "fast_tail_z": 8.0,
+  "reference_tail_z": 10.0,
+  "reference_rtol": 1e-09,
+  "fast_runtime_s": 0.4728121999942232,
+  "reference_runtime_s": 2.3085227999836206,
+  "reference_z10_tail_check_runtime_s": 32.57490839998354,
+  "z10_reference_at_each_grid_z8_worst_node": [
+    {
+      "grid_count": 235,
+      "frequency_index": 218,
+      "log10_hz": -13.641944809173847,
+      "fast_z8_log10_OmegaGW": -287.16594432885535,
+      "reference_z8_log10_OmegaGW": -287.166334308904,
+      "reference_z10_log10_OmegaGW": -287.1661926687634,
+      "fast_z8_abs_error_vs_reference_z10_dex": 0.00024833990806882866,
+      "reference_z8_to_z10_abs_delta_dex": 0.00014164014061179842,
+      "reference_nfev": 1107509,
+      "reference_handoff_eps": 2.286043166543316e-05
+    },
+    {
+      "grid_count": 469,
+      "frequency_index": 436,
+      "log10_hz": -13.641944809173847,
+      "fast_z8_log10_OmegaGW": -287.16594432885535,
+      "reference_z8_log10_OmegaGW": -287.166334308904,
+      "reference_z10_log10_OmegaGW": -287.1661926687634,
+      "fast_z8_abs_error_vs_reference_z10_dex": 0.00024833990806882866,
+      "reference_z8_to_z10_abs_delta_dex": 0.00014164014061179842,
+      "reference_nfev": 1107509,
+      "reference_handoff_eps": 2.286043166543316e-05
+    },
+    {
+      "grid_count": 937,
+      "frequency_index": 869,
+      "log10_hz": -12.891944809173847,
+      "fast_z8_log10_OmegaGW": -274.1312496768535,
+      "reference_z8_log10_OmegaGW": -274.13171727837073,
+      "reference_z10_log10_OmegaGW": -274.1316404536079,
+      "fast_z8_abs_error_vs_reference_z10_dex": 0.0003907767543864793,
+      "reference_z8_to_z10_abs_delta_dex": 7.682476285708617e-05,
+      "reference_nfev": 849161,
+      "reference_handoff_eps": 2.6732526535639268e-05
+    }
+  ],
+  "reference_nfev": [
+    27890,
+    24962,
+    22514,
+    20042,
+    17942,
+    16214,
+    14558,
+    12938,
+    11774,
+    10598,
+    9542,
+    8606,
+    7778,
+    7118,
+    6494
+  ],
+  "direct_fast_log10_OmegaGW": [
+    -327.53994343065665,
+    -328.4039918630979,
+    -329.2659694325826,
+    -330.1310401032875,
+    -330.99558239765497,
+    -331.85304478123794,
+    -332.71712064105634,
+    -333.5794139992044,
+    -334.43675734468064,
+    -335.29511550960626,
+    -336.1542659098621,
+    -337.00560055302185,
+    -337.85359442732886,
+    -338.7159854846437,
+    -339.55565261124065
+  ],
+  "direct_reference_log10_OmegaGW": [
+    -327.53994240792866,
+    -328.4040000338629,
+    -329.26597279648735,
+    -330.13105451177006,
+    -330.99558017997805,
+    -331.85304594982256,
+    -332.71712647484253,
+    -333.5794133875211,
+    -334.4367626464402,
+    -335.29511029578816,
+    -336.1542611202894,
+    -337.00559477525206,
+    -337.85359667073277,
+    -338.71598506143016,
+    -339.5556413519784
+  ],
+  "fast_minus_reference_dex": [
+    -1.0227279858554539e-06,
+    8.17076505654768e-06,
+    3.3639047387623577e-06,
+    1.4408482570615888e-05,
+    -2.217676922100509e-06,
+    1.168584617516899e-06,
+    5.8337861901236465e-06,
+    -6.116833333180693e-07,
+    5.3017595291748876e-06,
+    -5.213818099036871e-06,
+    -4.789572699337441e-06,
+    -5.777769786163844e-06,
+    2.2434039124163974e-06,
+    -4.2321352111684973e-07,
+    -1.1259262237217627e-05
+  ],
+  "abs_error_summary_dex": {
+    "max": 1.4408482570615888e-05,
+    "p95": 1.2204028337237102e-05
+  },
+  "pchip_prediction_error_against_direct_reference_dex": {
+    "max": 0.008817674816555154,
+    "p95": 0.006739103804858357
+  },
+  "pchip_prediction_error_against_direct_fast_dex": {
+    "max": 0.008802990146818956,
+    "p95": 0.006743568801130092
+  },
+  "937_node_outlier": {
+    "index": 893,
+    "log10_hz": -16.291944809173845,
+    "reference_log10_OmegaGW": -333.1443141301007,
+    "step_refinements": [
+      {
+        "z_tail": 5.0,
+        "h": 0.005,
+        "sigma_exact": false,
+        "runtime_s": 0.15979170001810417,
+        "mapped_DN_gw": 0.027412164956764948,
+        "log10_OmegaGW": -333.14669955253794,
+        "error_vs_direct_reference_dex": 0.0023854224372144017
+      },
+      {
+        "z_tail": 5.0,
+        "h": 0.005,
+        "sigma_exact": true,
+        "runtime_s": 0.1293764000001829,
+        "mapped_DN_gw": 0.027412171305169503,
+        "log10_OmegaGW": -333.14669969259927,
+        "error_vs_direct_reference_dex": 0.0023855624985458235
+      },
+      {
+        "z_tail": 5.0,
+        "h": 0.0025,
+        "sigma_exact": true,
+        "runtime_s": 0.2023625000147149,
+        "mapped_DN_gw": 0.027412186027192805,
+        "log10_OmegaGW": -333.1466943208951,
+        "error_vs_direct_reference_dex": 0.002380190794383452
+      },
+      {
+        "z_tail": 5.0,
+        "h": 0.00125,
+        "sigma_exact": true,
+        "runtime_s": 0.34583339997334406,
+        "mapped_DN_gw": 0.027412202121280826,
+        "log10_OmegaGW": -333.1466920686387,
+        "error_vs_direct_reference_dex": 0.0023779385379611995
+      },
+      {
+        "z_tail": 5.0,
+        "h": 0.000625,
+        "sigma_exact": true,
+        "runtime_s": 0.6840028000005987,
+        "mapped_DN_gw": 0.027412201933473445,
+        "log10_OmegaGW": -333.14669127281445,
+        "error_vs_direct_reference_dex": 0.0023771427137262435
+      },
+      {
+        "z_tail": 8.0,
+        "h": 0.005,
+        "sigma_exact": false,
+        "runtime_s": 0.2348393000138458,
+        "mapped_DN_gw": 0.02741217426033701,
+        "log10_OmegaGW": -333.1443176697249,
+        "error_vs_direct_reference_dex": 3.539624174209166e-06
+      },
+      {
+        "z_tail": 8.0,
+        "h": 0.005,
+        "sigma_exact": true,
+        "runtime_s": 0.20079699999769218,
+        "mapped_DN_gw": 0.02741217386100315,
+        "log10_OmegaGW": -333.14431469212064,
+        "error_vs_direct_reference_dex": 5.620199203804077e-07
+      },
+      {
+        "z_tail": 8.0,
+        "h": 0.0025,
+        "sigma_exact": true,
+        "runtime_s": 0.2847226000158116,
+        "mapped_DN_gw": 0.02741220139678545,
+        "log10_OmegaGW": -333.14431408922513,
+        "error_vs_direct_reference_dex": 4.0875590912037296e-08
+      },
+      {
+        "z_tail": 8.0,
+        "h": 0.00125,
+        "sigma_exact": true,
+        "runtime_s": 0.44670110000879504,
+        "mapped_DN_gw": 0.02741221865095758,
+        "log10_OmegaGW": -333.14431385933625,
+        "error_vs_direct_reference_dex": 2.707644739530224e-07
+      },
+      {
+        "z_tail": 8.0,
+        "h": 0.000625,
+        "sigma_exact": true,
+        "runtime_s": 0.744508500007214,
+        "mapped_DN_gw": 0.027412221469330585,
+        "log10_OmegaGW": -333.1443138354194,
+        "error_vs_direct_reference_dex": 2.9468134243870736e-07
+      }
+    ]
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "grid_input_json": "a314b0e9f9a322e599728c67022ab943feeda58e0137e4ebdc527c16592be77a",
+    "tail_input_json": "0e2362c41b38e30de499bb89e88631a6d59cff3cbcbc60c839fee6ee23782076",
+    "diagnostic_script": "1c29823f3bd4d078994d6693506fa9603c498245c084a3e6888d4fda3dbc62c0"
+  }
+}

@@ -28,6 +28,7 @@ def _sha(path: Path) -> str:
 
 def _run_variant(params, freqs, frozen_dn, reference_log, *, h, sigma_exact):
     model = LCDM_SG(**params)
+    model.cosmo_param["DN_eff"] = float(frozen_dn)
     model.gen_expansion()
     original_gen = model.gen_expansion
     original_goal = FA.goal_oriented_freqs

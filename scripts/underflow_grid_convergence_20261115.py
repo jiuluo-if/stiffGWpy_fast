@@ -79,6 +79,8 @@ def _nested_midpoints(freqs_desc: np.ndarray) -> np.ndarray:
 
 def _fast_run(freqs: np.ndarray, *, frozen_dn: float | None = None) -> dict:
     model = LCDM_SG(**PARAMS)
+    if frozen_dn is not None:
+        model.cosmo_param["DN_eff"] = float(frozen_dn)
     model.gen_expansion()
     original_goal = FA.goal_oriented_freqs
     original_construct = FA.construct_fast_frequency_grid

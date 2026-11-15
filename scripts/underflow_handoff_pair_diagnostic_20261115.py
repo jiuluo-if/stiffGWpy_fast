@@ -33,6 +33,7 @@ def _sha(path: Path) -> str:
 def _fast_fixed(data: dict, freqs: np.ndarray, frozen_dn: float, z_tail: float) -> dict:
     params = dict(data["parameters"])
     model = LCDM_SG(**params)
+    model.cosmo_param["DN_eff"] = float(frozen_dn)
     model.gen_expansion()
     original_gen = model.gen_expansion
     original_goal, original_construct = FA.goal_oriented_freqs, FA.construct_fast_frequency_grid
@@ -83,7 +84,10 @@ def main() -> int:
     reference_tail = json.loads(REFERENCE_TAIL_INPUT.read_text(encoding="utf-8"))
     freqs = np.asarray(data["frequency_grids"]["235"]["log10_hz"], dtype=np.float64)
     common_dn = float(data["background"]["common_DN_eff"])
-    reference_z10_log = np.asarray(reference_tail["z_tail_10"]["log10_OmegaGW"], dtype=np.float64)
+    reference_z10_log = np.asarray(
+        reference_tail["grids"]["235"]["z_tail_10"]["log10_OmegaGW"],
+        dtype=np.float64,
+    )
     fast5 = _fast_fixed(data, freqs, common_dn, 5.0)
     fast8 = _fast_fixed(data, freqs, common_dn, 8.0)
     fast12 = _fast_fixed(data, freqs, common_dn, 12.0)

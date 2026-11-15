@@ -1770,7 +1770,9 @@ the diagnostic artifacts are retained.
 
 ## 2026-11-15 underflow mode-state attribution
 
-- The first standalone replay omitted the formal `phase_max=0.5` substeps; its state numbers were invalid and were superseded without changing production code.
-- Corrected the replay and generated a raw JSON comparing Fast and Cartesian Reference at both z5 and z8 for three step/primitive variants. `ruff`, `py_compile`, JSON/hash validation, and diff checks pass.
-- At z8, h=.000625 state norm-squared differs by only `−6.45e-8`, while the common ratio across all Fast terminal moments to Reference z8 is `0.9956615`. The same-node Fast gamma-corrected handoff coefficient-squared ratio is `1.000281`; post-handoff mapping / Reference tail remains to attribute.
-- A direct `rtol=1e-11` Cartesian solve through z12 took more than two minutes without returning and was stopped. Next compare the closed-form Fast and Reference tail scale mappings from the recorded z8 states; keep all findings diagnostic until independently verified.
+- Root cause of the earlier large fixed-background spectrum difference: three Fast experiment scripts seeded `DN_eff` after the initial expansion. Corrected the initialization order, regenerated the 235/469/937 JSON, and refreshed the dependent tail, step, handoff, PCHIP, and state diagnostics. Fast/Reference production sources remain unchanged.
+- With matched backgrounds, z5 max errors are `0.000480`, `0.000648`, and `0.002385 dex` at 235/469/937. Z8 reduces them to `0.000390`, `0.000390`, and `0.000468 dex`. The 937 z5 outlier is insensitive to h refinement (`0.002385→0.002377 dex` from h=.005 to .000625), while tail z8 reduces that mode to `3.54e-6 dex`.
+- Added direct 15-node local frequency refinement around the 937 outlier. At z8, max/P95 Fast-to-Reference z10 error is `1.44e-5/1.22e-5 dex`; the original 937-node Reference PCHIP misses these nodes by up to `0.00882 dex`.
+- Replayed the formal Fast settings and reconstructed the z8 `assemble_tail` `Opgw` result from the saved state; prediction/production ratio is `0.99999999999994`. This validates one analytic-tail path; phase-resolved blending remains unproven.
+- Completed direct Reference z10 on all 235/469/937 nodes. Reference z8→z10 max spectral shift is `2.069e-4 dex` on each grid (P95 about `1.42e-4`); Fast z8 vs Reference z10 max errors are `0.000353`, `0.000380`, and `0.000391 dex`.
+- Next: run alternating repeated z5/z8 cost measurements at the same fixed background/root/grid/thread, then test one independent non-underflow parameter point before considering any profile change.
