@@ -1459,7 +1459,6 @@ Select a physical-amplitude `cr>0` holdout or a distinct scalar-amplitude bounda
 - [x] Current Fast z8 vs Reference z10 has max/P95 spectrum error `3.1394e-4/2.2217e-5 dex`, map error `−3.294e-6`, and fixed-root residual 0; Reference z8→z10 changes `1.6498e-4 dex` max / `1.5849e-4 dex` P95.
 - [x] Save the staged, source-hashed script and full JSON with no Reference warnings or normalized-zero nodes.
 - [x] Commit `285ddab02c1c2d07f1cd6e035c99a9468e04c832` with required identity/message; remote SHA verified and GitHub Actions run `43743231707` passed all jobs.
-- [x] Commit `285ddab02c1c2d07f1cd6e035c99a9468e04c832` with required identity/message; remote SHA verified and GitHub Actions run `43743231707` passed all jobs.
 - [ ] Test `cr>0` or a distinct amplitude boundary; continue to keep the domain claim discrete and `cr=0` scoped until that branch is independently verified.
 
 ### Next Step
@@ -1473,8 +1472,22 @@ Select a Reference-backed physical-amplitude `cr>0` point with valid cutoff/back
 - [x] Re-run the nine `r=1e-316,cr=1` low/mid/high `T_re × kappa10` cutoff preflight cases on current source; all remain `Delta_N<0`, `N_inf=None`, and pre-primitive `invalid_cutoff`.
 - [x] Re-run the separate S2-overflow pressure control; it still fails at `primitive:S2`, keeping the failure stages distinct.
 - [x] Save source-hashed current control/matrix artifacts; no production code changed.
-- [ ] Map the valid-cutoff side of the `cr>0` amplitude boundary for a subnormal or near-subnormal stored `A_t`; do not run propagation on rejected points.
+- [x] Map the valid-cutoff side of the `cr>0` amplitude boundary with the exact log-domain consistency equation and direct derived-param checks on both sides; do not propagate rejected points.
+- [x] For the nine tested `(T_re,kappa10)` combinations, cutoff roots lie 241.5–262.7 decades above the float64 `A_t` normal/subnormal boundary; every tested subnormal `A_t` point has `Delta_N<0`, while `r_cut*(1+1e-6)` gives positive `Delta_N`.
 
 ### Next Step
 
-Sweep `r` near the `cr>0` cutoff sign change at one low, one middle, and one high `(T_re,kappa10)` setting, recording `A_t`, `log(rA_s)`, `Delta_N`, and `N_inf` before deciding whether any physical subnormal-amplitude sample exists.
+Test physical-amplitude `cr>0` just above one derived cutoff root, and compare its background/root/spectrum against the direct Reference control; preserve the distinction that the valid-cutoff boundary occurs far above the subnormal amplitude interval in the sampled matrix.
+
+## Autonomous continuation: Round 48 — `cr>0` cutoff/representability boundary
+
+- [x] Derive the `Delta_N=0` root in `log(r)` from the exact `cr>0` consistency equation, using the fixed-background independence of `N_re` and reheating densities from `r`.
+- [x] Confirm direct `derived_param` gives negative/positive `Delta_N` immediately below/above each computed root.
+- [x] Compare cutoff roots to `A_t` normal/subnormal and rounded-zero boundaries for the 3×3 low/mid/high `T_re × kappa10` matrix; observe no overlap at those discrete backgrounds.
+- [x] At `T_re=2000,kappa10=.01`, run `r=1.1*r_cut` through current `cr>0` Fast and direct same-root Reference z8/z10/z12 on the exact 77-node Fast grid. Fast-vs-Reference z12 max spectrum error is `3.776e-4 dex`; fixed-root map error `−6.086e-6`; z10→z12 map shift `−1.953e-5`.
+- [x] Detect that Reference's public log spectrum is floored at `−40` for all 77 nodes here; compare against `log10(Ogw-Oj)` from raw positive finite Reference values and record floor-node count instead of treating clipped values as data.
+- [ ] Commit/push the source-hashed boundary derivation and verify CI.
+
+### Next Step
+
+Select an independent low- or high-temperature `cr>0` cutoff-valid point to check whether the same-root and raw-spectrum comparison remains stable when the reheating background changes; preserve discrete-only scope.

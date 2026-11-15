@@ -83,6 +83,30 @@
 
 这仍未找到 `cr>0`、cutoff 有效且原初振幅落在次正规边界的可传播点；一致性分支适用域没有扩展。
 
+## `cr>0` cutoff 与 `A_t` 可表示边界的解析关系
+
+在固定 `T_re,kappa10,DN_eff=0` 的 `cr>0` 支路，`N_re`、`rho_rad,re` 与 `rho_stiff,re` 不依赖 `r`。一致性方程可写为
+
+`Delta_N = 4/3*(N_10-N_re) + 4/3*ln(M_Pl) + 1/3*(ln(45/2)+ln(r)+ln(A_s)-ln(rho_rad,re+rho_stiff,re))`。
+
+因此 `Delta_N` 对 `ln(r)` 的斜率是 `1/3`，cutoff 零点有闭式表达：
+
+`ln(r_cut) = -4*(N_10-N_re) - 4*ln(M_Pl) - ln(45/2) - ln(A_s) + ln(rho_rad,re+rho_stiff,re)`。
+
+我用该式给出候选边界，再在 `r_cut*(1±1e-6)` 直接重建模型验证 `Delta_N` 符号。对 `T_re={10,2000,10000}`、`kappa10={1e-3,.01,1}` 九个组合，边界 `log10(r_cut)` 分别落在 `−57.47..−36.25`；float64 `A_t` 正规/次正规边界是 `log10(r)=-298.975`。所以 cutoff 有效下界比 `A_t` 开始次正规高至少 `241.5` 个 `r` 数量级；在 `A_t` 刚进入次正规的样本中，`Delta_N` 仍为 `−185..−202`，`N_inf=None`。在这些离散背景上，不存在同时“cutoff 有效”和“张量振幅次正规/舍入为零”的交集，不能通过单位振幅传播绕开。
+
+完整九点解析根、两侧符号、正规边界和舍入零控制见[`cr>0` cutoff/振幅边界 JSON](results/cr_positive_cutoff_amplitude_boundary_20261116.json)，复跑[脚本](../../scripts/map_cr_positive_cutoff_amplitude_boundary_20261116.py)。这只证明指定九个 `T_re,kappa10` 点，不外推到所有宇宙学参数。
+
+### cutoff 有效侧的物理振幅验证
+
+选择中位背景 `T_re=2000,kappa10=.01`，取 `r=1.1*r_cut=3.962216254776857e-43`。在 `DN_eff=0` 起始背景上 `N_inf-N_re=0.03177006>0`；当前 Fast 的自洽根是 `1.067074488428421e-43`，固定该根时 `A_t=8.322829391755272e-52`，仍为正规数，`N_inf=37.80411134404018`、`N_re=37.7723412841054`。传播没有绕过 `cr>0` 背景依赖。
+
+当前 Fast 在新生成的 77 点频率网格上做直接自洽；之后在同一根和同一网格做固定根 Fast 与 Reference 对照。Reference `reference.py` 源哈希写入 JSON；Cartesian z8/z10/z12 均为直接求解，未插值生成频点、无警告、无非正/非有限原始谱节点。Fast 固定根积分为 `1.0670751194058553e-43`，相对 Reference z12 映射 `−6.086e-6`；Fast 自洽根相对 Reference z12 映射约 `−6.68e-6`。Reference z10→z12 积分变化 `−1.953e-5`，谱最大变化 `3.647e-4 dex`；Fast z8 对 Reference z12 原始正值谱的最大/P95 差为 `3.776e-4/2.567e-4 dex`，满足本轮 `2e-4` 根参考和 `1e-3 dex` 谱门槛。z8→z10 映射变化为 `−2.733e-4`，但更深的 z10→z12 已闭合到上述值。
+
+需要特别说明 Reference 对外 `log10OmegaGW` 在本点的 77/77 个节点都触及公开下限 `−40`，不能拿它与 Fast 直接比。本对照使用直接 Reference 结果中的 `Ogw-Oj` 原始正值取 `log10`；所有原始值经脚本检查为正且有限，并将被公开下限截断的节点数记录在 JSON。逐点频谱、原始对数谱、网格与所有源码哈希见[cutoff 有效侧 JSON](results/cr_positive_cutoff_valid_sample_20261116.json)，可复跑[直接对照脚本](../../scripts/verify_cr_positive_cutoff_valid_sample_20261116.py)。
+
+这是一个物理振幅、cutoff 有效的 `cr>0` 离散样本，验证的是该点 Fast/Reference 一致性；它不扩展 `cr>0` 次正规振幅的传播域，也不认证 `T_re`、`kappa10` 或其它参数的连续范围。Reference z12 单点运行约 1291 秒，暂无相同样本的性能 A/B 结论。
+
 - 生产修改限于 `cr=0` 对数振幅路径的终端积分映射和失败详情；`cr>0` 背景依赖、频率生成、Reference、默认尾部深度和普通振幅路径没有更改。
 - 目前的误差对照只有 `cr=0` 下四个离散点，不表示跨振幅、倾斜、再热温度、`kappa10` 或 `cr` 连续区域认证。
 - 线性数组中的逐点物理谱可能仍舍入为零，只有有限对数谱和终端积分缩放得到保护。低于 float64 根相对精度能力的根会拒绝，而不会恢复成 log-root 公共结果。
