@@ -74,5 +74,6 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 下溢振幅阶梯的外层根容差和独立固定点重映射：[研究记录](underflow_root_tolerance_screen_20261115.md)、[脚本](../../scripts/underflow_root_tolerance_screen_20261115.py)、[JSON](results/underflow_root_tolerance_screen_20261115.json)
 - Reference 下溢积分的原始 warning 与稳定线性 PCHIP 对照：[研究记录](underflow_reference_pchip_warning_diagnostic_20261115.md)、[脚本](../../scripts/underflow_reference_pchip_warning_diagnostic_20261115.py)、[JSON](results/underflow_reference_pchip_warning_diagnostic_20261115.json)
 - 最小次正规振幅下 469/937 网格及 z5/z8/z10 尾深对照：[研究记录](underflow_min_subnormal_tail_depth_20261115.md)、[Reference 网格脚本](../../scripts/underflow_min_subnormal_reference_grid_20261115.py)、[Fast z8 脚本](../../scripts/underflow_min_subnormal_tail_depth_20261115.py)、[Reference z10 脚本](../../scripts/underflow_min_subnormal_reference_z10_20261115.py)、[z10 JSON](results/underflow_min_subnormal_reference_z10_20261115.json)
+- 最小次正规 937 点最差频点的 WKB 交接归因：[脚本](../../scripts/underflow_min_subnormal_handoff_20261115.py)、[JSON](results/underflow_min_subnormal_handoff_20261115.json)
 
 三份原始 JSON 记录参数、频率节点、固定根映射、逐点对数谱、运行环境、Warning、运行时间和源码 SHA-256。只接受脚本记录的直接频率求解。当前没有候选数值改进达到验收门槛；未修改 Fast 或 Reference 生产路径，未声称性能提升或连续区域认证。

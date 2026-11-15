@@ -1368,4 +1368,5 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Reproduce the 937-point z5 failure (`0.002441 dex` max), then run Fast z8 at the identical grid/background and directly compare to Reference z10.
 - [x] Reference z8→z10 change is `0.0001649 dex` max / `0.0001421 dex` P95; Fast z8 vs Reference z10 is `0.0003722 dex` max / `0.0000233 dex` P95; the discrete sample passes the spectrum threshold.
 - [x] Record reference z10 cost (`1673 s`) and persistent PCHIP warnings; no production tail-depth change.
+- [x] Attribute the worst point: Fast z5 hands off at `epsilon≈2.496e-3`; Fast z8 never reaches its z=8 handoff before today and numerically propagates to the endpoint, matching Reference z8/z10 at that point within `4.34e-6 dex`.
 - [ ] Validate tail behavior at independent parameters and assess phase-resolved branch separately before any default change.

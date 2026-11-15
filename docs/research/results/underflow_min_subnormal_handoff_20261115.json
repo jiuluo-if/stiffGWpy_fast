@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "status": "complete_min_subnormal_worst_mode_handoff_attribution",
+  "scope": "Single 937-grid outlier mode at the minimum positive subnormal r; contrast Fast and Reference tail events under identical background and frequency.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 5e-324,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "frequency_index_937": 893,
+  "log10_frequency_hz": -16.291944809173845,
+  "frozen_DN_eff": 1.3543440396198841e-09,
+  "fast_handoff_states": {
+    "5.0": {
+      "h": 0.005,
+      "sigma_exact": false,
+      "kink_split": true,
+      "primitive_method": "fast_phi_s2_split",
+      "tail_z": 5.0,
+      "time_node_count": 9556,
+      "frequency_start_index": 6245,
+      "frequency_start_N": 31.225,
+      "frequency_start_z": -6.91144784135659,
+      "grid_f_hor_start": -13.290341149710537,
+      "last_node_before_tail_index": 9345,
+      "last_node_before_tail_N": 46.725,
+      "last_node_before_tail_z": 4.998283630925201,
+      "fast_state_scaled": [
+        -0.00787462488548677,
+        -0.005554684284718541
+      ],
+      "fast_state_physical": [
+        -0.024542471955429575,
+        -0.01731202251045933
+      ],
+      "fast_S2_at_handoff": 9.713524879281936,
+      "grid_sigma_at_handoff": 0.9147179923684267,
+      "loop_exit_z": 5.000139583993338
+    },
+    "8.0": {
+      "h": 0.005,
+      "sigma_exact": false,
+      "kink_split": true,
+      "primitive_method": "fast_phi_s2_split",
+      "tail_z": 8.0,
+      "time_node_count": 9556,
+      "frequency_start_index": 6245,
+      "frequency_start_N": 31.225,
+      "frequency_start_z": -6.91144784135659,
+      "grid_f_hor_start": -13.290341149710537,
+      "last_node_before_tail_index": 9555,
+      "last_node_before_tail_N": 47.7723412841054,
+      "last_node_before_tail_z": 4.990722868560383,
+      "fast_state_scaled": [
+        -0.007398787860843558,
+        0.006272482236619439
+      ],
+      "fast_state_physical": [
+        -0.008029913482652279,
+        0.006807532615995941
+      ],
+      "fast_S2_at_handoff": 1.177878735422013,
+      "grid_sigma_at_handoff": 0.3159340235833812,
+      "loop_exit_z": 4.990722868560383
+    }
+  },
+  "reference_states": {
+    "5.0": {
+      "used_tail": true,
+      "event_N": 46.729619463490785,
+      "eps_handoff": 0.002496004626991981,
+      "n_steps": 9041,
+      "matching_error_rel": 0.002496004626991981
+    },
+    "8.0": {
+      "used_tail": false,
+      "event_N": null,
+      "eps_handoff": null,
+      "n_steps": 13598,
+      "matching_error_rel": null
+    },
+    "10.0": {
+      "used_tail": false,
+      "event_N": null,
+      "eps_handoff": null,
+      "n_steps": 13598,
+      "matching_error_rel": null
+    }
+  },
+  "point_spectra_log10_OmegaGW": {
+    "Fast_z5": -340.45436911500684,
+    "Fast_z8": -340.4519325861452,
+    "Reference_z5": -340.45586763756353,
+    "Reference_z8": -340.4519282502761,
+    "Reference_z10": -340.4519282502761,
+    "Fast_z5_minus_Reference_z10_dex": -0.002440864730715475,
+    "Fast_z8_minus_Reference_z10_dex": -4.33586905046468e-06,
+    "Reference_z8_minus_z10_dex": 0.0
+  },
+  "interpretation": "At Fast z_tail=8 the mode never reaches z=8 before today (last z=4.9907), so it stays in numerical propagation; at z_tail=5 it transfers to the terminal WKB approximation near epsilon=2.5e-3. Reference z8/z10 also do not use a tail for this mode.",
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "single_mode_script": "7615490d85daed332e5a09dc431b83b51123d20f1753e9778ce4a10c230efcc1",
+    "grid_input": "c7387c96f58ff1e895788166269b8f67d8d4bea04b466512c86b965e3ade6471",
+    "tail_input": "209f4a9c9afaeef5e4736617ae8b2524722a5ad4a34aacfc684ea442423146f5",
+    "diagnostic_script": "77228c693d5949eee9d1c24defed30438b71840130df523d752c6395978d4431"
+  }
+}
