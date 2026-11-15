@@ -1498,8 +1498,20 @@ Select a high-temperature/high-`kappa10` cutoff-valid `cr>0` point to complete a
 - [x] Run current Fast self-consistency and direct same-root Reference z8/z10/z12 on the exact 76-node Fast grid; do not propagate any invalid-cutoff point.
 - [x] Compare raw `Ogw-Oj` log spectra because Reference's public log output floors all 76 nodes at `−40`; retain no-warning and positive-finite raw-signal checks.
 - [x] Fast z8 vs Reference z12 max/P95 spectrum error is `5.693e-4/4.881e-4 dex`; fixed-root map difference is `+2.571e-6`; Reference z10→z12 map change is `+3.389e-6`.
-- [ ] Commit/push the parameterized runner and low-temperature artifact, then verify CI.
+- [x] Commit `8b0d84891c46b430cfb8b514f9f7d0ec76c1aa64` with required identity/message, push/fetch the same remote SHA, and verify all jobs in CI `43751932536` succeeded.
 
 ### Next Step
 
-Choose the high-temperature/high-`kappa10` cutoff-valid matrix corner and test it with the same direct-root, raw-spectrum, and z12-tail protocol.
+With the high-temperature corner added, vary `T_re` while holding `kappa10=.01` to begin separating temperature sensitivity from the diagonal corner sequence.
+
+## Autonomous continuation: Round 50 — high-temperature/high-`kappa10` cutoff corner
+
+- [x] Run `T_re=10000,kappa10=1,r=1.1*r_cut` through current Fast and direct same-root Reference z8/z10/z12 on the exact 77-node Fast grid.
+- [x] Compare all modes using direct raw positive Reference `Ogw-Oj`; 59/77 public Reference log-spectrum nodes hit the `−40` floor, with no warnings or non-positive raw modes.
+- [x] Fast root vs Reference z12 map is `−6.074e-6`, fixed-root map difference is `−5.402e-6`, and Fast-vs-Reference z12 max spectrum error is `8.357e-5 dex`.
+- [x] Record z8→z10 map change `−2.528e-4` above the root screen; deeper z10→z12 map/spectrum changes are `−3.942e-5` and `8.712e-5 dex`.
+- [ ] Commit/push high-temperature artifact and research ledger; verify CI.
+
+### Next Step
+
+Hold `kappa10=.01` fixed and change `T_re` to a low or high value, so the next independent point isolates temperature variation relative to the middle control.
