@@ -251,12 +251,12 @@
     "root_DN_eff": 2.832295918247089e-104,
     "mapped_DN_gw": 2.832295918247089e-104,
     "outer_map_relative_residual": 0.0,
-    "runtime_s": 0.2663777000270784,
+    "runtime_s": 0.2716136000235565,
     "runtime_warnings": []
   },
   "fixed_background_runs": {
-    "z5_runtime_s_not_paired": 0.02956369999446906,
-    "z8_runtime_s_not_paired": 0.06254499999340624,
+    "z5_runtime_s_not_paired": 0.029561400006059557,
+    "z8_runtime_s_not_paired": 0.062251800001831725,
     "z5_warnings": [],
     "z8_warnings": []
   },
@@ -330,6 +330,19 @@
       "relative_fixed_root_residual": -2.220446049250313e-16
     }
   ],
+  "adaptive_per_mode_kernel": {
+    "defer_below_z_today": 6.0,
+    "defer_to_z": 8.0,
+    "selected_mode_count": 11,
+    "selected_mode_fraction": 0.049773755656108594,
+    "runtime_s_single_unpaired": 0.042521199997281656,
+    "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005780599370268646,
+    "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00015054279654691527,
+    "mapped_DN_gw": 2.832295918247088e-104,
+    "relative_map_error_vs_reference": 1.0196594221634214e-05,
+    "relative_fixed_root_residual": -2.220446049250313e-16,
+    "max_spectrum_difference_vs_composed_threshold6_dex": 0.00024015405000454848
+  },
   "interpretation": "This is an independent tilt holdout for an error-selection criterion, not an implementation or performance result.",
   "environment": {
     "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
@@ -339,10 +352,10 @@
     "threads": 1
   },
   "source_sha256": {
-    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "fast_sgwb.py": "507455053c50f7ba69ec6ec51a7e45021beec5d15b31ddfc0b1fb5564ae729aa",
     "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
     "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
-    "diagnostic_script": "ae775cb5d379936404e4ccd002e43fca40ba6481a0652a067a71a90bb4bae37d",
+    "diagnostic_script": "e482a4c0fa9c431224b0777c26e4adf78ab8b5c347e88c544a80ee8cecc6764c",
     "background_holdout_wrapper": "f3344e055c9eee48b4517e27d3c98bf722dbab7c70c2fd6962bf291aec5972e1"
   },
   "holdout_label": "n_t=17.45, T_re=10, kappa10=1e-3, r=5e-324"

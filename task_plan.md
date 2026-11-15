@@ -1376,11 +1376,24 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Screen the physically motivated `z_today<5` delayed-handoff mask against existing same-root z5/z8 and Reference z8/z10 rows at two amplitudes.
 - [x] Test independent `n_t=17.45`, minimum-subnormal amplitude, low `T_re=10`, low `kappa10=.001` on its directly generated 221-node grid; spectrum max error `5.78e-4 dex`, map error `8.18e-7` vs Reference z8.
 - [x] Record an exploratory high-T/high-kappa trial rejected because the root exceeded physical guard `DN_eff=5`; its accuracy data are excluded.
-- [ ] Keep mask diagnostic-only: no per-mode kernel or valid runtime benchmark, no `cr>0` underflow sample, and incomplete Reference tail convergence on the newer holdouts.
+- [x] Implement private opt-in per-mode kernel selection; preserve scalar/default behavior and avoid delaying phase-resolved-active rows.
+- [x] TDD per-mode threshold and phase-mask regressions pass; full suite `408 passed, 9 deselected`, Ruff, configured Mypy and package build pass after the kernel update.
+- [x] Warm one-thread 12-pair A/B: per-mode P50 `0.2283s`, z5 `0.2270s`, z8 `0.3079s`; per-mode max spectrum error `0.0004855 dex`, repeat spectra bitwise stable.
+- [ ] Keep candidate opt-in experimental: additional Reference z10 tail closure, more `cr>0` samples, independent frequency grids, phase-tail boundaries and multi-resource A/B remain open.
 
 ## Autonomous continuation: Round 41 — cross-branch handoff mask and threshold
 
 - [x] Sweep thresholds 5/6/7/8 for the `n_t=17.30` and `n_t=17.45` holdouts; retain per-threshold spectra, map errors, selected fractions, warning counts and source hashes.
 - [x] Test the physical-amplitude `cr>0` sample: threshold 5 fails the spectrum gate (`0.001429 dex`), while threshold 6 reaches `0.000374 dex` max / `0.000283 dex` P95 with `9.21%` z8 rows; map error is `−4.96e-6` vs direct Reference z10.
 - [x] Threshold 6 passes the five recorded discrete `cr=0/cr>0` samples at spectrum and map/root screening limits.
-- [ ] Still reject production adoption pending actual per-mode kernel implementation, same-resource A/B runtime/memory, independent grids, and Reference z10 tails for the three newer holdouts; phase-resolved branches need separate proof.
+- [x] Actual per-mode kernel and one-thread same-root/grid warm A/B are complete; scalar/default dispatch remains unchanged.
+- [ ] Reject production-default adoption until Reference z10 tails close for newer holdouts, additional `cr>0` points and grids pass, phase-resolved boundaries are validated, and multi-resource A/B is measured.
+
+## Autonomous continuation: Round 42 — per-mode WKB handoff prototype
+
+- [x] TDD: old `solve_kernel` rejects `z_tail_by_mode`; add an opt-in trailing threshold array and verify two modes can hand off at distinct thresholds.
+- [x] Preserve scalar/default invocation by omitting the optional keyword when unset; preserve phase-resolved-active modes at their original threshold.
+- [x] Fix a regression found by the full suite: the kernel call was accidentally nested under the phase-tail-state guard; restore unconditional scalar-path solve. Targeted failures cleared, full suite `408 passed, 9 deselected`.
+- [x] Full Ruff, configured Mypy and package build pass.
+- [x] Warm one-thread 12-pair same-root/grid A/B at 937 nodes: z5/per-mode/z8 P50 `0.2270/0.2283/0.3079s`, P95 `0.2471/0.2341/0.3563s`; per-mode max error `0.0004855 dex` vs Reference z10, repeat spectra bitwise stable.
+- [ ] Performance and accuracy still cover one full z10 A/B point; keep this path private and opt-in pending multi-grid, multi-resource, additional `cr>0`, and Reference tail checks.

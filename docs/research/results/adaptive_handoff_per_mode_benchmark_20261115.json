@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "status": "complete_paired_warm_per_mode_handoff_benchmark",
+  "scope": "Same minimum-subnormal sample, frozen root, exact 937-node grid and one-thread Fast profile; alternate 12 paired z5/z8/adaptive rounds after one per-variant warmup call.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 5e-324,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "frequency_count": 937,
+  "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+  "frozen_DN_eff": 1.3543440396198841e-09,
+  "adaptive_thresholds": {
+    "z_today_below": 6.0,
+    "defer_handoff_to": 8.0
+  },
+  "threads": 1,
+  "pair_count_per_variant": 12,
+  "order_cycle": [
+    [
+      "z5",
+      "z8",
+      "adaptive"
+    ],
+    [
+      "z8",
+      "adaptive",
+      "z5"
+    ],
+    [
+      "adaptive",
+      "z5",
+      "z8"
+    ]
+  ],
+  "first_call_after_process_start_s": {
+    "z5": 0.4829297999967821,
+    "z8": 0.3077093999891076,
+    "adaptive": 0.23805409998749383
+  },
+  "rss_after_first_call_mib": {
+    "z5": 160.28125,
+    "z8": 164.3046875,
+    "adaptive": 167.125
+  },
+  "rss_before_mib": 119.42578125,
+  "adaptive_selected_mode_counts": [
+    44
+  ],
+  "variants": {
+    "z5": {
+      "p50_runtime_s": 0.22702989999379497,
+      "p95_runtime_s": 0.2470931099844165,
+      "p50_rss_mib": 180.408203125,
+      "p95_rss_mib": 198.1970703125,
+      "max_repeat_spectrum_spread_dex": 0.0,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.002440864730715475,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 3.215985127127393e-05,
+      "mapped_DN_gw_p50": 1.3543409204417143e-09,
+      "mapped_DN_gw_relative_to_frozen_root": -2.303091444000316e-06,
+      "paired_p50_speedup_vs_z5": 1.0
+    },
+    "z8": {
+      "p50_runtime_s": 0.3079330500040669,
+      "p95_runtime_s": 0.3563249349957914,
+      "p50_rss_mib": 180.919921875,
+      "p95_rss_mib": 197.3646484375,
+      "max_repeat_spectrum_spread_dex": 0.0,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.00037215931706668925,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 2.3252928312444947e-05,
+      "mapped_DN_gw_p50": 1.3543413800992572e-09,
+      "mapped_DN_gw_relative_to_frozen_root": -1.9636964827540737e-06,
+      "paired_p50_speedup_vs_z5": 0.7372703254515764
+    },
+    "adaptive": {
+      "p50_runtime_s": 0.22834119999606628,
+      "p95_runtime_s": 0.23413884999754372,
+      "p50_rss_mib": 178.634765625,
+      "p95_rss_mib": 196.780078125,
+      "max_repeat_spectrum_spread_dex": 0.0,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.0004855090938349349,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 3.1701349359281034e-05,
+      "mapped_DN_gw_p50": 1.3543409204417143e-09,
+      "mapped_DN_gw_relative_to_frozen_root": -2.303091444000316e-06,
+      "paired_p50_speedup_vs_z5": 0.9942572781333641
+    }
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "psutil": "7.2.2"
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "507455053c50f7ba69ec6ec51a7e45021beec5d15b31ddfc0b1fb5564ae729aa",
+    "screen_helper.py": "c7333f279c1a40b25410d486e56073c2ef7687b334f00a0c151bb5a5aaea29a1",
+    "reference_z10_json": "397eef7973808bc984fadfb405d46c468fff0b413b7eeb4fd56c9e3dddce68a6",
+    "diagnostic_script": "fab5ca81b19455f5249f8fd6027d5d2d60c8751c6dc2ff27f64af3c2f9e6ed2c"
+  }
+}

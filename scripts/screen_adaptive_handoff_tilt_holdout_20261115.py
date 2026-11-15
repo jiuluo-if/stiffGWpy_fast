@@ -41,11 +41,20 @@ PARAMS = {
 }
 
 
-def run_fast(freqs: np.ndarray, z_tail: float, frozen_dn: float | None = None) -> dict[str, object]:
+def run_fast(
+    freqs: np.ndarray,
+    z_tail: float,
+    frozen_dn: float | None = None,
+    *,
+    adaptive_handoff: bool = False,
+) -> dict[str, object]:
     model = LCDM_SG(**PARAMS)
     if frozen_dn is not None:
         model.cosmo_param["DN_eff"] = frozen_dn
         model.gen_expansion()
+    if adaptive_handoff:
+        model._fast_adaptive_handoff_below = 6.0
+        model._fast_adaptive_handoff_to = 8.0
     original_gen = model.gen_expansion
     original_goal = FA.goal_oriented_freqs
     original_construct = FA.construct_fast_frequency_grid
@@ -82,6 +91,8 @@ def run_fast(freqs: np.ndarray, z_tail: float, frozen_dn: float | None = None) -
         "log_spectrum": np.asarray(model.log10OmegaGW, dtype=np.float64),
         "runtime_s": elapsed,
         "runtime_warnings": [str(item.message) for item in caught],
+        "adaptive_handoff_selected_count": getattr(model, "_fast_adaptive_handoff_selected", None),
+        "adaptive_handoff_selected_fraction": getattr(model, "_fast_adaptive_handoff_fraction", None),
     }
 
 
@@ -94,6 +105,7 @@ def main() -> int:
     root = float(root_solution["root"])
     fast5 = run_fast(freqs, 5.0, frozen_dn=root)
     fast8 = run_fast(freqs, 8.0, frozen_dn=root)
+    adaptive = run_fast(freqs, 5.0, frozen_dn=root, adaptive_handoff=True)
 
     unit_params = {**PARAMS, "r": 1.0, "A_s": 1.0, "n_t": 0.0, "DN_eff": 0.0}
     reference_model = LCDM_SG(**unit_params)
@@ -142,6 +154,27 @@ def main() -> int:
             "relative_fixed_root_residual": float(hybrid_map / root - 1.0),
         })
     adaptive_candidate = adaptive_candidates[0]
+    adaptive_kernel_error = adaptive["log_spectrum"] - log_reference
+    adaptive_kernel_integrand = adaptive["Ogw"] - adaptive["Oj"]
+    adaptive_kernel_map = gp.Neff0 * gp.ln10 * float(
+        np.sum(FS._pchip_integrals_vectorized(freqs, adaptive_kernel_integrand))
+    ) / (gp.Omega_nh2 / float(reference_model.derived_param["h"]) ** 2)
+    adaptive_kernel_result = {
+        "defer_below_z_today": 6.0,
+        "defer_to_z": 8.0,
+        "selected_mode_count": adaptive["adaptive_handoff_selected_count"],
+        "selected_mode_fraction": adaptive["adaptive_handoff_selected_fraction"],
+        "runtime_s_single_unpaired": adaptive["runtime_s"],
+        "max_abs_spectrum_error_vs_reference_z8_dex": float(np.max(np.abs(adaptive_kernel_error))),
+        "p95_abs_spectrum_error_vs_reference_z8_dex": float(np.quantile(np.abs(adaptive_kernel_error), 0.95)),
+        "mapped_DN_gw": float(adaptive_kernel_map),
+        "relative_map_error_vs_reference": float(adaptive_kernel_map / reference_map - 1.0),
+        "relative_fixed_root_residual": float(adaptive_kernel_map / root - 1.0),
+        "max_spectrum_difference_vs_composed_threshold6_dex": float(np.max(np.abs(
+            adaptive["log_spectrum"]
+            - np.where(z_today < 6.0, fast8["log_spectrum"], fast5["log_spectrum"])
+        ))),
+    }
     output = {
         "schema_version": 1,
         "status": "complete_adaptive_handoff_tilt_holdout_screen_not_production",
@@ -184,6 +217,7 @@ def main() -> int:
             "runtime_status": "not measured; z5/z8 rows came from separate full direct runs",
         },
         "adaptive_candidates": adaptive_candidates,
+        "adaptive_per_mode_kernel": adaptive_kernel_result,
         "interpretation": "This is an independent tilt holdout for an error-selection criterion, not an implementation or performance result.",
         "environment": {
             "python": sys.version,

@@ -1477,6 +1477,28 @@ def _phase_resolved_tail_weights(z_today, z_tail, enabled):
     return weights
 
 
+def _adaptive_wkb_tail_thresholds(
+    z_today, z_tail, defer_below, defer_to, phase_weight=None
+):
+    """Build optional per-mode thresholds: choose only rows safe to defer.\n\n+    English description: Delay WKB handoff for modes that are not deep today.
+    中文说明：仅对今天未处于深亚视界的频点延迟 WKB 交接。
+    """
+    if not math.isfinite(float(defer_below)) or not math.isfinite(float(defer_to)):
+        raise ValueError("adaptive handoff thresholds must be finite")
+    if float(defer_to) <= float(z_tail):
+        raise ValueError("deferred handoff threshold must exceed z_tail")
+    values = np.asarray(z_today, dtype=np.float64)
+    thresholds = np.full(values.shape, float(z_tail), dtype=np.float64)
+    delayed = values < float(defer_below)
+    if phase_weight is not None:
+        weights = np.asarray(phase_weight, dtype=np.float64)
+        if weights.shape != values.shape:
+            raise ValueError("phase_weight and z_today must have matching shapes")
+        delayed &= weights <= 0.0
+    thresholds[delayed] = float(defer_to)
+    return thresholds
+
+
 @njit(cache=True)
 def _phase_integral_suffix(Nv, Phi_grid):
     """Return normalized suffix integrals of exp(Phi_grid) over N intervals."""
@@ -1670,6 +1692,7 @@ def solve_kernel(
     h_final=0.0,
     phase_weight=None,
     tail_state=None,
+    z_tail_by_mode=None,
 ):
     """Integrate independent modes and write their coarse output rows.
 
@@ -1684,6 +1707,7 @@ def solve_kernel(
     """
     nv = len(Nv)
     for m in prange(len(j0s)):
+        mode_z_tail = z_tail if z_tail_by_mode is None else z_tail_by_mode[m]
         j0 = j0s[m]
         z0 = z0s[m]
         Pt = P_t[m]
@@ -1706,8 +1730,8 @@ def solve_kernel(
                 assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
         elif k == nv - 1:
             assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
-        if zz < z_tail:
-            while k < nv - 1 and zz < z_tail:
+        if zz < mode_z_tail:
+            while k < nv - 1 and zz < mode_z_tail:
                 if h_arr is not None:
                     h_step = h_arr[k]
                 elif k == nv - 2 and h_final > 0.0:
@@ -1741,11 +1765,11 @@ def solve_kernel(
                     next_assembly_k += col_step
                 elif k == nv - 1:
                     assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
-                if zz < z_tail:
+                if zz < mode_z_tail:
                     lxh = xh
                     lyh = yh
                     last_z = zz
-            if zz < z_tail:
+            if zz < mode_z_tail:
                 kend = nv - 1
             else:
                 kend = k - 1
@@ -2761,6 +2785,24 @@ def _SGWB_iter_fast_impl(
                     if tail_state is None or tail_state.shape[0] != Nf:
                         tail_state = np.zeros((Nf, 4), dtype=np.float64)
                         tail_state[:, 3] = -1.0
+            tail_z_by_mode = None
+            adaptive_defer_below = getattr(
+                m, "_fast_adaptive_handoff_below", None
+            )
+            if adaptive_defer_below is not None:
+                tail_z_by_mode = _adaptive_wkb_tail_thresholds(
+                    z_today_by_mode,
+                    z_tail,
+                    adaptive_defer_below,
+                    getattr(m, "_fast_adaptive_handoff_to", z_tail + 3.0),
+                    phase_weight=phase_weight,
+                )
+                m._fast_adaptive_handoff_selected = int(
+                    np.count_nonzero(tail_z_by_mode > z_tail)
+                )
+                m._fast_adaptive_handoff_fraction = float(
+                    np.mean(tail_z_by_mode > z_tail)
+                )
             _fresh_buffers = False
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
@@ -2842,7 +2884,10 @@ def _SGWB_iter_fast_impl(
                     Opgw.fill(0.0)
                 if tail_state is not None:
                     tail_state[:, 3] = -1.0
-                solve_kernel(*solve_args)
+                if tail_z_by_mode is None:
+                    solve_kernel(*solve_args)
+                else:
+                    solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode)
             if log_amplitude_mode:
                 if not (
                     np.isfinite(Ogw).all()

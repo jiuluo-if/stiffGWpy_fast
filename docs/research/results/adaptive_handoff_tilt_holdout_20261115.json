@@ -265,12 +265,12 @@
     "root_DN_eff": 4.559590367655573e-11,
     "mapped_DN_gw": 4.559590367655573e-11,
     "outer_map_relative_residual": 0.0,
-    "runtime_s": 0.2664447000133805,
+    "runtime_s": 0.2575405999959912,
     "runtime_warnings": []
   },
   "fixed_background_runs": {
-    "z5_runtime_s_not_paired": 0.03205500001786277,
-    "z8_runtime_s_not_paired": 0.061260599992237985,
+    "z5_runtime_s_not_paired": 0.032702500000596046,
+    "z8_runtime_s_not_paired": 0.06142690000706352,
     "z5_warnings": [],
     "z8_warnings": []
   },
@@ -349,6 +349,19 @@
       "relative_fixed_root_residual": 0.0
     }
   ],
+  "adaptive_per_mode_kernel": {
+    "defer_below_z_today": 6.0,
+    "defer_to_z": 8.0,
+    "selected_mode_count": 11,
+    "selected_mode_fraction": 0.04680851063829787,
+    "runtime_s_single_unpaired": 0.044316900020930916,
+    "max_abs_spectrum_error_vs_reference_z8_dex": 0.00047462260260999756,
+    "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014855114373801825,
+    "mapped_DN_gw": 4.559590367655573e-11,
+    "relative_map_error_vs_reference": 8.184119388854327e-07,
+    "relative_fixed_root_residual": 0.0,
+    "max_spectrum_difference_vs_composed_threshold6_dex": 0.00047429376513719035
+  },
   "interpretation": "This is an independent tilt holdout for an error-selection criterion, not an implementation or performance result.",
   "environment": {
     "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
@@ -358,9 +371,9 @@
     "threads": 1
   },
   "source_sha256": {
-    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "fast_sgwb.py": "507455053c50f7ba69ec6ec51a7e45021beec5d15b31ddfc0b1fb5564ae729aa",
     "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
     "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
-    "diagnostic_script": "ae775cb5d379936404e4ccd002e43fca40ba6481a0652a067a71a90bb4bae37d"
+    "diagnostic_script": "e482a4c0fa9c431224b0777c26e4adf78ab8b5c347e88c544a80ee8cecc6764c"
   }
 }

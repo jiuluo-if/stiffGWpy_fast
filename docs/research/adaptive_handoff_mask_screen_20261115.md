@@ -22,8 +22,20 @@
 
 另尝试 `n_t=17.45,T_re=1e4,kappa10=1,r=5e-324`，关闭物理 guard 的探索性运行给出 `DN_eff≈1.383e9`，超过物理 guard 上限 5。该组合被记为物理 preflight 拒绝，所有谱差结果作废，不计作候选通过。未通过绕过背景 guard 扩展适用域。
 
-## 取舍
+## 每模内核原型与 A/B
 
-该结果支持继续做**每模 WKB 交接准则**实验，但不支持直接改 Fast：本轮的混合谱是把两个全量 z5/z8 运行输出拼接而成，**没有实现每模内核，也没有测出真实加速或内存成本**。不能用“只选中 5–9% 模式”直接推断相同比例的 runtime 节省，因为模式成本和尾部数值传播长度不相等。尚缺独立频率网格留出、三个后续点的 Reference z10 尾收敛，以及相位分辨尾部状态兼容性。生产 z_tail 未改变。
+已增加私有 opt-in 路径：传播核可接收 `z_tail_by_mode`，Fast 默认仍传原标量 `z_tail`；仅设置模型私有属性 `_fast_adaptive_handoff_below=6`、`_fast_adaptive_handoff_to=8` 时启用。具有相位分辨权重的模式不会延迟，避免 phase-tail state 使用不一致的 handoff 定义。TDD 先在旧核上以“不接受 `z_tail_by_mode`”失败，再加入 per-mode 参数；两模测试确认不同交接阈值分别生效，另有测试确认 phase-resolved 活跃行仍使用原阈值。
 
-复跑文件：[mask 屏查脚本](../../scripts/underflow_adaptive_handoff_mask_screen_20261115.py)、[倾斜 holdout 脚本](../../scripts/screen_adaptive_handoff_tilt_holdout_20261115.py)、[背景参数 holdout 包装脚本](../../scripts/screen_adaptive_handoff_background_holdout_20261115.py)、[`cr>0` 分支筛查](../../scripts/screen_adaptive_handoff_consistency_branch_20261115.py)。逐点结果、源码 SHA-256 和物理拒绝记录见[mask JSON](results/underflow_adaptive_handoff_mask_screen_20261115.json)、[倾斜 JSON](results/adaptive_handoff_tilt_holdout_20261115.json)、[背景 holdout JSON](results/adaptive_handoff_background_holdout_20261115.json)、[`cr>0` JSON](results/adaptive_handoff_consistency_branch_20261115.json)、[preflight 拒绝 JSON](results/adaptive_handoff_physical_preflight_rejection_20261115.json)。
+937 点最小次正规样本做了同根、同网格、单线程、每变体预热后交替 12 组 A/B：
+
+| 路径 | P50 / P95 | RSS P50 / P95 | 最大谱差对 Reference z10 | 映射根残差 |
+|---|---:|---:|---:|---:|
+| 全局 z5 | `0.2270 / 0.2471 s` | `180.41 / 198.20 MiB` | `0.002441 dex` | `−2.303e-6` |
+| 全局 z8 | `0.3079 / 0.3563 s` | `180.92 / 197.36 MiB` | `0.0003722 dex` | `−1.964e-6` |
+| per-mode z5 / 延迟交接 | `0.2283 / 0.2341 s` | `178.63 / 196.78 MiB` | `0.0004855 dex` | `−2.303e-6` |
+
+per-mode 相比 z5 的 P50 运行比为 `1.006`（基本持平），P95 约低 `5.2%`；相比全局 z8，P50 快 `1.35×`、P95 快 `1.52×`。三种变体 12 次重复谱的最大离散度为 0。第一次调用另列：z5 `0.483 s`、z8 `0.308 s`、per-mode `0.238 s`，包含各路径首次调用/JIT 成本，不计入预热后统计。该节是一次参数点、单线程的实测，不外推为普遍提速。
+
+实际 per-mode 内核在其他四个离散点也已运行；最大谱差分别为 `0.000517 dex`（最小下溢 937 点）、`0.000459 dex`（`n_t=17.30`）、`0.000578 dex`（`n_t=17.45,T_re=10,kappa10=.001`）、`0.000374 dex`（正常物理振幅 `cr=1`）。这些点仅最后一项有 Reference z10；其余与 Reference z8 比较。它仍是**私有 opt-in 实验路径**，没有改变正式默认或公开接口。接受为生产方案前还需：不同频率网格 Reference z10 留出、三个较新背景点的 z8→z10 收敛、更多 `cr>0` 参数点、phase-resolved 活跃/非活跃边界测试及多资源档位 A/B。此之前不得声明连续适用域或修改默认 `z_tail`。
+
+复跑文件：[mask 屏查脚本](../../scripts/underflow_adaptive_handoff_mask_screen_20261115.py)、[倾斜 holdout 脚本](../../scripts/screen_adaptive_handoff_tilt_holdout_20261115.py)、[背景参数 holdout 包装脚本](../../scripts/screen_adaptive_handoff_background_holdout_20261115.py)、[`cr>0` 分支筛查](../../scripts/screen_adaptive_handoff_consistency_branch_20261115.py)、[per-mode 12 组 A/B](../../scripts/benchmark_adaptive_handoff_per_mode_20261115.py)。逐点结果和源码 SHA-256 见[mask JSON](results/underflow_adaptive_handoff_mask_screen_20261115.json)、[A/B JSON](results/adaptive_handoff_per_mode_benchmark_20261115.json)、[倾斜 JSON](results/adaptive_handoff_tilt_holdout_20261115.json)、[背景 holdout JSON](results/adaptive_handoff_background_holdout_20261115.json)、[`cr>0` JSON](results/adaptive_handoff_consistency_branch_20261115.json)、[preflight 拒绝 JSON](results/adaptive_handoff_physical_preflight_rejection_20261115.json)。

@@ -24,10 +24,10 @@
     47.85374369428393
   ],
   "fast_direct_runs": {
-    "z5_runtime_s": 0.3597443999897223,
+    "z5_runtime_s": 0.38192549999803305,
     "z5_runtime_warnings": [],
     "z5_mapped_DN_gw": 1.3543409204417143e-09,
-    "z8_runtime_s": 0.20887840000796132,
+    "z8_runtime_s": 0.2151165000104811,
     "z8_runtime_warnings": [],
     "z8_mapped_DN_gw": 1.3543413800992572e-09
   },
@@ -106,6 +106,21 @@
       "mapping_warnings": []
     }
   ],
+  "adaptive_per_mode_kernel": {
+    "defer_below_z_today": 6.0,
+    "defer_to_z": 8.0,
+    "selected_mode_count": 44,
+    "selected_mode_fraction": 0.04695837780149413,
+    "runtime_s_single_unpaired": 0.1432296999846585,
+    "runtime_warnings": [],
+    "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+    "p95_abs_spectrum_error_vs_reference_z8_dex": 0.0001484403557114433,
+    "max_error_log10_hz": -12.891944809173847,
+    "mapped_DN_gw": 1.354340920441714e-09,
+    "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+    "relative_fixed_root_residual": -2.303091444111338e-06,
+    "max_spectrum_difference_vs_composed_mask_dex": 0.00048465586860402254
+  },
   "amplitude_holdout": {
     "label": "r=1e-316 baseline amplitude at its own frozen 235-root",
     "root_DN_eff": 0.027412228089632874,
@@ -201,12 +216,12 @@
     "threads": 1
   },
   "source_sha256": {
-    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "fast_sgwb.py": "507455053c50f7ba69ec6ec51a7e45021beec5d15b31ddfc0b1fb5564ae729aa",
     "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
     "input_json": "c7387c96f58ff1e895788166269b8f67d8d4bea04b466512c86b965e3ade6471",
     "base_grid_input": "a314b0e9f9a322e599728c67022ab943feeda58e0137e4ebdc527c16592be77a",
     "base_tail_input": "0e2362c41b38e30de499bb89e88631a6d59cff3cbcbc60c839fee6ee23782076",
     "base_reference_input": "c1db32721a663e9c16bda46270fc316867caa27c2c16e51f10a20c6fe7fffb47",
-    "diagnostic_script": "cc5b7e612894eb22914a103f8d686ea5911b033540f0713f2baef8806c180a16"
+    "diagnostic_script": "c7333f279c1a40b25410d486e56073c2ef7687b334f00a0c151bb5a5aaea29a1"
   }
 }

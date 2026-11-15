@@ -31,9 +31,19 @@ BASE_REF_INPUT = ROOT / "docs" / "research" / "results" / "underflow_reference_t
 THRESHOLDS = (5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
 
 
-def run_fast(params: dict[str, float], freqs: np.ndarray, root: float, z_tail: float) -> tuple[dict, float]:
+def run_fast(
+    params: dict[str, float],
+    freqs: np.ndarray,
+    root: float,
+    z_tail: float,
+    *,
+    adaptive_handoff: bool = False,
+) -> tuple[dict, float]:
     model = LCDM_SG(**params)
     model.cosmo_param["DN_eff"] = root
+    if adaptive_handoff:
+        model._fast_adaptive_handoff_below = 6.0
+        model._fast_adaptive_handoff_to = 8.0
     model.gen_expansion()
     original_gen = model.gen_expansion
     original_goal = FA.goal_oriented_freqs
@@ -68,6 +78,8 @@ def run_fast(params: dict[str, float], freqs: np.ndarray, root: float, z_tail: f
         "mapped_DN_gw": float(model.DN_gw[-1]),
         "runtime_s": elapsed,
         "runtime_warnings": [str(item.message) for item in caught],
+        "adaptive_handoff_selected_count": getattr(model, "_fast_adaptive_handoff_selected", None),
+        "adaptive_handoff_selected_fraction": getattr(model, "_fast_adaptive_handoff_fraction", None),
         "frequency_count": int(model.f.size),
     }, float(model.derived_param["h"])
 
@@ -80,6 +92,7 @@ def main() -> int:
     root = float(row["frozen_DN_eff"])
     fast5, h = run_fast(params, freqs, root, 5.0)
     fast8, _ = run_fast(params, freqs, root, 8.0)
+    adaptive, _ = run_fast(params, freqs, root, 5.0, adaptive_handoff=True)
 
     bg_model = LCDM_SG(**params)
     bg_model.cosmo_param["DN_eff"] = root
@@ -110,6 +123,31 @@ def main() -> int:
             "relative_map_residual_vs_frozen_root": float(map_value / root - 1.0),
             "mapping_warnings": [str(item.message) for item in caught_map],
         })
+    adaptive_error = adaptive["log10_OmegaGW"] - ref_log
+    adaptive_integrand = adaptive["Ogw_today"] - adaptive["Oj_today"]
+    adaptive_map = map_scale * float(
+        np.sum(FS._pchip_integrals_vectorized(freqs, adaptive_integrand))
+    )
+    adaptive_kernel_result = {
+        "defer_below_z_today": 6.0,
+        "defer_to_z": 8.0,
+        "selected_mode_count": adaptive["adaptive_handoff_selected_count"],
+        "selected_mode_fraction": adaptive["adaptive_handoff_selected_fraction"],
+        "runtime_s_single_unpaired": adaptive["runtime_s"],
+        "runtime_warnings": adaptive["runtime_warnings"],
+        "max_abs_spectrum_error_vs_reference_z8_dex": float(np.max(np.abs(adaptive_error))),
+        "p95_abs_spectrum_error_vs_reference_z8_dex": float(np.quantile(np.abs(adaptive_error), 0.95)),
+        "max_error_log10_hz": float(freqs[np.argmax(np.abs(adaptive_error))]),
+        "mapped_DN_gw": float(adaptive_map),
+        "relative_map_error_vs_reference_z8": float(
+            adaptive_map / float(row["reference"]["mapped_DN_gw"]) - 1.0
+        ),
+        "relative_fixed_root_residual": float(adaptive_map / root - 1.0),
+        "max_spectrum_difference_vs_composed_mask_dex": float(np.max(np.abs(
+            adaptive["log10_OmegaGW"]
+            - np.where(z_today < 6.0, fast8["log10_OmegaGW"], fast5["log10_OmegaGW"])
+        ))),
+    }
     base_grid_data = json.loads(BASE_GRID_INPUT.read_text(encoding="utf-8"))
     base_tail_data = json.loads(BASE_TAIL_INPUT.read_text(encoding="utf-8"))
     base_ref_data = json.loads(BASE_REF_INPUT.read_text(encoding="utf-8"))
@@ -172,6 +210,7 @@ def main() -> int:
         },
         "reference_z8_map_DN_gw": row["reference"]["mapped_DN_gw"],
         "threshold_candidates": candidates,
+        "adaptive_per_mode_kernel": adaptive_kernel_result,
         "amplitude_holdout": {
             "label": "r=1e-316 baseline amplitude at its own frozen 235-root",
             "root_DN_eff": base_root,

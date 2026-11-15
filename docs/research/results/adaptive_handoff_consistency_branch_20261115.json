@@ -71,6 +71,18 @@
       "relative_fixed_root_residual": 4.428346578322362e-11
     }
   ],
+  "adaptive_per_mode_kernel": {
+    "defer_below_z_today": 6.0,
+    "defer_to_z": 8.0,
+    "selected_mode_count": 7,
+    "selected_mode_fraction": 0.09210526315789473,
+    "runtime_s_single_unpaired": 2.7512240999785718,
+    "max_abs_spectrum_error_vs_reference_z10_dex": 0.0003741129696308576,
+    "p95_abs_spectrum_error_vs_reference_z10_dex": 0.00028311668700720105,
+    "mapped_DN_gw": 0.0022636474125225935,
+    "relative_map_error_vs_reference_z10": -4.9567304976072535e-06,
+    "relative_fixed_root_residual": 4.5542902782358397e-11
+  },
   "performance": "not measured; hybrid spectra are composed from separate full direct z5 and z8 runs",
   "environment": {
     "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
@@ -80,9 +92,9 @@
     "threads": 1
   },
   "source_sha256": {
-    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "fast_sgwb.py": "507455053c50f7ba69ec6ec51a7e45021beec5d15b31ddfc0b1fb5564ae729aa",
     "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
     "input_json": "e6aef3b8bcec2f32566b9be4e1d7b0e2f1d9278692e4153649ca727b0df3974a",
-    "diagnostic_script": "663911ede908840c016cc8bb45ce2e2c9c244cfddc1c90b538188e43e72280c6"
+    "diagnostic_script": "a0fcea18f27b773a95810b2cd4b39da7448d2cf6b1346553eae7f7228b9a9b3f"
   }
 }

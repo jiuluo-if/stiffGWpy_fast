@@ -7,6 +7,7 @@ import json
 import math
 import platform
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -16,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from stiffgwpy_fast import fast_sgwb as FS  # noqa: E402
+from stiffgwpy_fast import freq_adaptive as FA  # noqa: E402
 from stiffgwpy_fast import global_param as gp  # noqa: E402
 from stiffgwpy_fast.reference import _Background, f_hor_abs  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
@@ -44,6 +46,41 @@ def main() -> int:
     grid_hash = hashlib.sha256(np.asarray(freqs, dtype="<f8").tobytes()).hexdigest()
     if freqs.size != data["frequency_count"] or grid_hash != data["frequency_grid_sha256_f64le"]:
         raise AssertionError("reconstructed consistency frequency grid differs from saved comparison")
+    adaptive_model = LCDM_SG(**params)
+    adaptive_model.cosmo_param["DN_eff"] = root
+    adaptive_model._fast_adaptive_handoff_below = 6.0
+    adaptive_model._fast_adaptive_handoff_to = 8.0
+    adaptive_model.gen_expansion()
+    original_gen = adaptive_model.gen_expansion
+    original_goal = FA.goal_oriented_freqs
+    original_construct = FA.construct_fast_frequency_grid
+
+    def locked_gen(*args, **kwargs):
+        adaptive_model.cosmo_param["DN_eff"] = root
+        return original_gen(*args, **kwargs)
+
+    FA.goal_oriented_freqs = lambda *args, **kwargs: freqs.copy()
+    FA.construct_fast_frequency_grid = lambda *args, **kwargs: freqs.copy()
+    adaptive_model.gen_expansion = locked_gen
+    started = time.perf_counter()
+    try:
+        adaptive_result = adaptive_model.SGWB_iter(
+            engine="fast", fallback=False, tol=0.99, z_tail=5.0,
+            threads=1, accuracy_mode="fast", freq_grid="goal",
+            physical_guard=True,
+        )
+    finally:
+        FA.goal_oriented_freqs = original_goal
+        FA.construct_fast_frequency_grid = original_construct
+    adaptive_runtime = time.perf_counter() - started
+    if adaptive_result is None:
+        raise RuntimeError(f"Adaptive consistency-branch Fast failed: {adaptive_model.fast_failure_reason}")
+    adaptive_spectrum = np.asarray(adaptive_model.log10OmegaGW, dtype=np.float64)
+    reference_spectrum = np.asarray(data["reference_fixed_root_physical_amplitude"]["10"]["log10_OmegaGW"], dtype=np.float64)
+    adaptive_error = np.abs(adaptive_spectrum - reference_spectrum)
+    adaptive_map = gp.Neff0 * gp.ln10 * float(np.sum(FS._pchip_integrals_vectorized(
+        freqs, adaptive_model.Ogw_today - adaptive_model.Oj_today
+    ))) / (gp.Omega_nh2 / float(model.derived_param["h"]) ** 2)
     model = LCDM_SG(**params)
     model.gen_expansion()
     bg = _Background(model, root)
@@ -87,6 +124,20 @@ def main() -> int:
         "reference_z10_map_DN_gw": reference_map,
         "reference_z10_map_residual": float(reference_map / root - 1.0),
         "threshold_candidates": candidates,
+        "adaptive_per_mode_kernel": {
+            "defer_below_z_today": 6.0,
+            "defer_to_z": 8.0,
+            "selected_mode_count": getattr(adaptive_model, "_fast_adaptive_handoff_selected", None),
+            "selected_mode_fraction": getattr(adaptive_model, "_fast_adaptive_handoff_fraction", None),
+            "runtime_s_single_unpaired": adaptive_runtime,
+            "max_abs_spectrum_error_vs_reference_z10_dex": float(np.max(adaptive_error)),
+            "p95_abs_spectrum_error_vs_reference_z10_dex": float(np.quantile(adaptive_error, 0.95)),
+            "mapped_DN_gw": float(adaptive_map),
+            "relative_map_error_vs_reference_z10": float(
+                adaptive_map / float(data["reference_fixed_root_physical_amplitude"]["10"]["mapped_DN_gw"]) - 1.0
+            ),
+            "relative_fixed_root_residual": float(adaptive_map / root - 1.0),
+        },
         "performance": "not measured; hybrid spectra are composed from separate full direct z5 and z8 runs",
         "environment": {
             "python": sys.version,
