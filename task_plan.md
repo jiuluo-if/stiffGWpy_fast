@@ -1274,3 +1274,25 @@ The previously reported `~1.94e-3 dex` mismatch was contaminated by a fixed-back
 ### Next Step
 
 Run alternating repeated z5/z8 timing at fixed 937 grid/root/thread, then expand tail accuracy to an independent parameter point before considering profile changes.
+
+## Autonomous continuation: Round 33 — tail-depth runtime trade-off
+
+### Hypothesis
+
+Fast z8 passes the current underflow sample's discrete accuracy gate, but it may materially increase runtime. Measure z5/z8 at the same frozen background, native 937 frequency grid, Fast profile, and single-thread budget before deciding whether z8 is useful beyond validation.
+
+### Gates
+
+- Capture first-call time separately from JIT-warmed timing; alternate z5/z8 run order across repeated paired calls.
+- Require identical frequencies and frozen `DN_eff`; report map residuals, spectrum delta, repeat determinism, P50/P95, and peak RSS.
+- Treat this single underflow point as a cost study only; no profile change without independent parameter regimes and full acceptance evidence.
+
+### Progress
+
+- [x] Add and run reproducible same-root z5/z8 timing artifact with cold-call, warmup, alternating paired P50/P95, map residual, repeat spread, and RSS telemetry.
+- [x] Record z8/z5 steady P50 ratio `1.566`; z8 is slower and remains validation-only.
+- [ ] Decide whether z8 merits an independent non-underflow accuracy sample; do not change production profile in this round.
+
+### Next Step
+
+Run a second fixed-root z5/z8 spectrum comparison on a representative non-underflow parameter point, then assess tail bias across both regimes.

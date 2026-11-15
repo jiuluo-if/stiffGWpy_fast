@@ -38,6 +38,7 @@ Fast 的对数谱在三个网格上均为全有限值；物理线性 `(Ogw−Oj)
 - 对 z5/z8 最差交接节点 `log10(f/Hz)=−12.642` 直接读取 Reference z8/z10 与 Fast 终端矩：Fast z8 对 Reference z10 的谱误差为 `0.000353 dex`；该节点 `z_today=13.395`，相位尾权重为 0。根据 Fast 同一交接状态重建 `assemble_tail` 的 `Opgw_today`，预测值与实际线性缩放结果比值为 `0.99999999999994`；Fast/Reference z8 `Opgw` 比为 `1.000729`。这验证了该节点的解析尾缩放与生产实现一致，但不构成所有状态或相位修正分支的证明。
 - 另一项局部频率加密直接在 937 网格异常点两侧求解 15 个 1873 等效中点；Fast z8 对 Reference z10 最大 / P95 差 `1.44e-5/1.22e-5 dex`。由原 937 点 Reference 曲线 PCHIP 预测这些直接值的最大 / P95 误差为 `0.00882/0.00674 dex`。因此局部曲线不能由粗节点插值可靠代表；这 15 点不替代完整 1873 网格自洽积分。
 - Reference 自身 `z_tail=8→10` 在三个网格上均重现每次积分 4 条 `overflow encountered in divide` 警告；参考尾差数据完整记录在原始 JSON。尾部变化只对该参数点和这些离散节点有据，不构成其他参数下的误差界。
+- 同根、同 937 点网格、单线程交替 12 对 z5/z8 计时：z5 P50/P95 `0.1299/0.1351 s`，z8 `0.2034/0.2128 s`，z8/z5 P50 时间比 `1.566`。两组重复谱 spread 均为 0，最大 RSS 约 `173.7 MB`；固定根映射绝对残差分别 `6.31e-8` 与 `5.38e-8`。首个 Fast 调用 z5 冷启动 `0.446 s`，随后 z8 首次档位调用 `0.208 s`（Numba 已由前一调用预热，不能视为独立冷启动）。因此 z8 带来本样本尾部准确性改善，但耗时约增 `56.6%`，不是性能优化，也无充分依据改生产预设。
 - 最差节点直接状态对照现已复刻 Fast 正式配置 `phase_max=0.25`、`kink_split=True`、正确的固定背景与分段原函数。该模式在 `N≈22.735` 起步，`cr=0, DN_re=10` 的 kink 在 `N=10`，传播不跨 kink；z8 匹配节点上 `h=.005` Fast/Reference 二次范数差为 `−4.99e-6`。以 Fast 同状态按 `assemble_tail` 公式重建的 `Opgw_today` 与生产 Fast 线性结果比值为 `0.99999999999994`；该点相位尾权重为 0。此结果验证一个实际模式的解析尾尺度组装，不证明其他相位分辨权重分支。
 
 PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割线时导数置零。正数整体缩放具有齐次性，但不能让已在构造归一化数组时舍入为零的节点恢复。可研究的下一步是直接从 log 样本稳定计算割线与调和平均，并验证得到的同一线性 PCHIP 曲线及积分；log-PCHIP 是不同插值器，必须用这些直接细网格数据另行衡量偏差。算法公式见 SciPy [`PchipInterpolator`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.PchipInterpolator.html) 和 Fritsch–Butland [原始论文](https://doi.org/10.1137/0905021)。
@@ -58,6 +59,7 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 最差频点交接遥测：[脚本](../../scripts/underflow_handoff_pair_diagnostic_20261115.py)、[JSON](results/underflow_handoff_pair_diagnostic_20261115.json)
 - 同起点尾前状态对照：[脚本](../../scripts/underflow_single_mode_state_attribution_20261115.py)、[JSON](results/underflow_single_mode_state_attribution_20261115.json)
 - 937 点异常频段局部直接加密：[脚本](../../scripts/underflow_local_frequency_refinement_20261115.py)、[JSON](results/underflow_local_frequency_refinement_20261115.json)
+- 固定根 z5/z8 交替成本对照：[脚本](../../scripts/benchmark_underflow_tail_depth_20261115.py)、[JSON](results/underflow_tail_depth_benchmark_20261115.json)
 - Reference 尾部复核：[脚本](../../scripts/underflow_reference_tail_z8_z10_20261115.py)、[JSON](results/underflow_reference_tail_z8_z10_20261115.json)
 - log-PCHIP 候选偏差诊断：[脚本](../../scripts/underflow_pchip_log_candidate_20261115.py)、[JSON](results/underflow_pchip_log_candidate_20261115.json)
 - 同线性 PCHIP 稳定算术：[实现](../../scripts/stable_log_pchip.py)、[测试](../../tests/test_stable_log_pchip.py)、[诊断脚本](../../scripts/underflow_stable_linear_pchip_20261115.py)、[JSON](results/underflow_stable_linear_pchip_20261115.json)

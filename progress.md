@@ -1776,3 +1776,8 @@ the diagnostic artifacts are retained.
 - Replayed the formal Fast settings and reconstructed the z8 `assemble_tail` `Opgw` result from the saved state; prediction/production ratio is `0.99999999999994`. This validates one analytic-tail path; phase-resolved blending remains unproven.
 - Completed direct Reference z10 on all 235/469/937 nodes. Reference z8→z10 max spectral shift is `2.069e-4 dex` on each grid (P95 about `1.42e-4`); Fast z8 vs Reference z10 max errors are `0.000353`, `0.000380`, and `0.000391 dex`.
 - Next: run alternating repeated z5/z8 cost measurements at the same fixed background/root/grid/thread, then test one independent non-underflow parameter point before considering any profile change.
+## 2026-11-15 tail-depth cost study
+
+- Ran 12 alternating z5/z8 pairs at the same frozen root `0.027412228089632874`, native 937-node frequency grid, Fast profile, and one thread. Warm P50/P95 were z5 `0.1299/0.1351 s` and z8 `0.2034/0.2128 s`, a 1.566 P50 ratio. Both replay spectra were bitwise repeatable (`max spread=0`); peak RSS was about 173.7 MB.
+- First z5 call took `0.446 s`; the first z8 call was `0.208 s` after Numba had already been warmed by z5, so this is not an independent z8 cold-start measurement. Fixed-map residuals were `6.31e-8` (z5) and `5.38e-8` (z8).
+- z8 reduces the observed tail-sensitive maximum spectrum error below the Reference z10 threshold on these three grids but costs about 56.6% more steady runtime. Keep it validation-only pending a second parameter regime and profile-level performance evidence.
