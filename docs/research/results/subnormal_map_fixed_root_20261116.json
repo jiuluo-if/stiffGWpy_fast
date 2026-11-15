@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "status": "complete_direct_fast_fixed_root_remap",
+  "scope": "For the cr=0,n_t=0,r=1e-315 root from freq_res=1/2, rerun Fast with DN_eff initialized to that root on the identical grid and compare the mapped root independently.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "n_t": 0.0,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01,
+    "r": 1e-315
+  },
+  "fast_options": {
+    "tol": 1e-07,
+    "z_tail": 5.0,
+    "threads": 1
+  },
+  "cases": [
+    {
+      "freq_res": 1.0,
+      "frequency_count": 235,
+      "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+      "expected_frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+      "input_root_DN_eff": 2.3692005e-316,
+      "fixed_root_fast_returned": true,
+      "fixed_root_mapped_DN_gw": 2.3692005e-316,
+      "relative_fixed_point_residual": 0.0,
+      "root_converged_delta": 2.3692005e-316,
+      "failure_reason": null,
+      "failure_detail": null,
+      "neff_base_absorbs_root_exactly": true,
+      "background_arrays_bitwise_equal_to_dn0": {
+        "Nv": true,
+        "sigma": true,
+        "f_hor": true
+      },
+      "background_array_sha256": {
+        "Nv": "9987430acda993c7eb6e1cb970b87e5f1163744f2892b4ce3d580d2171a11bb7",
+        "sigma": "2ed9bbc02e67364920472edbe11eac406bb13ac652f8a0e9daaac69431f2c127",
+        "f_hor": "34f5a3c4039d7b039e946a943e8f8cf6652c3ddacdebe3935e06c1f879f67641"
+      }
+    },
+    {
+      "freq_res": 2.0,
+      "frequency_count": 457,
+      "frequency_sha256_f64le": "b863a1df89b904f0d0fc3548195179ab6acf720563ad0d7b55b9e6a7bea80da1",
+      "expected_frequency_sha256_f64le": "b863a1df89b904f0d0fc3548195179ab6acf720563ad0d7b55b9e6a7bea80da1",
+      "input_root_DN_eff": 2.3692897e-316,
+      "fixed_root_fast_returned": true,
+      "fixed_root_mapped_DN_gw": 2.3692897e-316,
+      "relative_fixed_point_residual": 0.0,
+      "root_converged_delta": 2.3692897e-316,
+      "failure_reason": null,
+      "failure_detail": null,
+      "neff_base_absorbs_root_exactly": true,
+      "background_arrays_bitwise_equal_to_dn0": {
+        "Nv": true,
+        "sigma": true,
+        "f_hor": true
+      },
+      "background_array_sha256": {
+        "Nv": "9987430acda993c7eb6e1cb970b87e5f1163744f2892b4ce3d580d2171a11bb7",
+        "sigma": "2ed9bbc02e67364920472edbe11eac406bb13ac652f8a0e9daaac69431f2c127",
+        "f_hor": "34f5a3c4039d7b039e946a943e8f8cf6652c3ddacdebe3935e06c1f879f67641"
+      }
+    }
+  ],
+  "source_sha256": {
+    "fast_sgwb.py": "68275440cd5055e3c9ea8f75de8c8471240ac35d79f36b9a0ca7728733d383a5",
+    "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+    "script": "e4b89b2dd5cbc3d11a75cbaf1a2194275876556fc9612b759576aa4d1bbdc5b7"
+  }
+}

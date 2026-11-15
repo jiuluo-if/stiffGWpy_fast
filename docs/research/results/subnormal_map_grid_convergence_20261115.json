@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "status": "complete_cr0_nt0_subnormal_map_frequency_and_tail_screen",
+  "scope": "Direct Fast self-consistent and direct unit-amplitude Cartesian Reference maps for r=1e-315 on freq_res 1/2 grids, z8/z10, with log-domain amplitude restoration.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "n_t": 0.0,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01,
+    "r": 1e-315
+  },
+  "fast_options": {
+    "tol": 1e-07,
+    "z_tail": 5.0,
+    "threads": 1
+  },
+  "reference_options": {
+    "backend": "cartesian",
+    "rtol": 1e-09,
+    "workers": 1
+  },
+  "cases": [
+    {
+      "freq_res": 1.0,
+      "frequency_count": 235,
+      "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+      "fast": {
+        "returned": true,
+        "root_DN_eff": 2.3692005e-316,
+        "mapped_DN_gw": 2.3692005e-316,
+        "root_converged_delta": 2.3692005e-316,
+        "failure_reason": null,
+        "failure_detail": null,
+        "runtime_s": 0.3777890999917872
+      },
+      "reference": {
+        "z8": {
+          "z_tail": 8.0,
+          "rtol": 1e-09,
+          "runtime_s": 62.7234005999926,
+          "log_DN_gw": -726.7540406751591,
+          "DN_gw_float64": 2.36990227e-316,
+          "used_tail_count": 220,
+          "quadrature_error_relative": 1.1102230246251559e-14,
+          "interpolation_error_relative": 0.0009316298517236697,
+          "warnings": []
+        },
+        "z10": {
+          "z_tail": 10.0,
+          "rtol": 1e-09,
+          "runtime_s": 415.51233769999817,
+          "log_DN_gw": -726.7543287708714,
+          "DN_gw_float64": 2.36921957e-316,
+          "used_tail_count": 219,
+          "quadrature_error_relative": 1.1102230246251567e-14,
+          "interpolation_error_relative": 0.0009344437774338431,
+          "warnings": []
+        }
+      },
+      "reference_z8_to_z10_relative_map_change": -0.00028805421675049726,
+      "fast_z5_vs_reference_z10_map_relative_error": -8.058203367555987e-06
+    },
+    {
+      "freq_res": 2.0,
+      "frequency_count": 457,
+      "frequency_sha256_f64le": "b863a1df89b904f0d0fc3548195179ab6acf720563ad0d7b55b9e6a7bea80da1",
+      "fast": {
+        "returned": true,
+        "root_DN_eff": 2.3692897e-316,
+        "mapped_DN_gw": 2.3692897e-316,
+        "root_converged_delta": 2.3692897e-316,
+        "failure_reason": null,
+        "failure_detail": null,
+        "runtime_s": 0.07196110000950284
+      },
+      "reference": {
+        "z8": {
+          "z_tail": 8.0,
+          "rtol": 1e-09,
+          "runtime_s": 127.7463379999972,
+          "log_DN_gw": -726.7540035528793,
+          "DN_gw_float64": 2.3699902e-316,
+          "used_tail_count": 428,
+          "quadrature_error_relative": 1.1102230246251554e-14,
+          "interpolation_error_relative": 0.00019327516160534412,
+          "warnings": []
+        },
+        "z10": {
+          "z_tail": 10.0,
+          "rtol": 1e-09,
+          "runtime_s": 864.1297094000038,
+          "log_DN_gw": -726.7542918858536,
+          "DN_gw_float64": 2.36930697e-316,
+          "used_tail_count": 427,
+          "quadrature_error_relative": 1.1102230246251559e-14,
+          "interpolation_error_relative": 0.00019347778868608018,
+          "warnings": []
+        }
+      },
+      "reference_z8_to_z10_relative_map_change": -0.0002882914103072742,
+      "fast_z5_vs_reference_z10_map_relative_error": -7.3030311605502535e-06
+    }
+  ],
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "win32",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1"
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "082cdce4c0f1055d5369369a8189dc111c71f50e9934c09bbd124ced117a1813",
+    "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "script": "ede43b3968588c46027b5c0899c991a06a93081ed30a8ef899feb7a5ee00fe9b"
+  }
+}

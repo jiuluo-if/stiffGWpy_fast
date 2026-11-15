@@ -1402,3 +1402,21 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Complete direct Reference z8/z10 for the low-T/high-tilt 221-node holdout; z8→z10 max/P95 `1.648e-4/1.598e-4 dex`, map shift `−1.245e-5`; actual per-mode vs z10 max error `5.692e-4 dex`, root residual `−2.22e-16`.
 - [x] z8→z10 closure at the `n_t=17.30` holdout completed; per-mode max error vs Reference z10 is `0.0004746 dex`, map error `−4.48e-6`.
 - [ ] Still need changed-root 469/937 grids, more `cr>0` samples, and phase-resolved-active boundary accuracy for the per-mode path.
+
+## Autonomous continuation: Round 43 — tensor amplitude and integral representability boundary
+
+- [x] Recheck the original `prototype_cr0_event_chart_kernel` collection failure at `8dfbee5`: the issue is already fixed in `d6ddbb2` by moving the test-owned helpers out of the research validator dependency; current remote `39b2317` CI and full local pytest pass.
+- [x] Run a direct unit-transfer Reference map in the log domain on the identical native grid at minimum-subnormal amplitude; calculate the minimum-subnormal rounding ratio and interpolation estimate.
+- [x] Separate rounded-to-zero stored `A_t`, finite `log_A_t`, a physically exact zero, and a positive mathematical integral that cannot be represented in `DN_gw` float64.
+- [x] TDD the 3-unit subnormal case: recover the representable aggregate with an integral-first log-normalized map using the selected quadrature and phase-corrected terminal signal.
+- [x] Keep the minimum-subnormal failure reason compatible while distinguishing integral underflow and root quantization; exact-zero route test remains green.
+- [x] Resolve the 235-grid Fast/Reference map difference (`−2.96e-4`) with direct 235/457 z8/z10/z12 Reference and frequency-grid convergence. z10→z12 residual is `−6.14e-6`; z12 interpolation estimate `1.93e-4`; 457 Fast-vs-Reference root error `−1.17e-6`.
+- [x] Independently remap 235/457 Fast roots; map residuals are exactly zero and background arrays match at `DN_eff=0` and the subnormal root.
+- [x] Compare all 457 Fast z5 log-spectrum nodes against direct Reference z10; maximum error is `4.672e-4 dex` (P95 `3.073e-5`), satisfying the `1e-3 dex` gate for this sample.
+- [ ] Extend the integral-first path beyond this one `cr=0,n_t=0,T_re=2000,kappa10=.01` slice (amplitude/tilt/temperature/cr holdouts), then assess any broader claim.
+- [x] Finish source-hashed docs/artifact audit; full tests (`409 passed, 9 deselected`), Ruff, Mypy, package build and diff check all pass on the final code.
+- [ ] Commit only this round's implementation, regression, research scripts, raw JSON, and report; push to `fast_v0.2` and verify remote SHA.
+
+### Next Step
+
+Commit the validated discrete integral-first correction with its domain limits and verify the `fast_v0.2` push; keep the broader parameter-region goal open.
