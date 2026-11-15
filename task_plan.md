@@ -1370,3 +1370,10 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Record reference z10 cost (`1673 s`) and persistent PCHIP warnings; no production tail-depth change.
 - [x] Attribute the worst point: Fast z5 hands off at `epsilon≈2.496e-3`; Fast z8 never reaches its z=8 handoff before today and numerically propagates to the endpoint, matching Reference z8/z10 at that point within `4.34e-6 dex`.
 - [ ] Validate tail behavior at independent parameters and assess phase-resolved branch separately before any default change.
+
+## Autonomous continuation: Round 40 — per-mode handoff mask hypothesis
+
+- [x] Screen the physically motivated `z_today<5` delayed-handoff mask against existing same-root z5/z8 and Reference z8/z10 rows at two amplitudes.
+- [x] Test independent `n_t=17.45`, minimum-subnormal amplitude, low `T_re=10`, low `kappa10=.001` on its directly generated 221-node grid; spectrum max error `5.78e-4 dex`, map error `8.18e-7` vs Reference z8.
+- [x] Record an exploratory high-T/high-kappa trial rejected because the root exceeded physical guard `DN_eff=5`; its accuracy data are excluded.
+- [ ] Keep mask diagnostic-only: no per-mode kernel, no valid runtime benchmark, no `cr>0` sample, and incomplete Reference tail convergence on two holdouts.

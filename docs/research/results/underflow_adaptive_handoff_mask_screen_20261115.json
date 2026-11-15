@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "status": "complete_z_today_gated_handoff_hypothesis_screen_not_production",
+  "scope": "Compose per-frequency z8 rows only when today's z is below a threshold, otherwise z5 rows; both inputs are direct same-root Fast runs and scores use direct Reference z8 nodes.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 5e-324,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "frequency_count": 937,
+  "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+  "frozen_DN_eff": 1.3543440396198841e-09,
+  "f_hor_today_log10_hz": -18.459378758443304,
+  "z_today_range": [
+    0.0401431516998893,
+    47.85374369428393
+  ],
+  "fast_direct_runs": {
+    "z5_runtime_s": 0.3597443999897223,
+    "z5_runtime_warnings": [],
+    "z5_mapped_DN_gw": 1.3543409204417143e-09,
+    "z8_runtime_s": 0.20887840000796132,
+    "z8_runtime_warnings": [],
+    "z8_mapped_DN_gw": 1.3543413800992572e-09
+  },
+  "reference_z8_map_DN_gw": 1.354340341557103e-09,
+  "threshold_candidates": [
+    {
+      "z_today_threshold": 5.0,
+      "z8_mode_count": 44,
+      "z8_mode_fraction": 0.04695837780149413,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.0001484403557114433,
+      "max_error_frequency_log10_hz": -12.891944809173847,
+      "fixed_background_mapped_DN_gw": 1.354340920441714e-09,
+      "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+      "relative_map_residual_vs_frozen_root": -2.303091444111338e-06,
+      "mapping_warnings": []
+    },
+    {
+      "z_today_threshold": 6.0,
+      "z8_mode_count": 52,
+      "z8_mode_fraction": 0.05549626467449306,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014808416346028251,
+      "max_error_frequency_log10_hz": -12.891944809173847,
+      "fixed_background_mapped_DN_gw": 1.354340920441714e-09,
+      "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+      "relative_map_residual_vs_frozen_root": -2.303091444111338e-06,
+      "mapping_warnings": []
+    },
+    {
+      "z_today_threshold": 7.0,
+      "z8_mode_count": 57,
+      "z8_mode_fraction": 0.060832443970117396,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014752843397047855,
+      "max_error_frequency_log10_hz": -12.891944809173847,
+      "fixed_background_mapped_DN_gw": 1.354340920441714e-09,
+      "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+      "relative_map_residual_vs_frozen_root": -2.303091444111338e-06,
+      "mapping_warnings": []
+    },
+    {
+      "z_today_threshold": 8.0,
+      "z8_mode_count": 59,
+      "z8_mode_fraction": 0.06296691568836713,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014737045316053353,
+      "max_error_frequency_log10_hz": -12.891944809173847,
+      "fixed_background_mapped_DN_gw": 1.354340920441714e-09,
+      "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+      "relative_map_residual_vs_frozen_root": -2.303091444111338e-06,
+      "mapping_warnings": []
+    },
+    {
+      "z_today_threshold": 9.0,
+      "z8_mode_count": 61,
+      "z8_mode_fraction": 0.06510138740661686,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014737045316053353,
+      "max_error_frequency_log10_hz": -12.891944809173847,
+      "fixed_background_mapped_DN_gw": 1.354340920441714e-09,
+      "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+      "relative_map_residual_vs_frozen_root": -2.303091444111338e-06,
+      "mapping_warnings": []
+    },
+    {
+      "z_today_threshold": 10.0,
+      "z8_mode_count": 63,
+      "z8_mode_fraction": 0.0672358591248666,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0005167446886957805,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014737045316053353,
+      "max_error_frequency_log10_hz": -12.891944809173847,
+      "fixed_background_mapped_DN_gw": 1.354340920441714e-09,
+      "relative_map_error_vs_reference_z8": 4.274292018102699e-07,
+      "relative_map_residual_vs_frozen_root": -2.303091444111338e-06,
+      "mapping_warnings": []
+    }
+  ],
+  "amplitude_holdout": {
+    "label": "r=1e-316 baseline amplitude at its own frozen 235-root",
+    "root_DN_eff": 0.027412228089632874,
+    "frequency_count": 937,
+    "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+    "f_hor_today_log10_hz": -18.459378758443304,
+    "z_today_range": [
+      0.0401431516998893,
+      47.85374369428393
+    ],
+    "reference_z10_map_DN_gw": 0.0274122541454071,
+    "threshold_candidates": [
+      {
+        "z_today_threshold": 5.0,
+        "z8_mode_count": 44,
+        "z8_mode_fraction": 0.04695837780149413,
+        "max_abs_spectrum_error_vs_reference_z10_dex": 0.0004829702650681611,
+        "p95_abs_spectrum_error_vs_reference_z10_dex": 3.1123613418060345e-05,
+        "max_error_frequency_log10_hz": -15.791944809173845,
+        "fixed_background_mapped_DN_gw_log_reconstructed": 0.027412164956764934,
+        "relative_map_error_vs_reference_z10": -3.253604818231892e-06,
+        "relative_map_residual_vs_frozen_root": -2.3030914427790705e-06,
+        "mapping_warnings": []
+      },
+      {
+        "z_today_threshold": 6.0,
+        "z8_mode_count": 52,
+        "z8_mode_fraction": 0.05549626467449306,
+        "max_abs_spectrum_error_vs_reference_z10_dex": 0.0004829702650681611,
+        "p95_abs_spectrum_error_vs_reference_z10_dex": 3.039871925807347e-05,
+        "max_error_frequency_log10_hz": -15.791944809173845,
+        "fixed_background_mapped_DN_gw_log_reconstructed": 0.027412164956764934,
+        "relative_map_error_vs_reference_z10": -3.253604818231892e-06,
+        "relative_map_residual_vs_frozen_root": -2.3030914427790705e-06,
+        "mapping_warnings": []
+      },
+      {
+        "z_today_threshold": 7.0,
+        "z8_mode_count": 57,
+        "z8_mode_fraction": 0.060832443970117396,
+        "max_abs_spectrum_error_vs_reference_z10_dex": 0.00039101995076862295,
+        "p95_abs_spectrum_error_vs_reference_z10_dex": 2.9488361110452385e-05,
+        "max_error_frequency_log10_hz": -12.891944809173847,
+        "fixed_background_mapped_DN_gw_log_reconstructed": 0.027412164956764934,
+        "relative_map_error_vs_reference_z10": -3.253604818231892e-06,
+        "relative_map_residual_vs_frozen_root": -2.3030914427790705e-06,
+        "mapping_warnings": []
+      },
+      {
+        "z_today_threshold": 8.0,
+        "z8_mode_count": 59,
+        "z8_mode_fraction": 0.06296691568836713,
+        "max_abs_spectrum_error_vs_reference_z10_dex": 0.00039101995076862295,
+        "p95_abs_spectrum_error_vs_reference_z10_dex": 2.938263828866638e-05,
+        "max_error_frequency_log10_hz": -12.891944809173847,
+        "fixed_background_mapped_DN_gw_log_reconstructed": 0.027412164956764934,
+        "relative_map_error_vs_reference_z10": -3.253604818231892e-06,
+        "relative_map_residual_vs_frozen_root": -2.3030914427790705e-06,
+        "mapping_warnings": []
+      },
+      {
+        "z_today_threshold": 9.0,
+        "z8_mode_count": 61,
+        "z8_mode_fraction": 0.06510138740661686,
+        "max_abs_spectrum_error_vs_reference_z10_dex": 0.00039101995076862295,
+        "p95_abs_spectrum_error_vs_reference_z10_dex": 2.938263828866638e-05,
+        "max_error_frequency_log10_hz": -12.891944809173847,
+        "fixed_background_mapped_DN_gw_log_reconstructed": 0.027412164956764934,
+        "relative_map_error_vs_reference_z10": -3.253604818231892e-06,
+        "relative_map_residual_vs_frozen_root": -2.3030914427790705e-06,
+        "mapping_warnings": []
+      },
+      {
+        "z_today_threshold": 10.0,
+        "z8_mode_count": 63,
+        "z8_mode_fraction": 0.0672358591248666,
+        "max_abs_spectrum_error_vs_reference_z10_dex": 0.00039101995076862295,
+        "p95_abs_spectrum_error_vs_reference_z10_dex": 2.938263828866638e-05,
+        "max_error_frequency_log10_hz": -12.891944809173847,
+        "fixed_background_mapped_DN_gw_log_reconstructed": 0.027412164956764934,
+        "relative_map_error_vs_reference_z10": -3.253604818231892e-06,
+        "relative_map_residual_vs_frozen_root": -2.3030914427790705e-06,
+        "mapping_warnings": []
+      }
+    ]
+  },
+  "runtime_note": "These z5 then z8 single calls are not alternated or cold/warm controlled and are not comparable timings. Composition is an accuracy screen, not the runtime or memory cost of a per-mode production kernel.",
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "input_json": "c7387c96f58ff1e895788166269b8f67d8d4bea04b466512c86b965e3ade6471",
+    "base_grid_input": "a314b0e9f9a322e599728c67022ab943feeda58e0137e4ebdc527c16592be77a",
+    "base_tail_input": "0e2362c41b38e30de499bb89e88631a6d59cff3cbcbc60c839fee6ee23782076",
+    "base_reference_input": "c1db32721a663e9c16bda46270fc316867caa27c2c16e51f10a20c6fe7fffb47",
+    "diagnostic_script": "cc5b7e612894eb22914a103f8d686ea5911b033540f0713f2baef8806c180a16"
+  }
+}
