@@ -1361,3 +1361,11 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Compare the same-node integral against stable positive linear PCHIP arithmetic from log values; the map difference is within `7.11e-15` relative and the stable path emits no warning.
 - [x] Correct the amplitude-ladder JSON serialization that had overwritten its full Reference result payload; rerun the Reference data and verify script/source hashes.
 - [ ] Keep the stable implementation diagnostic-only pending direct new-node interpolation error evidence across more backgrounds and grids; Reference grid/tail convergence remains open.
+
+## Autonomous continuation: Round 39 — minimum-subnormal 937-point tail falsifier
+
+- [x] Run direct 469/937 Reference z8 at the minimum positive `r=5e-324` sample's own 235-root.
+- [x] Reproduce the 937-point z5 failure (`0.002441 dex` max), then run Fast z8 at the identical grid/background and directly compare to Reference z10.
+- [x] Reference z8→z10 change is `0.0001649 dex` max / `0.0001421 dex` P95; Fast z8 vs Reference z10 is `0.0003722 dex` max / `0.0000233 dex` P95; the discrete sample passes the spectrum threshold.
+- [x] Record reference z10 cost (`1673 s`) and persistent PCHIP warnings; no production tail-depth change.
+- [ ] Validate tail behavior at independent parameters and assess phase-resolved branch separately before any default change.
