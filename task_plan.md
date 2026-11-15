@@ -1419,4 +1419,35 @@ Start the next independently testable part of the research objective: choose a p
 
 ### Next Step
 
-Choose an independent holdout outside the `n_t=0` slice for the integral-first map, then repeat same-root Reference/grid/tail and spectrum gates before any domain expansion claim.
+Validate the integral-first map on a low-temperature/high-tilt independent holdout and keep continuous-domain claims on hold.
+
+## Autonomous continuation: Round 44 — blue-tilt minimum-subnormal holdout
+
+- [x] Verify the historical 937-node Reference z10 artifact's `reference.py` source hash and exact grid hash against the canonical nested grid.
+- [x] Recompute current Fast self-consistent roots on direct 235/469/937 nested grids for `r=5e-324,n_t=17.38,cr=0`; at each returned root perform a direct fixed-root remap.
+- [x] On the same 937-node frozen background/root, run current Fast z8 and compare every log-spectrum node and map with the direct Reference z10 artifact; separate tail error from root/background changes.
+- [x] This discrete sample meets root residual/grid/map and spectrum gates; preserve Reference z8→z10 convergence and interpolation evidence.
+- [x] Save the source-hashed script/JSON; production code is unchanged, and the script passes Ruff.
+
+- [x] Current Fast roots close on direct 235/469/937 grids; own-root fixed remaps have zero relative residual.
+- [x] Same 937-node frozen-root current Fast z8 spectrum vs Reference z10 passes (`3.722e-4 dex` max / `2.325e-5 dex` P95); map error is `−3.253e-6`; reference z8→z10 changes `1.649e-4 dex` max / `1.421e-4 dex` P95.
+- [x] Verify and save source/grid hashes without modifying the Reference or hiding its four divide warnings/49 normalized zero nodes.
+- [ ] Add an independent low-temperature/high-tilt holdout from existing direct Reference data, then consider a `kappa10` or `cr` change.
+- [ ] Commit/push the Round 44 research record and verify remote SHA/CI.
+
+### Next Step
+
+Run the existing low-T/high-tilt Reference holdout through current Fast and compare its same-grid spectrum and mapped integral, then update the discrete evidence ledger.
+
+## Autonomous continuation: Round 45 — low-temperature/high-tilt holdout
+
+- [x] Verify direct Reference z8/z10 source and 221-node grid hashes against the current independent Reference and saved holdout grid.
+- [x] Run current Fast z5 self-consistent, fixed at its own root, fixed at the Reference root, and z8 on the identical grid.
+- [x] Compare same-grid spectra to direct Reference z10; maximum error `5.692e-4 dex`, map error `−2.251e-6`, own-root residual 0.
+- [x] Confirm Reference tail change `z8→z10` is `1.648e-4 dex` max / `1.598e-4 dex` P95; Reference source is unchanged and no warnings/zero nodes were hidden.
+- [x] Save source-hashed script and full nodewise JSON. This is the third passing discrete `cr=0` point, not a continuous-domain certification.
+- [ ] Update research ledger, run final artifact/static check, commit/push Round 44/45 records, and verify remote SHA/CI.
+
+### Next Step
+
+Select an independent `kappa10` decade or physical-amplitude `cr>0` holdout; first inspect whether a direct Reference with a matching root/grid/tail already exists, then rerun current Fast on the exact saved nodes.
