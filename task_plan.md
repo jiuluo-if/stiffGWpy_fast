@@ -1415,8 +1415,8 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Compare all 457 Fast z5 log-spectrum nodes against direct Reference z10; maximum error is `4.672e-4 dex` (P95 `3.073e-5`), satisfying the `1e-3 dex` gate for this sample.
 - [ ] Extend the integral-first path beyond this one `cr=0,n_t=0,T_re=2000,kappa10=.01` slice (amplitude/tilt/temperature/cr holdouts), then assess any broader claim.
 - [x] Finish source-hashed docs/artifact audit; full tests (`409 passed, 9 deselected`), Ruff, Mypy, package build and diff check all pass on the final code.
-- [ ] Commit only this round's implementation, regression, research scripts, raw JSON, and report; push to `fast_v0.2` and verify remote SHA.
+- [x] Commit `65dbd55e3207394d1391e9e5217ea65179ac1f1c` with the required email/message; push and fetch confirmed the same SHA at `fast/fast_v0.2`. GitHub Actions CI completed successfully across Canonical, static, package, Cobaya and Python 3.9–3.13 compatibility jobs.
 
 ### Next Step
 
-Commit the validated discrete integral-first correction with its domain limits and verify the `fast_v0.2` push; keep the broader parameter-region goal open.
+Choose an independent holdout outside the `n_t=0` slice for the integral-first map, then repeat same-root Reference/grid/tail and spectrum gates before any domain expansion claim.
