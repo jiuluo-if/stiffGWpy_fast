@@ -63,6 +63,77 @@ def test_fast_recovers_blue_spectrum_after_nonzero_tensor_product_underflows():
     assert np.any(model.Ogw_today > 0.0)
 
 
+def test_cr_positive_nonzero_underflow_keeps_consistency_background_finite():
+    model = _underflow_model(cr=1.0, r=1e-316)
+
+    derived = model.derived_param
+
+    assert model.cosmo_param["r"] > 0.0
+    assert model.cosmo_param["A_s"] > 0.0
+    assert derived["A_t"] == 0.0
+    assert np.isfinite(derived["V_inf"])
+    expected_v_inf = np.exp(
+        0.25 * (np.log(1.5) + np.log(model.cosmo_param["r"]) + np.log(model.cosmo_param["A_s"]))
+        + 0.5 * np.log(gp.M_Pl)
+        + 0.5 * np.log(np.pi)
+    )
+    assert np.isclose(derived["V_inf"], expected_v_inf, rtol=1e-14)
+    assert derived["N_inf"] is None
+
+    result = model.SGWB_iter(
+        engine="fast",
+        fallback=False,
+        tol=1e-6,
+        z_tail=5.0,
+        threads=1,
+        accuracy_mode="fast",
+        physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "invalid_cutoff"
+
+
+def test_cr_positive_exact_zero_remains_invalid_r_not_underflow():
+    model = _underflow_model(cr=1.0, r=0.0)
+
+    result = model.SGWB_iter(
+        engine="fast",
+        fallback=False,
+        tol=1e-6,
+        z_tail=5.0,
+        threads=1,
+        accuracy_mode="fast",
+        physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "invalid_r"
+
+
+def test_cr_positive_exact_scalar_zero_has_no_inflation_cutoff():
+    model = _underflow_model(cr=1.0, r=0.01, A_s=0.0)
+
+    derived = model.derived_param
+
+    assert derived["A_t"] == 0.0
+    assert derived["V_inf"] == 0.0
+    assert derived["N_inf"] is None
+
+    result = model.SGWB_iter(
+        engine="fast",
+        fallback=False,
+        tol=1e-6,
+        z_tail=5.0,
+        threads=1,
+        accuracy_mode="fast",
+        physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "invalid_cutoff"
+
+
 def test_phase_tail_blend_is_gated_by_log_amplitude_mode_and_ripple():
     z_today = np.array([4.9, 5.1, 7.0])
     disabled = _phase_resolved_tail_weights(

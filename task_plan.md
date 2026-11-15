@@ -1269,7 +1269,7 @@ The previously reported `~1.94e-3 dex` mismatch was contaminated by a fixed-back
 - [x] Reconstruct one production `assemble_tail` output from its matched z8 state; physical `Opgw_today` agrees to `6.5e-14` relative.
 - [x] Directly solve 15 local 1873-equivalent frequencies with Fast and Reference; do not substitute interpolation for these nodes.
 - [x] Finish Reference z10 on all 235/469/937 nodes and compare full Fast z8 spectra against it; maximum discrepancies are `0.000353`, `0.000380`, and `0.000391 dex`, with Reference z8→z10 maximum shift `0.000207 dex`.
-- [ ] Measure same fixed background/root/grid/thread z5-versus-z8 runtime with warmups and repeated alternating A/B; keep z8 validation-only until cost and other parameter regimes are evaluated.
+- [x] Measure same fixed background/root/grid/thread z5-versus-z8 runtime with warmups and repeated alternating A/B; keep z8 validation-only until cost and other parameter regimes are evaluated.
 
 ### Next Step
 
@@ -1293,8 +1293,41 @@ Fast z8 passes the current underflow sample's discrete accuracy gate, but it may
 - [x] Record z8/z5 steady P50 ratio `1.566`; z8 is slower and remains validation-only.
 - [x] Check a non-underflow `cr=0`, `r=.01`, `n_t=0` point: z5 vs Reference z10 max error `0.002321 dex`; z8 `0.000378 dex`; Fast root residuals stay below `2e-4`.
 - [x] Record an attempted `n_t=.5` point rejected by `shared_Neff_guard` before comparing accuracy.
-- [ ] Test one physical-amplitude `cr>0` consistency-branch point; do not infer its domain from the `cr=0` results.
+- [x] Test one physical-amplitude `cr>0` consistency-branch point with direct Reference; z8 passed the discrete spectrum gate, while Reference z8 root residual still required z10.
+- [x] Probe `cr>0` tensor-amplitude underflow without replacing the amplitude-dependent background; distinguish a valid rejection from a background `S2` failure and from the exact-zero limit.
 
 ### Next Step
 
-Run a fixed-root tail-depth comparison on a `cr>0` consistency-branch point using the physical amplitude in both Fast and Reference; require root closure and direct z8/z10 tail evidence.
+Probe the `cr>0` consistency-branch amplitude-underflow boundary with small parameter tests; verify the exact failure category and keep physical-amplitude Reference/background dependencies intact.
+
+## Autonomous continuation: Round 34 — consistency-branch underflow background
+
+### Hypothesis
+
+The `cr>0` `math domain error` at a nonzero but underflowed `r*A_s` is caused by forming `log(A_t)` from the rounded zero. Evaluating the same consistency equations from `log(r)+log(A_s)` should recover finite `V_inf` and `Delta_N` while retaining the physical `N_inf` sign/cutoff guard. It must not enable unit-amplitude propagation on this branch.
+
+### Gates
+
+- Regression must fail first on the old `math domain error` and pass after the minimal log-domain background change.
+- Preserve distinct behavior for `cr=0` nonzero underflow, `cr=0` exact zero, `cr>0` exact zero, and `cr>0` nonzero underflow.
+- Verify normal `cr>0` spectra are unchanged, full tests/static/Mypy/package build pass, and independently record the resulting physical cutoff status.
+
+### Progress
+
+- [x] TDD reproduced `ValueError` in consistency-background derivation for `cr>0`, nonzero `r` and `A_s` whose product rounds to zero.
+- [x] Implement log-domain `V_inf`/`Delta_N` only for positive input factors when stored `A_t==0`; the sampled `Delta_N=-209.962` keeps `N_inf` invalid, so Fast returns `invalid_cutoff` without bypassing the background dependency.
+- [x] Preserve and test `cr>0,r=0 -> invalid_r`, `cr>0,A_s=0 -> invalid_cutoff`, and `cr=0` exact/nonzero-zero product branches.
+- [x] Full suite `406 passed, 9 deselected`; Ruff, configured Mypy and sdist/wheel build pass.
+- [x] Normal-amplitude `cr>0` tail spectrum was rerun unchanged after the background arithmetic change.
+- [x] Scan existing low/mid/high `T_re` and kappa settings for the sign of log-derived `Delta_N`; rerun an ordinary-amplitude S2-overflow control to verify its later-stage failure classification.
+
+### Next Step
+
+Start the next independently testable part of the research objective: choose a parameter subset for an underflowed but physically valid `cr=0` fixed-point closure and compare root change separately from frequency-grid discretization. The `cr>0` matrix remains a discrete background classification screen, not evidence that consistency-branch underflow can be propagated.
+
+### Round 34 follow-up result
+
+- [x] Nine `T_re={10,2000,10000}` × `kappa10={1e-3,1e-2,1}` underflow combinations all produced finite `V_inf`, negative log-derived `Delta_N` (`−198.43` to `−214.72`), `N_inf=None`, and pre-primitive `invalid_cutoff`.
+- [x] Replayed ordinary-amplitude S2 pressure control at `Omega_bh2=1e6`, `cr=1`, `r=.01`, `n_t=.5`, `T_re=2000`, `kappa10=.01`; current code reached `S2` and returned `nonfinite_background_primitive` at index 13763, log scale 12678.0768.
+- [x] Added reproducible script and raw JSON; the control confirms distinct failure stages but grants no precision/parameter-domain acceptance to the pressure point.
+- [ ] Rerun targeted/full regression after the final test assertion and diagnostic artifact updates, then commit and push the verified change set.

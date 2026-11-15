@@ -167,11 +167,41 @@ class LCDM_SN:
         derived_dict['N_inf'] = None
         if self.cosmo_param['cr'] > 0:
             if self.cosmo_param['r'] > 0:
-                derived_dict['V_inf'] = (1.5*derived_dict['A_t'])**.25 * math.pi**.5 * M_Pl
-                # 单场慢滚暴胀的特征能标 V^(1/4)，单位 GeV。
-
-                Delta_N = (N_10-derived_dict['N_re'])*4/3 + math.log(M_Pl)*4/3 + math.log(45/2*derived_dict['A_t']/(self.rhorad_re+self.rhostiff_re))/3
-                # 假设暴胀结束至再加热结束期间按 a^{-3} 物质型演化，计算这段回望 e 折数。
+                tensor_amplitude = derived_dict['A_t']
+                if tensor_amplitude > 0.0:
+                    derived_dict['V_inf'] = (
+                        (1.5 * tensor_amplitude) ** .25 * math.pi ** .5 * M_Pl
+                    )
+                    Delta_N = (
+                        (N_10 - derived_dict['N_re']) * 4 / 3
+                        + math.log(M_Pl) * 4 / 3
+                        + math.log(
+                            45 / 2 * tensor_amplitude
+                            / (self.rhorad_re + self.rhostiff_re)
+                        ) / 3
+                    )
+                elif self.cosmo_param['A_s'] > 0.0:
+                    log_tensor_amplitude = (
+                        math.log(self.cosmo_param['r'])
+                        + math.log(self.cosmo_param['A_s'])
+                    )
+                    derived_dict['V_inf'] = math.exp(
+                        .25 * (math.log(1.5) + log_tensor_amplitude)
+                        + .5 * math.log(math.pi)
+                        + math.log(M_Pl)
+                    )
+                    Delta_N = (
+                        (N_10 - derived_dict['N_re']) * 4 / 3
+                        + math.log(M_Pl) * 4 / 3
+                        + (
+                            math.log(45 / 2)
+                            + log_tensor_amplitude
+                            - math.log(self.rhorad_re + self.rhostiff_re)
+                        ) / 3
+                    )
+                else:
+                    derived_dict['V_inf'] = 0.0
+                    Delta_N = -math.inf
 
                 if Delta_N >= 0:
                     derived_dict['N_inf'] = derived_dict['N_re'] + Delta_N

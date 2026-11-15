@@ -1787,3 +1787,17 @@ the diagnostic artifacts are retained.
 - The Reference z8 fixed map missed the root residual threshold (`2.94e-4` relative); Reference z10 residual was `4.02e-6`, confirming the need to check root/tail convergence separately from pointwise spectra.
 - An `n_t=.5` attempted sample was rejected by `shared_Neff_guard` before spectral comparison.
 - Next: evaluate the `cr>0` consistency branch with physical amplitude and direct Reference; then determine whether the increased z8 cost is acceptable across more than two `cr=0` points.
+
+## 2026-11-15 `cr>0` consistency-branch continuation
+
+- Added a physical-amplitude Reference comparison at `cr=1`; no unit-amplitude scaling bypassed the amplitude-dependent background. Fast and Reference derived the same nonzero `A_t` exactly.
+- Fast root closed; z5 max spectrum error vs Reference z10 exceeded `1e-3 dex`, while z8 passed on the 76-node grid. Reference z8 map missed the root threshold but z10 closed to `4.96e-6` relative.
+- Next: screen the `cr>0` amplitude-underflow boundary and record whether rejection is correctly classified; do not infer it from the successful normal-amplitude point.
+
+## 2026-11-15 consistency-background underflow repair
+
+- Added a failing regression test for nonzero `r,A_s` whose product underflows in the `cr>0` consistency background; observed the original `math domain error` before implementation.
+- Rewrote only `V_inf` and `Delta_N` evaluation in log space when the stored `A_t` is zero but both inputs are positive. The physical cutoff remains enforced: this sample computes `Delta_N=-209.962` and Fast rejects it as `invalid_cutoff`; no spectrum is reported.
+- Preserved distinct exact-zero behavior: `cr>0,r=0` returns `invalid_r`, while exact `A_s=0` returns `invalid_cutoff`; the `cr=0` log-power path still solves the nonzero underflow sample.
+- Three targeted consistency tests pass, followed by the complete suite/static/Mypy/build gates. Normal-amplitude `cr>0` z5/z8 outputs were rechecked unchanged.
+- 2026-11-15 Round 34 follow-up: the 3×3 `cr>0`, `r=1e-316` matrix across `T_re={10,2000,10000}` and `kappa10={1e-3,1e-2,1}` yielded finite log-domain background values but `Delta_N<0` at all nine discrete points, all rejected before primitive construction as `invalid_cutoff`. Re-running the existing ordinary-amplitude stress control reached `S2` and reproduced `nonfinite_background_primitive` at index 13763. Script/JSON are `scripts/scan_consistency_underflow_boundary_20261115.py` and `docs/research/results/consistency_underflow_boundary_20261115.json`; this separates cutoff rejection from `S2` overflow without broadening the `cr>0` underflow domain.

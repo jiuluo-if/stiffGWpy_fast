@@ -3310,3 +3310,17 @@ remote matrix run.
 - A normal amplitude `cr=0`, `r=.01`, `n_t=0` fixed-root case converged at `DN_eff=0.002369124823794334`. Fast z5/z8 maps had relative residuals `3.63e-11` and `−5.21e-6`.
 - Against direct Reference z10, z5 max/P95 spectrum error was `0.002321/0.000351 dex`; z8 was `0.000378/0.000239 dex`. Reference z8 map residual was `2.94e-4` relative, above the root gate; z10 reduced it to `4.02e-6`.
 - A blue `n_t=.5` preflight was rejected by `shared_Neff_guard`, with no spectrum claim.
+
+## 2026-11-15 consistency-branch tail-depth check
+
+- Tested `cr=1`, `r=.01`, `T_re=2000`, `kappa10=.01` with the physical tensor amplitude in both solvers. The Fast root converged at `DN_eff=0.0022636474124195006`; the consistency relation derived `n_t=-0.00125`, and Fast/Reference physical `A_t=2.1005489999999998e-11` matched exactly. No unit-amplitude surrogate was used.
+- At the same 76 native frequencies and frozen root, z5 Fast vs Reference z10 max/P95 spectrum error was `0.001429/0.000343 dex`; z8 was `0.000358/0.000245 dex`. Fast map residuals were `3.54e-11` and `−4.04e-6` relative.
+- Reference z8 root residual was `2.943e-4` relative (above the `2e-4` gate); z10 reduced it to `4.957e-6`. Reference z8→z10 max spectrum shift was `1.65e-4 dex`. This supports z8 spectral improvement for one `cr>0` normal-amplitude point but does not certify the underflow boundary or the consistency branch domain.
+
+## 2026-11-15 consistency background underflow repair
+
+- TDD reproduced an unhandled `ValueError: math domain error` while deriving the `cr>0` background for `r=1e-316`, `A_s>0`: the stored `A_t=r*A_s` was zero although the inputs were positive. The failure was before Fast tensor propagation or `S2` construction.
+- Implemented the mathematically equivalent log-domain `V_inf` and `Delta_N` expressions only when positive inputs have a zero stored product. The sampled case now obtains finite `V_inf`, `Delta_N=-209.962`, and is rejected as `invalid_cutoff` because `N_inf` is not physical. No unit-power background bypass was introduced.
+- Existing `cr>0` exact `r=0` remains `invalid_r`; exact `A_s=0` has no consistency cutoff and is `invalid_cutoff`. `cr=0` nonzero underflow remains on its existing finite log-amplitude path.
+- Full validation on this production-code change: `406 passed, 9 deselected, 2 warnings`; `ruff check .`, configured Mypy, sdist and wheel build passed. The normal-amplitude `cr>0` tail comparison was rerun and stayed numerically unchanged.
+- 2026-11-15 `cr>0` amplitude-underflow follow-up: the `T_re={10,2e3,1e4}` × `kappa10={1e-3,1e-2,1}` nine-point screen kept finite log-derived `V_inf` but yielded `Delta_N=-198.43..-214.72`, so all cases correctly stop as pre-primitive `invalid_cutoff`. An ordinary-amplitude stress control with valid `N_inf=68.81384` reached `S2`, failing as `nonfinite_background_primitive` at index 13763 (log scale 12678.08). Thus the background cutoff guard and `S2=exp(Psi)` overflow are separate failure classes. The control is not an accuracy pass; see `docs/research/consistency_amplitude_underflow_20261115.md` and its boundary JSON/script.

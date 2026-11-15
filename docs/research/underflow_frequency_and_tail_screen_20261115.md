@@ -49,6 +49,10 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 
 精确零输入由 `r=0` 或 `A_s=0` 且 `cr<=0` 定义；非零次正规 `r A_s` 下溢不是精确零。`cr=0` 的对数振幅回退可分别计算 `log(r)+log(A_s)`。`cr>0` 的背景依赖张量幅度，不能通过同一回退忽略；若其存储 `A_t` 已为零，Fast 保持失败。背景原函数 `S2=exp(Psi)` 另外在传播前检查非有限值；本实验没有触及或扩展 `S2` 溢出域。
 
+一致性分支的四分类检查进一步发现，`cr>0`、`r>0`、`A_s>0` 但乘积下溢时，原实现先在派生背景 `log(A_t)` 处异常，未进入 Fast 的 cutoff 或 `S2` 阶段。已按数学等价的分项对数式计算 `V_inf/Delta_N`：示例得到有限 `V_inf`、`Delta_N=-209.962`，随后以 `invalid_cutoff` 拒绝；`cr>0,r=0` 仍为 `invalid_r`，`cr>0,A_s=0` 为 `invalid_cutoff`。`cr=0` 的非零下溢与精确零路径仍分别为 log-power 成功路径和 exact-zero 成功路径。实现和证据见[一致性分支下溢研究记录](consistency_amplitude_underflow_20261115.md)；没有扩展 `cr>0` 的振幅传播域。
+
+后续 `T_re={10,2000,10000}` × `kappa10={1e-3,1e-2,1}` 九点扫描全部因负 `Delta_N` 在 primitive 构造前被拒；同轮以普通振幅 `N_inf=68.81` 压力控制点重新得到 `nonfinite_background_primitive`, detail=`S2`。因此 `invalid_cutoff` 与 `S2` 指数溢出有可观测的不同阶段和失败分类。详见[边界扫描 JSON](results/consistency_underflow_boundary_20261115.json)。
+
 相位分辨尾部单元测试覆盖精确辐射解析解，但目前的 ripple 权重、尾后相位积分、部分周期权重和三终端矩同权混合尚未形成统一 WKB 余项/交接误差界。本轮没有修改这些逻辑，也没有接受相位尾部候选。
 
 ## 可复查文件与判定
@@ -61,6 +65,7 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 937 点异常频段局部直接加密：[脚本](../../scripts/underflow_local_frequency_refinement_20261115.py)、[JSON](results/underflow_local_frequency_refinement_20261115.json)
 - 固定根 z5/z8 交替成本对照：[脚本](../../scripts/benchmark_underflow_tail_depth_20261115.py)、[JSON](results/underflow_tail_depth_benchmark_20261115.json)
 - 常规振幅独立参数点复核：[研究记录](tail_depth_nonunderflow_20261115.md)、[脚本](../../scripts/compare_tail_depth_nonunderflow_20261115.py)、[JSON](results/underflow_tail_depth_nonunderflow_20261115.json)
+- `cr>0` 一致性分支物理振幅复核：[研究记录](tail_depth_consistency_branch_20261115.md)、[脚本](../../scripts/compare_tail_depth_consistency_branch_20261115.py)、[JSON](results/underflow_tail_depth_consistency_branch_20261115.json)
 - Reference 尾部复核：[脚本](../../scripts/underflow_reference_tail_z8_z10_20261115.py)、[JSON](results/underflow_reference_tail_z8_z10_20261115.json)
 - log-PCHIP 候选偏差诊断：[脚本](../../scripts/underflow_pchip_log_candidate_20261115.py)、[JSON](results/underflow_pchip_log_candidate_20261115.json)
 - 同线性 PCHIP 稳定算术：[实现](../../scripts/stable_log_pchip.py)、[测试](../../tests/test_stable_log_pchip.py)、[诊断脚本](../../scripts/underflow_stable_linear_pchip_20261115.py)、[JSON](results/underflow_stable_linear_pchip_20261115.json)
