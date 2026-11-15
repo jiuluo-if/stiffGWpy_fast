@@ -69,6 +69,9 @@ def _run_variant(params, freqs, frozen_dn, reference_log, *, h, sigma_exact):
         "h": h,
         "sigma_exact": sigma_exact,
         "tail_z": 5.0,
+        "time_node_count": int(model.Nv.size),
+        "max_time_step": float(np.max(np.diff(model.Nv))),
+        "min_time_step": float(np.min(np.diff(model.Nv))),
         "runtime_s": elapsed,
         "map_DN_gw": float(model.DN_gw[-1]),
         "map_residual_at_frozen_background": float(model.DN_gw[-1] - frozen_dn),
@@ -92,6 +95,8 @@ def main() -> int:
         (0.01, True),
         (0.005, True),
         (0.0025, True),
+        (0.00125, True),
+        (0.000625, True),
     )
     results = [
         _run_variant(
