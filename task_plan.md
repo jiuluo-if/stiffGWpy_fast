@@ -1450,4 +1450,28 @@ Inspect direct Reference evidence for a `kappa10` decade or physical-amplitude `
 
 ### Next Step
 
-Select a `kappa10` decade or physical-amplitude `cr>0` holdout with matching direct Reference grid/root/tail evidence, then rerun current Fast on those exact saved nodes.
+Select a physical-amplitude `cr>0` holdout or a distinct scalar-amplitude boundary with matching direct Reference grid/root/tail evidence; current evidence is still `cr=0` only.
+
+## Autonomous continuation: Round 46 — `kappa10` decade holdout
+
+- [x] Preflight a 10× `kappa10` change on the low-temperature/high-tilt minimum-subnormal sample; current Fast remains physically valid with finite log amplitude and a representable root.
+- [x] Directly solve Reference z8/z10 on the exact 227-node Fast grid; do not reuse or interpolate the prior 221-node spectrum.
+- [x] Current Fast z8 vs Reference z10 has max/P95 spectrum error `3.1394e-4/2.2217e-5 dex`, map error `−3.294e-6`, and fixed-root residual 0; Reference z8→z10 changes `1.6498e-4 dex` max / `1.5849e-4 dex` P95.
+- [x] Save the staged, source-hashed script and full JSON with no Reference warnings or normalized-zero nodes.
+- [ ] Commit/push Round46 and verify CI, then test `cr>0` or a distinct amplitude boundary.
+
+### Next Step
+
+Commit/push Round46 kappa-decade evidence and verify the remote SHA/CI, then select a Reference-backed physical-amplitude `cr>0` point to test the existing background boundary without bypassing its dependencies.
+
+## Autonomous continuation: Round 46 — `kappa10` decade holdout
+
+- [x] Preflight a 10× `kappa10` change on the low-temperature, high-tilt, minimum-subnormal sample; current Fast remains physically valid with finite log amplitude and a representable root.
+- [x] Directly solve Reference z8/z10 on the exact 227-node Fast grid; do not reuse or interpolate the prior 221-node spectrum.
+- [x] Current Fast z8 vs Reference z10 has max/P95 spectrum error `3.1394e-4/2.2217e-5 dex`, map error `−3.294e-6`, and fixed-root residual 0; Reference z8→z10 changes `1.6498e-4 dex` max / `1.5849e-4 dex` P95.
+- [x] Save the staged, source-hashed script and full JSON with no Reference warnings or normalized-zero nodes.
+- [ ] Commit/push Round46 and verify CI, then test `cr>0` or a distinct amplitude boundary.
+
+### Next Step
+
+Commit/push the Round46 kappa-decade evidence, then choose a Reference-backed physical-amplitude `cr>0` point to test the existing branch boundary without bypassing its background dependence.
