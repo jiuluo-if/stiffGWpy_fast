@@ -1397,3 +1397,5 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Full Ruff, configured Mypy and package build pass.
 - [x] Warm one-thread 12-pair same-root/grid A/B at 937 nodes: z5/per-mode/z8 P50 `0.2270/0.2283/0.3079s`, P95 `0.2471/0.2341/0.3563s`; per-mode max error `0.0004855 dex` vs Reference z10, repeat spectra bitwise stable.
 - [ ] Performance and accuracy still cover one full z10 A/B point; keep this path private and opt-in pending multi-grid, multi-resource, additional `cr>0`, and Reference tail checks.
+- [x] Complete direct Reference z8/z10 for the low-T/high-tilt 221-node holdout; z8→z10 max/P95 `1.648e-4/1.598e-4 dex`, map shift `−1.245e-5`; actual per-mode vs z10 max error `5.692e-4 dex`, root residual `−2.22e-16`.
+- [ ] Still need z8→z10 closure at the `n_t=17.30` holdout and Reference z10 on independent frequency grids for the new background cases.
