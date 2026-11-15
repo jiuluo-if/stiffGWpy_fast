@@ -75,6 +75,14 @@
 
 逐频谱、根/映射和源码哈希见[`kappa10=.01` 留出 JSON](results/integral_first_kappa_decade_holdout_20261116.json)，可复跑[分阶段脚本](../../scripts/screen_integral_first_kappa_decade_holdout_20261116.py)。这一点将同一低温高倾斜切片上的 `kappa10` 扩展到十倍跨度，但没有测试 `cr>0`，不能认证连续的 kappa 区间。
 
+## `cr>0` 一致性分支的当前边界（2026-11-16）
+
+使用已有物理振幅一致性样本 `r=.01,cr=1,T_re=2000,DN_re=20,kappa10=.01` 作当前源码控制。Reference z10 源码哈希和 76 点频率网格与保存结果一致；当前 Fast 根仍为 `0.0022636474124195006`。固定根 z8 谱对 Reference z10 最大差 `3.5795e-4 dex`，根映射相对差 `−4.045e-6`。`A_t=2.100549e-11` 为正规数，直接监视 `_integrate_log_scaled_dn_map` 的调用次数为 0；该候选没有进入物理一致性分支。
+
+另用当前源码重跑 `r=1e-316,cr=1` 的九点 `T_re={10,2000,10000} × kappa10={1e-3,.01,1}` 矩阵。所有点的 `Delta_N<0`、`N_inf=None`，Fast 均在构造传播原语之前按 `invalid_cutoff` 拒绝。独立正常振幅压力控制仍到达 `primitive:S2`，并报 `nonfinite_background_primitive`；没有把 cutoff 拒绝和 `S2` 溢出合并。矩阵当前源码结果见[JSON](results/consistency_underflow_boundary_20261115.json)，物理振幅控制见[JSON](results/integral_first_cr_positive_control_20261116.json)和[复跑脚本](../../scripts/verify_integral_first_cr_positive_control_20261116.py)。
+
+这仍未找到 `cr>0`、cutoff 有效且原初振幅落在次正规边界的可传播点；一致性分支适用域没有扩展。
+
 - 生产修改限于 `cr=0` 对数振幅路径的终端积分映射和失败详情；`cr>0` 背景依赖、频率生成、Reference、默认尾部深度和普通振幅路径没有更改。
 - 目前的误差对照只有 `cr=0` 下四个离散点，不表示跨振幅、倾斜、再热温度、`kappa10` 或 `cr` 连续区域认证。
 - 线性数组中的逐点物理谱可能仍舍入为零，只有有限对数谱和终端积分缩放得到保护。低于 float64 根相对精度能力的根会拒绝，而不会恢复成 log-root 公共结果。
