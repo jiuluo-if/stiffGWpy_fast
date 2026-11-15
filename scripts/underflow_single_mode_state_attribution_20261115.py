@@ -25,7 +25,8 @@ from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 INPUT = ROOT / "docs" / "research" / "results" / "underflow_grid_235_469_937_20261115.json"
 OUTPUT = ROOT / "docs" / "research" / "results" / "underflow_single_mode_state_attribution_20261115.json"
 MODE_INDEX = 215
-TAIL_Z = 5.0
+TAIL_ZS = (5.0, 8.0)
+PHASE_MAX = 0.5
 VARIANTS = ((0.01, False), (0.01, True), (0.000625, True))
 
 
@@ -33,7 +34,9 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _fast_handoff_state(params: dict, freq: float, dn_eff: float, h: float, sigma_exact: bool) -> dict:
+def _fast_handoff_state(
+    params: dict, freq: float, dn_eff: float, h: float, sigma_exact: bool, tail_z: float
+) -> dict:
     model = LCDM_SG(**params)
     model.cosmo_param["DN_eff"] = dn_eff
     FS.gen_fast(model, h)
@@ -52,23 +55,24 @@ def _fast_handoff_state(params: dict, freq: float, dn_eff: float, h: float, sigm
     z = z0
     last_xh, last_yh, last_z = xh, yh, z
     kend = j0
-    while k < len(model.Nv) - 1 and z < TAIL_Z:
+    while k < len(model.Nv) - 1 and z < tail_z:
         step = float(h_arr[k]) if h_arr is not None else h
         z_mid = z0 + float(Phi_mid[k]) - float(Phi[j0])
         z_end = 2.0 * z_mid - z
-        xh, yh = FS._phase_segment(xh, yh, z, z_end, step, 0.0)
+        xh, yh = FS._phase_segment(xh, yh, z, z_end, step, PHASE_MAX)
         k += 1
         z = z0 + float(Phi[k]) - float(Phi[j0])
-        if z < TAIL_Z:
+        if z < tail_z:
             last_xh, last_yh, last_z = xh, yh, z
             kend = k
 
-    if z >= TAIL_Z:
+    if z >= tail_z:
         kend = max(j0, k - 1)
     scale = math.sqrt(float(S2[kend]))
     return {
         "h": h,
         "sigma_exact": sigma_exact,
+        "tail_z": tail_z,
         "time_node_count": int(len(model.Nv)),
         "frequency_start_index": j0,
         "frequency_start_N": float(model.Nv[j0]),
@@ -123,26 +127,27 @@ def main() -> int:
     freq = float(freqs[MODE_INDEX])
     variants = []
     for h, sigma_exact in VARIANTS:
-        fast = _fast_handoff_state(params, freq, dn_eff, h, sigma_exact)
-        reference_state = _reference_state_at(
-            params,
-            freq,
-            dn_eff,
-            fast["frequency_start_N"],
-            fast["frequency_start_z"],
-            fast["last_node_before_tail_N"],
-        )
-        fast_xy = np.asarray(fast["fast_state_physical"], dtype=np.float64)
-        ref_xy = np.asarray(reference_state["state_physical"], dtype=np.float64)
-        rel_state = float(np.linalg.norm(fast_xy - ref_xy) / np.linalg.norm(ref_xy))
-        rel_norm2 = float(np.dot(fast_xy, fast_xy) / np.dot(ref_xy, ref_xy) - 1.0)
-        variants.append({
-            **fast,
-            "reference_state": reference_state,
-            "z_difference": fast["last_node_before_tail_z"] - reference_state["z"],
-            "relative_state_vector_difference": rel_state,
-            "relative_quadratic_norm_difference": rel_norm2,
-        })
+        for tail_z in TAIL_ZS:
+            fast = _fast_handoff_state(params, freq, dn_eff, h, sigma_exact, tail_z)
+            reference_state = _reference_state_at(
+                params,
+                freq,
+                dn_eff,
+                fast["frequency_start_N"],
+                fast["frequency_start_z"],
+                fast["last_node_before_tail_N"],
+            )
+            fast_xy = np.asarray(fast["fast_state_physical"], dtype=np.float64)
+            ref_xy = np.asarray(reference_state["state_physical"], dtype=np.float64)
+            rel_state = float(np.linalg.norm(fast_xy - ref_xy) / np.linalg.norm(ref_xy))
+            rel_norm2 = float(np.dot(fast_xy, fast_xy) / np.dot(ref_xy, ref_xy) - 1.0)
+            variants.append({
+                **fast,
+                "reference_state": reference_state,
+                "z_difference": fast["last_node_before_tail_z"] - reference_state["z"],
+                "relative_state_vector_difference": rel_state,
+                "relative_quadratic_norm_difference": rel_norm2,
+            })
 
     output = {
         "schema_version": 1,
@@ -153,7 +158,8 @@ def main() -> int:
         "frequency_index": MODE_INDEX,
         "frequency_log10_hz": freq,
         "frozen_DN_eff": dn_eff,
-        "tail_z": TAIL_Z,
+        "tail_z_targets": list(TAIL_ZS),
+        "phase_max": PHASE_MAX,
         "reference_state_rtol": 1e-9,
         "variants": variants,
         "environment": {
@@ -178,6 +184,7 @@ def main() -> int:
             {
                 "h": row["h"],
                 "sigma_exact": row["sigma_exact"],
+                "tail_z": row["tail_z"],
                 "N_start": row["frequency_start_N"],
                 "z_start": row["frequency_start_z"],
                 "N_handoff": row["last_node_before_tail_N"],

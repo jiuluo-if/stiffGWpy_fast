@@ -1264,9 +1264,9 @@ The remaining fixed-background Fast/Reference spectrum mismatch near `2e-3 dex` 
 ### Progress
 
 - [x] Confirm the worst mode starts at `N=19`, after the `N_re=10` kink; current single-mode replay does not cross the reheating discontinuity.
-- [x] Compare Fast and Cartesian Reference states at the same handoff-grid node near `z=5` for three time-grid variants.
+- [x] Compare Fast and Cartesian Reference states at matching handoff-grid nodes near `z=5` and `z=8` for three time-grid variants, replaying the formal `phase_max=0.5` substep setting.
 - [ ] Determine whether the residual is high-frequency propagation phase/amplitude error or terminal-moment assembly; do not alter production Fast/Reference before attribution.
 
 ### Next Step
 
-Use saved z5 states to compare each terminal moment formula in isolation, then run a bounded direct Reference state check at z8 only if its measured cost is acceptable.
+Derive the Fast and Reference closed-form post-handoff scale mappings at the matched z8 state. The direct Cartesian state checks at z8 already completed within budget; do not repeat them without a changed hypothesis.

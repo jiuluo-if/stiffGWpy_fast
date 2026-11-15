@@ -1770,7 +1770,7 @@ the diagnostic artifacts are retained.
 
 ## 2026-11-15 underflow mode-state attribution
 
-- Added a standalone same-start Fast/Cartesian Reference diagnostic and raw JSON at `z≈5`; compiled and executed successfully.
-- The z5 state discrepancy falls strongly with time-step refinement, but the refined discrepancy does not yet account for the approximately `1.94e-3 dex` final spectrum mismatch. A direct high-accuracy z12 Cartesian solve was too costly (>2 min with no result), so the deep propagation attribution remains open.
-- Logged the abandoned high-cost integration attempt and revised the diagnostic threshold to a tractable z5 node. No production Fast or Reference source changed.
-- Next: independently assemble terminal moments from saved states and then assess bounded z8 Reference cost.
+- The first standalone replay omitted the formal `phase_max=0.5` substeps; its state numbers were invalid and were superseded without changing production code.
+- Corrected the replay and generated a raw JSON comparing Fast and Cartesian Reference at both z5 and z8 for three step/primitive variants. `ruff`, `py_compile`, JSON/hash validation, and diff checks pass.
+- At z8, h=.000625 state norm-squared differs by only `−6.45e-8`, while the common ratio across all Fast terminal moments to Reference z8 is `0.9956615`. The same-node Fast gamma-corrected handoff coefficient-squared ratio is `1.000281`; post-handoff mapping / Reference tail remains to attribute.
+- A direct `rtol=1e-11` Cartesian solve through z12 took more than two minutes without returning and was stopped. Next compare the closed-form Fast and Reference tail scale mappings from the recorded z8 states; keep all findings diagnostic until independently verified.
