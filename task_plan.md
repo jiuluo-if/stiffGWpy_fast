@@ -1432,12 +1432,12 @@ Validate the integral-first map on a low-temperature/high-tilt independent holdo
 - [x] Current Fast roots close on direct 235/469/937 grids; own-root fixed remaps have zero relative residual.
 - [x] Same 937-node frozen-root current Fast z8 spectrum vs Reference z10 passes (`3.722e-4 dex` max / `2.325e-5 dex` P95); map error is `−3.253e-6`; reference z8→z10 changes `1.649e-4 dex` max / `1.421e-4 dex` P95.
 - [x] Verify and save source/grid hashes without modifying the Reference or hiding its four divide warnings/49 normalized zero nodes.
-- [ ] Add an independent low-temperature/high-tilt holdout from existing direct Reference data, then consider a `kappa10` or `cr` change.
-- [ ] Commit/push the Round 44 research record and verify remote SHA/CI.
+- [x] Add an independent low-temperature/high-tilt holdout from existing direct Reference data; the sample changes tilt, temperature and `kappa10` while preserving `cr=0`.
+- [x] Commit/push Round44/45 in `90e968c9ab13538c019d8e2c9b771a98ec71c222`, verify remote SHA, and observe all CI jobs pass.
 
 ### Next Step
 
-Run the existing low-T/high-tilt Reference holdout through current Fast and compare its same-grid spectrum and mapped integral, then update the discrete evidence ledger.
+Inspect direct Reference evidence for a `kappa10` decade or physical-amplitude `cr>0` sample; preserve current discrete-only conclusions.
 
 ## Autonomous continuation: Round 45 — low-temperature/high-tilt holdout
 
@@ -1446,8 +1446,8 @@ Run the existing low-T/high-tilt Reference holdout through current Fast and comp
 - [x] Compare same-grid spectra to direct Reference z10; maximum error `5.692e-4 dex`, map error `−2.251e-6`, own-root residual 0.
 - [x] Confirm Reference tail change `z8→z10` is `1.648e-4 dex` max / `1.598e-4 dex` P95; Reference source is unchanged and no warnings/zero nodes were hidden.
 - [x] Save source-hashed script and full nodewise JSON. This is the third passing discrete `cr=0` point, not a continuous-domain certification.
-- [ ] Update research ledger, run final artifact/static check, commit/push Round 44/45 records, and verify remote SHA/CI.
+- [x] Update research ledger, run Ruff/artifact hash/diff checks, commit/push and verify remote SHA/CI success.
 
 ### Next Step
 
-Select an independent `kappa10` decade or physical-amplitude `cr>0` holdout; first inspect whether a direct Reference with a matching root/grid/tail already exists, then rerun current Fast on the exact saved nodes.
+Select a `kappa10` decade or physical-amplitude `cr>0` holdout with matching direct Reference grid/root/tail evidence, then rerun current Fast on those exact saved nodes.
