@@ -1338,4 +1338,5 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Compare fixed-background spectrum/integral scaling with self-consistent root outcomes; retain exact-zero as a separate case.
 - [x] Fixed-background normalized spectra agree within `1.14e-13 dex`; integrated `DN_gw` scaling ratio spans `0.99999999999994..1.00000000000002`.
 - [x] Self-consistent roots scale with `r` to about `1.2e-11` relative in this discrete ladder, but their normalized spectral shape shifts `0.00191..0.00192 dex` as the background root changes.
+- [x] Add an independent unit-amplitude Cartesian Reference at the shared frozen root, scaled analytically over the amplitude ladder; all five nonzero cases reproduce the same `0.00048045 dex` maximum spectrum difference and `8.35e-7` map-relative difference.
 - [ ] Do not certify the ladder: each amplitude still needs independent Reference, 469/937 frequency convergence and root-tolerance evidence before any domain claim.

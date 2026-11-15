@@ -8,6 +8,7 @@ import math
 import platform
 import sys
 import time
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -17,7 +18,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from stiffgwpy_fast import freq_adaptive as FA  # noqa: E402
+from stiffgwpy_fast import global_param as gp  # noqa: E402
 from stiffgwpy_fast.freq_adaptive import _log_tensor_amplitude  # noqa: E402
+from stiffgwpy_fast.reference import integrate_spectrum, spectrum_reference  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 BASE_PARAMS = {
@@ -122,6 +125,70 @@ def run_case(
     }
 
 
+def reference_fixed_background(freqs: np.ndarray, frozen_dn: float) -> dict[str, object]:
+    unit_params = {
+        **BASE_PARAMS,
+        "r": 1.0,
+        "A_s": 1.0,
+        "n_t": 0.0,
+        "DN_eff": 0.0,
+    }
+    model = LCDM_SG(**unit_params)
+    model.gen_expansion()
+    started = time.perf_counter()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", RuntimeWarning)
+        Ogw, Oj, Opgw, used_tail = spectrum_reference(
+            model, freqs, frozen_dn, z_tail=8.0, rtol=1e-9,
+            workers=1, backend="cartesian",
+        )
+        base = np.where(used_tail, 3.0 * Opgw, Ogw - Oj)
+        if np.any(~np.isfinite(base)) or np.any(base <= 0.0):
+            raise FloatingPointError("Reference unit-transfer spectrum is not positive and finite")
+        rows = []
+        for r in AMPLITUDES:
+            if r == 0.0:
+                rows.append({
+                    "r": r,
+                    "log10_OmegaGW": [None] * freqs.size,
+                    "mapped_DN_gw": 0.0,
+                })
+                continue
+            log_amp = math.log(r) + math.log(BASE_PARAMS["A_s"])
+            log_power = log_amp + BASE_PARAMS["n_t"] * (
+                math.log(10.0) * freqs - math.log(gp.f_piv)
+            )
+            log_integrand = np.log(base) + log_power
+            shift = float(np.max(log_integrand))
+            normalized = np.exp(log_integrand - shift)
+            g2_scaled, qerr_scaled, ierr_scaled = integrate_spectrum(
+                freqs, normalized, np.zeros_like(normalized)
+            )
+            log_g2 = shift + math.log(g2_scaled)
+            omega_nu = gp.Omega_nh2 / float(model.derived_param["h"]) ** 2
+            rows.append({
+                "r": r,
+                "log10_OmegaGW": (log_integrand / math.log(10.0)).tolist(),
+                "mapped_DN_gw": gp.Neff0 * math.exp(log_g2) / omega_nu,
+                "normalized_nodes_underflowed_to_zero": int(np.count_nonzero(normalized == 0.0)),
+                "quadrature_error_relative": (
+                    None if qerr_scaled is None else float(qerr_scaled / g2_scaled)
+                ),
+                "interpolation_error_relative": (
+                    None if ierr_scaled is None else float(ierr_scaled / g2_scaled)
+                ),
+            })
+    return {
+        "frozen_DN_eff": frozen_dn,
+        "z_tail": 8.0,
+        "rtol": 1e-9,
+        "used_tail_count": int(np.count_nonzero(used_tail)),
+        "runtime_s": time.perf_counter() - started,
+        "runtime_warnings": [str(item.message) for item in caught],
+        "cases": rows,
+    }
+
+
 def main() -> int:
     baseline = json.loads(BASE_RESULT.read_text(encoding="utf-8"))
     freqs = np.asarray(baseline["frequency_grids"]["235"]["log10_hz"], dtype=np.float64)
@@ -130,6 +197,24 @@ def main() -> int:
     fixed_background = [
         run_case(r, freqs, frozen_dn=frozen_dn) for r in AMPLITUDES
     ]
+    reference = reference_fixed_background(freqs, frozen_dn)
+    ref_by_r = {row["r"]: row for row in reference["cases"]}
+    fixed_by_r = {row["r"]: row for row in fixed_background}
+    for r in AMPLITUDES:
+        fast_row = fixed_by_r[r]
+        ref_row = ref_by_r[r]
+        if r == 0.0:
+            fast_row["reference_max_abs_spectrum_error_dex"] = None
+            fast_row["reference_map_relative_error"] = None
+            continue
+        fast_spectrum = np.asarray(fast_row["log10_OmegaGW"], dtype=np.float64)
+        ref_spectrum = np.asarray(ref_row["log10_OmegaGW"], dtype=np.float64)
+        fast_row["reference_max_abs_spectrum_error_dex"] = float(
+            np.max(np.abs(fast_spectrum - ref_spectrum))
+        )
+        fast_row["reference_map_relative_error"] = (
+            float(fast_row["mapped_DN_gw"]) / float(ref_row["mapped_DN_gw"]) - 1.0
+        )
     rows = self_consistent + fixed_background
     for group in (self_consistent, fixed_background):
         reference = next(row for row in group if row["r"] == BASE_PARAMS["r"])
@@ -173,6 +258,7 @@ def main() -> int:
         "frequency_log10_hz": freqs.tolist(),
         "frequency_sha256_f64le": hashlib.sha256(np.asarray(freqs, dtype="<f8").tobytes()).hexdigest(),
         "cases": rows,
+        "reference_fixed_background": reference,
         "environment": {
             "python": sys.version,
             "platform": platform.platform(),
@@ -202,6 +288,8 @@ def main() -> int:
             "normalized_spectrum_max_delta_dex": row["normalized_spectrum_max_delta_dex"],
             "map_amplitude_scale_ratio": row["map_amplitude_scale_ratio"],
             "root_amplitude_scale_ratio": row["root_amplitude_scale_ratio"],
+            "reference_max_abs_spectrum_error_dex": row.get("reference_max_abs_spectrum_error_dex"),
+            "reference_map_relative_error": row.get("reference_map_relative_error"),
             "failure": row["fast_failure_reason"],
         } for row in rows],
     }, indent=2))
