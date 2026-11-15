@@ -3,6 +3,7 @@ import math
 import numpy as np
 
 from stiffgwpy_fast.fast_sgwb import (
+    _adaptive_wkb_tail_thresholds,
     _blend_phase_tail_moments,
     _phase_after_tail_entry,
     _phase_integral_suffix,
@@ -197,6 +198,45 @@ def test_solve_kernel_skips_stale_tail_state_when_phase_weight_is_none():
     )
 
     np.testing.assert_array_equal(tail_state[:, 3], np.array([-1.0]))
+
+
+def test_solve_kernel_accepts_per_mode_tail_thresholds():
+    nv = np.arange(5, dtype=np.float64) * 0.1
+    phi = np.arange(5, dtype=np.float64)
+    phi_mid = np.r_[0.5 * (phi[:-1] + phi[1:]), phi[-1]]
+    s2 = np.ones(5, dtype=np.float64)
+    s2inv = np.ones(5, dtype=np.float64)
+    j0s = np.array([0, 0], dtype=np.int64)
+    z0s = np.array([-1.0, -1.0], dtype=np.float64)
+    ogw = np.zeros((2, 3), dtype=np.float64)
+    oj = np.zeros_like(ogw)
+    opgw = np.zeros_like(ogw)
+    handoff_eps = np.full(2, -1.0)
+
+    solve_kernel(
+        nv, phi, phi_mid, s2, s2inv, j0s, z0s,
+        np.ones(2, dtype=np.float64),
+        np.exp(-nv), np.ones(5, dtype=np.float64),
+        np.ones(2, dtype=np.float64), 1, 3, 2, 0.1, 5.0,
+        ogw, oj, opgw, np.diff(nv), np.ones(5, dtype=np.float64),
+        0.0, handoff_eps,
+        z_tail_by_mode=np.array([0.0, 100.0], dtype=np.float64),
+    )
+
+    assert handoff_eps[0] >= 0.0
+    assert handoff_eps[1] == -1.0
+
+
+def test_adaptive_wkb_threshold_mask_preserves_phase_resolved_rows():
+    actual = _adaptive_wkb_tail_thresholds(
+        np.array([4.9, 5.5, 5.5, 7.0]),
+        z_tail=5.0,
+        defer_below=6.0,
+        defer_to=8.0,
+        phase_weight=np.array([0.0, 0.0, 0.2, 0.0]),
+    )
+
+    np.testing.assert_array_equal(actual, np.array([8.0, 8.0, 5.0, 5.0]))
 
 
 def test_phase_tail_state_is_not_passed_without_phase_weights():
