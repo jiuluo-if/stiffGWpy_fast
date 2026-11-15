@@ -125,7 +125,11 @@ def run_case(
     }
 
 
-def reference_fixed_background(freqs: np.ndarray, frozen_dn: float) -> dict[str, object]:
+def reference_fixed_background(
+    freqs: np.ndarray,
+    frozen_dn: float,
+    amplitudes: tuple[float, ...] = AMPLITUDES,
+) -> dict[str, object]:
     unit_params = {
         **BASE_PARAMS,
         "r": 1.0,
@@ -146,7 +150,7 @@ def reference_fixed_background(freqs: np.ndarray, frozen_dn: float) -> dict[str,
         if np.any(~np.isfinite(base)) or np.any(base <= 0.0):
             raise FloatingPointError("Reference unit-transfer spectrum is not positive and finite")
         rows = []
-        for r in AMPLITUDES:
+        for r in amplitudes:
             if r == 0.0:
                 rows.append({
                     "r": r,

@@ -1,0 +1,424 @@
+{
+  "schema_version": 1,
+  "status": "complete_direct_fast_amplitude_grid_screen",
+  "scope": "Three discrete cr=0 amplitudes, direct Fast on nested 235/469/937 native frequency grids; each grid is both solved self-consistently and mapped at that amplitude's 235-point root.",
+  "parameters_except_r": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "amplitudes": [
+    1e-316,
+    1e-318,
+    5e-324
+  ],
+  "grids": {
+    "235": {
+      "count": 235,
+      "sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f"
+    },
+    "469": {
+      "count": 469,
+      "sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4"
+    },
+    "937": {
+      "count": 937,
+      "sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee"
+    }
+  },
+  "cases": [
+    {
+      "r": 1e-316,
+      "root_235": 0.027412228089632874,
+      "grids": [
+        {
+          "count": 235,
+          "self_consistent": {
+            "grid": "235",
+            "frequency_count": 235,
+            "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+            "solve_mode": "self_consistent",
+            "r": 1e-316,
+            "evaluation_background_DN_eff": 0.027412228089632874,
+            "root_DN_eff": 0.027412228089632874,
+            "mapped_DN_gw": 0.027412228089632874,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.0604528000112623,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": 0.0
+          },
+          "fixed_at_235_root": {
+            "grid": "235",
+            "frequency_count": 235,
+            "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+            "solve_mode": "fixed_background",
+            "r": 1e-316,
+            "evaluation_background_DN_eff": 0.027412228089632874,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 0.027412228089632874,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.03188150000642054,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": 0.0
+          }
+        },
+        {
+          "count": 469,
+          "self_consistent": {
+            "grid": "469",
+            "frequency_count": 469,
+            "frequency_sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+            "solve_mode": "self_consistent",
+            "r": 1e-316,
+            "evaluation_background_DN_eff": 0.027412167344026253,
+            "root_DN_eff": 0.027412167344026253,
+            "mapped_DN_gw": 0.027412167344026253,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.1208115000044927,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": -2.2160039826468747e-06
+          },
+          "fixed_at_235_root": {
+            "grid": "469",
+            "frequency_count": 469,
+            "frequency_sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+            "solve_mode": "fixed_background",
+            "r": 1e-316,
+            "evaluation_background_DN_eff": 0.027412228089632874,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 0.027412167344026253,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -2.2160039826970504e-06,
+            "runtime_s": 0.06162249998305924,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": -2.2160039826468747e-06
+          }
+        },
+        {
+          "count": 937,
+          "self_consistent": {
+            "grid": "937",
+            "frequency_count": 937,
+            "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+            "solve_mode": "self_consistent",
+            "r": 1e-316,
+            "evaluation_background_DN_eff": 0.027412164956764948,
+            "root_DN_eff": 0.027412164956764948,
+            "mapped_DN_gw": 0.027412164956764948,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.24214660000870936,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": -2.303091442223959e-06
+          },
+          "fixed_at_235_root": {
+            "grid": "937",
+            "frequency_count": 937,
+            "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+            "solve_mode": "fixed_background",
+            "r": 1e-316,
+            "evaluation_background_DN_eff": 0.027412228089632874,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 0.027412164956764948,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -2.3030914422606224e-06,
+            "runtime_s": 0.1262148999958299,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": -2.303091442223959e-06
+          }
+        }
+      ],
+      "reference_at_235_root": {
+        "frequency_count": 235,
+        "frozen_DN_eff": 0.027412228089632874,
+        "reference_z_tail": 8.0,
+        "reference_rtol": 1e-09,
+        "runtime_s": 59.24389169999631,
+        "max_abs_spectrum_error_dex": 0.00048044794749557695,
+        "map_relative_error": 8.351933211692142e-07,
+        "reference_map_relative_residual": -8.351926235050655e-07,
+        "runtime_warnings": [
+          "overflow encountered in divide",
+          "overflow encountered in divide",
+          "overflow encountered in divide",
+          "overflow encountered in divide"
+        ],
+        "normalized_nodes_underflowed_to_zero": 13,
+        "quadrature_error_relative": 1.1102230246251564e-14,
+        "interpolation_error_relative": 1.5993220359354286e-05
+      }
+    },
+    {
+      "r": 1e-318,
+      "root_235": 0.0002741219423071541,
+      "grids": [
+        {
+          "count": 235,
+          "self_consistent": {
+            "grid": "235",
+            "frequency_count": 235,
+            "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+            "solve_mode": "self_consistent",
+            "r": 1e-318,
+            "evaluation_background_DN_eff": 0.0002741219423071541,
+            "root_DN_eff": 0.0002741219423071541,
+            "mapped_DN_gw": 0.0002741219423071541,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.06102439999813214,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": 0.0
+          },
+          "fixed_at_235_root": {
+            "grid": "235",
+            "frequency_count": 235,
+            "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+            "solve_mode": "fixed_background",
+            "r": 1e-318,
+            "evaluation_background_DN_eff": 0.0002741219423071541,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 0.00027412194230715407,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -1.9775910008521936e-16,
+            "runtime_s": 0.031035499996505678,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": 0.0
+          }
+        },
+        {
+          "count": 469,
+          "self_consistent": {
+            "grid": "469",
+            "frequency_count": 469,
+            "frequency_sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+            "solve_mode": "self_consistent",
+            "r": 1e-318,
+            "evaluation_background_DN_eff": 0.0002741213348518374,
+            "root_DN_eff": 0.0002741213348518374,
+            "mapped_DN_gw": 0.0002741213348518374,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.11988199999905191,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": -2.216003985755499e-06
+          },
+          "fixed_at_235_root": {
+            "grid": "469",
+            "frequency_count": 469,
+            "frequency_sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+            "solve_mode": "fixed_background",
+            "r": 1e-318,
+            "evaluation_background_DN_eff": 0.0002741219423071541,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 0.0002741213348518374,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -2.2160039857480842e-06,
+            "runtime_s": 0.06254020001506433,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": -2.2160039855334546e-06
+          }
+        },
+        {
+          "count": 937,
+          "self_consistent": {
+            "grid": "937",
+            "frequency_count": 937,
+            "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+            "solve_mode": "self_consistent",
+            "r": 1e-318,
+            "evaluation_background_DN_eff": 0.00027412131097925445,
+            "root_DN_eff": 0.00027412131097925445,
+            "mapped_DN_gw": 0.00027412131097925445,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.24263919997611083,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": -2.303091443001115e-06
+          },
+          "fixed_at_235_root": {
+            "grid": "937",
+            "frequency_count": 937,
+            "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+            "solve_mode": "fixed_background",
+            "r": 1e-318,
+            "evaluation_background_DN_eff": 0.0002741219423071541,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 0.0002741213109792545,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -2.303091442854848e-06,
+            "runtime_s": 0.12242720002541319,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": -2.3030914426680482e-06
+          }
+        }
+      ],
+      "reference_at_235_root": {
+        "frequency_count": 235,
+        "frozen_DN_eff": 0.0002741219423071541,
+        "reference_z_tail": 8.0,
+        "reference_rtol": 1e-09,
+        "runtime_s": 60.68962590000592,
+        "max_abs_spectrum_error_dex": 0.0004716797464539013,
+        "map_relative_error": 8.347924262963602e-07,
+        "reference_map_relative_residual": -8.347917294093676e-07,
+        "runtime_warnings": [
+          "overflow encountered in divide",
+          "overflow encountered in divide",
+          "overflow encountered in divide",
+          "overflow encountered in divide"
+        ],
+        "normalized_nodes_underflowed_to_zero": 13,
+        "quadrature_error_relative": 1.1102230246251562e-14,
+        "interpolation_error_relative": 1.5993270535813855e-05
+      }
+    },
+    {
+      "r": 5e-324,
+      "root_235": 1.3543440396198841e-09,
+      "grids": [
+        {
+          "count": 235,
+          "self_consistent": {
+            "grid": "235",
+            "frequency_count": 235,
+            "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+            "solve_mode": "self_consistent",
+            "r": 5e-324,
+            "evaluation_background_DN_eff": 1.3543440396198841e-09,
+            "root_DN_eff": 1.3543440396198841e-09,
+            "mapped_DN_gw": 1.3543440396198841e-09,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.032378199975937605,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": 0.0
+          },
+          "fixed_at_235_root": {
+            "grid": "235",
+            "frequency_count": 235,
+            "frequency_sha256_f64le": "d2e6476976d0f56081d7074417b341861329705af685a74c97066bb4d773986f",
+            "solve_mode": "fixed_background",
+            "r": 5e-324,
+            "evaluation_background_DN_eff": 1.3543440396198841e-09,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 1.3543440396198841e-09,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.03165459999581799,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": 0.0
+          }
+        },
+        {
+          "count": 469,
+          "self_consistent": {
+            "grid": "469",
+            "frequency_count": 469,
+            "frequency_sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+            "solve_mode": "self_consistent",
+            "r": 5e-324,
+            "evaluation_background_DN_eff": 1.354341038388094e-09,
+            "root_DN_eff": 1.354341038388094e-09,
+            "mapped_DN_gw": 1.354341038388094e-09,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.06340590000036173,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": -2.2160039859775438e-06
+          },
+          "fixed_at_235_root": {
+            "grid": "469",
+            "frequency_count": 469,
+            "frequency_sha256_f64le": "f8da894bd3a46a0584a3ddb778b6998505868410e4923803cdeea15a6723b5b4",
+            "solve_mode": "fixed_background",
+            "r": 5e-324,
+            "evaluation_background_DN_eff": 1.3543440396198841e-09,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 1.354341038388094e-09,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -2.216003985947024e-06,
+            "runtime_s": 0.0638059000193607,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": -2.2160039859775438e-06
+          }
+        },
+        {
+          "count": 937,
+          "self_consistent": {
+            "grid": "937",
+            "frequency_count": 937,
+            "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+            "solve_mode": "self_consistent",
+            "r": 5e-324,
+            "evaluation_background_DN_eff": 1.3543409204417143e-09,
+            "root_DN_eff": 1.3543409204417143e-09,
+            "mapped_DN_gw": 1.3543409204417143e-09,
+            "root_map_residual_relative": 0.0,
+            "map_residual_vs_evaluation_background_relative": 0.0,
+            "runtime_s": 0.12740970001323149,
+            "fast_failure_reason": null,
+            "relative_root_change_vs_235": -2.303091444000316e-06
+          },
+          "fixed_at_235_root": {
+            "grid": "937",
+            "frequency_count": 937,
+            "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+            "solve_mode": "fixed_background",
+            "r": 5e-324,
+            "evaluation_background_DN_eff": 1.3543440396198841e-09,
+            "root_DN_eff": null,
+            "mapped_DN_gw": 1.3543409204417143e-09,
+            "root_map_residual_relative": null,
+            "map_residual_vs_evaluation_background_relative": -2.3030914439710564e-06,
+            "runtime_s": 0.12758249999023974,
+            "fast_failure_reason": null,
+            "relative_mapping_change_vs_235": -2.303091444000316e-06
+          }
+        }
+      ],
+      "reference_at_235_root": {
+        "frequency_count": 235,
+        "frozen_DN_eff": 1.3543440396198841e-09,
+        "reference_z_tail": 8.0,
+        "reference_rtol": 1e-09,
+        "runtime_s": 60.88574460000382,
+        "max_abs_spectrum_error_dex": 0.0004746227398300107,
+        "map_relative_error": 8.351692997177196e-07,
+        "reference_map_relative_residual": -8.351686021645932e-07,
+        "runtime_warnings": [
+          "overflow encountered in divide",
+          "overflow encountered in divide",
+          "overflow encountered in divide",
+          "overflow encountered in divide"
+        ],
+        "normalized_nodes_underflowed_to_zero": 13,
+        "quadrature_error_relative": 1.1102230246251569e-14,
+        "interpolation_error_relative": 1.599295429241857e-05
+      }
+    }
+  ],
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "amplitude_ladder_script": "d076925ee4eee8cf89f403816bf76db3a0d1087300b6e20c839e2c4ffa3f64c4",
+    "diagnostic_script": "0f4e5e38764ac2b3f1105fbb29d532627dbf81935407fd6356152099ba47484d"
+  }
+}

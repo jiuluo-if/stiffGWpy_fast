@@ -1340,3 +1340,10 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Self-consistent roots scale with `r` to about `1.2e-11` relative in this discrete ladder, but their normalized spectral shape shifts `0.00191..0.00192 dex` as the background root changes.
 - [x] Add an independent unit-amplitude Cartesian Reference at the shared frozen root, scaled analytically over the amplitude ladder; all five nonzero cases reproduce the same `0.00048045 dex` maximum spectrum difference and `8.35e-7` map-relative difference.
 - [ ] Do not certify the ladder: each amplitude still needs independent Reference, 469/937 frequency convergence and root-tolerance evidence before any domain claim.
+
+## Autonomous continuation: Round 36 — underflow ladder frequency/root separation
+
+- [x] For `r={1e-316,1e-318,5e-324}`, solve direct Fast self-consistent roots on nested 235/469/937 grids.
+- [x] At each amplitude's 235-point root, compare fixed-background maps on all three direct grids; relative mapping shifts are the same (`−2.2160e-6` at 469, `−2.3031e-6` at 937).
+- [x] Run unit-transfer Cartesian Reference at each selected 235-point root; Fast maximum spectrum difference is `0.000472..0.000481 dex` and map relative difference is `8.35e-7`.
+- [ ] Reference at 469/937 for each changed root, z8→z10 tail convergence, and root-tolerance sensitivity remain unmeasured; Reference's four PCHIP divide warnings per run remain open.
