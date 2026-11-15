@@ -1330,4 +1330,12 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Nine `T_re={10,2000,10000}` × `kappa10={1e-3,1e-2,1}` underflow combinations all produced finite `V_inf`, negative log-derived `Delta_N` (`−198.43` to `−214.72`), `N_inf=None`, and pre-primitive `invalid_cutoff`.
 - [x] Replayed ordinary-amplitude S2 pressure control at `Omega_bh2=1e6`, `cr=1`, `r=.01`, `n_t=.5`, `T_re=2000`, `kappa10=.01`; current code reached `S2` and returned `nonfinite_background_primitive` at index 13763, log scale 12678.0768.
 - [x] Added reproducible script and raw JSON; the control confirms distinct failure stages but grants no precision/parameter-domain acceptance to the pressure point.
-- [ ] Rerun targeted/full regression after the final test assertion and diagnostic artifact updates, then commit and push the verified change set.
+- [x] Rerun the full regression, static checks, configured Mypy and package build after the final test assertion; commit `1d99cb4` and verify the push to `fast_v0.2`.
+
+## Autonomous continuation: Round 35 — `cr=0` subnormal amplitude ladder
+
+- [x] Use the same direct 235-point grid and `cr=0, n_t=17.38` point for `r=1e-316,1e-317,1e-318,1e-320,5e-324,0`.
+- [x] Compare fixed-background spectrum/integral scaling with self-consistent root outcomes; retain exact-zero as a separate case.
+- [x] Fixed-background normalized spectra agree within `1.14e-13 dex`; integrated `DN_gw` scaling ratio spans `0.99999999999994..1.00000000000002`.
+- [x] Self-consistent roots scale with `r` to about `1.2e-11` relative in this discrete ladder, but their normalized spectral shape shifts `0.00191..0.00192 dex` as the background root changes.
+- [ ] Do not certify the ladder: each amplitude still needs independent Reference, 469/937 frequency convergence and root-tolerance evidence before any domain claim.
