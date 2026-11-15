@@ -71,5 +71,6 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 同线性 PCHIP 稳定算术：[实现](../../scripts/stable_log_pchip.py)、[测试](../../tests/test_stable_log_pchip.py)、[诊断脚本](../../scripts/underflow_stable_linear_pchip_20261115.py)、[JSON](results/underflow_stable_linear_pchip_20261115.json)
 - `cr=0` 次正规振幅阶梯（固定根缩放和自洽根）：[研究记录](underflow_amplitude_ladder_20261115.md)、[脚本](../../scripts/underflow_amplitude_ladder_20261115.py)、[JSON](results/underflow_amplitude_ladder_20261115.json)
 - 振幅阶梯的 235/469/937 Fast 根与各 235 点根 Reference：[研究记录](underflow_amplitude_grid_convergence_20261115.md)、[脚本](../../scripts/underflow_amplitude_grid_convergence_20261115.py)、[JSON](results/underflow_amplitude_grid_convergence_20261115.json)
+- 下溢振幅阶梯的外层根容差和独立固定点重映射：[研究记录](underflow_root_tolerance_screen_20261115.md)、[脚本](../../scripts/underflow_root_tolerance_screen_20261115.py)、[JSON](results/underflow_root_tolerance_screen_20261115.json)
 
 三份原始 JSON 记录参数、频率节点、固定根映射、逐点对数谱、运行环境、Warning、运行时间和源码 SHA-256。只接受脚本记录的直接频率求解。当前没有候选数值改进达到验收门槛；未修改 Fast 或 Reference 生产路径，未声称性能提升或连续区域认证。
