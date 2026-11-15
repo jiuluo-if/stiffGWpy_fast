@@ -1510,8 +1510,20 @@ With the high-temperature corner added, vary `T_re` while holding `kappa10=.01` 
 - [x] Compare all modes using direct raw positive Reference `Ogw-Oj`; 59/77 public Reference log-spectrum nodes hit the `−40` floor, with no warnings or non-positive raw modes.
 - [x] Fast root vs Reference z12 map is `−6.074e-6`, fixed-root map difference is `−5.402e-6`, and Fast-vs-Reference z12 max spectrum error is `8.357e-5 dex`.
 - [x] Record z8→z10 map change `−2.528e-4` above the root screen; deeper z10→z12 map/spectrum changes are `−3.942e-5` and `8.712e-5 dex`.
-- [ ] Commit/push high-temperature artifact and research ledger; verify CI.
+- [x] Commit `2f85a8877502e91d2e9920b30e9d16b3a94133f9` with required identity/message, push/fetch the same remote SHA, and verify CI `43754260310` passed all jobs.
 
 ### Next Step
 
-Hold `kappa10=.01` fixed and change `T_re` to a low or high value, so the next independent point isolates temperature variation relative to the middle control.
+At fixed `kappa10=.01`, compare a high-temperature point to the existing low-temperature and middle controls to isolate reheating-temperature variation over more than one step.
+
+## Autonomous continuation: Round 51 — fixed-`kappa10` low-temperature control
+
+- [x] At fixed `kappa10=.01`, use `T_re=10` and `r=1.1*r_cut`, preserving positive cutoff margin and a normal stored amplitude.
+- [x] Run current Fast and direct Reference z8/z10/z12 on the exact 76-node Fast grid; compare raw positive `Ogw-Oj` because all public Reference log values hit the `−40` floor.
+- [x] Fast root vs Reference z12 map differs by `+6.326e-6`; fixed-root map differs by `−1.235e-6`; Fast-vs-Reference z12 maximum spectrum error is `3.752e-4 dex`.
+- [x] Reference z10→z12 map/spectrum changes are `+4.972e-6` and `3.741e-4 dex`; no warnings or non-positive raw spectrum nodes.
+- [ ] Commit/push the fixed-`kappa10` temperature artifact and research ledger, then verify CI.
+
+### Next Step
+
+At the same `kappa10=.01`, validate `T_re=10000` to separate high-temperature behavior from the high/high diagonal corner where `kappa10=1`.
