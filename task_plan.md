@@ -1354,3 +1354,10 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Recompute one frozen-background map at each returned root and count background propagations per self-consistent solve.
 - [x] Roots are invariant across the four tolerances; independent relative fixed-point residual is at most `2.22e-16` for these samples.
 - [ ] This does not close Reference 469/937 or z8→z10 evidence and is not a global root convergence guarantee.
+
+## Autonomous continuation: Round 38 — Reference PCHIP warning falsifier
+
+- [x] Reproduce the four original PCHIP `overflow encountered in divide` warnings separately for five positive subnormal amplitudes, retaining the original Reference path as baseline.
+- [x] Compare the same-node integral against stable positive linear PCHIP arithmetic from log values; the map difference is within `7.11e-15` relative and the stable path emits no warning.
+- [x] Correct the amplitude-ladder JSON serialization that had overwritten its full Reference result payload; rerun the Reference data and verify script/source hashes.
+- [ ] Keep the stable implementation diagnostic-only pending direct new-node interpolation error evidence across more backgrounds and grids; Reference grid/tail convergence remains open.

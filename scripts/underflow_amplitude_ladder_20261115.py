@@ -201,8 +201,8 @@ def main() -> int:
     fixed_background = [
         run_case(r, freqs, frozen_dn=frozen_dn) for r in AMPLITUDES
     ]
-    reference = reference_fixed_background(freqs, frozen_dn)
-    ref_by_r = {row["r"]: row for row in reference["cases"]}
+    reference_payload = reference_fixed_background(freqs, frozen_dn)
+    ref_by_r = {row["r"]: row for row in reference_payload["cases"]}
     fixed_by_r = {row["r"]: row for row in fixed_background}
     for r in AMPLITUDES:
         fast_row = fixed_by_r[r]
@@ -221,9 +221,9 @@ def main() -> int:
         )
     rows = self_consistent + fixed_background
     for group in (self_consistent, fixed_background):
-        reference = next(row for row in group if row["r"] == BASE_PARAMS["r"])
-        reference_spectrum = np.asarray(reference["log10_OmegaGW"], dtype=np.float64)
-        reference_map = float(reference["mapped_DN_gw"])
+        baseline = next(row for row in group if row["r"] == BASE_PARAMS["r"])
+        reference_spectrum = np.asarray(baseline["log10_OmegaGW"], dtype=np.float64)
+        reference_map = float(baseline["mapped_DN_gw"])
         log10_ref_amp = math.log10(BASE_PARAMS["r"]) + math.log10(BASE_PARAMS["A_s"])
         for row in group:
             spectrum = row["log10_OmegaGW"]
@@ -246,7 +246,7 @@ def main() -> int:
                 float(row["mapped_DN_gw"]) / reference_map
                 / (float(row["r"]) / BASE_PARAMS["r"])
             )
-            reference_root = reference.get("root_DN_eff")
+            reference_root = baseline.get("root_DN_eff")
             row["root_amplitude_scale_ratio"] = (
                 None
                 if row["root_DN_eff"] is None or reference_root is None
@@ -262,7 +262,7 @@ def main() -> int:
         "frequency_log10_hz": freqs.tolist(),
         "frequency_sha256_f64le": hashlib.sha256(np.asarray(freqs, dtype="<f8").tobytes()).hexdigest(),
         "cases": rows,
-        "reference_fixed_background": reference,
+        "reference_fixed_background": reference_payload,
         "environment": {
             "python": sys.version,
             "platform": platform.platform(),
