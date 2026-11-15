@@ -1486,7 +1486,7 @@ Test physical-amplitude `cr>0` just above one derived cutoff root, and compare i
 - [x] Compare cutoff roots to `A_t` normal/subnormal and rounded-zero boundaries for the 3×3 low/mid/high `T_re × kappa10` matrix; observe no overlap at those discrete backgrounds.
 - [x] At `T_re=2000,kappa10=.01`, run `r=1.1*r_cut` through current `cr>0` Fast and direct same-root Reference z8/z10/z12 on the exact 77-node Fast grid. Fast-vs-Reference z12 max spectrum error is `3.776e-4 dex`; fixed-root map error `−6.086e-6`; z10→z12 map shift `−1.953e-5`.
 - [x] Detect that Reference's public log spectrum is floored at `−40` for all 77 nodes here; compare against `log10(Ogw-Oj)` from raw positive finite Reference values and record floor-node count instead of treating clipped values as data.
-- [ ] Commit/push the source-hashed boundary derivation and verify CI.
+- [x] Commit `797c82a2530f89d9eab0b8f3b60653add932407a` with the required email/message; push/fetch confirmed the same `fast_v0.2` SHA, and GitHub Actions `43748405989` passed every job.
 
 ### Next Step
 
