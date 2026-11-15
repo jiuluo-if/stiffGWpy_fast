@@ -102,6 +102,7 @@ class LCDM_SG(LCDM_SN):
         self.last_engine = None
         self.last_fast_error = None
         self.fast_failure_reason = None
+        self.fast_failure_detail = None
         self.fast_guard_rejections = 0
         self.fast_physical_rejections = 0
         self.reference_evals = 0

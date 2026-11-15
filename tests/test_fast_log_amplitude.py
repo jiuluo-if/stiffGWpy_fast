@@ -6,6 +6,7 @@ from scipy.interpolate import PchipInterpolator
 from stiffgwpy_fast import fast_sgwb as FS
 from stiffgwpy_fast import global_param as gp
 from stiffgwpy_fast.fast_sgwb import (
+    _integrate_log_scaled_dn_map,
     _phase_resolved_tail_weights,
     _rebuild_pchip_terminal_map,
     _scale_frequency_rows_by_log,
@@ -264,3 +265,30 @@ def test_log_scaling_does_not_hide_nonfinite_propagation():
     _scale_frequency_rows_by_log(values, np.array([0.0]))
     assert np.isnan(values[0, 0])
     assert values[0, 1] == 2.0
+
+
+def test_log_scaled_dn_map_preserves_log_pchip_with_unrepresentable_nodes():
+    freqs = np.array([-3.0, -2.0, -1.0, 0.0])
+    signal = np.ones_like(freqs)
+    log_power = np.array([0.0, -800.0, 0.0, -800.0])
+
+    mapped = _integrate_log_scaled_dn_map(
+        freqs, signal, log_power, 'log_pchip', np.log(10.0), np.exp(40.0)
+    )
+
+    shifted_log = log_power - np.max(log_power)
+    spline = PchipInterpolator(freqs, shifted_log)
+    nodes, weights = np.polynomial.legendre.leggauss(8)
+    scaled_integral = sum(
+        0.5 * (right - left) * np.dot(
+            weights,
+            np.exp(spline(0.5 * (left + right) + 0.5 * (right - left) * nodes)),
+        )
+        for left, right in zip(freqs[:-1], freqs[1:])
+    )
+    expected = np.exp(
+        np.max(log_power) + np.log(np.log(10.0) * scaled_integral) + 40.0
+    )
+
+    assert mapped > 0.0
+    assert np.isclose(mapped, expected, rtol=2e-14)

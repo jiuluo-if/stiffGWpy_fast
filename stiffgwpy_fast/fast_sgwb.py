@@ -2078,6 +2078,55 @@ def integrate_frequency_quadrature(freqs, integrand, method="simpson"):
     raise ValueError("unknown frequency quadrature method")
 
 
+def _integrate_log_scaled_dn_map(
+    freqs, positive_signal, log_power, method, ln10v, map_scale, simpson_weights=None
+):
+    """Integrate a positive frequency map before restoring its tiny scale.
+
+    English description: Normalize nodal log contributions, apply the selected
+    frequency quadrature, then restore the amplitude and map scales once.
+    中文说明：先归一化频点对数贡献并完成既定频率求积，最后一次性恢复振幅和映射尺度，避免各频点先舍入为零。
+    """
+    x = np.asarray(freqs, dtype=np.float64)
+    signal = np.asarray(positive_signal, dtype=np.float64)
+    log_power = np.asarray(log_power, dtype=np.float64)
+    if (
+        x.ndim != 1 or signal.ndim != 1 or log_power.ndim != 1
+        or x.size != signal.size or x.size != log_power.size or x.size < 2
+        or not np.isfinite(x).all() or not np.isfinite(signal).all()
+        or not np.isfinite(log_power).all() or np.any(signal <= 0.0)
+    ):
+        return float("nan")
+    log_integrand = np.log(signal) + log_power
+    shift = float(np.max(log_integrand))
+    normalized = np.exp(log_integrand - shift)
+    if method == "pchip":
+        integral = float(np.sum(_pchip_integrals_vectorized(x, normalized)))
+    elif method == "log_pchip":
+        order = np.argsort(x)
+        xa = x[order]
+        log_spline = interpolate.PchipInterpolator(
+            xa, (log_integrand - shift)[order]
+        )
+        nodes, weights = np.polynomial.legendre.leggauss(8)
+        integral = 0.0
+        for left, right in zip(xa[:-1], xa[1:]):
+            mid = 0.5 * (left + right)
+            half = 0.5 * (right - left)
+            integral += half * float(np.dot(weights, np.exp(log_spline(mid + half * nodes))))
+    elif method == "simpson" and simpson_weights is not None:
+        integral = float(np.dot(simpson_weights, normalized[::-1]))
+    else:
+        integral = integrate_frequency_quadrature(x, normalized, method)
+    if not math.isfinite(integral) or integral <= 0.0 or map_scale <= 0.0:
+        return float("nan")
+    log_map = shift + math.log(ln10v) + math.log(integral) + math.log(map_scale)
+    log_max = math.log(np.finfo(np.float64).max)
+    if log_map > log_max:
+        return float("inf")
+    return math.exp(log_map)
+
+
 def estimate_frequency_quadrature_local(
     freqs, integrand, method="pchip", allocation="weighted", candidate_intervals=None
 ):
@@ -2369,6 +2418,7 @@ def _SGWB_iter_fast_impl(
     # deterministic physical rejection from a recoverable numerical failure.
     # 供外层读取的失败原因，用于区分确定性物理拒绝和可恢复的数值失败。
     m.fast_failure_reason = None
+    m.fast_failure_detail = None
     r = m.cosmo_param["r"]
     zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
     if r < 0 or (r == 0 and not zero_tensor_limit):
@@ -2909,6 +2959,7 @@ def _SGWB_iter_fast_impl(
                     break
                 log10_base_signal_today = np.full(Nf, -np.inf, dtype=np.float64)
                 log10_base_signal_today[:] = np.log10(base_signal_today)
+                log10_base_signal_before_phase = log10_base_signal_today.copy()
             if phase_weight is not None and tail_state is not None:
                 active_phase_modes = (phase_weight > 0.0) & (tail_state[:, 3] >= 0.0)
                 if np.any(active_phase_modes):
@@ -2923,6 +2974,11 @@ def _SGWB_iter_fast_impl(
                         phase_start, phase_suffix,
                     )
             if log_amplitude_mode:
+                phase_changed = log10_base_signal_today != log10_base_signal_before_phase
+                if np.any(phase_changed):
+                    base_signal_today[phase_changed] = np.power(
+                        10.0, log10_base_signal_today[phase_changed]
+                    )
                 _scale_frequency_rows_by_log(Ogw, log_P_t)
                 _scale_frequency_rows_by_log(Oj, log_P_t)
                 _scale_frequency_rows_by_log(Opgw, log_P_t)
@@ -2961,13 +3017,31 @@ def _SGWB_iter_fast_impl(
                     * ln10
                 )
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
+            if log_amplitude_mode:
+                DN_gw_new = _integrate_log_scaled_dn_map(
+                    integration_freqs,
+                    base_signal_today[integration_indices],
+                    log_P_t[integration_indices],
+                    frequency_quadrature,
+                    ln10,
+                    gp.Neff0 / Omega_nu,
+                    W_support_last,
+                )
             if not math.isfinite(DN_gw_new):
                 m.fast_failure_reason = "nonfinite"
                 print("SGWB_iter_fast: non-finite DN_gw_new, aborting.")
                 break
             if log_amplitude_mode and DN_gw_new == 0.0:
                 m.fast_failure_reason = "tensor_amplitude_underflow"
+                m.fast_failure_detail = "dn_gw_integral_underflow"
                 break
+            if log_amplitude_mode:
+                min_subnormal = np.nextafter(0.0, 1.0)
+                half_ulp_ratio = 0.5 * (min_subnormal / DN_gw_new)
+                if half_ulp_ratio >= 1.0 or half_ulp_ratio / (1.0 - half_ulp_ratio) > tol:
+                    m.fast_failure_reason = "tensor_amplitude_underflow"
+                    m.fast_failure_detail = "dn_gw_root_quantization"
+                    break
             if physical_guard and DN_eff_orig + DN_gw_new > 5:
                 m.fast_failure_reason = "shared_Neff_guard"
                 print("SGWB_iter_fast: total N_eff too large, aborting.")
@@ -3082,6 +3156,8 @@ def _SGWB_iter_fast_impl(
     m.g2 = g2_fine
     m.w2 = w2_fine
     m.DN_gw = gp.Neff0 * np.multiply(g2_fine, np.exp(2 * (f_hor - f_hor[-1]) * gp.ln10 + 2 * (Nv - Nv[-1]))) / Omega_nu
+    if log_amplitude_mode:
+        m.DN_gw[-1] = DN_gw_new
     m.Ogw_today = Ogw[:, -1].copy()
     m.Opgw_today = Opgw[:, -1].copy()
     m.Oj_today = Oj[:, -1].copy()

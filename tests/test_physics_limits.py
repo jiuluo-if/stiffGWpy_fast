@@ -205,6 +205,7 @@ def test_blue_tilt_cutoff_point_is_finite_but_uncertified():
 
     assert result is model
     assert model.SGWB_converge
+    assert getattr(model, 'fast_failure_detail', None) is None
     assert model.fast_failure_reason is None
     assert np.isfinite(model.log10OmegaGW).all()
     assert model.local_error_budget['certification_status'].startswith('uncertified')
@@ -534,6 +535,32 @@ def test_fast_zero_tensor_limit_returns_exact_zero_spectrum():
     )
     assert FS.SGWB_iter_fast(underflow, tol=1e-7) is None
     assert underflow.fast_failure_reason == 'tensor_amplitude_underflow'
+    assert getattr(underflow, 'fast_failure_detail', None) == 'dn_gw_integral_underflow'
+
+    minimum_positive_r = LCDM_SG(
+        r=np.nextafter(0.0, 1.0), cr=0.0, n_t=0.0, T_re=2e3,
+        kappa10=1e-2, DN_re=10.0, DN_eff=0.0,
+    )
+    assert FS.SGWB_iter_fast(minimum_positive_r, tol=1e-7) is None
+    assert minimum_positive_r.fast_failure_reason == 'tensor_amplitude_underflow'
+    assert minimum_positive_r.fast_failure_detail == 'dn_gw_integral_underflow'
+
+    three_subnormal_units = LCDM_SG(
+        r=3.0 * np.nextafter(0.0, 1.0), cr=0.0, n_t=0.0,
+        T_re=2e3, kappa10=1e-2, DN_re=10.0, DN_eff=0.0,
+    )
+    assert FS.SGWB_iter_fast(three_subnormal_units, tol=1e-7) is None
+    assert three_subnormal_units.fast_failure_reason == 'tensor_amplitude_underflow'
+    assert three_subnormal_units.fast_failure_detail == 'dn_gw_root_quantization'
+
+    representable_root = LCDM_SG(
+        r=1e-315, cr=0.0, n_t=0.0, T_re=2e3, kappa10=1e-2,
+        DN_re=10.0, DN_eff=0.0,
+    )
+    assert FS.SGWB_iter_fast(representable_root, tol=1e-7) is representable_root
+    assert representable_root.DN_gw[-1] > 0.0
+    assert representable_root.fast_failure_reason is None
+    assert representable_root.fast_failure_detail is None
 
 
 def test_lsoda_zero_tensor_limit_returns_exact_zero_spectrum(monkeypatch):
