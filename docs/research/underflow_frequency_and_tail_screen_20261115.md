@@ -60,6 +60,7 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 同起点尾前状态对照：[脚本](../../scripts/underflow_single_mode_state_attribution_20261115.py)、[JSON](results/underflow_single_mode_state_attribution_20261115.json)
 - 937 点异常频段局部直接加密：[脚本](../../scripts/underflow_local_frequency_refinement_20261115.py)、[JSON](results/underflow_local_frequency_refinement_20261115.json)
 - 固定根 z5/z8 交替成本对照：[脚本](../../scripts/benchmark_underflow_tail_depth_20261115.py)、[JSON](results/underflow_tail_depth_benchmark_20261115.json)
+- 常规振幅独立参数点复核：[研究记录](tail_depth_nonunderflow_20261115.md)、[脚本](../../scripts/compare_tail_depth_nonunderflow_20261115.py)、[JSON](results/underflow_tail_depth_nonunderflow_20261115.json)
 - Reference 尾部复核：[脚本](../../scripts/underflow_reference_tail_z8_z10_20261115.py)、[JSON](results/underflow_reference_tail_z8_z10_20261115.json)
 - log-PCHIP 候选偏差诊断：[脚本](../../scripts/underflow_pchip_log_candidate_20261115.py)、[JSON](results/underflow_pchip_log_candidate_20261115.json)
 - 同线性 PCHIP 稳定算术：[实现](../../scripts/stable_log_pchip.py)、[测试](../../tests/test_stable_log_pchip.py)、[诊断脚本](../../scripts/underflow_stable_linear_pchip_20261115.py)、[JSON](results/underflow_stable_linear_pchip_20261115.json)

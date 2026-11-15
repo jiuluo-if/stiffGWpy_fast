@@ -3304,3 +3304,9 @@ remote matrix run.
 
 - At fixed 937-node grid, root `0.027412228089632874`, one Fast thread, and alternating z5/z8 calls, 12 steady pairs gave P50/P95 `0.1299/0.1351 s` (z5) and `0.2034/0.2128 s` (z8). P50 ratio is `1.566`; both replay spectra were bitwise identical across repeats and peak RSS was about 173.7 MB.
 - The z5 first Fast call took `0.446 s`; the first z8 call took `0.208 s` after z5 JIT warmup. These are process-call observations, not independent cold starts per setting. The z8 validation profile is slower, so no production change is justified on this one parameter point.
+
+## 2026-11-15 non-underflow tail-depth finding
+
+- A normal amplitude `cr=0`, `r=.01`, `n_t=0` fixed-root case converged at `DN_eff=0.002369124823794334`. Fast z5/z8 maps had relative residuals `3.63e-11` and `−5.21e-6`.
+- Against direct Reference z10, z5 max/P95 spectrum error was `0.002321/0.000351 dex`; z8 was `0.000378/0.000239 dex`. Reference z8 map residual was `2.94e-4` relative, above the root gate; z10 reduced it to `4.02e-6`.
+- A blue `n_t=.5` preflight was rejected by `shared_Neff_guard`, with no spectrum claim.

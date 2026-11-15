@@ -1291,8 +1291,10 @@ Fast z8 passes the current underflow sample's discrete accuracy gate, but it may
 
 - [x] Add and run reproducible same-root z5/z8 timing artifact with cold-call, warmup, alternating paired P50/P95, map residual, repeat spread, and RSS telemetry.
 - [x] Record z8/z5 steady P50 ratio `1.566`; z8 is slower and remains validation-only.
-- [ ] Decide whether z8 merits an independent non-underflow accuracy sample; do not change production profile in this round.
+- [x] Check a non-underflow `cr=0`, `r=.01`, `n_t=0` point: z5 vs Reference z10 max error `0.002321 dex`; z8 `0.000378 dex`; Fast root residuals stay below `2e-4`.
+- [x] Record an attempted `n_t=.5` point rejected by `shared_Neff_guard` before comparing accuracy.
+- [ ] Test one physical-amplitude `cr>0` consistency-branch point; do not infer its domain from the `cr=0` results.
 
 ### Next Step
 
-Run a second fixed-root z5/z8 spectrum comparison on a representative non-underflow parameter point, then assess tail bias across both regimes.
+Run a fixed-root tail-depth comparison on a `cr>0` consistency-branch point using the physical amplitude in both Fast and Reference; require root closure and direct z8/z10 tail evidence.

@@ -1781,3 +1781,9 @@ the diagnostic artifacts are retained.
 - Ran 12 alternating z5/z8 pairs at the same frozen root `0.027412228089632874`, native 937-node frequency grid, Fast profile, and one thread. Warm P50/P95 were z5 `0.1299/0.1351 s` and z8 `0.2034/0.2128 s`, a 1.566 P50 ratio. Both replay spectra were bitwise repeatable (`max spread=0`); peak RSS was about 173.7 MB.
 - First z5 call took `0.446 s`; the first z8 call was `0.208 s` after Numba had already been warmed by z5, so this is not an independent z8 cold-start measurement. Fixed-map residuals were `6.31e-8` (z5) and `5.38e-8` (z8).
 - z8 reduces the observed tail-sensitive maximum spectrum error below the Reference z10 threshold on these three grids but costs about 56.6% more steady runtime. Keep it validation-only pending a second parameter regime and profile-level performance evidence.
+## 2026-11-15 non-underflow tail-depth continuation
+
+- Tested a normal-amplitude `cr=0`, `r=.01`, `n_t=0` case. Fast self-consistent root converged, and fixed-root z8 versus Reference z10 passed both the `1e-3 dex` spectrum and `2e-4` root residual gates at this one grid.
+- The Reference z8 fixed map missed the root residual threshold (`2.94e-4` relative); Reference z10 residual was `4.02e-6`, confirming the need to check root/tail convergence separately from pointwise spectra.
+- An `n_t=.5` attempted sample was rejected by `shared_Neff_guard` before spectral comparison.
+- Next: evaluate the `cr>0` consistency branch with physical amplitude and direct Reference; then determine whether the increased z8 cost is acceptable across more than two `cr=0` points.
