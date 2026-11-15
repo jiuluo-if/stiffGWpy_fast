@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "status": "complete_adaptive_handoff_multi_resource_benchmark",
+  "scope": "Same minimum-subnormal physical parameters, frozen 235-root, exact native 937-node grid; one per-variant warm call then 12 alternating triplets at each thread count.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-09,
+    "r": 5e-324,
+    "n_t": 17.38,
+    "cr": 0.0,
+    "T_re": 2000.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01
+  },
+  "frequency_count": 937,
+  "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+  "frozen_DN_eff": 1.3543440396198841e-09,
+  "threads": [
+    1,
+    2,
+    8
+  ],
+  "pairs_per_thread_count": 12,
+  "warm_order_cycle": [
+    [
+      "z5",
+      "z8",
+      "adaptive"
+    ],
+    [
+      "z8",
+      "adaptive",
+      "z5"
+    ],
+    [
+      "adaptive",
+      "z5",
+      "z8"
+    ]
+  ],
+  "baseline_rss_mib": 87.1015625,
+  "adaptive_rule": {
+    "z_today_below": 6.0,
+    "defer_handoff_to": 8.0,
+    "phase_resolved_active_rows": "not deferred"
+  },
+  "resources": {
+    "1": {
+      "first_call_runtime_s": {
+        "z5": 0.9807287000003271,
+        "z8": 0.22658360001514666,
+        "adaptive": 0.14503529999637976
+      },
+      "first_call_rss_mib": {
+        "z5": 159.84765625,
+        "z8": 163.52734375,
+        "adaptive": 166.57421875
+      },
+      "adaptive_selected_mode_counts": [
+        44
+      ],
+      "variants": {
+        "z5": {
+          "p50_runtime_s": 0.13998194999294356,
+          "p95_runtime_s": 0.17078440000041153,
+          "p50_rss_mib": 179.53125,
+          "p95_rss_mib": 194.6548828125,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.002440864730715475,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 3.215985127127393e-05,
+          "mapped_DN_gw_p50": 1.3543409204417143e-09,
+          "root_residual_relative_p50": -2.303091444000316e-06,
+          "p50_speedup_vs_z5": 1.0
+        },
+        "z8": {
+          "p50_runtime_s": 0.21537884999997914,
+          "p95_runtime_s": 0.2693890100097633,
+          "p50_rss_mib": 181.154296875,
+          "p95_rss_mib": 193.7263671875,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.00037215931706668925,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 2.3252928312444947e-05,
+          "mapped_DN_gw_p50": 1.3543413800992572e-09,
+          "root_residual_relative_p50": -1.9636964827540737e-06,
+          "p50_speedup_vs_z5": 0.6499335937254616
+        },
+        "adaptive": {
+          "p50_runtime_s": 0.1389416500023799,
+          "p95_runtime_s": 0.19401565499574644,
+          "p50_rss_mib": 178.169921875,
+          "p95_rss_mib": 193.2716796875,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.0004855090938349349,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 3.1701349359281034e-05,
+          "mapped_DN_gw_p50": 1.3543409204417143e-09,
+          "root_residual_relative_p50": -2.303091444000316e-06,
+          "p50_speedup_vs_z5": 1.0074873156504607
+        }
+      }
+    },
+    "2": {
+      "first_call_runtime_s": {
+        "z5": 0.1232216999924276,
+        "z8": 0.18569539999589324,
+        "adaptive": 0.13775510000414215
+      },
+      "first_call_rss_mib": {
+        "z5": 199.28515625,
+        "z8": 200.69921875,
+        "adaptive": 202.0859375
+      },
+      "adaptive_selected_mode_counts": [
+        44
+      ],
+      "variants": {
+        "z5": {
+          "p50_runtime_s": 0.1223516500176629,
+          "p95_runtime_s": 0.13801146499899913,
+          "p50_rss_mib": 188.904296875,
+          "p95_rss_mib": 206.6423828125,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.002440864730715475,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 3.215985127127393e-05,
+          "mapped_DN_gw_p50": 1.3543409204417143e-09,
+          "root_residual_relative_p50": -2.303091444000316e-06,
+          "p50_speedup_vs_z5": 1.0
+        },
+        "z8": {
+          "p50_runtime_s": 0.17447020001418423,
+          "p95_runtime_s": 0.18110515498701715,
+          "p50_rss_mib": 190.380859375,
+          "p95_rss_mib": 206.087109375,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.00037215931706668925,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 2.3252928312444947e-05,
+          "mapped_DN_gw_p50": 1.3543413800992572e-09,
+          "root_residual_relative_p50": -1.9636964827540737e-06,
+          "p50_speedup_vs_z5": 0.7012753467796555
+        },
+        "adaptive": {
+          "p50_runtime_s": 0.12256234999222215,
+          "p95_runtime_s": 0.12393114998121746,
+          "p50_rss_mib": 189.630859375,
+          "p95_rss_mib": 207.4513671875,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.0004855090938349349,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 3.1701349359281034e-05,
+          "mapped_DN_gw_p50": 1.3543409204417143e-09,
+          "root_residual_relative_p50": -2.303091444000316e-06,
+          "p50_speedup_vs_z5": 0.9982808752070059
+        }
+      }
+    },
+    "8": {
+      "first_call_runtime_s": {
+        "z5": 0.10079209998366423,
+        "z8": 0.11435049999272451,
+        "adaptive": 0.09836829997948371
+      },
+      "first_call_rss_mib": {
+        "z5": 177.2734375,
+        "z8": 178.74609375,
+        "adaptive": 180.00390625
+      },
+      "adaptive_selected_mode_counts": [
+        44
+      ],
+      "variants": {
+        "z5": {
+          "p50_runtime_s": 0.09936684998683631,
+          "p95_runtime_s": 0.11305098500306485,
+          "p50_rss_mib": 189.712890625,
+          "p95_rss_mib": 208.80078125,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.002440864730715475,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 3.215985127127393e-05,
+          "mapped_DN_gw_p50": 1.3543409204417143e-09,
+          "root_residual_relative_p50": -2.303091444000316e-06,
+          "p50_speedup_vs_z5": 1.0
+        },
+        "z8": {
+          "p50_runtime_s": 0.11468544998206198,
+          "p95_runtime_s": 0.12225293999072165,
+          "p50_rss_mib": 191.12890625,
+          "p95_rss_mib": 208.096875,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.00037215931706668925,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 2.3252928312444947e-05,
+          "mapped_DN_gw_p50": 1.3543413800992572e-09,
+          "root_residual_relative_p50": -1.9636964827540737e-06,
+          "p50_speedup_vs_z5": 0.8664294381055168
+        },
+        "adaptive": {
+          "p50_runtime_s": 0.098565399996005,
+          "p95_runtime_s": 0.10997462498926323,
+          "p50_rss_mib": 188.2578125,
+          "p95_rss_mib": 209.51796875,
+          "max_repeat_spectrum_spread_dex": 0.0,
+          "max_abs_spectrum_error_vs_reference_z10_dex": 0.0004855090938349349,
+          "p95_abs_spectrum_error_vs_reference_z10_dex": 3.1701349359281034e-05,
+          "mapped_DN_gw_p50": 1.3543409204417143e-09,
+          "root_residual_relative_p50": -2.303091444000316e-06,
+          "p50_speedup_vs_z5": 1.0081311493776093
+        }
+      }
+    }
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "numba": "0.67.0",
+    "psutil": "7.2.2"
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "507455053c50f7ba69ec6ec51a7e45021beec5d15b31ddfc0b1fb5564ae729aa",
+    "input_json": "c7387c96f58ff1e895788166269b8f67d8d4bea04b466512c86b965e3ade6471",
+    "reference_z10_json": "397eef7973808bc984fadfb405d46c468fff0b413b7eeb4fd56c9e3dddce68a6",
+    "diagnostic_script": "74c7c2066872254241dc5970d365ddc8257dfe0c631d30d42b50e17b1326663a"
+  }
+}

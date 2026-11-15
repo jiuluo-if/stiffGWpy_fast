@@ -78,6 +78,7 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 按 `z_today<5` 延迟局部 WKB 交接的两振幅/倾斜筛查：[研究记录](adaptive_handoff_mask_screen_20261115.md)、[mask 脚本](../../scripts/underflow_adaptive_handoff_mask_screen_20261115.py)、[tilt holdout](../../scripts/screen_adaptive_handoff_tilt_holdout_20261115.py)、[背景 holdout](../../scripts/screen_adaptive_handoff_background_holdout_20261115.py)
 - `cr>0` 物理振幅点上的自适应交接门槛筛查：[脚本](../../scripts/screen_adaptive_handoff_consistency_branch_20261115.py)、[JSON](results/adaptive_handoff_consistency_branch_20261115.json)
 - per-mode 内核相对统一 z5/z8 的 12 组预热 A/B：[脚本](../../scripts/benchmark_adaptive_handoff_per_mode_20261115.py)、[JSON](results/adaptive_handoff_per_mode_benchmark_20261115.json)
+- per-mode 内核 1/2/8 线程交替 A/B：[脚本](../../scripts/benchmark_adaptive_handoff_resources_20261115.py)、[JSON](results/adaptive_handoff_resource_benchmark_20261115.json)
 - 低温/高倾斜 holdout 的 Reference z8→z10 收敛：[脚本](../../scripts/validate_adaptive_handoff_background_z10_20261115.py)、[z8 checkpoint](results/adaptive_handoff_background_reference_z8_20261115.json)、[z10 JSON](results/adaptive_handoff_background_z10_20261115.json)
 - `n_t=17.30` holdout 的 Reference z8→z10 收敛：[脚本](../../scripts/validate_adaptive_handoff_tilt_z10_20261115.py)、[z8 checkpoint](results/adaptive_handoff_tilt_reference_z8_20261115.json)、[z10 JSON](results/adaptive_handoff_tilt_z10_20261115.json)
 

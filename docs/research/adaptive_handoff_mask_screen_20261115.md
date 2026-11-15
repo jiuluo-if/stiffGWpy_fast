@@ -36,6 +36,16 @@
 
 per-mode 相比 z5 的 P50 运行比为 `1.006`（基本持平），P95 约低 `5.2%`；相比全局 z8，P50 快 `1.35×`、P95 快 `1.52×`。三种变体 12 次重复谱的最大离散度为 0。第一次调用另列：z5 `0.483 s`、z8 `0.308 s`、per-mode `0.238 s`，包含各路径首次调用/JIT 成本，不计入预热后统计。该节是一次参数点、单线程的实测，不外推为普遍提速。
 
+同一冻结根、937 点网格、每个线程数预热并交替 12 组三变体，扩到 1/2/8 线程后结果如下：
+
+| 线程 | z5 P50 / P95 (s) | per-mode P50 / P95 (s) | z8 P50 / P95 (s) | per-mode/z5 P50 | per-mode/z8 P50 |
+|---:|---:|---:|---:|---:|---:|
+| 1 | `0.1400 / 0.1708` | `0.1389 / 0.1940` | `0.2154 / 0.2694` | `1.007×` | `1.551×` |
+| 2 | `0.1224 / 0.1380` | `0.1226 / 0.1239` | `0.1745 / 0.1811` | `0.998×` | `1.426×` |
+| 8 | `0.0994 / 0.1131` | `0.0986 / 0.1100` | `0.1147 / 0.1223` | `1.008×` | `1.164×` |
+
+三种线程数下 per-mode 的 `max_abs_spectrum_error=0.0004855 dex`、固定根残差 `−2.303e-6`、重复谱离散度 0；z5 超谱差门槛，z8 与 per-mode 通过。RSS P50（z5/per-mode/z8）分别为 1 线程 `179.5/178.2/181.2 MiB`、2 线程 `188.9/189.6/190.4 MiB`、8 线程 `189.7/188.3/191.1 MiB`。因此这一个样本上 per-mode 保持 z5 的稳定成本而接近 z8 的精度；它不是普遍加速结论，需在不同参数、频率密度和 phase-tail 活跃状态复测。
+
 实际 per-mode 内核的直接 Reference z10 留出如下：
 
 | 样本 | 网格 | 最大谱差 / P95 | 映射差 vs Ref z10 | 固定根残差 |
@@ -49,4 +59,4 @@ per-mode 相比 z5 的 P50 运行比为 `1.006`（基本持平），P95 约低 `
 
 per-mode 路径仍是**私有 opt-in 实验路径**，没有改变正式默认或公开接口。接受为生产方案前还需：不同频率网格 Reference z10 留出、更多 `cr>0` 参数点、phase-resolved 活跃/非活跃边界测试及多资源档位 A/B。此之前不得声明连续适用域或修改默认 `z_tail`。
 
-复跑文件：[mask 屏查脚本](../../scripts/underflow_adaptive_handoff_mask_screen_20261115.py)、[倾斜 holdout 脚本](../../scripts/screen_adaptive_handoff_tilt_holdout_20261115.py)、[背景参数 holdout 包装脚本](../../scripts/screen_adaptive_handoff_background_holdout_20261115.py)、[低温 holdout Reference z10](../../scripts/validate_adaptive_handoff_background_z10_20261115.py)、[`n_t=17.30` holdout Reference z10](../../scripts/validate_adaptive_handoff_tilt_z10_20261115.py)、[`cr>0` 分支筛查](../../scripts/screen_adaptive_handoff_consistency_branch_20261115.py)、[per-mode 12 组 A/B](../../scripts/benchmark_adaptive_handoff_per_mode_20261115.py)。逐点 JSON 见[mask](results/underflow_adaptive_handoff_mask_screen_20261115.json)、[A/B](results/adaptive_handoff_per_mode_benchmark_20261115.json)、[倾斜](results/adaptive_handoff_tilt_holdout_20261115.json)、[低温 holdout](results/adaptive_handoff_background_z10_20261115.json)、[`n_t=17.30` holdout](results/adaptive_handoff_tilt_z10_20261115.json)、[`cr>0`](results/adaptive_handoff_consistency_branch_20261115.json)和[物理 preflight 拒绝](results/adaptive_handoff_physical_preflight_rejection_20261115.json)。
+复跑文件：[mask 屏查脚本](../../scripts/underflow_adaptive_handoff_mask_screen_20261115.py)、[倾斜 holdout 脚本](../../scripts/screen_adaptive_handoff_tilt_holdout_20261115.py)、[背景参数 holdout 包装脚本](../../scripts/screen_adaptive_handoff_background_holdout_20261115.py)、[低温 holdout Reference z10](../../scripts/validate_adaptive_handoff_background_z10_20261115.py)、[`n_t=17.30` holdout Reference z10](../../scripts/validate_adaptive_handoff_tilt_z10_20261115.py)、[`cr>0` 分支筛查](../../scripts/screen_adaptive_handoff_consistency_branch_20261115.py)、[单线程 A/B](../../scripts/benchmark_adaptive_handoff_per_mode_20261115.py)、[1/2/8 线程 A/B](../../scripts/benchmark_adaptive_handoff_resources_20261115.py)。逐点 JSON 见[mask](results/underflow_adaptive_handoff_mask_screen_20261115.json)、[单线程 A/B](results/adaptive_handoff_per_mode_benchmark_20261115.json)、[多线程 A/B](results/adaptive_handoff_resource_benchmark_20261115.json)、[倾斜](results/adaptive_handoff_tilt_holdout_20261115.json)、[低温 holdout](results/adaptive_handoff_background_z10_20261115.json)、[`n_t=17.30` holdout](results/adaptive_handoff_tilt_z10_20261115.json)、[`cr>0`](results/adaptive_handoff_consistency_branch_20261115.json)和[物理 preflight 拒绝](results/adaptive_handoff_physical_preflight_rejection_20261115.json)。
