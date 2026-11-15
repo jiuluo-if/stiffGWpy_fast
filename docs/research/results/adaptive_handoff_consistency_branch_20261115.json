@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "status": "complete_cr_positive_adaptive_handoff_screen_not_production",
+  "scope": "Physical-amplitude cr>0 consistency branch; reuse direct same-root z5/z8 Fast and z10 Reference spectra from the recorded tail-depth run, reconstruct exact 76-node grid.",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "r": 0.01,
+    "n_t": 0.0,
+    "cr": 1.0,
+    "T_re": 2000.0,
+    "DN_re": 20.0,
+    "kappa10": 0.01,
+    "DN_eff": 0.0
+  },
+  "frequency_count": 76,
+  "frequency_sha256_f64le": "e20f49fc6b48ed114060fcad852f03da3a56690ccefa0b9ae590d83098990e3b",
+  "frozen_DN_eff": 0.0022636474124195006,
+  "f_hor_today_log10_hz": -18.459378758443304,
+  "z_today_range": [
+    0.0,
+    58.37449293820897
+  ],
+  "reference_z10_map_DN_gw": 0.0022636586328683753,
+  "reference_z10_map_residual": 4.956800609967615e-06,
+  "threshold_candidates": [
+    {
+      "z_today_threshold": 5.0,
+      "z8_mode_count": 6,
+      "z8_mode_fraction": 0.07894736842105263,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.0014285046032078696,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 0.0003428013966857435,
+      "max_error_log10_hz": -16.03991998732221,
+      "mapped_DN_gw": 0.002263647412499693,
+      "relative_map_error_vs_reference_z10": -4.956740614292521e-06,
+      "relative_fixed_root_residual": 3.542610649276412e-11
+    },
+    {
+      "z_today_threshold": 6.0,
+      "z8_mode_count": 7,
+      "z8_mode_fraction": 0.09210526315789473,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.0003741129696308576,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 0.00028311668700720105,
+      "max_error_log10_hz": -15.619144548866366,
+      "mapped_DN_gw": 0.0022636474125225917,
+      "relative_map_error_vs_reference_z10": -4.95673049838441e-06,
+      "relative_fixed_root_residual": 4.5542014603938696e-11
+    },
+    {
+      "z_today_threshold": 7.0,
+      "z8_mode_count": 8,
+      "z8_mode_fraction": 0.10526315789473684,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.0003583487418978848,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 0.00024492259917785475,
+      "max_error_log10_hz": -13.199685777745273,
+      "mapped_DN_gw": 0.0022636474125166807,
+      "relative_map_error_vs_reference_z10": -4.956733109739986e-06,
+      "relative_fixed_root_residual": 4.293077005002033e-11
+    },
+    {
+      "z_today_threshold": 8.0,
+      "z8_mode_count": 9,
+      "z8_mode_fraction": 0.11842105263157894,
+      "max_abs_spectrum_error_vs_reference_z10_dex": 0.0003583487418978848,
+      "p95_abs_spectrum_error_vs_reference_z10_dex": 0.00024492259917785475,
+      "max_error_log10_hz": -13.199685777745273,
+      "mapped_DN_gw": 0.002263647412519743,
+      "relative_map_error_vs_reference_z10": -4.95673175693323e-06,
+      "relative_fixed_root_residual": 4.428346578322362e-11
+    }
+  ],
+  "performance": "not measured; hybrid spectra are composed from separate full direct z5 and z8 runs",
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "input_json": "e6aef3b8bcec2f32566b9be4e1d7b0e2f1d9278692e4153649ca727b0df3974a",
+    "diagnostic_script": "663911ede908840c016cc8bb45ce2e2c9c244cfddc1c90b538188e43e72280c6"
+  }
+}

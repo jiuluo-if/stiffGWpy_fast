@@ -25,6 +25,7 @@ from stiffgwpy_fast.reference import _Background, f_hor_abs, integrate_spectrum,
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
 OUTPUT = ROOT / "docs" / "research" / "results" / "adaptive_handoff_tilt_holdout_20261115.json"
+THRESHOLDS = (5.0, 6.0, 7.0, 8.0)
 PARAMS = {
     "Omega_bh2": 0.0223828,
     "Omega_ch2": 0.1201075,
@@ -120,13 +121,27 @@ def main() -> int:
     bg = _Background(reference_model, root)
     f_hor_today = f_hor_abs(bg, bg.N_inf)
     z_today = (freqs - f_hor_today) * gp.ln10
-    use_z8 = z_today < 5.0
-    hybrid_log = np.where(use_z8, fast8["log_spectrum"], fast5["log_spectrum"])
-    error = hybrid_log - log_reference
-    hybrid_integrand = np.where(use_z8, fast8["Ogw"] - fast8["Oj"], fast5["Ogw"] - fast5["Oj"])
-    hybrid_map = gp.Neff0 * gp.ln10 * float(np.sum(FS._pchip_integrals_vectorized(freqs, hybrid_integrand))) / (
-        gp.Omega_nh2 / float(reference_model.derived_param["h"]) ** 2
-    )
+    adaptive_candidates = []
+    for threshold in THRESHOLDS:
+        use_z8 = z_today < threshold
+        hybrid_log = np.where(use_z8, fast8["log_spectrum"], fast5["log_spectrum"])
+        error = hybrid_log - log_reference
+        hybrid_integrand = np.where(use_z8, fast8["Ogw"] - fast8["Oj"], fast5["Ogw"] - fast5["Oj"])
+        hybrid_map = gp.Neff0 * gp.ln10 * float(np.sum(FS._pchip_integrals_vectorized(freqs, hybrid_integrand))) / (
+            gp.Omega_nh2 / float(reference_model.derived_param["h"]) ** 2
+        )
+        adaptive_candidates.append({
+            "z_today_threshold": threshold,
+            "z8_selected_mode_count": int(np.count_nonzero(use_z8)),
+            "z8_selected_mode_fraction": float(np.mean(use_z8)),
+            "max_abs_spectrum_error_vs_reference_z8_dex": float(np.max(np.abs(error))),
+            "p95_abs_spectrum_error_vs_reference_z8_dex": float(np.quantile(np.abs(error), 0.95)),
+            "max_error_log10_hz": float(freqs[np.argmax(np.abs(error))]),
+            "mapped_DN_gw": float(hybrid_map),
+            "relative_map_error_vs_reference": float(hybrid_map / reference_map - 1.0),
+            "relative_fixed_root_residual": float(hybrid_map / root - 1.0),
+        })
+    adaptive_candidate = adaptive_candidates[0]
     output = {
         "schema_version": 1,
         "status": "complete_adaptive_handoff_tilt_holdout_screen_not_production",
@@ -137,8 +152,8 @@ def main() -> int:
         "frozen_DN_eff": root,
         "frequency_log10_hz": freqs.tolist(),
         "z_today_range": [float(np.min(z_today)), float(np.max(z_today))],
-        "z8_selected_mode_count": int(np.count_nonzero(use_z8)),
-        "z8_selected_mode_fraction": float(np.mean(use_z8)),
+        "z8_selected_mode_count": adaptive_candidate["z8_selected_mode_count"],
+        "z8_selected_mode_fraction": adaptive_candidate["z8_selected_mode_fraction"],
         "root_solution": {
             "root_DN_eff": root,
             "mapped_DN_gw": root_solution["mapped_DN_gw"],
@@ -164,15 +179,11 @@ def main() -> int:
             "runtime_warnings": [str(item.message) for item in caught_ref],
         },
         "adaptive_candidate": {
-            "criterion": "use z8 row if z_today < 5; otherwise use z5 row",
-            "max_abs_spectrum_error_vs_reference_z8_dex": float(np.max(np.abs(error))),
-            "p95_abs_spectrum_error_vs_reference_z8_dex": float(np.quantile(np.abs(error), 0.95)),
-            "max_error_log10_hz": float(freqs[np.argmax(np.abs(error))]),
-            "mapped_DN_gw": float(hybrid_map),
-            "relative_map_error_vs_reference": float(hybrid_map / reference_map - 1.0),
-            "relative_fixed_root_residual": float(hybrid_map / root - 1.0),
+            **adaptive_candidate,
+            "criterion": "use z8 row if z_today is below threshold; otherwise use z5 row",
             "runtime_status": "not measured; z5/z8 rows came from separate full direct runs",
         },
+        "adaptive_candidates": adaptive_candidates,
         "interpretation": "This is an independent tilt holdout for an error-selection criterion, not an implementation or performance result.",
         "environment": {
             "python": sys.version,
@@ -197,8 +208,7 @@ def main() -> int:
         "frequency_count": output["frequency_count"],
         "root": root,
         "z8_fraction": output["z8_selected_mode_fraction"],
-        "max_p95_error_dex": [output["adaptive_candidate"]["max_abs_spectrum_error_vs_reference_z8_dex"], output["adaptive_candidate"]["p95_abs_spectrum_error_vs_reference_z8_dex"]],
-        "map_relative_error": output["adaptive_candidate"]["relative_map_error_vs_reference"],
+        "thresholds": [{"threshold": row["z_today_threshold"], "z8_fraction": row["z8_selected_mode_fraction"], "max_error": row["max_abs_spectrum_error_vs_reference_z8_dex"], "map_error": row["relative_map_error_vs_reference"]} for row in adaptive_candidates],
     }, indent=2))
     return 0
 

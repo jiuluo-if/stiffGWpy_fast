@@ -1376,4 +1376,11 @@ Start the next independently testable part of the research objective: choose a p
 - [x] Screen the physically motivated `z_today<5` delayed-handoff mask against existing same-root z5/z8 and Reference z8/z10 rows at two amplitudes.
 - [x] Test independent `n_t=17.45`, minimum-subnormal amplitude, low `T_re=10`, low `kappa10=.001` on its directly generated 221-node grid; spectrum max error `5.78e-4 dex`, map error `8.18e-7` vs Reference z8.
 - [x] Record an exploratory high-T/high-kappa trial rejected because the root exceeded physical guard `DN_eff=5`; its accuracy data are excluded.
-- [ ] Keep mask diagnostic-only: no per-mode kernel, no valid runtime benchmark, no `cr>0` sample, and incomplete Reference tail convergence on two holdouts.
+- [ ] Keep mask diagnostic-only: no per-mode kernel or valid runtime benchmark, no `cr>0` underflow sample, and incomplete Reference tail convergence on the newer holdouts.
+
+## Autonomous continuation: Round 41 — cross-branch handoff mask and threshold
+
+- [x] Sweep thresholds 5/6/7/8 for the `n_t=17.30` and `n_t=17.45` holdouts; retain per-threshold spectra, map errors, selected fractions, warning counts and source hashes.
+- [x] Test the physical-amplitude `cr>0` sample: threshold 5 fails the spectrum gate (`0.001429 dex`), while threshold 6 reaches `0.000374 dex` max / `0.000283 dex` P95 with `9.21%` z8 rows; map error is `−4.96e-6` vs direct Reference z10.
+- [x] Threshold 6 passes the five recorded discrete `cr=0/cr>0` samples at spectrum and map/root screening limits.
+- [ ] Still reject production adoption pending actual per-mode kernel implementation, same-resource A/B runtime/memory, independent grids, and Reference z10 tails for the three newer holdouts; phase-resolved branches need separate proof.

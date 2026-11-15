@@ -265,12 +265,12 @@
     "root_DN_eff": 4.559590367655573e-11,
     "mapped_DN_gw": 4.559590367655573e-11,
     "outer_map_relative_residual": 0.0,
-    "runtime_s": 0.2605508999840822,
+    "runtime_s": 0.2664447000133805,
     "runtime_warnings": []
   },
   "fixed_background_runs": {
-    "z5_runtime_s_not_paired": 0.03268289999687113,
-    "z8_runtime_s_not_paired": 0.06169970001792535,
+    "z5_runtime_s_not_paired": 0.03205500001786277,
+    "z8_runtime_s_not_paired": 0.061260599992237985,
     "z5_warnings": [],
     "z8_warnings": []
   },
@@ -291,15 +291,64 @@
     ]
   },
   "adaptive_candidate": {
-    "criterion": "use z8 row if z_today < 5; otherwise use z5 row",
+    "z_today_threshold": 5.0,
+    "z8_selected_mode_count": 11,
+    "z8_selected_mode_fraction": 0.04680851063829787,
     "max_abs_spectrum_error_vs_reference_z8_dex": 0.00047462260260999756,
     "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014855114373801825,
     "max_error_log10_hz": -16.241944809173845,
     "mapped_DN_gw": 4.559590367655573e-11,
     "relative_map_error_vs_reference": 8.184119388854327e-07,
     "relative_fixed_root_residual": 0.0,
+    "criterion": "use z8 row if z_today is below threshold; otherwise use z5 row",
     "runtime_status": "not measured; z5/z8 rows came from separate full direct runs"
   },
+  "adaptive_candidates": [
+    {
+      "z_today_threshold": 5.0,
+      "z8_selected_mode_count": 11,
+      "z8_selected_mode_fraction": 0.04680851063829787,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.00047462260260999756,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014855114373801825,
+      "max_error_log10_hz": -16.241944809173845,
+      "mapped_DN_gw": 4.559590367655573e-11,
+      "relative_map_error_vs_reference": 8.184119388854327e-07,
+      "relative_fixed_root_residual": 0.0
+    },
+    {
+      "z_today_threshold": 6.0,
+      "z8_selected_mode_count": 13,
+      "z8_selected_mode_fraction": 0.05531914893617021,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0004587900139085832,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.00014783261754161003,
+      "max_error_log10_hz": -15.641944809173847,
+      "mapped_DN_gw": 4.559590367655573e-11,
+      "relative_map_error_vs_reference": 8.184119388854327e-07,
+      "relative_fixed_root_residual": 0.0
+    },
+    {
+      "z_today_threshold": 7.0,
+      "z8_selected_mode_count": 15,
+      "z8_selected_mode_fraction": 0.06382978723404255,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0003759687064643913,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.0001469412052180985,
+      "max_error_log10_hz": -12.641944809173847,
+      "mapped_DN_gw": 4.559590367655573e-11,
+      "relative_map_error_vs_reference": 8.184119388854327e-07,
+      "relative_fixed_root_residual": 0.0
+    },
+    {
+      "z_today_threshold": 8.0,
+      "z8_selected_mode_count": 15,
+      "z8_selected_mode_fraction": 0.06382978723404255,
+      "max_abs_spectrum_error_vs_reference_z8_dex": 0.0003759687064643913,
+      "p95_abs_spectrum_error_vs_reference_z8_dex": 0.0001469412052180985,
+      "max_error_log10_hz": -12.641944809173847,
+      "mapped_DN_gw": 4.559590367655573e-11,
+      "relative_map_error_vs_reference": 8.184119388854327e-07,
+      "relative_fixed_root_residual": 0.0
+    }
+  ],
   "interpretation": "This is an independent tilt holdout for an error-selection criterion, not an implementation or performance result.",
   "environment": {
     "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
@@ -312,6 +361,6 @@
     "fast_sgwb.py": "5bfde604e778abee8b955b61549bbd805026943a1235686739215d60f54c6449",
     "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
     "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
-    "diagnostic_script": "2afcc7f1f76270547424d39bf9ee7816848301c0863d02352b3ea3ba5420c403"
+    "diagnostic_script": "ae775cb5d379936404e4ccd002e43fca40ba6481a0652a067a71a90bb4bae37d"
   }
 }

@@ -76,5 +76,6 @@ PCHIP 内点导数是相邻割线的加权调和平均；零割线或异号割�
 - 最小次正规振幅下 469/937 网格及 z5/z8/z10 尾深对照：[研究记录](underflow_min_subnormal_tail_depth_20261115.md)、[Reference 网格脚本](../../scripts/underflow_min_subnormal_reference_grid_20261115.py)、[Fast z8 脚本](../../scripts/underflow_min_subnormal_tail_depth_20261115.py)、[Reference z10 脚本](../../scripts/underflow_min_subnormal_reference_z10_20261115.py)、[z10 JSON](results/underflow_min_subnormal_reference_z10_20261115.json)
 - 最小次正规 937 点最差频点的 WKB 交接归因：[脚本](../../scripts/underflow_min_subnormal_handoff_20261115.py)、[JSON](results/underflow_min_subnormal_handoff_20261115.json)
 - 按 `z_today<5` 延迟局部 WKB 交接的两振幅/倾斜筛查：[研究记录](adaptive_handoff_mask_screen_20261115.md)、[mask 脚本](../../scripts/underflow_adaptive_handoff_mask_screen_20261115.py)、[tilt holdout](../../scripts/screen_adaptive_handoff_tilt_holdout_20261115.py)、[背景 holdout](../../scripts/screen_adaptive_handoff_background_holdout_20261115.py)
+- `cr>0` 物理振幅点上的自适应交接门槛筛查：[脚本](../../scripts/screen_adaptive_handoff_consistency_branch_20261115.py)、[JSON](results/adaptive_handoff_consistency_branch_20261115.json)
 
 三份原始 JSON 记录参数、频率节点、固定根映射、逐点对数谱、运行环境、Warning、运行时间和源码 SHA-256。只接受脚本记录的直接频率求解。当前没有候选数值改进达到验收门槛；未修改 Fast 或 Reference 生产路径，未声称性能提升或连续区域认证。
