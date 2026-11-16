@@ -332,3 +332,8 @@ index 7 完成了固定 8 点设计中的最后一个直接 Reference 留出：�
 z10/z12 两档原始频谱、根序列、误差估计和源码哈希分别见[z10 细网格 JSON](results/cr_positive_sobol_index7_frequency_refinement_z10_20261117.json)和[z12 细网格 JSON](results/cr_positive_sobol_index7_frequency_refinement_z12_20261117.json)，可由[z10 runner](../../scripts/verify_sobol_index7_frequency_refinement_z10_20261117.py)和[z12 runner](../../scripts/verify_sobol_index7_frequency_refinement_z12_20261117.py)复跑。
 
 完整 77/153 节点谱、映射、误差估计、根序列、运行环境与源码哈希见[频率网格 JSON](results/cr_positive_sobol_index7_frequency_refinement_z10_20261117.json)。原执行脚本快照及其哈希保存在[calculation snapshot](results/cr_positive_sobol_index7_frequency_refinement_z10_calculation_20261117.py.txt)，已规范化且标注正确日期的可复跑 runner 为[验证脚本](../../scripts/verify_sobol_index7_frequency_refinement_z10_20261117.py)。
+
+
+继续沿同一网格分层，将 153 个直接节点逐段插入 152 个新中点，得到 305 个 z10 Reference 直接节点，并在同根网格上闭合映射。积分 map 相对 153 点改变 `−4.1022e-5`，相对 77 点累计改变 `−3.9265e-4`；两个新增层级的共享节点逐点完全相同，无 warning。新增 152 个中点上，153 点线性信号 PCHIP 对直接 Reference 的误差 P95/最大值为 `0.03291/0.24721 dex`。305 点网格的更新根 residual 为 `0.0`，其映射根相对 Fast 根仍偏 `−4.0142e-4`，超过 `2e-4`；因此在这个样本上 Fast 的 77 点自洽根没有通过频率加密 Reference 的根筛查，尽管 153→305 映射变化已降至门槛内。305 点单次/更新映射耗时约 `740.05/742.97 s`。当前证据为 z10 的 77/153/305 三档；z12 只到 153 点，需直接 305 点 z12 才能确认尾部与细网格的交互，另需独立参数点避免只基于单样本扩域。
+
+305 点原始谱、PCHIP 新节点误差、根序列、环境和哈希见[305 点网格 JSON](results/cr_positive_sobol_index7_frequency_refinement_z10_305_20261117.json)，可用[305 点 runner](../../scripts/verify_sobol_index7_frequency_refinement_z10_305_20261117.py)复跑。
