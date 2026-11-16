@@ -174,3 +174,13 @@ z8→z10 映射变化为 `−2.528e-4`，略高于 `2e-4` 根筛查参考线；�
 按模态开关之前是私有原型；本轮把由 `1e-3 dex` 纹波界计算的默认阈值接入 Fast 正式路径。原型复用按相位权重保护活动相位行的逻辑。全量 `pytest` 为 `411 passed, 9 deselected`；Ruff、Mypy 和 sdist/wheel 构建通过。产物与复跑脚本：[`cr>0` cutoff 点 Reference](results/cr_positive_consistency_cutoff_20261116.json)、[当前默认 Fast cutoff 复核](results/cr_positive_consistency_adaptive_cutoff_20261116.json)、[`cr>0` 自适应 A/B](results/cr_positive_consistency_tail_handoff_20261116.json)、[常规振幅控制 A/B](results/cr_positive_normal_control_handoff_20261116.json)、[`cr=0` 次正规控制 A/B](results/cr0_underflow_tail_handoff_20261116.json)、[cutoff 预筛脚本](../../scripts/screen_cr_positive_consistency_cutoff_20261116.py)、[当前 Fast cutoff 复核脚本](../../scripts/validate_cr_positive_consistency_adaptive_cutoff_20261116.py)、[逐模 A/B 脚本](../../scripts/diagnose_cr_positive_consistency_tail_handoff_20261116.py)。
 
 当前候选通过这三个离散点，但仍须在不同 `T_re`、`kappa10`、普通 `cr=0` 振幅与更高频率网格上继续独立验证；它没有形成一般 WKB 余项证明，也不能认证连续参数域。
+
+### 937 点 `cr=0` 最小次正规留出与非单调背景修正
+
+在 canonical nested 937 点网格上，以 `r=5e-324, n_t=17.38, T_re=2000, kappa10=.01, cr=0` 的直接 Reference z10 谱和冻结根作同根、同网格、单线程 A/B。该网格逐点直接求解，没有把 235/469 点谱插值到 937 点。z5 最大谱差为 `2.4408647e-3 dex`，z8 为 `3.7215932e-4 dex`；默认自适应方案延迟 44/937 个模式，最大差为 `4.8550909e-4 dex`，满足本轮 `1e-3 dex` 频谱门槛。Reference z8→z10 映射变化 `3.6809e-6`、最大谱变化 `1.6489e-4 dex`；Fast 自洽根相对冻结 z10 Reference 根差 `−2.3031e-6`，满足本轮 `2e-4` 根筛查线。
+
+该留出暴露了首版模式筛选条件的问题：最差 z5 模式今天的 `z_today=4.99072<z_tail=5`，但在非单调背景中曾短暂越过 `z_tail`，所以当前确实会触发 z5 交接；仅筛选 `z_today>z_tail` 会漏掉它。最终规则对所有 `z_today<z_cut` 且相位权重为零的模式延迟到 `z_tail+3`，相位分辨活动模式仍走原路径。逐模阈值变体当前只在 `z_today` 纹波超过解析门槛时应用；这个修正由 937 点直接谱对照支持，不代表 WKB 高阶余项存在统一严格上界。
+
+同一固定根/网格/线程，预热后 12 次交错运行：z5、自适应、z8 的 P50 分别为 `125.39、126.22、199.15 ms`，P95 为 `127.89、132.32、219.92 ms`。自适应较全局 z8 快 `1.578×`，但相对 z5 P50 慢约 `0.67%`；因此这里显示的是精度修复以极小运行成本维持 z5 级速度，不是相对原 z5 的加速。RSS P50 分别 `227.96、229.46、229.48 MiB`。冷启动首调含 JIT，单列于 JSON，不与预热数据混合。
+
+937 点产物[`A/B JSON`](results/cr0_underflow_937_handoff_20261116.json)记录完整逐节点谱、根残差、重复计时、RSS、环境、输入和源码 SHA；[复跑脚本](../../scripts/diagnose_cr0_underflow_937_handoff_20261116.py)会核验 nested grid 与 Reference 源哈希。Reference 的 PCHIP 仍发出 4 次 `overflow encountered in divide`，49 个缩放节点舍入为零；本次直接 Reference 谱完整且有限、网格/尾部收敛筛查满足门槛，但这些警告和 Reference 插值稳定性问题尚未修复，Reference 仍需专门审计。该结论只覆盖一个高倾斜、最小次正规振幅的 `cr=0` 离散点，不认证 469/937 的一般网格收敛或连续参数范围。

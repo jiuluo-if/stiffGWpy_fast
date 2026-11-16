@@ -1547,9 +1547,12 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Derive the leading ripple threshold `z_cut=6.074868627758201` from `log10(1+exp(-z)+exp(-2z))=1e-3 dex`; test per-mode delay to `z_tail+3` at fixed root/grid/thread.
 - [x] A/B shows max spectrum errors z5/z8/adaptive `1.886e-3/3.776e-4/5.639e-4 dex`; adaptive selects 1/77 and its P50/P95 is `4.45/6.41 ms` vs no-deferral z5 `4.00/5.51 ms` and z8 `13.05/16.12 ms`.
 - [x] Current `cr>0,r=.01` normal-amplitude control also passes adaptively (`3.741e-4 dex`, one mode selected); current `cr=0` subnormal phase-active control remains unchanged and passes (`5.695e-4 dex`, zero modes selected).
+- [x] Direct 937-node `cr=0` minimum-subnormal holdout: z5/adaptive/z8 maximum spectrum errors `2.440865e-3/4.855091e-4/3.721593e-4 dex`; self-consistent root error `−2.3031e-6`; Reference z8→z10 map/spectrum changes `3.6809e-6/1.6489e-4 dex`. No interpolated spectrum nodes.
+- [x] Correct the mode mask after the 937-node worst mode showed transient z_tail crossing in a nonmonotone background despite `z_today<z_tail`; defer all phase-inactive shallow-today modes and retain phase-resolved rows on the original path.
+- [x] Record that 937-node Reference still emits four PCHIP divide-overflow warnings and has 49 normalized interpolation nodes rounded to zero; Reference stability remains open.
 - [x] TDD regression first failed on the expected z5 handoff `handoff_eps=3.3378e-3`; current default defers that mode, and ripple-threshold unit tests pass.
 - [x] Full validation after the production change: `411 passed, 9 deselected`; Ruff, Mypy, and sdist/wheel package build passed.
-- [ ] Commit/push the production handoff change, current-source reference/A-B artifacts, and updated research ledger; run/verify GitHub CI.
+- [ ] Finish latest-mask full test/static/build checks, then commit/push the production handoff change, current-source 937 A/B artifact and updated research ledger; run/verify GitHub CI.
 
 ### Next Step
 
