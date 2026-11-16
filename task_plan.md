@@ -1522,8 +1522,20 @@ At fixed `kappa10=.01`, compare a high-temperature point to the existing low-tem
 - [x] Run current Fast and direct Reference z8/z10/z12 on the exact 76-node Fast grid; compare raw positive `Ogw-Oj` because all public Reference log values hit the `−40` floor.
 - [x] Fast root vs Reference z12 map differs by `+6.326e-6`; fixed-root map differs by `−1.235e-6`; Fast-vs-Reference z12 maximum spectrum error is `3.752e-4 dex`.
 - [x] Reference z10→z12 map/spectrum changes are `+4.972e-6` and `3.741e-4 dex`; no warnings or non-positive raw spectrum nodes.
-- [ ] Commit/push the fixed-`kappa10` temperature artifact and research ledger, then verify CI.
+- [x] Commit `47663768feb7986fe91358c2f270d0aef6b9d8db` with required identity/message, push/fetch the same SHA, and verify all jobs in CI `43757146361` passed.
 
 ### Next Step
 
-At the same `kappa10=.01`, validate `T_re=10000` to separate high-temperature behavior from the high/high diagonal corner where `kappa10=1`.
+After completing the fixed-`kappa10` temperature sweep, screen the consistency branch at the blue-tilt edge with background/cutoff/physical-guard checks before deciding whether a full Reference run is meaningful.
+
+## Autonomous continuation: Round 52 — fixed-`kappa10` high-temperature control
+
+- [x] At fixed `kappa10=.01`, use `T_re=10000` and `r=1.1*r_cut` on the valid cutoff side.
+- [x] Run current Fast and direct Reference z8/z10/z12 on the exact 77-node Fast grid; use raw positive Reference signal because every public log node is floored at `−40`.
+- [x] Fast root vs Reference z12 map differs by `−9.856e-6`; fixed-root map differs by `−9.103e-6`; Fast-vs-Reference z12 spectrum maximum error is `3.845e-4 dex`.
+- [x] Keep the z8→z10 map shift `−2.542e-4` visible; the deeper z10→z12 map/spectrum shifts are `−3.432e-5` and `3.549e-4 dex`.
+- [ ] Commit/push the high-temperature fixed-`kappa10` artifact and ledger; verify CI.
+
+### Next Step
+
+Preflight the `cr>0` consistency branch at `n_t=17.3` near the valid cutoff side. First check derived cutoff and `A_t`, then use Fast's physical guard; run Reference only if the guarded Fast map is finite and physically admitted.
