@@ -184,3 +184,11 @@ z8→z10 映射变化为 `−2.528e-4`，略高于 `2e-4` 根筛查参考线；�
 同一固定根/网格/线程，预热后 12 次交错运行：z5、自适应、z8 的 P50 分别为 `125.39、126.22、199.15 ms`，P95 为 `127.89、132.32、219.92 ms`。自适应较全局 z8 快 `1.578×`，但相对 z5 P50 慢约 `0.67%`；因此这里显示的是精度修复以极小运行成本维持 z5 级速度，不是相对原 z5 的加速。RSS P50 分别 `227.96、229.46、229.48 MiB`。冷启动首调含 JIT，单列于 JSON，不与预热数据混合。
 
 937 点产物[`A/B JSON`](results/cr0_underflow_937_handoff_20261116.json)记录完整逐节点谱、根残差、重复计时、RSS、环境、输入和源码 SHA；[复跑脚本](../../scripts/diagnose_cr0_underflow_937_handoff_20261116.py)会核验 nested grid 与 Reference 源哈希。Reference 的 PCHIP 仍发出 4 次 `overflow encountered in divide`，49 个缩放节点舍入为零；本次直接 Reference 谱完整且有限、网格/尾部收敛筛查满足门槛，但这些警告和 Reference 插值稳定性问题尚未修复，Reference 仍需专门审计。该结论只覆盖一个高倾斜、最小次正规振幅的 `cr=0` 离散点，不认证 469/937 的一般网格收敛或连续参数范围。
+
+### 937 点 Reference PCHIP 警告诊断
+
+复用同一直接 Reference z10 的完整有限 `log10(OmegaGW)` 节点和 canonical 937 点网格，对全局归一化后的线性数组重跑原始 `integrate_spectrum`，捕获到 4 条 `overflow encountered in divide`；937 点中 49 个节点在全局归一化后成为精确零，另有 10 个为正次正规数。节点动态范围为 `362.22 dex`。这与 PCHIP 内部加权调和割线斜率的倒数运算相符；warning 不是 QUADPACK 求积产生的。
+
+以现有 `LogPchip` 从同一 log 节点计算**同一个正值线性 PCHIP Hermite 多项式**的割线、导数和积分，未对 `log(y)` 构造 PCHIP。该计算无 warning，总积分与原始 SciPy PCHIP 相差 `1.42e-14` 相对。49 个触及归一化零节点的插值区间，稳定候选累计积分仅占总量 `10^-322.716`，故这些零值在此离散点对 `DN_gw` 积分可忽略。对 937 个新增区间中点，原 SciPy PCHIP 有 48 个也舍入为零；在仍可表示为正的中点，候选与 SciPy 输出 P95 差约 `2.84e-14 dex`，最大局部差 `0.3009 dex` 出现在极弱尾部 `log10(f/Hz)=-15.51694`。因此总积分稳定不等于每个极小尾点插值稳定；若该频带之后被加权、扩展或用于其它可观测量，仍需独立评估。
+
+数据、源码哈希和可复跑脚本见[PCHIP 937 点诊断 JSON](results/reference_pchip_937_diagnostic_20261116.json)与[脚本](../../scripts/diagnose_reference_pchip_937_20261116.py)。这是对警告及其积分影响的诊断，不改 Reference 正式实现，也不把普通 log-PCHIP 当替代方案。该稳定算法先前只在 235 点振幅阶梯上评估；此次 937 点对照进一步支持总积分数学等价性，但尚未在不同背景、独立频率网格与更广动态范围重复，因此不能据此替换独立 Reference 基准。

@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "status": "complete_reference_937_linear_pchip_warning_diagnostic",
+  "scope": "Reuse direct Reference z10 log nodes on the exact canonical 937-point grid; compare original normalized linear PCHIP quadrature with log-arithmetic evaluation/integration of the positive linear-PCHIP Hermite polynomial. Reference production source is unchanged.",
+  "frequency_count": 937,
+  "frequency_sha256_f64le": "7a2be43f3a11c73114fd481082acf83ff312704b5de1cbd2f9eaa590d38da8ee",
+  "frozen_DN_eff": 1.3543440396198841e-09,
+  "source_values": {
+    "minimum_log10_OmegaGW": -374.7449110051489,
+    "maximum_log10_OmegaGW": -12.529393587136035,
+    "finite_count": 937
+  },
+  "normalization": {
+    "shift_natural_log": -28.84999489799463,
+    "normalized_zero_nodes": 49,
+    "normalized_positive_subnormal_nodes": 10
+  },
+  "original_linear_pchip": {
+    "runtime_warnings": [
+      "overflow encountered in divide",
+      "overflow encountered in divide",
+      "overflow encountered in divide",
+      "overflow encountered in divide"
+    ],
+    "log_integral": -31.718392839764505,
+    "quadrature_error_relative": 1.1102230246251562e-14,
+    "half_density_interpolation_error_relative": 3.2208654824074176e-07
+  },
+  "stable_log_arithmetic_same_pchip": {
+    "runtime_warnings": [],
+    "log_integral": -31.71839283976449,
+    "relative_integral_difference": 1.4210854715202105e-14,
+    "interpolant_definition": "Same positive linear PCHIP Hermite polynomial from log-domain secants and derivatives; not PCHIP applied to log(y).",
+    "panels_touching_a_normalized_zero_node": 49,
+    "log10_fraction_of_total_integral_in_those_panels": -322.7158372962596
+  },
+  "midpoint_interpolation": {
+    "point_count": 936,
+    "linear_zero_count": 48,
+    "runtime_warnings": [
+      "overflow encountered in divide",
+      "overflow encountered in divide"
+    ],
+    "finite_linear_vs_stable_log_pchip_max_abs_dex": 0.3008998251776802,
+    "finite_linear_vs_stable_log_pchip_p95_abs_dex": 2.842170943040401e-14,
+    "worst_finite_midpoint": {
+      "index": 56,
+      "log10_frequency": -15.516944809173847,
+      "difference_dex": 0.3008998251776802,
+      "left_node_log10_signal": -329.217481888643,
+      "right_node_log10_signal": -324.87963986332477
+    }
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1"
+  },
+  "source_sha256": {
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "stable_log_pchip.py": "786987447004ecb9710d59b805399c5b33f2d98ed822be0cf0e72df279c1ddc3",
+    "diagnostic_script": "3e30764deac893e32f4d98d6c23dd63e2c86578733af6bac4b6cf37140950221",
+    "grid_input": "a314b0e9f9a322e599728c67022ab943feeda58e0137e4ebdc527c16592be77a",
+    "reference_input": "397eef7973808bc984fadfb405d46c468fff0b413b7eeb4fd56c9e3dddce68a6"
+  }
+}

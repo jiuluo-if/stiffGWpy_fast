@@ -1550,10 +1550,11 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Direct 937-node `cr=0` minimum-subnormal holdout: z5/adaptive/z8 maximum spectrum errors `2.440865e-3/4.855091e-4/3.721593e-4 dex`; self-consistent root error `−2.3031e-6`; Reference z8→z10 map/spectrum changes `3.6809e-6/1.6489e-4 dex`. No interpolated spectrum nodes.
 - [x] Correct the mode mask after the 937-node worst mode showed transient z_tail crossing in a nonmonotone background despite `z_today<z_tail`; defer all phase-inactive shallow-today modes and retain phase-resolved rows on the original path.
 - [x] Record that 937-node Reference still emits four PCHIP divide-overflow warnings and has 49 normalized interpolation nodes rounded to zero; Reference stability remains open.
+- [x] Replay the original 937-node Reference PCHIP warning from stored direct log nodes; compare the stable log-arithmetic evaluation of the same linear PCHIP and measure its integral and midpoint effects without editing Reference.
 - [x] TDD regression first failed on the expected z5 handoff `handoff_eps=3.3378e-3`; current default defers that mode, and ripple-threshold unit tests pass.
 - [x] Full validation after the production change: `411 passed, 9 deselected`; Ruff, Mypy, and sdist/wheel package build passed.
-- [x] Finish latest-mask full test/static/build checks; commit/push production source, current-source 937 A/B artifact and updated ledger as `5a612e1dbf2a3de1f703da753764a2229d46e3b4`; fetch verified the same SHA and GitHub CI run `43815188536` passed every job.
+- [x] Finish latest-mask full test/static/build checks; commit/push production source, current-source 937 A/B artifact and updated ledger as `5a612e1dbf2a3de1f703da753764a2229d46e3b4`; fetch verified the same SHA and GitHub CI run `43815188536` passed every job. CI-result ledger commit `ba8c6b4a0abb3f5fae168acad888d6f807ce786c` also passed every job in run `43815931166`.
 
 ### Next Step
 
-After delivery, validate the adaptive handoff on direct 469/937 high-tilt underflow grids and on additional normal-amplitude `cr>0` background points before making any broader certification claim.
+Broaden the same-linear-PCHIP stability diagnostic with independently solved 469-node data and at least one distinct background; keep Reference unchanged until pointwise and integral bias are both bounded. Then continue adaptive-handoff checks at 469 nodes and additional normal-amplitude `cr>0` points.
