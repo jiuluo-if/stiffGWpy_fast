@@ -346,3 +346,12 @@ z10/z12 两档原始频谱、根序列、误差估计和源码哈希分别见[z1
 305 点 z10 映射根相对 Fast 根仍差 `−2.5651e-4`，超过 `2e-4`，但比 index 7 的 `−4.0142e-4` 小。两个独立 Sobol 点都表现为 153→305 网格变化落入 `2e-4` 内，而细网格 Reference 根相对 Fast 仍超出该阈值。这支持当前 77 点目标网格在这两个离散点上低估积分 map；尚未有 305 点 z12 或更高网格，因此不据此作连续域认证，也不直接更改 Fast 默认网格。index 3 的 z10/z12 77 点尾部变化此前约 `+6.19e-6`，但 305 点 z12 交互仍需直接核验。
 
 完整 index 3 的网格映射、PCHIP 新节点差、root residual 与源码哈希见[305 点结果 JSON](results/cr_positive_sobol_index3_frequency_refinement_z10_305_20261117.json)，可由[复跑脚本](../../scripts/verify_sobol_index3_frequency_refinement_z10_305_20261117.py)重现。
+
+
+### 现有 Fast adaptive 频率网格 target 的双点直接 Reference 筛查
+
+用 index 3 和 7 各自 305 点 z10 直接 Reference 收敛根作锚点，对现有 `freq_grid="adaptive"` 的 target `3e-4,2e-4,1e-4,5e-5,1e-5` 进行单线程 Fast root-only 屏幕。target `3e-4` 在两点的根差分别为 `+3.349e-4` 和 `+3.483e-4`，均超过 `2e-4`；target `2e-4` 时为 `+1.517e-4` 和 `+1.623e-4`，均落入 root 屏幕；更紧的 targets 继续降低偏差。该 screen 只比较 root，未将不同频率网格的谱直接相减，也不是性能 A/B。
+
+对 root-only 通过的较保守 target `1e-4`，进一步在两个 Fast 自适应原生网格上分别直接求 Reference z10，并按 `|F(x)/x−1|≤2e-4` 检查更新后 root residual。index 3 使用 175 点，根相对 305 点 Reference 锚点 `+1.031e-4`，Reference 初始 residual `+3.048e-6`，更新后为 `0.0`；Fast/Reference 同根同网格最大/P95 谱差 `7.202e-4/5.170e-4 dex`。index 7 使用 167 点，根差 `+1.132e-4`，初始 residual `−7.229e-6`，更新后为 `0.0`；最大/P95 谱差 `8.967e-4/3.315e-4 dex`。两点 raw Reference 节点均正有限且无 warning，谱差小于 `1e-3 dex`。此证据支持现有 adaptive opt-in 的 `1e-4` target 在这两个离散点 z10 下通过 root、谱门槛；index 7 最大谱差已接近限值。尚未对该 adaptive 网格做 z12 直接 Reference，也未做相同 root/频率网格/线程数的稳定运行性能 A/B，因此不据此改变 Fast 默认 grid 或宣称性能改进。
+
+目标扫描 JSON/runner 与 index 3/7 的 direct Reference JSON/runner 均保留在[自适应 target screen](results/sobol_fast_adaptive_target_root_screen_20261117.json)、[index 3 direct validation](results/sobol_index3_adaptive_target1e4_reference_z10_20261117.json)、[index 7 direct validation](results/sobol_index7_adaptive_target1e4_reference_z10_20261117.json)及相邻脚本；index 7 原执行脚本快照和补充来源哈希校正也一并保存。

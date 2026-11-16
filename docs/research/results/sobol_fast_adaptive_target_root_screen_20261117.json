@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "status": "complete_sobol_fast_adaptive_target_root_screen",
+  "scope": "For fixed Sobol indices 3 and 7, compare existing Fast freq_grid='adaptive' target settings against independently closed direct Reference z10 root anchors on nested 305-node grids. This screen compares roots only; it does not compare spectra on identical grids or measure performance A/B.",
+  "targets": [
+    0.0003,
+    0.0002,
+    0.0001,
+    5e-05,
+    1e-05
+  ],
+  "samples": {
+    "3": {
+      "parameters": {
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "A_s": 2.100549e-09,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "DN_re": 20.0,
+        "DN_eff": 0.0,
+        "T_re": 2623.915011928965,
+        "kappa10": 0.001641715157552986,
+        "r": 3.3188430390169986e-43
+      },
+      "reference_z10_root_anchor_305": 2.52550543916434e-44,
+      "reference_grid_count": 305,
+      "reference_grid_sha256_f64le": "5d6ff99d7bf8e82ce6bb016f3c62e5eb5c4e98fcd867648c995e81a71a5e4f63",
+      "runs": [
+        {
+          "target": 0.0003,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.623474600026384,
+          "root_DN_eff": 2.5263511801551e-44,
+          "mapped_DN_gw": 2.5263511801551e-44,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 0.00033487989281044683,
+          "frequency_count": 173,
+          "frequency_sha256_f64le": "be96feca1147a2bd67a7381e14c0896d2687f7134195672b3846212b42035109",
+          "freq_grid_error": 0.00028509469878509175,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 0.0002,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.01664709998294711,
+          "root_DN_eff": 2.525888529647047e-44,
+          "mapped_DN_gw": 2.525888529647047e-44,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 0.00015168863894166051,
+          "frequency_count": 174,
+          "frequency_sha256_f64le": "44c3a06e2b688c1da6b563709e43aa2d11a06203ec71769478acafdfcf01bc2d",
+          "freq_grid_error": 0.00017644144552664482,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 0.0001,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.017198799992911518,
+          "root_DN_eff": 2.525765837513971e-44,
+          "mapped_DN_gw": 2.525765837513971e-44,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 0.00010310741984254079,
+          "frequency_count": 175,
+          "frequency_sha256_f64le": "5c632a9e8e0391f484b35ad0c817114a65e317f845bfe7cdc551d3028fb7d618",
+          "freq_grid_error": 9.971155583640594e-05,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 5e-05,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.024942399992141873,
+          "root_DN_eff": 2.5256508436274967e-44,
+          "mapped_DN_gw": 2.5256508436274967e-44,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 5.7574401108650974e-05,
+          "frequency_count": 177,
+          "frequency_sha256_f64le": "6520105b8d53d30409406466a9b48ae69c033087d8a12a271e48bb567ef4b654",
+          "freq_grid_error": 4.006278725065723e-05,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 1e-05,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.024634400033392012,
+          "root_DN_eff": 2.52555681011985e-44,
+          "mapped_DN_gw": 2.52555681011985e-44,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 2.034086116498024e-05,
+          "frequency_count": 185,
+          "frequency_sha256_f64le": "eca7604eb1c58a6112d9455c55e8a49e7bbba5a35a91e575b484f129e131be57",
+          "freq_grid_error": 8.75148071627281e-06,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        }
+      ]
+    },
+    "7": {
+      "parameters": {
+        "Omega_bh2": 0.0223828,
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "A_s": 2.100549e-09,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "DN_re": 20.0,
+        "DN_eff": 0.0,
+        "T_re": 642.6992202584653,
+        "kappa10": 0.011699883267519385,
+        "r": 5.091582059669135e-46
+      },
+      "reference_z10_root_anchor_305": 1.6548428940254398e-47,
+      "reference_grid_count": 305,
+      "reference_grid_sha256_f64le": "ba621fa5a109eece27561221224944244b9697970efa558924a17db035faa0a1",
+      "runs": [
+        {
+          "target": 0.0003,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.016030200000386685,
+          "root_DN_eff": 1.655419329146433e-47,
+          "mapped_DN_gw": 1.655419329146433e-47,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 0.0003483322332737959,
+          "frequency_count": 165,
+          "frequency_sha256_f64le": "67040478a2ae70e7436151cb02655154fd65bbdc7d2e1f437299d35b03fc7a1a",
+          "freq_grid_error": 0.0002879289380736478,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 0.0002,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.015997599984984845,
+          "root_DN_eff": 1.6551114068023943e-47,
+          "mapped_DN_gw": 1.6551114068023943e-47,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 0.00016225877267506128,
+          "frequency_count": 166,
+          "frequency_sha256_f64le": "85d387b3ee6bcca4936b775e809f5ad3c8dc6502eb7ab7d7dbc60619d5864c74",
+          "freq_grid_error": 0.00017819946742235698,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 0.0001,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.015631999995093793,
+          "root_DN_eff": 1.6550302630295167e-47,
+          "mapped_DN_gw": 1.6550302630295167e-47,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 0.0001132246479429444,
+          "frequency_count": 167,
+          "frequency_sha256_f64le": "9c834a0ceaf993ed67becf9b1478adbeed014115eca07d268657543776c52fa3",
+          "freq_grid_error": 9.90475768523333e-05,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 5e-05,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.022715500032063574,
+          "root_DN_eff": 1.6549509503123811e-47,
+          "mapped_DN_gw": 1.6549509503123811e-47,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 6.52970063390601e-05,
+          "frequency_count": 169,
+          "frequency_sha256_f64le": "ce3389a7bbf64ce9d7c3830259c538a26526821bebfdf95269e954205b93e47b",
+          "freq_grid_error": 4.047656920542662e-05,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        },
+        {
+          "target": 1e-05,
+          "returned_model": true,
+          "failure_reason": null,
+          "runtime_s": 0.030051100009586662,
+          "root_DN_eff": 1.654891405141409e-47,
+          "mapped_DN_gw": 1.654891405141409e-47,
+          "fixed_point_residual_relative": 0.0,
+          "root_relative_error_vs_reference_z10_305": 2.9314635331401107e-05,
+          "frequency_count": 177,
+          "frequency_sha256_f64le": "8137cce29ce40b5abe6b9f18c991daeb9e1bbec6511f876850262abb431c7df4",
+          "freq_grid_error": 9.23472989112543e-06,
+          "public_spectrum_finite": true,
+          "runtime_warnings": []
+        }
+      ]
+    }
+  },
+  "environment": {
+    "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.4",
+    "threads": 1
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "041af5772df7fabb6f3497d87b240586576aedbc26fafcdde57318de28c28e04",
+    "stiff_SGWB.py": "ce0145d0166d5965fb586e9a8137f238728e2cea0d3e33e3ade79a6784b1b28a",
+    "freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+    "scripts": {},
+    "inputs": {
+      "3": "7cc94aa36c0eba5472a51f24081554fc94b26c938742238c273ff88c7ba78a1a",
+      "7": "4fb3e3391b4ca2ae0a59575b66c241622e0ae985829b141238b421c9c37fcc12"
+    },
+    "script": "9b2b1f65a6806c2864e94c21fe32111188b4330adc0a1f95643abfefada71a3e"
+  }
+}
