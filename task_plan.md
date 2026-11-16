@@ -1552,10 +1552,11 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Record that 937-node Reference still emits four PCHIP divide-overflow warnings and has 49 normalized interpolation nodes rounded to zero; Reference stability remains open.
 - [x] Replay the original 937-node Reference PCHIP warning from stored direct log nodes; compare the stable log-arithmetic evaluation of the same linear PCHIP and measure its integral and midpoint effects without editing Reference.
 - [x] Extend the same-polynomial diagnostic to directly solved 469/937 same-background grids and a distinct low-temperature 221-node Reference background; verify grid and current Reference hashes.
+- [x] Validate the accepted adaptive WKB handoff on a direct 469-node high-tilt grid with same frozen root, Reference z8, and fixed single-thread A/B; separately close the current Fast root on that exact grid.
 - [x] TDD regression first failed on the expected z5 handoff `handoff_eps=3.3378e-3`; current default defers that mode, and ripple-threshold unit tests pass.
 - [x] Full validation after the production change: `411 passed, 9 deselected`; Ruff, Mypy, and sdist/wheel package build passed.
 - [x] Finish latest-mask full test/static/build checks; commit/push production source, current-source 937 A/B artifact and updated ledger as `5a612e1dbf2a3de1f703da753764a2229d46e3b4`; fetch verified the same SHA and GitHub CI run `43815188536` passed every job. CI-result ledger commit `ba8c6b4a0abb3f5fae168acad888d6f807ce786c` also passed every job in run `43815931166`.
 
 ### Next Step
 
-Check whether the same-polynomial log arithmetic remains stable over wider amplitude ranges and additional direct grids, keeping Reference unchanged; quantify weak-tail pointwise bias separately from integral bias. Then continue adaptive-handoff checks at 469 nodes and additional normal-amplitude `cr>0` points.
+Check the adaptive WKB rule on additional cutoff-valid normal-amplitude `cr>0` backgrounds and distinguish consistency-derived tilt from supplied `n_t`; continue broader amplitude/domain coverage only where the background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
