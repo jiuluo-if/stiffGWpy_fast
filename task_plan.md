@@ -1534,8 +1534,23 @@ After completing the fixed-`kappa10` temperature sweep, screen the consistency b
 - [x] Run current Fast and direct Reference z8/z10/z12 on the exact 77-node Fast grid; use raw positive Reference signal because every public log node is floored at `−40`.
 - [x] Fast root vs Reference z12 map differs by `−9.856e-6`; fixed-root map differs by `−9.103e-6`; Fast-vs-Reference z12 spectrum maximum error is `3.845e-4 dex`.
 - [x] Keep the z8→z10 map shift `−2.542e-4` visible; the deeper z10→z12 map/spectrum shifts are `−3.432e-5` and `3.549e-4 dex`.
-- [ ] Commit/push the high-temperature fixed-`kappa10` artifact and ledger; verify CI.
+- [x] Commit `a45c1fef25f64ef92d43f016aa55252f81e42020`, push/fetch the same SHA, and verify CI `43802407367` passed all jobs.
 
 ### Next Step
 
-Preflight the `cr>0` consistency branch at `n_t=17.3` near the valid cutoff side. First check derived cutoff and `A_t`, then use Fast's physical guard; run Reference only if the guarded Fast map is finite and physically admitted.
+Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; distinguish the input `n_t` field from the consistency-derived tilt before treating the point as a blue-tilt sample.
+
+## Autonomous continuation: Round 53 — ripple-based per-mode WKB handoff
+
+- [x] Preflight the consistency branch at requested `n_t={17.3,17.45}`; verify positive cutoff and normal `A_t`, then use the physical guard. Fast admitted both; Reference z8/z10/z12 on the exact 77-node grid shows the same physical spectrum because consistency-derived `nt=-4.952770318471071e-44` ignores the input tilt.
+- [x] Diagnose the z5 `1.886e-3 dex` local spectrum miss at `log10(f/Hz)=-16.0917663`: the mode handoff residual is `3.3378e-3` at z5 and becomes no-handoff at z8/z10; the integral root changes by only `~6e-7`.
+- [x] Derive the leading ripple threshold `z_cut=6.074868627758201` from `log10(1+exp(-z)+exp(-2z))=1e-3 dex`; test per-mode delay to `z_tail+3` at fixed root/grid/thread.
+- [x] A/B shows max spectrum errors z5/z8/adaptive `1.886e-3/3.776e-4/5.639e-4 dex`; adaptive selects 1/77 and its P50/P95 is `4.45/6.41 ms` vs no-deferral z5 `4.00/5.51 ms` and z8 `13.05/16.12 ms`.
+- [x] Current `cr>0,r=.01` normal-amplitude control also passes adaptively (`3.741e-4 dex`, one mode selected); current `cr=0` subnormal phase-active control remains unchanged and passes (`5.695e-4 dex`, zero modes selected).
+- [x] TDD regression first failed on the expected z5 handoff `handoff_eps=3.3378e-3`; current default defers that mode, and ripple-threshold unit tests pass.
+- [x] Full validation after the production change: `411 passed, 9 deselected`; Ruff, Mypy, and sdist/wheel package build passed.
+- [ ] Commit/push the production handoff change, current-source reference/A-B artifacts, and updated research ledger; run/verify GitHub CI.
+
+### Next Step
+
+After delivery, validate the adaptive handoff on direct 469/937 high-tilt underflow grids and on additional normal-amplitude `cr>0` background points before making any broader certification claim.

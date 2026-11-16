@@ -248,7 +248,7 @@ def test_nonfinite_dn_gw_aborts_and_restores(monkeypatch, model):
                   Ogw, Oj, Opgw, h_arr=None, Sv=None, phase_max=0.0,
                   handoff_eps=None, kink_index=-1, kink_fraction=0.0,
                   phi_re=0.0, h_final=0.0, phase_weight=None,
-                  tail_state=None):
+                   tail_state=None, z_tail_by_mode=None):
         Ogw[...] = np.nan
         Oj[...] = 0.0
         Opgw[...] = 0.0
@@ -352,7 +352,7 @@ def test_per_call_thread_config_is_restored_on_failure(monkeypatch, model):
                   Ogw, Oj, Opgw, h_arr=None, Sv=None, phase_max=0.0,
                   handoff_eps=None, kink_index=-1, kink_fraction=0.0,
                   phi_re=0.0, h_final=0.0, phase_weight=None,
-                  tail_state=None):
+                  tail_state=None, z_tail_by_mode=None):
         Ogw[...] = np.nan
         Oj[...] = 0.0
         Opgw[...] = 0.0
@@ -372,7 +372,7 @@ def test_max_iterations_abort_and_restore(monkeypatch, model):
                    Ogw, Oj, Opgw, h_arr=None, Sv=None, phase_max=0.0,
                    handoff_eps=None, kink_index=-1, kink_fraction=0.0,
                    phi_re=0.0, h_final=0.0, phase_weight=None,
-                   tail_state=None):
+                  tail_state=None, z_tail_by_mode=None):
         # Produce a random DN_gw_new in (0.05, 4.9) that never converges.
         # 生成 (0.05, 4.9) 内的随机 DN_gw_new，保证迭代不收敛。
         Omega_nu = FS.gp.Omega_nh2 / model.derived_param['h'] ** 2
@@ -485,7 +485,7 @@ def test_solve_kernel_legacy_signature_regression():
               'col_step', 'h', 'z_tail', 'Ogw', 'Oj', 'Opgw')
     assert params[:len(legacy)] == list(legacy)
     for name, default in (('h_arr', None), ('Sv', None), ('phase_max', 0.0),
-                          ('handoff_eps', None)):
+                          ('handoff_eps', None), ('z_tail_by_mode', None)):
         assert sig.parameters[name].default == default
 
 

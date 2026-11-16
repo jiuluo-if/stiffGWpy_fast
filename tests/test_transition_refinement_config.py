@@ -38,10 +38,10 @@ def test_transition_refine_and_kink_split_use_actual_nonuniform_steps(monkeypatc
     captured = []
     original = FS.solve_kernel
 
-    def capture(*args):
+    def capture(*args, **kwargs):
         nv, h_arr = args[0], args[19]
         captured.append((np.asarray(nv).copy(), None if h_arr is None else np.asarray(h_arr).copy()))
-        return original(*args)
+        return original(*args, **kwargs)
 
     monkeypatch.setattr(FS, 'solve_kernel', capture)
     config = FS.resolve_config(
@@ -67,10 +67,10 @@ def test_kink_split_passes_actual_terminal_step_without_grid_array(monkeypatch, 
     captured = []
     original = FS.solve_kernel
 
-    def capture(*args):
+    def capture(*args, **kwargs):
         captured.append((np.asarray(args[0]).copy(), args[19],
                          args[26] if len(args) > 26 else None))
-        return original(*args)
+        return original(*args, **kwargs)
 
     monkeypatch.setattr(FS, 'solve_kernel', capture)
     config = FS.resolve_config(
@@ -126,9 +126,9 @@ def test_aligned_zero_radius_refinement_uses_scalar_terminal_step(monkeypatch, k
     captured = []
     original = FS.solve_kernel
 
-    def capture(*args):
+    def capture(*args, **kwargs):
         captured.append((np.asarray(args[0]).copy(), args[19], args[26]))
-        return original(*args)
+        return original(*args, **kwargs)
 
     monkeypatch.setattr(FS, 'solve_kernel', capture)
     config = FS.resolve_config(

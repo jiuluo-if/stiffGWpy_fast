@@ -14,8 +14,10 @@ from stiffgwpy_fast.fast_sgwb import (
     _phase_tail_state_for_weights,
     _requires_phase_resolved_tail,
     _terminal_base_signal,
+    _z_today_threshold_for_ripple_dex,
     solve_kernel,
 )
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
 def test_phase_tail_blends_all_terminal_moments_with_one_weight():
@@ -236,7 +238,50 @@ def test_adaptive_wkb_threshold_mask_preserves_phase_resolved_rows():
         phase_weight=np.array([0.0, 0.0, 0.2, 0.0]),
     )
 
-    np.testing.assert_array_equal(actual, np.array([8.0, 8.0, 5.0, 5.0]))
+    np.testing.assert_array_equal(actual, np.array([5.0, 8.0, 5.0, 5.0]))
+
+
+def test_default_wkb_ripple_threshold_solves_the_requested_dex_bound():
+    target = 1e-3
+    threshold = _z_today_threshold_for_ripple_dex(target)
+
+    def bound(z):
+        return math.log1p(math.exp(-z) + math.exp(-2.0 * z)) / math.log(10.0)
+
+    assert abs(bound(threshold) - target) < 2e-16
+    assert bound(threshold - 1e-6) > target
+    assert bound(threshold + 1e-6) < target
+
+
+def test_default_consistency_solve_defers_shallow_today_mode():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=3.962216254776857e-43,
+        n_t=0.0,
+        cr=1.0,
+        T_re=2000.0,
+        DN_re=20.0,
+        kappa10=0.01,
+    )
+
+    result = model.SGWB_iter(
+        engine="fast",
+        fallback=False,
+        tol=0.99,
+        z_tail=5.0,
+        threads=1,
+        accuracy_mode="fast",
+        freq_grid="goal",
+        physical_guard=True,
+    )
+
+    assert result is model
+    index = int(np.argmin(np.abs(np.asarray(model.f) - (-16.091766328870836))))
+    assert model.handoff_eps[index] == -1.0
 
 
 def test_phase_tail_state_is_not_passed_without_phase_weights():
