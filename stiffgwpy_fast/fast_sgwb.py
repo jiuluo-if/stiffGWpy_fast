@@ -1477,11 +1477,34 @@ def _phase_resolved_tail_weights(z_today, z_tail, enabled):
     return weights
 
 
+def _z_today_threshold_for_ripple_dex(ripple_dex):
+    """Solve the leading endpoint-ripple bound for a target dex tolerance.
+
+    English description: Return the minimum today's z that bounds the leading
+    oscillatory endpoint ripple. 中文说明：求使今天端点主导相位纹波不超过
+    指定 dex 容差所需的最小 ``z_today``。
+    """
+    ripple_dex = float(ripple_dex)
+    if not math.isfinite(ripple_dex) or ripple_dex <= 0.0:
+        raise ValueError("ripple_dex must be positive and finite")
+    excess = math.expm1(ripple_dex * ln10)
+    inverse_omega = 2.0 * excess / (1.0 + math.sqrt(1.0 + 4.0 * excess))
+    return -math.log(inverse_omega)
+
+
+_DEFAULT_WKB_RIPPLE_DEX = 1.0e-3
+_DEFAULT_ADAPTIVE_HANDOFF_BELOW = _z_today_threshold_for_ripple_dex(
+    _DEFAULT_WKB_RIPPLE_DEX
+)
+
+
 def _adaptive_wkb_tail_thresholds(
     z_today, z_tail, defer_below, defer_to, phase_weight=None
 ):
-    """Build optional per-mode thresholds: choose only rows safe to defer.\n\n+    English description: Delay WKB handoff for modes that are not deep today.
-    中文说明：仅对今天未处于深亚视界的频点延迟 WKB 交接。
+    """Build per-mode thresholds for shallow modes that would hand off now.
+
+    English description: Delay only active handoffs whose today's ripple exceeds
+    the target bound. 中文说明：仅延迟当前会交接且今天端点纹波超限的模态。
     """
     if not math.isfinite(float(defer_below)) or not math.isfinite(float(defer_to)):
         raise ValueError("adaptive handoff thresholds must be finite")
@@ -1489,7 +1512,7 @@ def _adaptive_wkb_tail_thresholds(
         raise ValueError("deferred handoff threshold must exceed z_tail")
     values = np.asarray(z_today, dtype=np.float64)
     thresholds = np.full(values.shape, float(z_tail), dtype=np.float64)
-    delayed = values < float(defer_below)
+    delayed = (values > float(z_tail)) & (values < float(defer_below))
     if phase_weight is not None:
         weights = np.asarray(phase_weight, dtype=np.float64)
         if weights.shape != values.shape:
@@ -2837,22 +2860,24 @@ def _SGWB_iter_fast_impl(
                         tail_state[:, 3] = -1.0
             tail_z_by_mode = None
             adaptive_defer_below = getattr(
-                m, "_fast_adaptive_handoff_below", None
+                m, "_fast_adaptive_handoff_below", _DEFAULT_ADAPTIVE_HANDOFF_BELOW
             )
+            if adaptive_defer_below is None:
+                adaptive_defer_below = _DEFAULT_ADAPTIVE_HANDOFF_BELOW
             if adaptive_defer_below is not None:
-                tail_z_by_mode = _adaptive_wkb_tail_thresholds(
+                candidate_tail_z = _adaptive_wkb_tail_thresholds(
                     z_today_by_mode,
                     z_tail,
                     adaptive_defer_below,
                     getattr(m, "_fast_adaptive_handoff_to", z_tail + 3.0),
                     phase_weight=phase_weight,
                 )
-                m._fast_adaptive_handoff_selected = int(
-                    np.count_nonzero(tail_z_by_mode > z_tail)
-                )
+                m._fast_adaptive_handoff_selected = int(np.count_nonzero(candidate_tail_z > z_tail))
                 m._fast_adaptive_handoff_fraction = float(
-                    np.mean(tail_z_by_mode > z_tail)
+                    np.mean(candidate_tail_z > z_tail)
                 )
+                if m._fast_adaptive_handoff_selected > 0:
+                    tail_z_by_mode = candidate_tail_z
             _fresh_buffers = False
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
