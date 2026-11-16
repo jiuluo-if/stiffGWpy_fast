@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "status": "complete_current_fast_cr_positive_highT_handoff_diagnostic",
-  "scope": "Current Fast same-root/grid/thread z5, adaptive and z8 A/B versus directly solved Reference z12 on a cutoff-valid cr>0 high-temperature point. Reference remains independent and unchanged.",
+  "status": "complete_current_fast_cr_positive_handoff_diagnostic",
+  "scope": "Current Fast same-root/grid/thread z5, adaptive and z8 A/B versus directly solved Reference z12 on a cutoff-valid cr>0 background. Reference remains independent and unchanged.",
   "parameters": {
     "Omega_bh2": 0.0223828,
     "Omega_ch2": 0.1201075,
@@ -32,7 +32,7 @@
     "runtime_warnings": []
   },
   "current_fast_self_consistent": {
-    "runtime_s": 0.2718975000025239,
+    "runtime_s": 0.2711027999757789,
     "DN_eff_root": 4.184938229560105e-38,
     "mapped_DN_gw": 4.184938229560105e-38,
     "fixed_point_residual_relative": 0.0,
@@ -70,8 +70,8 @@
   "first_variant_calls_after_root_warmup": {
     "z5": {
       "variant": "z5",
-      "runtime_s": 2.3746872000047006,
-      "rss_bytes": 206229504,
+      "runtime_s": 0.014356400002725422,
+      "rss_bytes": 168730624,
       "mapped_DN_gw": 4.1849382295582917e-38,
       "root_residual_relative": 0.0,
       "handoff_count": 70,
@@ -82,8 +82,8 @@
     },
     "z8": {
       "variant": "z8",
-      "runtime_s": 0.013139899994712323,
-      "rss_bytes": 207781888,
+      "runtime_s": 0.012664300011238083,
+      "rss_bytes": 170770432,
       "mapped_DN_gw": 4.184941379485882e-38,
       "root_residual_relative": 7.526819794101414e-07,
       "handoff_count": 66,
@@ -94,8 +94,8 @@
     },
     "adaptive": {
       "variant": "adaptive",
-      "runtime_s": 0.004282500012777746,
-      "rss_bytes": 209039360,
+      "runtime_s": 0.004401300015160814,
+      "rss_bytes": 172523520,
       "mapped_DN_gw": 4.184938229560105e-38,
       "root_residual_relative": 4.334310688136611e-13,
       "handoff_count": 68,
@@ -107,10 +107,10 @@
   },
   "variants": {
     "z5": {
-      "p50_runtime_s": 0.003949050005758181,
-      "p95_runtime_s": 0.004176710009051021,
-      "p50_rss_mib": 210.11328125,
-      "p95_rss_mib": 220.7576171875,
+      "p50_runtime_s": 0.004148100008023903,
+      "p95_runtime_s": 0.005642089992761612,
+      "p50_rss_mib": 175.34375,
+      "p95_rss_mib": 188.0603515625,
       "max_repeat_spectrum_spread_dex": 0.0,
       "max_abs_spectrum_error_vs_reference_z12_dex": 0.0013816517130749162,
       "p95_abs_spectrum_error_vs_reference_z12_dex": 0.00037712860010117314,
@@ -126,25 +126,25 @@
       "z_today_max": null,
       "warnings": [],
       "runtime_samples_s": [
-        0.0038574999780394137,
-        0.003950100013753399,
-        0.003994200000306591,
-        0.004094499978236854,
-        0.0038844999799039215,
-        0.004104799998458475,
-        0.004264600021997467,
-        0.0038764000055380166,
-        0.0038825999945402145,
-        0.003990699973655865,
-        0.0039474999939557165,
-        0.003947999997762963
+        0.0038364000211004168,
+        0.004133000009460375,
+        0.004852800018852577,
+        0.004163200006587431,
+        0.00558709999313578,
+        0.0038050999864935875,
+        0.005709299992304295,
+        0.0035653999948408455,
+        0.004449900006875396,
+        0.003822099999524653,
+        0.003496999997878447,
+        0.004782200005138293
       ]
     },
     "z8": {
-      "p50_runtime_s": 0.012601300011738203,
-      "p95_runtime_s": 0.013854400010313838,
-      "p50_rss_mib": 209.40625,
-      "p95_rss_mib": 218.8623046875,
+      "p50_runtime_s": 0.012689700000919402,
+      "p95_runtime_s": 0.020153709994337986,
+      "p50_rss_mib": 174.80078125,
+      "p95_rss_mib": 187.241796875,
       "max_repeat_spectrum_spread_dex": 0.0,
       "max_abs_spectrum_error_vs_reference_z12_dex": 0.00038447035917243966,
       "p95_abs_spectrum_error_vs_reference_z12_dex": 0.0002393920536576389,
@@ -160,25 +160,25 @@
       "z_today_max": null,
       "warnings": [],
       "runtime_samples_s": [
-        0.01228990001254715,
-        0.012579300004290417,
-        0.012564799981191754,
-        0.012385999987600371,
-        0.012939100008225068,
-        0.01262330001918599,
-        0.01497310001286678,
-        0.01286769998841919,
-        0.012693299999227747,
-        0.01250320000690408,
-        0.012636899977223948,
-        0.01254470000276342
+        0.012108499999158084,
+        0.012480599980335683,
+        0.01289880002150312,
+        0.019174599990947172,
+        0.021350399998482317,
+        0.018821800011210144,
+        0.01870370001415722,
+        0.017530799988890067,
+        0.012341900001047179,
+        0.012161499995272607,
+        0.011971600004471838,
+        0.012323200004175305
       ]
     },
     "adaptive": {
-      "p50_runtime_s": 0.004321300002629869,
-      "p95_runtime_s": 0.004558660007023718,
-      "p50_rss_mib": 208.828125,
-      "p95_rss_mib": 217.1171875,
+      "p50_runtime_s": 0.004500800001551397,
+      "p95_runtime_s": 0.006148080001003108,
+      "p50_rss_mib": 174.1015625,
+      "p95_rss_mib": 186.844140625,
       "max_repeat_spectrum_spread_dex": 0.0,
       "max_abs_spectrum_error_vs_reference_z12_dex": 0.0005424251558991955,
       "p95_abs_spectrum_error_vs_reference_z12_dex": 0.00027457210294841184,
@@ -194,23 +194,23 @@
       "z_today_max": 46.08994855421868,
       "warnings": [],
       "runtime_samples_s": [
-        0.0043298999953549355,
-        0.004562400019494817,
-        0.0042591999808792025,
-        0.004534999985480681,
-        0.004312700009904802,
-        0.004228999983752146,
-        0.004555599996820092,
-        0.004117200005566701,
-        0.00448780000442639,
-        0.004268999997293577,
-        0.004262000002199784,
-        0.00443139998242259
+        0.004339200007962063,
+        0.004134099988732487,
+        0.005364399985410273,
+        0.004865099996095523,
+        0.006336399994324893,
+        0.004226599994581193,
+        0.005994000006467104,
+        0.004132500005653128,
+        0.004635299992514774,
+        0.004447099985554814,
+        0.0038222000002861023,
+        0.00455450001754798
       ]
     }
   },
-  "adaptive_vs_z8_speedup_p50": 2.916090066431229,
-  "adaptive_vs_z5_p50_runtime_ratio": 1.0942631762902224,
+  "adaptive_vs_z8_speedup_p50": 2.819432100192264,
+  "adaptive_vs_z5_p50_runtime_ratio": 1.0850268780514565,
   "environment": {
     "python": "3.11.9 | packaged by Anaconda, Inc. | (main, Apr 19 2024, 16:40:41) [MSC v.1916 64 bit (AMD64)]",
     "platform": "Windows-10-10.0.26200-SP0",
@@ -226,7 +226,7 @@
     "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
     "input_artifact": "74c7375e864d30b1e135be2381130bf7cff28a733b51e37fe290ed7cf40fc7be",
     "handoff_runner": "ec310187a2bab7653330224e8655505785cf7c1766cea016503a568b3f0c4297",
-    "diagnostic_script": "0133cfe96b30511f926ac431c71b4dc5f82273c5e13bcc3cb3997da7f7810b7b"
+    "diagnostic_script": "c26b107f1d2c06a781311800578b359084db9e3ed6dd94b48cb34c783a0e3e4c"
   },
   "spectra": {
     "reference_z12_raw_log10_OmegaGW": [

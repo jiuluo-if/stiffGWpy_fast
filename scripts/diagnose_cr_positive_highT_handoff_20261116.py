@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import platform
@@ -23,8 +24,8 @@ import diagnose_cr_positive_consistency_tail_handoff_20261116 as handoff  # noqa
 from stiffgwpy_fast import freq_adaptive as FA  # noqa: E402
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
 
-INPUT = ROOT / "docs" / "research" / "results" / "cr_positive_cutoff_valid_highT_fixed_kappa_20261116.json"
-OUTPUT = ROOT / "docs" / "research" / "results" / "cr_positive_highT_handoff_20261116.json"
+DEFAULT_INPUT = ROOT / "docs" / "research" / "results" / "cr_positive_cutoff_valid_highT_fixed_kappa_20261116.json"
+DEFAULT_OUTPUT = ROOT / "docs" / "research" / "results" / "cr_positive_highT_handoff_20261116.json"
 THREADS = 1
 REPEATS = 12
 
@@ -100,15 +101,22 @@ def summarize(records: list[dict[str, object]], ref: np.ndarray, freq: np.ndarra
 
 
 def main() -> int:
-    source = json.loads(INPUT.read_text(encoding="utf-8"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    args = parser.parse_args()
+    input_path = args.input.resolve()
+    output_path = args.output.resolve()
+    source = json.loads(input_path.read_text(encoding="utf-8"))
     params = {key: float(value) for key, value in source["parameters"].items()}
     freq = np.asarray(source["frequency_grid"]["log10f"], dtype=np.float64)
+    expected_count = int(source["frequency_grid"]["count"])
     direct = source["direct_reference"]
     root = float(direct["fixed_DN_eff"])
     ref_spectrum = np.asarray(direct["z12_raw_log10_OmegaGW"], dtype=np.float64)
     grid_hash = hashlib.sha256(np.asarray(freq, dtype="<f8").tobytes()).hexdigest()
-    if freq.size != 77 or grid_hash != source["frequency_grid"]["log10f_sha256_f64le"]:
-        raise RuntimeError("direct cr>0 77-node grid hash mismatch")
+    if freq.size != expected_count or grid_hash != source["frequency_grid"]["log10f_sha256_f64le"]:
+        raise RuntimeError("direct cr>0 frequency grid hash mismatch")
     if source["source_sha256"]["reference.py"] != sha(ROOT / "stiffgwpy_fast" / "reference.py"):
         raise RuntimeError("direct Reference source SHA differs from current Reference")
     if ref_spectrum.shape != freq.shape or not np.isfinite(ref_spectrum).all():
@@ -141,8 +149,8 @@ def main() -> int:
 
     output = {
         "schema_version": 1,
-        "status": "complete_current_fast_cr_positive_highT_handoff_diagnostic",
-        "scope": "Current Fast same-root/grid/thread z5, adaptive and z8 A/B versus directly solved Reference z12 on a cutoff-valid cr>0 high-temperature point. Reference remains independent and unchanged.",
+        "status": "complete_current_fast_cr_positive_handoff_diagnostic",
+        "scope": "Current Fast same-root/grid/thread z5, adaptive and z8 A/B versus directly solved Reference z12 on a cutoff-valid cr>0 background. Reference remains independent and unchanged.",
         "parameters": params,
         "supplied_n_t": params["n_t"],
         "derived_n_t": actual_nt,
@@ -195,7 +203,7 @@ def main() -> int:
             "freq_adaptive.py": sha(ROOT / "stiffgwpy_fast" / "freq_adaptive.py"),
             "stiff_SGWB.py": sha(ROOT / "stiffgwpy_fast" / "stiff_SGWB.py"),
             "reference.py": sha(ROOT / "stiffgwpy_fast" / "reference.py"),
-            "input_artifact": sha(INPUT),
+            "input_artifact": sha(input_path),
             "handoff_runner": sha(ROOT / "scripts" / "diagnose_cr_positive_consistency_tail_handoff_20261116.py"),
             "diagnostic_script": sha(Path(__file__)),
         },
@@ -204,9 +212,9 @@ def main() -> int:
             **{variant: np.asarray(first_calls[variant]["log10_OmegaGW"], dtype=np.float64).tolist() for variant in handoff.VARIANTS},
         },
     }
-    OUTPUT.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    output_path.write_text(json.dumps(output, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps({
-        "output": str(OUTPUT),
+        "output": str(output_path),
         "supplied_n_t": params["n_t"],
         "derived_n_t": actual_nt,
         "root_relative_error_vs_reference_z12": output["root_relative_difference_vs_reference_z12_map"],
