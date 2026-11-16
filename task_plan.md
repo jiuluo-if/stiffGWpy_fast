@@ -1575,4 +1575,5 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [ ] Continue additional `cr>0` backgrounds and parameter-domain coverage only where the consistency background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
 - [x] Complete direct Reference z8/z10/z12 for all eight points in the fixed Sobol design; retain fixed-root mapping caveat and make no continuous-domain claim.
 - [x] Audit Reference self-consistency stopping logic; perform adaptive z12 map iteration at Sobol index 7 using a root-relative residual and record the updated-root residual and spectrum change.
-- [ ] Repeat root-relative direct Reference closure at an independent Sobol point and measure root sensitivity to frequency-grid refinement separately from tail convergence.
+- [x] Repeat root-relative direct Reference closure at an independent Sobol point; index 3 and index 7 each stabilize after one mapped-root reevaluation under the `2e-4` residual criterion.
+- [ ] Measure root sensitivity to frequency-grid refinement separately from tail convergence, and expand root-closure evidence beyond these two points.

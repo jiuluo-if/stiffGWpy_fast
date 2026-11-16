@@ -314,3 +314,6 @@ index 7 完成了固定 8 点设计中的最后一个直接 Reference 留出：�
 第一次直接映射从 Fast 根 `1.6555074520171973e-47` 得到 `1.655519043161566e-47`，相对变化 `+7.0016e-6`。在更新后的根上再直接求 Reference，映射仍为 `1.655519043161566e-47`，实测 residual 为 `0.0`；77 个 raw-positive 节点逐点变化也是 `0.0 dex`，无 warning。第二次映射耗时 `1464.13 s`，积分误差估计为 `2.28e-66`，半密度插值误差估计为 `2.04e-55`。这证明 index 7 在固定网格、z12 Reference 下 root iteration 实际闭合；尚未在其它七点做相同的完整根迭代，也没有解决不同频率网格引起的 root 变化。
 
 完整根序列、原始谱差、环境、误差估计和源码哈希见[index 7 root-closure JSON](results/cr_positive_sobol_index7_reference_root_closure_20261116.json)，可由[自适应 root-closure runner](../../scripts/verify_sobol_index7_reference_root_closure_20261116.py)复跑。下一步在独立 Sobol 点复核这个 root-residual 策略，并继续将 Reference 根误差与频率离散误差分开。
+
+
+在 index 3 的独立高温、低 `kappa10` 点重复上述 root-residual continuation。固定 Fast 根处的 z12 Reference 映射先将根从 `2.526153432897177e-44` 更新到 `2.526174494813028e-44`（相对变化 `+8.3375e-6`）；在该更新根上再次直接求解，映射仍为 `2.526174494813028e-44`，residual 为 `0.0`，77 个正有限频谱节点相对原 Fast-root z12 参考变化为 `0.0 dex`，没有 warning。第二次 z12 求解耗时 `1335.97 s`，quadrature/interpolation 误差估计为 `3.48e-63/5.18e-52`。因此 index 3 与 index 7 两个离散点都通过更新后的 root residual 检查；其余六个点仍只有固定 Fast 根映射证据，频率网格诱发的自洽根变化也未在这两个点以外量化。详情见[index 3 root-closure JSON](results/cr_positive_sobol_index3_reference_root_closure_20261116.json)和[复跑脚本](../../scripts/verify_sobol_index3_reference_root_closure_20261116.py)。
