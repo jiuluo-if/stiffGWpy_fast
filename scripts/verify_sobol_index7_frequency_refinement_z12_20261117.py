@@ -1,0 +1,480 @@
+"""Directly refine the Sobol index 7 Reference frequency grid at z12."""
+
+
+
+from __future__ import annotations
+
+import hashlib
+import json
+import math
+import platform
+import sys
+import time
+import warnings
+from pathlib import Path
+
+import numpy as np
+import scipy
+from scipy.interpolate import PchipInterpolator
+
+ROOT = Path(__file__).resolve().parents[1]
+
+sys.path.insert(0, str(ROOT))
+
+
+
+from stiffgwpy_fast.reference import run_reference  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
+
+INPUT = ROOT / "docs" / "research" / "results" / "cr_positive_sobol_index7_reference_20261116.json"
+
+OUTPUT = ROOT / "docs" / "research" / "results" / "cr_positive_sobol_index7_frequency_refinement_z12_20261117.json"
+
+Z_TAIL = 12.0
+
+REFERENCE_RTOL = 1e-9
+
+ROOT_RESIDUAL_TOL = 2e-4
+
+MAX_ROOT_ITER = 5
+
+
+
+
+
+def sha(path: Path) -> str:
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+
+
+
+def digest(values: np.ndarray) -> str:
+
+    return hashlib.sha256(np.asarray(values, dtype="<f8").tobytes()).hexdigest()
+
+
+
+
+
+def raw_log_spectrum(result: dict[str, object]) -> tuple[np.ndarray, np.ndarray]:
+
+    signal = np.asarray(result["Ogw"], dtype=np.float64) - np.asarray(result["Oj"], dtype=np.float64)
+
+    valid = np.isfinite(signal) & (signal > 0.0)
+
+    logs = np.full(signal.shape, np.nan, dtype=np.float64)
+
+    logs[valid] = np.log10(signal[valid])
+
+    return logs, valid
+
+
+
+
+
+def run_fixed_reference(model: LCDM_SG, root: float, freqs: np.ndarray) -> tuple[dict[str, object], float, list[str]]:
+
+    caught: list[warnings.WarningMessage]
+
+    start = time.perf_counter()
+
+    with warnings.catch_warnings(record=True) as caught:
+
+        warnings.simplefilter("always")
+
+        result = run_reference(
+
+            model, dn_eff=root, freq_subset=freqs, z_tail=Z_TAIL,
+
+            rtol=REFERENCE_RTOL, self_consistent=False, physical_guard=True,
+
+        )
+
+    runtime = time.perf_counter() - start
+
+    warning_text = [f"{item.category.__name__}: {item.message}" for item in caught]
+
+    return result, runtime, warning_text
+
+
+
+
+
+def main() -> int:
+
+    source = json.loads(INPUT.read_text(encoding="utf-8"))
+
+    if source["source_sha256"]["reference.py"] != sha(ROOT / "stiffgwpy_fast" / "reference.py"):
+
+        raise RuntimeError("Index 7 Reference artifact source SHA differs from current Reference")
+
+    params = {key: float(value) for key, value in source["parameters"].items()}
+
+    fast_root = float(source["current_fast"]["root_DN_eff"])
+
+    model = LCDM_SG(**params)
+
+    fast_start = time.perf_counter()
+
+    fast_result = model.SGWB_iter(
+
+        engine="fast", fallback=False, tol=1e-7, z_tail=5.0,
+
+        threads=1, accuracy_mode="fast", freq_grid="goal", physical_guard=True,
+
+    )
+
+    fast_runtime = time.perf_counter() - fast_start
+
+    if fast_result is not model:
+
+        raise RuntimeError(f"Index 7 current Fast failed: {model.fast_failure_reason}")
+
+    freqs = np.asarray(model.f, dtype=np.float64)
+
+    if digest(freqs) != source["current_fast"]["frequency_sha256_f64le"]:
+
+        raise RuntimeError("Index 7 Fast grid differs from direct Reference artifact")
+
+    if not math.isclose(float(model.cosmo_param["DN_eff"]), fast_root, rel_tol=2e-12, abs_tol=0.0):
+
+        raise RuntimeError("Index 7 Fast root differs from direct Reference artifact")
+
+    if freqs.size != 77:
+
+        raise RuntimeError(f"Expected 77-point base grid, got {freqs.size}")
+
+
+
+    midpoints = (freqs[:-1] + freqs[1:]) / 2.0
+
+    refined = np.empty(2 * freqs.size - 1, dtype=np.float64)
+
+    refined[::2] = freqs
+
+    refined[1::2] = midpoints
+
+    direction = 1.0 if freqs[-1] > freqs[0] else -1.0
+
+    if not np.all(direction * np.diff(refined) > 0.0):
+
+        raise RuntimeError("Nested frequency refinement lost the native grid ordering")
+
+    OUTPUT.write_text(json.dumps({
+        "schema_version": 1,
+        "status": "running_sobol_index7_z12_frequency_refinement",
+        "scope": "Directly solve the nested 153-node Sobol index 7 Reference grid at z12, compare with the native 77-node z12 map, then continue root-relative mapping on the refined grid.",
+        "input_artifact": str(INPUT.relative_to(ROOT)).replace("\\", "/"),
+        "parameters": params,
+        "fixed_root": fast_root,
+        "frequency_grids": {
+            "base_count": int(freqs.size),
+            "base_sha256_f64le": digest(freqs),
+            "refined_count": int(refined.size),
+            "refined_sha256_f64le": digest(refined),
+            "construction": "77 native nodes plus all 76 adjacent log-frequency midpoints, each directly solved",
+        },
+        "source_sha256": {
+            "fast_sgwb.py": sha(ROOT / "stiffgwpy_fast" / "fast_sgwb.py"),
+            "reference.py": sha(ROOT / "stiffgwpy_fast" / "reference.py"),
+            "input_artifact": sha(INPUT),
+            "script": sha(Path(__file__)),
+        },
+    }, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+    base_tail = source["reference"]["z_tails"][str(Z_TAIL)]
+
+    base_logs = np.asarray(base_tail["raw_log10_OmegaGW"], dtype=np.float64)
+
+    if base_logs.size != freqs.size or not np.all(np.isfinite(base_logs)):
+
+        raise RuntimeError("Base z12 Reference spectrum is incomplete")
+
+    base_signal = np.power(10.0, base_logs)
+
+    if not np.all(np.isfinite(base_signal) & (base_signal > 0.0)):
+
+        raise RuntimeError("Base raw spectrum cannot be represented as positive finite linear values")
+
+
+
+    model_at_fast_root = LCDM_SG(**params)
+
+    initial, initial_runtime, initial_warnings = run_fixed_reference(model_at_fast_root, fast_root, refined)
+
+    initial_logs, initial_valid = raw_log_spectrum(initial)
+
+    if not np.all(initial_valid):
+
+        raise RuntimeError("Refined z12 Reference spectrum contains invalid raw nodes")
+
+    initial_map = float(initial["DN_gw"])
+
+    coarse_map = float(base_tail["DN_gw"])
+
+    common_delta = initial_logs[::2] - base_logs
+
+    common_abs = np.abs(common_delta)
+
+    pchip = PchipInterpolator(freqs[::-1], base_signal[::-1], extrapolate=False)
+
+    predicted_mid = np.asarray(pchip(midpoints), dtype=np.float64)
+
+    actual_mid_logs = initial_logs[1::2]
+
+    prediction_valid = np.isfinite(predicted_mid) & (predicted_mid > 0.0)
+
+    midpoint_delta = np.log10(predicted_mid[prediction_valid]) - actual_mid_logs[prediction_valid]
+
+    initial_record = {
+
+        "input_DN_eff": fast_root,
+
+        "mapped_DN_gw": initial_map,
+
+        "relative_map_residual_vs_fast_root": initial_map / fast_root - 1.0,
+
+        "runtime_s": initial_runtime,
+
+        "quadrature_error": float(initial["quadrature_error"]),
+
+        "interpolation_error": float(initial["interpolation_error"]),
+
+        "raw_signal_positive_finite_nodes": int(np.count_nonzero(initial_valid)),
+
+        "runtime_warnings": initial_warnings,
+
+        "map_relative_change_vs_77_nodes": initial_map / coarse_map - 1.0,
+
+        "common_77_node_spectrum_delta_max_abs_dex": float(np.max(common_abs)),
+
+        "common_77_node_spectrum_delta_p95_abs_dex": float(np.percentile(common_abs, 95.0)),
+
+        "new_midpoint_direct_vs_77_node_linear_pchip_dex": {
+
+            "new_node_count": int(midpoints.size),
+
+            "compared_nodes": int(midpoint_delta.size),
+
+            "uncompared_nodes": int(midpoints.size - midpoint_delta.size),
+
+            "max_abs_dex": float(np.max(np.abs(midpoint_delta))) if midpoint_delta.size else None,
+
+            "p95_abs_dex": float(np.percentile(np.abs(midpoint_delta), 95.0)) if midpoint_delta.size else None,
+
+            "max_abs_dex_log10_frequency": float(midpoints[prediction_valid][int(np.argmax(np.abs(midpoint_delta)))]) if midpoint_delta.size else None,
+
+        },
+
+    }
+
+    partial: dict[str, object] = {
+
+        "schema_version": 1,
+
+        "status": "running_sobol_index7_z12_frequency_refinement",
+
+        "scope": "At the exact current Fast root, directly solve Reference z12 on a nested 153-node grid formed by inserting every log-frequency midpoint into the original 77 direct nodes. Compare the 77 shared direct nodes, new-node errors against the original linear-signal PCHIP, the fixed-root integral map, and then continue Reference root iteration on the refined grid until the root-relative residual closes.",
+
+        "input_artifact": str(INPUT.relative_to(ROOT)).replace("\\", "/"),
+
+        "parameters": params,
+
+        "fixed_root": fast_root,
+
+        "frequency_grids": {
+
+            "base_count": int(freqs.size),
+
+            "base_sha256_f64le": digest(freqs),
+
+            "refined_count": int(refined.size),
+
+            "refined_sha256_f64le": digest(refined),
+
+            "construction": "77 original log10(f/Hz) nodes plus all 76 adjacent arithmetic midpoints; all 153 nodes are directly solved by Reference",
+
+        },
+
+        "fixed_root_reference": {
+
+            "z_tail": Z_TAIL,
+
+            "rtol": REFERENCE_RTOL,
+
+            "base_77_nodes": {
+                "mapped_DN_gw": coarse_map,
+                "runtime_s": float(base_tail["runtime_s"]),
+                "quadrature_error": float(base_tail["quadrature_error"]),
+                "interpolation_error": float(base_tail["interpolation_error"]),
+                "raw_signal_positive_finite_nodes": int(base_tail["raw_signal_positive_finite_nodes"]),
+                "runtime_warnings": base_tail["runtime_warnings"],
+            },
+
+            "refined_153_nodes": initial_record,
+
+        },
+
+        "root_iteration": {
+
+            "root_residual_tolerance": ROOT_RESIDUAL_TOL,
+
+            "max_iterations": MAX_ROOT_ITER,
+
+            "iterations": [],
+
+        },
+
+        "environment": {
+
+            "python": sys.version,
+
+            "platform": platform.platform(),
+
+            "numpy": np.__version__,
+
+            "scipy": scipy.__version__,
+
+            "threads": 1,
+
+            "fast_replay_runtime_s": fast_runtime,
+
+        },
+
+        "source_sha256": {
+
+            "fast_sgwb.py": sha(ROOT / "stiffgwpy_fast" / "fast_sgwb.py"),
+
+            "reference.py": sha(ROOT / "stiffgwpy_fast" / "reference.py"),
+
+            "input_artifact": sha(INPUT),
+
+            "script": sha(Path(__file__)),
+
+        },
+
+        "spectra": {
+
+            "refined_z12_log10_OmegaGW_at_fast_root": initial_logs.tolist(),
+
+        },
+
+    }
+
+    OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+
+
+    x = initial_map
+
+    for iteration in range(1, MAX_ROOT_ITER + 1):
+
+        iteration_model = LCDM_SG(**params)
+
+        mapped_result, runtime, caught = run_fixed_reference(iteration_model, x, refined)
+
+        mapped_logs, mapped_valid = raw_log_spectrum(mapped_result)
+
+        if not np.all(mapped_valid):
+
+            raise RuntimeError("Refined root-iteration Reference spectrum contains invalid nodes")
+
+        mapped = float(mapped_result["DN_gw"])
+
+        residual = mapped / x - 1.0
+
+        spectrum_delta = mapped_logs - initial_logs
+
+        record = {
+
+            "iteration": iteration,
+
+            "input_DN_eff": x,
+
+            "mapped_DN_gw": mapped,
+
+            "relative_map_residual": residual,
+
+            "runtime_s": runtime,
+
+            "quadrature_error": float(mapped_result["quadrature_error"]),
+
+            "interpolation_error": float(mapped_result["interpolation_error"]),
+
+            "raw_signal_positive_finite_nodes": int(np.count_nonzero(mapped_valid)),
+
+            "runtime_warnings": caught,
+
+            "spectrum_change_vs_refined_map_at_fast_root": {
+
+                "compared_nodes": int(spectrum_delta.size),
+
+                "max_abs_dex": float(np.max(np.abs(spectrum_delta))),
+
+                "p95_abs_dex": float(np.percentile(np.abs(spectrum_delta), 95.0)),
+
+            },
+
+        }
+
+        partial["root_iteration"]["iterations"].append(record)
+
+        partial["status"] = (
+
+            "complete_sobol_index7_z12_frequency_root_closure"
+
+            if abs(residual) <= ROOT_RESIDUAL_TOL
+
+            else "running_sobol_index7_z12_frequency_refinement"
+
+        )
+
+        partial["spectra"]["refined_z12_log10_OmegaGW_at_updated_root"] = mapped_logs.tolist()
+
+        OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+        if abs(residual) <= ROOT_RESIDUAL_TOL:
+
+            break
+
+        x = mapped
+
+    else:
+
+        partial["status"] = "reference_refined_grid_root_iteration_limit_without_closure"
+
+        OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+        raise RuntimeError(f"Refined-grid Reference root residual exceeds {ROOT_RESIDUAL_TOL}")
+
+
+
+    print(json.dumps({
+
+        "output": str(OUTPUT),
+
+        "base_nodes": int(freqs.size),
+
+        "refined_nodes": int(refined.size),
+
+        "fixed_root_map_change_vs_77": initial_record["map_relative_change_vs_77_nodes"],
+
+        "new_node_pchip_max_abs_dex": initial_record["new_midpoint_direct_vs_77_node_linear_pchip_dex"]["max_abs_dex"],
+
+        "refined_root_residual": partial["root_iteration"]["iterations"][-1]["relative_map_residual"],
+
+        "refined_root": partial["root_iteration"]["iterations"][-1]["mapped_DN_gw"],
+
+    }, indent=2))
+
+    return 0
+
+
+
+
+
+if __name__ == "__main__":
+
+    raise SystemExit(main())

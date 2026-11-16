@@ -1577,4 +1577,5 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Audit Reference self-consistency stopping logic; perform adaptive z12 map iteration at Sobol index 7 using a root-relative residual and record the updated-root residual and spectrum change.
 - [x] Repeat root-relative direct Reference closure at an independent Sobol point; index 3 and index 7 each stabilize after one mapped-root reevaluation under the `2e-4` residual criterion.
 - [x] At Sobol index 7, directly refine z10 from 77 to 153 nested Reference nodes; compare common nodes, direct midpoint interpolation error, map change, and updated-root residual.
-- [ ] Directly solve z12 on the same 153-node grid to quantify tail/grid interaction, then repeat the nested-grid screen at an independent `cr>0` point before judging the 77-node root gate.
+- [x] Directly solve z12 on the same 153-node grid and continue the updated-root map; retain the z10/z12 frequency-grid shift and tail-change comparison.
+- [ ] Solve at least 305 directly computed nodes (no interpolation) at z10/z12 to establish frequency convergence, then repeat at an independent `cr>0` point before changing the production grid.
