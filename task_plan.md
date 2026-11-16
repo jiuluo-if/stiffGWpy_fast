@@ -1579,4 +1579,5 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] At Sobol index 7, directly refine z10 from 77 to 153 nested Reference nodes; compare common nodes, direct midpoint interpolation error, map change, and updated-root residual.
 - [x] Directly solve z12 on the same 153-node grid and continue the updated-root map; retain the z10/z12 frequency-grid shift and tail-change comparison.
 - [x] Extend Sobol index 7 z10 Reference from 153 to 305 nested direct nodes and continue root mapping until residual closure; record that the 305-node map is stable to 153 within `2e-4`, while its root still differs from Fast by `−4.014e-4`.
-- [ ] Extend the same 305-node direct Reference to z12 and an independent `cr>0` sample before changing the production grid.
+- [x] Repeat 77/153/305 direct z10 grid closure at independent Sobol index 3; retain that the converged 305-node root remains just outside `2e-4`.
+- [ ] Extend the 305-node direct Reference to z12 at an independent point, then evaluate a tighter existing Fast adaptive-grid target against the same-root direct Reference before proposing any production grid change.
