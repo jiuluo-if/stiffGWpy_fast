@@ -1567,5 +1567,6 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Audit the Sobol cutoff formula's `r=minsub` background-probe warning against a safe valid `r=.01` probe; verify identical `N_re`, `rho_rad,re`, and `rho_stiff,re`, exact cutoff agreement, and no invalid Fast/Reference propagation.
 - [x] Replay all eight Sobol points through current default adaptive Fast and correct the legacy `fast_z5` label; confirm root/grid equality and recompare the two Reference holdouts.
 - [x] Add Sobol index 2 at the low-temperature/high-kappa corner with direct Reference z8/z10/z12; verify exact Fast root/grid replay and preserve the calculation-script snapshot through metadata correction.
+- [x] Add Sobol index 3 at the high-temperature/low-kappa corner with direct Reference z8/z10/z12; verify the default-adaptive Fast label, exact root/grid replay, z10→z12 tail convergence, and retain the executed-script snapshot.
 - [ ] Continue additional `cr>0` backgrounds and parameter-domain coverage only where the consistency background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
-- [ ] Select additional indices from the existing fixed Sobol set for direct Reference; five remain Fast-only and must not be described as reference-validated.
+- [ ] Select additional indices from the existing fixed Sobol set for direct Reference; four remain Fast-only and must not be described as reference-validated.
