@@ -1,191 +1,397 @@
-"""Validate Fast adaptive target 1e-4 against direct same-grid Reference at Sobol 3."""
-
-from __future__ import annotationsimport hashlibimport jsonimport platformimport sysimport timeimport warningsfrom pathlib import Pathimport numpy as npimport scipyROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-
-from stiffgwpy_fast.reference import run_reference  # noqa: E402from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402INPUT = ROOT / "docs" / "research" / "results" / "cr_positive_sobol_index3_frequency_refinement_z10_305_20261117.json"
-OUTPUT = ROOT / "docs" / "research" / "results" / "sobol_index3_adaptive_target1e4_reference_z10_20261117.json"
-GRID_TARGET = 1e-4
-GRID_MAX_POINTS = 1500
-Z_TAIL = 10.0
-REFERENCE_RTOL = 1e-9
-ROOT_RESIDUAL_TOL = 2e-4
-MAX_ROOT_ITER = 5
-
-
-def sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def digest(values: np.ndarray) -> str:
-    return hashlib.sha256(np.asarray(values, dtype="<f8").tobytes()).hexdigest()
-
-
-def raw_log_spectrum(result: dict[str, object]) -> tuple[np.ndarray, np.ndarray]:
-    signal = np.asarray(result["Ogw"], dtype=np.float64) - np.asarray(result["Oj"], dtype=np.float64)
-    valid = np.isfinite(signal) & (signal > 0.0)
-    logs = np.full(signal.shape, np.nan, dtype=np.float64)
-    logs[valid] = np.log10(signal[valid])
-    return logs, valid
-
-
-def direct_map(params: dict[str, float], root: float, freqs: np.ndarray) -> tuple[dict[str, object], float, list[str]]:
-    model = LCDM_SG(**params)
-    caught: list[warnings.WarningMessage]
-    start = time.perf_counter()
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        result = run_reference(
-            model, dn_eff=root, freq_subset=freqs, z_tail=Z_TAIL,
-            rtol=REFERENCE_RTOL, self_consistent=False, physical_guard=True,
-        )
-    runtime = time.perf_counter() - start
-    return result, runtime, [f"{item.category.__name__}: {item.message}" for item in caught]
-
-
-def main() -> int:
-    source = json.loads(INPUT.read_text(encoding="utf-8"))
-    for key, rel in (("fast_sgwb.py", "stiffgwpy_fast/fast_sgwb.py"),
-                     ("reference.py", "stiffgwpy_fast/reference.py")):
-        if source["source_sha256"][key] != sha(ROOT / rel):
-            raise RuntimeError(f"Index 3 305-node input source SHA differs for {key}")
-    params = {key: float(value) for key, value in source["parameters"].items()}
-    reference_root_305 = float(source["root_iteration"]["iterations"][-1]["mapped_DN_gw"])
-    model = LCDM_SG(**params)
-    fast_start = time.perf_counter()
-    result = model.SGWB_iter(
-        engine="fast", fallback=False, tol=1e-7, z_tail=5.0,
-        threads=1, accuracy_mode="fast", physical_guard=True,
-        freq_grid="adaptive", freq_grid_target=GRID_TARGET,
-        freq_grid_max_points=GRID_MAX_POINTS,
-    )
-    fast_runtime = time.perf_counter() - fast_start
-    if result is not model:
-        raise RuntimeError(f"Index 3 adaptive Fast failed: {model.fast_failure_reason}")
-    freqs = np.asarray(model.f, dtype=np.float64)
-    fast_root = float(model.cosmo_param["DN_eff"])
-    fast_logs = np.asarray(model.log10OmegaGW, dtype=np.float64)
-    fast_map = float(model.DN_gw[-1])
-
-    partial: dict[str, object] = {
-        "schema_version": 1,
-        "status": "running_sobol_index3_adaptive_target1e4_reference_z10",
-        "scope": "Validate the existing Fast adaptive frequency grid target 1e-4 at Sobol index 3 using direct Cartesian Reference solves on the exact same grid and Fast root, then continue Reference map iteration until the root-relative residual closes. A 305-node direct z10 Reference root is the frequency-convergence anchor.",
-        "input_artifact": str(INPUT.relative_to(ROOT)).replace("\\", "/"),
-        "parameters": params,
-        "reference_root_anchor_305_z10": reference_root_305,
-        "fast_adaptive": {
-            "target": GRID_TARGET,
-            "max_points": GRID_MAX_POINTS,
-            "runtime_s": fast_runtime,
-            "root_DN_eff": fast_root,
-            "mapped_DN_gw": fast_map,
-            "fixed_point_residual_relative": fast_map / fast_root - 1.0,
-            "frequency_count": int(freqs.size),
-            "frequency_sha256_f64le": digest(freqs),
-            "frequency_grid_error": getattr(model, "freq_grid_error", None),
-            "public_spectrum_finite": bool(np.all(np.isfinite(fast_logs))),
-        },
-        "reference": {
-            "z_tail": Z_TAIL,
-            "rtol": REFERENCE_RTOL,
-            "root_residual_tolerance": ROOT_RESIDUAL_TOL,
-            "max_iterations": MAX_ROOT_ITER,
-            "initial_map": None,
-            "iterations": [],
-        },
-        "environment": {
-            "python": sys.version,
-            "platform": platform.platform(),
-            "numpy": np.__version__,
-            "scipy": scipy.__version__,
-            "threads": 1,
-        },
-        "source_sha256": {
-            "fast_sgwb.py": sha(ROOT / "stiffgwpy_fast" / "fast_sgwb.py"),
-            "reference.py": sha(ROOT / "stiffgwpy_fast" / "reference.py"),
-            "input_artifact": sha(INPUT),
-            "script": sha(Path(__file__)),
-        },
-    }
-    OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-
-    initial, initial_runtime, initial_warnings = direct_map(params, fast_root, freqs)
-    initial_logs, initial_valid = raw_log_spectrum(initial)
-    if not np.all(initial_valid):
-        raise RuntimeError("Direct Reference on the adaptive grid has invalid raw spectrum nodes")
-    delta = fast_logs - initial_logs
-    initial_map = float(initial["DN_gw"])
-    initial_record = {
-        "input_DN_eff": fast_root,
-        "mapped_DN_gw": initial_map,
-        "relative_map_residual_vs_fast_root": initial_map / fast_root - 1.0,
-        "runtime_s": initial_runtime,
-        "quadrature_error": float(initial["quadrature_error"]),
-        "interpolation_error": float(initial["interpolation_error"]),
-        "raw_signal_positive_finite_nodes": int(np.count_nonzero(initial_valid)),
-        "runtime_warnings": initial_warnings,
-        "fast_vs_reference_same_root_grid_spectrum_dex": {
-            "compared_nodes": int(delta.size),
-            "max_abs_dex": float(np.max(np.abs(delta))),
-            "p95_abs_dex": float(np.percentile(np.abs(delta), 95.0)),
-        },
-    }
-    partial["reference"]["initial_map"] = initial_record
-    partial["spectra"] = {"reference_z10_log10_OmegaGW_at_fast_adaptive_root": initial_logs.tolist()}
-    OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-
-    x = initial_map
-    for iteration in range(1, MAX_ROOT_ITER + 1):
-        mapped, runtime, mapped_warnings = direct_map(params, x, freqs)
-        logs, valid = raw_log_spectrum(mapped)
-        if not np.all(valid):
-            raise RuntimeError("Direct Reference root-iteration spectrum has invalid nodes")
-        mapped_dn = float(mapped["DN_gw"])
-        residual = mapped_dn / x - 1.0
-        spec_delta = logs - initial_logs
-        record = {
-            "iteration": iteration,
-            "input_DN_eff": x,
-            "mapped_DN_gw": mapped_dn,
-            "relative_map_residual": residual,
-            "runtime_s": runtime,
-            "quadrature_error": float(mapped["quadrature_error"]),
-            "interpolation_error": float(mapped["interpolation_error"]),
-            "raw_signal_positive_finite_nodes": int(np.count_nonzero(valid)),
-            "runtime_warnings": mapped_warnings,
-            "spectrum_change_vs_reference_map_at_fast_root": {
-                "compared_nodes": int(spec_delta.size),
-                "max_abs_dex": float(np.max(np.abs(spec_delta))),
-                "p95_abs_dex": float(np.percentile(np.abs(spec_delta), 95.0)),
-            },
-        }
-        partial["reference"]["iterations"].append(record)
-        partial["status"] = (
-            "complete_sobol_index3_adaptive_target1e4_reference_root"
-            if abs(residual) <= ROOT_RESIDUAL_TOL
-            else "running_sobol_index3_adaptive_target1e4_reference_z10"
-        )
-        partial["spectra"]["reference_z10_log10_OmegaGW_at_updated_root"] = logs.tolist()
-        OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-        if abs(residual) <= ROOT_RESIDUAL_TOL:
-            break
-        x = mapped_dn
-    else:
-        partial["status"] = "adaptive_target1e4_reference_root_iteration_limit_without_closure"
-        OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
-        raise RuntimeError("Adaptive-target direct Reference root did not close")
-
-    print(json.dumps({
-        "output": str(OUTPUT),
-        "fast_count": int(freqs.size),
-        "root_error_vs_305_z10": fast_root / reference_root_305 - 1.0,
-        "same_root_same_grid_spectrum_max_abs_dex": initial_record["fast_vs_reference_same_root_grid_spectrum_dex"]["max_abs_dex"],
-        "initial_reference_residual": initial_record["relative_map_residual_vs_fast_root"],
-        "updated_reference_residual": partial["reference"]["iterations"][-1]["relative_map_residual"],
-    }, indent=2))
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+"""Validate Fast adaptive target 1e-4 against direct same-grid Reference at Sobol 3."""
+
+
+
+from __future__ import annotations
+
+import hashlib
+import json
+import platform
+import sys
+import time
+import warnings
+from pathlib import Path
+
+import numpy as np
+import scipy
+
+ROOT = Path(__file__).resolve().parents[1]
+
+sys.path.insert(0, str(ROOT))
+
+
+
+from stiffgwpy_fast.reference import run_reference  # noqa: E402
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG  # noqa: E402
+
+INPUT = ROOT / "docs" / "research" / "results" / "cr_positive_sobol_index3_frequency_refinement_z10_305_20261117.json"
+
+OUTPUT = ROOT / "docs" / "research" / "results" / "sobol_index3_adaptive_target1e4_reference_z10_20261117.json"
+
+GRID_TARGET = 1e-4
+
+GRID_MAX_POINTS = 1500
+
+Z_TAIL = 10.0
+
+REFERENCE_RTOL = 1e-9
+
+ROOT_RESIDUAL_TOL = 2e-4
+
+MAX_ROOT_ITER = 5
+
+
+
+
+
+def sha(path: Path) -> str:
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+
+
+
+def digest(values: np.ndarray) -> str:
+
+    return hashlib.sha256(np.asarray(values, dtype="<f8").tobytes()).hexdigest()
+
+
+
+
+
+def raw_log_spectrum(result: dict[str, object]) -> tuple[np.ndarray, np.ndarray]:
+
+    signal = np.asarray(result["Ogw"], dtype=np.float64) - np.asarray(result["Oj"], dtype=np.float64)
+
+    valid = np.isfinite(signal) & (signal > 0.0)
+
+    logs = np.full(signal.shape, np.nan, dtype=np.float64)
+
+    logs[valid] = np.log10(signal[valid])
+
+    return logs, valid
+
+
+
+
+
+def direct_map(params: dict[str, float], root: float, freqs: np.ndarray) -> tuple[dict[str, object], float, list[str]]:
+
+    model = LCDM_SG(**params)
+
+    caught: list[warnings.WarningMessage]
+
+    start = time.perf_counter()
+
+    with warnings.catch_warnings(record=True) as caught:
+
+        warnings.simplefilter("always")
+
+        result = run_reference(
+
+            model, dn_eff=root, freq_subset=freqs, z_tail=Z_TAIL,
+
+            rtol=REFERENCE_RTOL, self_consistent=False, physical_guard=True,
+
+        )
+
+    runtime = time.perf_counter() - start
+
+    return result, runtime, [f"{item.category.__name__}: {item.message}" for item in caught]
+
+
+
+
+
+def main() -> int:
+
+    source = json.loads(INPUT.read_text(encoding="utf-8"))
+
+    for key, rel in (("fast_sgwb.py", "stiffgwpy_fast/fast_sgwb.py"),
+
+                     ("reference.py", "stiffgwpy_fast/reference.py")):
+
+        if source["source_sha256"][key] != sha(ROOT / rel):
+
+            raise RuntimeError(f"Index 3 305-node input source SHA differs for {key}")
+
+    params = {key: float(value) for key, value in source["parameters"].items()}
+
+    reference_root_305 = float(source["root_iteration"]["iterations"][-1]["mapped_DN_gw"])
+
+    model = LCDM_SG(**params)
+
+    fast_start = time.perf_counter()
+
+    result = model.SGWB_iter(
+
+        engine="fast", fallback=False, tol=1e-7, z_tail=5.0,
+
+        threads=1, accuracy_mode="fast", physical_guard=True,
+
+        freq_grid="adaptive", freq_grid_target=GRID_TARGET,
+
+        freq_grid_max_points=GRID_MAX_POINTS,
+
+    )
+
+    fast_runtime = time.perf_counter() - fast_start
+
+    if result is not model:
+
+        raise RuntimeError(f"Index 3 adaptive Fast failed: {model.fast_failure_reason}")
+
+    freqs = np.asarray(model.f, dtype=np.float64)
+
+    fast_root = float(model.cosmo_param["DN_eff"])
+
+    fast_logs = np.asarray(model.log10OmegaGW, dtype=np.float64)
+
+    fast_map = float(model.DN_gw[-1])
+
+
+
+    partial: dict[str, object] = {
+
+        "schema_version": 1,
+
+        "status": "running_sobol_index3_adaptive_target1e4_reference_z10",
+
+        "scope": "Validate the existing Fast adaptive frequency grid target 1e-4 at Sobol index 3 using direct Cartesian Reference solves on the exact same grid and Fast root, then continue Reference map iteration until the root-relative residual closes. A 305-node direct z10 Reference root is the frequency-convergence anchor.",
+
+        "input_artifact": str(INPUT.relative_to(ROOT)).replace("\\", "/"),
+
+        "parameters": params,
+
+        "reference_root_anchor_305_z10": reference_root_305,
+
+        "fast_adaptive": {
+
+            "target": GRID_TARGET,
+
+            "max_points": GRID_MAX_POINTS,
+
+            "runtime_s": fast_runtime,
+
+            "root_DN_eff": fast_root,
+
+            "mapped_DN_gw": fast_map,
+
+            "fixed_point_residual_relative": fast_map / fast_root - 1.0,
+
+            "frequency_count": int(freqs.size),
+
+            "frequency_sha256_f64le": digest(freqs),
+
+            "frequency_grid_error": getattr(model, "freq_grid_error", None),
+
+            "public_spectrum_finite": bool(np.all(np.isfinite(fast_logs))),
+
+        },
+
+        "reference": {
+
+            "z_tail": Z_TAIL,
+
+            "rtol": REFERENCE_RTOL,
+
+            "root_residual_tolerance": ROOT_RESIDUAL_TOL,
+
+            "max_iterations": MAX_ROOT_ITER,
+
+            "initial_map": None,
+
+            "iterations": [],
+
+        },
+
+        "environment": {
+
+            "python": sys.version,
+
+            "platform": platform.platform(),
+
+            "numpy": np.__version__,
+
+            "scipy": scipy.__version__,
+
+            "threads": 1,
+
+        },
+
+        "source_sha256": {
+
+            "fast_sgwb.py": sha(ROOT / "stiffgwpy_fast" / "fast_sgwb.py"),
+
+            "reference.py": sha(ROOT / "stiffgwpy_fast" / "reference.py"),
+
+            "input_artifact": sha(INPUT),
+
+            "script": sha(Path(__file__)),
+
+        },
+
+    }
+
+    OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+
+
+    initial, initial_runtime, initial_warnings = direct_map(params, fast_root, freqs)
+
+    initial_logs, initial_valid = raw_log_spectrum(initial)
+
+    if not np.all(initial_valid):
+
+        raise RuntimeError("Direct Reference on the adaptive grid has invalid raw spectrum nodes")
+
+    delta = fast_logs - initial_logs
+
+    initial_map = float(initial["DN_gw"])
+
+    initial_record = {
+
+        "input_DN_eff": fast_root,
+
+        "mapped_DN_gw": initial_map,
+
+        "relative_map_residual_vs_fast_root": initial_map / fast_root - 1.0,
+
+        "runtime_s": initial_runtime,
+
+        "quadrature_error": float(initial["quadrature_error"]),
+
+        "interpolation_error": float(initial["interpolation_error"]),
+
+        "raw_signal_positive_finite_nodes": int(np.count_nonzero(initial_valid)),
+
+        "runtime_warnings": initial_warnings,
+
+        "fast_vs_reference_same_root_grid_spectrum_dex": {
+
+            "compared_nodes": int(delta.size),
+
+            "max_abs_dex": float(np.max(np.abs(delta))),
+
+            "p95_abs_dex": float(np.percentile(np.abs(delta), 95.0)),
+
+        },
+
+    }
+
+    partial["reference"]["initial_map"] = initial_record
+
+    partial["spectra"] = {"reference_z10_log10_OmegaGW_at_fast_adaptive_root": initial_logs.tolist()}
+
+    OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+
+
+    x = initial_map
+
+    for iteration in range(1, MAX_ROOT_ITER + 1):
+
+        mapped, runtime, mapped_warnings = direct_map(params, x, freqs)
+
+        logs, valid = raw_log_spectrum(mapped)
+
+        if not np.all(valid):
+
+            raise RuntimeError("Direct Reference root-iteration spectrum has invalid nodes")
+
+        mapped_dn = float(mapped["DN_gw"])
+
+        residual = mapped_dn / x - 1.0
+
+        spec_delta = logs - initial_logs
+
+        record = {
+
+            "iteration": iteration,
+
+            "input_DN_eff": x,
+
+            "mapped_DN_gw": mapped_dn,
+
+            "relative_map_residual": residual,
+
+            "runtime_s": runtime,
+
+            "quadrature_error": float(mapped["quadrature_error"]),
+
+            "interpolation_error": float(mapped["interpolation_error"]),
+
+            "raw_signal_positive_finite_nodes": int(np.count_nonzero(valid)),
+
+            "runtime_warnings": mapped_warnings,
+
+            "spectrum_change_vs_reference_map_at_fast_root": {
+
+                "compared_nodes": int(spec_delta.size),
+
+                "max_abs_dex": float(np.max(np.abs(spec_delta))),
+
+                "p95_abs_dex": float(np.percentile(np.abs(spec_delta), 95.0)),
+
+            },
+
+        }
+
+        partial["reference"]["iterations"].append(record)
+
+        partial["status"] = (
+
+            "complete_sobol_index3_adaptive_target1e4_reference_root"
+
+            if abs(residual) <= ROOT_RESIDUAL_TOL
+
+            else "running_sobol_index3_adaptive_target1e4_reference_z10"
+
+        )
+
+        partial["spectra"]["reference_z10_log10_OmegaGW_at_updated_root"] = logs.tolist()
+
+        OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+        if abs(residual) <= ROOT_RESIDUAL_TOL:
+
+            break
+
+        x = mapped_dn
+
+    else:
+
+        partial["status"] = "adaptive_target1e4_reference_root_iteration_limit_without_closure"
+
+        OUTPUT.write_text(json.dumps(partial, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+
+        raise RuntimeError("Adaptive-target direct Reference root did not close")
+
+
+
+    print(json.dumps({
+
+        "output": str(OUTPUT),
+
+        "fast_count": int(freqs.size),
+
+        "root_error_vs_305_z10": fast_root / reference_root_305 - 1.0,
+
+        "same_root_same_grid_spectrum_max_abs_dex": initial_record["fast_vs_reference_same_root_grid_spectrum_dex"]["max_abs_dex"],
+
+        "initial_reference_residual": initial_record["relative_map_residual_vs_fast_root"],
+
+        "updated_reference_residual": partial["reference"]["iterations"][-1]["relative_map_residual"],
+
+    }, indent=2))
+
+    return 0
+
+
+
+
+
+if __name__ == "__main__":
+
+    raise SystemExit(main())
