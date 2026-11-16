@@ -255,3 +255,13 @@ Reference z8→z10 积分变化为 `−2.5422e-4`，超过筛查参考线；z10�
 `kappa10=.001` 点使用直接 76 节点 Reference z12；z8→z10 与 z10→z12 映射变化分别 `+2.5594e-6`、`+3.3891e-6`，z10→z12 最大谱变化 `5.4096e-4 dex`，无警告。Reference 对外 76 个谱节点都达到 `−40` 下限，使用原始正值 log 谱比较。Fast 自洽根对 Reference z12 映射差 `+7.4970e-7`；z5、自适应、z8 最大谱差 `1.9847e-3`、`5.6956e-4`、`5.6931e-4 dex`。自适应延迟 13/76 模式，P50/P95 为 `4.14/4.25 ms`，较 z5 慢 `10.3%`、较 z8 快 `3.41×`。和 `.01` 点相比，两点的 adaptive 误差均通过，且都保留 PCHIP/尾部来源证据。
 
 这扩大到 `cr>0` 低温有效 cutoff 的两个离散 kappa decade 端点，不认证 kappa 连续区间或固定振幅横切。新点逐节点谱、根、A/B 计时、RSS、环境和来源哈希见[`kappa10=.001` 交接 JSON](results/cr_positive_lowT_kappa001_handoff_20261116.json)，由同一[参数化诊断脚本](../../scripts/diagnose_cr_positive_highT_handoff_20261116.py)复跑。
+
+### 高温 cutoff 边界上的高 `kappa10` 留出
+
+再在 `T_re=10000` 固定温度，将 `kappa10` 从 `.01` 扩到 `1`，选高 kappa 点自己的 cutoff 边界上方 `r=1.1*r_cut=6.209353644613012e-37`。由于 r 也随解析 cutoff 调整，这与低温 decade 对照一样是沿 cutoff 边界的组合样本。该点初始 `Delta_N=.03177006>0`；一致性支路派生 `n_t=−7.7617e-38`（传入值仍为 0），`A_t=1.3043e-45` 为正规数。
+
+Reference 的 z8→z10 映射变化 `−2.5281e-4` 高于根筛查参考线；保留该观察，用更深 z10→z12 的 `−3.9420e-5` 映射变化和 `8.7119e-5 dex` 最大逐点谱变化判断收敛。z12 求积/插值估计分别为 `5.7599e-53`、`1.7732e-41`，无 warning；公开 Reference 对数谱 59/77 节点触及 `−40`，比较使用直接求得的原始正值 log 谱。
+
+同一 frozen root/grid/thread 的 z5、自适应、z8 最大/P95 谱差分别为 `1.7319e-3/1.0291e-4`、`7.0358e-4/7.6946e-5`、`8.3570e-5/2.8592e-5 dex`。z5 超 `1e-3 dex`，adaptive 延迟 8/77 后通过；当前 Fast 自洽根相对 Reference z12 映射为 `−6.0744e-6`，自映射残差为零。A/B P50/P95：z5 `3.75/4.30 ms`、adaptive `3.99/4.60 ms`、z8 `11.72/14.54 ms`；adaptive 比 z5 慢约 `6.4%`，比 z8 快 `2.94×`。这把高温 cutoff 边界的离散 `kappa10` 对照扩展到 `{.01,1}`，不认证固定 r 或连续范围。
+
+完整节点谱、根、交接数量、逐次计时、RSS、源码/输入哈希见[高温 `kappa10=1` 交接 JSON](results/cr_positive_highT_kappa1_handoff_20261116.json)，由[同一参数化脚本](../../scripts/diagnose_cr_positive_highT_handoff_20261116.py)复跑。
