@@ -1563,4 +1563,7 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Repeat at `T_re=10` while holding `kappa10=.01`; use the exact direct 76-node z12 Reference, retain z8→z10/z10→z12 convergence data, and verify the current Fast root on the valid cutoff side.
 - [x] Add the second cutoff-valid low-T endpoint at `kappa10=.001`; use its independently direct z12 Reference, preserve that r follows the kappa-dependent cutoff, and compare same-root adaptive A/B.
 - [x] At fixed high temperature, extend the cutoff-boundary `cr>0` kappa pair to `kappa10=1`; use direct Reference z12, retain the z8→z10 excess root shift, and verify adaptive spectrum/root gates.
+- [x] Run an 8-point scrambled Sobol cutoff preflight over log-temperature/log-kappa; require Fast physical-guard admission and exact map closure, then directly solve Reference z8/z10/z12 at the first two fixed-design points.
+- [x] Audit the Sobol cutoff formula's `r=minsub` background-probe warning against a safe valid `r=.01` probe; verify identical `N_re`, `rho_rad,re`, and `rho_stiff,re`, exact cutoff agreement, and no invalid Fast/Reference propagation.
+- [x] Replay all eight Sobol points through current default adaptive Fast and correct the legacy `fast_z5` label; confirm root/grid equality and recompare the two Reference holdouts.
 - [ ] Continue additional `cr>0` backgrounds and parameter-domain coverage only where the consistency background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.

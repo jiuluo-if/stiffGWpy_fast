@@ -265,3 +265,22 @@ Reference 的 z8→z10 映射变化 `−2.5281e-4` 高于根筛查参考线；�
 同一 frozen root/grid/thread 的 z5、自适应、z8 最大/P95 谱差分别为 `1.7319e-3/1.0291e-4`、`7.0358e-4/7.6946e-5`、`8.3570e-5/2.8592e-5 dex`。z5 超 `1e-3 dex`，adaptive 延迟 8/77 后通过；当前 Fast 自洽根相对 Reference z12 映射为 `−6.0744e-6`，自映射残差为零。A/B P50/P95：z5 `3.75/4.30 ms`、adaptive `3.99/4.60 ms`、z8 `11.72/14.54 ms`；adaptive 比 z5 慢约 `6.4%`，比 z8 快 `2.94×`。这把高温 cutoff 边界的离散 `kappa10` 对照扩展到 `{.01,1}`，不认证固定 r 或连续范围。
 
 完整节点谱、根、交接数量、逐次计时、RSS、源码/输入哈希见[高温 `kappa10=1` 交接 JSON](results/cr_positive_highT_kappa1_handoff_20261116.json)，由[同一参数化脚本](../../scripts/diagnose_cr_positive_highT_handoff_20261116.py)复跑。
+
+## `cr>0` cutoff 有效域的 Sobol 独立预筛
+
+为从 3×3 背景矩阵走向独立采样，对 `log10(T_re)∈[1,4]`、`log10(kappa10)∈[-3,0]` 生成固定 seed `20261116` 的 8 点 scrambled Sobol 设计。每点在一致性方程的精确 cutoff 根上取 `r=1.1*r_cut`。固定其余背景时
+
+`Delta_N(r) = (1/3) ln(r/r_cut)`，
+
+故预计 cutoff 裕量 `(1/3)ln(1.1)=0.0317700599`；代码仍对每个真实参数点重新计算 `Delta_N`、`A_t`，并只在物理 guard 下调用 Fast。8 点全在 `Delta_N≈0.03177006` cutoff 有效侧、`A_t` 为正规数、Fast 成功，映射固定点残差均为 0，节点数为 76 或 77，Fast 无 warning。这是小规模设计/脚本预筛，不能认证连续域。
+
+Sobol index 0 `(T_re,kappa10)=(1186.4313,.0743135)` 和随后 index 1 `(186.6991,.0257680)` 用各自 Fast 原生网格和完全相同 Fast 根直接求 Reference z8/z10/z12。index 0 为预筛中预先指定的 Reference 点；index 1 是同一固定 8 点设计中的追加 Reference 留出，没有按它的结果选参数。两个点的 Reference 都是当前源码 SHA 一致的直接 Cartesian 求解，77/77 个信号节点正有限且无 Reference warning。
+
+| Sobol 点 | T_re | kappa10 | Fast 根对 Reference z12 | Fast 默认自适应谱最大 / P95 差 | Reference z8→z10 映射 | z10→z12 映射 / 最大谱变化 |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | `1186.43` | `.07431` | `−5.246e-6` | `5.600e-4 / 1.885e-4 dex` | `−2.628e-4` | `−3.041e-5 / 2.022e-4 dex` |
+| 1 | `186.70` | `.02577` | `−7.590e-6` | `8.133e-4 / 2.538e-4 dex` | `−2.883e-4` | `+3.847e-6 / 2.417e-4 dex` |
+
+两点 Fast 根误差低于 `2e-4`，77 点最大谱差均低于 `1e-3 dex`。两点的 z8→z10 Reference 映射变化都超过 `2e-4`，已保留；更深 z10→z12 根变化和逐点谱变化满足本轮收敛判断。Sobol preflight 原脚本用 `r=minsub` 的仅背景 cutoff 探针读取 `N_re,rho_rad,rho_stiff`，它本身产生 “Delta_N < 0” 提示。单独审计表明：该探针没有送入 Fast 或 Reference；同一背景改用有效安全探针 `r=.01` 后 `N_re` 和两种能量密度逐位相同、无提示，解析 cutoff 与 8 点原结果逐点相同。真实 Sobol 样本全部用 `1.1*r_cut`，故提示归类为无效探针构造噪声，不是有效点的失败或传播警告；完整捕获和对照见[cutoff 探针审计 JSON](results/cr_positive_sobol_cutoff_probe_audit_20261116.json)。
+
+8 点真实参数、Sobol 单位坐标、Fast 根/网格/错误状态、源码哈希和首两点直接 Reference 谱见[Sobol 预筛 JSON](results/cr_positive_sobol_cutoff_holdout_20261116.json)；追加点 z8/z10/z12 数据见[index 1 Reference JSON](results/cr_positive_sobol_index1_reference_20261116.json)。因原 preflight 字段名把默认 adaptive 输出误标成 z5，对当前源码 8 点重新运行默认 adaptive 并明确对两个 Reference 的重比较，结果见[纠正标签后的 adaptive Sobol JSON](results/cr_positive_sobol_default_adaptive_20261116.json)，可复跑[纠正验证脚本](../../scripts/verify_cr_positive_sobol_default_adaptive_20261116.py)。边界探针告警可用[独立审计脚本](../../scripts/audit_cr_positive_sobol_cutoff_probe_20261116.py)重现。该设计只在两个 Sobol 点上完成直接 Reference 收敛/谱检查，另外六点是 Fast 预筛；不构成连续参数域认证，后续需分层追加 Reference 留出。
