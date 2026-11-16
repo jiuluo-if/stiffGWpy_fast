@@ -317,3 +317,14 @@ index 7 完成了固定 8 点设计中的最后一个直接 Reference 留出：�
 
 
 在 index 3 的独立高温、低 `kappa10` 点重复上述 root-residual continuation。固定 Fast 根处的 z12 Reference 映射先将根从 `2.526153432897177e-44` 更新到 `2.526174494813028e-44`（相对变化 `+8.3375e-6`）；在该更新根上再次直接求解，映射仍为 `2.526174494813028e-44`，residual 为 `0.0`，77 个正有限频谱节点相对原 Fast-root z12 参考变化为 `0.0 dex`，没有 warning。第二次 z12 求解耗时 `1335.97 s`，quadrature/interpolation 误差估计为 `3.48e-63/5.18e-52`。因此 index 3 与 index 7 两个离散点都通过更新后的 root residual 检查；其余六个点仍只有固定 Fast 根映射证据，频率网格诱发的自洽根变化也未在这两个点以外量化。详情见[index 3 root-closure JSON](results/cr_positive_sobol_index3_reference_root_closure_20261116.json)和[复跑脚本](../../scripts/verify_sobol_index3_reference_root_closure_20261116.py)。
+
+
+### `cr>0` 嵌套频率网格：Sobol index 7 的 z10 直接审计
+
+以 index 7 已验证的 Fast 根 `1.6555074520171973e-47` 为固定背景，保留原生降序 77 点网格，并在每一对相邻 `log10(f/Hz)` 节点间插入真实中点，形成嵌套 153 点 Reference 网格；153 个频率全部直接求解 z10（`rtol=1e-9`），没有用粗网格插值替代新增节点。77 个共享节点的直接 Reference 谱与原 77 点结果完全一致。新增 76 个中点上，基于原始正值线性谱构造的 77 点 PCHIP 对直接 Reference 的局部误差 P95 为 `0.04556 dex`、最大 `0.52462 dex`，最大值位于 `log10(f/Hz)=−18.2978` 的极弱尾部。
+
+固定根的 Reference 映射从 77 点 `1.655492928135184e-47` 变为 153 点 `1.6549107813018223e-47`，相对网格变化 `−3.5165e-4`；相对 Fast 根为 `−3.6042e-4`，超过 `2e-4` 根筛查线。153 点网格再按 `|F(x)/x−1|≤2e-4` 继续一轮 z10 Reference 映射，返回相同映射根、residual `0.0`，153 个频谱节点逐点变化 `0.0 dex`。这说明该点在 z10 下粗网格频率离散会造成可见积分根变化，而更新后的细网格映射闭合；不是模态求解在共享频率处出现变化。
+
+77 点和 153 点的 QUADPACK 相对误差估计都约 `1.38e-19`；半密度 PCHIP 积分误差估计分别约 `1.23e-8` 和 `4.36e-9`，远小于两网格映射差 `3.52e-4`。因此这些同网格估计没有捕捉到遗漏频率节点的离散误差。已有 77 点 z10→z12 映射变化约 `+1.58e-5`，小于这里的 z10 网格变化；但尚未直接求解 153 点 z12，不能假设尾部误差与网格误差完全可分，也不能据此宣布最终 `cr>0` 根误差失败/通过。下一步需要对同一 153 点网格直接做 z12，并在独立点复核。
+
+完整 77/153 节点谱、映射、误差估计、根序列、运行环境与源码哈希见[频率网格 JSON](results/cr_positive_sobol_index7_frequency_refinement_z10_20261117.json)。原执行脚本快照及其哈希保存在[calculation snapshot](results/cr_positive_sobol_index7_frequency_refinement_z10_calculation_20261117.py.txt)，已规范化且标注正确日期的可复跑 runner 为[验证脚本](../../scripts/verify_sobol_index7_frequency_refinement_z10_20261117.py)。
