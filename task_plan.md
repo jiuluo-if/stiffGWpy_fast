@@ -1570,5 +1570,6 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Add Sobol index 3 at the high-temperature/low-kappa corner with direct Reference z8/z10/z12; verify the default-adaptive Fast label, exact root/grid replay, z10→z12 tail convergence, and retain the executed-script snapshot.
 - [x] Add Sobol index 4 at the high-temperature/mid-high-kappa design point with direct Reference z8/z10/z12; verify exact root/grid replay, preserve z8→z10 drift, and document fixed-root mapping limits.
 - [x] Add Sobol index 5 at the mid-low-temperature/low-kappa design point with direct Reference z8/z10/z12; verify raw-positive spectrum comparisons below the public floor and retain the z10→z12 spectral change.
+- [x] Add Sobol index 6 at the low-temperature/mid-high-kappa design point with direct Reference z8/z10/z12; verify raw-positive spectra, exact root/grid replay, and record fixed-root mapping limits.
 - [ ] Continue additional `cr>0` backgrounds and parameter-domain coverage only where the consistency background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
-- [ ] Select additional indices from the existing fixed Sobol set for direct Reference; two remain Fast-only and must not be described as reference-validated.
+- [ ] Select additional indices from the existing fixed Sobol set for direct Reference; one remains Fast-only and must not be described as reference-validated.

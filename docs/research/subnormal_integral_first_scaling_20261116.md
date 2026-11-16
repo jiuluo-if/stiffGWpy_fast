@@ -284,6 +284,7 @@ Sobol index 0 `(T_re,kappa10)=(1186.4313,.0743135)` 和随后 index 1 `(186.6991
 | 3 | `2623.92` | `.001642` | `−8.337e-6` | `7.202e-4 / 5.089e-4 dex` | `−2.990e-4` | `+6.185e-6 / 4.854e-4 dex` |
 | 4 | `4843.81` | `.32923` | `−7.848e-6` | `2.140e-4 / 8.723e-5 dex` | `−2.530e-4` | `−3.831e-5 / 1.414e-4 dex` |
 | 5 | `45.75` | `.003758` | `−3.186e-6` | `4.731e-4 / 3.881e-4 dex` | `−1.380e-5` | `−4.979e-6 / 4.788e-4 dex` |
+| 6 | `68.27` | `.16354` | `−8.215e-6` | `2.654e-4 / 1.438e-4 dex` | `−2.745e-4` | `+2.795e-6 / 1.386e-4 dex` |
 
 六点 Fast 根误差低于 `2e-4`，全部 76/77 直接比较节点的最大谱差低于 `1e-3 dex`。index 0/1 的 z8→z10 Reference 映射变化超过 `2e-4`，已保留；更深 z10→z12 根变化和逐点谱变化满足本轮收敛判断。index 2 位于低温、高 `kappa10` 端，z8→z10、z10→z12 变化均小于门槛，z12 Reference 用时约 `1333 s`，无 Reference warning。index 3 位于高温、低 `kappa10` 端；z8→z10 映射仍变化 `−2.990e-4`，z10→z12 收敛到 `+6.185e-6`、逐点谱变化 `4.854e-4 dex`，z12 用时 `1297 s`。Fast 默认自适应相对 z12 的最大/P95 谱差为 `7.202e-4/5.089e-4 dex`，全部 77 点有效、无 warning，满足离散样本根与谱筛查线。Sobol preflight 原脚本用 `r=minsub` 的仅背景 cutoff 探针读取 `N_re,rho_rad,rho_stiff`，它本身产生 “Delta_N < 0” 提示。单独审计表明：该探针没有送入 Fast 或 Reference；同一背景改用有效安全探针 `r=.01` 后 `N_re` 和两种能量密度逐位相同、无提示，解析 cutoff 与 8 点原结果逐点相同。真实 Sobol 样本全部用 `1.1*r_cut`，故提示归类为无效探针构造噪声，不是有效点的失败或传播警告；完整捕获和对照见[cutoff 探针审计 JSON](results/cr_positive_sobol_cutoff_probe_audit_20261116.json)。
 
@@ -297,3 +298,6 @@ index 4 的高温、中高 `kappa10` 直接留出在固定 Fast 根/77 点网格
 
 
 index 5 的中低温、低 `kappa10` 直接留出使用 Fast 原生 76 点网格与固定 Fast 根，Reference z8/z10/z12 均为 76 个正有限原始信号节点且无 warning；公共 Reference 对数谱全部为 `−40` floor，故仅用保存的原始 `Ogw−Oj` 正值对数比较。Fast 默认自适应相对 z12 的最大/P95 谱差为 `4.731e-4/3.881e-4 dex`，根对 z12 映射差 `−3.186e-6`。Reference z8→z10 映射变化 `−1.380e-5`，z10→z12 变化 `−4.979e-6`，但 z10→z12 最大逐点谱变化仍为 `4.788e-4 dex`，应保留。z12 用时约 `1582 s`。和其他 Sobol 点一样，这是固定 Fast 根下的 Reference 映射和谱收敛，不是完整 Reference 自洽根的独立收敛证明。结果见[index 5 Reference JSON](results/cr_positive_sobol_index5_reference_20261116.json)及[复跑脚本](../../scripts/verify_cr_positive_sobol_index5_reference_20261116.py)。
+
+
+index 6 的低温、中高 `kappa10` 留出在固定 Fast 根和 77 点网格上完成 Reference z8/z10/z12；原始信号 77/77 正有限且无 warning，公共 Reference 对数谱全部触及 `−40` floor，故谱误差比较使用原始正值 `Ogw−Oj` 对数值。Fast 默认自适应对 z12 的最大/P95 谱差为 `2.654e-4/1.438e-4 dex`，Fast 根相对 z12 映射差 `−8.215e-6`。Reference z8→z10 映射变化 `−2.745e-4`，仍需保留；z10→z12 映射变化 `+2.795e-6`、最大逐点谱变化 `1.386e-4 dex`。z12 用时 `1402.81 s`。这是固定 Fast 根上的 Reference 映射和尾部谱证据，不是独立闭合的 Reference 自洽根。完整结果见[index 6 Reference JSON](results/cr_positive_sobol_index6_reference_20261116.json)与[复跑脚本](../../scripts/verify_cr_positive_sobol_index6_reference_20261116.py)。
