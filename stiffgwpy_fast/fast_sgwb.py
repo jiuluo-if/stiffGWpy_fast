@@ -1501,10 +1501,11 @@ _DEFAULT_ADAPTIVE_HANDOFF_BELOW = _z_today_threshold_for_ripple_dex(
 def _adaptive_wkb_tail_thresholds(
     z_today, z_tail, defer_below, defer_to, phase_weight=None
 ):
-    """Build per-mode thresholds for shallow modes that would hand off now.
+    """Build per-mode thresholds for modes whose endpoint ripple exceeds tolerance.
 
-    English description: Delay only active handoffs whose today's ripple exceeds
-    the target bound. 中文说明：仅延迟当前会交接且今天端点纹波超限的模态。
+    English description: Defer shallow modes even if their z crossed the scalar
+    threshold earlier in a nonmonotone background. 中文说明：即使非单调背景中
+    的模态曾越过标量阈值，只要今天端点纹波超限，仍延迟其交接。
     """
     if not math.isfinite(float(defer_below)) or not math.isfinite(float(defer_to)):
         raise ValueError("adaptive handoff thresholds must be finite")
@@ -1512,7 +1513,7 @@ def _adaptive_wkb_tail_thresholds(
         raise ValueError("deferred handoff threshold must exceed z_tail")
     values = np.asarray(z_today, dtype=np.float64)
     thresholds = np.full(values.shape, float(z_tail), dtype=np.float64)
-    delayed = (values > float(z_tail)) & (values < float(defer_below))
+    delayed = values < float(defer_below)
     if phase_weight is not None:
         weights = np.asarray(phase_weight, dtype=np.float64)
         if weights.shape != values.shape:

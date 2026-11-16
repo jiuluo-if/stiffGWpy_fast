@@ -238,7 +238,7 @@ def test_adaptive_wkb_threshold_mask_preserves_phase_resolved_rows():
         phase_weight=np.array([0.0, 0.0, 0.2, 0.0]),
     )
 
-    np.testing.assert_array_equal(actual, np.array([5.0, 8.0, 5.0, 5.0]))
+    np.testing.assert_array_equal(actual, np.array([8.0, 8.0, 5.0, 5.0]))
 
 
 def test_default_wkb_ripple_threshold_solves_the_requested_dex_bound():
