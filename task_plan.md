@@ -1552,7 +1552,7 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Record that 937-node Reference still emits four PCHIP divide-overflow warnings and has 49 normalized interpolation nodes rounded to zero; Reference stability remains open.
 - [x] TDD regression first failed on the expected z5 handoff `handoff_eps=3.3378e-3`; current default defers that mode, and ripple-threshold unit tests pass.
 - [x] Full validation after the production change: `411 passed, 9 deselected`; Ruff, Mypy, and sdist/wheel package build passed.
-- [ ] Finish latest-mask full test/static/build checks, then commit/push the production handoff change, current-source 937 A/B artifact and updated research ledger; run/verify GitHub CI.
+- [x] Finish latest-mask full test/static/build checks; commit/push production source, current-source 937 A/B artifact and updated ledger as `5a612e1dbf2a3de1f703da753764a2229d46e3b4`; fetch verified the same SHA and GitHub CI run `43815188536` passed every job.
 
 ### Next Step
 
