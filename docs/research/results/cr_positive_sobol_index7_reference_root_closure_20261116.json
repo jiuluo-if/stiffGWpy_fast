@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "complete_sobol_index7_reference_root_iteration",
+  "scope": "Continue fixed-point iteration from the directly solved z12 Reference map at the current Fast root. Every additional map is directly solved at the previous Reference-mapped root on the exact same native frequency grid; stop only when the relative map residual is below the root screen.",
+  "input_artifact": "docs/research/results/cr_positive_sobol_index7_reference_20261116.json",
+  "parameters": {
+    "Omega_bh2": 0.0223828,
+    "Omega_ch2": 0.1201075,
+    "H0": 67.32117,
+    "A_s": 2.100549e-09,
+    "n_t": 0.0,
+    "cr": 1.0,
+    "DN_re": 20.0,
+    "DN_eff": 0.0,
+    "T_re": 642.6992202584653,
+    "kappa10": 0.011699883267519385,
+    "r": 5.091582059669135e-46
+  },
+  "fixed_frequency_grid": {
+    "count": 77,
+    "sha256_f64le": "fd85ec8d987a0f8a348d7575395a7e6e3a46c4495ca651d5657c97af5b8704bd"
+  },
+  "current_fast": {
+    "root_DN_eff": 1.6555074520171973e-47,
+    "runtime_s": 0.3013476000051014,
+    "fixed_point_residual_relative": 0.0
+  },
+  "initial_z12_reference_at_fast_root": {
+    "input_DN_eff": 1.6555074520171973e-47,
+    "mapped_DN_gw": 1.655519043161566e-47,
+    "relative_map_residual": 7.001565806685761e-06,
+    "runtime_s": 1406.0704478000407
+  },
+  "reference": {
+    "z_tail": 12.0,
+    "rtol": 1e-09,
+    "root_residual_tolerance": 0.0002,
+    "max_iterations": 5,
+    "iterations": [
+      {
+        "iteration": 1,
+        "input_DN_eff": 1.655519043161566e-47,
+        "mapped_DN_gw": 1.655519043161566e-47,
+        "relative_map_residual": 0.0,
+        "runtime_s": 1464.1263721999712,
+        "quadrature_error": 2.2776763474843697e-66,
+        "interpolation_error": 2.03700639431903e-55,
+        "raw_signal_positive_finite_nodes": 77,
+        "raw_signal_invalid_nodes": 0,
+        "runtime_warnings": [],
+        "spectrum_change_vs_z12_at_fast_root": {
+          "compared_nodes": 77,
+          "max_abs_dex": 0.0,
+          "p95_abs_dex": 0.0
+        }
+      }
+    ]
+  },
+  "source_sha256": {
+    "fast_sgwb.py": "041af5772df7fabb6f3497d87b240586576aedbc26fafcdde57318de28c28e04",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "input_artifact": "1d0da2c53e2daae6f1c5820fa077090736c3dee2a1d6065a1f2b0732d8d7395d",
+    "script": "996b737a1ce0894cda6bc1ed5d606ba0d6335d74429bd4b6a6c375549ecd40d5"
+  }
+}

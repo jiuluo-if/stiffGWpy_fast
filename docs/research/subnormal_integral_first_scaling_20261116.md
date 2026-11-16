@@ -305,3 +305,12 @@ index 6 的低温、中高 `kappa10` 留出在固定 Fast 根和 77 点网格上
 
 
 index 7 完成了固定 8 点设计中的最后一个直接 Reference 留出：在 Fast 自洽根与原生 77 点网格上 z8/z10/z12 均直接求解，原始谱节点 77/77 正有限且无 warning，公开 log 节点全部因 `−40` floor 不可用于谱差比较，故使用保存的原始 `Ogw−Oj` 正值对数谱。Fast 默认自适应相对 z12 的最大/P95 谱差 `4.984e-4/2.940e-4 dex`，根相对 z12 映射差 `−7.002e-6`。Reference z8→z10 映射变化 `−3.111e-4`，z10→z12 变化 `+1.577e-5`，最大逐点谱变化 `3.433e-4 dex`；z12 用时 `1406.07 s`。此处的根比较仍是在固定 Fast 根处读取 Reference 映射，不能替代完整 Reference 自洽根的迭代闭合证据。结果见[index 7 Reference JSON](results/cr_positive_sobol_index7_reference_20261116.json)和[复跑脚本](../../scripts/verify_cr_positive_sobol_index7_reference_20261116.py)。当前 8/8 结果只支持这个预先固定的有限设计，不能解释为连续域认证。
+
+
+### Reference 自洽根 residual 的单点直接复核
+
+审计 `run_reference` 发现：显式提供 `dn_eff` 时只计算一次固定背景映射；内置 `self_consistent=True` 分支的停止测试以总 `N_eff` 作相对分母，而不是以极小的 `DN_gw` 根作分母。因此当 `DN_gw≈1e-47` 时，不能只凭内置停止状态声称满足本项目 `2e-4` 相对根误差门槛。保持 Reference 实现未改，在 Sobol index 7 的同一 77 点原生网格、`z_tail=12, rtol=1e-9` 上，按实际映射 `F(x)=DN_gw_ref(x)` 继续迭代，采用 `|F(x)/x−1|≤2e-4` 为停止判据。
+
+第一次直接映射从 Fast 根 `1.6555074520171973e-47` 得到 `1.655519043161566e-47`，相对变化 `+7.0016e-6`。在更新后的根上再直接求 Reference，映射仍为 `1.655519043161566e-47`，实测 residual 为 `0.0`；77 个 raw-positive 节点逐点变化也是 `0.0 dex`，无 warning。第二次映射耗时 `1464.13 s`，积分误差估计为 `2.28e-66`，半密度插值误差估计为 `2.04e-55`。这证明 index 7 在固定网格、z12 Reference 下 root iteration 实际闭合；尚未在其它七点做相同的完整根迭代，也没有解决不同频率网格引起的 root 变化。
+
+完整根序列、原始谱差、环境、误差估计和源码哈希见[index 7 root-closure JSON](results/cr_positive_sobol_index7_reference_root_closure_20261116.json)，可由[自适应 root-closure runner](../../scripts/verify_sobol_index7_reference_root_closure_20261116.py)复跑。下一步在独立 Sobol 点复核这个 root-residual 策略，并继续将 Reference 根误差与频率离散误差分开。

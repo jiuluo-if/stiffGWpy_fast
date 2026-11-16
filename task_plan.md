@@ -1574,3 +1574,5 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Add Sobol index 7 at the high-temperature/low-kappa design point with direct Reference z8/z10/z12; finish direct Reference coverage of the fixed 8-point design, preserve z8→z10 drift, and state the fixed-root mapping limitation.
 - [ ] Continue additional `cr>0` backgrounds and parameter-domain coverage only where the consistency background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
 - [x] Complete direct Reference z8/z10/z12 for all eight points in the fixed Sobol design; retain fixed-root mapping caveat and make no continuous-domain claim.
+- [x] Audit Reference self-consistency stopping logic; perform adaptive z12 map iteration at Sobol index 7 using a root-relative residual and record the updated-root residual and spectrum change.
+- [ ] Repeat root-relative direct Reference closure at an independent Sobol point and measure root sensitivity to frequency-grid refinement separately from tail convergence.
