@@ -1559,4 +1559,5 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 
 ### Next Step
 
-Check the adaptive WKB rule on additional cutoff-valid normal-amplitude `cr>0` backgrounds and distinguish consistency-derived tilt from supplied `n_t`; continue broader amplitude/domain coverage only where the background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
+- [x] Check the adaptive WKB rule on a different cutoff-valid normal-amplitude `cr>0` high-temperature background; distinguish consistency-derived tilt from supplied `n_t`, use direct z12 Reference at the same root/grid, and retain the z8→z10 tail shift above the root screen.
+- [ ] Continue additional `cr>0` backgrounds and parameter-domain coverage only where the consistency background admits propagation. Keep Reference unchanged while extending same-polynomial stability checks to further scales and direct nodes.
