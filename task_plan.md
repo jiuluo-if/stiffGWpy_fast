@@ -1650,3 +1650,4 @@ Build a nested 469→937 frequency grid from the exact saved 469 nodes; directly
 - [x] Correct and verify source/runner/input lineage after the preflight runner's import-only edit; confirmed all preflight rows and Fast numerical results were unchanged before metadata-only Reference lineage refresh.
 - [x] Round 55 local validation: `411 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel, installed-wheel smoke, and Cobaya marker pass. Production source unchanged.
 - [ ] Commit and push the validated preflight, Fast screen, Reference 75/235/469 artifacts, and ledgers; verify remote CI.
+- [x] Push validated Round 55 artifacts/ledgers and verify all nine GitHub Actions jobs at commit `1ed916a` pass.
