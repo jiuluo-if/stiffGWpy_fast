@@ -1613,3 +1613,40 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 ### Next Step
 
 Choose a small current-source tilt/amplitude boundary design around the tested underflow point; first verify each proposed case's derived amplitude, cutoff validity, and exact frequency setup before Reference work.
+
+
+## Autonomous continuation: Round 55 — amplitude/tilt boundary preflight
+
+- [ ] Build a current-source hash-checked screening runner for `cr=0`, using three target tilts (`17.30, 17.38, 17.45`), float-derived normal/subnormal `r*A_s` edge values, `r=1e-316`, and `r=minsub`; cross with low/mid/high `T_re` and `kappa10` strata.
+- [x] For every sample, record derived/stored/log amplitude, exact Fast background construction status, current default grid hash/count, and distinct exact-zero/rounded-product-zero status. No Reference before this preflight.
+- [ ] Expand the preflight with `n_t=0,1.6`: high-tilt normal/subnormal boundary samples at `n_t=17.38` are rejected by the existing `shared_Neff_guard`, so they cannot serve as valid normal-amplitude propagation points.
+- [ ] Select a small set spanning amplitude representations and an independent background holdout; compare Fast against direct Reference only for admitted cases and keep `cr>0` tied to valid physical cutoff.
+- [ ] Record root/spectrum/frequency/tail evidence and any failed sample classification; run applicable validation, commit and push only a verified experiment bundle.
+
+### Next Step
+
+Create and execute the preflight runner against current source hashes; use its observed feasibility and grid coverage to choose the smallest informative direct-solve set.
+
+### Round 55 observed outcomes
+
+- [x] Current-source 270-case `cr=0` construction preflight and six-stratum guarded Fast screen at `n_t=1.6` plus high-tilt boundary controls at `n_t=17.38`.
+- [x] Direct scaled Reference z8/z10 at exact 75- and 235-node Fast grids; close the 235-grid minimum-subnormal z10 map at its updated root.
+- [ ] Refine the low-tilt 235-node Reference grid to nested 469 nodes at z10/z12; compare direct added-node spectra, fixed-root map shifts, tail changes, and updated-root closure.
+- [ ] Reserve an independent reheating/kappa holdout after the nested-grid reference confirms the runner's error estimates; keep `cr>0` limited to cutoff-valid physical amplitude.
+
+### Next Step
+
+Construct the nested 469-node grid from the exact 235-node Reference grid, then run direct z10/z12 Reference and closure checks.
+
+### Round 55 completion: direct Reference 235→469
+
+- [x] Directly solve all 234 nested midpoint nodes at 469 total frequencies for z10/z12; verify exact equality of the original 235 shared nodes.
+- [x] Compare 235→469 fixed-root maps, added-node PCHIP error, z10→z12 tail shift, same-grid Fast/Reference spectra, and updated-root closure.
+- [ ] Because 235→469 map shifts remain `3.20e-4`–`3.24e-4` and the 469 interpolation estimate is `3.20e-4`, continue to nested 937 direct Reference nodes before drawing a frequency-convergence conclusion.
+
+### Next Step
+
+Build a nested 469→937 frequency grid from the exact saved 469 nodes; directly solve z10/z12 Reference, check all 469 shared nodes, compare map and new-node errors, then close the updated root.
+- [x] Correct and verify source/runner/input lineage after the preflight runner's import-only edit; confirmed all preflight rows and Fast numerical results were unchanged before metadata-only Reference lineage refresh.
+- [x] Round 55 local validation: `411 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel, installed-wheel smoke, and Cobaya marker pass. Production source unchanged.
+- [ ] Commit and push the validated preflight, Fast screen, Reference 75/235/469 artifacts, and ledgers; verify remote CI.
