@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "status": "complete_current_source_reference_pchip_937_diagnostic",
+  "scope": "Use the exact 937 Reference nodes directly solved on the current-source nested grid; compare SciPy linear PCHIP arithmetic against log arithmetic for the same positive linear PCHIP polynomial. Reference production code is not modified.",
+  "input_artifact": "docs/research/results/underflow_grid_235_469_937_current_20261117.json",
+  "source_sha256": {
+    "stiffgwpy_fast/fast_sgwb.py": "041af5772df7fabb6f3497d87b240586576aedbc26fafcdde57318de28c28e04",
+    "stiffgwpy_fast/freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+    "stiffgwpy_fast/exact_background.py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+    "stiffgwpy_fast/reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+    "stiffgwpy_fast/stiff_SGWB.py": "ce0145d0166d5965fb586e9a8137f238728e2cea0d3e33e3ade79a6784b1b28a",
+    "scripts/underflow_grid_convergence_20261115.py": "9d2529aae9f599b6170b1d5c023b80dd46443c25539fcb6e22722ca72ed071cb",
+    "input_artifact": "f5b9f6235f504d3c74a009e93bf5739a5054536c5cc46ba81b21816bf72afcf7",
+    "diagnostic_runner": "5e5d6ea4125256f2aaf3a4e742783bd2cc96726cb11ef1e176d39d7233cfa9da",
+    "stable_log_pchip": "786987447004ecb9710d59b805399c5b33f2d98ed822be0cf0e72df279c1ddc3",
+    "diagnostic_library": "177241476113d7e88c744453472951b8f4f86cb16ac6fc239d39fdd7d8b141e9"
+  },
+  "diagnostic": {
+    "label": "current_source_reference_937",
+    "frequency_count": 937,
+    "frequency_sha256_f64le": "986c28c4d35d9e96b63a013113fc7d43a145f127a9ac27a6552c12304d30ecd3",
+    "parameters": {
+      "Omega_bh2": 0.0223828,
+      "Omega_ch2": 0.1201075,
+      "H0": 67.32117,
+      "DN_eff": 0.0,
+      "A_s": 2.100549e-09,
+      "r": 1e-316,
+      "n_t": 17.38,
+      "cr": 0.0,
+      "T_re": 2000.0,
+      "DN_re": 10.0,
+      "kappa10": 0.01
+    },
+    "frozen_DN_eff": 0.027412228089632867,
+    "z_tail": 8.0,
+    "rtol": 1e-09,
+    "log10_signal_range_dex": 362.2156358544116,
+    "normalized_zero_nodes": 49,
+    "normalized_positive_subnormal_nodes": 10,
+    "original_linear_pchip": {
+      "warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "log_integral": -14.895214001814308,
+      "quadrature_error_relative": 1.1102230246251559e-14,
+      "half_density_interpolation_error_relative": 2.8260983394254797e-07
+    },
+    "stable_log_arithmetic_same_linear_pchip": {
+      "warnings": [],
+      "log_integral": -14.89521400181431,
+      "relative_integral_difference": -1.7763568394002487e-15,
+      "zero_adjacent_panel_count": 49,
+      "log10_fraction_total_integral_in_zero_adjacent_panels": -322.7143642133391
+    },
+    "midpoint_interpolation": {
+      "count": 936,
+      "linear_zero_count": 48,
+      "warnings": [
+        "overflow encountered in divide",
+        "overflow encountered in divide"
+      ],
+      "finite_linear_vs_stable_max_abs_dex": 0.30089983027136213,
+      "finite_linear_vs_stable_p95_abs_dex": 3.7658764995284987e-14,
+      "worst_finite": {
+        "log10_frequency": -15.516944809173847,
+        "difference_dex": 0.30089983027136213,
+        "left_node_log10_signal": -321.909728088001,
+        "right_node_log10_signal": -317.5718860257023
+      }
+    },
+    "input_sha256": {
+      "stiffgwpy_fast/fast_sgwb.py": "041af5772df7fabb6f3497d87b240586576aedbc26fafcdde57318de28c28e04",
+      "stiffgwpy_fast/freq_adaptive.py": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+      "stiffgwpy_fast/exact_background.py": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+      "stiffgwpy_fast/reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+      "stiffgwpy_fast/stiff_SGWB.py": "ce0145d0166d5965fb586e9a8137f238728e2cea0d3e33e3ade79a6784b1b28a",
+      "scripts/underflow_grid_convergence_20261115.py": "9d2529aae9f599b6170b1d5c023b80dd46443c25539fcb6e22722ca72ed071cb",
+      "input_artifact": "f5b9f6235f504d3c74a009e93bf5739a5054536c5cc46ba81b21816bf72afcf7",
+      "diagnostic_runner": "5e5d6ea4125256f2aaf3a4e742783bd2cc96726cb11ef1e176d39d7233cfa9da",
+      "stable_log_pchip": "786987447004ecb9710d59b805399c5b33f2d98ed822be0cf0e72df279c1ddc3",
+      "diagnostic_library": "177241476113d7e88c744453472951b8f4f86cb16ac6fc239d39fdd7d8b141e9"
+    }
+  }
+}
