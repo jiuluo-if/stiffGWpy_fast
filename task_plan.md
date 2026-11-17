@@ -1589,3 +1589,26 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Re-run the 937-node PCHIP underflow diagnostic using the current directly solved Reference spectrum; compare original linear PCHIP with stable log arithmetic for the same positive polynomial while leaving Reference unchanged.
 - [ ] Extend current-source underflow coverage to independent tilt/amplitude/T_re/kappa10 strata and a Sobol holdout; the refreshed 235/469/937 result is still one discrete `cr=0` point and does not certify the parameter domain.
 - [ ] Run a matched-root/grid/thread performance A/B with cold/JIT/warm timing and memory accounting; keep the production default unchanged until this and broader independent accuracy evidence support a change.
+
+
+## Autonomous continuation: Round 54 — underflow scaling and phase-tail isolation
+
+- [x] Compare standard physical-power propagation with forced unit-transfer log propagation at the same representable nonzero amplitude, exact 235-node grid, frozen input `DN_eff`, and one thread; require identical returned background-grid hashes.
+- [x] Compare the adjacent nonzero product-underflow amplitude against the representable control using log-spectrum ratio and `DN_gw` ratio; separately verify exact-zero output and integral semantics.
+- [x] Record the current-source 937-node phase-resolved/phase-averaged fixed-root A/B with direct Reference spectrum errors; do not infer a general WKB error bound from one sample.
+- [x] Verify full pytest (`411 passed, 9 deselected`), Ruff, Mypy, sdist/wheel build, installed-wheel smoke, and Cobaya marker (`1 passed`).
+- [x] Resolve the initial false alarm: the discarded background assertion compared the constructor expansion mesh to Fast's finer internal evolution mesh (different lengths), not two backgrounds; replace it with exact cross-case hashes of the solver-returned grids.
+- [ ] Extend underflow scaling to independent tilt/boundary strata and at least one independent holdout; test `cr>0` only on a cutoff-valid physical-amplitude background.
+- [ ] Perform a same-root/grid/thread performance A/B only after the accuracy sample set is broadened; retain cold/JIT/warm timing and memory accounting.
+
+### Round 54 outcome
+
+- Physical-power vs forced log path at `r=1e-300,n_t=1.6,cr=0`: max/P95 spectrum difference `1.6315e-9/4.9101e-11 dex`; mapped `DN_gw` relative difference `−1.5654e-14`. Both use the exact same returned `Nv` and `f_hor` hashes.
+- At `r=1e-316`, stored `A_t=0` while the nonzero log amplitude remains finite. The 235-node linear spectrum contains 18 zeros, but all 235 log-spectrum entries remain finite. After applying the exact log-amplitude ratio, spectrum-shape max error is `1.6315e-9 dex` and map-ratio relative error is `9.3259e-15` against the representable control. This confirms the discrete `cr=0` scaling path only; it does not certify other tilts or a parameter interval.
+- Exact `r=0` is separate: 235 linear zeros, 235 `−inf` log-spectrum values, and exactly zero map. No `cr>0` background dependency was bypassed.
+- At the separate `r=1e-316,n_t=17.38` 937-node frozen-root phase A/B, phase correction is active for 13/937 modes with max weight `0.8106`. It changes the spectrum by at most `4.7969e-4 dex` and leaves the map unchanged at recorded precision; against direct Reference z8, max error changes from `9.0711e-4` (phase averaged) to `4.8297e-4 dex` (phase resolved), while P95 is effectively unchanged. This is one-point evidence, not a bound on phase quadrature, WKB remainder, or handoff error.
+- Raw artifacts and runners: `docs/research/results/log_amplitude_scale_equivalence_20261117.json` / `scripts/verify_log_amplitude_scale_equivalence_20261117.py`; `docs/research/results/underflow_phase_tail_937_ab_20261117.json` / `scripts/compare_underflow_phase_tail_937_20261117.py`.
+
+### Next Step
+
+Choose a small current-source tilt/amplitude boundary design around the tested underflow point; first verify each proposed case's derived amplitude, cutoff validity, and exact frequency setup before Reference work.
