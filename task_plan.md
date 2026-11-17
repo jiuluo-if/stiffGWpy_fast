@@ -1582,4 +1582,6 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Repeat 77/153/305 direct z10 grid closure at independent Sobol index 3; retain that the converged 305-node root remains just outside `2e-4`.
 - [x] Screen existing Fast adaptive targets against 305-node z10 Reference roots at Sobol 3/7; directly validate target `1e-4` spectra and root residuals on both exact adaptive grids.
 - [x] Validate the adaptive target `1e-4` grid at z12 on Sobol indices 3 and 7 with independent Reference root-relative closure; record that these two discrete points do not establish frequency convergence or domain coverage.
+- [x] Extend Sobol index 7 z12 Reference from 153 to 305 nested direct nodes and close the updated-root map; compare the 153→305 map shift and new-midpoint interpolation discrepancy, and evaluate the adaptive target `1e-4` root against the closed 305-node result.
+- [ ] Continue z12 frequency convergence to 609/937 nodes only if the 153→305 results and direct-node spectral changes warrant the added cost; index 3 z12 remains at 153 nodes.
 - [ ] Run a matched-root/grid/thread performance A/B with cold/JIT/warm timing and memory accounting; keep the production default unchanged until this and broader independent accuracy evidence support a change.
