@@ -1597,6 +1597,7 @@ Investigate the WKB discrepancy on a cutoff-valid consistency-branch point; dist
 - [x] Compare the adjacent nonzero product-underflow amplitude against the representable control using log-spectrum ratio and `DN_gw` ratio; separately verify exact-zero output and integral semantics.
 - [x] Record the current-source 937-node phase-resolved/phase-averaged fixed-root A/B with direct Reference spectrum errors; do not infer a general WKB error bound from one sample.
 - [x] Verify full pytest (`411 passed, 9 deselected`), Ruff, Mypy, sdist/wheel build, installed-wheel smoke, and Cobaya marker (`1 passed`).
+- [x] Commit the experiment bundle with the required identity, push to `fast_v0.2`, verify remote SHA, and verify all nine GitHub Actions checks passed.
 - [x] Resolve the initial false alarm: the discarded background assertion compared the constructor expansion mesh to Fast's finer internal evolution mesh (different lengths), not two backgrounds; replace it with exact cross-case hashes of the solver-returned grids.
 - [ ] Extend underflow scaling to independent tilt/boundary strata and at least one independent holdout; test `cr>0` only on a cutoff-valid physical-amplitude background.
 - [ ] Perform a same-root/grid/thread performance A/B only after the accuracy sample set is broadened; retain cold/JIT/warm timing and memory accounting.
