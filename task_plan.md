@@ -1651,3 +1651,30 @@ Build a nested 469→937 frequency grid from the exact saved 469 nodes; directly
 - [x] Round 55 local validation: `411 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel, installed-wheel smoke, and Cobaya marker pass. Production source unchanged.
 - [ ] Commit and push the validated preflight, Fast screen, Reference 75/235/469 artifacts, and ledgers; verify remote CI.
 - [x] Push validated Round 55 artifacts/ledgers and verify all nine GitHub Actions jobs at commit `1ed916a` pass.
+
+## Autonomous continuation: Round 56 — nested 469→937 frequency closure
+
+- [ ] Build the exact 937-node nested log-frequency grid from the committed 469-node direct Reference artifact; assert all 469 old nodes remain exact.
+- [ ] Before expensive propagation, inspect the Reference background snapshot at `DN_eff=0` and at the selected `n_t=1.6` Fast root; compare every physical background primitive bitwise to determine whether a direct updated-root ODE re-solve is necessary.
+- [ ] Directly solve Reference at z12 on all 937 nodes; compare 469 common nodes, all 468 inserted modes against linear-signal PCHIP from the direct 469 nodes, fixed-root map shift, and same-grid Fast spectrum/map.
+- [ ] Close the updated Reference map either by a direct second map or a verified bitwise-identical physical background plus root-relative residual; record the exact basis and residual.
+- [ ] If 469→937 map shift remains above `2e-4`, preserve the failure and choose whether 1873 direct nodes are proportionate; do not claim frequency convergence.
+
+### Next Step
+
+Inspect `reference._Background` fields and current Fast root magnitudes, then build/run the 469→937 z12 direct Reference screen with exact source/input hashes.
+
+### Round 56 outcome: 469→937 direct refinement
+
+- [x] Directly solve 937-node Reference z10/z12 on the exact nested grid; verify 469 shared nodes, all 468 new modes, current-source hashes, and warnings.
+- [x] Compare 469→937 fixed-root maps, added-node PCHIP errors, tail change, and same-grid Fast/Reference spectra for five nonzero amplitude categories.
+- [x] Close the minimum-subnormal z12 Reference map at its updated root (residual 0); record quadrature/interpolation estimates and zero-normalized-node count.
+- [x] Probe the exact Reference background formulas at 2,001 points for all tested `DN_eff` roots; retain that it is a finite probe and does not bypass the background dependency.
+- [ ] Run one independent reheating-temperature/`kappa10` holdout on current source at a cutoff-valid `cr=0` point; assess whether the 469→937 cost is proportionate before attempting 1873 nodes.
+- [ ] Commit/push Round 56 scripts/artifact/ledger and verify full CI.
+
+### Next Step
+
+Build a current-source Fast preflight and direct Reference holdout at a distinct `T_re`/`kappa10` background, beginning with `T_re=10,kappa10=.001,n_t=1.6,r=1e-316` (and minimum-subnormal `r`) before launching expensive Reference solves.
+- [x] Round 56 local full pytest/static/build/wheel/Cobaya validation passed; artifact source, runner, shared nodes, warnings, and closure verified.
+- [ ] Commit/push Round 56 direct 469→937 Reference result and verify remote CI.
