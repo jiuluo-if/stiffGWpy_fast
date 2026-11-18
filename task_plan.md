@@ -1678,3 +1678,4 @@ Inspect `reference._Background` fields and current Fast root magnitudes, then bu
 Build a current-source Fast preflight and direct Reference holdout at a distinct `T_re`/`kappa10` background, beginning with `T_re=10,kappa10=.001,n_t=1.6,r=1e-316` (and minimum-subnormal `r`) before launching expensive Reference solves.
 - [x] Round 56 local full pytest/static/build/wheel/Cobaya validation passed; artifact source, runner, shared nodes, warnings, and closure verified.
 - [ ] Commit/push Round 56 direct 469→937 Reference result and verify remote CI.
+- [x] Commit/push Round 56 469→937 Reference results and verify all nine GitHub Actions jobs at commit `546a024` pass.
