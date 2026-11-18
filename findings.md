@@ -3439,3 +3439,9 @@ remote matrix run.
 - A background-sensitivity diagnostic evaluated the exact Reference `_Background` formulas at 2,001 points over the full `N_re_abs..N_inf` interval for the tested Fast roots. `H2` and `sigma` outputs were bitwise identical to the `DN_eff=0` probe, though the linear `Oerh2` coefficient is nonzero (`~1e-279` for the largest root). This is a finite diagnostic probe, not a proof for every `N` or other parameters; no `DN_eff` dependence was bypassed.
 - Scope is one discrete `cr=0,n_t=1.6,T_re=2000,kappa10=.01` background with five nonzero amplitude representations. It does not certify a continuous parameter region. 469→937 meets the refinement screen, but the cumulative 235→937 shift remains just beyond it; decide whether 1873 is proportionate after independent background holdout checks.
 - Artifact/runner: `docs/research/results/underflow_boundary_reference_469_937_20261118.json` / `scripts/refine_underflow_boundary_reference_469_937_20261118.py`.
+
+## Round 57 holdout selection — current-source preflight only
+
+- Independently selected from the recorded 270-case construction preflight: `cr=0,n_t=1.6,T_re=10,kappa10=.001`, with `r=1e-316` and minimum-subnormal `r=5e-324`.
+- Both are nonzero input amplitudes whose stored `A_t` rounds to zero; finite log amplitudes are `−747.5979565` and `−764.4211390`. Both construct the same exact 221-node Fast grid (`sha256_f64le=cd3831ebfecf46fce907a723682d673cdcd8a1d8e609e375fbafc44f74a3a5fd`), with finite `N_inf=42.39051243` and no preflight error.
+- This is only background/grid feasibility evidence; no Fast propagation or Reference validation has yet been run for this independent low-temperature/low-kappa background.

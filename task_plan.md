@@ -1658,11 +1658,11 @@ Build a nested 469→937 frequency grid from the exact saved 469 nodes; directly
 - [ ] Before expensive propagation, inspect the Reference background snapshot at `DN_eff=0` and at the selected `n_t=1.6` Fast root; compare every physical background primitive bitwise to determine whether a direct updated-root ODE re-solve is necessary.
 - [ ] Directly solve Reference at z12 on all 937 nodes; compare 469 common nodes, all 468 inserted modes against linear-signal PCHIP from the direct 469 nodes, fixed-root map shift, and same-grid Fast spectrum/map.
 - [ ] Close the updated Reference map either by a direct second map or a verified bitwise-identical physical background plus root-relative residual; record the exact basis and residual.
-- [ ] If 469→937 map shift remains above `2e-4`, preserve the failure and choose whether 1873 direct nodes are proportionate; do not claim frequency convergence.
+- [x] 469→937 last-step map changes are `8.72e-5`–`8.79e-5` and pass the `2e-4` screen; retain that cumulative 235→937 is `−2.331e-4` and keep wider resolution decisions tied to independent backgrounds.
 
 ### Next Step
 
-Inspect `reference._Background` fields and current Fast root magnitudes, then build/run the 469→937 z12 direct Reference screen with exact source/input hashes.
+Run a direct Fast and Reference preflight/holdout at `T_re=10,kappa10=.001,n_t=1.6`, first validating rounded-zero and minimum-subnormal amplitudes on the exact constructed grid.
 
 ### Round 56 outcome: 469→937 direct refinement
 
@@ -1671,11 +1671,22 @@ Inspect `reference._Background` fields and current Fast root magnitudes, then bu
 - [x] Close the minimum-subnormal z12 Reference map at its updated root (residual 0); record quadrature/interpolation estimates and zero-normalized-node count.
 - [x] Probe the exact Reference background formulas at 2,001 points for all tested `DN_eff` roots; retain that it is a finite probe and does not bypass the background dependency.
 - [ ] Run one independent reheating-temperature/`kappa10` holdout on current source at a cutoff-valid `cr=0` point; assess whether the 469→937 cost is proportionate before attempting 1873 nodes.
-- [ ] Commit/push Round 56 scripts/artifact/ledger and verify full CI.
+- [x] Commit/push Round 56 scripts/artifact/ledger; direct-data commit `546a024` CI and final ledger commit `b545f85` CI both pass.
 
 ### Next Step
 
 Build a current-source Fast preflight and direct Reference holdout at a distinct `T_re`/`kappa10` background, beginning with `T_re=10,kappa10=.001,n_t=1.6,r=1e-316` (and minimum-subnormal `r`) before launching expensive Reference solves.
 - [x] Round 56 local full pytest/static/build/wheel/Cobaya validation passed; artifact source, runner, shared nodes, warnings, and closure verified.
-- [ ] Commit/push Round 56 direct 469→937 Reference result and verify remote CI.
+- [x] Verify Round 56 artifact commit and final ledger commit at remote `fast_v0.2`, with all CI jobs green.
 - [x] Commit/push Round 56 469→937 Reference results and verify all nine GitHub Actions jobs at commit `546a024` pass.
+
+## Autonomous continuation: Round 57 — independent low-temperature/low-kappa holdout
+
+- [ ] Use the current 270-case preflight row for `T_re=10,kappa10=.001,n_t=1.6` to check the exact Fast constructed grid and amplitude classification; no interpolated frequency nodes.
+- [ ] Run guarded Fast for `r=1e-316` and minimum-subnormal `r`, recording exact parameters, grid hashes, root/map, finite log rows, warnings, and failure causes.
+- [ ] If admitted, solve direct Cartesian Reference z10/z12 on the exact Fast grid; compare same-grid spectra/maps and close the updated root. Keep the 469→937 reference point as context, not as a substitute for this independent background.
+- [ ] Verify all runner/source/input hashes, local validation, commit/push, and CI. Do not claim domain expansion beyond the sampled holdout.
+
+### Next Step
+
+Inspect the exact 221-node preflight grid for the low-temperature/low-kappa holdout, then run the two guarded Fast amplitude cases.
