@@ -204,7 +204,14 @@ def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
     return left, right
 
 
-def exact_phi_s2(m, Nv, DN_eff, h):
+def _primitive_scales(psi, relative_scale):
+    if relative_scale:
+        units = np.ones_like(psi)
+        return units, units
+    return np.exp(psi), np.exp(-0.5 * psi)
+
+
+def exact_phi_s2(m, Nv, DN_eff, h, *, relative_scale=False):
     """Exact ``Phi``/``Phi_mid``/``S2``/``S2inv`` from the continuous sigma.
 
     ``F = integral sigma dN`` is evaluated on a fine sub-grid with the reheating
@@ -243,8 +250,7 @@ def exact_phi_s2(m, Nv, DN_eff, h):
     Phi_grid = 1.5 * F_grid - Nv + N0
     Phi_mid = 1.5 * F_mid - (Nv + half) + N0
     Psi = 3.0 * F_grid - 4.0 * Nv
-    S2 = np.exp(Psi)
-    S2inv = np.exp(-0.5 * Psi)
+    S2, S2inv = _primitive_scales(Psi, relative_scale)
     return Phi_grid.astype(np.float64), Phi_mid.astype(np.float64), \
         S2.astype(np.float64), S2inv.astype(np.float64)
 
@@ -275,14 +281,11 @@ def build_transition_grid(m, h):
     # Exact f_hor (log10 aH/(2pi)/Hz) with the MD extension for N < N_re_abs,
     # normalised to the grid's present node (same convention as gen_fast).
     # 计算精确 f_hor；N < N_re_abs 时延拓物质主导分支，并按网格当前时刻节点归一化，与 gen_fast 一致。
-    H2 = H2_vec(Nv, m, dn)
+    post = Nv >= N_re_abs
     raw = np.empty_like(Nv)
-    raw_re = -0.5 * N_re_abs + 0.5 * math.log(float(H2_vec(np.array([N_re_abs]), m, dn)[0]))
-    for i in range(Nv.size):
-        if Nv[i] < N_re_abs:
-            raw[i] = raw_re - 0.5 * (Nv[i] - N_re_abs)
-        else:
-            raw[i] = -0.5 * Nv[i] + 0.5 * math.log(float(H2[i]))
+    raw[post] = -0.5 * Nv[post] + 0.5 * np.log(H2_vec(Nv[post], m, dn))
+    raw_re = raw[np.searchsorted(Nv, N_re_abs)]
+    raw[~post] = raw_re - 0.5 * (Nv[~post] - N_re_abs)
     Delta_f = math.log(2.0 * math.pi / d['H_0'])
     f_hor = (raw - raw[-1] - Delta_f) / math.log(10.0)
     index_re = int(np.argmin(np.abs(Nv - N_re_abs)))
@@ -335,14 +338,11 @@ def build_kink_refined_grid(m, h, refine_radius=2.0, refine_factor=8):
     Nv = np.sort(np.concatenate((nodes, anchors)))
     dn = m.cosmo_param['DN_eff']
     sigma = sigma_vec(Nv, m, dn)
-    H2 = H2_vec(Nv, m, dn)
+    post = Nv >= N_re_abs
     raw = np.empty_like(Nv)
-    raw_re = -0.5 * N_re_abs + 0.5 * math.log(float(H2_vec(np.array([N_re_abs]), m, dn)[0]))
-    for i in range(Nv.size):
-        if Nv[i] < N_re_abs:
-            raw[i] = raw_re - 0.5 * (Nv[i] - N_re_abs)
-        else:
-            raw[i] = -0.5 * Nv[i] + 0.5 * math.log(float(H2[i]))
+    raw[post] = -0.5 * Nv[post] + 0.5 * np.log(H2_vec(Nv[post], m, dn))
+    raw_re = raw[np.searchsorted(Nv, N_re_abs)]
+    raw[~post] = raw_re - 0.5 * (Nv[~post] - N_re_abs)
     Delta_f = math.log(2.0 * math.pi / d['H_0'])
     f_hor = (raw - raw[-1] - Delta_f) / math.log(10.0)
     index_re = int(np.argmin(np.abs(Nv - N_re_abs)))
@@ -354,7 +354,7 @@ def build_kink_refined_grid(m, h, refine_radius=2.0, refine_factor=8):
     return Nv, sigma, f_hor, index_re
 
 
-def exact_phi_s2_grid(m, Nv, DN_eff):
+def exact_phi_s2_grid(m, Nv, DN_eff, *, relative_scale=False):
     """Exact ``Phi``/``midpoint-Phi``/``S2``/``S2inv``/``h_arr`` on a variable grid.
 
     中文：在可变步长网格上精确计算节点和区间中点处的 ``Phi``，以及 ``S2``、``S2inv`` 和步长数组。
@@ -382,8 +382,7 @@ def exact_phi_s2_grid(m, Nv, DN_eff):
     Phi_grid = 1.5 * F_nodes - Nv + N0
     Phi_mid = 1.5 * F_mid - mid + N0
     Psi = 3.0 * F_nodes - 4.0 * Nv
-    S2 = np.exp(Psi)
-    S2inv = np.exp(-0.5 * Psi)
+    S2, S2inv = _primitive_scales(Psi, relative_scale)
     h_arr = np.diff(Nv).astype(np.float64)
     return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
             S2.astype(np.float64), S2inv.astype(np.float64), h_arr)
@@ -422,7 +421,7 @@ def exact_phi_s2_breakpoint(m, Nv, DN_eff):
             S2.astype(np.float64), S2inv.astype(np.float64), h_arr)
 
 
-def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
+def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
     """Build uniform-grid primitives while splitting the one ``N_re`` interval.
 
     The returned grid remains uniform, so the hot kernel keeps its original
@@ -481,8 +480,7 @@ def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
     Phi_grid = 1.5 * F_nodes - Nv + N0
     Phi_mid = 1.5 * F_mid - mid + N0
     Psi = 3.0 * F_nodes - 4.0 * Nv
-    S2 = np.exp(Psi)
-    S2inv = np.exp(-0.5 * Psi)
+    S2, S2inv = _primitive_scales(Psi, relative_scale)
     return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
             S2.astype(np.float64), S2inv.astype(np.float64),
             kink_index, float(kink_fraction), float(phi_re))
@@ -492,7 +490,7 @@ def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
 def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
                       kink_fraction, sig_left, sig_re, sig_right,
                       h_arr, mid_sigma, integral, F_nodes, F_mid,
-                      Phi_grid, Phi_mid, S2, S2inv):
+                      Phi_grid, Phi_mid, S2, S2inv, relative_scale=False):
     n = len(Nv)
     for i in range(n - 1):
         h_arr[i] = Nv[i + 1] - Nv[i]
@@ -509,8 +507,14 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
             sig_re + 4.0 * sig_right + nodes_right[kink_index + 1]) / 6.0
         integral[kink_index] = left_integral + right_integral
     F_nodes[0] = 0.0
+    compensation = 0.0
     for i in range(n - 1):
-        F_nodes[i + 1] = F_nodes[i] + integral[i]
+        if relative_scale:
+            increment = integral[i] - compensation
+            F_nodes[i + 1] = F_nodes[i] + increment
+            compensation = (F_nodes[i + 1] - F_nodes[i]) - increment
+        else:
+            F_nodes[i + 1] = F_nodes[i] + integral[i]
         F_mid[i] = F_nodes[i] + h_arr[i] * (
             nodes_left[i] + 4.0 * (0.75 * nodes_left[i]
                                     + 0.25 * nodes_right[i + 1])
@@ -519,8 +523,8 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
     for i in range(n):
         Phi_grid[i] = 1.5 * F_nodes[i] - Nv[i] + N0
         Psi = 3.0 * F_nodes[i] - 4.0 * Nv[i]
-        S2[i] = np.exp(Psi)
-        S2inv[i] = np.exp(-0.5 * Psi)
+        S2[i] = 1.0 if relative_scale else np.exp(Psi)
+        S2inv[i] = 1.0 if relative_scale else np.exp(-0.5 * Psi)
     for i in range(n - 1):
         Phi_mid[i] = 1.5 * F_mid[i] - 0.5 * (Nv[i] + Nv[i + 1]) + N0
     return left_integral
@@ -543,7 +547,7 @@ def _fast_phi_s2_workspace(m, n):
     return workspace
 
 
-def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
+def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
     """Build a kink-exact primitive with a cheap smooth-background estimate.
 
     The formal fast path already has continuous background values at every
@@ -603,7 +607,7 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None):
         sig_left, sig_re, sig_right, workspace['h_arr'],
         workspace['mid_sigma'], workspace['integral'], workspace['F_nodes'],
         workspace['F_mid'], workspace['Phi_grid'], workspace['Phi_mid'],
-        workspace['S2'], workspace['S2inv'])
+        workspace['S2'], workspace['S2inv'], relative_scale)
     if kink_index >= 0 and 0.0 < kink_fraction < 1.0:
         phi_re = (1.5 * (workspace['F_nodes'][kink_index] + left_integral)
                   - n_re + Nv[0])

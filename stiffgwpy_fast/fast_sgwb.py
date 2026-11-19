@@ -1112,7 +1112,7 @@ def _correct_kink_background(m):
 
 # ================= Numba preparation / Numba 预处理（样条、原函数及频率初值） =================
 @njit(cache=True)
-def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus):
+def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus, relative_scale=False):
     nv = len(Nv)
     nseg = nv - 1
     M = np.empty(nv)
@@ -1155,8 +1155,8 @@ def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v, Phi_grid, Phi_mid, Psi, S2, S2in
     for i in range(nv):
         Phi_grid[i] = 1.5 * F[i] - Nv[i] + N0
         Psi[i] = 3.0 * F[i] - 4.0 * Nv[i]
-        S2[i] = math.exp(Psi[i])
-        S2inv[i] = math.exp(-0.5 * Psi[i])
+        S2[i] = 1.0 if relative_scale else math.exp(Psi[i])
+        S2inv[i] = 1.0 if relative_scale else math.exp(-0.5 * Psi[i])
     for i in range(nv):
         if i < nseg:
             seg = i
@@ -1252,7 +1252,7 @@ def prep_frequency_only(m, Nv, freqs):
     return (m.sigma, m.f_hor, workspace["j0s"], workspace["z0s"], workspace["fp_minus"])
 
 
-def prep_fast(m, Nv, freqs, h, variable_grid=False):
+def prep_fast(m, Nv, freqs, h, variable_grid=False, relative_scale=False):
     Sv = m.sigma
     f_hor = m.f_hor
     nv = len(Nv)
@@ -1267,7 +1267,7 @@ def prep_fast(m, Nv, freqs, h, variable_grid=False):
     if variable_grid:
         prep_frequency_kernel(f_hor, freqs, ln10, j0s, z0s, fp_minus)
     else:
-        prep_kernel(Nv, Sv, f_hor, freqs, h, ln10, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus)
+        prep_kernel(Nv, Sv, f_hor, freqs, h, ln10, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus, relative_scale)
     return Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus
 
 
@@ -1310,6 +1310,9 @@ def _scale_frequency_rows_by_log(values, log_scale):
 
 
 # ================= stepping, assembly and kernel / 步进、组装与计算核 =================
+_LOG_MAX_FLOAT = math.log(np.finfo(np.float64).max)
+
+
 def _uniform_step_terminal_width(Nv, h):
     """Return the final interval if all preceding grid steps equal ``h``.
 
@@ -1685,6 +1688,16 @@ def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, f
     Ogw[m, slot] = 3.0 * Op + oj
 
 
+@njit(cache=True, inline="always")
+def _mode_state(x, y, index, start, log_gain, relative_background):
+    if relative_background is None:
+        return x, y
+    log_scale = relative_background[0]
+    # A common exact gauge at the mode start cancels in every observable.
+    scale = math.exp((log_scale[index] - log_scale[start]) + log_gain)
+    return scale * x, scale * y
+
+
 @njit(parallel=True, cache=True)
 def solve_kernel(
     Nv,
@@ -1717,6 +1730,7 @@ def solve_kernel(
     phase_weight=None,
     tail_state=None,
     z_tail_by_mode=None,
+    relative_background=None,
 ):
     """Integrate independent modes and write their coarse output rows.
 
@@ -1738,6 +1752,7 @@ def solve_kernel(
         fp_i = fp_freq[m]
         Phi0 = Phi_grid[j0]
         xh, yh = 0.0, math.exp(z0) * S2inv[j0]
+        log_gain = 0.0
         k = j0
         # Track the next coarse sample instead of taking a modulo every step.
         # 递增维护下一个粗采样列，避免每个积分步都执行取模。
@@ -1745,15 +1760,18 @@ def solve_kernel(
         zz = z0 + Phi_grid[k] - Phi0
         lxh = 0.0
         lyh = yh
+        last_gain = log_gain
         last_z = zz
         if k % col_step == 0:
             if assemble:
                 slot = k // col_step
                 if slot >= n_coarse - 1:
                     slot = n_coarse - 1
-                assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
+                ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
+                assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], ax, ay, zz, Pt)
         elif k == nv - 1:
-            assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
+            ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
+            assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], ax, ay, zz, Pt)
         if zz < mode_z_tail:
             while k < nv - 1 and zz < mode_z_tail:
                 if h_arr is not None:
@@ -1778,6 +1796,12 @@ def solve_kernel(
                 else:
                     z_end = 2.0 * z_mid_step - z_node
                     xh, yh = _phase_segment(xh, yh, z_node, z_end, h_step, phase_max)
+                if relative_background is not None:
+                    size = max(abs(xh), abs(yh))
+                    if size > 2.0**450 or 0.0 < size < 2.0**-450:
+                        xh /= size
+                        yh /= size
+                        log_gain += math.log(size)
                 k += 1
                 zz = z0 + Phi_grid[k] - Phi0
                 if k == next_assembly_k:
@@ -1785,13 +1809,16 @@ def solve_kernel(
                         slot = k // col_step
                         if slot >= n_coarse - 1:
                             slot = n_coarse - 1
-                        assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], xh, yh, zz, Pt)
+                        ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
+                        assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], ax, ay, zz, Pt)
                     next_assembly_k += col_step
                 elif k == nv - 1:
-                    assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], xh, yh, zz, Pt)
+                    ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
+                    assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], ax, ay, zz, Pt)
                 if zz < mode_z_tail:
                     lxh = xh
                     lyh = yh
+                    last_gain = log_gain
                     last_z = zz
             if zz < mode_z_tail:
                 kend = nv - 1
@@ -1801,6 +1828,7 @@ def solve_kernel(
                     kend = j0
         else:
             kend = j0
+        lxh, lyh = _mode_state(lxh, lyh, kend, j0, last_gain, relative_background)
         if tail_state is not None and phase_weight[m] > 0.0 and kend < nv - 1:
             tail_state[m, 0] = lxh
             tail_state[m, 1] = lyh
@@ -1815,7 +1843,7 @@ def solve_kernel(
             else:
                 amp2 = lxh * lxh + lyh * lyh
             coeff = math.sqrt(0.5 * s2k * amp2)
-            eNz = math.exp(Nv[kend] - last_z)
+            eNz = math.exp(Nv[kend] - last_z) if relative_background is None else 0.0
             if handoff_eps is not None:
                 if Sv is not None:
                     handoff_eps[m] = abs(1.5 * Sv[kend] - 1.0) * e_z
@@ -1837,7 +1865,19 @@ def solve_kernel(
                 kk2 = col_step * slot
                 if slot == n_coarse - 1:
                     kk2 = nv - 1
-                assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus)
+                if relative_background is None:
+                    assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus)
+                else:
+                    horizon = relative_background[1]
+                    decay = (Nv[kend] - Nv[kk2]) - last_z
+                    log_q = z0 + (horizon[j0] - horizon[kk2]) * ln10
+                    th = coeff * math.exp(decay)
+                    xf = coeff * math.exp(decay + log_q)
+                    oj = -th * th / 3.0 * Pt
+                    op = xf * xf / 36.0 * Pt
+                    Oj[m, slot] = oj
+                    Opgw[m, slot] = op
+                    Ogw[m, slot] = 3.0 * op + oj
 
 
 # ================= Simpson weights / Simpson 预计算权重 =================
@@ -2746,6 +2786,9 @@ def _SGWB_iter_fast_impl(
                 Ogw = Oj = Opgw = None
             first = False
             h_final = 0.0
+            # WKB forms exp(N_h) and exp(-N); its absolute factors cease
+            # to be normal before a translation-invariant product does.
+            relative_scale = Nv[-1] >= _LOG_MAX_FLOAT - z_tail
             if transition_refine:
                 # The refined grid is nonuniform and already contains N_re as
                 # an exact node; its interval widths must reach solve_kernel.
@@ -2757,13 +2800,13 @@ def _SGWB_iter_fast_impl(
                     from .exact_background import exact_phi_s2_grid
 
                     Phi_grid, Phi_mid, S2, S2inv, h_arr = exact_phi_s2_grid(
-                        m, Nv, m.cosmo_param["DN_eff"]
+                        m, Nv, m.cosmo_param["DN_eff"], relative_scale=relative_scale
                     )
                 else:
                     from .exact_background import fast_phi_s2_split
 
                     Phi_grid, Phi_mid, S2, S2inv, _, _, _ = fast_phi_s2_split(
-                        m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
+                        m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma, relative_scale=relative_scale
                     )
                     h_arr = np.diff(Nv)
                 h_final = _uniform_step_terminal_width(Nv, h)
@@ -2796,31 +2839,31 @@ def _SGWB_iter_fast_impl(
                         from .exact_background import exact_phi_s2_split
 
                         exact_primitive = exact_phi_s2_split(
-                            m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
+                            m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma, relative_scale=relative_scale
                         )
                     else:
                         from .exact_background import fast_phi_s2_split
 
                         exact_primitive = fast_phi_s2_split(
-                            m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma
+                            m, Nv, m.cosmo_param["DN_eff"], sigma_nodes=m.sigma, relative_scale=relative_scale
                         )
                     exact_Nv, exact_sigma, exact_f_hor = _retain_outer_background_snapshot(Nv, m.sigma, m.f_hor)
                     Phi_grid, Phi_mid, S2, S2inv, kink_index, kink_fraction, phi_re = exact_primitive
                 h_arr = None
             elif sigma_exact:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                    m, Nv, freqs, h, variable_grid=False
+                    m, Nv, freqs, h, variable_grid=False, relative_scale=relative_scale
                 )
                 from .exact_background import exact_phi_s2
 
-                Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(m, Nv, m.cosmo_param["DN_eff"], h)
+                Phi_grid, Phi_mid, S2, S2inv = exact_phi_s2(m, Nv, m.cosmo_param["DN_eff"], h, relative_scale=relative_scale)
                 h_arr = np.diff(Nv)
                 kink_index = -1
                 kink_fraction = 0.0
                 phi_re = 0.0
             else:
                 Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus = prep_fast(
-                    m, Nv, freqs, h, variable_grid=False
+                    m, Nv, freqs, h, variable_grid=False, relative_scale=relative_scale
                 )
                 h_arr = np.diff(Nv)
                 kink_index = -1
@@ -2960,7 +3003,10 @@ def _SGWB_iter_fast_impl(
                     Opgw.fill(0.0)
                 if tail_state is not None:
                     tail_state[:, 3] = -1.0
-                if tail_z_by_mode is None:
+                if relative_scale:
+                    solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode,
+                                 relative_background=(Phi_grid - Nv, f_hor))
+                elif tail_z_by_mode is None:
                     solve_kernel(*solve_args)
                 else:
                     solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode)
