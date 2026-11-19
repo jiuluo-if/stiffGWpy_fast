@@ -1976,3 +1976,5 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - Continuation: added four paired CR1 crossing points to enlarge the accepted finite-sample rectangle to `[1e5,5e5]^2`; old/current Fast `0/9 → 9/9` on the 3×3 lattice, plus independent holdout `0/1 → 1/1`. Direct z8 Reference at the newly added 800k total density passes root `3.44e-5`, spectrum `8.70e-4 dex`. Updated report/plot and will refresh manifest before the follow-up commit.
 
 - CI for prior evidence commit `0a0ef4742dadbabd6b3c6c8db57a479e70bf9739` completed successfully: all 9 jobs passed. The 5e5 extension is a follow-up documentation/data commit; its source and Reference code are unchanged.
+
+- CI run `44551497120` for commit `5dcc29326ba862c7f1a550e97f2b9442dc6b3aa3` passed all 9 jobs. Continued with an asymmetric CR1 rectangle and 800k same-sum holdout check; its paired screen is `0/8 → 8/8` plus holdout `0/1 → 1/1`, and Reference reuse passes after fixing the runner import path. New report/manifest/figure changes are staged for the next focused commit.

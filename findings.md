@@ -3523,3 +3523,7 @@ remote matrix run.
 
 - Extended the precision-qualified CR1 density box from `[1e5,3e5]^2` to `[1e5,5e5]^2`. Four additional paired crossings `(1e5,5e5)`, `(3e5,5e5)`, `(5e5,1e5)`, `(5e5,3e5)` are old Fast `0/4` → current Fast `4/4`, all old failures `nonfinite_background_primitive`; together with the original 5 matching samples this yields `0/9 → 9/9` on the `{1e5,3e5,5e5}` 3×3 lattice. The independent `(2e5,2.5e5)` holdout remains `0/1 → 1/1`.
 - Direct z8 Reference at `(3e5,5e5)` (total density 800k) passes with root proxy `3.4397e-5`, spectrum max `8.7012e-4 dex`. Existing checks cover the remaining distinct lattice sums 200k, 400k, 600k, and 1M, plus 450k holdout. Across six precision checks max root proxy is `8.7923e-5`, max spectrum error `9.0781e-4 dex`. Exact source symmetry maps the swapped 800k/600k pairs to the same physical model.
+
+- 继续扩展到非对称 CR1 矩形 `Omega_bh2∈[1e5,7e5]`、`Omega_ch2∈[1e5,3e5]`。在 `{1e5,3e5,5e5,7e5}×{1e5,3e5}` 的 4×2 格点上，合并已有与新增同输入记录后旧 Fast `0/8`、候选 `8/8`；两点新增的 700k 行和 `(650k,150k)` 独立留出均旧版 `nonfinite_background_primitive`、新版成功。
+- 对 holdout `(650k,150k)` 复用同 `Omega_mh2=800k` 的直接 z8 Reference 原始数据：修正验证脚本显式导入本仓库后，Fast 频率数组与 Reference 网格 bitwise 相同，根代理差 `3.4397e-5`、最大谱差 `8.7012e-4 dex`。先前可复现脚本导入了环境中另一份已安装包，首次网格断言失败；修正仓库根 `sys.path` 后同一核验稳定通过。
+- 当前扩大矩形的采样最大 `Omega_bh2` 达 `7e5`，总密度不超过已有 Reference 校验的 1M。这个范围仍为有限样本证据；高总密度 `1e6` 方形角点仍不通过精度门槛。

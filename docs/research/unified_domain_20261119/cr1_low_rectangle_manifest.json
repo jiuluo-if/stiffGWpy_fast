@@ -1,37 +1,69 @@
 {
-  "status": "accepted_sampled_cr1_density_rectangle_1e5_to_5e5; terminal_curved_transfer_candidate_rejected",
+  "status": "accepted_sampled_cr1_density_regions_to_total_density_1e6; terminal_curved_transfer_candidate_rejected",
   "base_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
   "candidate_source_commit": "b236c5632fa06cbd113f11627efadee92947c243",
   "reference_source_unchanged": true,
   "domain": {
     "cr": 1.0,
-    "Omega_bh2_range": [
-      100000.0,
-      500000.0
-    ],
-    "Omega_ch2_range": [
-      100000.0,
-      500000.0
-    ],
     "derived_nt": -0.00125,
     "finite_N_inf": 68.81383977195475,
-    "lattice_values": [
-      100000.0,
-      300000.0,
-      500000.0
-    ],
-    "independent_holdout": [
-      200000.0,
-      250000.0
+    "square": {
+      "Omega_bh2_range": [
+        100000.0,
+        500000.0
+      ],
+      "Omega_ch2_range": [
+        100000.0,
+        500000.0
+      ],
+      "lattice_values": [
+        100000.0,
+        300000.0,
+        500000.0
+      ]
+    },
+    "asymmetric_rectangle": {
+      "Omega_bh2_range": [
+        100000.0,
+        700000.0
+      ],
+      "Omega_ch2_range": [
+        100000.0,
+        300000.0
+      ],
+      "lattice_values_baryon": [
+        100000.0,
+        300000.0,
+        500000.0,
+        700000.0
+      ],
+      "lattice_values_cdm": [
+        100000.0,
+        300000.0
+      ]
+    },
+    "independent_holdouts": [
+      [
+        200000.0,
+        250000.0
+      ],
+      [
+        650000.0,
+        150000.0
+      ]
     ],
     "modeled_density_dependency": "Omega_mh2=Omega_bh2+Omega_ch2"
   },
   "paired_outcome": {
-    "rectangle_old_successes": 0,
-    "rectangle_points": 9,
-    "rectangle_candidate_successes": 9,
+    "square_old_successes": 0,
+    "square_points": 9,
+    "square_candidate_successes": 9,
+    "asymmetric_old_successes": 0,
+    "asymmetric_points": 8,
+    "asymmetric_candidate_successes": 8,
     "holdout_old_successes": 0,
-    "holdout_candidate_successes": 1,
+    "holdouts": 2,
+    "holdout_candidate_successes": 2,
     "old_failure_reason": "nonfinite_background_primitive"
   },
   "reference_checks": {
@@ -43,8 +75,8 @@
       800000.0,
       1000000.0
     ],
-    "independent_holdout_density_sum": 450000.0,
-    "number_of_precision_checks": 6,
+    "direct_reference_checks": 6,
+    "symmetry_reuse_holdout_checks": 1,
     "root_relative_proxy_max": 8.792282041589466e-05,
     "spectrum_max_abs_dex": 0.0009078084035285519,
     "root_gate": 0.0002,
@@ -58,6 +90,8 @@
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_density.json": "a19e4f10755d0419bbf4a0591b91af3fb7e3396a1eeb2c6253dc1ce5191ab8c4",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_mid_rectangle_crossings.py": "593e7af4c854e6529b6eb09b58e14c38d9e52d2b742b5959595cea48e5ec3eb0",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_mid_rectangle_crossings.json": "ad28ca7485d7821685558972f84f6e10a50c5845c24399d5c969ee2421d568be",
+    "docs/research/unified_domain_20261119/screen_h2_identity_cr1_asymmetric_rectangle.py": "a325c784911c2a3d1082257e782bbd5781691e2260824f7eb16f87d07a234e51",
+    "docs/research/unified_domain_20261119/screen_h2_identity_cr1_asymmetric_rectangle.json": "dd26421882abd4125c2ea208f333c719c94e129cdf8f20c62cf16e50d2151f49",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_low_rectangle_holdout.py": "053140f35a3dc5c519f6cbedf4f5bb03487498e7f4d341a957c1599fbc53b578",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_low_rectangle_holdout.json": "8f66d28a69a02173ab2de30c549cf5ec67fcc7a426afb1d37154c4dc8bb57ce4",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_density_z8.json": "e1b6ab5f39958dd0052c42fe78c0fbd23a047d3c61af3df6340d27bd57e48363",
@@ -65,9 +99,11 @@
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_low_rectangle_z8.json": "b2514674de17b500f2bc9c24265abc758c2b533091350ffac98149bdcedf720f",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_mid_rectangle_z8.py": "11a4025aaa65cda368255ff91abd6ec5bdf32e9cb6e47bd89dd9a4cee5a50a25",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_mid_rectangle_z8.json": "5f1211f5a589095de402bbe64ae344f472786b5a679d2fd8ebf9b6c9096de1ce",
-    "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "dc4615af7bceeb4e2ef0e26654220bb6d1628102f137b0ab15778eaa4ba06c6e",
-    "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "55f1c35d4509d3f5309005148873c6a36c2516f8746e3abea8eb2ade1abb7b6e",
-    "docs/research/unified_domain_20261119/domain_expansion.md": "ffe84b9d114caf80dbf73693ae60368b870426bececbc81f3b93a4cbb64d224f",
+    "docs/research/unified_domain_20261119/validate_h2_identity_cr1_asymmetric_holdout_symmetry.py": "50e2a8a68b2f82d20c131adb99d974bc1cdd76c6d1d60ea0337717527815b367",
+    "docs/research/unified_domain_20261119/validate_h2_identity_cr1_asymmetric_holdout_symmetry.json": "040c22beff0595c0f9d2cc0a50c856ff5e0dcd5ff7d13ee508153f99c03a8c9e",
+    "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "613870ee51f6e120b02722857f6ced909b354119334880b59acb0e1a12d78412",
+    "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "873c6de6fe2176da5ec8ec921c8735455a6bb0966cb049112420ee56f4ec435f",
+    "docs/research/unified_domain_20261119/domain_expansion.md": "afce21af2062c51ec2b564db7917ad2596837e1b64ffed222c70d7946c9336c8",
     "docs/research/unified_domain_20261119/diagnose_cr1_mode_trajectory_fixed_root.py": "4f5331bd65f9124f9aa8886bd4f5f210bfa3bef39050859360bc6644d6b92458",
     "docs/research/unified_domain_20261119/cr1_mode_trajectory_curved_transfer_thresholds.json": "fcbd691d28ce4a87f104039fe1abdd4aa26b273bbeffa8b45da2a08386b9f246",
     "docs/research/unified_domain_20261119/cr1_high_corner_curved_transfer_fast_probe.json": "672aee56cc55bcf57d40df97b01419c6c4b0aea0dbbe8e5df89fe558e05de5d3"

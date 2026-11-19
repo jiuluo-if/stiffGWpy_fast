@@ -1729,12 +1729,12 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 ### Precision-qualified CR1 density rectangle
 
 - [x] Audited the model dependency: `Omega_bh2` and `Omega_ch2` enter downstream only through their sum `Omega_mh2`.
-- [x] Reused the paired `872a70d` 3×3 screen and added four crossings to extend the rectangle through `[1e5,5e5]²`: combined 3×3 corners are old Fast `0/9`, current Fast `9/9`, all old failures `nonfinite_background_primitive`.
-- [x] Added exact paired old/new check for independent `(2e5,2.5e5)` holdout: `0/1 → 1/1` with the same old failure.
+- [x] Reused the paired `872a70d` 3×3 screen and added four crossings for the square `[1e5,5e5]²` (`0/9 → 9/9`), then added an overlapping asymmetric rectangle `[1e5,7e5] × [1e5,3e5]` (`0/8 → 8/8`); all old failures are `nonfinite_background_primitive`.
+- [x] Added exact paired old/new checks for independent `(2e5,2.5e5)` and `(6.5e5,1.5e5)` holdouts: both are `0/1 → 1/1` with the same old failure. The 800k asymmetric holdout exactly reuses the same-total-density Reference result after bitwise frequency-grid confirmation.
 - [x] Same-grid z8 Reference checks cover each of the five distinct total-density sums in the rectangle plus an independent holdout. Across six checks max root proxy is `8.7923e-5`, max spectrum error `9.0781e-4 dex`; all pass.
 - [x] Updated raw artifact, source-hash manifest, domain report, and paired coverage/precision plot.
 - [x] Full local validation: `428 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel, evidence integrity checks passed.
 
 ### Next Step
 
-Stage the new 5e5 crossing scripts/data, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 1e6 CR1 corner remains unresolved; finite points do not certify the continuum.
+Stage the 7e5 asymmetric screen/holdout data, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 1e6 square corner remains unresolved; finite points do not certify the continuum.

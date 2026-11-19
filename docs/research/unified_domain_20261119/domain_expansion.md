@@ -107,6 +107,14 @@ The earlier `cr=1` 3×3 rectangle extending to `Omega_bh2=Omega_ch2=1e6` remains
 - `Omega_bh2` and `Omega_ch2` enter downstream only through `Omega_mh2=Omega_bh2+Omega_ch2`. Thus swapped coordinates with the same total density have exactly the same modeled background and spectra; direct Reference checks are retained for every distinct total density sampled in the rectangle. This source-level symmetry does not turn the finite accuracy samples into a continuous-domain proof.
 - After warmup, candidate Fast calls in the new cross points take `0.11–0.16 s`; the independent holdout is `0.27 s` including process-local startup. The previously screened `1e6 × 1e6` corner remains excluded. No interpolation is used to claim unsampled accuracy.
 
+### Additional asymmetric CR1 rectangle
+
+A second overlapping sampled rectangle extends the baryon-density axis while keeping the total density within the Reference-validated range: `Omega_bh2 ∈ [1e5,7e5]`, `Omega_ch2 ∈ [1e5,3e5]`. On the `{1e5,3e5,5e5,7e5} × {1e5,3e5}` lattice, combining prior paired rows and new exact baseline screens gives old Fast `0/8`, current Fast `8/8`; every old failure is `nonfinite_background_primitive`. The independent holdout `(6.5e5,1.5e5)` is old `0/1`, current `1/1`.
+
+The lattice totals are `200k,400k,600k,800k,1M`, already covered by the direct z8 Reference checks above. For the independent holdout, the current Fast frequency nodes match the saved 800k Reference nodes bitwise; its root proxy is `3.4397e-5` and spectrum max error is `8.7012e-4 dex`. This reuse is valid because both density inputs enter only through their exact sum, and the source hash matches. The holdout Fast run took `0.35 s`; new rectangle corners took `0.15–0.16 s`.
+
+The square and asymmetric rectangles overlap but are distinct sampled regions. They are finite coverage evidence, not a guarantee for unsampled points or a continuous-domain proof. The updated plot outlines both regions.
+
 ### Rejected local transfer-curvature candidate
 
 A separate diagnostic found that high-error CR1 mode trajectories accumulate transfer-state discrepancy near the terminal active panels. A quadratic quarter-point local transfer reduced the largest discrepancies for two selected modes, but a full high-corner Fast solve moved the root only from `0.2117557174` to `0.2117574375`; relative to the saved same-grid z10 Reference map this remains `4.43e-4`, slightly worse than the previous `4.35e-4`. The candidate production edit and its focused test were removed. This mechanism is not accepted and provides no capability or performance claim. Its fixed-root mode traces and the no-change Fast probe remain in the diagnostic artifacts.
