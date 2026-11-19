@@ -1,0 +1,58 @@
+{
+  "status": "complete_finite_sample_domain_evidence",
+  "candidate_head_before_evidence_commit": "7c548be4757343137dc3c9e576ee778de8453376",
+  "baseline_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "trusted_benchmark_base": "48bbb96a44d4ced3f7e3d80dd2a2deaae440a0a3",
+  "candidate_source_sha256": {
+    "stiffgwpy_fast/fast_sgwb.py": "98a0fe0961b93689a74f63ad9c77ea29c60dd23b68a6ab346d6f984c72bb03e5",
+    "stiffgwpy_fast/exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "stiffgwpy_fast/reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "artifact_sha256": {
+    "docs/research/unified_domain_20261119/screen_cr0_density_negative_tilt.py": "e9fdf4728d0c0014e02fcc5ef596afa50e7db697afb14c5de80227eb6addcd44",
+    "docs/research/unified_domain_20261119/screen_cr0_density_negative_tilt_sobol.py": "886dc0aa000dde250c4296d1f1a7cefc7afd16ec1754baca945648a167956e07",
+    "docs/research/unified_domain_20261119/screen_cr0_density_negative_tilt_exploratory.json": "a034d381146b6bf141eeb18fae58acd04b53f00e1804ea9fa7a726323a4e80dc",
+    "docs/research/unified_domain_20261119/screen_cr0_density_negative_tilt_sobol.json": "1976577325bbda60f4269d98500890c795cd12468b865270e045ce6f9ec15a4e",
+    "docs/research/unified_domain_20261119/screen_cr0_density_tilt_exploratory.json": "af8c1dc2129de7970cf52b7628143c1fa47438ccdec87959c37872cf79cc6d99",
+    "docs/research/unified_domain_20261119/validate_cr0_density_negative_tilt_z8.py": "c9856e1cca8e1403523debf3d6c07b39d4d60d1728c085fdbdfec351f7709a8f",
+    "docs/research/unified_domain_20261119/validate_cr0_density_negative_tilt_z8.json": "5cfa49e1a87e9053edd26a93a72163475b2a1252b9f64bf2fb6cf03af6969cf1",
+    "docs/research/unified_domain_20261119/benchmark_cr0_density_negative_tilt_fast.py": "d98bac2e4e3cbcc9d3bf6d0914bcab3ccf9748713dbe773993029bb342ead9c4",
+    "docs/research/unified_domain_20261119/benchmark_cr0_density_negative_tilt_fast.json": "cda3dfef37a02591e6267e6c31ad2ae8fc5cef8f612613c40b05e76a1846df6b",
+    "docs/research/unified_domain_20261119/benchmark_exact_quarter_candidate_trusted_ab.json": "20844fe1595ebc1f86ab100db6cc0af26c33e70f8ab04a88255a6b1b8034cc12",
+    "docs/research/unified_domain_20261119/plot_cr0_density_negative_tilt_domain.py": "4f04fa534c81e92e229e610b2d4b6649e03f50187739cfec459263f359cbf0ef",
+    "docs/research/unified_domain_20261119/cr0_density_negative_tilt_domain.png": "210546a2e2c5949ceddb2ae02ab65773582afe1acd80a7798f68b6fb414cad01",
+    "docs/research/unified_domain_20261119/domain_expansion.md": "1c4e56f9b26a7872094e9b9914f950ea4217e9e660d5a9432c8a0dda197fc81e",
+    "progress.md": "6357c48e2ea1cf247246b2efcbd28d7327a97e26dedc5c2bc6605a5f414519bc",
+    "findings.md": "4e55d411038ce7311a26453359041ee33247e43a3901141b925a24659d98cac0"
+  },
+  "expansion": {
+    "cr": 0.0,
+    "Omega_bh2": [
+      100000.0,
+      1000000.0
+    ],
+    "n_t": [
+      -0.5,
+      0.0
+    ],
+    "paired_lattice_old_new": "0/9 -> 9/9",
+    "manual_holdouts_old_new": "0/2 -> 2/2",
+    "scrambled_sobol_seed": 20261120,
+    "sobol_n": 8,
+    "sobol_old_new": "0/8 -> 8/8",
+    "direct_reference_checks": 5,
+    "max_root_relative_error": 6.570783285047756e-05,
+    "max_spectrum_error_dex": 0.0008586859931618562,
+    "max_reference_closure_residual": 5.1315608621160794e-08,
+    "candidate_warm_p50_seconds": [
+      0.00626215,
+      0.00739005000286852
+    ],
+    "candidate_warm_p95_seconds": [
+      0.006969424996350426,
+      0.008310345003337716
+    ]
+  },
+  "performance_note": "Current-source trusted aggregate P50/P95 ratios pass at 1.0220/1.0441; two trusted-case P50 and four case P95 ratios exceed 1.05. Maximum individual P95 ratio is 1.1072.",
+  "reference_modified": false
+}
