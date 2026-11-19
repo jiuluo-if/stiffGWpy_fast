@@ -54,7 +54,12 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
             ))
     low_cr1 = _load("validate_h2_identity_cr1_low_rectangle_z8.json")
     mid_cr1 = _load("validate_h2_identity_cr1_mid_rectangle_z8.json")
-    for row in low_cr1["cases"] + mid_cr1["cases"]:
+    upper_cr1 = _load("validate_h2_identity_cr1_upper_boundary_z8.json")
+    square_cr1 = _load("validate_h2_identity_cr1_600_square_z8.json")
+    for row in (
+        low_cr1["cases"] + mid_cr1["cases"]
+        + upper_cr1["cases"] + square_cr1["cases"]
+    ):
         results.append((
             f"cr1 低密度 {row['case_id']}",
             float(row["root_relative_error_proxy"]),
@@ -68,6 +73,15 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
         "cr1 非对称矩形独立留出 800k",
         float(symmetry_holdout["root_relative_error_proxy"]),
         float(symmetry_holdout["spectrum_max_abs_dex"]),
+        "cr1",
+    ))
+    square_holdout = _load(
+        "validate_h2_identity_cr1_600_square_holdout_symmetry.json"
+    )
+    results.append((
+        "cr1 扩展方形独立留出 1100k",
+        float(square_holdout["root_relative_error_proxy"]),
+        float(square_holdout["spectrum_max_abs_dex"]),
         "cr1",
     ))
     return results
@@ -116,7 +130,7 @@ def main() -> None:
             ax.grid(True, alpha=0.25)
             if row_index == 2 and version == "candidate":
                 lower = 5.0
-                upper = np.log10(5.0e5)
+                upper = np.log10(6.0e5)
                 ax.add_patch(Rectangle(
                     (lower, lower), upper - lower, upper - lower,
                     fill=False, edgecolor="#16804a", linestyle="--",

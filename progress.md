@@ -1978,3 +1978,5 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - CI for prior evidence commit `0a0ef4742dadbabd6b3c6c8db57a479e70bf9739` completed successfully: all 9 jobs passed. The 5e5 extension is a follow-up documentation/data commit; its source and Reference code are unchanged.
 
 - CI run `44551497120` for commit `5dcc29326ba862c7f1a550e97f2b9442dc6b3aa3` passed all 9 jobs. Continued with an asymmetric CR1 rectangle and 800k same-sum holdout check; its paired screen is `0/8 → 8/8` plus holdout `0/1 → 1/1`, and Reference reuse passes after fixing the runner import path. New report/manifest/figure changes are staged for the next focused commit.
+
+- CI run `44552905102` for `98486a9781a56c0b4abc4f8766f6bc31ea779fcc` passed all 9 jobs. Continued boundary search: 1.1M and 1.2M paired CR1 corners have direct z8 Reference and both pass; the additional 700k cross sample passes too. Expanded square lattice `{1e5,5e5,6e5}` has old/current `0/9→9/9`; holdout `(5.5e5,5.5e5)` old/current `0/1→1/1`, using verified same-sum Reference reuse. Latest report/plot/manifest and scripts/data are pending a focused commit.

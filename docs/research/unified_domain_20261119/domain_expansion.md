@@ -99,13 +99,13 @@ This is an output-validity correction only, not an expansion result: the wide-su
 
 ### Accepted finite-sample coverage
 
-The earlier `cr=1` 3×3 rectangle extending to `Omega_bh2=Omega_ch2=1e6` remains outside the accepted precision domain because its upper corner misses the root gate. The precision-qualified rectangle is now extended to `Omega_bh2, Omega_ch2 ∈ [1e5,5e5]`, with `cr=1`, consistency-derived tilt `n_t=-0.00125`, finite `N_inf=68.81384`, and `physical_guard=True`:
+The earlier `cr=1` 3×3 rectangle extending to `Omega_bh2=Omega_ch2=1e6` remains outside the accepted precision domain because its upper corner misses the root gate. The precision-qualified square now reaches `Omega_bh2, Omega_ch2 ∈ [1e5,6e5]`, with `cr=1`, consistency-derived tilt `n_t=-0.00125`, finite `N_inf=68.81384`, and `physical_guard=True`:
 
-- The paired 3×3 sample on values `{1e5,3e5,5e5}` has old Fast `0/9` and current Fast `9/9`; all old failures are `nonfinite_background_primitive`. This combines the original `872a70d` density screen with four new cross points; base SHA is `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45`, candidate SHA `b236c5632fa06cbd113f11627efadee92947c243`.
-- Independent holdout `(Omega_bh2, Omega_ch2)=(2e5,2.5e5)` has old Fast `0/1` and current Fast `1/1`, with the same old failure. Combined paired status is `0/10 → 10/10`.
-- Same-grid z8 Reference checks validate the rectangle's distinct density sums `200k, 400k, 600k, 800k, 1M`, plus the independent 450k holdout. They cover the lower corner, cross points, upper corner, and holdout. Across these six checks, the maximum root-relative proxy is `8.7923e-5` and maximum spectrum error is `9.0781e-4 dex`, under `2e-4` and `1e-3 dex`.
-- `Omega_bh2` and `Omega_ch2` enter downstream only through `Omega_mh2=Omega_bh2+Omega_ch2`. Thus swapped coordinates with the same total density have exactly the same modeled background and spectra; direct Reference checks are retained for every distinct total density sampled in the rectangle. This source-level symmetry does not turn the finite accuracy samples into a continuous-domain proof.
-- After warmup, candidate Fast calls in the new cross points take `0.11–0.16 s`; the independent holdout is `0.27 s` including process-local startup. The previously screened `1e6 × 1e6` corner remains excluded. No interpolation is used to claim unsampled accuracy.
+- The paired 3×3 lattice on `{1e5,5e5,6e5}` has old Fast `0/9` and current Fast `9/9`; all old failures are `nonfinite_background_primitive`. It combines earlier same-input rows with the new 600k cross points. Base SHA is `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45`, candidate source SHA `b236c5632fa06cbd113f11627efadee92947c243`.
+- Independent paired holdouts `(2e5,2.5e5)` and `(5.5e5,5.5e5)` are both old Fast `0/1`, current Fast `1/1`, with the same old failure. The square plus these holdouts samples `0/11 → 11/11`.
+- Same-grid z8 Reference checks cover each distinct square total `200k,600k,700k,1M,1.1M,1.2M`. The overlapping asymmetric rectangle adds totals `400k,800k`, and the independent lower holdout adds `450k`. Across nine direct Reference checks plus two exact-sum holdout reuses, maximum root-relative proxy is `1.4193e-4` and maximum spectrum error is `9.0781e-4 dex`, below `2e-4` and `1e-3 dex`.
+- `Omega_bh2` and `Omega_ch2` enter downstream only through `Omega_mh2=Omega_bh2+Omega_ch2`. Swapped coordinates with the same total density produce identical modeled backgrounds; each distinct total used in these samples has direct Reference coverage. This source-level symmetry does not certify unsampled points.
+- New 600k square points run in roughly `0.09–0.15 s`; the 1.1M and 1.2M direct Reference calls take about `71 s` each. The previously screened `1e6 × 1e6` corner remains excluded. No interpolation is used to claim unsampled accuracy.
 
 ### Additional asymmetric CR1 rectangle
 
