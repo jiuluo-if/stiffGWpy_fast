@@ -3238,7 +3238,30 @@ def _SGWB_iter_fast_impl(
     elif log_amplitude_mode and log10_base_signal_today is not None:
         m.log10OmegaGW = log10_base_signal_today + log_P_t / math.log(10.0)
     else:
-        m.log10OmegaGW = np.log10(m.Ogw_today - m.Oj_today)
+        final_spectrum = m.Ogw_today - m.Oj_today
+        if not np.isfinite(final_spectrum).all():
+            m.fast_failure_reason = "nonfinite_spectrum"
+            m.cosmo_param["DN_eff"] = DN_eff_orig
+            m.DN_eff_orig = None
+            m.SGWB_converge = False
+            return None
+        if np.any(final_spectrum < 0.0):
+            m.fast_failure_reason = "nonpositive_spectrum"
+            m.cosmo_param["DN_eff"] = DN_eff_orig
+            m.DN_eff_orig = None
+            m.SGWB_converge = False
+            return None
+        if np.any(final_spectrum == 0.0):
+            if np.any((m.Ogw_today == 0.0) & (m.Oj_today == 0.0)):
+                m.fast_failure_reason = "nonrepresentable_output"
+                m.fast_failure_detail = "final_spectrum_underflow"
+            else:
+                m.fast_failure_reason = "nonpositive_spectrum"
+            m.cosmo_param["DN_eff"] = DN_eff_orig
+            m.DN_eff_orig = None
+            m.SGWB_converge = False
+            return None
+        m.log10OmegaGW = np.log10(final_spectrum)
     m.kappa_r = m.cosmo_param["DN_eff"] * 7 / 8 * (4 / 11) ** (4 / 3) * gp.z_ratio**4
     # Local a-posteriori quadrature error: Richardson estimate from the
     # Simpson-vs-trapezoid difference on the final frequency grid,

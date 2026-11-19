@@ -64,6 +64,31 @@ def test_fast_recovers_blue_spectrum_after_nonzero_tensor_product_underflows():
     assert np.any(model.Ogw_today > 0.0)
 
 
+def test_nonzero_tensor_final_energy_underflow_is_not_reported_as_success():
+    model = _underflow_model(
+        r=0.01,
+        n_t=0.0,
+        T_re=1e-3,
+        kappa10=1e-3,
+        DN_re=717.4979895910536,
+    )
+
+    result = model.SGWB_iter(
+        engine="fast",
+        fallback=False,
+        tol=1e-6,
+        threads=2,
+        accuracy_mode="fast",
+        physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "nonrepresentable_output"
+    assert model.fast_failure_detail == "final_spectrum_underflow"
+    assert model.cosmo_param["DN_eff"] == 0.0
+    assert not model.SGWB_converge
+
+
 def test_cr_positive_nonzero_underflow_keeps_consistency_background_finite():
     model = _underflow_model(cr=1.0, r=1e-316)
 

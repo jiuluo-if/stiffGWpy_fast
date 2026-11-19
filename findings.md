@@ -3445,3 +3445,11 @@ remote matrix run.
 - Independently selected from the recorded 270-case construction preflight: `cr=0,n_t=1.6,T_re=10,kappa10=.001`, with `r=1e-316` and minimum-subnormal `r=5e-324`.
 - Both are nonzero input amplitudes whose stored `A_t` rounds to zero; finite log amplitudes are `−747.5979565` and `−764.4211390`. Both construct the same exact 221-node Fast grid (`sha256_f64le=cd3831ebfecf46fce907a723682d673cdcd8a1d8e609e375fbafc44f74a3a5fd`), with finite `N_inf=42.39051243` and no preflight error.
 - This is only background/grid feasibility evidence; no Fast propagation or Reference validation has yet been run for this independent low-temperature/low-kappa background.
+
+## 2026-11-19 — final linear spectrum representability
+
+- A reconstructed `cr=0`, low-`T_re`/low-`kappa10`, long-`DN_re` input with `r*A_s>0` returned success while one final linear signal bin was exactly zero; `np.log10` produced `-inf` and a divide-by-zero warning. This was distinct from the exact-zero tensor limit and from the previously supported log-amplitude path.
+- Root cause: the final `Ogw_today - Oj_today` representation had rounded to zero, but the success path did not validate final output representability before computing logs and returning the model.
+- Minimal fail-closed classification added: nonfinite final signals => `nonfinite_spectrum`; nonzero-input zero/negative output with both stored linear terms zero => `nonrepresentable_output/final_spectrum_underflow`; other nonpositive signals => `nonpositive_spectrum`. On failure, restore input `DN_eff` and clear convergence state.
+- TDD evidence: new regression failed before production edit because the call returned a model; after edit it passes without the previous divide-by-zero warning. The exact-zero spectrum regression and log-amplitude recovery regression also pass.
+- No domain-expansion claim: this corrects status reporting for a failed output and leaves the wide-support region unresolved.

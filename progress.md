@@ -1885,3 +1885,11 @@ the diagnostic artifacts are retained.
 - Round 56 delivery: commit `546a024a9dad209383389a140d69af90fe386d74` was pushed and remote `fast_v0.2` SHA verified. GitHub Actions run `44215527410` completed successfully across all nine jobs, including canonical, static, Cobaya, package, and Python compatibility.
 - Round 56 final ledger delivery: commit `b545f8503ea0a4a68584385ccf278f181cde706c` pushed and remote SHA verified; GitHub Actions run `44216116648` succeeded on all nine jobs. Current remote/worktree basis is now verified; Round 57 holdout begins next.
 - Round 57 selection from current preflight: low-temperature/low-kappa point (`T_re=10,kappa10=.001,n_t=1.6`) has two amplitude holdouts (`r=1e-316`, minsub `r=5e-324`), both rounded-zero stored `A_t`, finite log amplitude, valid `N_inf=42.3905`, and same direct Fast 221-node construct grid hash. Propagation and Reference remain pending.
+
+## 2026-11-19 — final-output underflow classification
+
+- Confirmed the proposed regression existed: nonzero tensor model returned success with one zero linear spectrum bin, `log10OmegaGW=-inf`, and a divide-by-zero warning. The failing test reproduced the issue before the source change.
+- Updated only final output classification in `fast_sgwb.py`: reject nonfinite and nonpositive final spectra explicitly, distinguish a zeroed linear output as `nonrepresentable_output/final_spectrum_underflow`, and restore input `DN_eff`/non-convergence state on rejection.
+- Regression validation: focused behavior/zero-limit/log-amplitude trio `3 passed`; affected test files `30 passed, 5 deselected`; full default suite `423 passed, 9 deselected, 2 existing DeprecationWarnings`.
+- Static/package validation: Ruff passed; Mypy reports no issues; compileall and `git diff --check` passed; sdist and wheel built; distribution boundary and installed-wheel smoke passed.
+- This is a fail-closed output correctness fix, not a new Fast success or expansion result. Commit/push and remote CI remain.
