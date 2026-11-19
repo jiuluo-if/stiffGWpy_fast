@@ -1,5 +1,5 @@
 {
-  "status": "accepted_sampled_cr1_density_regions_to_total_density_1e6; terminal_curved_transfer_candidate_rejected",
+  "status": "accepted_sampled_cr1_square_to_1p2e6_and_asymmetric_region_to_1e6; 1p4e6_square_boundary_rejected",
   "base_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
   "candidate_source_commit": "b236c5632fa06cbd113f11627efadee92947c243",
   "reference_source_unchanged": true,
@@ -65,14 +65,17 @@
     "asymmetric_old_successes": 0,
     "asymmetric_points": 8,
     "asymmetric_candidate_successes": 8,
-    "holdout_old_successes": 0,
-    "holdouts": 3,
-    "holdout_candidate_successes": 3,
+    "accepted_holdout_old_successes": 0,
+    "accepted_holdouts": 3,
+    "accepted_holdout_candidate_successes": 3,
+    "excluded_boundary_old_success": false,
+    "excluded_boundary_fast_success": true,
+    "excluded_boundary_failure_reason": "root_accuracy_gate",
     "old_failure_reason": "nonfinite_background_primitive"
   },
   "reference_checks": {
     "reference_tail_z": 8.0,
-    "distinct_density_sums": [
+    "distinct_accepted_density_sums": [
       200000.0,
       400000.0,
       450000.0,
@@ -83,13 +86,22 @@
       1100000.0,
       1200000.0
     ],
-    "direct_reference_checks": 9,
+    "direct_accepted_reference_checks": 9,
     "symmetry_reuse_holdout_checks": 2,
     "root_relative_proxy_max": 0.00014192486198617957,
     "spectrum_max_abs_dex": 0.0009078084035285519,
     "root_gate": 0.0002,
     "spectrum_gate_dex": 0.001,
-    "finite_samples_only": true
+    "finite_samples_only": true,
+    "excluded_boundary_probe": {
+      "density_sum": 1400000.0,
+      "reference_map_first": 0.1449084401457417,
+      "reference_map_second": 0.14490842738351778,
+      "reference_closure_residual": 8.807095727272428e-08,
+      "fast_root_relative_to_closed_reference": 0.0002035530462532949,
+      "spectrum_max_abs_dex": 0.0008695787312174019,
+      "accepted": false
+    }
   },
   "artifacts_sha256": {
     "stiffgwpy_fast/exact_background.py": "b444429157611485b33e3ca8b3dff2ae3e7d1abf40ab0174d2ab7571c4aa2035",
@@ -106,6 +118,8 @@
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_upper_boundary.json": "24bda9079ef04658b5fdb35469b83377fef9cd2c17dd851126d1776c8b99fa11",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_600_square_crossings.py": "ea4b4a3407263da833d57e1b187f22abfadbf77d74fc094619ec5b94aa2c3478",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_600_square_crossings.json": "d082bd76291c59a14cbb3fe99b78c985a313b5d92d3112c6c728585e574ac6b0",
+    "docs/research/unified_domain_20261119/screen_h2_identity_cr1_700_square_screen.py": "86b3061a666b0d024ba06319ac11dfc74fe84919c56ea5c29cc14e02b6cf5016",
+    "docs/research/unified_domain_20261119/screen_h2_identity_cr1_700_square_screen.json": "e3df701e2b1ca0028b3c8beb1177cd3dc85b28b17e7ad0485f622450b9f89f7d",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_density_z8.json": "e1b6ab5f39958dd0052c42fe78c0fbd23a047d3c61af3df6340d27bd57e48363",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_low_rectangle_z8.py": "c7e2b283aebfb5b7a30ddfd6c317dc05a70db544d32572207a7e15ef9178565f",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_low_rectangle_z8.json": "b2514674de17b500f2bc9c24265abc758c2b533091350ffac98149bdcedf720f",
@@ -115,13 +129,17 @@
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_upper_boundary_z8.json": "329196b9bf499358e23b19682711b71cbc8cc98f7106355a3aac4d9c7301db55",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_z8.py": "5fecdae6e03efe2d1ede0a32f52d002ed0bc9d8c3fea918544a58810f1efe261",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_z8.json": "8bbe2a9627029eb4d610144fb560421dcdec20d8718c39cd612c8133b89ec35e",
+    "docs/research/unified_domain_20261119/validate_h2_identity_cr1_700_square_z8.py": "b8374e6e0d5ca7efbbbade83f316f6d2c5f66ed5b3db81aa6f816c19b8a3d4cd",
+    "docs/research/unified_domain_20261119/validate_h2_identity_cr1_700_square_z8.json": "b1021acdbfceb7bc8ef0314f2c1018628b2dd10195a84d4f5f327d8216d7f52d",
+    "docs/research/unified_domain_20261119/close_reference_cr1_700_square_z8.py": "d5b2a854b9884a331b93ac1e4829bd0970b568827e74fa3929dc8a268f3f6672",
+    "docs/research/unified_domain_20261119/close_reference_cr1_700_square_z8.json": "db72dd138fc6fb49cc91ee500b5633e20f673b3936728d59f64acde902f5f3d4",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_asymmetric_holdout_symmetry.py": "50e2a8a68b2f82d20c131adb99d974bc1cdd76c6d1d60ea0337717527815b367",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_asymmetric_holdout_symmetry.json": "040c22beff0595c0f9d2cc0a50c856ff5e0dcd5ff7d13ee508153f99c03a8c9e",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_holdout_symmetry.py": "0c3adf2239506fd8d16561c92d35c2e030edae3cebdc5b54449f8505eb2e189d",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_holdout_symmetry.json": "57f9d4c4625744bf9e9772808de613dcd90b1c554a8601121b520dc516763bc2",
-    "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "f93ef052deb67770544fd289cc05db0a09365da4c9620acc72a72d742f6ea89e",
-    "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "60c0ba86ec501d6c496f4db3759c972117d7adca038af3203c34dc2f3cc0cf80",
-    "docs/research/unified_domain_20261119/domain_expansion.md": "203a69dd31cfb96d2386668a3f617014ced57395f4818b760f91e52e550509cd",
+    "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "5ebf504123ee7eca3b4ef8c9ff25f92fbadfcf0a73097063a0c057af17c51148",
+    "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "b3702636f89e2c2e1dfc53be66aa81fd683a4c5485a4ab31e1edcb2bac2100ea",
+    "docs/research/unified_domain_20261119/domain_expansion.md": "a3fec37ee1caef33de2525fc94d00189bf82433528723ce97d97f06736605c37",
     "docs/research/unified_domain_20261119/diagnose_cr1_mode_trajectory_fixed_root.py": "4f5331bd65f9124f9aa8886bd4f5f210bfa3bef39050859360bc6644d6b92458",
     "docs/research/unified_domain_20261119/cr1_mode_trajectory_curved_transfer_thresholds.json": "fcbd691d28ce4a87f104039fe1abdd4aa26b273bbeffa8b45da2a08386b9f246",
     "docs/research/unified_domain_20261119/cr1_high_corner_curved_transfer_fast_probe.json": "672aee56cc55bcf57d40df97b01419c6c4b0aea0dbbe8e5df89fe558e05de5d3"

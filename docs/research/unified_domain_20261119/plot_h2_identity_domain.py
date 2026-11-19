@@ -56,9 +56,11 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
     mid_cr1 = _load("validate_h2_identity_cr1_mid_rectangle_z8.json")
     upper_cr1 = _load("validate_h2_identity_cr1_upper_boundary_z8.json")
     square_cr1 = _load("validate_h2_identity_cr1_600_square_z8.json")
+    rejected_boundary = _load("validate_h2_identity_cr1_700_square_z8.json")
     for row in (
         low_cr1["cases"] + mid_cr1["cases"]
         + upper_cr1["cases"] + square_cr1["cases"]
+        + rejected_boundary["cases"]
     ):
         results.append((
             f"cr1 低密度 {row['case_id']}",
@@ -129,6 +131,17 @@ def main() -> None:
                 )
             ax.grid(True, alpha=0.25)
             if row_index == 2 and version == "candidate":
+                ax.scatter(
+                    np.log10(7.0e5), np.log10(7.0e5), marker="D", s=105,
+                    facecolors="white", edgecolors="#b23b32", linewidths=2,
+                    zorder=5,
+                )
+                ax.annotate(
+                    "Fast成功，根门槛失败", (np.log10(7.0e5), np.log10(7.0e5)),
+                    xytext=(-92, 10), textcoords="offset points", fontsize=8,
+                    color="#9f2f28",
+                    bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "none"},
+                )
                 lower = 5.0
                 upper = np.log10(6.0e5)
                 ax.add_patch(Rectangle(

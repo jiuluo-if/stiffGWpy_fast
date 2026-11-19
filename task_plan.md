@@ -1737,4 +1737,4 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 
 ### Next Step
 
-Stage the 1.1M/1.2M boundary screens and Reference data, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.
+Stage the 1.1M/1.2M accepted boundary checks and the rejected 1.4M closure evidence, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.
