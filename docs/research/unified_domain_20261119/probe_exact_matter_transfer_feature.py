@@ -63,7 +63,7 @@ def main() -> None:
         LCDM_SG(**PARAMS),
         dn_eff=float(model.DN_gw[-1]),
         freq_subset=fast_freq,
-        z_tail=5.0,
+        z_tail=8.0,
         workers=1,
         rtol=1e-11,
     )
@@ -79,11 +79,11 @@ def main() -> None:
         "fast_status": "success",
         "fast_root": float(model.DN_gw[-1]),
         "fast_seconds": elapsed,
+        "reference_z_tail": 8.0,
         "reference_map_at_fast_root": float(ref["DN_gw"]),
-        "root_relative_error_vs_closed_reference": abs(
-            float(model.DN_gw[-1]) - 0.1614848239010858
-        )
-        / 0.1614848239010858,
+        "map_relative_residual_at_fast_root": abs(
+            float(model.DN_gw[-1]) - float(ref["DN_gw"])
+        ) / max(abs(float(model.DN_gw[-1])), 1e-300),
         "max_spectrum_error_dex_same_root": float(
             np.max(np.abs(fast_spectrum - ref_logspec))
         ),
