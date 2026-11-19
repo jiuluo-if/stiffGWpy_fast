@@ -140,9 +140,34 @@
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_holdout_symmetry.json": "57f9d4c4625744bf9e9772808de613dcd90b1c554a8601121b520dc516763bc2",
     "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "2cf6e69cc8d62444815a9cfbf3ba39e72e7fd5d21b853c705f74d5684a3893cf",
     "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "4006947b05bd3ea760b33d36143a1e03e828cd16642ac0219075c9f8dc8d934c",
-    "docs/research/unified_domain_20261119/domain_expansion.md": "f877ca94387cce97c5854b0eab271ff5662a7d3febe47d6a8d47b834af4efcb7",
+    "docs/research/unified_domain_20261119/domain_expansion.md": "175ceac0d665ad643d917659f52d223a48c4d57198ac3dc6f0111383ccf717e2",
     "docs/research/unified_domain_20261119/diagnose_cr1_mode_trajectory_fixed_root.py": "4f5331bd65f9124f9aa8886bd4f5f210bfa3bef39050859360bc6644d6b92458",
     "docs/research/unified_domain_20261119/cr1_mode_trajectory_curved_transfer_thresholds.json": "fcbd691d28ce4a87f104039fe1abdd4aa26b273bbeffa8b45da2a08386b9f246",
-    "docs/research/unified_domain_20261119/cr1_high_corner_curved_transfer_fast_probe.json": "672aee56cc55bcf57d40df97b01419c6c4b0aea0dbbe8e5df89fe558e05de5d3"
+    "docs/research/unified_domain_20261119/cr1_high_corner_curved_transfer_fast_probe.json": "672aee56cc55bcf57d40df97b01419c6c4b0aea0dbbe8e5df89fe558e05de5d3",
+    "docs/research/unified_domain_20261119/curved_transfer_candidate.patch": "c3f9eac057ba828dd4e9bf31cce6381045d90fb01ba291b63b4d2189852893dc",
+    "docs/research/unified_domain_20261119/validate_curved_transfer_1400_candidate.py": "bae7f0f1d48e65948146c65b5c6b95ab1c8ce5855394f3b66db4db183a9e549c",
+    "docs/research/unified_domain_20261119/validate_curved_transfer_1400_candidate.json": "1356b0564bcdc414c8bad7e430c75dba4176aef45b75bf26b7ed3d0b14e83d85",
+    "docs/research/unified_domain_20261119/diagnose_cr1_1400k_dominant_modes.py": "99aa244328644e48b0e321d117ba0d5dfb28a8a4b2d6d3964717d6df39911c14",
+    "docs/research/unified_domain_20261119/cr1_1400k_dominant_mode_trajectories.json": "756d550bca7da6bad757385dfae9c0aebe1687ca082fdcc57f4aa53fe62020be",
+    "docs/research/unified_domain_20261119/diagnose_cr1_1400k_spectrum_decomposition.py": "b26f9461ab676e437598a22ea62890deefc9b503d66f037e6863d88c383338d4",
+    "docs/research/unified_domain_20261119/diagnose_cr1_1400k_spectrum_decomposition.json": "45175b76b2c97f63b8372a2ce99d0652261d8d45094fa142e22620e3bb4abfc2"
+  },
+  "rejected_solver_candidate": {
+    "method": "quadratic z interpolation with two quarter-panel constant transfers, local defect threshold 1e-5",
+    "candidate_fast_sgwb_sha256": "7f753f0242a5ff8b0459ba00751fa33faff67b699d6abb15ed88108fd5bd81e1",
+    "status": "rejected_spectrum_gate",
+    "high_corner_root_relative_to_closed_reference": 6.221828200915341e-05,
+    "high_corner_spectrum_max_abs_dex": 0.0014311953079886308,
+    "spectrum_gate_dex": 0.001,
+    "source_reverted_to_candidate_source_commit": "b236c5632fa06cbd113f11627efadee92947c243"
+  },
+  "error_decomposition_1p4m": {
+    "fast_minus_reference_pchip_map": 2.948378965736409e-05,
+    "reference_pchip_minus_reference_quadpack": -5.551115123125783e-17,
+    "dominant_log10_frequency_range": [
+      -15.619144548876548,
+      -14.041236654672794
+    ],
+    "interpretation": "sampled tensor spectra dominate the root-map difference; reference quadrature discrepancy is negligible"
   }
 }

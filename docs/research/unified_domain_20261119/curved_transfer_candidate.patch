@@ -1,0 +1,42 @@
+--- a/stiffgwpy_fast/fast_sgwb.py
++++ b/stiffgwpy_fast/fast_sgwb.py
+@@ -1432,0 +1433,32 @@
++def _phase_segment_curvature(
++    xh, yh, z_start, z_mid, z_end, h_step, phase_max, defect_tol
++):
++    """Resolve a local z-curvature defect with quadratic quarter-point steps.
++
++    中文：端点和中点来自精确背景原函数。若中点反射端点的对数频率缺陷可忽略，保留原单步快路；
++    否则用三点二次插值估计四分点频率，并串接两个半步常系数传递。
++    """
++    z_end_midpoint = 2.0 * z_mid - z_start
++    defect = z_end - z_end_midpoint
++    phase_scale = h_step
++    if z_mid > 0.0:
++        if z_mid > _LOG_MAX_FLOAT - math.log(h_step):
++            phase_scale = math.inf
++        else:
++            phase_scale *= math.exp(z_mid)
++    if abs(defect) * max(1.0, phase_scale) <= defect_tol:
++        return _phase_segment(
++            xh, yh, z_start, z_end_midpoint, h_step, phase_max
++        )
++
++    z_quarter = 0.375 * z_start + 0.75 * z_mid - 0.125 * z_end
++    z_three_quarter = -0.125 * z_start + 0.75 * z_mid + 0.375 * z_end
++    xh, yh = _phase_segment(
++        xh, yh, z_quarter, z_quarter, 0.5 * h_step, phase_max
++    )
++    return _phase_segment(
++        xh, yh, z_three_quarter, z_three_quarter, 0.5 * h_step, phase_max
++    )
++
++
++@njit(cache=True, inline="always")
+@@ -1999 +2031,5 @@
+-                    xh, yh = _phase_segment(xh, yh, z_node, z_end, h_step, phase_max)
++                    z_end_exact = z0 + Phi_grid[k + 1] - Phi0
++                    xh, yh = _phase_segment_curvature(
++                        xh, yh, z_node, z_mid_step, z_end_exact,
++                        h_step, phase_max, 1.0e-5,
++                    )
