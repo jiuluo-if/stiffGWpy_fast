@@ -1,0 +1,136 @@
+{
+  "status": "accepted_sampled_cr1_exact_quarter_patch",
+  "date": "2026-11-20",
+  "base_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "candidate_parent_commit": "866e1a9b6637d73363ef0faab98ac247dc62eafd",
+  "reference_source_unchanged": true,
+  "production_source_sha256": {
+    "fast_sgwb.py": "98a0fe0961b93689a74f63ad9c77ea29c60dd23b68a6ab346d6f984c72bb03e5",
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "current_source_bitwise_output_replay": true,
+  "tests_sha256": {
+    "test_curvature_defect_gate.py": "f3409076d5a6736f5bf4cc1256aa5e5ba79fba21c47a3faff83b02316d59fe7b",
+    "test_exact_quarter_transfer.py": "8793c7349084b722aef39629082ce16201048848118d19f4d1650e5d4fc13951",
+    "test_fast_phi_quarter_samples.py": "f51e526c65b31808d7e3a2dfaebb3857a3bbd2462601f78fc438d731098bcd71",
+    "test_fast_sgwb.py": "dad57dd95c084d59be064c871e022965681bc1ea5b1f1020358e290b2c00d9df"
+  },
+  "method": {
+    "state_equation": "z(N)=z0+Phi(N)-Phi(N0); compose four existing exact constant-coefficient transfer maps using quarter background samples when local endpoint/midpoint second difference exceeds 1e-5",
+    "background_quadrature": "three composite-Simpson subinterval integrals of sigma on smooth panels",
+    "activation_screen": "existing steep-panel or output-representability estimate; not parameter-specific",
+    "reheating_kink": "unchanged exact split; no sampling across kink"
+  },
+  "sampled_patch": {
+    "cr": 1.0,
+    "derived_nt": -0.00125,
+    "N_inf": 68.81383977195475,
+    "Omega_bh2_range": [
+      650000.0,
+      700000.0
+    ],
+    "Omega_ch2_range": [
+      650000.0,
+      700000.0
+    ],
+    "paired_points": 5,
+    "old_successes": 0,
+    "candidate_successes": 5,
+    "old_failure_reasons": [
+      "nonfinite_background_primitive"
+    ],
+    "independent_holdout": "(675000,675000)",
+    "tested_total_densities": [
+      1300000.0,
+      1350000.0,
+      1400000.0
+    ],
+    "reference_validation": {
+      "1300": {
+        "root_relative_to_closed_reference": 5.7898479046671594e-05,
+        "reference_closure_residual_relative": 4.473542554923497e-09,
+        "spectrum_max_abs_dex": 0.0008591110054378959,
+        "raw_spectrum_max_abs_dex": 0.0008591110054378959,
+        "same_frequency_grid": true,
+        "reference_tail_z": 8.0,
+        "validation_source_sha256": {
+          "fast_sgwb.py": "6a11f4b1338f5a8ebe2006f1047d043192df2f3ffd22dfa77a00ab0d15e48f35",
+          "exact_background.py": "7011a0a3c03b7cb079221da8d744a7c8c6474722e83aab16b4728ea79b9c7339",
+          "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+        }
+      },
+      "1350": {
+        "root_relative_to_closed_reference": 9.054067632341484e-05,
+        "reference_closure_residual_relative": 1.6531765145746397e-07,
+        "spectrum_max_abs_dex": 0.0009346926543045697,
+        "raw_spectrum_max_abs_dex": 0.0009346926543045697,
+        "same_frequency_grid": true,
+        "reference_tail_z": 8.0,
+        "validation_source_sha256": {
+          "fast_sgwb.py": "6a11f4b1338f5a8ebe2006f1047d043192df2f3ffd22dfa77a00ab0d15e48f35",
+          "exact_background.py": "7011a0a3c03b7cb079221da8d744a7c8c6474722e83aab16b4728ea79b9c7339",
+          "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+        }
+      },
+      "1400": {
+        "root_relative_to_closed_reference": 0.00010908597417711487,
+        "reference_closure_residual_relative": 4.9782982274210834e-08,
+        "spectrum_max_abs_dex": 0.0008696033449098195,
+        "raw_spectrum_max_abs_dex": 0.0008696033449098195,
+        "same_frequency_grid": true,
+        "reference_tail_z": 8.0,
+        "validation_source_sha256": {
+          "fast_sgwb.py": "6a11f4b1338f5a8ebe2006f1047d043192df2f3ffd22dfa77a00ab0d15e48f35",
+          "exact_background.py": "7011a0a3c03b7cb079221da8d744a7c8c6474722e83aab16b4728ea79b9c7339",
+          "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+        }
+      }
+    },
+    "finite_samples_only": true,
+    "continuous_domain_certified": false
+  },
+  "performance": {
+    "trusted_region_pairs_per_case": 128,
+    "trusted_region_all_outputs_exact": true,
+    "trusted_region_aggregate_p50_ratio": 1.0220438474345492,
+    "trusted_region_aggregate_p95_ratio": 1.0441091785564502,
+    "expanded_region_pairs_per_total": 128,
+    "expanded_region_aggregate_p50_ratio": 1.1141524110393823,
+    "expanded_region_aggregate_p95_ratio": 1.1275766929741362,
+    "expanded_candidate_warm_p50_s": [
+      0.08306545000050392,
+      0.08214539999971748,
+      0.08136070000000473
+    ],
+    "host": {
+      "threads": 2,
+      "threading_layer": "workqueue",
+      "repeat_pairs": 128,
+      "python": "3.11.9",
+      "platform": "Windows-10-10.0.26200-SP0"
+    }
+  },
+  "artifacts_sha256": {
+    "screen_exact_quarter_expanded_patch.py": "101d563d643f05389317b2221405d0b6b80c4cddfe8682208e465045f40cae1f",
+    "screen_exact_quarter_expanded_patch.json": "9d902fbdc6ec2c1008dd83abd7f8516f2cafdd1cef12d38833d763cd34016596",
+    "benchmark_exact_quarter_candidate_trusted_ab.py": "b32aaca93003b0941d642e629da32906d7781c8612ee8f90c4f711964b5a2e3a",
+    "benchmark_exact_quarter_candidate_trusted_ab.json": "20844fe1595ebc1f86ab100db6cc0af26c33e70f8ab04a88255a6b1b8034cc12",
+    "benchmark_exact_quarter_candidate_expanded_patch.py": "19942bb871cd804dc065fc15a035f1be743c81ebc39e79af5a7546a0480c5f73",
+    "benchmark_exact_quarter_candidate_expanded_patch.json": "176df84f6b98883fa2be2d13c8f50e03903af8abb2f25043195dfc53f6c76602",
+    "validate_exact_quarter_transfer_1300_candidate.py": "c60e07302f8a2dcc5701f7fd5e5ef559cb9ac89e670fa5ceaf613a567e63ebe6",
+    "validate_exact_quarter_transfer_1300_candidate.json": "435e8a7f09527cdb1861c2d4bf5db536a64412613ffe37adcd271143c66c4c1e",
+    "validate_exact_quarter_transfer_1350_candidate.py": "23fd0d6fe52ec845a7719fcdf7e8400653aa3570dbb57083742df621c6cb1f7f",
+    "validate_exact_quarter_transfer_1350_candidate.json": "c6bc8e802014daa09458fdb78b76b44e8591de5d1c26c44ef66209b4fbbd8e41",
+    "validate_exact_quarter_transfer_1400_candidate.py": "6e5738eabda7f1b668de145d9dd69ef1054c9422339db4b68ce93161d8360bc3",
+    "validate_exact_quarter_transfer_1400_candidate.json": "1bf5282f068d8f57926b4a80ce69cd232af676abd25f2866b948c1c6646f6bee",
+    "capture_exact_quarter_reference_spectra.py": "56a18d6f3fef411f84c0ac349c7a69c21e68dbf7ed860506488fe39d9c2f10e7",
+    "reference_spectrum_exact_quarter_1300k.json": "85ba650bf4dc388b94dd50aab5fc6e5ea76c4320f9a001b503bd4a92e2a29d64",
+    "reference_spectrum_exact_quarter_1350k.json": "6cfee9cde4df1bb3833a59f3e7387b8d76edae75924cad46b30a49de619e6b18",
+    "reference_spectrum_exact_quarter_1400k.json": "fbf9647382fc46e696c1bffd88383e265bda6b0458226fdb19e3bd1a91a7ce70",
+    "verify_exact_quarter_current_output_replay.json": "79d2646306b8da1ca026e5751c606d305abd70e194de6d5bd20b7cd4760d400a",
+    "plot_h2_identity_domain.py": "704e73f7bf1f2e5c5c2b1266c214d4852a810d2ce47781ecd9c98b3f54256c03",
+    "h2_identity_domain_coverage.png": "fdab02a0228b64c8e1dc9fe97d256ef753ffba0c6e18455387e896df2a5f019b",
+    "domain_expansion.md": "ece0cd51aea3c34983c328562948ef4575b0e1c59085862c8b4f7482af16d5db"
+  }
+}

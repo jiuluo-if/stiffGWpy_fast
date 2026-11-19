@@ -86,6 +86,18 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
         float(square_holdout["spectrum_max_abs_dex"]),
         "cr1",
     ))
+    for label, name in (
+        ("cr1 exact-quarter 1300k", "validate_exact_quarter_transfer_1300_candidate.json"),
+        ("cr1 exact-quarter 1350k", "validate_exact_quarter_transfer_1350_candidate.json"),
+        ("cr1 exact-quarter 1400k", "validate_exact_quarter_transfer_1400_candidate.json"),
+    ):
+        row = _load(name)
+        results.append((
+            label,
+            float(row["fast_root_relative_to_closed_reference"]),
+            float(row["spectrum_max_abs_dex_at_fast_root"]),
+            "cr1",
+        ))
     return results
 
 
@@ -105,8 +117,8 @@ def main() -> None:
         ("cr=0: Ωb × Ωch", "screen_h2_identity_density_slice.json", "Omega_bh2", "Omega_ch2"),
         ("cr=1: Ωb × Ωch", "screen_h2_identity_cr1_density.json", "Omega_bh2", "Omega_ch2"),
     )
-    fig = plt.figure(figsize=(13.2, 12.0), constrained_layout=True)
-    grid = fig.add_gridspec(4, 2, height_ratios=(1.0, 1.0, 1.0, 1.35))
+    fig = plt.figure(figsize=(13.2, 14.0), constrained_layout=True)
+    grid = fig.add_gridspec(5, 2, height_ratios=(1.0, 1.0, 1.0, 0.8, 1.35))
     colors = {
         "success": "#16804a",
         "nonfinite_background_primitive": "#c6423a",
@@ -176,6 +188,34 @@ def main() -> None:
                     "当前接收矩形", color="#1f668f", fontsize=8, va="top",
                     bbox={"facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
                 )
+            if row_index == 2:
+                lower_patch = np.log10(6.5e5)
+                upper_patch = np.log10(7.0e5)
+                ax.add_patch(Rectangle(
+                    (lower_patch, lower_patch),
+                    upper_patch - lower_patch,
+                    upper_patch - lower_patch,
+                    fill=False,
+                    edgecolor="#8a3fa0",
+                    linestyle="-",
+                    linewidth=2.2,
+                    zorder=4,
+                ))
+                patch = _load("screen_exact_quarter_expanded_patch.json")
+                patch_marker = "x" if version == "baseline" else "o"
+                patch_color = "#c6423a" if version == "baseline" else "#16804a"
+                for pair in patch["paired_rows"]:
+                    params = pair["input"]["params"]
+                    ax.scatter(
+                        np.log10(float(params["Omega_bh2"])),
+                        np.log10(float(params["Omega_ch2"])),
+                        marker=patch_marker,
+                        s=75,
+                        color=patch_color,
+                        edgecolors="black" if version == "candidate" else None,
+                        linewidths=0.7,
+                        zorder=6,
+                    )
             ax.set_title(f"{title} — {'旧版 Fast' if version == 'baseline' else '候选 Fast'}")
             ax.set_xlabel(f"log10({x_key})")
             ax.set_ylabel(f"log10({y_key})")
@@ -189,9 +229,46 @@ def main() -> None:
                 bbox={"facecolor": "white", "alpha": 0.85, "edgecolor": "0.8"},
             )
 
+    patch = _load("screen_exact_quarter_expanded_patch.json")
+    low_patch = np.log10(6.5e5)
+    high_patch = np.log10(7.0e5)
+    for col_index, version in enumerate(("baseline", "candidate")):
+        ax = fig.add_subplot(grid[3, col_index])
+        ax.add_patch(Rectangle(
+            (low_patch, low_patch), high_patch-low_patch, high_patch-low_patch,
+            fill=False, edgecolor="#8a3fa0", linewidth=2.0, zorder=3,
+        ))
+        for pair in patch["paired_rows"]:
+            params = pair["input"]["params"]
+            is_holdout = pair["input"]["case_id"] == "patch_04"
+            ax.scatter(
+                np.log10(float(params["Omega_bh2"])),
+                np.log10(float(params["Omega_ch2"])),
+                marker=("D" if is_holdout else ("x" if version == "baseline" else "o")),
+                s=72 if is_holdout else 54,
+                color=("#8a3fa0" if is_holdout else ("#c6423a" if version == "baseline" else "#16804a")),
+                edgecolors=("black" if version == "candidate" and not is_holdout else None),
+                linewidths=0.8,
+                zorder=4,
+            )
+        ax.set_xlim(low_patch - 0.012, high_patch + 0.012)
+        ax.set_ylim(low_patch - 0.012, high_patch + 0.012)
+        ax.set_aspect("equal", adjustable="box")
+        ax.grid(True, alpha=0.25)
+        ax.set_title(f"cr=1 扩展区局部：{'旧版 Fast' if version == 'baseline' else '候选 Fast'}")
+        ax.set_xlabel("log10(Omega_bh2)")
+        ax.set_ylabel("log10(Omega_ch2)")
+        ax.text(
+            0.02, 0.98,
+            f"紫框：验证矩形；紫菱形：中心留出\n"
+            f"成功点：{sum(pair[f'{version}_fast']['success'] for pair in patch['paired_rows'])}/5",
+            transform=ax.transAxes, va="top", fontsize=8,
+            bbox={"facecolor": "white", "alpha": 0.85, "edgecolor": "0.8"},
+        )
+
     precision = _read_precision()
-    ax_root = fig.add_subplot(grid[3, 0])
-    ax_spec = fig.add_subplot(grid[3, 1])
+    ax_root = fig.add_subplot(grid[4, 0])
+    ax_spec = fig.add_subplot(grid[4, 1])
     labels = [item[0] for item in precision]
     positions = np.arange(len(labels))
     point_colors = ["#b23b32" if item[3] == "cr1" else "#1f6d9c" for item in precision]
