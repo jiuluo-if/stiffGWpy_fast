@@ -1998,3 +1998,12 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - Current Fast warm timings on four representatives over 64 repetitions: P50 `6.26–7.39 ms`, P95 `6.97–8.31 ms`, with bitwise-identical roots, grids, and complete spectra over repetitions. Cold worker startup `1.30 s`; first solve `0.222 s` for a complete 75-frequency output.
 - The matching current-source trusted A/B aggregate P50/P95 ratios are `1.0220/1.0441` versus `48bbb96`, but several individual trusted cases exceed 1.05 P95. This tail behavior remains disclosed; no production source changed in this evidence tranche.
 - Artifacts and SHA256 manifest: `docs/research/unified_domain_20261119/cr0_density_negative_tilt_manifest.json`; figure `cr0_density_negative_tilt_domain.png`. The sampled box is coverage evidence only, not a continuous-domain certification.
+
+
+## 2026-11-20 — CR0 blue-tilt amplitude strip
+
+- At `Omega_bh2=1e6`, `Omega_ch2=0.1201075`, `cr=0`, fixed `T_re=2000`, `kappa10=.01`, paired baseline/current Fast is `0/11→11/11` on the `log10(r)∈[-12,-8]`, `n_t∈[.05,.1]` 3×3 lattice plus two interior samples. Every baseline failure is `nonfinite_background_primitive`; every current sample passes the physical guard.
+- Eight scrambled log-r Sobol points (`seed=20261122`) give `0/8→8/8`. Direct z8 Reference checks at both amplitude edges for `n_t=.05/.1` and one Sobol holdout have max closed-root error `1.6119e-4`, max spectrum error `8.0253e-4 dex`, and max Reference closure residual `2.3212e-8`.
+- A wider positive-tilt candidate was rejected on accuracy: direct root errors at `n_t=.2`, `.3`, and `.5` examples exceed `2e-4` while spectra pass. No CR0 blue-tilt range beyond `[.05,.1]` is claimed.
+- Current-source warm Fast on four representatives (64 full solves each): P50 `4.32–4.47 ms`, P95 `4.95–5.13 ms`, outputs exact across repeats; first cold solver `0.252 s`, worker startup `1.45 s`. Trusted A/B limits remain as documented in the prior section.
+- No production source changed. Data, Reference arrays, timings, plot, and source hashes are in `cr0_blue_tilt_low_strip_manifest.json`.
