@@ -1,0 +1,130 @@
+{
+  "status": "complete_local_panel_screen",
+  "source_commit": "63aee9d180f8c570276f07177afe241dc9b8b0cd",
+  "source_sha256": {
+    "fast_sgwb.py": "94936840905af9029504e369f312e0a6330ba03ef5fc2e104da5e0c9a9be9a42",
+    "_wkb_transfer.py": "6abd58e7c6e7bb07701fe5bf4caf877220f4332b14ce274d5e7cfdbf1a26e121"
+  },
+  "resources": {
+    "affinity": [
+      0,
+      1
+    ],
+    "threads": 2
+  },
+  "oracle": "exact constant-q Bessel fundamental matrix; phase chain is original production _phase_segment_base with phase_max=.25",
+  "cases": [
+    {
+      "case": "cr0_rmin_nt50",
+      "panel": 9554,
+      "mode": 49,
+      "q": 3304.290499256922,
+      "n_phase_substeps": 101987,
+      "wkb3_defect_basis": 1.0199424380426753e-07,
+      "matrix_rel_error_vs_bessel": 1.4255260687170475e-10,
+      "phase_matrix_rel_error_vs_bessel": 3.2736174897136707e-06,
+      "max_column_power_absdiff_vs_bessel": 5.442313266712517e-13,
+      "wkb3_transfer_p50_s": 2.649998350534588e-06,
+      "phase_substeps_p50_s": 0.00523339999926975,
+      "speed_ratio": 1974.8691534898535
+    },
+    {
+      "case": "cr0_rmin_nt50",
+      "panel": 9554,
+      "mode": 50,
+      "q": 3304.290499256922,
+      "n_phase_substeps": 48844,
+      "wkb3_defect_basis": 4.446798125178451e-07,
+      "matrix_rel_error_vs_bessel": 1.242509861824782e-09,
+      "phase_matrix_rel_error_vs_bessel": 6.835372318351594e-06,
+      "max_column_power_absdiff_vs_bessel": 1.0289880059133338e-11,
+      "wkb3_transfer_p50_s": 2.2999993234407157e-06,
+      "phase_substeps_p50_s": 0.002492899999197107,
+      "speed_ratio": 1083.8698836953652
+    },
+    {
+      "case": "cr0_rmin_nt50",
+      "panel": 9554,
+      "mode": 51,
+      "q": 3304.290499256922,
+      "n_phase_substeps": 23393,
+      "wkb3_defect_basis": 1.938835970992035e-06,
+      "matrix_rel_error_vs_bessel": 1.13464941477823e-08,
+      "phase_matrix_rel_error_vs_bessel": 1.4271843869495626e-05,
+      "max_column_power_absdiff_vs_bessel": 1.9554735608551255e-10,
+      "wkb3_transfer_p50_s": 1.800006430130452e-06,
+      "phase_substeps_p50_s": 0.0011629000000539236,
+      "speed_ratio": 646.0532476929234
+    },
+    {
+      "case": "cr0_rmin_nt50",
+      "panel": 9554,
+      "mode": 52,
+      "q": 3304.290499256922,
+      "n_phase_substeps": 11204,
+      "wkb3_defect_basis": 8.4553164666642e-06,
+      "matrix_rel_error_vs_bessel": 1.0426256969283069e-07,
+      "phase_matrix_rel_error_vs_bessel": 2.9797027413691874e-05,
+      "max_column_power_absdiff_vs_bessel": 3.7171195010898828e-09,
+      "wkb3_transfer_p50_s": 1.6999983927235007e-06,
+      "phase_substeps_p50_s": 0.0005557000004046131,
+      "speed_ratio": 326.8826622326083
+    },
+    {
+      "case": "cr0_rmin_nt50",
+      "panel": 9554,
+      "mode": 49,
+      "q": 277.6514735944488,
+      "n_phase_substeps": 10872,
+      "wkb3_defect_basis": 7.217410153912081e-10,
+      "matrix_rel_error_vs_bessel": 5.380548311340923e-13,
+      "phase_matrix_rel_error_vs_bessel": 1.1598259934970564e-07,
+      "max_column_power_absdiff_vs_bessel": 1.9984014443252818e-15,
+      "wkb3_transfer_p50_s": 1.7999991541728377e-06,
+      "phase_substeps_p50_s": 0.0005383499992603902,
+      "speed_ratio": 299.08347346295324
+    },
+    {
+      "case": "cr0_rmax_nt50",
+      "panel": 9554,
+      "mode": 49,
+      "q": 3304.2904992576837,
+      "n_phase_substeps": 101987,
+      "wkb3_defect_basis": 1.0199421330932764e-07,
+      "matrix_rel_error_vs_bessel": 1.3649858435535085e-10,
+      "phase_matrix_rel_error_vs_bessel": 3.2736094815442223e-06,
+      "max_column_power_absdiff_vs_bessel": 5.426770144367765e-13,
+      "wkb3_transfer_p50_s": 2.549997589085251e-06,
+      "phase_substeps_p50_s": 0.005216600002313498,
+      "speed_ratio": 2045.7274252501647
+    },
+    {
+      "case": "cr0_rmax_nt50",
+      "panel": 9554,
+      "mode": 50,
+      "q": 3304.2904992576837,
+      "n_phase_substeps": 48844,
+      "wkb3_defect_basis": 4.4467954350240337e-07,
+      "matrix_rel_error_vs_bessel": 1.2429014619873705e-09,
+      "phase_matrix_rel_error_vs_bessel": 6.835373762621911e-06,
+      "max_column_power_absdiff_vs_bessel": 1.0291323349065351e-11,
+      "wkb3_transfer_p50_s": 2.0500010577961802e-06,
+      "phase_substeps_p50_s": 0.0025047999988601077,
+      "speed_ratio": 1221.8530275066548
+    },
+    {
+      "case": "cr0_rmax_nt50",
+      "panel": 9554,
+      "mode": 51,
+      "q": 3304.2904992576837,
+      "n_phase_substeps": 23393,
+      "wkb3_defect_basis": 1.9388336624224745e-06,
+      "matrix_rel_error_vs_bessel": 1.1347762715423789e-08,
+      "phase_matrix_rel_error_vs_bessel": 1.4271853628310598e-05,
+      "max_column_power_absdiff_vs_bessel": 1.9554380337183375e-10,
+      "wkb3_transfer_p50_s": 1.8499995348975062e-06,
+      "phase_substeps_p50_s": 0.00116379999963101,
+      "speed_ratio": 629.081239036899
+    }
+  ]
+}

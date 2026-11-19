@@ -1,0 +1,68 @@
+{
+  "status": "complete",
+  "source": "constant-q positive-frequency segment, q=100, h=0.00125",
+  "phase_max": 0.25,
+  "wkb_defect_tolerance": 1e-05,
+  "resources": {
+    "loops": 200,
+    "repeats": 7
+  },
+  "rows": [
+    {
+      "target_substeps": 16,
+      "actual_substeps": 17,
+      "accepted": true,
+      "wkb_us": 0.36299999919719994,
+      "phase_us": 0.5919999966863543,
+      "phase_over_wkb": 1.630853988968606
+    },
+    {
+      "target_substeps": 32,
+      "actual_substeps": 32,
+      "accepted": true,
+      "wkb_us": 0.3300000025774352,
+      "phase_us": 0.9565000073052942,
+      "phase_over_wkb": 2.898484847983749
+    },
+    {
+      "target_substeps": 64,
+      "actual_substeps": 64,
+      "accepted": true,
+      "wkb_us": 0.3315000139991753,
+      "phase_us": 1.7255000057048164,
+      "phase_over_wkb": 5.205128002525844
+    },
+    {
+      "target_substeps": 128,
+      "actual_substeps": 128,
+      "accepted": true,
+      "wkb_us": 0.33399999665562063,
+      "phase_us": 3.2914999974309467,
+      "phase_over_wkb": 9.85479051014702
+    },
+    {
+      "target_substeps": 256,
+      "actual_substeps": 256,
+      "accepted": true,
+      "wkb_us": 0.3265000123064965,
+      "phase_us": 6.367499991029035,
+      "phase_over_wkb": 19.502296327792017
+    },
+    {
+      "target_substeps": 512,
+      "actual_substeps": 512,
+      "accepted": true,
+      "wkb_us": 0.33250002161366865,
+      "phase_us": 12.543500015453901,
+      "phase_over_wkb": 37.724809624307866
+    },
+    {
+      "target_substeps": 1024,
+      "actual_substeps": 1024,
+      "accepted": true,
+      "wkb_us": 0.32949999877018854,
+      "phase_us": 24.85600001818966,
+      "phase_over_wkb": 75.43550868273479
+    }
+  ]
+}

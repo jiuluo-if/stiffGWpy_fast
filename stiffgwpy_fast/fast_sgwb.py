@@ -45,6 +45,7 @@ from scipy import integrate, interpolate
 
 from . import global_param as gp
 from ._resources import package_path
+from ._wkb_transfer import wkb_transfer_embedded as _wkb_transfer_embedded
 from .config import FastSolverConfig
 from .functions import int_FD
 from .LCDM_stiff_Neff import _has_exact_zero_tensor_amplitude
@@ -84,6 +85,8 @@ __all__ = [
 _MAX_THREADS = numba_config.NUMBA_NUM_THREADS
 _THREADS = get_num_threads()
 _NUMBA_CONFIG_LOCK = RLock()
+_WKB3_ERROR_TOLERANCE = 1.0e-5
+_WKB3_MIN_SUBSTEPS = 64
 
 
 def _numba_layer_is_threadsafe():
@@ -1411,7 +1414,7 @@ def _phase_substeps(h_step, z_mid, phase_max):
 
 
 @njit(cache=True, inline="always")
-def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
+def _phase_segment_base(xh, yh, z_start, z_end, h_step, phase_max):
     """Advance one segment, optionally using a constant-z phase envelope.
 
     中文：推进一个积分区间；若相位增量超过上限，则按子步中点的 ``z`` 逐步推进。
@@ -1427,6 +1430,53 @@ def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
         zs = z_start + dz_half * (2.0 * s + 1.0) / n_sub
         xh, yh = scaled_step(xh, yh, zs, h_sub)
     return xh, yh
+
+
+@njit(cache=True, inline="always")
+def _phase_segment_wkb3(
+    xh,
+    yh,
+    z_start,
+    z_end,
+    h_step,
+    phase_max,
+    error_tolerance,
+    min_substeps,
+):
+    """Try the local embedded WKB3 map before expensive phase subdivision.
+
+    中文：只有生产相位细分预计达到工作盈亏门槛时才尝试 WKB3；正频率与阶次缺陷
+    不满足要求时逐位回退既有传递。
+    """
+    z_mid = 0.5 * (z_start + z_end)
+    n_sub = _phase_substeps(h_step, z_mid, phase_max)
+    if n_sub >= min_substeps:
+        x_new, y_new, defect, accepted = _wkb_transfer_embedded(
+            xh, yh, z_start, z_end, h_step, error_tolerance
+        )
+        if accepted:
+            return x_new, y_new, True, n_sub, defect
+    else:
+        defect = math.inf
+    x_new, y_new = _phase_segment_base(
+        xh, yh, z_start, z_end, h_step, phase_max
+    )
+    return x_new, y_new, False, n_sub, defect
+
+
+@njit(cache=True, inline="always")
+def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
+    x_new, y_new, _, _, _ = _phase_segment_wkb3(
+        xh,
+        yh,
+        z_start,
+        z_end,
+        h_step,
+        phase_max,
+        _WKB3_ERROR_TOLERANCE,
+        _WKB3_MIN_SUBSTEPS,
+    )
+    return x_new, y_new
 
 
 @njit(cache=True, inline="always")

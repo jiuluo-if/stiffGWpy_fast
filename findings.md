@@ -3549,3 +3549,13 @@ CR0 has independent `n_t`; do not apply the CR1 consistency relation to it. At f
 ## 2026-11-20 CR0 low-positive-tilt strip
 
 At fixed `Omega_bh2=1e6`, `Omega_ch2=0.1201075`, `cr=0`, `T_re=2000`, `kappa10=.01`, a finite sampled strip `log10(r)∈[-12,-8]`, `n_t∈[.05,.1]` is supported: paired Fast `0/11→11/11` on lattice plus interior, scrambled log-r Sobol `0/8→8/8`, all old failures `nonfinite_background_primitive`, all current rows physical-guard admitted. Five direct z8 Reference checks (two `n_t=.1` reused from the wider probe, two `n_t=.05` amplitude endpoints, one Sobol holdout) max root relative error `1.6119e-4`, max spectrum error `8.0253e-4 dex`, max map closure `2.3212e-8`. Broader positive tilt fails the root gate: examples `n_t=.2` and `.3` have root error about `2.8e-4`; `n_t=.5,r=1e-12` gives `2.70e-4`. Warm new-domain P50/P95 `4.32–4.47 / 4.95–5.13 ms`. The strip is finite sampled evidence, not continuous certification. See `docs/research/unified_domain_20261119/cr0_blue_tilt_low_strip_manifest.json`.
+
+## 2026-11-20 — WKB3 局部传递候选
+
+对于 Fast 缩放状态 `x'=-x-exp(z)y, y'=exp(z)x+y`，在单个 `z=z0+qN` 子段消去 y 得 `x''-q x'+(exp(2z)-q-1)x=0`。代换 `x=exp(qN/2)u` 后 `u''+Omega^2 u=0`，`Omega^2=w^2-alpha`、`alpha=q+1+q^2/4`。通过端点 WKB 基矩阵及其逆回映到原 `(x,y)`，初态/匹配/状态能量表达不变。`S0` 和 `S2` 相位有闭式原函数，三阶振幅项 `S3=-q^2*w^2*(w^2+4alpha)/(16*Omega^6)`。具体公式、论文章节及适用条件见 `docs/research/unified_domain_20261119/adaptive_wkb3_summary.md`。
+
+局部误差采用 WKB2/WKB3 传递矩阵差的 Frobenius 范数除以 `max(||M3||F,sqrt(2))`，而不是当前状态的单方向差；这提供一个对任意输入方向共同的局部指标，但不是严格余项/全局误差界。`Omega^2` 端点不正、q/幅度不可表示、误差大于 `1e-5` 等情况回退原 `_phase_segment_base`。相位子步数低于 64 时跳过 WKB；生产矩阵级成本在 64 步测得 0.335 us，对照相位传播 1.772 us。kink 仍按原切分保留。
+
+在 64 组交替完整求解中，两个可信 CR1 案例 warm P50/P95 比都低于 1.05；三个 CR0 蓝倾斜代表点的 warm P50/P95 时间比为 0.37–0.45。每对根逐位相同，谱差最大 `2.433e-9 dex`。历史 CR0 蓝倾斜 z10 Reference 对应根误差最大 `4.8712e-6`、谱误差最大 `7.2099e-4 dex`；以新旧候选谱差作上界余量，仍通过正式限值。首次含 JIT 完整求解候选 `10.173s` vs 基线 `7.376s`，一次性编译代价 +38%，应继续显式披露。
+
+该优化的3个 CR0 输入 old/current 均成功，故不是新的求值域扩展。对应旧版背景数值失败→当前背景稳定实现成功的 CR0 区域数据仍使用既有区域报告/清单；WKB3 的贡献是降低该高倾斜片区的传播成本。两处初期 A/B 无效：第一处用了旧 `48bbb96` 混合比较；第二处 Numba 缓存沿用同一路径的已编译全局。最终报告使用 `63aee9d` 同源隔离副本与新鲜缓存路径。

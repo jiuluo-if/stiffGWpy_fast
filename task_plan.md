@@ -1717,6 +1717,28 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 **Boundary:** the sampled high-density cr1 rectangle is not an accepted precision extension. Its high corner exceeds root error at both z8/z10, and z10 also exceeds the spectrum gate. Only the two sampled cr0 regions support the current expansion claim; this is not a proof over all intervening parameters.
 
 
+## Round 60 — local adaptive WKB3 on high-phase linear transfer segments
+
+### Decision
+
+- [x] Derive the scalar oscillator representation for each smooth Fast segment with linear `z(N)` and implement WKB2/WKB3 transfer matrices with a state-independent Frobenius defect estimate.
+- [x] Keep the existing phase-substep map as exact fallback for turning/forbidden segments, unrepresentable WKB matrices, and failed defect gates; retain the existing reheating kink split.
+- [x] Calibrate the work dispatch from phase-substep timing: only try WKB when the existing transfer predicts at least 64 subdivisions; defect tolerance `1e-5` is a local estimate gate, not a global certificate.
+- [x] Complete 64-pair alternating full-solve A/B for two trusted CR1 cases and three CR0 high-blue-tilt representatives, recording first-call/JIT timing, raw paired timings, hashes, roots, frequency/spectrum digest differences, and plotted ratios.
+- [x] Reuse matching z10 Reference arrays: the root is unchanged and candidate-vs-baseline spectrum shift is <= `2.433e-9 dex`, so the saved root/spectrum margins remain under their acceptance limits.
+- [x] Add production-kernel TDD for exact Bessel comparison, state-independent defect estimate, exact fallback, and turning-point rejection.
+- [x] Final verification on the final production source: `436 passed, 9 deselected`; Ruff, CI-configured Mypy, compileall, sdist/wheel build, isolated installed-wheel high-tilt smoke, and diff check pass.
+- [ ] Stage only this round's solver, tests, ledgers, and WKB3 evidence; verify Git identity; commit/push to both `fast_v0.2` refs and verify remote SHA plus GitHub Actions.
+
+### Boundary
+
+This round preserves existing sampled successes and materially reduces cost in the accepted high-tilt CR0 region; it does not change the old→new success count and is not itself a parameter-domain expansion. Cold first-call compilation remains measurably slower and must stay disclosed. Finite sampling and a local WKB defect do not certify the continuum or the full global error.
+
+### Next Step
+
+Finish final validation and provenance for the production WKB3 change, then push only the validated solver/test/evidence files and verify CI.
+
+
 ## 2026-11-19 continuation — CR1 high corner and qualified lower rectangle
 
 ### Rejected transfer candidate
