@@ -115,6 +115,14 @@ The lattice totals are `200k,400k,600k,800k,1M`, already covered by the direct z
 
 The square and asymmetric rectangles overlap but are distinct sampled regions. They are finite coverage evidence, not a guarantee for unsampled points or a continuous-domain proof. The updated plot outlines both regions.
 
+### Extended CR1 rectangle through 1.3M total density
+
+The validated square and asymmetric rectangle are contained in the larger rectangle `Omega_bh2 ∈ [1e5,7e5]`, `Omega_ch2 ∈ [1e5,6e5]`. A 3×2 lattice on `{1e5,6e5,7e5} × {1e5,6e5}` has old Fast `0/6` and current Fast `6/6`; all old failures are `nonfinite_background_primitive`. Three paired holdouts inside the rectangle `(2e5,2.5e5)`, `(6.5e5,1.5e5)`, `(6.5e5,5.5e5)` also change `0/3 → 3/3`.
+
+Direct same-grid z8 Reference checks cover the new total densities `700k` and `1.3M`; existing raw data cover `200k`, `800k`, and `1.2M`. The maximum root proxy across accepted direct checks is `1.6726e-4`; maximum spectrum error remains `9.0781e-4 dex`. The `1.2M` holdout reuses the same-sum Reference with a bitwise-equal frequency grid. Fast corners take about `0.14–0.16 s`.
+
+The adjacent `7e5 × 7e5` point has a paired Fast success, but two Reference maps close at residual `8.81e-8` and place the Fast root `2.0355e-4` from the closed Reference root. Its spectrum error passes (`8.696e-4 dex`), but the root gate does not, so that point remains excluded. The current rectangle is supported by finite samples; no continuous-domain claim is made.
+
 ### Rejected local transfer-curvature candidate
 
 A separate diagnostic found that high-error CR1 mode trajectories accumulate transfer-state discrepancy near the terminal active panels. A quadratic quarter-point local transfer reduced the largest discrepancies for two selected modes, but a full high-corner Fast solve moved the root only from `0.2117557174` to `0.2117574375`; relative to the saved same-grid z10 Reference map this remains `4.43e-4`, slightly worse than the previous `4.35e-4`. The candidate production edit and its focused test were removed. This mechanism is not accepted and provides no capability or performance claim. Its fixed-root mode traces and the no-change Fast probe remain in the diagnostic artifacts.

@@ -160,9 +160,20 @@ def main() -> None:
                     edgecolor="#0d7d87", linestyle=":", linewidth=1.8,
                     zorder=4,
                 ))
+                ax.add_patch(Rectangle(
+                    (lower, lower), np.log10(7.0e5) - lower,
+                    np.log10(6.0e5) - lower, fill=False,
+                    edgecolor="#2476a6", linestyle="-.", linewidth=1.7,
+                    zorder=4,
+                ))
                 ax.text(
                     5.02, np.log10(3.0e5) - 0.02, "非对称子域",
                     color="#0a6972", fontsize=8, va="top",
+                    bbox={"facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
+                )
+                ax.text(
+                    np.log10(6.0e5) - 0.2, np.log10(6.0e5) - 0.03,
+                    "当前接收矩形", color="#1f668f", fontsize=8, va="top",
                     bbox={"facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
                 )
             ax.set_title(f"{title} — {'旧版 Fast' if version == 'baseline' else '候选 Fast'}")

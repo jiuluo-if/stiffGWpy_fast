@@ -3533,3 +3533,6 @@ remote matrix run.
 - 最新已推送代码无改动；CI `44552905102` 对 `98486a9` 通过9/9。
 
 - 继续向外探测 1.4M 总密度角点 `(7e5,7e5)`：旧 Fast 失败、新 Fast 有有限输出；z8 Reference 单映射后再映射闭合残差 `8.81e-8`，Fast 根相对闭合 Reference 差 `2.0355e-4`，略超 `2e-4`。谱误差 `8.696e-4 dex` 通过，但该点仍按根门槛拒绝。故当前精度方形边界保留在 `[1e5,6e5]^2`，不把 1.4M点计为新域成功。
+
+- 1.3M asymmetric corner `(7e5,6e5)` passes: Reference fixed-point residual `5.38e-8`, Fast root relative to closed map `1.6731e-4`, spectrum max `8.588e-4 dex`. Its exact paired baseline Fast fails and candidate succeeds. Together with 200k/700k/800k/1.2M checks this supports the sampled rectangle `[1e5,7e5]×[1e5,6e5]`, with holdout `(650k,550k)` at 1.2M.
+- 1.4M `(7e5,7e5)` is the adjacent rejected probe; its closed root difference is `2.0355e-4`, while spectrum error passes. This keeps the upper accuracy boundary explicit.

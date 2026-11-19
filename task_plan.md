@@ -1731,10 +1731,10 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 - [x] Audited the model dependency: `Omega_bh2` and `Omega_ch2` enter downstream only through their sum `Omega_mh2`.
 - [x] Reused the paired `872a70d` screen and added crossings for the square `[1e5,6e5]²` (`0/9 → 9/9`), plus an overlapping asymmetric rectangle `[1e5,7e5] × [1e5,3e5]` (`0/8 → 8/8`); all old failures are `nonfinite_background_primitive`.
 - [x] Added exact paired old/new checks for `(2e5,2.5e5)`, `(5.5e5,5.5e5)`, and `(6.5e5,1.5e5)` holdouts: all are `0/1 → 1/1` with the same old failure. Same-sum Reference reuse was verified by bitwise frequency-grid comparison.
-- [x] Same-grid z8 Reference checks cover all sampled total-density sums plus same-sum holdouts. Nine direct checks and two symmetry-reuse checks pass; max root proxy is `1.4193e-4`, max spectrum error `9.0781e-4 dex`.
+- [x] Same-grid z8 Reference checks cover all sampled total-density sums plus same-sum holdouts. Ten direct checks and two symmetry-reuse checks pass; max root proxy is `1.6726e-4`, max spectrum error `9.0781e-4 dex`.
 - [x] Updated raw artifact, source-hash manifest, domain report, and paired coverage/precision plot.
 - [x] Full local validation: `428 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel, evidence integrity checks passed.
 
 ### Next Step
 
-Stage the 1.1M/1.2M accepted boundary checks and the rejected 1.4M closure evidence, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.
+Stage the accepted 1.3M rectangle edge, rejected 1.4M closure evidence, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.

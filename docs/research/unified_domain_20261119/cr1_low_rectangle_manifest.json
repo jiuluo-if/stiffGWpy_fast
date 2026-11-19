@@ -1,5 +1,5 @@
 {
-  "status": "accepted_sampled_cr1_square_to_1p2e6_and_asymmetric_region_to_1e6; 1p4e6_square_boundary_rejected",
+  "status": "accepted_sampled_cr1_rectangle_to_1p3e6; 1p4e6_boundary_rejected",
   "base_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
   "candidate_source_commit": "b236c5632fa06cbd113f11627efadee92947c243",
   "reference_source_unchanged": true,
@@ -7,40 +7,40 @@
     "cr": 1.0,
     "derived_nt": -0.00125,
     "finite_N_inf": 68.81383977195475,
-    "square": {
+    "accepted_rectangle": {
       "Omega_bh2_range": [
         100000.0,
-        600000.0
+        700000.0
       ],
       "Omega_ch2_range": [
         100000.0,
         600000.0
       ],
-      "lattice_values": [
+      "lattice_Omega_bh2": [
         100000.0,
-        500000.0,
+        600000.0,
+        700000.0
+      ],
+      "lattice_Omega_ch2": [
+        100000.0,
         600000.0
       ]
     },
-    "asymmetric_rectangle": {
-      "Omega_bh2_range": [
+    "covered_subregions": {
+      "square_600k": [
         100000.0,
-        700000.0
+        600000.0
       ],
-      "Omega_ch2_range": [
-        100000.0,
-        300000.0
-      ],
-      "lattice_values_baryon": [
-        100000.0,
-        300000.0,
-        500000.0,
-        700000.0
-      ],
-      "lattice_values_cdm": [
-        100000.0,
-        300000.0
-      ]
+      "asymmetric_rectangle": {
+        "Omega_bh2": [
+          100000.0,
+          700000.0
+        ],
+        "Omega_ch2": [
+          100000.0,
+          300000.0
+        ]
+      }
     },
     "independent_holdouts": [
       [
@@ -48,29 +48,25 @@
         250000.0
       ],
       [
-        550000.0,
-        550000.0
+        650000.0,
+        150000.0
       ],
       [
         650000.0,
-        150000.0
+        550000.0
       ]
     ],
     "modeled_density_dependency": "Omega_mh2=Omega_bh2+Omega_ch2"
   },
   "paired_outcome": {
-    "square_old_successes": 0,
-    "square_points": 9,
-    "square_candidate_successes": 9,
-    "asymmetric_old_successes": 0,
-    "asymmetric_points": 8,
-    "asymmetric_candidate_successes": 8,
-    "accepted_holdout_old_successes": 0,
-    "accepted_holdouts": 3,
-    "accepted_holdout_candidate_successes": 3,
-    "excluded_boundary_old_success": false,
-    "excluded_boundary_fast_success": true,
-    "excluded_boundary_failure_reason": "root_accuracy_gate",
+    "accepted_rectangle_old_successes": 0,
+    "accepted_rectangle_points": 6,
+    "accepted_rectangle_candidate_successes": 6,
+    "holdout_old_successes": 0,
+    "holdouts": 3,
+    "holdout_candidate_successes": 3,
+    "excluded_1p4m_boundary_old_success": false,
+    "excluded_1p4m_boundary_fast_success": true,
     "old_failure_reason": "nonfinite_background_primitive"
   },
   "reference_checks": {
@@ -84,19 +80,18 @@
       800000.0,
       1000000.0,
       1100000.0,
-      1200000.0
+      1200000.0,
+      1300000.0
     ],
-    "direct_accepted_reference_checks": 9,
+    "direct_accepted_reference_checks": 10,
     "symmetry_reuse_holdout_checks": 2,
-    "root_relative_proxy_max": 0.00014192486198617957,
+    "root_relative_proxy_max": 0.00016725271189625384,
     "spectrum_max_abs_dex": 0.0009078084035285519,
     "root_gate": 0.0002,
     "spectrum_gate_dex": 0.001,
     "finite_samples_only": true,
-    "excluded_boundary_probe": {
-      "density_sum": 1400000.0,
-      "reference_map_first": 0.1449084401457417,
-      "reference_map_second": 0.14490842738351778,
+    "excluded_1p4m_boundary": {
+      "total_density": 1400000.0,
       "reference_closure_residual": 8.807095727272428e-08,
       "fast_root_relative_to_closed_reference": 0.0002035530462532949,
       "spectrum_max_abs_dex": 0.0008695787312174019,
@@ -120,6 +115,8 @@
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_600_square_crossings.json": "d082bd76291c59a14cbb3fe99b78c985a313b5d92d3112c6c728585e574ac6b0",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_700_square_screen.py": "86b3061a666b0d024ba06319ac11dfc74fe84919c56ea5c29cc14e02b6cf5016",
     "docs/research/unified_domain_20261119/screen_h2_identity_cr1_700_square_screen.json": "e3df701e2b1ca0028b3c8beb1177cd3dc85b28b17e7ad0485f622450b9f89f7d",
+    "docs/research/unified_domain_20261119/screen_h2_identity_cr1_1300_boundary.py": "32d28d8dcf2e45fe3084f32d691f630ce78467aae69ea1f14cb74a489721195e",
+    "docs/research/unified_domain_20261119/screen_h2_identity_cr1_1300_boundary.json": "6cd07d292fe3a09d9c65eaf07e253b39e687c01840dae88a0c06f4e51bf1a398",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_density_z8.json": "e1b6ab5f39958dd0052c42fe78c0fbd23a047d3c61af3df6340d27bd57e48363",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_low_rectangle_z8.py": "c7e2b283aebfb5b7a30ddfd6c317dc05a70db544d32572207a7e15ef9178565f",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_low_rectangle_z8.json": "b2514674de17b500f2bc9c24265abc758c2b533091350ffac98149bdcedf720f",
@@ -131,15 +128,19 @@
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_z8.json": "8bbe2a9627029eb4d610144fb560421dcdec20d8718c39cd612c8133b89ec35e",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_700_square_z8.py": "b8374e6e0d5ca7efbbbade83f316f6d2c5f66ed5b3db81aa6f816c19b8a3d4cd",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_700_square_z8.json": "b1021acdbfceb7bc8ef0314f2c1018628b2dd10195a84d4f5f327d8216d7f52d",
+    "docs/research/unified_domain_20261119/validate_h2_identity_cr1_1300_boundary_z8.py": "350af0c144cc48a034ce7a62b3ecd515935f14ac464c2c423b1cc384a2a556fb",
+    "docs/research/unified_domain_20261119/validate_h2_identity_cr1_1300_boundary_z8.json": "887b7e7d084253dfc92dc7216d867e755d1e5a9e1701d277d68a59102489dafc",
     "docs/research/unified_domain_20261119/close_reference_cr1_700_square_z8.py": "d5b2a854b9884a331b93ac1e4829bd0970b568827e74fa3929dc8a268f3f6672",
     "docs/research/unified_domain_20261119/close_reference_cr1_700_square_z8.json": "db72dd138fc6fb49cc91ee500b5633e20f673b3936728d59f64acde902f5f3d4",
+    "docs/research/unified_domain_20261119/close_reference_cr1_1300_boundary_z8.py": "21217f86e5a299c4e482f05638d1b40cfe2d92b6510af4664249d8fc04639a23",
+    "docs/research/unified_domain_20261119/close_reference_cr1_1300_boundary_z8.json": "fb8335780edf4d8501bc1fc986d083165c880f7d9c059825161906c493101eda",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_asymmetric_holdout_symmetry.py": "50e2a8a68b2f82d20c131adb99d974bc1cdd76c6d1d60ea0337717527815b367",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_asymmetric_holdout_symmetry.json": "040c22beff0595c0f9d2cc0a50c856ff5e0dcd5ff7d13ee508153f99c03a8c9e",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_holdout_symmetry.py": "0c3adf2239506fd8d16561c92d35c2e030edae3cebdc5b54449f8505eb2e189d",
     "docs/research/unified_domain_20261119/validate_h2_identity_cr1_600_square_holdout_symmetry.json": "57f9d4c4625744bf9e9772808de613dcd90b1c554a8601121b520dc516763bc2",
-    "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "5ebf504123ee7eca3b4ef8c9ff25f92fbadfcf0a73097063a0c057af17c51148",
-    "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "b3702636f89e2c2e1dfc53be66aa81fd683a4c5485a4ab31e1edcb2bac2100ea",
-    "docs/research/unified_domain_20261119/domain_expansion.md": "a3fec37ee1caef33de2525fc94d00189bf82433528723ce97d97f06736605c37",
+    "docs/research/unified_domain_20261119/plot_h2_identity_domain.py": "2cf6e69cc8d62444815a9cfbf3ba39e72e7fd5d21b853c705f74d5684a3893cf",
+    "docs/research/unified_domain_20261119/h2_identity_domain_coverage.png": "4006947b05bd3ea760b33d36143a1e03e828cd16642ac0219075c9f8dc8d934c",
+    "docs/research/unified_domain_20261119/domain_expansion.md": "f877ca94387cce97c5854b0eab271ff5662a7d3febe47d6a8d47b834af4efcb7",
     "docs/research/unified_domain_20261119/diagnose_cr1_mode_trajectory_fixed_root.py": "4f5331bd65f9124f9aa8886bd4f5f210bfa3bef39050859360bc6644d6b92458",
     "docs/research/unified_domain_20261119/cr1_mode_trajectory_curved_transfer_thresholds.json": "fcbd691d28ce4a87f104039fe1abdd4aa26b273bbeffa8b45da2a08386b9f246",
     "docs/research/unified_domain_20261119/cr1_high_corner_curved_transfer_fast_probe.json": "672aee56cc55bcf57d40df97b01419c6c4b0aea0dbbe8e5df89fe558e05de5d3"
