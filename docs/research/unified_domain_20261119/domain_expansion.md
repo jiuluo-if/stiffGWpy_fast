@@ -29,7 +29,17 @@ Artifacts in this directory include the exact baseline and candidate grid rows, 
 
 An interleaved trusted-point benchmark used eight alternating fresh processes, each with one warmup and 12 timed calls (96 samples per version). Baseline/candidate P50/P95 were 10.34/12.33 ms and 10.16/11.58 ms. The candidate shows no measured regression on this workload. The separate cold-to-warm process startup medians were 262/258 ms. New-region calls on the 3x3 narrow-cutoff slice took 46–47 ms warm after compilation. The broad feature-support cases are rejected on accuracy.
 
-The added regression test checks the 3x3 rectangle. The focused file passes 11 tests. The current full suite passes 422 tests with 9 deselected. Ruff, Mypy, source distribution and wheel builds also pass. GitHub CI has not yet been run for this candidate.
+The added regression test checks the 3x3 rectangle. The focused file passes 11 tests. The current full suite passes 422 tests with 9 deselected. Ruff, Mypy, source distribution and wheel builds also pass. GitHub Actions run `44462717007` for commit `b6140947c909fe2891d562b2e3cef05acf409b4b` completed successfully across canonical regression, static checks, package build, Cobaya smoke, and Python 3.9–3.13 compatibility.
+
+## 2026-11-19 candidate screen: exact matter-era Bessel transfer (rejected)
+
+For the Fast tensor equation `T'' + (3 - 1.5 sigma) T' + exp(2z) T = 0`, a constant matter-era branch has `sigma=1` and `z'=1/2`. With `x=2 exp(z)`, it reduces to `x^2 T_xx + 4x T_x + x^2 T = 0`; its independent solutions are proportional to `(sin x - x cos x)/x^3` and `(cos x + x sin x)/x^3`. This is the exact order-3/2 Bessel solution. The state conversion follows from the Fast matrix system and the existing `S2` gauge; the matching point remains the actual unsmoothed reheating event.
+
+The source check read Turner, White & Lidsey, “Tensor Perturbations in Inflationary Models as a Probe of Cosmology,” §2.1 and Eq. (13), which states the matter-era `3 j1(k tau)/(k tau)` solution, and Greene et al., “Observable CMB Tensor Modes from Cosmological Phase Transitions,” §II, Eqs. (15)–(21), which derives the source-free tensor equation and the radiation/matter Bessel solutions. Those papers assume exact constant-equation-of-state eras and a homogeneous source-free mode. They establish the analytic basis, not the Fast state conversion or accuracy of a discretized reheating match; those were checked separately against DOP853 and an exact fractional-event unit case.
+
+The unit screen first failed on the old frozen-z propagation, then passed after the Bessel transfer was implemented. A paired end-to-end A/B with 22 eligible modes (`cr=0`, `T_re=2000 GeV`, `kappa10=.01`, `n_t=1`, `A_s=1e-15`, `DN_re=740.003`) changed the self-consistent root by `19.30` on a root near `1.50e7`, and the interpolated same-grid spectrum by at most `1.13e-6 dex`. The A/B used the same source and disabled only the new shortcut while retaining the exact event metadata; it is a local branch-isolation probe, not an old-binary comparison. Four paired warm runs gave P50/P95 `74.94/80.77 ms` with the transfer and `76.30/81.49 ms` without it. This does not repair the feature-band errors: on the prior `395`-frequency point, whose reheating event was grid-aligned and therefore did not invoke the shortcut, the spectrum remained `0.004664 dex` off Reference and the root error remained about `9.03e-4`. The wide-support probe also had a grid-aligned event. The candidate was removed from production and its unit tests; the probe and A/B artifacts are retained locally for provenance.
+
+This result redirects work toward the spectral-error source. In the wide-support probe, the reheating event landed exactly on a background grid node, so the fractional-event shortcut was correctly ineligible; the frequency grid itself had eight nodes from reheating through the next two dex. In the separate `395`-node feature-band comparison, propagation error persisted even though the grid was dense. More work is needed to distinguish the post-reheating transfer residual from background/initial-state effects before choosing another production candidate.
 
 ## Literature and scope
 
@@ -37,5 +47,5 @@ The accepted background rewrite follows directly from the project’s piecewise 
 
 ## Current decision
 
-The long-background overflow fix passes the sampled narrow-cutoff `cr=0` rectangle and Reference root checks. This evidence does not support broad-spectrum, transition-in-support accuracy, `cr>0` expansion, cold/warm P50/P95 qualification, or the complete delivery gates. Do not treat the failed wide-spectrum or transition-in-support regimes as accepted.
+The long-background overflow fix passes the sampled narrow-cutoff `cr=0` rectangle and Reference root checks. This evidence does not support broad-spectrum or transition-in-support accuracy, a `cr>0` expansion, or the complete delivery gates. The exact matter-era Bessel candidate was rejected. Do not treat the failed wide-spectrum or transition-in-support regimes as accepted.
 
