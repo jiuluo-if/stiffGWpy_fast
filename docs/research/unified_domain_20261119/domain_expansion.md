@@ -85,7 +85,7 @@ Paired screens, raw same-grid Reference spectra, the exact-replay artifact, benc
 
 ### Decision
 
-Accept the stable H2 identity and fused WKB screen for the sampled `cr=0` expanded regions only. The final trusted samples show exact output with aggregate P50/P95 ratios `0.8850/0.8603`; all four individual cases are below 5%. The `cr=1` high-density corner remains outside accepted accuracy coverage because its high corner misses the root gate and its z10 spectrum misses the spectrum gate. Final local gates passed: `428 passed, 9 deselected`, Ruff, Mypy, compileall, sdist/wheel build, and installed-wheel smoke. Git commit, push and remote CI verification remain.
+Accept the stable H2 identity and fused WKB screen for the sampled `cr=0` expanded regions only. The final trusted samples show exact output with aggregate P50/P95 ratios `0.8850/0.8603`; all four individual cases are below 5%. The `cr=1` high-density corner remains outside accepted accuracy coverage because it misses the root gate and its z10 spectrum misses the spectrum gate. Final local gates passed: `428 passed, 9 deselected`, Ruff, Mypy, compileall, sdist/wheel build, and installed-wheel smoke. Commit `5895d29ddbb685f5ed3a04574bf87565cd91e249` was pushed to `fast_v0.2`; GitHub Actions run `44541293060` passed all nine jobs.
 
 ## 2026-11-19 final-spectrum representability classification
 

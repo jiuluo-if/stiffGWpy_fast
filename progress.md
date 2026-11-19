@@ -1947,7 +1947,8 @@ the diagnostic artifacts are retained.
 - [x] Measure trusted P50/P95 on four full Fast cases using 64 alternating warm pairs: candidate/base aggregate ratios `0.8850/0.8603`; exact outputs, with each case below the 5% regression gate.
 - [x] Generate paired status/precision figure and raw replay/benchmark artifacts.
 - [x] Finish current-source full pytest (`428 passed, 9 deselected`), Ruff, Mypy, compileall, sdist/wheel build, and installed-wheel smoke.
-- [ ] Refresh final source hashes, stage only this round’s relevant code/tests/evidence, verify Git identity, commit with the required bilingual format, push `fast_v0.2`, and verify Actions.
+- [x] Refresh final source hashes, stage only this round’s relevant code/tests/evidence, verify Git identity, and commit with the required bilingual format.
+- [x] Push commit `5895d29ddbb685f5ed3a04574bf87565cd91e249` to `fast_v0.2`, verify the remote SHA, and confirm GitHub Actions run `44541293060` passed all nine jobs.
 
 ### Current delivery boundary
 

@@ -1712,6 +1712,6 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 5. [x] Measure four established full Fast cases with 64 alternating warm pairs each; exact outputs, every case below 5%, and aggregate candidate/baseline P50/P95 `0.8850/0.8603`.
 6. [x] Generate failure-class coverage maps and precision plots with raw artifacts and source hashes.
 7. [x] Complete current-source full test/static/package verification: `428 passed, 9 deselected`, Ruff, Mypy, compileall, sdist/wheel, and installed-wheel smoke.
-8. [ ] Inspect/stage only this round’s code, tests, ledgers and accepted evidence; verify Git identity, bilingual commit, push `fast_v0.2`, and remote CI.
+8. [x] Inspect/stage only this round’s code, tests, ledgers and accepted evidence; verify Git identity; push commit `5895d29ddbb685f5ed3a04574bf87565cd91e249` to `fast_v0.2`; verify remote SHA and Actions run `44541293060` (9/9 jobs passed).
 
 **Boundary:** the sampled high-density cr1 rectangle is not an accepted precision extension. Its high corner exceeds root error at both z8/z10, and z10 also exceeds the spectrum gate. Only the two sampled cr0 regions support the current expansion claim; this is not a proof over all intervening parameters.
