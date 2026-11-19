@@ -51,6 +51,42 @@ The accepted background rewrite follows directly from the project’s piecewise 
 
 The long-background overflow fix passes the sampled narrow-cutoff `cr=0` rectangle and Reference root checks. One previously rejected `395`-frequency point now passes the root and spectrum gates against a converged `z_tail=8` Reference; this was an accuracy-reference correction for an existing Fast success, not new domain coverage. The wide-support grid, `cr>0` expansion, and complete delivery gates remain unresolved. The exact matter-era Bessel candidate was rejected. Do not treat the remaining failed wide-spectrum regimes as accepted.
 
+## 2026-11-19 continuation — stable H2 primitives and WKB screening
+
+### Mathematical and implementation change
+
+On each smooth post-reheating branch, the background definitions imply
+
+`sigma = 1 - (d ln H2 / dN)/3` and `F(N)-F(N_re) = (N-N_re) - (ln H2(N)-ln H2(N_re))/3`.
+
+The candidate evaluates this exact identity from positive finite `H2`, anchored at the unmodified physical reheating event. Before reheating it retains the exact `sigma=1` matter branch. No transition is smoothed or moved. If `Psi` or either required exponential scale is outside float64 representability, the implementation uses a common relative scale and the same H2 primitive; it reports a nonfinite or nonpositive H2 when the mathematical background is invalid. It does not clamp invalid values.
+
+The high-sigma panel trigger `h*|sigma_right-sigma_left| > 0.05` is a local resolution indicator. It is independent of parameter names and also protects finite-but-unresolved terminal panels. The WKB handoff screen uses the local small parameter `epsilon=|1.5 sigma-1| exp(-z)`. Its fused Numba implementation uses a suffix maximum and monotone-`Phi` binary search; if sampled `Phi` is not monotone it uses the general scan. Before building the suffix array, a sufficient global bound `max|1.5 sigma-1| * exp(-(min_tail - max_delta_Phi)) <= 0.02` skips the detailed scan for smooth trusted backgrounds. This bound includes the predecessor node used by the transfer kernel. Scalar-equivalence and terminal-unsafe regressions pass.
+
+This change follows from the project’s own `H2_vec`/`sigma_vec` equations and the linear tensor system. No external approximate solver or paper-derived method was adopted; the identity is an algebraic consequence of the background definitions. The assumptions are a smooth branch with positive finite H2 and the exact unchanged reheating breakpoint.
+
+### Paired domain evidence
+
+All screens used the same input objects, Fast configuration (`h=0.005`, `z_tail=5`, goal frequency grid, two threads, `tol=1e-6`, `physical_guard=True`), and baseline source `872a70d`:
+
+- `cr=0`, `Omega_bh2={1e5,3e5,1e6}` by `T_re={1000,2000,4000}` plus two independent holdouts: baseline `1/11`, candidate `11/11`. Baseline failures were nine `nonfinite_background_primitive` and one 15-second resource timeout; the one prior success remains successful.
+- `cr=0`, `Omega_bh2={1e5,3e5,1e6}` by `Omega_ch2={1e5,3e5,1e6}` at fixed `T_re=2000` plus two holdouts: baseline `0/11`, candidate `11/11`; all baseline failures were `nonfinite_background_primitive` with positive finite H2.
+- A separate `cr=1` consistency-relation density rectangle used the model-derived tilt (`n_t=-0.00125`) and required a finite derived `N_inf=68.81384` plus physical-guard acceptance. Baseline `0/11`, candidate `11/11`, all old failures the same primitive classification. This is mathematical-computation coverage only; the high-density corner fails the accuracy gate described below and is not counted as accepted expansion.
+
+The two `cr=0` slices have direct same-grid `z_tail=8`, `rtol=1e-9` Reference checks at both corners and an independent holdout in each slice, plus an old-success control and a former baseline timeout point. The maximum selected root-relative proxy is `1.5121e-4`; maximum full-spectrum error is `8.7021e-4 dex`. Current-source replay after fusing the WKB screen reproduced all eight stored Fast roots, frequency arrays, and spectra exactly. Finite samples support local region improvement; they do not prove a continuous parameter domain.
+
+For `cr=1`, the low-density corner and independent holdout pass the root and spectrum gates, but the high-density corner does not: `z_tail=8` root-relative proxy `4.3667e-4`, spectrum max `9.5425e-4 dex`. One same-grid `z_tail=10` check leaves the root proxy at `4.3525e-4` and gives max spectrum error `1.0938e-3 dex`; extending the tail does not resolve it. A 254-node adaptive Fast grid also leaves the root proxy at `4.2471e-4`. Therefore the `cr=1` successes are not credited as accurate domain expansion; high-density `cr>0` remains a known boundary.
+
+### Performance and artifacts
+
+On the same Windows host, two Numba threads (`workqueue`), 64 alternating warm pairs on each of four trusted full Fast inputs, roots, grids, warnings, and spectra were exact. Aggregate candidate/baseline ratios were P50 `0.8850` and P95 `0.8603`; all four individual cases also stayed below the 5% regression limit. Cold first-solver P50 was `0.5935/0.5745 s` (candidate/base), and process-to-first-solve P50 was `1.644/1.599 s`. In the newly covered rectangles, candidate Fast solve times were `0.094–0.193 s`; old Fast failed on those cases. The independent Reference calls remain slow and were used only for selected precision checks.
+
+Paired screens, raw same-grid Reference spectra, the exact-replay artifact, benchmark samples, z8/z10 CR1 checks, runner hashes, and [`h2_identity_domain_coverage.png`](h2_identity_domain_coverage.png) are in this directory. [`plot_h2_identity_domain.py`](plot_h2_identity_domain.py) regenerates the failure-map and precision figure. The source hashes are stored with each data artifact; the supplementary replay artifact links earlier CR0 Reference arrays to the current candidate by exact output equality.
+
+### Decision
+
+Accept the stable H2 identity and fused WKB screen for the sampled `cr=0` expanded regions only. The final trusted samples show exact output with aggregate P50/P95 ratios `0.8850/0.8603`; all four individual cases are below 5%. The `cr=1` high-density corner remains outside accepted accuracy coverage because its high corner misses the root gate and its z10 spectrum misses the spectrum gate. Final local gates passed: `428 passed, 9 deselected`, Ruff, Mypy, compileall, sdist/wheel build, and installed-wheel smoke. Git commit, push and remote CI verification remain.
+
 ## 2026-11-19 final-spectrum representability classification
 
 The reconstructed wide-support probe (`cr=0`, `T_re=1e-3`, `kappa10=1e-3`, `n_t=0`, `r=0.01`, `A_s=2.100549e-9`, `DN_re=717.4979895910536`) had returned a converged model while one final linear spectral bin was zero and `log10OmegaGW` was `-inf` with a divide-by-zero warning. This is a nonzero tensor input whose final linear output is not representable; it is not an exact-zero limit. The Fast output assembly now fails closed with `nonrepresentable_output/final_spectrum_underflow` for a zero final signal in the linear-amplitude path. Nonfinite and other nonpositive signals retain separate failure reasons; the explicit exact-zero path and log-amplitude recovery are unchanged. The same regression was red before the change and passes afterward.

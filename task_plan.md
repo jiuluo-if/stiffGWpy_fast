@@ -1690,3 +1690,28 @@ Build a current-source Fast preflight and direct Reference holdout at a distinct
 ### Next Step
 
 Inspect the exact 221-node preflight grid for the low-temperature/low-kappa holdout, then run the two guarded Fast amplitude cases.
+
+## Round 58 — terminal S2 overflow and H2 identity audit (2026-11-19)
+
+- [x] Reproduce the S2 overflow and terminal sigma spike on `Omega_bh2=1e5` using the current Fast grid.
+- [x] Derive and numerically check the smooth post-reheating identity `sigma = 1 - (d ln H2/dN)/3`, preserving the exact reheating breakpoint and pre-reheating matter branch.
+- [x] Compare the identity primitive with the archived same-grid Reference root and reject candidates that exceed the `2e-4` root gate.
+- [x] Restore production source and test files after the candidate failed acceptance; retain the evidence in findings/progress.
+- [ ] Inspect Reference background primitives at identical `N` nodes and identify whether the residual root mismatch is due to transfer propagation or background semantics before choosing another representation.
+
+### Next Step
+
+Background comparison is complete and bitwise-close. Uniform h refinement and H2-curvature-based terminal N refinement both miss the root gate. Next derive a transfer-step defect estimator from `z_end = 2*z_mid - z_node`, then compare a fixed-root locally scaled transfer against Reference on existing same-grid data; no production dispatch until root and spectrum gates pass.
+
+## Round 59 — stable primitives and verified sampled cr0 expansion
+
+1. [x] Build exact H2-identity background primitives with representability checks and unchanged physical transitions.
+2. [x] Add local steep-panel dispatch and nonadiabatic WKB tail screening; fuse the per-mode screen after the first implementation exceeded the 5% runtime gate.
+3. [x] Re-run paired Fast screens on a `cr=0` `Omega_bh2 × T_re` rectangle, an independent `cr=0` `Omega_bh2 × Omega_ch2` rectangle, and a consistency-derived `cr=1` rectangle with finite `N_inf`.
+4. [x] Run selected same-grid Reference checks on both accepted cr0 slices; reproduce saved Fast outputs exactly on the final fused kernel.
+5. [x] Measure four established full Fast cases with 64 alternating warm pairs each; exact outputs, every case below 5%, and aggregate candidate/baseline P50/P95 `0.8850/0.8603`.
+6. [x] Generate failure-class coverage maps and precision plots with raw artifacts and source hashes.
+7. [x] Complete current-source full test/static/package verification: `428 passed, 9 deselected`, Ruff, Mypy, compileall, sdist/wheel, and installed-wheel smoke.
+8. [ ] Inspect/stage only this round’s code, tests, ledgers and accepted evidence; verify Git identity, bilingual commit, push `fast_v0.2`, and remote CI.
+
+**Boundary:** the sampled high-density cr1 rectangle is not an accepted precision extension. Its high corner exceeds root error at both z8/z10, and z10 also exceeds the spectrum gate. Only the two sampled cr0 regions support the current expansion claim; this is not a proof over all intervening parameters.

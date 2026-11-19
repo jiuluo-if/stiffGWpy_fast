@@ -1,0 +1,48 @@
+{
+  "status": "complete_current_source_replay",
+  "candidate_sha256": {
+    "exact_background.py": "b444429157611485b33e3ca8b3dff2ae3e7d1abf40ab0174d2ab7571c4aa2035",
+    "fast_sgwb.py": "b7ab7304be0215239f72f0ccb7ee4ca2e2184fa9fcfa41dff948bb692110c3b0"
+  },
+  "rows": [
+    {
+      "case_id": "training_low_density_corner",
+      "success": true,
+      "seconds": 0.2753093000028457,
+      "root": 0.023607114909884916,
+      "stored_root": 0.023607114909884916,
+      "root_exact": true,
+      "frequency_exact": true,
+      "spectrum_exact": true,
+      "max_spectrum_delta": 0.0,
+      "old_reference_root_proxy": 4.596328774951152e-05,
+      "old_reference_spectrum_max": 0.0008929884616950545
+    },
+    {
+      "case_id": "training_high_density_corner",
+      "success": true,
+      "seconds": 0.12176060000274447,
+      "root": 0.21175571742057805,
+      "stored_root": 0.21175571742057805,
+      "root_exact": true,
+      "frequency_exact": true,
+      "spectrum_exact": true,
+      "max_spectrum_delta": 0.0,
+      "old_reference_root_proxy": 0.0004366721575561493,
+      "old_reference_spectrum_max": 0.0009542450571018435
+    },
+    {
+      "case_id": "independent_density_holdout",
+      "success": true,
+      "seconds": 0.08063830000173766,
+      "root": 0.1059514160339281,
+      "stored_root": 0.1059514160339281,
+      "root_exact": true,
+      "frequency_exact": true,
+      "spectrum_exact": true,
+      "max_spectrum_delta": 0.0,
+      "old_reference_root_proxy": 8.792282041589466e-05,
+      "old_reference_spectrum_max": 0.0008671128439345921
+    }
+  ]
+}
