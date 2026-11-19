@@ -95,16 +95,17 @@ This is an output-validity correction only, not an expansion result: the wide-su
 
 
 
-## 2026-11-19 continuation — precision-qualified lower-density cr=1 rectangle
+## 2026-11-19 continuation — precision-qualified cr=1 density rectangle
 
 ### Accepted finite-sample coverage
 
-The earlier `cr=1` 3×3 rectangle extending to `Omega_bh2=Omega_ch2=1e6` remains outside the accepted precision domain because its upper corner misses the root gate. A lower rectangle is now separately evaluated, with `cr=1`, the consistency-derived tilt `n_t=-0.00125`, finite `N_inf=68.81384`, and `physical_guard=True`:
+The earlier `cr=1` 3×3 rectangle extending to `Omega_bh2=Omega_ch2=1e6` remains outside the accepted precision domain because its upper corner misses the root gate. The precision-qualified rectangle is now extended to `Omega_bh2, Omega_ch2 ∈ [1e5,5e5]`, with `cr=1`, consistency-derived tilt `n_t=-0.00125`, finite `N_inf=68.81384`, and `physical_guard=True`:
 
-- Rectangle: `Omega_bh2, Omega_ch2 ∈ {1e5, 3e5}` at the fixed physical settings from the paired screen. All four old Fast points fail as `nonfinite_background_primitive`; current Fast solves all four. The paired base is `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45` and candidate is `b236c5632fa06cbd113f11627efadee92947c243`.
-- Independent holdout `(Omega_bh2, Omega_ch2)=(2e5,2.5e5)`: old Fast fails with the same primitive classification and current Fast succeeds. Combined sampled status is `0/5 → 5/5`.
-- Same-grid z8 Reference checks pass on the previously stored lower corner `(1e5,1e5)` and the new cross point `(1e5,3e5)`, upper corner `(3e5,3e5)`, and holdout `(2e5,2.5e5)`. Across these four points, maximum root-relative proxy is `4.5964e-5` and maximum spectrum error is `9.0781e-4 dex`, below `2e-4` and `1e-3 dex` respectively. The two density inputs enter the model only through `Omega_mh2=Omega_bh2+Omega_ch2`; this exact exchange symmetry is recorded as a source-level property, while accuracy claims remain limited to the sampled points.
-- Post-warm Fast solve times in the rectangle are approximately `0.05–0.15 s`; the separate holdout run records `0.27 s` including its process-local startup. The former high-density corner remains excluded. No pointwise or continuous-domain extrapolation is made from this finite grid.
+- The paired 3×3 sample on values `{1e5,3e5,5e5}` has old Fast `0/9` and current Fast `9/9`; all old failures are `nonfinite_background_primitive`. This combines the original `872a70d` density screen with four new cross points; base SHA is `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45`, candidate SHA `b236c5632fa06cbd113f11627efadee92947c243`.
+- Independent holdout `(Omega_bh2, Omega_ch2)=(2e5,2.5e5)` has old Fast `0/1` and current Fast `1/1`, with the same old failure. Combined paired status is `0/10 → 10/10`.
+- Same-grid z8 Reference checks validate the rectangle's distinct density sums `200k, 400k, 600k, 800k, 1M`, plus the independent 450k holdout. They cover the lower corner, cross points, upper corner, and holdout. Across these six checks, the maximum root-relative proxy is `8.7923e-5` and maximum spectrum error is `9.0781e-4 dex`, under `2e-4` and `1e-3 dex`.
+- `Omega_bh2` and `Omega_ch2` enter downstream only through `Omega_mh2=Omega_bh2+Omega_ch2`. Thus swapped coordinates with the same total density have exactly the same modeled background and spectra; direct Reference checks are retained for every distinct total density sampled in the rectangle. This source-level symmetry does not turn the finite accuracy samples into a continuous-domain proof.
+- After warmup, candidate Fast calls in the new cross points take `0.11–0.16 s`; the independent holdout is `0.27 s` including process-local startup. The previously screened `1e6 × 1e6` corner remains excluded. No interpolation is used to claim unsampled accuracy.
 
 ### Rejected local transfer-curvature candidate
 

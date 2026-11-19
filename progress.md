@@ -1972,3 +1972,7 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - Direct same-grid z8 Reference validation (76 nodes) now covers lower corner, cross corner, upper corner, and independent `(2e5,2.5e5)` holdout. Maximum root proxy `4.59633e-5`; maximum spectrum difference `9.07808e-4 dex`; all pass. The reference source hash is unchanged. New raw files and hash manifest are in `docs/research/unified_domain_20261119/`.
 - Updated `domain_expansion.md` and `h2_identity_domain_coverage.png` to identify this finite-sample CR1 subregion; the previously screened high-density corner stays excluded. Full pytest: `428 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall, diff check, sdist and wheel passed.
 - Pending: stage only this continuation's report, figure, scripts, JSON data, manifest, and ledgers; verify author/committer email; commit/push `fast_v0.2`; verify CI and remote SHA.
+
+- Continuation: added four paired CR1 crossing points to enlarge the accepted finite-sample rectangle to `[1e5,5e5]^2`; old/current Fast `0/9 → 9/9` on the 3×3 lattice, plus independent holdout `0/1 → 1/1`. Direct z8 Reference at the newly added 800k total density passes root `3.44e-5`, spectrum `8.70e-4 dex`. Updated report/plot and will refresh manifest before the follow-up commit.
+
+- CI for prior evidence commit `0a0ef4742dadbabd6b3c6c8db57a479e70bf9739` completed successfully: all 9 jobs passed. The 5e5 extension is a follow-up documentation/data commit; its source and Reference code are unchanged.
