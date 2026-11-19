@@ -1737,4 +1737,4 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 
 ### Next Step
 
-Stage the accepted 1.3M rectangle edge, rejected 1.4M closure evidence, refreshed manifest, updated report/figure, and ledgers only; verify Git identity, commit/push `fast_v0.2`, then check CI. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.
+Next, investigate the 1.4M boundary root discrepancy with a generic transfer/integration error decomposition; do not retune thresholds on that single point. Any candidate must pass neighboring total-density samples, the existing trusted-region performance gate, and an independent holdout before changing production. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.
