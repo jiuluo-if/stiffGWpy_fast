@@ -27,6 +27,9 @@ __all__ = ['sigma_vec', 'H2_vec', 'exact_phi_s2', 'build_transition_grid',
            'fast_phi_s2_split']
 
 ln10 = math.log(10.0)
+_LOG_FLOAT_MAX = math.log(float(np.finfo(np.float64).max))
+_LOG_FLOAT_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
+_H2_IDENTITY_PANEL_VARIATION_LIMIT = 5.0e-2
 
 
 def _fd_from_ref():
@@ -205,10 +208,99 @@ def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
 
 
 def _primitive_scales(psi, relative_scale):
-    if relative_scale:
+    psi = np.asarray(psi, dtype=np.float64)
+    finite = bool(np.isfinite(psi).all())
+    auto_scale = bool(
+        finite
+        and (
+            np.any(psi > _LOG_FLOAT_MAX)
+            or np.any(psi < _LOG_FLOAT_MIN_SUBNORMAL)
+            or np.any(-0.5 * psi > _LOG_FLOAT_MAX)
+            or np.any(-0.5 * psi < _LOG_FLOAT_MIN_SUBNORMAL)
+        )
+    )
+    use_relative = bool(relative_scale or auto_scale)
+    if use_relative:
         units = np.ones_like(psi)
-        return units, units
-    return np.exp(psi), np.exp(-0.5 * psi)
+        return units, units, use_relative, auto_scale and not relative_scale
+    return np.exp(psi), np.exp(-0.5 * psi), False, False
+
+
+def _h2_identity_primitives(m, Nv, DN_eff, midpoints, *, relative_scale=False):
+    """Build exact background primitives from the smooth-branch H2 identity.
+
+    On every smooth post-reheating branch, ``sigma = 1 - (d ln H2/dN)/3``.
+    Integrate that identity from the physical reheating breakpoint; retain the
+    exact pre-reheating matter branch ``sigma=1``. The transition itself is not
+    smoothed or shifted.
+    """
+    nodes = np.asarray(Nv, dtype=np.float64)
+    mids = np.asarray(midpoints, dtype=np.float64)
+    n0 = float(nodes[0])
+    n_re = float(m.derived_param["N_inf"] - m.derived_param["N_re"])
+    anchor_n = max(n0, n_re)
+    post_nodes = nodes >= n_re
+    post_mids = mids >= n_re
+    try:
+        h2_anchor = float(H2_vec(np.asarray([anchor_n]), m, DN_eff)[0])
+        h2_nodes = H2_vec(nodes[post_nodes], m, DN_eff)
+        h2_mids = H2_vec(mids[post_mids], m, DN_eff)
+    except (OverflowError, ValueError, FloatingPointError):
+        h2_anchor = float("nan")
+        h2_nodes = np.full(int(np.count_nonzero(post_nodes)), np.nan)
+        h2_mids = np.full(int(np.count_nonzero(post_mids)), np.nan)
+
+    valid_anchor = math.isfinite(h2_anchor) and h2_anchor > 0.0
+    valid_nodes = np.isfinite(h2_nodes).all() and np.all(h2_nodes > 0.0)
+    valid_mids = np.isfinite(h2_mids).all() and np.all(h2_mids > 0.0)
+    if not (valid_anchor and valid_nodes and valid_mids):
+        finite_nonpositive = (
+            (math.isfinite(h2_anchor) and h2_anchor <= 0.0)
+            or np.any(np.isfinite(h2_nodes) & (h2_nodes <= 0.0))
+            or np.any(np.isfinite(h2_mids) & (h2_mids <= 0.0))
+        )
+        failure = "nonpositive_h2" if finite_nonpositive else "nonfinite_background"
+        if not valid_anchor:
+            failure_index = int(np.searchsorted(nodes, anchor_n, side="left"))
+        elif not valid_nodes:
+            failure_index = int(np.flatnonzero(~(np.isfinite(h2_nodes) & (h2_nodes > 0.0)))[0])
+        else:
+            failure_index = max(
+                0,
+                int(np.flatnonzero(~(np.isfinite(h2_mids) & (h2_mids > 0.0)))[0]),
+            )
+        return None, failure, failure_index
+
+    log_anchor = math.log(h2_anchor)
+    F_nodes = nodes - n0
+    F_mids = mids - n0
+    F_nodes[post_nodes] -= (np.log(h2_nodes) - log_anchor) / 3.0
+    F_mids[post_mids] -= (np.log(h2_mids) - log_anchor) / 3.0
+    phi_nodes = 1.5 * F_nodes - nodes + n0
+    phi_mids = 1.5 * F_mids - mids + n0
+    psi = 3.0 * F_nodes - 4.0 * nodes
+    s2, s2inv, use_relative, _ = _primitive_scales(psi, relative_scale)
+    phi_re = 0.5 * (n_re - n0) if n0 < n_re <= nodes[-1] else 0.0
+    return (phi_nodes, phi_mids, s2, s2inv, use_relative, float(phi_re)), None, None
+
+
+def _replace_overflowed_primitive(
+    m, Nv, DN_eff, midpoints, *, auto_overflow, relative_scale,
+):
+    if not auto_overflow:
+        return None
+    result, failure, failure_index = _h2_identity_primitives(
+        m, Nv, DN_eff, midpoints, relative_scale=relative_scale
+    )
+    if result is None:
+        m._fast_background_failure = failure
+        m._fast_background_failure_detail = "H2 in sigma-integral identity"
+        m._fast_background_failure_index = int(failure_index)
+        return None
+    phi, phi_mid, s2, s2inv, relative_used, phi_re = result
+    m._fast_relative_background_required = bool(relative_used)
+    m._fast_h2_identity_used = True
+    return phi, phi_mid, s2, s2inv, float(phi_re), bool(relative_used)
 
 
 def exact_phi_s2(m, Nv, DN_eff, h, *, relative_scale=False):
@@ -250,7 +342,15 @@ def exact_phi_s2(m, Nv, DN_eff, h, *, relative_scale=False):
     Phi_grid = 1.5 * F_grid - Nv + N0
     Phi_mid = 1.5 * F_mid - (Nv + half) + N0
     Psi = 3.0 * F_grid - 4.0 * Nv
-    S2, S2inv = _primitive_scales(Psi, relative_scale)
+    S2, S2inv, relative_used, auto_overflow = _primitive_scales(Psi, relative_scale)
+    if auto_overflow:
+        replacement = _replace_overflowed_primitive(
+            m, Nv, DN_eff, Nv + half, auto_overflow=True,
+            relative_scale=relative_scale,
+        )
+        if replacement is not None:
+            Phi_grid, Phi_mid, S2, S2inv, _, relative_used = replacement
+    m._fast_relative_background_required = bool(relative_used)
     return Phi_grid.astype(np.float64), Phi_mid.astype(np.float64), \
         S2.astype(np.float64), S2inv.astype(np.float64)
 
@@ -382,7 +482,15 @@ def exact_phi_s2_grid(m, Nv, DN_eff, *, relative_scale=False):
     Phi_grid = 1.5 * F_nodes - Nv + N0
     Phi_mid = 1.5 * F_mid - mid + N0
     Psi = 3.0 * F_nodes - 4.0 * Nv
-    S2, S2inv = _primitive_scales(Psi, relative_scale)
+    S2, S2inv, relative_used, auto_overflow = _primitive_scales(Psi, relative_scale)
+    if auto_overflow:
+        replacement = _replace_overflowed_primitive(
+            m, Nv, DN_eff, mid, auto_overflow=True,
+            relative_scale=relative_scale,
+        )
+        if replacement is not None:
+            Phi_grid, Phi_mid, S2, S2inv, _, relative_used = replacement
+    m._fast_relative_background_required = bool(relative_used)
     h_arr = np.diff(Nv).astype(np.float64)
     return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
             S2.astype(np.float64), S2inv.astype(np.float64), h_arr)
@@ -480,7 +588,15 @@ def exact_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False)
     Phi_grid = 1.5 * F_nodes - Nv + N0
     Phi_mid = 1.5 * F_mid - mid + N0
     Psi = 3.0 * F_nodes - 4.0 * Nv
-    S2, S2inv = _primitive_scales(Psi, relative_scale)
+    S2, S2inv, relative_used, auto_overflow = _primitive_scales(Psi, relative_scale)
+    if auto_overflow:
+        replacement = _replace_overflowed_primitive(
+            m, Nv, DN_eff, mid, auto_overflow=True,
+            relative_scale=relative_scale,
+        )
+        if replacement is not None:
+            Phi_grid, Phi_mid, S2, S2inv, phi_re, relative_used = replacement
+    m._fast_relative_background_required = bool(relative_used)
     return (Phi_grid.astype(np.float64), Phi_mid.astype(np.float64),
             S2.astype(np.float64), S2inv.astype(np.float64),
             kink_index, float(kink_fraction), float(phi_re))
@@ -492,8 +608,12 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
                       h_arr, mid_sigma, integral, F_nodes, F_mid,
                       Phi_grid, Phi_mid, S2, S2inv, relative_scale=False):
     n = len(Nv)
+    steep_panel = False
     for i in range(n - 1):
         h_arr[i] = Nv[i + 1] - Nv[i]
+        if (abs(nodes_right[i + 1] - nodes_left[i]) * h_arr[i]
+                > _H2_IDENTITY_PANEL_VARIATION_LIMIT):
+            steep_panel = True
         mid_sigma[i] = 0.5 * (nodes_left[i] + nodes_right[i + 1])
         integral[i] = h_arr[i] * (
             nodes_left[i] + 4.0 * mid_sigma[i] + nodes_right[i + 1]) / 6.0
@@ -508,6 +628,14 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
         integral[kink_index] = left_integral + right_integral
     F_nodes[0] = 0.0
     compensation = 0.0
+    all_psi_finite = math.isfinite(3.0 * F_nodes[0] - 4.0 * Nv[0])
+    outside_float_range = False
+    psi0 = 3.0 * F_nodes[0] - 4.0 * Nv[0]
+    if math.isfinite(psi0) and (
+            psi0 > _LOG_FLOAT_MAX or psi0 < _LOG_FLOAT_MIN_SUBNORMAL
+            or -0.5 * psi0 > _LOG_FLOAT_MAX
+            or -0.5 * psi0 < _LOG_FLOAT_MIN_SUBNORMAL):
+        outside_float_range = True
     for i in range(n - 1):
         if relative_scale:
             increment = integral[i] - compensation
@@ -515,19 +643,29 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
             compensation = (F_nodes[i + 1] - F_nodes[i]) - increment
         else:
             F_nodes[i + 1] = F_nodes[i] + integral[i]
+        psi = 3.0 * F_nodes[i + 1] - 4.0 * Nv[i + 1]
+        if not math.isfinite(psi):
+            all_psi_finite = False
+        elif (psi > _LOG_FLOAT_MAX or psi < _LOG_FLOAT_MIN_SUBNORMAL
+              or -0.5 * psi > _LOG_FLOAT_MAX
+              or -0.5 * psi < _LOG_FLOAT_MIN_SUBNORMAL):
+            outside_float_range = True
         F_mid[i] = F_nodes[i] + h_arr[i] * (
             nodes_left[i] + 4.0 * (0.75 * nodes_left[i]
                                     + 0.25 * nodes_right[i + 1])
             + mid_sigma[i]) / 12.0
     N0 = Nv[0]
+    relative_used = all_psi_finite and (relative_scale or outside_float_range)
+    auto_overflow = all_psi_finite and outside_float_range and not relative_scale
+    identity_required = auto_overflow or steep_panel
     for i in range(n):
         Phi_grid[i] = 1.5 * F_nodes[i] - Nv[i] + N0
         Psi = 3.0 * F_nodes[i] - 4.0 * Nv[i]
-        S2[i] = 1.0 if relative_scale else np.exp(Psi)
-        S2inv[i] = 1.0 if relative_scale else np.exp(-0.5 * Psi)
+        S2[i] = 1.0 if relative_used else np.exp(Psi)
+        S2inv[i] = 1.0 if relative_used else np.exp(-0.5 * Psi)
     for i in range(n - 1):
         Phi_mid[i] = 1.5 * F_mid[i] - 0.5 * (Nv[i] + Nv[i + 1]) + N0
-    return left_integral
+    return left_integral, relative_used, identity_required
 
 
 def _fast_phi_s2_workspace(m, n):
@@ -602,17 +740,31 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
             kink_fraction = 0.0
 
     workspace = _fast_phi_s2_workspace(m, Nv.size)
-    left_integral = _fast_phi_s2_fill(
+    left_integral, relative_used, identity_required = _fast_phi_s2_fill(
         Nv, nodes_left, nodes_right, kink_index, kink_fraction,
         sig_left, sig_re, sig_right, workspace['h_arr'],
         workspace['mid_sigma'], workspace['integral'], workspace['F_nodes'],
         workspace['F_mid'], workspace['Phi_grid'], workspace['Phi_mid'],
         workspace['S2'], workspace['S2inv'], relative_scale)
-    if kink_index >= 0 and 0.0 < kink_fraction < 1.0:
+    if identity_required:
+        replacement = _replace_overflowed_primitive(
+            m, Nv, DN_eff, 0.5 * (Nv[:-1] + Nv[1:]),
+            auto_overflow=True, relative_scale=relative_scale,
+        )
+        if replacement is not None:
+            phi, phi_mid, s2, s2inv, phi_re, relative_used = replacement
+            workspace['Phi_grid'][:] = phi
+            workspace['Phi_mid'][:phi_mid.size] = phi_mid
+            workspace['S2'][:] = s2
+            workspace['S2inv'][:] = s2inv
+        else:
+            phi_re = 0.0
+    elif kink_index >= 0 and 0.0 < kink_fraction < 1.0:
         phi_re = (1.5 * (workspace['F_nodes'][kink_index] + left_integral)
                   - n_re + Nv[0])
     else:
         phi_re = 0.0
+    m._fast_relative_background_required = bool(relative_used)
     return (workspace['Phi_grid'], workspace['Phi_mid'],
             workspace['S2'], workspace['S2inv'],
             kink_index, float(kink_fraction), float(phi_re))

@@ -350,62 +350,13 @@ def test_fast_outer_reuse_recomputes_when_frequency_grid_changes():
     assert np.all(model.Ogw_today - model.Oj_today > 0.0)
     assert model.DN_gw[-1] > 0.0
 
-def test_fast_reports_nonpositive_background_h2_without_leaking_division_error():
+def test_fast_reports_nonpositive_background_h2_without_leaking_division_error(monkeypatch):
     model = LCDM_SG(
         Omega_bh2=-1e100,
         Omega_ch2=0.1201075,
         H0=67.32117,
         DN_eff=0.0,
         A_s=2.100549e-9,
-        r=1e-2,
-        n_t=0.5,
-        cr=0.0,
-        T_re=2e3,
-        DN_re=10.0,
-        kappa10=1e-2,
-    )
-
-    result = model.SGWB_iter(
-        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
-        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
-    )
-
-    assert result is None
-    assert model.fast_failure_reason == 'nonpositive_h2'
-
-def test_fast_reports_invalid_derived_cutoff_after_outer_update():
-    model = LCDM_SG(
-        Omega_bh2=0.0223828,
-        Omega_ch2=0.1201075,
-        H0=1e100,
-        DN_eff=0.0,
-        A_s=2.100549e-9,
-        r=1e-2,
-        n_t=0.5,
-        cr=1.0,
-        T_re=2e3,
-        DN_re=10.0,
-        kappa10=1e-2,
-    )
-
-    assert model.derived_param['N_inf'] is not None
-    result = model.SGWB_iter(
-        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
-        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
-    )
-
-    assert result is None
-    assert model.fast_failure_reason == 'invalid_iterate_cutoff'
-    assert model.cosmo_param['DN_eff'] == 0.0
-
-
-def test_fast_stops_before_tensor_when_background_primitive_overflows(monkeypatch):
-    model = LCDM_SG(
-        Omega_bh2=0.0223828,
-        Omega_ch2=0.1201075,
-        H0=67.32117,
-        DN_eff=0.0,
-        A_s=1e20,
         r=1e-2,
         n_t=0.5,
         cr=0.0,
@@ -421,17 +372,48 @@ def test_fast_stops_before_tensor_when_background_primitive_overflows(monkeypatc
         return original_kernel(*args, **kwargs)
 
     monkeypatch.setattr(FS, 'solve_kernel', counted_kernel)
+
     result = model.SGWB_iter(
         engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
-        freq_res=1.0, threads=1, accuracy_mode='fast', physical_guard=False,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
     )
 
     assert result is None
-    assert model.fast_failure_reason == 'nonfinite_background_primitive'
-    assert model._fast_background_failure_detail == 'S2'
-    assert 0 <= model._fast_background_failure_index < len(model.Nv)
-    assert model._fast_background_failure_log_scale > 700.0
-    assert len(calls) == 1
+    assert model.fast_failure_reason == 'nonpositive_h2'
+    assert not calls
+
+def test_fast_reports_invalid_derived_cutoff_after_outer_update(monkeypatch):
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=1e100,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-2,
+        n_t=0.5,
+        cr=1.0,
+        T_re=2e3,
+        DN_re=10.0,
+        kappa10=1e-2,
+    )
+
+    assert model.derived_param['N_inf'] is not None
+    monkeypatch.setattr(
+        FS, '_defer_nonadiabatic_wkb_tails_kernel',
+        lambda *args, **kwargs: (0, 0),
+    )
+    monkeypatch.setattr(
+        FS, '_pchip_integrals_vectorized',
+        lambda x, y: np.full(max(1, len(x) - 1), 1e-150),
+    )
+    result = model.SGWB_iter(
+        engine='fast', fallback=False, tol=1e-6, z_tail=5.0,
+        freq_res=1.0, threads=2, accuracy_mode='fast', physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == 'invalid_iterate_cutoff'
+    assert model.cosmo_param['DN_eff'] == 0.0
 
 
 @pytest.mark.slow

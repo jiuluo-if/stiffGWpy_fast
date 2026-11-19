@@ -1155,8 +1155,20 @@ def prep_kernel(Nv, Sv, f_hor, freqs, h, ln10v, Phi_grid, Phi_mid, Psi, S2, S2in
     for i in range(nv):
         Phi_grid[i] = 1.5 * F[i] - Nv[i] + N0
         Psi[i] = 3.0 * F[i] - 4.0 * Nv[i]
-        S2[i] = 1.0 if relative_scale else math.exp(Psi[i])
-        S2inv[i] = 1.0 if relative_scale else math.exp(-0.5 * Psi[i])
+    all_psi_finite = True
+    outside_float_range = False
+    for i in range(nv):
+        psi = Psi[i]
+        if not math.isfinite(psi):
+            all_psi_finite = False
+        elif (psi > _LOG_MAX_FLOAT or psi < _LOG_MIN_SUBNORMAL
+              or -0.5 * psi > _LOG_MAX_FLOAT
+              or -0.5 * psi < _LOG_MIN_SUBNORMAL):
+            outside_float_range = True
+    relative_scale_used = all_psi_finite and (relative_scale or outside_float_range)
+    for i in range(nv):
+        S2[i] = 1.0 if relative_scale_used else math.exp(Psi[i])
+        S2inv[i] = 1.0 if relative_scale_used else math.exp(-0.5 * Psi[i])
     for i in range(nv):
         if i < nseg:
             seg = i
@@ -1266,8 +1278,34 @@ def prep_fast(m, Nv, freqs, h, variable_grid=False, relative_scale=False):
     z0s = np.empty(len(freqs))
     if variable_grid:
         prep_frequency_kernel(f_hor, freqs, ln10, j0s, z0s, fp_minus)
+        m._fast_relative_background_required = bool(relative_scale)
     else:
         prep_kernel(Nv, Sv, f_hor, freqs, h, ln10, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus, relative_scale)
+        auto_overflow = bool(
+            not relative_scale
+            and np.isfinite(Psi).all()
+            and (
+                np.any(Psi > _LOG_MAX_FLOAT)
+                or np.any(Psi < _LOG_MIN_SUBNORMAL)
+                or np.any(-0.5 * Psi > _LOG_MAX_FLOAT)
+                or np.any(-0.5 * Psi < _LOG_MIN_SUBNORMAL)
+            )
+        )
+        m._fast_relative_background_required = bool(relative_scale)
+        if auto_overflow:
+            from .exact_background import _replace_overflowed_primitive
+
+            replacement = _replace_overflowed_primitive(
+                m, Nv, m.cosmo_param["DN_eff"], Nv + 0.5 * h,
+                auto_overflow=True, relative_scale=False,
+            )
+            if replacement is not None:
+                phi, phi_mid, s2, s2inv, _, relative_used = replacement
+                Phi_grid[:] = phi
+                Phi_mid[:] = phi_mid
+                S2[:] = s2
+                S2inv[:] = s2inv
+                m._fast_relative_background_required = bool(relative_used)
     return Sv, f_hor, Phi_grid, Phi_mid, Psi, S2, S2inv, j0s, z0s, fp_minus
 
 
@@ -1311,6 +1349,7 @@ def _scale_frequency_rows_by_log(values, log_scale):
 
 # ================= stepping, assembly and kernel / 步进、组装与计算核 =================
 _LOG_MAX_FLOAT = math.log(np.finfo(np.float64).max)
+_LOG_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
 
 
 def _uniform_step_terminal_width(Nv, h):
@@ -1499,6 +1538,7 @@ _DEFAULT_WKB_RIPPLE_DEX = 1.0e-3
 _DEFAULT_ADAPTIVE_HANDOFF_BELOW = _z_today_threshold_for_ripple_dex(
     _DEFAULT_WKB_RIPPLE_DEX
 )
+_WKB_ADIABATICITY_LIMIT = 2.0e-2
 
 
 def _adaptive_wkb_tail_thresholds(
@@ -1524,6 +1564,167 @@ def _adaptive_wkb_tail_thresholds(
         delayed &= weights <= 0.0
     thresholds[delayed] = float(defer_to)
     return thresholds
+
+
+def _defer_nonadiabatic_wkb_tail(
+    z_grid, sigma, *, z_tail, epsilon_limit=_WKB_ADIABATICITY_LIMIT,
+    phase_active=False,
+):
+    """Defer WKB handoff past a future rise in the local adiabaticity.
+
+    The WKB small parameter for ``omega=exp(z)`` is
+    ``|omega'|/omega**2 = |z'| exp(-z) = |1.5*sigma - 1| exp(-z)``.
+    If a mode first crosses its proposed handoff while a later background
+    interval exceeds ``epsilon_limit``, the tail would cross a region where
+    the WKB approximation becomes less adiabatic. Move the scalar handoff
+    threshold above every ``z`` value in that unsafe segment. A later crossing
+    remains possible after the adiabaticity returns below the limit.
+
+    This is a local dispatch screen, not a rigorous bound on the full WKB
+    remainder. Phase-resolved modes retain their established matching path.
+    """
+    if phase_active:
+        return float(z_tail)
+    if not math.isfinite(float(epsilon_limit)) or epsilon_limit <= 0.0:
+        raise ValueError("epsilon_limit must be positive and finite")
+    z_values = np.asarray(z_grid, dtype=np.float64)
+    sigma_values = np.asarray(sigma, dtype=np.float64)
+    if z_values.ndim != 1 or sigma_values.shape != z_values.shape:
+        raise ValueError("z_grid and sigma must be matching one-dimensional arrays")
+    if not np.isfinite(z_values).all() or not np.isfinite(sigma_values).all():
+        raise ValueError("z_grid and sigma must be finite")
+    crossing = np.flatnonzero(z_values >= float(z_tail))
+    if crossing.size == 0:
+        return float(z_tail)
+    first_crossing = int(crossing[0])
+    # The kernel hands off from the state at the node immediately before its
+    # first z >= z_tail node. Include that predecessor in the adiabaticity
+    # screen as well as future nodes.
+    start = max(0, first_crossing - 1)
+    derivative = np.abs(1.5 * sigma_values[start:] - 1.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        log_epsilon = np.log(derivative) - z_values[start:]
+    unsafe = np.flatnonzero(log_epsilon > math.log(float(epsilon_limit)))
+    if unsafe.size == 0:
+        return float(z_tail)
+    last_unsafe = start + int(unsafe[-1])
+    safe_state = min(last_unsafe + 1, z_values.size - 1)
+    defer_z_max = float(np.max(z_values[start:safe_state + 1]))
+    return float(np.nextafter(max(float(z_tail), defer_z_max), math.inf))
+
+
+@njit(cache=True)
+def _defer_nonadiabatic_wkb_tails_kernel(
+    candidate_tails, z0s, j0s, Phi_grid, sigma, phase_weight,
+    has_phase_weight, epsilon_limit,
+):
+    """Fused per-mode WKB screen; avoid allocating/scanning NumPy arrays per mode."""
+    n_modes = candidate_tails.size
+    n_nodes = Phi_grid.size
+    log_limit = math.log(epsilon_limit)
+    monotone_phi = True
+    max_dphi = 0.0
+    max_derivative = 0.0
+    for i in range(1, n_nodes):
+        delta_phi = Phi_grid[i] - Phi_grid[i - 1]
+        if delta_phi < 0.0:
+            monotone_phi = False
+        if delta_phi > max_dphi:
+            max_dphi = delta_phi
+        derivative = abs(1.5 * sigma[i] - 1.0)
+        if derivative > max_derivative:
+            max_derivative = derivative
+    derivative = abs(1.5 * sigma[0] - 1.0)
+    if derivative > max_derivative:
+        max_derivative = derivative
+    min_tail = candidate_tails[0]
+    for mode in range(1, n_modes):
+        if candidate_tails[mode] < min_tail:
+            min_tail = candidate_tails[mode]
+    if monotone_phi and max_derivative > 0.0:
+        if math.log(max_derivative) - (min_tail - max_dphi) <= log_limit:
+            return 0, 0
+    elif max_derivative == 0.0:
+        return 0, 0
+
+    suffix_unsafe = np.empty(n_nodes, dtype=np.float64)
+    suffix_unsafe[n_nodes - 1] = -math.inf
+    derivative = abs(1.5 * sigma[n_nodes - 1] - 1.0)
+    if derivative > 0.0:
+        suffix_unsafe[n_nodes - 1] = math.log(derivative) - Phi_grid[n_nodes - 1]
+    for i in range(n_nodes - 2, -1, -1):
+        value = -math.inf
+        derivative = abs(1.5 * sigma[i] - 1.0)
+        if derivative > 0.0:
+            value = math.log(derivative) - Phi_grid[i]
+        suffix_unsafe[i] = max(value, suffix_unsafe[i + 1])
+    deferred = 0
+    unresolved = 0
+    for mode in range(n_modes):
+        if has_phase_weight and phase_weight[mode] > 0.0:
+            continue
+        j0 = int(j0s[mode])
+        phi0 = Phi_grid[j0]
+        first_crossing = -1
+        if monotone_phi:
+            target_phi = phi0 + candidate_tails[mode] - z0s[mode]
+            low = j0
+            high = n_nodes
+            while low < high:
+                middle = (low + high) // 2
+                if Phi_grid[middle] >= target_phi:
+                    high = middle
+                else:
+                    low = middle + 1
+            if low < n_nodes:
+                first_crossing = low
+        else:
+            for i in range(j0, n_nodes):
+                z = z0s[mode] + Phi_grid[i] - phi0
+                if z >= candidate_tails[mode]:
+                    first_crossing = i
+                    break
+        if first_crossing < 0:
+            continue
+        start = max(j0, first_crossing - 1)
+        threshold = log_limit + z0s[mode] - phi0
+        last_unsafe = -1
+        if suffix_unsafe[start] > threshold:
+            if monotone_phi:
+                # suffix_unsafe is nonincreasing; find the first suffix whose
+                # maximum no longer exceeds the mode-specific threshold.
+                low = start
+                high = n_nodes
+                while low < high:
+                    middle = (low + high) // 2
+                    if suffix_unsafe[middle] <= threshold:
+                        high = middle
+                    else:
+                        low = middle + 1
+                last_unsafe = low - 1
+            else:
+                for i in range(start, n_nodes):
+                    derivative = abs(1.5 * sigma[i] - 1.0)
+                    z = z0s[mode] + Phi_grid[i] - phi0
+                    if derivative > 0.0 and math.log(derivative) - z > log_limit:
+                        last_unsafe = i
+        if last_unsafe < 0:
+            continue
+        if last_unsafe == n_nodes - 1:
+            unresolved += 1
+        safe_state = min(last_unsafe + 1, n_nodes - 1)
+        if monotone_phi:
+            max_z = z0s[mode] + Phi_grid[safe_state] - phi0
+        else:
+            max_z = -math.inf
+            for i in range(start, safe_state + 1):
+                z = z0s[mode] + Phi_grid[i] - phi0
+                if z > max_z:
+                    max_z = z
+        tail = max(candidate_tails[mode], max_z)
+        candidate_tails[mode] = np.nextafter(tail, math.inf)
+        deferred += 1
+    return deferred, unresolved
 
 
 @njit(cache=True)
@@ -2483,6 +2684,7 @@ def _SGWB_iter_fast_impl(
     # 供外层读取的失败原因，用于区分确定性物理拒绝和可恢复的数值失败。
     m.fast_failure_reason = None
     m.fast_failure_detail = None
+    m._fast_h2_identity_used = False
     r = m.cosmo_param["r"]
     zero_tensor_limit = _has_exact_zero_tensor_amplitude(m.cosmo_param)
     if r < 0 or (r == 0 and not zero_tensor_limit):
@@ -2869,6 +3071,9 @@ def _SGWB_iter_fast_impl(
                 kink_index = -1
                 kink_fraction = 0.0
                 phi_re = 0.0
+            if getattr(m, "_fast_background_failure", None) is not None:
+                m.fast_failure_reason = m._fast_background_failure
+                break
             bad_primitive = _first_nonfinite_primitive((
                 ("Phi_grid", Phi_grid),
                 ("Phi_mid", Phi_mid),
@@ -2915,6 +3120,21 @@ def _SGWB_iter_fast_impl(
                     adaptive_defer_below,
                     getattr(m, "_fast_adaptive_handoff_to", z_tail + 3.0),
                     phase_weight=phase_weight,
+                )
+                m._fast_nonadiabatic_handoff_selected = 0
+                m._fast_nonadiabatic_handoff_unresolved = 0
+                phase_values = (
+                    np.empty(0, dtype=np.float64)
+                    if phase_weight is None
+                    else np.asarray(phase_weight, dtype=np.float64)
+                )
+                (
+                    m._fast_nonadiabatic_handoff_selected,
+                    m._fast_nonadiabatic_handoff_unresolved,
+                ) = _defer_nonadiabatic_wkb_tails_kernel(
+                    candidate_tail_z, z0s, j0s, Phi_grid, m.sigma,
+                    phase_values, phase_weight is not None,
+                    _WKB_ADIABATICITY_LIMIT,
                 )
                 m._fast_adaptive_handoff_selected = int(np.count_nonzero(candidate_tail_z > z_tail))
                 m._fast_adaptive_handoff_fraction = float(
