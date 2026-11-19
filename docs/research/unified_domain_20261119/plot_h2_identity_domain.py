@@ -98,6 +98,14 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
             float(row["spectrum_max_abs_dex_at_fast_root"]),
             "cr1",
         ))
+    sobol_reference = _load("validate_exact_quarter_sobol_reference.json")
+    for row in sobol_reference["results"]:
+        results.append((
+            f"cr1 Sobol {row['case_id']} {(row['params']['Omega_bh2'] + row['params']['Omega_ch2']) / 1e6:.4f}M",
+            float(row["root_relative_to_closed_reference"]),
+            float(row["spectrum_max_abs_dex"]),
+            "cr1",
+        ))
     return results
 
 
@@ -216,6 +224,18 @@ def main() -> None:
                         linewidths=0.7,
                         zorder=6,
                     )
+                sobol = _load("screen_exact_quarter_sobol_holdout.json")
+                for pair in sobol["paired_rows"]:
+                    params = pair["input"]["params"]
+                    ax.scatter(
+                        np.log10(float(params["Omega_bh2"])),
+                        np.log10(float(params["Omega_ch2"])),
+                        marker="." if version == "candidate" else "x",
+                        s=18,
+                        color="#087f8c" if version == "candidate" else "#bd6a32",
+                        alpha=0.65,
+                        zorder=5,
+                    )
             ax.set_title(f"{title} — {'旧版 Fast' if version == 'baseline' else '候选 Fast'}")
             ax.set_xlabel(f"log10({x_key})")
             ax.set_ylabel(f"log10({y_key})")
@@ -230,6 +250,7 @@ def main() -> None:
             )
 
     patch = _load("screen_exact_quarter_expanded_patch.json")
+    sobol = _load("screen_exact_quarter_sobol_holdout.json")
     low_patch = np.log10(6.5e5)
     high_patch = np.log10(7.0e5)
     for col_index, version in enumerate(("baseline", "candidate")):
@@ -251,6 +272,17 @@ def main() -> None:
                 linewidths=0.8,
                 zorder=4,
             )
+        for pair in sobol["paired_rows"]:
+            params = pair["input"]["params"]
+            ax.scatter(
+                np.log10(float(params["Omega_bh2"])),
+                np.log10(float(params["Omega_ch2"])),
+                marker="x" if version == "baseline" else ".",
+                s=25,
+                color="#bd6a32" if version == "baseline" else "#087f8c",
+                alpha=0.7,
+                zorder=5,
+            )
         ax.set_xlim(low_patch - 0.012, high_patch + 0.012)
         ax.set_ylim(low_patch - 0.012, high_patch + 0.012)
         ax.set_aspect("equal", adjustable="box")
@@ -261,6 +293,7 @@ def main() -> None:
         ax.text(
             0.02, 0.98,
             f"紫框：验证矩形；紫菱形：中心留出\n"
+            f"独立 2D Sobol 点：{len(sobol['paired_rows'])}\n"
             f"成功点：{sum(pair[f'{version}_fast']['success'] for pair in patch['paired_rows'])}/5",
             transform=ax.transAxes, va="top", fontsize=8,
             bbox={"facecolor": "white", "alpha": 0.85, "edgecolor": "0.8"},

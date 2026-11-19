@@ -1,0 +1,1142 @@
+{
+  "status": "complete",
+  "base_sha": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "candidate_head": "9cb9347573cb8f1d6264b0ce729f201256c6bd5e",
+  "candidate_source_sha256": {
+    "fast_sgwb.py": "98a0fe0961b93689a74f63ad9c77ea29c60dd23b68a6ab346d6f984c72bb03e5",
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "rectangle": {
+    "Omega_bh2": [
+      650000.0,
+      700000.0
+    ],
+    "Omega_ch2": [
+      650000.0,
+      700000.0
+    ]
+  },
+  "paired_rows": [
+    {
+      "input": {
+        "case_id": "patch_00",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 693030.9729184955,
+          "Omega_ch2": 677278.6732763052
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_00",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 693030.9729184955,
+          "Omega_ch2": 677278.6732763052
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 1.8456583000006503
+      },
+      "candidate_fast": {
+        "case_id": "patch_00",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 693030.9729184955,
+          "Omega_ch2": 677278.6732763052
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1419357408008631,
+        "finite_spectrum": true,
+        "frequency_sha256": "20ae8b18ba8dbf06a07313919427ca14d92e1cd96a4d9c8d0459726334e34253",
+        "spectrum_sha256": "3f685e9df64d48660a05f87f29e404847c049a0020a3aff81d182e7f8eaa5134",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3191546999987622
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_01",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 671847.468148917,
+          "Omega_ch2": 655874.8472481966
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_01",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 671847.468148917,
+          "Omega_ch2": 655874.8472481966
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.20109629999933532
+      },
+      "candidate_fast": {
+        "case_id": "patch_01",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 671847.468148917,
+          "Omega_ch2": 655874.8472481966
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.13768251551352062,
+        "finite_spectrum": true,
+        "frequency_sha256": "a8a4aba92996bdb097242a440c6de52b93938d1a7a30c1d86e4f107fb28ee244",
+        "spectrum_sha256": "77f71769bc0d3ab24fcc9eff772e44b44bb704b1f27f5e321ee2e91794d3f1f3",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.30516029999853345
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_02",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 656563.6334940791,
+          "Omega_ch2": 691852.4532113224
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_02",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 656563.6334940791,
+          "Omega_ch2": 691852.4532113224
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19282269999894197
+      },
+      "candidate_fast": {
+        "case_id": "patch_02",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 656563.6334940791,
+          "Omega_ch2": 691852.4532113224
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.13974428655623614,
+        "finite_spectrum": true,
+        "frequency_sha256": "4733a31d496cf40d803a3199bc172ba218a6e26ff16dd356517041c550471dd2",
+        "spectrum_sha256": "55c3ee649f018a8a279e16bd3ec4f5fcf8ac9f35ac2a4e2015b8e0ed3626d4aa",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3112619999992603
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_03",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 678528.9366263896,
+          "Omega_ch2": 663273.753831163
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_03",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 678528.9366263896,
+          "Omega_ch2": 663273.753831163
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19152690000191797
+      },
+      "candidate_fast": {
+        "case_id": "patch_03",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 678528.9366263896,
+          "Omega_ch2": 663273.753831163
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.139084355652814,
+        "finite_spectrum": true,
+        "frequency_sha256": "f3f5d4eb36dbf65b43eb26f2cd3ad3c1b9b745c03f74ef385197b385491ad5e3",
+        "spectrum_sha256": "65aeeb7ed3c6e2ba5b94711811396d269609ee962a6e427d4e068b1e803a290f",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3204678000001877
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_04",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 681402.7395565063,
+          "Omega_ch2": 694807.7678214759
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_04",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 681402.7395565063,
+          "Omega_ch2": 694807.7678214759
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19477220000044326
+      },
+      "candidate_fast": {
+        "case_id": "patch_04",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 681402.7395565063,
+          "Omega_ch2": 694807.7678214759
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14252816424837028,
+        "finite_spectrum": true,
+        "frequency_sha256": "a79de06850ba3013d39ef2c2214fd9540e1da0113eaf4574479521aadd8896f8",
+        "spectrum_sha256": "40ca7b8eaf75ff40e8b4bbd19dcc8548ed47c0d65955124ba6c5e493daa87863",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31488940000053844
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_05",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 653761.5468725562,
+          "Omega_ch2": 672037.2072886676
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_05",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 653761.5468725562,
+          "Omega_ch2": 672037.2072886676
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19697749999977532
+      },
+      "candidate_fast": {
+        "case_id": "patch_05",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 653761.5468725562,
+          "Omega_ch2": 672037.2072886676
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.13749134663057463,
+        "finite_spectrum": true,
+        "frequency_sha256": "401e6c2512fc63059753c0424b21d67ee6df6a812e98440d1ccf1d3f9711122e",
+        "spectrum_sha256": "19d68a5a3366ba97a8519ee4964476495c0bb045dee0c77f6dd27fecf08ace32",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31060470000011264
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_06",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 668166.0938076675,
+          "Omega_ch2": 686041.2743873894
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_06",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 668166.0938076675,
+          "Omega_ch2": 686041.2743873894
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19043319999764208
+      },
+      "candidate_fast": {
+        "case_id": "patch_06",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 668166.0938076675,
+          "Omega_ch2": 686041.2743873894
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14032297478473338,
+        "finite_spectrum": true,
+        "frequency_sha256": "c00931a3dd042fe02ba06d89078a04f78efc34f2cb4f6095685d7145258032b9",
+        "spectrum_sha256": "a9138760fcda08623ed467f75c904abe453aa072ef01d1b2fcf5f5b92e1d0d4e",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3117333999980474
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_07",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 696588.7510683388,
+          "Omega_ch2": 658830.9784419835
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_07",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 696588.7510683388,
+          "Omega_ch2": 658830.9784419835
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1994436000022688
+      },
+      "candidate_fast": {
+        "case_id": "patch_07",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 696588.7510683388,
+          "Omega_ch2": 658830.9784419835
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14044420181353234,
+        "finite_spectrum": true,
+        "frequency_sha256": "363c37b59e9e855169647630e536a0e0921bbaef0a6b2f31149f7803b485d08d",
+        "spectrum_sha256": "735e97598c734ac63dac13f7bede1a88de1d2cb8142afc638b5c009f97c52cac",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.30536709999796585
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_08",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 697355.1996983588,
+          "Omega_ch2": 688161.291135475
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_08",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 697355.1996983588,
+          "Omega_ch2": 688161.291135475
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.2011168999997608
+      },
+      "candidate_fast": {
+        "case_id": "patch_08",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 697355.1996983588,
+          "Omega_ch2": 688161.291135475
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14346396917923027,
+        "finite_spectrum": true,
+        "frequency_sha256": "7c6c310ec91fda9cf00d427a6974f2c00b35b15525503f49ae301872be7cb845",
+        "spectrum_sha256": "e95c53a4a6ad8d3363a0ae8621b7c27d56a7047c5df9df4e149d19faae02f679",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3174949000022025
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_09",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 662889.9070899934,
+          "Omega_ch2": 666964.8654293269
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_09",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 662889.9070899934,
+          "Omega_ch2": 666964.8654293269
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1986907999998948
+      },
+      "candidate_fast": {
+        "case_id": "patch_09",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 662889.9070899934,
+          "Omega_ch2": 666964.8654293269
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1378945364630709,
+        "finite_spectrum": true,
+        "frequency_sha256": "e0eb486ac0ef93ca061ac97657eea9bfce485b532a6781ce76da5f7612f0122a",
+        "spectrum_sha256": "61e97468cc07cfdf35ac65a2f845810508649363deba98feeab8cf88ea0a8ed5",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.30558419999943
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_10",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 653076.1337373406,
+          "Omega_ch2": 680957.5540013611
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_10",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 653076.1337373406,
+          "Omega_ch2": 680957.5540013611
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19949450000058278
+      },
+      "candidate_fast": {
+        "case_id": "patch_10",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 653076.1337373406,
+          "Omega_ch2": 680957.5540013611
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.13831032099663662,
+        "finite_spectrum": true,
+        "frequency_sha256": "b508048e80f0b63b2ba4049bcab24cc6a8bb48c26a2191e977487a013711d132",
+        "spectrum_sha256": "15d8be68262d0b3646146e021c66cc707f850967d6b674bc291e01819de50ac3",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3147696000014548
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_11",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 686759.627982974,
+          "Omega_ch2": 652196.0114128888
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_11",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 686759.627982974,
+          "Omega_ch2": 652196.0114128888
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19906479999917792
+      },
+      "candidate_fast": {
+        "case_id": "patch_11",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 686759.627982974,
+          "Omega_ch2": 652196.0114128888
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.13880055124627352,
+        "finite_spectrum": true,
+        "frequency_sha256": "5fadaa065dcc7cd3c44a0440f714e5912d479ae3eb6b25251c9df150fa032008",
+        "spectrum_sha256": "f19deda6723f1141fbc3633a86ec0533565ccaf57e29ee744c733f6671432090",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31343980000019656
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_12",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 677915.0608927011,
+          "Omega_ch2": 683912.7313345671
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_12",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 677915.0608927011,
+          "Omega_ch2": 683912.7313345671
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1988435000021127
+      },
+      "candidate_fast": {
+        "case_id": "patch_12",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 677915.0608927011,
+          "Omega_ch2": 683912.7313345671
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1410855322310028,
+        "finite_spectrum": true,
+        "frequency_sha256": "fcbebe72d23710e305a9e6beb9eff34f53a6fcddc635b934a214bbdc02e29eca",
+        "spectrum_sha256": "468724d25a6beee9f3419011391815df780dd26a3841370ae1b6a38bb341e9bf",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31060749999960535
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_13",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 661992.4171362072,
+          "Omega_ch2": 660959.5660120249
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_13",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 661992.4171362072,
+          "Omega_ch2": 660959.5660120249
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19947580000007292
+      },
+      "candidate_fast": {
+        "case_id": "patch_13",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 661992.4171362072,
+          "Omega_ch2": 660959.5660120249
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.13720856000967938,
+        "finite_spectrum": true,
+        "frequency_sha256": "3cc67cf2532282fcd9638fcbf196d3388bd468f6ffbe44f0c4b5110ea04cf35f",
+        "spectrum_sha256": "e8b017607976e47e3e8531b1840810489e2ed70674f49356f6413cbf509b150c",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.32406669999909354
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_14",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 672490.1657085866,
+          "Omega_ch2": 696924.1722021252
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_14",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 672490.1657085866,
+          "Omega_ch2": 696924.1722021252
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1935075000001234
+      },
+      "candidate_fast": {
+        "case_id": "patch_14",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 672490.1657085866,
+          "Omega_ch2": 696924.1722021252
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14184592224815504,
+        "finite_spectrum": true,
+        "frequency_sha256": "34ab8060df7aa0960fcd7237a830c95c7ed29cf2e286d3c39d2fb48aa9034dc1",
+        "spectrum_sha256": "1d50822f8cbb94f323471ba163a62d4650d9c8f8094cbf088c8afd1044b5d586",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31069639999986975
+      }
+    },
+    {
+      "input": {
+        "case_id": "patch_15",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 687631.3448883593,
+          "Omega_ch2": 669920.7520578057
+        }
+      },
+      "baseline_fast": {
+        "case_id": "patch_15",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 687631.3448883593,
+          "Omega_ch2": 669920.7520578057
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1986523000014131
+      },
+      "candidate_fast": {
+        "case_id": "patch_15",
+        "params": {
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 687631.3448883593,
+          "Omega_ch2": 669920.7520578057
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1406575211193973,
+        "finite_spectrum": true,
+        "frequency_sha256": "b7def55b58e6f676af3ef4764039f90ab68a350c41f83dbd0380b54e6613a983",
+        "spectrum_sha256": "23b8d17e16dc4ecf72497188120673677937fa7467e1ea6208eb4d2e35b4d19e",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31432820000190986
+      }
+    }
+  ]
+}
