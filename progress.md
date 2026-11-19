@@ -1953,3 +1953,22 @@ the diagnostic artifacts are retained.
 ### Current delivery boundary
 
 The verified expansion claim is limited to the two sampled cr0 slices; no continuous-domain certification is asserted. The tested high-density cr1 region returns Fast results but fails strict accuracy at its selected high corner and remains unresolved. Do not represent it as an accepted capability until a generic propagation correction passes the same precision/performance gates.
+
+
+## 2026-11-19 continuation resumed
+
+- Confirmed active checkout remains clean in tracked files at `b236c5632fa06cbd113f11627efadee92947c243`; only prior untracked research leftovers are present. No other worktree was modified.
+- Re-read the selected plan/findings/progress, exact `scaled_step` and `solve_kernel` code, CR1 z10 artifact, and prior tensor-trajectory diagnostic. No Reference run and no source change performed.
+- Next: recreate CR1 exact-grid primitives and quantify per-panel `Phi[k+1]-2*Phi_mid[k]+Phi[k]` with mode phase exposure.
+
+- Corrected the panel analysis: the prior script accidentally used the exact endpoint, and the first aggregate trigger counter mis-unpacked `kink_index`; neither result informed the decision. Reproduced exact production transfer rule at the full CR1 root and confirmed state error grows near terminal active panels.
+- Diagnostic quadratic quarter-panel candidate improves two representative high-error trajectories by 3x–4x at `|delta_z|>1e-5`; no full solve or production edit yet. Next add one focused red test for the curved panel helper, then implement the minimal local dispatch.
+
+
+## 2026-11-19 — CR1 lower-density region validation
+
+- Tested a generic terminal panel-curvature transfer prototype with red/green coverage. It improved two selected mode-state errors but the full `Omega_bh2=Omega_ch2=1e6` Fast root remained `4.43e-4` from the existing z10 Reference map, slightly worse than `4.35e-4`; removed production code and test. No solver change was retained.
+- Audited `Omega_bh2`/`Omega_ch2` source dependencies and focused the CR1 claim on `[1e5,3e5]^2`. Reused the original same-input paired screen: four rectangle points old Fast `0/4`, current Fast `4/4`; separate exact holdout old `0/1`, current `1/1`. All old failures are `nonfinite_background_primitive`.
+- Direct same-grid z8 Reference validation (76 nodes) now covers lower corner, cross corner, upper corner, and independent `(2e5,2.5e5)` holdout. Maximum root proxy `4.59633e-5`; maximum spectrum difference `9.07808e-4 dex`; all pass. The reference source hash is unchanged. New raw files and hash manifest are in `docs/research/unified_domain_20261119/`.
+- Updated `domain_expansion.md` and `h2_identity_domain_coverage.png` to identify this finite-sample CR1 subregion; the previously screened high-density corner stays excluded. Full pytest: `428 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall, diff check, sdist and wheel passed.
+- Pending: stage only this continuation's report, figure, scripts, JSON data, manifest, and ledgers; verify author/committer email; commit/push `fast_v0.2`; verify CI and remote SHA.

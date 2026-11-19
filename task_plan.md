@@ -1715,3 +1715,26 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 8. [x] Inspect/stage only this round’s code, tests, ledgers and accepted evidence; verify Git identity; push commit `5895d29ddbb685f5ed3a04574bf87565cd91e249` to `fast_v0.2`; verify remote SHA and Actions run `44541293060` (9/9 jobs passed).
 
 **Boundary:** the sampled high-density cr1 rectangle is not an accepted precision extension. Its high corner exceeds root error at both z8/z10, and z10 also exceeds the spectrum gate. Only the two sampled cr0 regions support the current expansion claim; this is not a proof over all intervening parameters.
+
+
+## 2026-11-19 continuation — CR1 high corner and qualified lower rectangle
+
+### Rejected transfer candidate
+
+- [x] Recreated the high-corner Fast root and ranked active smooth-panel defects; separated the exact reheating kink from the terminal `N_inf` feature.
+- [x] Compared two representative fixed-root production mode trajectories with unchanged Reference Cartesian RHS.
+- [x] Wrote and observed the focused test fail, then implemented the quadratic quarter-panel prototype and saw the test pass.
+- [x] Ran a full high-corner Fast solve; the root stayed outside the `2e-4` gate (`4.43e-4` proxy versus the saved z10 map), slightly worse than before. Removed the candidate production code and its test. Candidate rejected; no production source diff remains.
+
+### Precision-qualified lower CR1 rectangle
+
+- [x] Audited the model dependency: `Omega_bh2` and `Omega_ch2` enter downstream only through their sum `Omega_mh2`.
+- [x] Reused the paired `872a70d` 3×3 screen and selected its `[1e5,3e5]²` rectangle: the 2×2 corners are old Fast `0/4`, current Fast `4/4`, all old failures `nonfinite_background_primitive`.
+- [x] Added exact paired old/new check for independent `(2e5,2.5e5)` holdout: `0/1 → 1/1` with the same old failure.
+- [x] Same-grid z8 Reference checks cover all rectangle corners (reusing the lower corner and its symmetric cross point) plus the independent holdout. Across these four checks max root proxy is `4.5964e-5`, max spectrum error `9.0781e-4 dex`; all pass.
+- [x] Updated raw artifact, source-hash manifest, domain report, and paired coverage/precision plot.
+- [x] Full local validation: `428 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel, evidence integrity checks passed.
+
+### Next Step
+
+Verify the exact staged file list and Git identity, commit only the lower-rectangle data/report/figure and current ledger changes, push `fast_v0.2`, and verify remote SHA plus CI. High-density CR1 beyond this sampled lower rectangle remains unresolved; finite points do not certify the continuum.

@@ -8,6 +8,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import font_manager
+from matplotlib.patches import Rectangle
 
 HERE = Path(__file__).resolve().parent
 OUTPUT = HERE / "h2_identity_domain_coverage.png"
@@ -51,6 +52,14 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
                 float(row["spectrum_max_abs_dex"]),
                 "cr1" if label.startswith("cr1") else "cr0",
             ))
+    low_cr1 = _load("validate_h2_identity_cr1_low_rectangle_z8.json")
+    for row in low_cr1["cases"]:
+        results.append((
+            f"cr1 低密度 {row['case_id']}",
+            float(row["root_relative_error_proxy"]),
+            float(row["spectrum_max_abs_dex"]),
+            "cr1",
+        ))
     return results
 
 
@@ -95,6 +104,19 @@ def main() -> None:
                     zorder=3,
                 )
             ax.grid(True, alpha=0.25)
+            if row_index == 2 and version == "candidate":
+                lower = 5.0
+                upper = np.log10(3.0e5)
+                ax.add_patch(Rectangle(
+                    (lower, lower), upper - lower, upper - lower,
+                    fill=False, edgecolor="#16804a", linestyle="--",
+                    linewidth=1.8, zorder=4,
+                ))
+                ax.text(
+                    lower + 0.015, upper - 0.02, "精度核验子域",
+                    color="#12643b", fontsize=8, va="top",
+                    bbox={"facecolor": "white", "alpha": 0.75, "edgecolor": "none"},
+                )
             ax.set_title(f"{title} — {'旧版 Fast' if version == 'baseline' else '候选 Fast'}")
             ax.set_xlabel(f"log10({x_key})")
             ax.set_ylabel(f"log10({y_key})")

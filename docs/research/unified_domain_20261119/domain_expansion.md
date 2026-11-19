@@ -93,3 +93,21 @@ The reconstructed wide-support probe (`cr=0`, `T_re=1e-3`, `kappa10=1e-3`, `n_t=
 
 This is an output-validity correction only, not an expansion result: the wide-support parameter region remains unresolved and is not counted as Fast-success coverage. Verification: `423 passed, 9 deselected` (two existing deprecation warnings), plus the focused affected tests and Cobaya marker; Ruff, Mypy, compileall, diff check, sdist/wheel build, distribution boundary check, and installed-wheel smoke pass. GitHub Actions run `44474144299` passed all 9 jobs, including canonical regression/manifest, static checks, packaging, Cobaya, and Python 3.9–3.13 compatibility. The changed `fast_sgwb.py` SHA256 is `29a398be7bcfa112df0705c8c56d3b14b372ebe5f2fdb274ca378b2edd9db1fc`. Prior expansion hashes in `source_hashes_20261119.json` still refer to their original benchmark source state.
 
+
+
+## 2026-11-19 continuation — precision-qualified lower-density cr=1 rectangle
+
+### Accepted finite-sample coverage
+
+The earlier `cr=1` 3×3 rectangle extending to `Omega_bh2=Omega_ch2=1e6` remains outside the accepted precision domain because its upper corner misses the root gate. A lower rectangle is now separately evaluated, with `cr=1`, the consistency-derived tilt `n_t=-0.00125`, finite `N_inf=68.81384`, and `physical_guard=True`:
+
+- Rectangle: `Omega_bh2, Omega_ch2 ∈ {1e5, 3e5}` at the fixed physical settings from the paired screen. All four old Fast points fail as `nonfinite_background_primitive`; current Fast solves all four. The paired base is `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45` and candidate is `b236c5632fa06cbd113f11627efadee92947c243`.
+- Independent holdout `(Omega_bh2, Omega_ch2)=(2e5,2.5e5)`: old Fast fails with the same primitive classification and current Fast succeeds. Combined sampled status is `0/5 → 5/5`.
+- Same-grid z8 Reference checks pass on the previously stored lower corner `(1e5,1e5)` and the new cross point `(1e5,3e5)`, upper corner `(3e5,3e5)`, and holdout `(2e5,2.5e5)`. Across these four points, maximum root-relative proxy is `4.5964e-5` and maximum spectrum error is `9.0781e-4 dex`, below `2e-4` and `1e-3 dex` respectively. The two density inputs enter the model only through `Omega_mh2=Omega_bh2+Omega_ch2`; this exact exchange symmetry is recorded as a source-level property, while accuracy claims remain limited to the sampled points.
+- Post-warm Fast solve times in the rectangle are approximately `0.05–0.15 s`; the separate holdout run records `0.27 s` including its process-local startup. The former high-density corner remains excluded. No pointwise or continuous-domain extrapolation is made from this finite grid.
+
+### Rejected local transfer-curvature candidate
+
+A separate diagnostic found that high-error CR1 mode trajectories accumulate transfer-state discrepancy near the terminal active panels. A quadratic quarter-point local transfer reduced the largest discrepancies for two selected modes, but a full high-corner Fast solve moved the root only from `0.2117557174` to `0.2117574375`; relative to the saved same-grid z10 Reference map this remains `4.43e-4`, slightly worse than the previous `4.35e-4`. The candidate production edit and its focused test were removed. This mechanism is not accepted and provides no capability or performance claim. Its fixed-root mode traces and the no-change Fast probe remain in the diagnostic artifacts.
+
+The updated figure marks the precision-checked lower `cr=1` rectangle and includes its Reference points. Raw spectra, paired baseline/candidate rows, diagnostic scripts, and source hashes are indexed by `cr1_low_rectangle_manifest.json`.
