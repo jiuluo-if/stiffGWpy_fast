@@ -18,10 +18,12 @@ Baseline commit: `3eb9589952833301b197b650a90d0709a5b229cc` (`fast_v0.2`). The 3
 - Candidate: 9/9 points return finite spectra. Root values are `4.81640928069` to the shown precision. The transition location moves from `log10(f_re/Hz)=-5.02` to `4.05` across the rectangle.
 - Independent 27-node Reference maps at the two rectangle corners differ from the Fast root by `8.36e-7` relative.
 - The `cr=0`, `DN_re x n_t` cutoff-admissible slice has 12/12 baseline exceptions and 12/12 candidate successes. It is sampled finite-region evidence, not a continuous-domain proof.
+- A seeded 32-point 3D Sobol training set over `T_re`, `kappa10`, and `n_t` has 32/32 baseline `OverflowError` failures and 32/32 candidate successes. A separate seed gives a 16-point holdout with the same 16/16 versus 16/16 result. Direct 27-node Reference checks at two independent holdout points give root relative errors `8.35e-7` and `8.36e-7` and maximum spectral errors below `3.84e-7 dex`.
+- The cutoff-to-reheating-feature distance was screened at 2, 4, 6, 8, and 10 log-frequency units. Reference checks at margins 2, 4, 6, 8, and 10 fail either the spectrum or the self-consistent-root gate. At margin 10, the 27-node Reference fixed-point root closes at `2.7611924`, while the 14-node Fast result is `2.8224694`. The main error source is under-resolved frequency integration around the cutoff. Raising adaptive frequency resolution recovers the Reference root but requires hundreds to over a thousand modes and costs about 0.9–2.0 s per call in this environment, so it is not an accepted Fast path.
 - A 3x2 wide-spectrum slice that brings the transition into the sampled support fails the accuracy gate. At two points the 127-node Reference maps differ from the default-grid Fast roots by 31% and 60%. An independently closed 395-node Reference root also differs from Fast by `9.03e-4` on another transition-in-support point. These results are retained as rejected regimes.
 - The `cr>0` 3x3 control grid is valid under the derived consistency tilt and cutoff constraints, but baseline also succeeds there. It is a regression control, not an expansion result.
 
-Artifacts in the experiment root include the exact baseline and candidate grid rows, frequency-refinement records, Reference root closure, per-mode error table, timing screen, and baseline/candidate source hashes. `domain_coverage_20261119.png` visualizes the sampled grids.
+Artifacts in this directory include the exact baseline and candidate grid rows, Sobol train and independent holdout rows, frequency-refinement records, Reference root closure, per-mode error table, timing screen, and baseline/candidate source hashes. `domain_coverage_20261119.png` visualizes the sampled grids.
 
 ## Performance and verification
 
