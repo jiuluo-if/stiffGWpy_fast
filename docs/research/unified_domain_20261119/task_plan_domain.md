@@ -9,5 +9,6 @@
 
 - 修正了非零张量最终线性能谱归零时仍报告收敛的分类缺陷；精确零极限和已验证的对数幅度恢复路径通过回归。
 - 该修改不计为扩域成果。当前可证扩域仍限于 `domain_expansion.md` 所列窄截止 `cr=0` 区域及其独立留出；宽频支持和 `cr>0` 扩域仍待验证。
-- 本轮本地门禁通过：423 tests、Ruff、Mypy、compileall、打包、归档边界和 wheel smoke。提交、推送及远端 CI 尚待完成。
-- 下一步：核验 diff 与 Git 身份，提交并推送 `fast_v0.2`，检查 Actions 结果。
+- 本轮本地门禁通过：423 tests、Ruff、Mypy、compileall、打包、归档边界和 wheel smoke。
+- 交付完成：commit `55ec264cb7a18d9bb75dcf39909a448eb866f18a` 已推送至 `fast_v0.2`，GitHub Actions `44474144299` 全 9 项通过。
+- 下一步：恢复宽频支持区求值域研究；当前 underflow 分类修正不视为扩域成果。
