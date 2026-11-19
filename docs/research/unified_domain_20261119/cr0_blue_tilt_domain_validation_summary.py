@@ -96,20 +96,27 @@ payload = {
         },
     },
     "performance": {
-        "benchmark": "benchmark_exact_quarter_candidate_trusted_ab.json",
+        "benchmark": "benchmark_exact_quarter_candidate_trusted_ab_affinity.json",
         "base_sha": "48bbb96a44d4ced3f7e3d80dd2a2deaae440a0a3",
         "candidate_source_sha256": EXPECTED_FAST,
-        "aggregate_p50_ratio": 1.0220438474345492,
-        "aggregate_p95_ratio": 1.0441091785564502,
+        "resources": {},
+        "aggregate_p50_ratio": None,
+        "aggregate_p95_ratio": None,
         "per_case": [],
-        "acceptance": "not met: individual trusted cases exceed 1.05; maximum P50/P95 ratios are 1.0666/1.1072",
+        "acceptance": "not met",
     },
     "reference_code_modified": False,
 }
-bench = load("benchmark_exact_quarter_candidate_trusted_ab.json")
+bench = load("benchmark_exact_quarter_candidate_trusted_ab_affinity.json")
+payload["performance"]["resources"] = bench["resources"]
+payload["performance"]["aggregate_p50_ratio"] = bench["aggregate_p50_ratio"]
+payload["performance"]["aggregate_p95_ratio"] = bench["aggregate_p95_ratio"]
 payload["performance"]["per_case"] = [
     {"case": c["case"], "p50_ratio": c["p50_ratio"], "p95_ratio": c["p95_ratio"]} for c in bench["paired_cases"]
 ]
+max_p50 = max(c["p50_ratio"] for c in bench["paired_cases"])
+max_p95 = max(c["p95_ratio"] for c in bench["paired_cases"])
+payload["performance"]["acceptance"] = "not met: aggregate P95 and at least one per-case P50/P95 exceed 1.05"
 (HERE / "cr0_blue_tilt_domain_validation_summary.json").write_text(
     json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
 )
@@ -136,7 +143,15 @@ lines = [
         payload["reference"]["z10_max_root_relative_error"], payload["reference"]["z10_max_spectrum_abs_dex"]
     ),
     "",
-    "性能仍未验收：同硬件可信区 A/B 汇总 P50/P95 比为 `1.022/1.044`，但逐例最大比为 `1.0666/1.1072`，超过 5% 上限；本次未更改生产代码。",
+    "可信区性能 A/B：固定 Windows affinity `[0,1]`、Numba 2/workqueue、BLAS 1 线程，每例交替 128 轮；全部 6 例输出完全一致。汇总 P50/P95 比为 `{:.3f}/{:.3f}`，逐例最大比为 `{:.3f}/{:.3f}`，超过 5% 门槛，因此当前候选仍未通过性能验收。".format(
+        bench["aggregate_p50_ratio"], bench["aggregate_p95_ratio"], max_p50, max_p95
+    ),
+    "",
+    "| 可信案例 | P50 比 | P95 比 |",
+    "|---|---:|---:|",
+    *[f"| {c['case']} | {c['p50_ratio']:.3f} | {c['p95_ratio']:.3f} |" for c in bench["paired_cases"]],
+    "",
+    "本轮没有改动生产源码；逐阶段 profile 与独立 kernel/背景分支微基准保留为诊断记录，不作为优化收益。",
     "",
     "![CR0 parameter coverage and accuracy errors](cr0_blue_tilt_domain_validation.png)",
     "原始输入、完整谱与 Reference 数组保存在相邻 z10 JSON 文件中；本图只标示采样设计与精度样本。",

@@ -115,44 +115,58 @@
     }
   },
   "performance": {
-    "benchmark": "benchmark_exact_quarter_candidate_trusted_ab.json",
+    "benchmark": "benchmark_exact_quarter_candidate_trusted_ab_affinity.json",
     "base_sha": "48bbb96a44d4ced3f7e3d80dd2a2deaae440a0a3",
     "candidate_source_sha256": "98a0fe0961b93689a74f63ad9c77ea29c60dd23b68a6ab346d6f984c72bb03e5",
-    "aggregate_p50_ratio": 1.0220438474345492,
-    "aggregate_p95_ratio": 1.0441091785564502,
+    "resources": {
+      "affinity": [
+        0,
+        1
+      ],
+      "threads": 2,
+      "threading_layer": "workqueue",
+      "blas_omp_numexpr_threads": 1,
+      "python": "3.11.9",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "repeats_per_case": 128,
+      "paired_order": "alternating",
+      "kink_split": true
+    },
+    "aggregate_p50_ratio": 1.0103342816804066,
+    "aggregate_p95_ratio": 1.1246073428788592,
     "per_case": [
       {
         "case": "default_cr1",
-        "p50_ratio": 1.0071506965824297,
-        "p95_ratio": 1.062670620299107
+        "p50_ratio": 1.000007358895102,
+        "p95_ratio": 0.9958742215537414
       },
       {
         "case": "lowT_cr1",
-        "p50_ratio": 0.985538041803407,
-        "p95_ratio": 0.9912840790336871
+        "p50_ratio": 0.9995433130090546,
+        "p95_ratio": 0.9948979468274755
       },
       {
         "case": "highT_cr1",
-        "p50_ratio": 1.0520955670043295,
-        "p95_ratio": 1.0394570579609836
+        "p50_ratio": 1.1430705174871145,
+        "p95_ratio": 1.1334069392388235
       },
       {
         "case": "highkappa_cr1",
-        "p50_ratio": 1.0666303970037947,
-        "p95_ratio": 1.053990995781371
+        "p50_ratio": 1.0999972722155253,
+        "p95_ratio": 1.110674983162932
       },
       {
         "case": "stiff_cr0",
-        "p50_ratio": 1.0425036731445563,
-        "p95_ratio": 1.1072253944941453
+        "p50_ratio": 1.0197771994253553,
+        "p95_ratio": 1.112438403175313
       },
       {
         "case": "highT_cr0",
-        "p50_ratio": 1.039700780330504,
-        "p95_ratio": 1.0948704582015094
+        "p50_ratio": 1.028137007379252,
+        "p95_ratio": 1.0577195106623367
       }
     ],
-    "acceptance": "not met: individual trusted cases exceed 1.05; maximum P50/P95 ratios are 1.0666/1.1072"
+    "acceptance": "not met: aggregate P95 and at least one per-case P50/P95 exceed 1.05"
   },
   "reference_code_modified": false
 }
