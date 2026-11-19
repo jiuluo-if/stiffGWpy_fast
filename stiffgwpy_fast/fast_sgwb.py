@@ -1430,6 +1430,43 @@ def _phase_segment(xh, yh, z_start, z_end, h_step, phase_max):
 
 
 @njit(cache=True, inline="always")
+def _has_panel_curvature_defect(
+    Phi_grid, Phi_mid, kink_index, kink_fraction, defect_tol
+):
+    """Return early when a smooth transfer panel exceeds the z-defect gate.
+
+    中文：无临时数组地扫描端点/中点原函数缺陷；跳过已精确拆分的再加热转折面板。
+    """
+    for i in range(len(Phi_mid)):
+        if i == kink_index and 0.0 < kink_fraction < 1.0:
+            continue
+        defect = Phi_grid[i + 1] - 2.0 * Phi_mid[i] + Phi_grid[i]
+        if abs(defect) > defect_tol:
+            return True
+    return False
+
+
+@njit(cache=True, inline="always")
+def _phase_segment_quarters(xh, yh, z_start, z_quarter, z_mid,
+                            z_three_quarter, z_end, h_step, phase_max):
+    """Advance through four panels using exact background z samples.
+
+    中文：用精确背景原函数在四分点得到的 z 边界，将一个区间拆成四个常系数传递子区间。
+    """
+    h_quarter = 0.25 * h_step
+    xh, yh = _phase_segment(
+        xh, yh, z_start, z_quarter, h_quarter, phase_max
+    )
+    xh, yh = _phase_segment(xh, yh, z_quarter, z_mid, h_quarter, phase_max)
+    xh, yh = _phase_segment(
+        xh, yh, z_mid, z_three_quarter, h_quarter, phase_max
+    )
+    return _phase_segment(
+        xh, yh, z_three_quarter, z_end, h_quarter, phase_max
+    )
+
+
+@njit(cache=True, inline="always")
 def _tail_match_gamma(sigma):
     """Return the physical high-frequency amplitude-match coefficient.
 
@@ -1932,6 +1969,7 @@ def solve_kernel(
     tail_state=None,
     z_tail_by_mode=None,
     relative_background=None,
+    Phi_quarters=None,
 ):
     """Integrate independent modes and write their coarse output rows.
 
@@ -1996,7 +2034,24 @@ def solve_kernel(
                     xh, yh = _phase_segment(xh, yh, z_break, z_end, h_right, phase_max)
                 else:
                     z_end = 2.0 * z_mid_step - z_node
-                    xh, yh = _phase_segment(xh, yh, z_node, z_end, h_step, phase_max)
+                    if Phi_quarters is not None:
+                        z_end_exact = z0 + Phi_grid[k + 1] - Phi0
+                        defect = z_end_exact - z_end
+                        if abs(defect) > 1.0e-5:
+                            z_quarter = z0 + Phi_quarters[0, k] - Phi0
+                            z_three_quarter = z0 + Phi_quarters[1, k] - Phi0
+                            xh, yh = _phase_segment_quarters(
+                                xh, yh, z_node, z_quarter, z_mid_step,
+                                z_three_quarter, z_end_exact, h_step, phase_max,
+                            )
+                        else:
+                            xh, yh = _phase_segment(
+                                xh, yh, z_node, z_end, h_step, phase_max
+                            )
+                    else:
+                        xh, yh = _phase_segment(
+                            xh, yh, z_node, z_end, h_step, phase_max
+                        )
                 if relative_background is not None:
                     size = max(abs(xh), abs(yh))
                     if size > 2.0**450 or 0.0 < size < 2.0**-450:
@@ -3095,6 +3150,32 @@ def _SGWB_iter_fast_impl(
                         -(Phi_grid[index] - Nv[index] - Nv[0])
                     )
                 break
+            Phi_quarters = None
+            if kink_split or transition_refine:
+                panel_curvature_defect = (
+                    _has_panel_curvature_defect(
+                        Phi_grid, Phi_mid, kink_index, kink_fraction, 1.0e-5
+                    )
+                    if sigma_exact
+                    else bool(getattr(m, "_fast_panel_curvature_defect", False))
+                )
+                if panel_curvature_defect:
+                    from .exact_background import fast_phi_s2_quarters
+
+                    Phi_quarters = fast_phi_s2_quarters(
+                        m,
+                        Nv,
+                        m.cosmo_param["DN_eff"],
+                        phi_grid=Phi_grid,
+                        kink_index=kink_index,
+                        kink_fraction=kink_fraction,
+                        sigma_nodes=m.sigma,
+                    )
+                    if not np.isfinite(Phi_quarters).all():
+                        m.fast_failure_reason = "nonfinite_background_primitive"
+                        m._fast_background_failure = m.fast_failure_reason
+                        m._fast_background_failure_detail = "Phi_quarters"
+                        break
             z_today_by_mode = z0s + Phi_grid[-1] - Phi_grid[j0s]
             phase_weight = None
             if log_amplitude_mode:
@@ -3223,13 +3304,19 @@ def _SGWB_iter_fast_impl(
                     Opgw.fill(0.0)
                 if tail_state is not None:
                     tail_state[:, 3] = -1.0
+                quarter_kwargs = (
+                    {} if Phi_quarters is None
+                    else {"Phi_quarters": Phi_quarters}
+                )
                 if relative_scale:
                     solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode,
-                                 relative_background=(Phi_grid - Nv, f_hor))
+                                 relative_background=(Phi_grid - Nv, f_hor),
+                                 **quarter_kwargs)
                 elif tail_z_by_mode is None:
-                    solve_kernel(*solve_args)
+                    solve_kernel(*solve_args, **quarter_kwargs)
                 else:
-                    solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode)
+                    solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode,
+                                 **quarter_kwargs)
             if log_amplitude_mode:
                 if not (
                     np.isfinite(Ogw).all()

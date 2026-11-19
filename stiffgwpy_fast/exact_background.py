@@ -663,9 +663,16 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
         Psi = 3.0 * F_nodes[i] - 4.0 * Nv[i]
         S2[i] = 1.0 if relative_used else np.exp(Psi)
         S2inv[i] = 1.0 if relative_used else np.exp(-0.5 * Psi)
+    has_panel_defect = False
     for i in range(n - 1):
         Phi_mid[i] = 1.5 * F_mid[i] - 0.5 * (Nv[i] + Nv[i + 1]) + N0
-    return left_integral, relative_used, identity_required
+        if identity_required and not (
+            i == kink_index and 0.0 < kink_fraction < 1.0
+        ):
+            defect = Phi_grid[i + 1] - 2.0 * Phi_mid[i] + Phi_grid[i]
+            if abs(defect) > 1.0e-5:
+                has_panel_defect = True
+    return left_integral, relative_used, identity_required, has_panel_defect
 
 
 def _fast_phi_s2_workspace(m, n):
@@ -740,7 +747,7 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
             kink_fraction = 0.0
 
     workspace = _fast_phi_s2_workspace(m, Nv.size)
-    left_integral, relative_used, identity_required = _fast_phi_s2_fill(
+    left_integral, relative_used, identity_required, has_panel_defect = _fast_phi_s2_fill(
         Nv, nodes_left, nodes_right, kink_index, kink_fraction,
         sig_left, sig_re, sig_right, workspace['h_arr'],
         workspace['mid_sigma'], workspace['integral'], workspace['F_nodes'],
@@ -765,6 +772,67 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
     else:
         phi_re = 0.0
     m._fast_relative_background_required = bool(relative_used)
+    m._fast_panel_curvature_defect = bool(has_panel_defect)
     return (workspace['Phi_grid'], workspace['Phi_mid'],
             workspace['S2'], workspace['S2inv'],
             kink_index, float(kink_fraction), float(phi_re))
+
+
+def fast_phi_s2_quarters(
+    m, Nv, DN_eff, *, phi_grid, kink_index=-1, kink_fraction=0.0,
+    sigma_nodes=None,
+):
+    """Evaluate local ``Phi`` at quarter boundaries on smooth panels.
+
+    The interval integral is assembled from three composite-Simpson quarter
+    panels. A panel containing the physical reheating kink is left unused by
+    the tensor kernel and is deliberately not sampled across that transition.
+
+    中文：在光滑背景区间上用三个复合 Simpson 子区间计算原函数四分点值。包含真实再加热转折的区间
+    由张量核单独精确拆分，因此此函数不跨越该不连续点采样。
+    """
+    nodes = np.asarray(Nv, dtype=np.float64)
+    phi = np.asarray(phi_grid, dtype=np.float64)
+    if nodes.ndim != 1 or phi.shape != nodes.shape:
+        raise ValueError("Nv and phi_grid must be equal one-dimensional arrays")
+    if nodes.size < 2:
+        return np.empty((2, 0), dtype=np.float64)
+    h = np.diff(nodes)
+    if np.any(h <= 0.0) or not np.isfinite(h).all():
+        raise ValueError("Nv must be finite and strictly increasing")
+
+    smooth = np.ones(h.size, dtype=bool)
+    if 0 <= int(kink_index) < h.size and 0.0 < float(kink_fraction) < 1.0:
+        smooth[int(kink_index)] = False
+    result = np.zeros((2, h.size), dtype=np.float64)
+    active = np.flatnonzero(smooth)
+    if active.size == 0:
+        return result
+
+    fractions = np.array([0.125, 0.25, 0.375, 0.5, 0.625, 0.75])
+    probes = nodes[active, None] + h[active, None] * fractions[None, :]
+    sampled_sigma = sigma_vec(probes.reshape(-1), m, DN_eff).reshape(
+        active.size, fractions.size
+    )
+    left, right = _sigma_node_limits(nodes, m, DN_eff, sigma_nodes)
+    f_nodes = (phi + nodes - nodes[0]) / 1.5
+    width = h[active]
+    integral_0_25 = width / 24.0 * (
+        left[active] + 4.0 * sampled_sigma[:, 0] + sampled_sigma[:, 1]
+    )
+    integral_25_50 = width / 24.0 * (
+        sampled_sigma[:, 1] + 4.0 * sampled_sigma[:, 2] + sampled_sigma[:, 3]
+    )
+    integral_50_75 = width / 24.0 * (
+        sampled_sigma[:, 3] + 4.0 * sampled_sigma[:, 4] + sampled_sigma[:, 5]
+    )
+    f_quarter = f_nodes[active] + integral_0_25
+    f_three_quarter = f_quarter + integral_25_50 + integral_50_75
+    n0 = nodes[0]
+    result[0, active] = (
+        1.5 * f_quarter - (nodes[active] + 0.25 * width) + n0
+    )
+    result[1, active] = (
+        1.5 * f_three_quarter - (nodes[active] + 0.75 * width) + n0
+    )
+    return result
