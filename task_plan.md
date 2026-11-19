@@ -1728,7 +1728,7 @@ Background comparison is complete and bitwise-close. Uniform h refinement and H2
 - [x] Reuse matching z10 Reference arrays: the root is unchanged and candidate-vs-baseline spectrum shift is <= `2.433e-9 dex`, so the saved root/spectrum margins remain under their acceptance limits.
 - [x] Add production-kernel TDD for exact Bessel comparison, state-independent defect estimate, exact fallback, and turning-point rejection.
 - [x] Final verification on the final production source: `436 passed, 9 deselected`; Ruff, CI-configured Mypy, compileall, sdist/wheel build, isolated installed-wheel high-tilt smoke, and diff check pass.
-- [ ] Stage only this round's solver, tests, ledgers, and WKB3 evidence; verify Git identity; commit/push to both `fast_v0.2` refs and verify remote SHA plus GitHub Actions.
+- [x] Stage only this round's solver, tests, ledgers, and WKB3 evidence; verify Git identity; commit `8b1b53f` and push to both `fast_v0.2` refs. Remote SHA matches; Actions runs `44635505675` and `44635525376` each passed all 9 jobs.
 
 ### Boundary
 
