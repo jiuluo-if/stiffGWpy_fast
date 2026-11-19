@@ -281,10 +281,10 @@ def grid_independent_freqs(m, freq_res=1.0, *, allow_log_amplitude=False):
         # Continuous log10(aH/(2pi)/Hz) at absolute N (grid-independent).
         # 在绝对 N 处计算连续的 log10(aH/(2pi)/Hz)，不依赖离散网格。
         N = float(N)
-        H2 = h2_at(N)
-        raw = -0.5 * N + 0.5 * _m.log(H2)
         if N < N_re_abs:
             raw = raw_re - 0.5 * (N - N_re_abs)
+        else:
+            raw = -0.5 * N + 0.5 * _m.log(h2_at(N))
         return (raw - raw_last - Delta_f) / ln10v
 
     fmax = f_hor_cont(0.0)

@@ -1,0 +1,48 @@
+{
+  "baseline_commit": "3eb9589952833301b197b650a90d0709a5b229cc",
+  "case": {
+    "cr": 0,
+    "T_re_GeV": 2000,
+    "kappa10": 0.01,
+    "n_t": 1,
+    "r": 0.01,
+    "DN_re": 740,
+    "A_s": 22045.384523292163
+  },
+  "baseline": {
+    "status": "exception",
+    "exception": "OverflowError: math range error",
+    "runtime_s": 1.1178443
+  },
+  "candidate": {
+    "status": "success",
+    "DN_gw": 4.816410038475271,
+    "runtime_s": 0.3433241,
+    "reference_DN_gw": 4.816405237444261,
+    "reference_root_relative_error": 1e-06,
+    "reference_max_spectrum_error_dex": 4.567241336239647e-07
+  },
+  "trusted_runtime_30_warm_pairs": {
+    "baseline_p50_s": 0.0129081,
+    "baseline_p95_s": 0.0147528,
+    "candidate_p50_s": 0.01170385,
+    "candidate_p95_s": 0.0144883,
+    "note": "non-interleaved fresh processes, exploratory only"
+  },
+  "domain_cr0_grid": "domain_grid_cr0.json",
+  "domain_cr1_grid": "domain_grid_cr1.json",
+  "sha256": {
+    "stiffgwpy_fast/exact_background.py": {
+      "baseline": "cc52e72cf05e0516430739ff740770f337c1df419716f2587f2f3f28e7bd086c",
+      "candidate": "02c298cfe29c74783e8a0917b197c40ea8450d7f422c6b895e60324c39294b4d"
+    },
+    "stiffgwpy_fast/fast_sgwb.py": {
+      "baseline": "041af5772df7fabb6f3497d87b240586576aedbc26fafcdde57318de28c28e04",
+      "candidate": "c85f751983fbddd0ec32bf2bc21aab01f905c925f45bd4ae495129660397ec41"
+    },
+    "stiffgwpy_fast/freq_adaptive.py": {
+      "baseline": "f5c0655ad36632eb31bb3d5b76dd99686ebef2da5c822638c961418a11c75a50",
+      "candidate": "59ac6546d0247f9515a3c9f1b2ace0b0ee3077434bc48abbd1a772ca82e23b3d"
+    }
+  }
+}
