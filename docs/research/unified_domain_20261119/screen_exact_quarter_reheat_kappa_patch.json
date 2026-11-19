@@ -1,0 +1,767 @@
+{
+  "status": "complete",
+  "base_sha": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "candidate_head": "6a3cd5b9e5f93280b08f6214747ca0e953f10110",
+  "candidate_source_sha256": {
+    "fast_sgwb.py": "98a0fe0961b93689a74f63ad9c77ea29c60dd23b68a6ab346d6f984c72bb03e5",
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "slice": {
+    "cr": 1.0,
+    "Omega_bh2": 700000.0,
+    "Omega_ch2": 700000.0,
+    "T_re": [
+      2000.0,
+      2500.0
+    ],
+    "kappa10": [
+      0.01,
+      0.015
+    ],
+    "lattice": {
+      "T_re": [
+        2000.0,
+        2250.0,
+        2500.0
+      ],
+      "kappa10": [
+        0.01,
+        0.0125,
+        0.015
+      ]
+    }
+  },
+  "paired_rows": [
+    {
+      "input": {
+        "case_id": "transition_00",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.01
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.81383977195475
+      },
+      "baseline_fast": {
+        "case_id": "transition_00",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.01
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 1.8708189000026323
+      },
+      "candidate_fast": {
+        "case_id": "transition_00",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.01
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14492424371390084,
+        "finite_spectrum": true,
+        "frequency_sha256": "4d9a597d5ed81391b866bbba26663df3f51a08459e49506dee1837db4baa67fa",
+        "spectrum_sha256": "7cc423670afac74c7f11d5bd2d46ab9d0d69fc816dc655d9710ea6138d9ca5a8",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31661370000074385
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_01",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.0125
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.73945858827591
+      },
+      "baseline_fast": {
+        "case_id": "transition_01",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.0125
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19406090000120457
+      },
+      "candidate_fast": {
+        "case_id": "transition_01",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.0125
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1455181457044073,
+        "finite_spectrum": true,
+        "frequency_sha256": "cc87a51fd2ecdde9529e8282a33f5ada5220daff41f3c85d63d58734ed5efedf",
+        "spectrum_sha256": "f3cb04bfeff874f2882401cd5e64e02dfb218ecb30a9a4ce3d146a96124f2ce2",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31180289999974775
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_02",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.015
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.67868473607297
+      },
+      "baseline_fast": {
+        "case_id": "transition_02",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.015
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.20122900000205846
+      },
+      "candidate_fast": {
+        "case_id": "transition_02",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2000.0,
+          "kappa10": 0.015
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14613288878994243,
+        "finite_spectrum": true,
+        "frequency_sha256": "287805a21240298323230ddcd701b6fcdbf77f5e7ffa71d7a35bc05c61946efc",
+        "spectrum_sha256": "86370a50db1c62a01a48c67904a5023586cddfda19919acb803f82d6d29aedfa",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3033324000025459
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_03",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.01
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.69601818806811
+      },
+      "baseline_fast": {
+        "case_id": "transition_03",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.01
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.2007413000028464
+      },
+      "candidate_fast": {
+        "case_id": "transition_03",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.01
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14560528759449298,
+        "finite_spectrum": true,
+        "frequency_sha256": "b42f533af19432d99e954fcd15c0f84f8b8658d1e65717a2f9125d5d0b254800",
+        "spectrum_sha256": "3e719f7732a9f3ec7c84cd35b02c2b73dddc2f9b0bbd8133a504812f5116966a",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31269560000146157
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_04",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.0125
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.62163700436983
+      },
+      "baseline_fast": {
+        "case_id": "transition_04",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.0125
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19329740000102902
+      },
+      "candidate_fast": {
+        "case_id": "transition_04",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.0125
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.14638619064860198,
+        "finite_spectrum": true,
+        "frequency_sha256": "cc2dbb44bd6fd11e543712e95c7eb4175c2b1a31d9f6cdf34b3bd03dccd0a6d6",
+        "spectrum_sha256": "e74e71455508296fa5bcd2be1d7e81a1e38d4b6a4f28bcbdfea1b965f291662a",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31716380000216304
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_05",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.015
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.56086315215393
+      },
+      "baseline_fast": {
+        "case_id": "transition_05",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.015
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19649720000234083
+      },
+      "candidate_fast": {
+        "case_id": "transition_05",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2250.0,
+          "kappa10": 0.015
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.15337010062826442,
+        "finite_spectrum": true,
+        "frequency_sha256": "9b11de60f13aafddfa1ae954e6877e56f14c8ba282330806a29b47707baaca48",
+        "spectrum_sha256": "a63820744cb857b9eaf1768da136b4addfc8619dc516c640034603aec372794b",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.31481409999832977
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_06",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.01
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.59062303713894
+      },
+      "baseline_fast": {
+        "case_id": "transition_06",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.01
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.19806729999982053
+      },
+      "candidate_fast": {
+        "case_id": "transition_06",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.01
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1523330943851282,
+        "finite_spectrum": true,
+        "frequency_sha256": "a1da76c60e8f6f965e848636b0297f75a65ff9fcc7db8f3e1b1a69624078ba73",
+        "spectrum_sha256": "c864e11cfed0a286b4e8f3ac735e2bf924623d2158e438f7d832e3950f0758c7",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.30879620000268915
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_07",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.0125
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.51624185342676
+      },
+      "baseline_fast": {
+        "case_id": "transition_07",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.0125
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1922551999996358
+      },
+      "candidate_fast": {
+        "case_id": "transition_07",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.0125
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.15389958256300382,
+        "finite_spectrum": true,
+        "frequency_sha256": "bdeac52c0d6a326b728148dbd205ff1cdbc0f2902097fc51f38b4f39f40bb53c",
+        "spectrum_sha256": "a8870c93dbce897d1fbe3469575c66525c7c376feb3f62e6cc86caa0a9b67a75",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3129979999976058
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_08",
+        "family": "T_re_x_kappa10",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.015
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.4554680012016
+      },
+      "baseline_fast": {
+        "case_id": "transition_08",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.015
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1985793999992893
+      },
+      "candidate_fast": {
+        "case_id": "transition_08",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2500.0,
+          "kappa10": 0.015
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.15531671120615767,
+        "finite_spectrum": true,
+        "frequency_sha256": "b749dea16b5ffb996762051fff25152a130f2faaf9abe44482dc55aec3d4f035",
+        "spectrum_sha256": "e61663364f505dd6275c78464f1d570691ef5461843503788f26ce7ba1b32731",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.3169521999989229
+      }
+    },
+    {
+      "input": {
+        "case_id": "transition_holdout",
+        "family": "independent_holdout",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2375.0,
+          "kappa10": 0.01375
+        },
+        "derived_nt": -0.00125,
+        "derived_N_inf": 68.53578194563534
+      },
+      "baseline_fast": {
+        "case_id": "transition_holdout",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2375.0,
+          "kappa10": 0.01375
+        },
+        "success": false,
+        "failure_reason": "nonfinite_background_primitive",
+        "exception": null,
+        "root": null,
+        "finite_spectrum": false,
+        "frequency_sha256": null,
+        "spectrum_sha256": null,
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.1973450999976194
+      },
+      "candidate_fast": {
+        "case_id": "transition_holdout",
+        "params": {
+          "Omega_bh2": 700000.0,
+          "Omega_ch2": 700000.0,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": 0.0,
+          "cr": 1.0,
+          "DN_re": 10.0,
+          "T_re": 2375.0,
+          "kappa10": 0.01375
+        },
+        "success": true,
+        "failure_reason": null,
+        "exception": null,
+        "root": 0.1536931428499952,
+        "finite_spectrum": true,
+        "frequency_sha256": "1578e6232c9ed8db8f0e8a9c174bb8ed8617e7988b1d79fdc87fbb962c389e53",
+        "spectrum_sha256": "d98cc68222dc9b66b014c298df8fe0c5f2d2688c70d1b2ec399fe54da29b2c97",
+        "warning_count": 0,
+        "h2_positive_finite": true,
+        "runtime_seconds": 0.30390729999999166
+      }
+    }
+  ]
+}

@@ -106,6 +106,16 @@ def _read_precision() -> list[tuple[str, float, float, str]]:
             float(row["spectrum_max_abs_dex"]),
             "cr1",
         ))
+    transition_reference = _load(
+        "validate_exact_quarter_reheat_kappa_patch.json"
+    )
+    for row in transition_reference["results"]:
+        results.append((
+            f"cr1 T/kappa {row['case_id']} T={row['params']['T_re']:g}",
+            float(row["root_relative_to_closed_reference"]),
+            float(row["spectrum_max_abs_dex"]),
+            "cr1",
+        ))
     return results
 
 
@@ -125,8 +135,8 @@ def main() -> None:
         ("cr=0: Ωb × Ωch", "screen_h2_identity_density_slice.json", "Omega_bh2", "Omega_ch2"),
         ("cr=1: Ωb × Ωch", "screen_h2_identity_cr1_density.json", "Omega_bh2", "Omega_ch2"),
     )
-    fig = plt.figure(figsize=(13.2, 14.0), constrained_layout=True)
-    grid = fig.add_gridspec(5, 2, height_ratios=(1.0, 1.0, 1.0, 0.8, 1.35))
+    fig = plt.figure(figsize=(13.2, 15.5), constrained_layout=True)
+    grid = fig.add_gridspec(6, 2, height_ratios=(1.0, 1.0, 1.0, 0.8, 0.8, 1.35))
     colors = {
         "success": "#16804a",
         "nonfinite_background_primitive": "#c6423a",
@@ -249,12 +259,52 @@ def main() -> None:
                 bbox={"facecolor": "white", "alpha": 0.85, "edgecolor": "0.8"},
             )
 
+    transition = _load("screen_exact_quarter_reheat_kappa_patch.json")
+    transition_low_x = np.log10(2_000.0)
+    transition_high_x = np.log10(2_500.0)
+    transition_low_y = np.log10(0.01)
+    transition_high_y = np.log10(0.015)
+    for col_index, version in enumerate(("baseline", "candidate")):
+        ax = fig.add_subplot(grid[3, col_index])
+        ax.add_patch(Rectangle(
+            (transition_low_x, transition_low_y),
+            transition_high_x-transition_low_x,
+            transition_high_y-transition_low_y,
+            fill=False, edgecolor="#8a3fa0", linewidth=2.0, zorder=3,
+        ))
+        for pair in transition["paired_rows"]:
+            params = pair["input"]["params"]
+            is_holdout = pair["input"]["case_id"] == "transition_holdout"
+            ax.scatter(
+                np.log10(float(params["T_re"])),
+                np.log10(float(params["kappa10"])),
+                marker=("D" if is_holdout else ("x" if version == "baseline" else "o")),
+                s=66 if is_holdout else 45,
+                color=("#8a3fa0" if is_holdout else ("#c6423a" if version == "baseline" else "#16804a")),
+                edgecolors=("black" if version == "candidate" and not is_holdout else None),
+                linewidths=0.8,
+                zorder=4,
+            )
+        ax.set_xlim(np.log10(1_800.0), np.log10(2_700.0))
+        ax.set_ylim(np.log10(0.008), np.log10(0.017))
+        ax.grid(True, alpha=0.25)
+        ax.set_title(f"cr=1 固定高密度：{'旧版 Fast' if version == 'baseline' else '候选 Fast'}")
+        ax.set_xlabel("log10(T_re)")
+        ax.set_ylabel("log10(kappa10)")
+        successes = sum(pair[f"{version}_fast"]["success"] for pair in transition["paired_rows"])
+        ax.text(
+            0.02, 0.98,
+            f"紫框：验证矩形；菱形：独立留出\n成功点：{successes}/10",
+            transform=ax.transAxes, va="top", fontsize=8,
+            bbox={"facecolor": "white", "alpha": 0.85, "edgecolor": "0.8"},
+        )
+
     patch = _load("screen_exact_quarter_expanded_patch.json")
     sobol = _load("screen_exact_quarter_sobol_holdout.json")
     low_patch = np.log10(6.5e5)
     high_patch = np.log10(7.0e5)
     for col_index, version in enumerate(("baseline", "candidate")):
-        ax = fig.add_subplot(grid[3, col_index])
+        ax = fig.add_subplot(grid[4, col_index])
         ax.add_patch(Rectangle(
             (low_patch, low_patch), high_patch-low_patch, high_patch-low_patch,
             fill=False, edgecolor="#8a3fa0", linewidth=2.0, zorder=3,
@@ -300,8 +350,8 @@ def main() -> None:
         )
 
     precision = _read_precision()
-    ax_root = fig.add_subplot(grid[4, 0])
-    ax_spec = fig.add_subplot(grid[4, 1])
+    ax_root = fig.add_subplot(grid[5, 0])
+    ax_spec = fig.add_subplot(grid[5, 1])
     labels = [item[0] for item in precision]
     positions = np.arange(len(labels))
     point_colors = ["#b23b32" if item[3] == "cr1" else "#1f6d9c" for item in precision]
