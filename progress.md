@@ -2151,3 +2151,11 @@ The current production source remains unchanged; added one tested Reference-orig
 - Three selected current-source z8 Reference cases pass: max root error `1.491192e-4`, max spectrum error `7.269534e-4 dex`, max map-closure residual `1.667741e-7`. Reference code hash remains unchanged.
 - Full Fast A/B uses baseline source `59a23ae` and current source-identical candidate, 100 alternating pairs and three warmups in isolated persistent TBB processes. New-region max P50/P95 ratios `0.996952/1.001001`; trusted CR0 `1.006798/1.007552`. Roots, frequency hashes and spectra are bitwise equal.
 - Figure `cr0_density_4m_to5m_domain.png` was rendered and visually checked. Report/raw outputs/source hashes are included in the forthcoming manifest. Local full source test suite already passed on the unchanged source (`446 passed, 9 deselected, 2 warnings`); targeted new runner Ruff checks pass.
+
+
+## Round 72 progress — CR0 density 5M–6M
+
+- Screen: lattice/interior + 8-point independent Sobol, pinned old/current `0/19→19/19`; old failures are all `nonfinite_background_primitive`. All candidate cutoffs finite, H² positive/finite, 75 frequencies and no warnings.
+- Three Reference cases pass z8: max root `1.432291e-4`, max same-root spectrum `7.305270e-4 dex`, max closure `6.608344e-8`; Reference source unchanged.
+- 500-pair full Fast A/B: new-region max P50/P95 `0.997719/1.002801`; trusted CR0 `1.000347/1.007013`; bitwise-identical outputs. The 100-pair trusted-control P95 outlier `1.052542` was rechecked at 500 pairs and did not persist.
+- Scripts Ruff pass. The figure `cr0_density_5m_to6m_domain.png` is rendered and visually checked. Manifest and delivery checks remain.

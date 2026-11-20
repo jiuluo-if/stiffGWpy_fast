@@ -3688,3 +3688,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Three current-source z8 Reference cases pass both acceptance thresholds: maximum closed-root relative error `1.4912e-4`, maximum same-root spectrum difference `7.2696e-4 dex`; map closure residual remains below `1.668e-7`. Reference production code and criteria are unchanged.
 - Full-solver paired timing stays within the 5% limit on all measured cases; maximum new-region P50/P95 ratios are `0.9970/1.0011`, trusted CR0 ratios `1.0068/1.0076`. Roots, frequencies and spectra match the source baseline bitwise.
 - This is finite sampled evidence extending an adjacent CR0 density×tilt slice. Production Fast source did not change in this validation tranche; do not label a finite sample as continuum certification.
+
+
+## CR0 high-density adjacent slice 5M–6M — 2026-11-20
+
+- Same-input old/current Fast screen covers 19 lattice/interior/Sobol points: pinned old Fast fails `0/19` (all `nonfinite_background_primitive`); current Fast solves `19/19` with finite cutoff, positive finite H², complete 75-node spectra and no warnings.
+- Three current-source z8 Reference validations pass: max closed-root relative error `1.4323e-4`, max spectrum difference `7.3053e-4 dex`, max closure residual `6.6084e-8`. Reference source/criteria unchanged.
+- 500 alternating full-solve pairs across two new points and a trusted CR0 point give max side-wise P50/P95 ratios `1.0004/1.0071`; all paired output roots, frequency digests and spectra are bitwise equal. A noisy 100-pair control P95 `1.0525` was explicitly rechecked at 500 pairs and is retained in raw evidence.
+- This extends sampled CR0 density×tilt coverage to 6M without production-source change. Finite samples are evidence, not a continuum proof.

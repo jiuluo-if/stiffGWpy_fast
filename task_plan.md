@@ -1950,3 +1950,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 ### Next Step
 
 若本轮提交与 CI 通过，继续探测 CR0 `[5e6,6e6] × n_t[-.5,0]`；任何数学有效性或 Reference 门槛失败都作为边界证据保留，不调参特判。
+
+
+## Round 72 — CR0 density continuation 5M–6M
+
+- [x] Pinned old Fast `872a70d` 与当前源同输入：3×3 lattice + 2 interior、seed `20261132` 独立 8 点 Sobol，旧版 `0/19`、当前 `19/19`；旧失败全为 `nonfinite_background_primitive`。
+- [x] 候选所有网格均正有限 H²，最小 `0.4532139935`，`N_inf` 有限，75 频点、无 warning、physical guard 通过。
+- [x] 当前源码 z8 Reference 检查 6M 两个 tilt 端点和独立 Sobol；最大根误差 `1.4323e-4`、最大谱差 `7.3053e-4 dex`、最大 map residual `6.6084e-8`。
+- [x] Complete Fast A/B 扩域两点与可信控制各 500 对：最大 P50/P95 比 `1.0004/1.0071`，roots/frequencies/spectra 全部逐位相同。100 对先导出现的可信控制 P95 `1.0525` 由 500 对复测解除，原始先导保留。
+- [x] 图已视觉复核，研究脚本 Ruff 通过，Reference/生产代码未改。Round 71 commit `6371a8a` 与 CI `44764980102` (9/9) 已通过。
+- [ ] 更新哈希清单并提交/推送 5M–6M 证据，等待 CI。
+
+### Boundary
+
+当前证据限于有限样本与三个 z8 Reference 代表点；不可视作 `[5e6,6e6]×[-.5,0]` 的连续域证明。100 对 P95 outlier 有完整 500 对复测对照，不隐去先导原始数据。
+
+### Next Step
+
+若本轮 CI 通过，继续筛查 CR0 `[6e6,7e6] × n_t[-.5,0]`，保留数学有效性、错误分类、Reference、性能与独立留出门槛。
