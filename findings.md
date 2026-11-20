@@ -3680,3 +3680,11 @@ Correct-origin current-source z8 Reference checks at both 4M tilt corners and th
 The closure bug was reproduced by inspection and fixed by explicitly applying `DN_eff_total = input_DN_eff_origin + Reference_map`. Added TDD coverage: the new `test_reference_fixed_point_map_adds_to_original_input_dn_eff` failed before adding the tested helper, then passed. The Reference production source and thresholds were not changed.
 
 Paired 100 complete-Fast solves against source commit `59a23ae` (same production code hashes): low-tilt upper corner P50/P95 `0.9910/0.9901`, independent Sobol `1.0063/1.0152`, trusted CR0 `0.9920/0.9919`; roots, frequency grids and spectra match bitwise. The 500-pair trusted gate from the unchanged production-source A/B is `0.9963/1.0110`. Figure, raw input/outcome/timing arrays and SHA manifest are in the 3M–4M artifacts.
+
+
+## CR0 high-density adjacent slice 4M–5M — 2026-11-20
+
+- Pinned old Fast `872a70d` fails all 19 same-input lattice/interior/independent Sobol cases as `nonfinite_background_primitive`; current unified background path solves all 19 with finite cutoff, positive finite H², complete 75-frequency output and no warnings. CR0 `n_t` remains an independent input.
+- Three current-source z8 Reference cases pass both acceptance thresholds: maximum closed-root relative error `1.4912e-4`, maximum same-root spectrum difference `7.2696e-4 dex`; map closure residual remains below `1.668e-7`. Reference production code and criteria are unchanged.
+- Full-solver paired timing stays within the 5% limit on all measured cases; maximum new-region P50/P95 ratios are `0.9970/1.0011`, trusted CR0 ratios `1.0068/1.0076`. Roots, frequencies and spectra match the source baseline bitwise.
+- This is finite sampled evidence extending an adjacent CR0 density×tilt slice. Production Fast source did not change in this validation tranche; do not label a finite sample as continuum certification.

@@ -1932,3 +1932,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 - [x] Recompute direct root discrepancy from the saved same-Fast-root Reference maps and close 3M representative maps using the true input origin `DN_eff=0`.
 - [x] Reassess CR0 3M and CR1 saved same-root Reference maps: same-root spectra remain bitwise comparable; CR1 production validators use one-map root proxies and their explicit close scripts iterate from base zero.
 - [x] Correct-origin current-source References establish that the CR0 3M–4M slice passes root, spectrum and map-closure gates.
+
+
+## Round 71 — CR0 density continuation 4M–5M
+
+- [x] 旧版 `872a70d` 与当前 Fast 同输入屏幕：3×3 格点 + 2 内部点与 seed `20261131` 的独立 8 点 Sobol 共 19 点，旧版 `0/19`、当前 `19/19`；旧失败均为 `nonfinite_background_primitive`。
+- [x] 检查新增样本：`N_inf` 有限，Fast 网格 H² 正且有限（最小 `0.4532139925`），75 个频率、无 warning、physical guard 通过；CR0 输入 tilt 独立。
+- [x] 当前源码 z8 Reference 三点（5M 两 tilt 端点 + 独立 Sobol）最大根误差 `1.4912e-4`、谱误差 `7.2696e-4 dex`、闭合残差 `1.6678e-7`，均在阈值内。
+- [x] 完整求解器 100 对交替 A/B：新增区域 P50/P95 最大比 `0.9970/1.0011`，可信 CR0 控制 `1.0068/1.0076`；根、75 点频率摘要、频谱逐位一致。
+- [x] 已生成并视觉检查扩域、精度和性能图；本轮 scripts Ruff 通过；源码与 Reference 未修改。产物见 `docs/research/unified_domain_20261119/cr0_density_4m_to5m_manifest.json`。
+- [ ] 更新 manifest 后提交并推送本轮区域证据，等待对应 Actions。
+
+### Boundary
+
+区域是有限样本支持；不得推断整个 4M–5M 连续矩形都成功。误差门槛使用当前源码 z8 Reference 代表点，性能 A/B 的 baseline 源与候选生产源相同，用于说明新增参数点没有慢路径惩罚。
+
+### Next Step
+
+若本轮提交与 CI 通过，继续探测 CR0 `[5e6,6e6] × n_t[-.5,0]`；任何数学有效性或 Reference 门槛失败都作为边界证据保留，不调参特判。

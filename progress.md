@@ -2143,3 +2143,11 @@ Both 4M tilt corners and independent high-density Sobol Reference samples pass: 
 The current production source remains unchanged; added one tested Reference-origin helper regression and research runners. Final full pytest: `446 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall, and sdist/wheel build pass. Old Fast to current Fast coverage and current-source References pass the sampled CR0 3M–4M rectangle gates. Manifest hash verification and commit/push/CI remain.
 
 - Round 70 delivery: commit `b62215bca7cb93ed6dc23d950f6cbaa1562e35f4` pushed to `fast_v0.2`; remote SHA matches. GitHub Actions `44760579377` completed successfully (9/9 jobs). The sample-supported CR0 density interval now reaches 4e6 for the tested negative-tilt slice; this remains finite-sample evidence.
+
+
+## Round 71 progress — CR0 density 4M–5M
+
+- Lattice/interior and independent Sobol paired screen: old Fast `0/19`, current Fast `19/19`; all old failures `nonfinite_background_primitive`. All current points have positive finite H², finite `N_inf`, 75 frequencies, zero warnings and accepted physical guard.
+- Three selected current-source z8 Reference cases pass: max root error `1.491192e-4`, max spectrum error `7.269534e-4 dex`, max map-closure residual `1.667741e-7`. Reference code hash remains unchanged.
+- Full Fast A/B uses baseline source `59a23ae` and current source-identical candidate, 100 alternating pairs and three warmups in isolated persistent TBB processes. New-region max P50/P95 ratios `0.996952/1.001001`; trusted CR0 `1.006798/1.007552`. Roots, frequency hashes and spectra are bitwise equal.
+- Figure `cr0_density_4m_to5m_domain.png` was rendered and visually checked. Report/raw outputs/source hashes are included in the forthcoming manifest. Local full source test suite already passed on the unchanged source (`446 passed, 9 deselected, 2 warnings`); targeted new runner Ruff checks pass.
