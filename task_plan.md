@@ -2022,3 +2022,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 ### Next Step
 
 若 CI 通过，继续筛查 `[9e6,10e6]×n_t[-.5,0]`，并在任何有效性、精度或性能边界失败时停止外推。
+
+
+## Round 76 — CR0 density continuation 9M–10M
+
+- [x] Paired old/current Fast screen: lattice/interior + independent Sobol 共 19 点，`0/19→19/19`，旧失败全为 `nonfinite_background_primitive`。
+- [x] 所有新增点 H² 正有限、`N_inf` 有限、75 频点、无 warning。
+- [x] 当前 z8 Reference 三点最大 root error `5.1286e-5`、谱差 `6.2001e-4 dex`、闭合误差 `4.0239e-8`。
+- [x] 500-pair full Fast A/B：新区域 P50/P95 比最大 `0.9978/1.0002`，可信 CR0 `1.0020/1.0047`，输出逐位一致。
+- [x] 脚本 Ruff 和扩域图复核通过，生产 Fast/Reference 未改。
+- [ ] 核验 manifest 哈希，提交推送并检查 CI。
+
+### Boundary
+
+区域结论只覆盖屏幕与 Reference 代表样本，不是连续域证明。
+
+### Next Step
+
+CI 通过后继续 CR0 `[10e6,11e6]×n_t[-.5,0]` 屏幕；继续按相同数学有效性、精度和性能规则判断。

@@ -3720,3 +3720,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Three current-source z8 Reference checks pass: max closed-root relative error `5.3722e-5`, max same-root spectrum difference `6.2685e-4 dex`, max map closure `1.0789e-7`.
 - 500-pair full-solve ratios stay within budget: new-region max P50/P95 `0.9934/1.0167`, trusted control `0.9942/0.9975`; outputs are bitwise equal.
 - No production Fast/Reference source changed. Result is finite sampled evidence for the unified CR0 mechanism.
+
+
+## CR0 high-density adjacent slice 9M–10M — 2026-11-21
+
+- Old/current Fast paired sample: pinned old solver fails `0/19`, current succeeds `19/19`; old failure classification remains `nonfinite_background_primitive`. Every current point has positive finite sampled H², finite cutoff, 75-frequency spectrum and no warnings.
+- Current-source z8 Reference at three representative cases passes: maximum root error `5.1286e-5`, spectrum error `6.2001e-4 dex`, map-closure residual `4.0239e-8`.
+- 500-pair full Fast A/B ratios are ≤`1.0020/1.0047` at P50/P95 including the trusted point; all output roots, frequency digests and spectra match bitwise.
+- No production Fast or Reference code changed. Evidence is finite-sample only.
