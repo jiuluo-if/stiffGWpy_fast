@@ -1901,7 +1901,7 @@ CR1 的 `T_re×kappa10` 矩形在 lattice/interior 和独立 Sobol 这些有限�
 - [x] 对 `fda343d` 逐点 replay 19 输入：根/频率摘要/频谱均逐位一致；复用 Reference 源哈希匹配的 z8 与第三 map 数据。最大根代理 `1.7512e-4`，最大谱差 `9.0787e-4 dex`，第二至第三 map 最大闭合 `6.1895e-8`。
 - [x] 最终源完整进程 A/B：TBB/2线程/BLAS1/goal/physical guard。500 对可信 CR0 P50/P95 比 `0.9963/1.0110`，旧版成功区内点 `0.9984/0.9929`；100 对低角点 `0.9982/0.9980`、独立 Sobol `0.9984/1.0079`。新旧输出相同。
 - [x] 全量 pytest `445 passed, 9 deselected, 2 warnings`；Ruff、Mypy、compileall、打包通过。保存复现脚本、19 点原始 screen、精度复用证据、100/500 对时序、图、报告与 manifest。
-- [ ] 确认 Git 邮箱并提交本轮代码/测试/证据，推送到 `fast_v0.2`；核验远端 SHA 和 Actions。
+- [x] 核验 Author/Committer 邮箱 `2966684515@qq.com`，提交 `53c42a9f7f70581b51712d7be6960829930a63bf` 并推送 `fast_v0.2`；远端 SHA 一致，Actions `44711888180` 全部 jobs 成功。
 
 ### Boundary
 

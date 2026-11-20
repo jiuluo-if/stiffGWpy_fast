@@ -2119,3 +2119,5 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - 精度最大根误差代理 `1.7512e-4`、谱误差 `9.0787e-4 dex`、第三 map 最大根差 `1.7513e-4`、second-to-third map 闭合 `6.1895e-8`。
 - TBB、2 Numba threads、CPU `[0,1]`、BLAS1、goal grid、`physical_guard=True` 的隔离持久进程 A/B：相对本轮起点 fda，500 对可信 CR0 P50/P95 `0.9963/1.0110`，500 对扩域旧成功点 `0.9984/0.9929`；新增低角点与 Sobol 100 对分别 `0.9982/0.9980`、`0.9984/1.0079`。输出全部逐位相同。
 - 最终源码全量 pytest `445 passed, 9 deselected, 2 warnings`；Ruff、Mypy、compileall、sdist/wheel build 通过。有限样本证据不构成连续域认证。复现脚本、逐位 replay、完整运行原始数据、Reference arrays、图与哈希见 `docs/research/unified_domain_20261119/cr1_b175_reheat_kappa_upper_candidate_manifest.json`。
+
+- Git 身份核验为 `2966684515@qq.com`；提交 `53c42a9f7f70581b51712d7be6960829930a63bf` 已推送至 `fast_v0.2`，远端 SHA 相同。GitHub Actions run `44711888180` 的 canonical、static、package、Cobaya 与 Python 3.9–3.13 compatibility 共 9 个 job 全部通过。
