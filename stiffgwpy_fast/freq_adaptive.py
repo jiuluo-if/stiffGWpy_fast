@@ -52,8 +52,9 @@ def _requires_log_tensor_power(log_amplitude, n_t, freqs, f_piv):
     freqs = np.asarray(freqs, dtype=np.float64)
     log_frequency = math.log(10.0) * freqs
     log_ratio = log_frequency - math.log(float(f_piv))
-    log_power = float(n_t) * log_ratio
-    log_pt = float(log_amplitude) + log_power
+    with np.errstate(over="ignore", invalid="ignore"):
+        log_power = float(n_t) * log_ratio
+        log_pt = float(log_amplitude) + log_power
     log_max = math.log(np.finfo(np.float64).max)
     log_min = math.log(np.nextafter(0.0, 1.0))
     return bool(

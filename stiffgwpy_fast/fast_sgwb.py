@@ -3057,9 +3057,10 @@ def _SGWB_iter_fast_impl(
                 elif log_amplitude_candidate:
                     from .freq_adaptive import _requires_log_tensor_power
 
-                    candidate_log_P_t = log_A_t + m.derived_param["nt"] * (
-                        math.log(10.0) * freqs - math.log(gp.f_piv)
-                    )
+                    with np.errstate(over="ignore", invalid="ignore"):
+                        candidate_log_P_t = log_A_t + m.derived_param["nt"] * (
+                            math.log(10.0) * freqs - math.log(gp.f_piv)
+                        )
                     log_amplitude_mode = (
                         A_t == 0.0
                         or not math.isfinite(A_t)
@@ -3068,6 +3069,10 @@ def _SGWB_iter_fast_impl(
                         )
                     )
                     if log_amplitude_mode:
+                        if not np.isfinite(candidate_log_P_t).all():
+                            m.fast_failure_reason = "nonrepresentable_output"
+                            m.fast_failure_detail = "tensor_power_log_out_of_range"
+                            break
                         log_P_t = candidate_log_P_t
                         # The equation is linear in primordial power. Propagate
                         # unit power and restore the physical scale in log space.
