@@ -1790,3 +1790,14 @@ Select the next adjacent region from current old-Fast failure records, first val
 ### Next Step
 
 Next, investigate the 1.4M boundary root discrepancy with a generic transfer/integration error decomposition; do not retune thresholds on that single point. Any candidate must pass neighboring total-density samples, the existing trusted-region performance gate, and an independent holdout before changing production. The 2M total-density square corner remains unresolved; finite points do not certify the continuum.
+
+## Round 62 — rejected final-spectrum retry
+
+- [x] Add a focused red test for finite log-spectrum output at the first high-density output-underflow case and observe the existing `None` failure.
+- [x] Trace the failure to the final spectrum assembly: finite positive H2 and DN map coexist with zero linear output at low-frequency bins.
+- [x] Test the existing log-amplitude propagation as a retry; reject it because 18/75 unit-transfer rows remain zero and it returns `nonpositive_log_amplitude_transfer`.
+- [x] Remove the unvalidated retry and test. Production Fast source is unchanged; 3M is not counted as supported.
+
+### Next Step
+
+Derive a normalized two-component tensor state with independent accumulated log scale, including the exact relation for initial conditions, analytic WKB handoff, phase-resolved tail blending, terminal energy, and the log-domain frequency integral. Write focused equivalence/underflow tests before integrating it into `solve_kernel`; compare warm P50/P95 and trusted-region spectra before accepting any candidate.

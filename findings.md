@@ -3579,3 +3579,10 @@ Four selected direct z8 Reference checks (both upper-density tilt corners, the l
 A separate 64-pair alternating full-solve A/B against the stable-background pre-WKB Fast source at `63aee9d` confirms WKB3 keeps the newly sampled region efficient: candidate P50/P95 are 26.7–27.4/27.8–28.6 ms and about 0.30–0.34 of baseline; roots match to roundoff, frequency grids are bitwise equal, max spectrum shift is `5.45e-9 dex`. A fresh-module first solve includes a larger one-time JIT cost (candidate 19.29 s vs baseline 9.60 s); warm gates pass, but this cold-start cost remains a limitation.
 
 Raw screens, direct Reference arrays, A/B samples, source hashes, manifest and figure are in `docs/research/unified_domain_20261119/`. Current production source was unchanged; this turn expands verified usage evidence for an already deployed Fast mechanism.
+
+## 2026-11-20 — CR0 3M 末端谱下溢恢复假设（拒绝）
+
+- 在固定 `cr=0, n_t=0` 的 `Omega_bh2=3e6` 样本上，旧 Fast 因 `nonfinite_background_primitive` 失败；当前背景保持正有限 H²，但 Fast 在末端因 `final_spectrum_underflow` 返回失败。自洽映射的 `DN_gw[-1]` 仍是有限正数，说明失败发生在最终逐频谱装配。
+- 先写了输出恢复红测，确认 `SGWB_iter_fast` 返回 `None`。尝试在该特定失败后重跑已有对数振幅路径，候选未通过：单位振幅传播的 75 个频点中 18 个低频末端传递量仍为零，失败被正确分类为 `nonpositive_log_amplitude_transfer`。因此仅在输出层切换已有对数振幅算法不能修复此区域。
+- 传播诊断显示受影响频率为 `log10(f/Hz)=-12.81…-18.46`，初态 `z0≈-6.91`，所以不是初态指数直接下溢；损失发生在长程传递状态动态范围。可能的后续方案是传播规范化二维状态及独立对数增益，并把尺度延伸到末端能量和对数频率积分；需保留相位尾部匹配尺度后再写候选测试。
+- 已撤掉未验证的重试改动和红测；生产源保持不变，不将该 3M 切片计为 Fast 求值域成功。`
