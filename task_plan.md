@@ -2049,7 +2049,7 @@ CI 通过后继续 CR0 `[10e6,11e6]×n_t[-.5,0]` 屏幕；继续按相同数学�
 - [x] Three current-source z8 Reference points pass: maximum root error `4.5421e-5`, spectrum error `6.8907e-4 dex`, map closure `9.6059e-8`.
 - [x] 500-pair complete-solve A/B: new region max P50/P95 `1.0001/1.0067`, trusted CR0 `1.0028/0.9969`; paired outputs are bitwise equal.
 - [x] Figure visual inspection and focused Ruff pass; Reference and production Fast source unchanged.
-- [ ] Finalize manifest, push evidence and verify Actions.
+- [x] 本轮 `76f4fe2` 已提交推送，远端一致；Actions `44782085765` 全 9 项通过。
 
 ### Boundary
 
@@ -2057,4 +2057,22 @@ Only sampled coverage, not continuous-domain certification.
 
 ### Next Step
 
-On successful CI continue `[11e6,12e6]×n_t[-.5,0]` screen with the same finite-background, Reference and 5% performance checks.
+On successful CI for Round 78, continue `[12e6,13e6]×n_t[-.5,0]` with the same finite-background, Reference and 5% performance checks.
+
+
+## Round 78 — CR0 density continuation 11M–12M
+
+- [x] 同输入旧/当前屏幕 19 点 `0/19→19/19`，旧版失败全为 `nonfinite_background_primitive`。
+- [x] 候选所有点 H² 正有限、cutoff 有限、75 频点完整、0 warnings。
+- [x] z8 Reference 三点通过，最大 root error `4.2549e-5`、最大 spectrum error `6.1427e-4 dex`、map closure `1.1203e-7`。
+- [x] 500 对完整 Fast A/B：扩域点 P50/P95 最大 `0.9978/0.9995`，可信 CR0 `1.0051/1.0221`；所有谱/根/频率逐位一致。
+- [x] 图复核及脚本 Ruff 通过；生产/Reference 源未改。
+- [ ] 提交、推送并核验本轮 Actions。
+
+### Boundary
+
+本轮只有有限样本覆盖，不构成整个矩形的连续域认证。
+
+### Next Step
+
+CI 通过后继续检查 CR0 `[12e6,13e6]×n_t[-.5,0]`；若精度/性能门槛失败，保留边界证据，不作参数特判。

@@ -2209,3 +2209,13 @@ The current production source remains unchanged; added one tested Reference-orig
 - z8 Reference max root error `4.542079e-5`, spectrum `6.890632e-4 dex`, map closure `9.605813e-8`.
 - 500-pair complete Fast A/B max new-region P50/P95 `1.000023/1.006664`, trusted CR0 `1.002703/0.996804`, all outputs bitwise equal.
 - Figure checked and scripts Ruff pass. Manifest, commit and CI remain.
+
+- Round 77 delivery: `76f4fe226712cb6dffb9a92a393dc8ea8e3a4863` pushed to `fast_v0.2`; remote matches and Actions `44782085765` passed 9/9.
+
+
+## Round 78 progress — CR0 density 11M–12M
+
+- Old/current Fast screen `0/19→19/19`, all old failures `nonfinite_background_primitive`; candidate H² positive finite, cutoff finite, 75 frequency points, zero warnings.
+- Three z8 Reference cases: max root `4.254815e-5`, max spectrum `6.142648e-4 dex`, closure `1.120277e-7`.
+- 500-pair full Fast A/B: new-region max P50/P95 `0.997705/0.999446`; trusted CR0 `1.005050/1.022094`; roots/frequency digests/spectra identical.
+- Figure visually checked, scripts Ruff pass. Manifest/commit/CI remain.
