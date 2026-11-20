@@ -21,7 +21,7 @@ E_det = 4u (|a11*a22| + |a12*a21|).
 
 固定 `cr=0`、`Omega_ch2=0.1201075`、`H0=67.32117`、`DN_eff=0`、`A_s=2.100549e-9`、`r=.01`、`T_re=2000`、`DN_re=10`、`kappa10=.01`，独立扫描 `n_t`。在 `[2e6,3e6] × [-.5,0]` 的 3×3 矩形格点加两个内部点，旧 Fast `0/11`、新 Fast `11/11`；另外 8 点 scrambled Sobol 留出为 `0/8→8/8`。19 个旧失败全为 `nonfinite_background_primitive`。新解均通过物理 guard，H² 有限正值（样本最小 `0.4532139925`），`N_inf` 有限，75 个输出频点完整，无警告。
 
-Reference 保持原生产源码和阈值。3M、`n_t=-.5` 与独立 Sobol 高密度点均在**相同 Fast 根**上比较频谱，并另做 Reference 根闭合：最大根相对误差 `1.7505e-5`，最大同根谱差 `7.7100e-4 dex`，最大闭合残差 `9.1044e-7`。复用的 3M、`n_t=0` 同根 Reference 为根误差 `3.4198e-6`、最大谱差 `7.5822e-4 dex`。全部通过 `2e-4` 与 `1e-3 dex` 门槛。参考频谱必须在 Fast 同一根比较；将 Fast 根处的 Fast 谱与闭合到稍有差异的 Reference 根谱比较会在窄频段造成约 `5.4e-3 dex` 的假差异，该混根比较不作为精度判据。
+Reference 保持原生产源码和阈值。3M、`n_t=-.5` 与独立 Sobol 高密度点均在**相同 Fast 根、相同频率网格**比较频谱，三点最大同根谱差 `7.7100e-4 dex`。复核发现初版 closure 字段把 Fast 收敛后的总 `DN_eff` 误当作输入底值；该旧闭合数值 `1.7505e-5 / 9.1044e-7` 不再引用。使用当前 Fast 与 Reference 首映射逐位复放后，以 CR0 原始输入 `DN_eff=0` 作为映射原点补做两次正确映射：3M `n_t=0` 根差/闭合 `6.7408e-6 / 4.7712e-8`，3M `n_t=-.5` 为 `3.4836e-5 / 1.2087e-7`，独立 Sobol 为 `6.5307e-6 / 2.5577e-7`。全部通过 `2e-4` 根和 `1e-3 dex` 谱门槛。混根谱比较仍不作为精度判据。
 
 原始数据：[3×3 + 内部点](screen_cr0_density_2m_to3m_wkb_guard.json)、[8 点 Sobol](screen_cr0_density_2m_to3m_wkb_guard_sobol.json)、[同根 z8 Reference](validate_cr0_3m_wkb_guard_z8_multi.json)、[3M 零倾斜 Reference](validate_cr0_3m_wkb_guard_z8.json)。
 

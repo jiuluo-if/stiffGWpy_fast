@@ -1,0 +1,142 @@
+{
+  "status": "complete_correct_origin_reference_closure",
+  "method": "DN_eff_total = input_DN_eff_origin + DN_gw; iterate at origin + previous map",
+  "reference_code_modified": false,
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "_wkb_transfer.py": "9fcb10055b2c9ac79b76bbbc2659c07d6eda0b82213218288eaa7bc087b7845e",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "cases": [
+    {
+      "case_id": "upper_density_zero_tilt",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 3000000.0,
+        "n_t": 0.0
+      },
+      "input_dn_eff_origin": 0.0,
+      "fast_root": 0.3121571825306297,
+      "fast_total_dn_eff": 0.3121571825306297,
+      "map_history": [
+        {
+          "input_total_dn_eff": 0.3121571825306297,
+          "mapped_dn_gw": 0.31215931755118853,
+          "origin_correct": true,
+          "source": "saved_reference_map_at_fast_root"
+        },
+        {
+          "input_total_dn_eff": 0.31215931755118853,
+          "mapped_dn_gw": 0.31215927185150927
+        },
+        {
+          "input_total_dn_eff": 0.31215927185150927,
+          "mapped_dn_gw": 0.31215928674539134
+        }
+      ],
+      "map_closure_relative": 4.771244266791862e-08,
+      "fast_root_relative_to_corrected_reference": 6.740836652961574e-06,
+      "additional_reference_seconds": [
+        63.355826900002285,
+        61.25009239999781
+      ],
+      "reference_source_sha256": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+      "current_fast_replay_exact": true
+    },
+    {
+      "case_id": "upper_density_negative_tilt",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 3000000.0,
+        "n_t": -0.5
+      },
+      "input_dn_eff_origin": 0.0,
+      "fast_root": 0.10169135044906329,
+      "fast_total_dn_eff": 0.10169135044906329,
+      "map_history": [
+        {
+          "input_total_dn_eff": 0.10169135044906329,
+          "mapped_dn_gw": 0.10169487303756194,
+          "origin_correct": true,
+          "source": "saved_reference_map_at_fast_root"
+        },
+        {
+          "input_total_dn_eff": 0.10169487303756194,
+          "mapped_dn_gw": 0.10169488080789389
+        },
+        {
+          "input_total_dn_eff": 0.10169488080789389,
+          "mapped_dn_gw": 0.10169489309945239
+        }
+      ],
+      "map_closure_relative": 1.208670181818151e-07,
+      "fast_root_relative_to_corrected_reference": 3.4836069748698445e-05,
+      "additional_reference_seconds": [
+        61.269740899999306,
+        61.26071310000043
+      ],
+      "reference_source_sha256": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+      "current_fast_replay_exact": true
+    },
+    {
+      "case_id": "independent_sobol_upper_density",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 2989492.731168866,
+        "n_t": -0.01380485063418746
+      },
+      "input_dn_eff_origin": 0.0,
+      "fast_root": 0.3000379914062627,
+      "fast_total_dn_eff": 0.3000379914062627,
+      "map_history": [
+        {
+          "input_total_dn_eff": 0.3000379914062627,
+          "mapped_dn_gw": 0.3000400347294868,
+          "origin_correct": true,
+          "source": "saved_reference_map_at_fast_root"
+        },
+        {
+          "input_total_dn_eff": 0.3000400347294868,
+          "mapped_dn_gw": 0.30004002761913096
+        },
+        {
+          "input_total_dn_eff": 0.30004002761913096,
+          "mapped_dn_gw": 0.30003995087702634
+        }
+      ],
+      "map_closure_relative": 2.557729542055378e-07,
+      "fast_root_relative_to_corrected_reference": 6.530699521575424e-06,
+      "additional_reference_seconds": [
+        60.9581197999978,
+        60.99758490000022
+      ],
+      "reference_source_sha256": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536",
+      "current_fast_replay_exact": true
+    }
+  ]
+}

@@ -2121,3 +2121,23 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - 最终源码全量 pytest `445 passed, 9 deselected, 2 warnings`；Ruff、Mypy、compileall、sdist/wheel build 通过。有限样本证据不构成连续域认证。复现脚本、逐位 replay、完整运行原始数据、Reference arrays、图与哈希见 `docs/research/unified_domain_20261119/cr1_b175_reheat_kappa_upper_candidate_manifest.json`。
 
 - Git 身份核验为 `2966684515@qq.com`；提交 `53c42a9f7f70581b51712d7be6960829930a63bf` 已推送至 `fast_v0.2`，远端 SHA 相同。GitHub Actions run `44711888180` 的 canonical、static、package、Cobaya 与 Python 3.9–3.13 compatibility 共 9 个 job 全部通过。
+
+## Round 70 started — CR0 density continuation
+
+Authoritative state verified: worktree HEAD `59a23aec2300f08b50124d7f35dec4b228388d37`, remote `fast/fast_v0.2` has the same SHA, and tracked working tree is clean. Current paired-screen inventory contains accepted CR0 `2M–3M` density×negative-tilt evidence but no accepted adjacent density screen. Positive-tilt extension is not selected because existing Reference samples already reject `n_t=.2/.3` near `2.8e-4` root error. Next action: use the existing pinned paired runner for CR0 `Omega_bh2∈[3M,4M] × n_t[-.5,0]`, then check old Fast failures and mathematical H²/cutoff before spending Reference cost.
+
+### Round 70 progress — paired screen
+
+完成 CR0 `[3e6,4e6] × n_t[-.5,0]` 的 lattice/interior + 8 点 scrambled Sobol 屏幕，旧 Fast `0/19`、当前 `19/19`；旧失败全是 `nonfinite_background_primitive`。候选全部满足 finite `N_inf`, positive finite H², 75-node spectrum, no warnings, physical guard. 不计为 accepted 域；进入 Reference 精度和当前源码复放。
+
+### Round 70 progress — Reference audit
+
+A validator audit found and corrected a root-closure bookkeeping error in the historical 3M CR0 validation only. Same-root spectra/first maps were still correct. The current-source replay for the two 3M corners is bitwise exact; after two correct-origin additional Reference maps, root errors are `6.7408e-6` and `3.4836e-5`, closure residuals `4.7712e-8` and `1.2087e-7`. Corrected raw mapping is in `close_cr0_3m_reference_origin_corrected.json`. New 3M–4M Reference validation explicitly reads the true input origin and asserts `total DN_eff = origin + Fast root`.
+
+### Round 70 progress — CR0 3M–4M precision/performance gates
+
+Both 4M tilt corners and independent high-density Sobol Reference samples pass: max root error `8.5923e-5`, max spectrum error `7.4338e-4 dex`, max current-box closure `2.1580e-7`. The 3M shared boundary’s correct-origin closures pass as well (max root `3.4836e-5`, max map residual `2.5578e-7`), after withdrawing one historical shifted-origin closure field. Complete Fast paired A/B ratios are `<1.016` at P50/P95 for two new samples and trusted CR0. Figure and summary produced; remaining work is manifest/hash verification, full local verification, commit/push and CI.
+
+### Round 70 progress — final local gates
+
+The current production source remains unchanged; added one tested Reference-origin helper regression and research runners. Final full pytest: `446 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall, and sdist/wheel build pass. Old Fast to current Fast coverage and current-source References pass the sampled CR0 3M–4M rectangle gates. Manifest hash verification and commit/push/CI remain.

@@ -1807,7 +1807,7 @@ Use the real JIT exception trace, not the earlier output-only hypothesis, to fin
 - [x] Trace the JIT failure to `_transfer_order` dividing by a WKB3 basis determinant rounded to zero on the captured CR0 3M panel.
 - [x] Add an IEEE-754 determinant error-bound gate and route unresolved inverses through the existing phase-substep fallback; retain exact parameter-independent dispatch.
 - [x] Paired old/current Fast lattice, interior and Sobol screen over `[2e6,3e6] × n_t[-.5,0]`: `0/19→19/19`, all baseline failures `nonfinite_background_primitive`, positive finite H2, physical guard admitted.
-- [x] Same-Fast-root z8 Reference checks at 3M `n_t=0`, 3M `n_t=-.5`, and an upper-density Sobol holdout: all pass root `2e-4` and spectrum `1e-3 dex` gates.
+- [x] Same-Fast-root z8 spectrum checks at 3M `n_t=0`, 3M `n_t=-.5`, and an upper-density Sobol holdout pass; audit/fix the historical closure origin, then reclose from CR0 input `DN_eff=0`: maximum root error `3.4836e-5`, map closure `2.5577e-7`, spectrum error `7.7100e-4 dex`.
 - [x] Exact old-helper/current-helper 32-pair full-solve A/B on two trusted points and one new-region point: all measured P50/P95 regressions <5%; frequencies, roots and spectra bitwise equal.
 - [x] Focused WKB tests `6 passed`; full pytest `438 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel build and installed-wheel guard smoke pass.
 - [x] Generate source/artifact hashes and QA the coverage/outcome/precision/runtime figure.
@@ -1906,3 +1906,29 @@ CR1 的 `T_re×kappa10` 矩形在 lattice/interior 和独立 Sobol 这些有限�
 ### Boundary
 
 数据是有限样本相邻区域证据，不是连续域证明。精度复用以 Fast 根、频率和谱逐位相同且 Reference 源码哈希不变为前提。Reference 生产代码未修改。
+
+## Round 70 — CR0 density continuation beyond 3M
+
+### Hypothesis and constraints
+
+The accepted sampled CR0 region currently ends at `Omega_bh2=3e6`, with independent `n_t∈[-.5,0]`. Probe the adjacent `Omega_bh2∈[3e6,4e6] × n_t∈[-.5,0]` slice at fixed `Omega_ch2=.1201075`, `r=.01`, `cr=0`, `T_re=2000`, `kappa10=.01`. CR0 tilt stays independent. First verify derived cutoff and H² over each generated Fast grid, then compare pinned `872a70d` with current `59a23ae` on 3×3 lattice + interiors and independent Sobol. Do not claim an expansion from Fast success alone.
+
+### Phases
+
+- [x] Paired lattice/interior/Sobol screen: old `0/19`, current `19/19`; all old failures are `nonfinite_background_primitive`; all candidate cutoffs finite, H² positive finite, guard admitted.
+- [x] Correct-origin z8 Reference at 4M corners and independent Sobol: max root error `8.5923e-5`, spectrum `7.4338e-4 dex`, closure `2.1580e-7`. Corrected the shared 3M boundary closure: max root `3.4836e-5`, map residual `2.5578e-7`.
+- [x] Full Fast source-baseline A/B: new upper corner P50/P95 `0.9910/0.9901`, Sobol `1.0063/1.0152`, trusted CR0 `0.9920/0.9919`; outputs bitwise equal. Existing 500-pair trusted gate remains below 5%.
+- [x] Create coverage/accuracy/performance figure, raw-data and source-hash manifest; red/green regression catches the Reference-origin mapping rule. Production source/Reference code unchanged.
+- [x] Final local verification: pytest `446 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall and wheel/sdist build pass.
+- [ ] Commit/push this evidence tranche and closure regression test to `fast_v0.2`; verify remote SHA and final Actions.
+
+### Selection rationale
+
+The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root gate around `2.8e-4`, so do not extend the previously accepted blue-tilt strip on those known-bad settings. The CR0 `2M–3M` density×negative-tilt rectangle has separate finite-sample Reference support and leaves an adjacent untested density interval. This round tests whether that boundary is physically/numerically extendable; it has no accepted outcome yet.
+
+### Round 70 validation-method audit
+
+- [x] Search Reference validators for input-base versus post-solve total `DN_eff`; identified the isolated faulty iterative closure in `validate_cr0_3m_wkb_guard_z8.py`.
+- [x] Recompute direct root discrepancy from the saved same-Fast-root Reference maps and close 3M representative maps using the true input origin `DN_eff=0`.
+- [x] Reassess CR0 3M and CR1 saved same-root Reference maps: same-root spectra remain bitwise comparable; CR1 production validators use one-map root proxies and their explicit close scripts iterate from base zero.
+- [x] Correct-origin current-source References establish that the CR0 3M–4M slice passes root, spectrum and map-closure gates.

@@ -3592,7 +3592,7 @@ Raw screens, direct Reference arrays, A/B samples, source hashes, manifest and f
 - WKB3 `B0` 逆矩阵的行列式由两项乘积相减。加入基于 float64 项级舍入界的拒绝条件：当 `|det| <= 4u(|p|+|q|)`、结果非有限或行列式落入 subnormal 区时拒绝 WKB 候选，让现有相位子步继续。同一实际面板在加守卫前抛 `ZeroDivisionError`：`z0=8.326819262766648`、`z1=13.006402132438978`、`h=5.853210263495612e-4`；WKB3 两个乘积均下溢为零，WKB2 行列式仍约 `-2.032`。
 - TDD：WKB3 focused contract `4 passed` 的原测试加新案例后 `5 passed`；端到端 3M `n_t=0` test 复现 75 个频率模完成、`DN_gw[-1]=0.3121571825`。旧失败时只有部分模进入终端装配，观测到的 `0.002371` 是无效部分映射，不能作为根基准。
 - 固定 `cr=0`、其余背景参数同高密度扫描，在 `[2e6,3e6]×n_t[-.5,0]` 的 3×3 格点加两内点、8点 scrambled Sobol 中，基线 `872a70d` 为 `0/11 + 0/8`，候选 `19/19`；旧失败均为 `nonfinite_background_primitive`。所有候选 H² 正且有限、物理 guard 接受，H² 最小 `0.4532139925`，频率节点 75。
-- 未改 Reference 的 z8/r tol=1e-9 核验：3M `n_t=-.5` 与 Sobol 上边界留出相对根误差最大 `1.7505e-5`，同 Fast 根谱差最大 `7.7100e-4 dex`；另有 3M `n_t=0` 同根检查谱差 `7.5822e-4 dex`。先前把 Fast 根处 Fast 谱与闭合到不同 DN 根后的 Reference 谱比较，产生 `5.41e-3 dex`，属混根口径，现已更正为同根比较。三个直接检查均在验收门内，且有限点不证明整个连续矩形。
+- 未改 Reference 的 z8/r tol=1e-9 同根谱核验：3M `n_t=-.5` 与 Sobol 上边界留出最大谱差 `7.7100e-4 dex`；3M `n_t=0` 为 `7.5822e-4 dex`。初版 root closure 把 Fast 收敛后的总 `DN_eff` 误当输入底值，撤销其 `1.7505e-5/9.1044e-7` 闭合数值。当前 Fast 与原始首映射逐位复放后，以真实 CR0 底值 `DN_eff=0` 补做两次 Reference map：3M `n_t=0/-0.5` 与 Sobol 的根差分别 `6.7408e-6/3.4836e-5/6.5307e-6`，最大闭合 `2.5577e-7`。修正后均通过根与谱门槛；三个点仍是有限采样。原始 same-root Reference 数组保留，正确闭合见 `close_cr0_3m_reference_origin_corrected.json`。
 - 对未改 helper 的精确旧/新源同进程 A/B：32 交替完整求解、两可信控制和一个 2.5M 新点，P50 最大回退 `1.01%`、P95 最大回退 `3.67%`；根、频率和谱逐位相同。新增区域 18 个非冷启动 screen 的 P50/P95 为 `90.9/94.6 ms`。冷首调基线/候选分别 `18.97/18.54 s`，包含一次性 JIT。
 - 文献方法依据：Higham (2002), *Accuracy and Stability of Numerical Algorithms*, 2nd ed., §2.1–2.2、§3.1；查阅 SIAM 公开章节摘录。适用假设、4u 保守界推导及面板详情见 `cr0_2m_to3m_wkb_basis_guard_summary.md`。当前守卫仅处理 WKB 基底逆的局部浮点可分辨性，不是渐近截断误差或整条轨迹误差界。
 - 原始筛选、Reference、逐对 A/B、覆盖/精度/失败图及 manifest 见 `screen_cr0_density_2m_to3m_wkb_guard*`、`validate_cr0_3m_wkb_guard_z8*`、`benchmark_wkb_basis_guard_ab.json`、`cr0_density_2m_to3m_wkb_guard_domain.png` 与对应 manifest。
@@ -3646,3 +3646,37 @@ The classification is distinct from exact zero, positive-tensor linear underflow
 守卫 kernel 原先从 `Phi_grid` 与 `sigma` 再扫描一次，以得到单调标记、`max(ΔPhi,0)` 与 `max|1.5sigma−1|`。候选在构造这些源数组时同步累计完全相同统计量；只有直接积分背景路径标记摘要有效。若出现 H² 身份替代或异常路径则禁用摘要并走原扫描。小网格等价测试逐元素对比两条 kernel 路径；额外端点回归测试覆盖最后节点左右极限不相同的情形。
 
 指数表示范围按两个指数约束求交，不使用有限替代值处理 NaN；NaN 留在非有限失败路径，正负无穷触发稳定背景尺度替代。最终 19 点候选与 fda 根、频率摘要、频谱逐位一致；两类扩域 A/B 和可信控制均未超过 P50/P95 5% 回退门槛。具体源/工件 SHA 和计时原始样本由 candidate manifest 保存。
+
+## Round 70 target selection — adjacent CR0 density boundary
+
+Current-source artifact inventory shows several possible screens. The CR0 positive-tilt expansion is a poor next target: previous direct Reference data already reject representative `n_t=.2/.3` at approximately `2.8e-4` root error, beyond the `2e-4` gate. The accepted CR0 negative-tilt density×tilt evidence reaches `Omega_bh2=3e6`; adjacent densities remain unexplored in this checkout's accepted manifests. Selected next probe is the mathematically independent CR0 slice `[3e6,4e6] × n_t[-.5,0]`, fixed background otherwise, with exact old-Fast pairing and independent Sobol. It remains exploratory until cutoff/H², Reference precision and full-runtime gates pass.
+
+## Round 70 初筛 — CR0 `3M–4M × n_t[-.5,0]`
+
+固定 `cr=0`, `Omega_ch2=.1201075`, `r=.01`, `T_re=2000`, `kappa10=.01`。新 paired 3×3 lattice + 2 interior 和 seed `20261130` 的独立 8 点 Sobol 共 19 点；对 `872a70d` 旧 Fast 为 `0/19`，19 个失败全部 `nonfinite_background_primitive`。当前 `59a23ae` 19/19 成功，所有点的 `N_inf` 有限、H² 正有限（当前屏幕网格最小 H² `0.4532139925`）、75 个频率点完整、无 warning，physical guard 全通过。候选 warm-screen P50 98.5–113.0 ms，合并中位数约 103 ms。
+
+这是数学有效性的 sampled preflight，不是精度域验收。CR0 的 `n_t` 是独立输入，本盒未使用 CR1 consistency tilt。下一步固定同根 Reference 核验密度×倾斜角点与独立 Sobol，并复放已有 3M 边界 Reference Fast arrays；如果精度/性能边界收缩，拒绝过宽部分。
+
+## Round 70 audit update — Reference fixed-point origin must be verified
+
+While preparing a current-source CR0 Reference check, a potential inherited validation defect surfaced: after Fast converges, `model.cosmo_param["DN_eff"]` stores the total (`input DN_eff + Fast root`). Several historical validators appear to assign that total to `root_origin`, then iterate `DN_eff = root_origin + Reference map`, which may shift the Reference fixed-point background by one map. A same-root z8 spectrum remains tied to the correct saved Fast total, but the recorded iterative root closure is not yet trusted.
+
+本轮后续不引用未经重核的 `closed_reference_root`/third-map 数字。先全局查出受影响的 Reference 验证/closure 脚本，利用已存同根 Reference map 核验 Fast root 误差；对必要代表点按真正输入底值（`params["DN_eff"]` / `model.DN_eff_orig`）重做有限次映射。若已有结果不满足正式门槛，重新限定/撤销对应精度域结论；Reference 生产代码保持不变。
+
+## Round 70 Reference-closure audit result
+
+The audit isolated one concrete issue: `validate_cr0_3m_wkb_guard_z8.py` correctly saved same-Fast-root z8 spectra/maps but assigned the post-solve total `cosmo_param["DN_eff"]` as the Reference iteration origin when computing its optional closed-root number. The two same-root frequency/spectrum arrays and their direct first-map values remain valid; only that shifted iterative closure field is replaced. This bug did not affect CR1 validators, which use a direct root-error proxy at the Fast total, nor the CR0 density validators that iterate maps from the physical input origin 0.
+
+A current-source replay confirmed both 3M Fast roots/frequencies/spectra are bitwise identical to the saved Reference anchors. Reusing those first maps and continuing with the correct origin produces: `n_t=0` root error `6.7408e-6`, closure residual `4.7712e-8`; `n_t=-.5` root error `3.4836e-5`, residual `1.2087e-7`. Reference code stays unchanged. Raw correction is `close_cr0_3m_reference_origin_corrected.json`.
+
+For the exploratory 3M–4M slice the Reference validator uses `origin = model.DN_eff_orig` (also cross-checking `total = origin + Fast root`), starts mapping at the Fast total, and iterates `total = origin + map`; all three selected upper-corner/Sobol cases are reported only after this corrected contract.
+
+## Round 70 final evidence — CR0 density extension and corrected Reference origin
+
+The paired `3M–4M × n_t[-.5,0]` CR0 slice is validated on a 3×3 lattice, two interior points and an independent eight-point Sobol design: old Fast `0/19`, all 19 old failures `nonfinite_background_primitive`; current Fast `19/19`, positive finite H², finite cutoff, 75 full frequency nodes, no warnings and guard admitted. This is the adjacent continuation of the previously supported CR0 density×negative-tilt slice.
+
+Correct-origin current-source z8 Reference checks at both 4M tilt corners and the independent high-density Sobol point give maximum root error `8.5923e-5`, same-root spectrum error `7.4338e-4 dex`, and map closure residual `2.1580e-7`. The Fast total-DN_eff invariant is checked against `input origin + Fast root` to roundoff. Corrected closure of the shared 3M zero/negative-tilt corners and high-density Sobol point gives max root error `3.4836e-5`, max closure `2.5578e-7`; the earlier shifted-origin closure field is superseded while same-root spectra remain valid and bitwise replayed.
+
+The closure bug was reproduced by inspection and fixed by explicitly applying `DN_eff_total = input_DN_eff_origin + Reference_map`. Added TDD coverage: the new `test_reference_fixed_point_map_adds_to_original_input_dn_eff` failed before adding the tested helper, then passed. The Reference production source and thresholds were not changed.
+
+Paired 100 complete-Fast solves against source commit `59a23ae` (same production code hashes): low-tilt upper corner P50/P95 `0.9910/0.9901`, independent Sobol `1.0063/1.0152`, trusted CR0 `0.9920/0.9919`; roots, frequency grids and spectra match bitwise. The 500-pair trusted gate from the unchanged production-source A/B is `0.9963/1.0110`. Figure, raw input/outcome/timing arrays and SHA manifest are in the 3M–4M artifacts.
