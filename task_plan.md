@@ -2076,3 +2076,21 @@ On successful CI for Round 78, continue `[12e6,13e6]×n_t[-.5,0]` with the same 
 ### Next Step
 
 CI 通过后继续检查 CR0 `[12e6,13e6]×n_t[-.5,0]`；若精度/性能门槛失败，保留边界证据，不作参数特判。
+
+
+## Round 79 — CR0 density continuation 12M–13M
+
+- [x] Old/current paired screen: 19 lattice/interior/independent Sobol cases `0/19→19/19`; old failures all `nonfinite_background_primitive`.
+- [x] Positive finite H², finite cutoff, complete 75 frequencies and no warnings on every current sample.
+- [x] Three current z8 Reference cases pass: max root relative error `4.2549e-5`, max spectrum error `6.7689e-4 dex`, map residual `8.6884e-8`.
+- [x] 500-pair full Fast A/B: new-region max P50/P95 `1.0030/1.0170`; trusted CR0 `1.0051/1.0221`; paired outputs bitwise identical.
+- [x] Figure and focused Ruff checks pass; production Fast and Reference source unchanged.
+- [ ] Commit/push the verified region package and wait for CI.
+
+### Boundary
+
+Finite sampled region evidence; no claim that every point in the box has been certified.
+
+### Next Step
+
+If CI succeeds, continue `[13e6,14e6]×n_t[-.5,0]` and preserve current boundary classifications.

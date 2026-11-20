@@ -3744,3 +3744,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Three current z8 Reference points pass both precision criteria: max root error `4.2549e-5`, spectrum difference `6.1427e-4 dex`, map residual at most `1.1203e-7`.
 - 500-pair complete Fast A/B: new region max P50/P95 `0.9978/0.9995`, trusted CR0 `1.0051/1.0221`; paired outputs bitwise identical.
 - No solver/Reference code changed; finite-sample evidence only.
+
+
+## CR0 high-density adjacent slice 12M–13M — 2026-11-21
+
+- Same-input old/current Fast screen: old succeeds `0/19`; current succeeds `19/19`, with all old failures `nonfinite_background_primitive`. Current samples preserve positive finite H², finite cutoff and complete 75-frequency spectra.
+- Three z8 Reference validations pass: max root error `4.2549e-5`, max spectrum difference `6.7689e-4 dex`, maximum map closure `8.6884e-8`.
+- 500 alternating full-solver pairs show P50/P95 ratios under 5% on new region and trusted control; roots, frequency digests and spectra are bitwise identical.
+- No production source changed. The result extends finite-sample CR0 density×tilt coverage only.
