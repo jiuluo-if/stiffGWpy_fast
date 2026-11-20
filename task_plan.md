@@ -2141,7 +2141,7 @@ After delivery checks, continue the 14M boundary toward more negative tilt only 
 - [x] Independent Sobol Reference holdout: root residual `1.53261e-5`, spectrum difference `6.33857e-4 dex`; one extra 14M boundary closure map succeeds with residual `6.85290e-8`.
 - [x] 500-pair full Fast A/B: max new-region P50/P95 `1.004954/1.019098`; trusted control `0.999444/0.997584`; outputs bitwise equal. First cold solve ratio `1.0101`.
 - [x] Plot inspected and focused Ruff passes; production Fast/Reference source unchanged.
-- [ ] Verify manifest and delivery checks, commit/push and confirm CI.
+- [x] Manifest verified; focused Ruff passed and prior full project tests/build checks remained valid because production source was unchanged. Commit `8a9b237137ad91d601bbab0208a1145304390fbd` pushed; Actions `44821370370` passed 9/9.
 
 ### Boundary
 
@@ -2150,3 +2150,21 @@ Finite sampled evidence for the expanded box, not a continuum certificate. Refer
 ### Next Step
 
 After delivery, probe toward more negative tilt near 14M; stop at the first Reference or performance boundary without changing Reference settings.
+
+
+## Round 83 — CR0 14M edge, tilt extension to -0.02734375
+
+- [x] Paired old/current Fast screen on lattice/interior and independent Sobol: `0/19→19/19`; old failures remain `nonfinite_background_primitive`; sampled H² positive finite, cutoff finite, 75 frequencies and zero warnings.
+- [x] Three selected z8 Reference density samples: max root residual `1.66487e-5`, max spectrum error `6.38373e-4 dex`.
+- [x] Independent Sobol Reference holdout: residual `1.47631e-5`, spectrum error `6.35914e-4 dex`; a second 14M closure map succeeds with residual `2.24471e-7`.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `1.009029/1.010746`; trusted control `1.002937/1.005692`; outputs bitwise equal; cold first solve ratio `1.0040`.
+- [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
+- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+
+### Boundary
+
+Finite sampled evidence for `[13.875M,14M]×[-0.02734375,0]`; this is not a continuum certificate. Reference integration outside the accepted density face remains a separate boundary.
+
+### Next Step
+
+After delivery, bracket the next more-negative tilt near 14M using unchanged Reference settings and full rectangle/holdout evidence.
