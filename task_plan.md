@@ -1811,8 +1811,8 @@ Use the real JIT exception trace, not the earlier output-only hypothesis, to fin
 - [x] Exact old-helper/current-helper 32-pair full-solve A/B on two trusted points and one new-region point: all measured P50/P95 regressions <5%; frequencies, roots and spectra bitwise equal.
 - [x] Focused WKB tests `6 passed`; full pytest `438 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel build and installed-wheel guard smoke pass.
 - [x] Generate source/artifact hashes and QA the coverage/outcome/precision/runtime figure.
-- [ ] Verify final staged hashes and Git identity, commit/push both Fast refs, then verify GitHub Actions.
+- [x] Verify final staged hashes and Git identity; commit `bb4217ba1404679f4f1ecae75ab0e9032e8c6853` is on both Fast refs and both resulting CI runs passed.
 
 ### Boundary
 
-The paired lattice, two interior points, eight Sobol holdouts and three Reference points are finite coverage evidence; this does not prove the full continuum. `cr>0` remains unaudited in this tranche.
+The paired lattice, two interior points, eight Sobol holdouts and three Reference points are finite coverage evidence; this does not prove the full continuum. `cr>0` remains unaudited in this tranche. Next, select an adjacent old-Fast failure region and continue paired coverage work.
