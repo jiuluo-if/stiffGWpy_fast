@@ -2177,7 +2177,7 @@ After delivery, bracket the next more-negative tilt near 14M using unchanged Ref
 - [x] Independent Sobol Reference holdout: residual `1.37634e-5`, spectrum error `6.37074e-4 dex`; extra 14M closure iteration fails with the unchanged step-size-under-spacing error and is explicitly retained.
 - [x] 500-pair full Fast A/B: max new-region P50/P95 `1.008956/1.019034`; trusted control `1.002286/0.990220`; outputs bitwise equal; cold first solve candidate is faster.
 - [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
-- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+- [x] Manifest verified; focused Ruff passed. Commit `ba66e074ab8630829441c520794246d3d8b8db58` pushed; Actions `44827952252` passed 9/9.
 
 ### Boundary
 
@@ -2186,3 +2186,21 @@ Finite sampled evidence for `[13.875M,14M]×[-0.029296875,0]`; this is not a con
 ### Next Step
 
 After delivery, test the next more-negative tilt only with the same rectangle, holdout, Reference and full-solver performance gates.
+
+
+## Round 85 — CR0 density-dependent tilt edge to -0.0302734375
+
+- [x] For `[13.875M,13.9375M]×[-0.0302734375,0]`, old/current paired Fast screen `0/19→19/19`; old failures `nonfinite_background_primitive`; H² positive finite, finite cutoff, 75 frequencies, zero warnings.
+- [x] Two accepted density Reference samples and independent Sobol: max root residual `1.54387e-5`, max spectrum error `6.38250e-4 dex`; at 13.9375M a second closure map passes with residual `1.85257e-7`.
+- [x] The same tilt at 14M fails on the first Reference map, so exclude that corner and report the density-dependent edge.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `0.998120/0.991825`; trusted control `0.994934/0.967881`; bitwise outputs.
+- [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
+- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+
+### Boundary
+
+Finite sampled evidence for a density-limited adjacent sub-box; no claim of a larger simple rectangular domain or continuum certification.
+
+### Next Step
+
+After delivery, bisect the density edge at `n_t=-0.0302734375` between 13.9375M and 14M using the same Reference and Fast gates.

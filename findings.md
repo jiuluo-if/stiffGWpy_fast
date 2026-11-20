@@ -3797,3 +3797,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - 14M 角点的额外 Reference 闭合调用步长下溢；已记录并保留失败分类。首次 Reference 映射误差仍低于原定门槛。
 - 500 对完整 Fast A/B（`59a23ae`→`d4ee1b9`）新增区域最大 P50/P95 `1.008956/1.019034`，可信控制 `1.002286/0.990220`，输出逐位相同。
 - 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to14m_nt029296875_summary.md` 及对应原始 JSON、manifest 和图。
+
+## 2026-11-21 — CR0 密度依赖倾斜边界到 -0.0302734375
+
+- 验收区域收窄为 `[13.875e6,13.9375e6]×[-0.0302734375,0]`。同输入 Fast 屏幕 19 点 `0/19→19/19`，旧失败全部 `nonfinite_background_primitive`；新样本 H² 正有限、75 频点、零 warning。
+- 低密度边界/内部 Reference 最大 root 残差 `1.543869e-5`、最大谱差 `6.382504e-4 dex`；独立 Sobol `1.279228e-5`、`6.279721e-4 dex`。13.9375M 的第二步 Reference 闭合残差 `1.852572e-7`。
+- 相同倾斜在 14M 的首次 Reference 映射步长下溢；不纳入精度扩域盒。明确记录随密度变化的外边界，避免把失败角点包含进矩形验收声明。
+- 500 对完整 Fast A/B 新区域最大 P50/P95 `0.998120/0.991825`，可信控制 `0.994934/0.967881`，输出逐位相同。
+- 详细证据见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p9375m_nt0302734375_summary.md` 与同目录 manifest/原始文件/图。

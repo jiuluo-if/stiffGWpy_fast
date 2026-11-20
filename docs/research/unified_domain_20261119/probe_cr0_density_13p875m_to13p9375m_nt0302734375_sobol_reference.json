@@ -1,0 +1,42 @@
+{
+  "status": "complete",
+  "reference_settings": {
+    "z_tail": 8.0,
+    "rtol": 1e-09,
+    "self_consistent": false,
+    "workers": 2
+  },
+  "reference_code_modified": false,
+  "source_sha256": {
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc"
+  },
+  "case": {
+    "case_id": "holdout_05",
+    "params": {
+      "Omega_bh2": 13882298.093813006,
+      "Omega_ch2": 0.1201075,
+      "H0": 67.32117,
+      "DN_eff": 0.0,
+      "A_s": 2.100549e-09,
+      "r": 0.01,
+      "n_t": -0.009219778759870678,
+      "cr": 0.0,
+      "T_re": 2000.0,
+      "DN_re": 10.0,
+      "kappa10": 0.01
+    },
+    "fast_success": true,
+    "fast_failure_reason": null,
+    "reference_status": "success",
+    "reference_seconds": 59.106921200000215,
+    "fast_root": 1.4052374031135195,
+    "reference_mapped_root": 1.4052553795360805,
+    "root_relative_error": 1.2792281618516852e-05,
+    "fixed_point_residual": 1.2792281618516852e-05,
+    "spectrum_valid_count": 75,
+    "spectrum_max_abs_dex": 0.0006279721475976885
+  }
+}
