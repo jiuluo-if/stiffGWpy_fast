@@ -1,0 +1,394 @@
+{
+  "status": "validated_finite_sample_cr0_density_edge_to_13p99609375m_at_minus_0p0302734375",
+  "source_base_commit": "90a4c543dcb3277dc8afbad8bc2a7911d8d97f02",
+  "old_failure_baseline_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "performance_baseline_commit": "59a23aec2300f08b50124d7f35dec4b228388d37",
+  "production_source_changed": false,
+  "reference_code_modified": false,
+  "source_sha256": {
+    "current_worktree": {
+      "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+      "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+      "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+      "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc",
+      "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+    },
+    "performance_baseline_59a23ae": {
+      "exact_background.py": "57740c71121ea0da063326887ae9cedf8e554889b5bde3b546636483218eb86a",
+      "fast_sgwb.py": "da3e3ca2898f0fcb6e1bb27c463c0b72e8e4e01bff92f1b9e70fbb6d4b2830e3",
+      "freq_adaptive.py": "29191346482b2fde81d8c9e44619736e63d10193b2a43ad42ebefe0c498e4c04",
+      "_wkb_transfer.py": "9fcb10055b2c9ac79b76bbbc2659c07d6eda0b82213218288eaa7bc087b7845e",
+      "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+    },
+    "reference_used": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "accepted_region": {
+    "Omega_bh2": [
+      13875000.0,
+      13996093.75
+    ],
+    "Omega_ch2": 0.1201075,
+    "cr": 0.0,
+    "n_t": [
+      -0.0302734375,
+      0.0
+    ],
+    "r": 0.01,
+    "T_re": 2000.0,
+    "kappa10": 0.01,
+    "tilt_contract": "CR0 input n_t is independent"
+  },
+  "paired_screen": {
+    "point_count": 19,
+    "old_successes": 0,
+    "candidate_successes": 19,
+    "old_failure_reasons": [
+      "nonfinite_background_primitive"
+    ],
+    "candidate_positive_finite_h2_all": true,
+    "candidate_min_sampled_h2": 0.45321399345993996,
+    "candidate_finite_cutoff_all": true,
+    "candidate_frequency_count_all_75": true,
+    "candidate_warning_count_max": 0,
+    "sobol_seed": 20261154,
+    "sobol_point_count": 8
+  },
+  "reference_checks": {
+    "z_tail": 8.0,
+    "rtol": 1e-09,
+    "accepted_density_cases": [
+      {
+        "case_id": "lower_density_edge",
+        "params": {
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 13875000.0,
+          "n_t": -0.0302734375
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 58.578375599994615,
+        "fast_root": 1.313760592053724,
+        "reference_mapped_root": 1.3137789680056637,
+        "root_relative_error": 1.3987095536738654e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.0006266071231344483
+      },
+      {
+        "case_id": "interior",
+        "params": {
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 13937500.0,
+          "n_t": -0.0302734375
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 59.25725749999401,
+        "fast_root": 1.3203219378563837,
+        "reference_mapped_root": 1.3203423222057509,
+        "root_relative_error": 1.5438685123019342e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.0006382503612112345
+      },
+      {
+        "params": {
+          "Omega_bh2": 13984375.0,
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": -0.0302734375,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 59.676502100002836,
+        "fast_root": 1.3252413737908346,
+        "reference_mapped_root": 1.325263205959327,
+        "root_relative_error": 1.6473835834431337e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.000618952862854627
+      },
+      {
+        "params": {
+          "Omega_bh2": 13992187.5,
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": -0.0302734375,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 60.14045850000548,
+        "fast_root": 1.3260611376357436,
+        "reference_mapped_root": 1.3260833343138594,
+        "root_relative_error": 1.6738524300394043e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.0006135268369096281
+      },
+      {
+        "params": {
+          "Omega_bh2": 13996093.75,
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": -0.0302734375,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 59.20068249999895,
+        "fast_root": 1.3264710079973463,
+        "reference_mapped_root": 1.3264929810220558,
+        "root_relative_error": 1.6564750076996692e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.0006106671041052891
+      }
+    ],
+    "independent_sobol_holdout": {
+      "case_id": "holdout_05",
+      "params": {
+        "Omega_bh2": 13927480.625126919,
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "n_t": -0.013977227791656333,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01
+      },
+      "fast_success": true,
+      "fast_failure_reason": null,
+      "reference_status": "success",
+      "reference_seconds": 59.43313639999542,
+      "fast_root": 1.3891570976738943,
+      "reference_mapped_root": 1.3891766121632583,
+      "root_relative_error": 1.4047522246723985e-05,
+      "fixed_point_residual": 1.4047522246404306e-05,
+      "spectrum_valid_count": 75,
+      "spectrum_max_abs_dex": 0.0006377133103256938
+    },
+    "13p984375m_second_closure_step": {
+      "status": "success",
+      "mapped_dn_gw": 1.3252630619403958,
+      "seconds": 59.58385719999933
+    },
+    "13p9921875m_second_closure_step": {
+      "status": "success",
+      "mapped_dn_gw": 1.326083084277823,
+      "seconds": 59.08402980000392
+    },
+    "13p99609375m_second_closure_step": {
+      "status": "success",
+      "mapped_dn_gw": 1.3264929962905256,
+      "seconds": 58.94156140000268
+    },
+    "excluded_14m_case": {
+      "case_id": "upper_density_edge",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 14000000.0,
+        "n_t": -0.0302734375
+      },
+      "fast_success": true,
+      "fast_failure_reason": null,
+      "reference_status": "integration_failure",
+      "reference_seconds": 58.90062089999992,
+      "exception_type": "RuntimeError",
+      "message": "reference tensor integration failed: Required step size is less than spacing between numbers."
+    },
+    "max_accepted_root_residual": 1.6738524300394043e-05,
+    "max_accepted_spectrum_error_dex": 0.0006382503612112345
+  },
+  "performance": {
+    "resources": {
+      "affinity": [
+        0,
+        1
+      ],
+      "numba_threads": 2,
+      "threading_layer": "tbb",
+      "blas_threads": 1,
+      "persistent_processes": 2,
+      "alternating_pairs_per_case": 500,
+      "warmups_per_side": 3,
+      "separate_numba_caches": true,
+      "physical_guard": true,
+      "frequency_grid": "goal"
+    },
+    "500_pair_full_solver": [
+      {
+        "case_id": "new_region_lower_density_low_tilt",
+        "pairs": 500,
+        "base_p50_seconds": 0.034411950000503566,
+        "current_p50_seconds": 0.03419834999658633,
+        "p50_ratio": 0.993792853822172,
+        "base_p95_seconds": 0.0367737250013306,
+        "current_p95_seconds": 0.03626122000096075,
+        "p95_ratio": 0.9860632829458721,
+        "paired_ratio_p95": 1.045955083015259,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": true,
+          "base_seconds": 20.59220500000083,
+          "current_seconds": 20.514780999998038,
+          "base_root": 1.313760592053724,
+          "current_root": 1.313760592053724
+        }
+      },
+      {
+        "case_id": "new_region_interior",
+        "pairs": 500,
+        "base_p50_seconds": 0.03442034999898169,
+        "current_p50_seconds": 0.034179750000475906,
+        "p50_ratio": 0.9930099490995035,
+        "base_p95_seconds": 0.03995373999860021,
+        "current_p95_seconds": 0.03948579999705544,
+        "p95_ratio": 0.9882879549809063,
+        "paired_ratio_p95": 1.0501544169279364,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": false,
+          "base_seconds": 0.036206699995091185,
+          "current_seconds": 0.035351700003957376,
+          "base_root": 1.3849410045214576,
+          "current_root": 1.3849410045214576
+        }
+      },
+      {
+        "case_id": "new_region_independent_sobol",
+        "pairs": 500,
+        "base_p50_seconds": 0.03444004999983008,
+        "current_p50_seconds": 0.034231049998197705,
+        "p50_ratio": 0.9939314837918817,
+        "base_p95_seconds": 0.03776516999969317,
+        "current_p95_seconds": 0.03736022999801207,
+        "p95_ratio": 0.989277421452508,
+        "paired_ratio_p95": 1.0532256613649384,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": false,
+          "base_seconds": 0.038105799998447765,
+          "current_seconds": 0.035502300001098774,
+          "base_root": 1.3676703135091088,
+          "current_root": 1.3676703135091088
+        }
+      },
+      {
+        "case_id": "trusted_physical_cr0_control",
+        "pairs": 500,
+        "base_p50_seconds": 0.005415150000771973,
+        "current_p50_seconds": 0.005423400001745904,
+        "p50_ratio": 1.0015235036836938,
+        "base_p95_seconds": 0.006156594998537912,
+        "current_p95_seconds": 0.006030200003806385,
+        "p95_ratio": 0.979469983852837,
+        "paired_ratio_p95": 1.1301163415368096,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": false,
+          "base_seconds": 4.958068499996443,
+          "current_seconds": 4.850774500002444,
+          "base_root": 0.002369295934602997,
+          "current_root": 0.002369295934602997
+        }
+      }
+    ],
+    "max_new_region_p50_ratio": 0.9939314837918817,
+    "max_new_region_p95_ratio": 0.989277421452508,
+    "trusted_control": {
+      "pairs": 500,
+      "p50_ratio": 1.0015235036836938,
+      "p95_ratio": 0.979469983852837,
+      "root_relative_delta_max": 0.0,
+      "frequency_digest_mismatch_pairs": 0,
+      "spectrum_absdiff_max_dex": 0.0
+    }
+  },
+  "continuum_claim": false,
+  "artifact_sha256": {
+    "screen_h2_identity_region.py": "f33747a9c3bf7f644a02ff2625dac99341998ed778a15afb060c4f34bcbde359",
+    "screen_cr0_density_13p875m_to13p99609375m_nt0302734375_slice.py": "06221fa80698a3e3a56a8f883714c79a11899c71677ae59c59e864213a2cf36d",
+    "screen_cr0_density_13p875m_to13p99609375m_nt0302734375_slice.json": "49bcf0c5342ce69e8c85b1bd2ec8649da88a0124f5bcc5978089f6ed2f3bcb1f",
+    "screen_cr0_density_13p875m_to13p99609375m_nt0302734375_slice_sobol.py": "31ced48c6de65ff8201e421c6f650e2d87c031dc267e96c56a9d90461cb1f2bb",
+    "screen_cr0_density_13p875m_to13p99609375m_nt0302734375_slice_sobol.json": "530df61fc8c89abf2a7c9c35afed4ceab7658eaa2cd3415cf8ba0c445a1bf0e9",
+    "probe_cr0_density_14m_nt0302734375_reference.py": "6abad058c0887233fe4beac1c3c9c76565630cd16d38a39c22bb832600c882b8",
+    "probe_cr0_density_14m_nt0302734375_reference.json": "fe69fe72cc0145671f1faf6f851336b1d832c67956c738de7475a89e7156ea48",
+    "probe_cr0_density_13p984375m_nt0302734375_reference.py": "f15d3dc663ecd115afc5a9303c5dfdf7a61ffb1fa9e5ca8611af78df06fce22c",
+    "probe_cr0_density_13p984375m_nt0302734375_reference.json": "ce4fcdeaaf50dc53b3232900d9fdb56286ce17c3cb3969fdb1e6e96ac23847d7",
+    "probe_cr0_density_13p984375m_nt0302734375_closure_step.py": "c81985292dd2395952df8dd1fd22617cacb4e85a575b841134173175e1420f49",
+    "probe_cr0_density_13p984375m_nt0302734375_closure_step.json": "590c5e9bed70bc89c4a8997df6308486954e9609c5b72766411537016b45735c",
+    "probe_cr0_density_13p9921875m_nt0302734375_reference.py": "a1a11a6e505939c00f07a5513172ff616f23b19811c5627730015236ca1dddc5",
+    "probe_cr0_density_13p9921875m_nt0302734375_reference.json": "2cd8708677bd8e9f501c70077a387ba7dcf7cbc0ce2622f3ac7cbd01416a1461",
+    "probe_cr0_density_13p9921875m_nt0302734375_closure_step.py": "b3a4163c45983261286f4132754654c7e4b900dc9fb2e3d4e43f0ef00120d1b3",
+    "probe_cr0_density_13p9921875m_nt0302734375_closure_step.json": "6c568053c6590365efed0724e1c8808d9d87b71b4ed4ac78a96b5d007d1c9356",
+    "probe_cr0_density_13p99609375m_nt0302734375_reference.py": "bdaaea84fd4016ce2af3c2cfba7a078da9610ba462b40316e090ea2242c7d61a",
+    "probe_cr0_density_13p99609375m_nt0302734375_reference.json": "db5cede266cefda3b813c35294c1c43e925671425d9a65a56e7bf2d50e7e6221",
+    "probe_cr0_density_13p99609375m_nt0302734375_closure_step.py": "21644d046b2c34f027c3805848792239d6f3dd60fbd067ff566977b83c21bb42",
+    "probe_cr0_density_13p99609375m_nt0302734375_closure_step.json": "36edb5111a99670f7a5ce0af9f74be3b12a9f3a640bda92013413ff6bd06f25b",
+    "probe_cr0_density_13p875m_to13p9921875m_nt0302734375_sobol_reference.py": "746b38d98acd9de3654ded9c8daa021108c11ea4af2ba315c36b784d8b829031",
+    "probe_cr0_density_13p875m_to13p9921875m_nt0302734375_sobol_reference.json": "3b87062e5c83fd8147caae5eb3ee9014f2bbd19c944e9edb158a531d58751411",
+    "benchmark_cr0_density_13m_to13_984375m_self_ab_500pairs.py": "88421ea26128965625d3aae097ceb4c3500b48a5cf8ac02819cf92a814ba0aaa",
+    "benchmark_cr0_density_13p875m_to13p99609375m_nt0302734375_self_ab_500pairs.py": "9b45cdd57ac682ab1e584241583278e87d51879820bc78a12373b38376413929",
+    "benchmark_cr0_density_13p875m_to13p99609375m_nt0302734375_self_ab_tbb_500pairs.json": "1af18a5bb9e47bfe36138391b68f6ec6ff992517d3caab260acd1616e342b30a",
+    "plot_cr0_density_13p875m_to13p99609375m_nt0302734375_slice.py": "0593ec34cc3c953c80a170b7043ba432f5f928603c44322f6dcfc29d38e30bc8",
+    "cr0_density_13p875m_to13p99609375m_nt0302734375_slice.png": "6adc41e6bb43dd48e798f18a176a73775535020cc89fafa78b1c9d9c4557fee7",
+    "cr0_density_13p875m_to13p99609375m_nt0302734375_summary.md": "78faf65c8059c70bdb1bae1b5761168c3dcf304e9c4c7ae170e33441bd944725",
+    "make_cr0_density_13p875m_to13p99609375m_nt0302734375_manifest.py": "8b47f0ad53eee60d00c2d3e54cf38c71717846787654c8eec385ec417e395d1e"
+  },
+  "manifest_self_hash_included": false
+}

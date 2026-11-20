@@ -2213,7 +2213,7 @@ After delivery, bisect the density edge at `n_t=-0.0302734375` between 13.9375M 
 - [x] 14M same-tilt first Reference map remains failed and excluded from accepted box.
 - [x] 500-pair full Fast A/B: max new-region P50/P95 `0.997097/1.000816`; trusted control `1.002412/0.991652`; bitwise equal outputs.
 - [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
-- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+- [x] Manifest verified; focused Ruff passed. Commit `90a4c543dcb3277dc8afbad8bc2a7911d8d97f02` pushed; Actions `44834854371` passed 9/9.
 
 ### Boundary
 
@@ -2222,3 +2222,39 @@ Finite sampled evidence for the density-limited box; not a continuum certificate
 ### Next Step
 
 After delivery, probe the same tilt between 13.984375M and 14M and preserve the Reference integration boundary.
+
+
+## Round 87 — CR0 negative-tilt density edge to 13.9921875M
+
+- [x] Box `[13.875M,13.9921875M]×[-0.0302734375,0]` paired Fast screen `0/19→19/19`; old failures all `nonfinite_background_primitive`; current H² positive finite, finite cutoff, 75 frequencies, zero warnings.
+- [x] Three density Reference checks plus independent Sobol: max root residual `1.67385e-5`, max spectrum error `6.38250e-4 dex`; 13.9921875M second-map residual `1.88552e-7`.
+- [x] 14M same-tilt first Reference map remains failed and excluded.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `0.996593/1.002441`; trusted control `0.996810/0.988929`; bitwise outputs.
+- [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
+- [x] Intermediate screen, Reference checks, 500-pair A/B, figure and manifest are prepared with the next adjacent density-edge delivery; no separate commit is claimed for this point.
+
+### Boundary
+
+Finite sampled evidence through 13.9921875M; the exact 14M outer face remains excluded at this tilt.
+
+### Next Step
+
+After delivery, test a density closer to 14M on this same tilt edge with unchanged Reference settings.
+
+
+## Round 88 — CR0 negative-tilt density edge to 13.99609375M
+
+- [x] For `[13.875M,13.99609375M]×[-0.0302734375,0]`, old/current Fast lattice/interior/Sobol `0/19→19/19`; old failures `nonfinite_background_primitive`; H² positive finite, finite cutoff, 75 frequencies, zero warnings.
+- [x] Selected Reference density points plus independent Sobol: max root residual `1.67385e-5`, max spectrum error `6.38250e-4 dex`; 13.99609375M second-map residual `1.15104e-8`.
+- [x] Same-tilt 14M Reference mapping still fails and remains excluded.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `0.993932/0.989277`; trusted control `1.001524/0.979470`; outputs bitwise equal.
+- [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
+- [ ] Verify both manifests/delivery checks, commit/push and confirm CI for the consolidated 13.9921875M–13.99609375M density-edge tranche.
+
+### Boundary
+
+Finite sample evidence through 13.99609375M; the 14M outer corner remains excluded at this tilt.
+
+### Next Step
+
+After delivery, test the next density midpoint between 13.99609375M and 14M under the unchanged Reference settings.

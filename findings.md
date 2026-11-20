@@ -3812,3 +3812,19 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Reference 低/内/高密度样本和 Sobol holdout 最大 root 残差 `1.647384e-5`，最大谱差 `6.382504e-4 dex`；13.984375M 第二次闭合残差 `1.086720e-7`。14M 相同倾斜首个 Reference 映射失败，继续排除。
 - 500 对 Fast A/B 新区域最大 P50/P95 `0.997097/1.000816`，可信控制 `1.002412/0.991652`，输出逐位相同。
 - 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p984375m_nt0302734375_summary.md` 和原始筛选、Reference、计时、manifest、图。
+
+## 2026-11-21 — CR0 负倾斜密度边界至 13.9921875M
+
+- `[13.875e6,13.9921875e6]×[-0.0302734375,0]` 的 19 个同输入 Fast 样本 old/current `0/19→19/19`；旧失败全为 `nonfinite_background_primitive`，新样本 H² 正有限、75 频点完整、零 warning。
+- 低密度/内部/上边界及独立 Sobol Reference 最大 root 残差 `1.673852e-5`、最大谱差 `6.382504e-4 dex`；13.9921875M 角点第二步闭合残差 `1.885523e-7`。
+- 同倾斜 14M 首次 Reference 映射失败，继续排除；有限样本证据扩到 13.9921875M。
+- 500 对完整 Fast A/B 新区域最大 P50/P95 `0.996593/1.002441`，可信控制 `0.996810/0.988929`，结果逐位相同。
+- 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p9921875m_nt0302734375_summary.md` 及配套 manifest/原始文件/图。
+
+## 2026-11-21 — CR0 负倾斜密度上界至 13.99609375M
+
+- `[13.875e6,13.99609375e6]×[-0.0302734375,0]` 19 点 old/current Fast `0/19→19/19`；旧失败为 `nonfinite_background_primitive`，当前 H² 正有限、75 频点完整、零 warning。
+- 低/内/上密度和独立 Sobol Reference 最大 root 残差 `1.673852e-5`、最大谱差 `6.382504e-4 dex`；13.99609375M 第二步闭合残差 `1.151040e-8`。
+- 14M 同倾斜 Reference 首次映射仍失败，排除在验收域外。新扩域只声称有限样本覆盖。
+- 500 对完整 Fast A/B 新区域最大 P50/P95 `0.993932/0.989277`，可信 CR0 控制 `1.001524/0.979470`，输出逐位相同。
+- 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p99609375m_nt0302734375_summary.md` 及配套证据。

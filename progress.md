@@ -2282,30 +2282,35 @@ The current production source remains unchanged; added one tested Reference-orig
 
 # Round 84 progress — CR0 14M tilt boundary
 
-- Midpoint tilt `n_t=-0.029296875` Reference probes at 13.875M, 13.9375M and 14M passed first-map checks; max root residual `1.691517e-5`, max spectrum error `6.385554e-4 dex`.
-- Candidate box `[13.875M,14M]×[-0.029296875,0]` paired old/current Fast screen `0/19→19/19`; all old failures `nonfinite_background_primitive`; current finite positive H² and complete 75-frequency outputs.
-- Independent Sobol Reference holdout passed (`root=1.376345e-5`, `spectrum=6.370737e-4 dex`). An extra 14M closure map failed with the unchanged Reference step-size limit; raw failure retained.
-- 500-pair full Fast A/B max new-region P50/P95 `1.008956/1.019034`; trusted control `1.002286/0.990220`; outputs bitwise equal.
-- Figure inspected; manifest, commit/push and CI remain.
-
-- Round 84 delivered as `ba66e074ab8630829441c520794246d3d8b8db58`; remote matched and Actions `44827952252` passed 9/9.
+- `n_t=-0.029296875` Reference probes at 13.875M, 13.9375M and 14M pass the first map; max root residual `1.691517e-5`, max spectrum error `6.385554e-4 dex`.
+- `[13.875M,14M]×[-0.029296875,0]` old/current Fast screen `0/19→19/19`; old failures `nonfinite_background_primitive`. Independent Sobol Reference passes; an extra 14M closure map fails.
+- 500-pair Fast A/B max new-region P50/P95 `1.008956/1.019034`; trusted control `1.002286/0.990220`; outputs bitwise equal.
+- Delivered as `ba66e074ab8630829441c520794246d3d8b8db58`; Actions `44827952252` passed 9/9.
 
 
 # Round 85 progress — density-dependent CR0 tilt edge
 
-- At `n_t=-0.0302734375`, Reference maps pass at 13.875M and 13.9375M but fail at 14M; candidate precision box is therefore limited to `[13.875M,13.9375M]` at this tilt.
-- On `[13.875M,13.9375M]×[-0.0302734375,0]`, paired Fast lattice/interior/Sobol screen `0/19→19/19`; all old failures are `nonfinite_background_primitive`; current H² positive finite, 75 frequencies and zero warnings.
-- Accepted Reference samples max root residual `1.543869e-5`, spectrum error `6.382504e-4 dex`; independent holdout `1.279228e-5`, `6.279721e-4 dex`. Extra closure at 13.9375M passes at `1.852572e-7`.
-- 500-pair full Fast A/B max new-region P50/P95 `0.998120/0.991825`; trusted control `0.994934/0.967881`; outputs bitwise equal.
-- Figure inspected; manifest and delivery checks, commit/push and CI remain.
-
-- Round 85 delivered as `7c63e54de1146d35d535a3d717f6de6957ad706d`; remote matched and Actions `44831399029` passed 9/9.
+- `[13.875M,13.9375M]×[-0.0302734375,0]` paired Fast screen `0/19→19/19`; all old failures `nonfinite_background_primitive`.
+- Reference boundary/interior and Sobol checks pass; max root `1.543869e-5`, spectrum `6.382504e-4 dex`; second map at 13.9375M residual `1.852572e-7`.
+- 500-pair Fast A/B max new-region P50/P95 `0.998120/0.991825`; trusted control `0.994934/0.967881`.
+- Delivered as `7c63e54de1146d35d535a3d717f6de6957ad706d`; Actions `44831399029` passed 9/9.
 
 
-# Round 86 progress — CR0 density edge near 14M
+# Round 86 progress — CR0 density edge to 13.984375M
 
-- Expanded the density face for the `n_t=-0.0302734375` region from 13.9375M to 13.984375M; at 14M the first Reference map still fails and remains outside accuracy claims.
-- New `[13.875M,13.984375M]×[-0.0302734375,0]` paired old/current Fast screen: `0/19→19/19`; all old failures `nonfinite_background_primitive`; positive finite H², complete 75-frequency outputs and zero warnings.
-- Three density Reference checks plus independent Sobol: max root residual `1.647384e-5`, max spectrum error `6.382504e-4 dex`; 13.984375M second closure residual `1.086720e-7`.
-- 500-pair complete Fast A/B max new-region P50/P95 `0.997097/1.000816`; trusted control `1.002412/0.991652`; bitwise outputs.
-- Figure inspected; manifest, commit/push and CI remain.
+- `[13.875M,13.984375M]×[-0.0302734375,0]` paired Fast screen `0/19→19/19`; selected Reference and Sobol max root `1.647384e-5`, spectrum `6.382504e-4 dex`; second closure residual `1.086720e-7`.
+- 500-pair Fast A/B max new-region P50/P95 `0.997097/1.000816`; trusted control `1.002412/0.991652`.
+- Delivered as `90a4c543dcb3277dc8afbad8bc2a7911d8d97f02`; Actions `44834854371` passed 9/9.
+
+
+# Round 87 progress — density bisection to 13.9921875M
+
+- The 13.9921875M edge and its independent closure check pass (`root=1.673852e-5`, extra-map residual `1.885523e-7`). 14M remains excluded.
+- Its 19-point paired screen, 500-pair A/B and figure are included with Round 88 evidence; no separate delivery commit was made.
+
+
+# Round 88 progress — CR0 negative-tilt density edge to 13.99609375M
+
+- `[13.875M,13.99609375M]×[-0.0302734375,0]` paired Fast screen `0/19→19/19`; Reference boundary/interior/Sobol max root `1.673852e-5`, spectrum `6.382504e-4 dex`; second upper-edge closure residual `1.151040e-8`.
+- 500-pair Fast A/B max new-region P50/P95 `0.993932/0.989277`; trusted control `1.001524/0.979470`; outputs bitwise equal.
+- Figure inspected; combined Round 87–88 manifest, delivery checks, commit/push and CI remain.
