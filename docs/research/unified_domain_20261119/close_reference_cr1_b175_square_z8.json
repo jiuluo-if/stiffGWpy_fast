@@ -1,0 +1,49 @@
+{
+  "status": "complete_cr1_second_reference_maps",
+  "reference_code_modified": false,
+  "z_tail": 8.0,
+  "same_frequency_grid": true,
+  "source_sha256": {
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "fast_sgwb.py": "94936840905af9029504e369f312e0a6330ba03ef5fc2e104da5e0c9a9be9a42",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "cases": [
+    {
+      "case_id": "high_square_corner",
+      "fast_root": 0.14492424371390084,
+      "first_reference_map_at_fast_root": 0.14490840047713957,
+      "second_reference_map": 0.1449084575020072,
+      "third_reference_map": 0.14490841514875416,
+      "first_to_second_closure_relative": 3.935233913637636e-07,
+      "second_to_third_closure_relative": 2.922760075741895e-07,
+      "fast_root_relative_to_third_map": 0.00010923151102319575,
+      "first_map_seconds": 136.36040400000002,
+      "third_map_seconds": 132.33373650000067
+    },
+    {
+      "case_id": "mid_rectangle_corner",
+      "fast_root": 0.061977627804035554,
+      "first_reference_map_at_fast_root": 0.06197618003224586,
+      "second_reference_map": 0.061976181977742725,
+      "third_reference_map": 0.06197618203067267,
+      "first_to_second_closure_relative": 3.1391040972337144e-08,
+      "second_to_third_closure_relative": 8.540368802139809e-10,
+      "fast_root_relative_to_third_map": 2.3327886867375035e-05,
+      "first_map_seconds": 137.42678159999923,
+      "third_map_seconds": 133.74211719999948
+    },
+    {
+      "case_id": "independent_low_holdout",
+      "fast_root": 0.045104325275991466,
+      "first_reference_map_at_fast_root": 0.04510433402843952,
+      "second_reference_map": 0.045104339451283094,
+      "third_reference_map": 0.04510433511259648,
+      "first_to_second_closure_relative": 1.202288658460543e-07,
+      "second_to_third_closure_relative": 9.619223075876372e-08,
+      "fast_root_relative_to_third_map": 2.180855785165112e-07,
+      "first_map_seconds": 136.09759189999932,
+      "third_map_seconds": 135.03169680000065
+    }
+  ]
+}

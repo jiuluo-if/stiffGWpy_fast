@@ -2059,3 +2059,12 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - Exact old-helper/current-helper 32-pair A/B on two trusted points and one new 2.5M point has P50 ratios `0.995–1.010` and P95 ratios `0.994–1.037`; roots, frequencies and spectra are bitwise identical. New-region screen warm P50/P95 excluding first JIT is `90.9/94.6 ms`.
 - Local verification complete: WKB focused tests `6 passed`; full pytest `438 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall, sdist/wheel build and installed-wheel guard smoke pass. Source/artifact manifest and figure are generated. The domain evidence is finite sampling, not a continuum certificate.
 - Delivery verified: commit `bb4217ba1404679f4f1ecae75ab0e9032e8c6853` is present on both `fast_v0.2` and `fast/fast_v0.2`. GitHub Actions runs `44661121653` and `44661128642` both completed successfully; canonical, static, package, Cobaya, and Python 3.9–3.13 compatibility jobs all passed.
+
+## 2026-11-20 — CR1 square-domain evidence at b175f0b
+
+- 对 pinned baseline `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45` 和候选 `b175f0b3ffceccd2d046808921cb2dceffda1611` 进行同输入 CR1 配对屏幕。`cr=1` 的实际派生倾斜均为 `-0.00125`；`[1e5,7e5]^2` 的 3×3 网格加两个内部点为 `0/11→11/11`，seed `20261120` 的独立 scrambled Sobol 为 `0/8→8/8`。旧版 19 点全为 `nonfinite_background_primitive`；候选 H² 均正有限，76 个输出频点完整且无警告。
+- 当前源码与已有 CR1 Reference 工件哈希不同，且复放旧输入时 Fast 根/谱未逐位复现；没有复用旧 Reference 误差。固定当前 Fast 根和当前原始频率数组的新 z8 Reference 三点（高角点、中角点、独立低区留出）及第三次映射显示：最大 Fast 根/Reference 相对差 `1.0923e-4`，最大同根频谱差 `8.9352e-4 dex`，最大第二至第三映射闭合差 `2.9228e-7`，通过原门槛。Reference 源码哈希 `4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536` 未变。
+- CR1 两点以旧 WKB helper / 当前 helper 交替完整求解各 32 对，P50/P95 最大候选/旧核比率 `1.0221/1.0092`；根、频率、谱逐位相同。隔离新 Numba cache 的第一点冷启动基线/候选为 `21.44/20.08 s`；其余报告使用预热分布。该 A/B 检查的是 WKB 守卫开销，不能解释背景 identity 对旧背景失败的改善。
+- 一次 Reference 复跑 Fast 根产生了轻微变化的动态频率网格；闭合验证已改为固定首轮 Reference 记录的同一频率数组，再逐次迭代 Reference map。图表经视觉检查，Ruff 与 `git diff --check` 通过，哈希 manifest 覆核通过。
+- 报告、原始配对数据、三个 Reference 样本、第三次映射闭合、A/B、复现脚本及图在 `docs/research/unified_domain_20261119/cr1_b175_square_*`、`screen_cr1_b175_square*`、`validate_cr1_b175_square_z8*`、`close_reference_cr1_b175_square_z8*` 和 `benchmark_cr1_b175_wkb_guard_ab*`。
+- 这是 CR1 方域的有限样本证据，不是连续认证；本轮未改生产源代码。下一步沿 CR1 失败边界做邻接矩形与独立留出，并继续核验未覆盖的有效切片。

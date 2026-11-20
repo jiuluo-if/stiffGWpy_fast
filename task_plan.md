@@ -1816,3 +1816,16 @@ Use the real JIT exception trace, not the earlier output-only hypothesis, to fin
 ### Boundary
 
 The paired lattice, two interior points, eight Sobol holdouts and three Reference points are finite coverage evidence; this does not prove the full continuum. `cr>0` remains unaudited in this tranche. Next, select an adjacent old-Fast failure region and continue paired coverage work.
+
+## Round 64 — CR1 square paired validation at b175f0b
+
+- [x] Pin the `872a70d` old Fast baseline and current `b175f0b`; enforce CR1 model-derived tilt and physical guard over `[1e5,7e5]²`.
+- [x] Run a 3×3 lattice plus two interior points and an independently scrambled 8-point Sobol holdout: paired success `0/19→19/19`, all old failures `nonfinite_background_primitive`, candidate H² positive finite and full 76-node output.
+- [x] Do not reuse mismatched historical Reference results; run three current-source z8 spectrum checks and iterate the Reference map to a third map. Maximum root error `1.0923e-4`, max spectrum error `8.9352e-4 dex`, second-to-third map closure `2.9228e-7`.
+- [x] Run 32 alternating full-solve pairs for two CR1 points against the old WKB helper; maximum P50/P95 ratios `1.0221/1.0092`, roots/frequencies/spectra identical. Fresh-cache first-case compilation times are recorded separately.
+- [x] Generate and visually inspect coverage/accuracy/performance figure; verify source/artifact hash manifest; Ruff and diff check pass.
+- [ ] Expand the CR1 study across an adjacent failure-boundary rectangle and another valid two-dimensional slice; retain finite-sample wording until broader coverage exists.
+
+### Boundary
+
+This tranche adds finite evidence for one CR1 square at source commit `b175f0b`; it is not a continuum certificate and changes no production code. The broad objective remains active.

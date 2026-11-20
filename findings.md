@@ -3596,3 +3596,11 @@ Raw screens, direct Reference arrays, A/B samples, source hashes, manifest and f
 - 对未改 helper 的精确旧/新源同进程 A/B：32 交替完整求解、两可信控制和一个 2.5M 新点，P50 最大回退 `1.01%`、P95 最大回退 `3.67%`；根、频率和谱逐位相同。新增区域 18 个非冷启动 screen 的 P50/P95 为 `90.9/94.6 ms`。冷首调基线/候选分别 `18.97/18.54 s`，包含一次性 JIT。
 - 文献方法依据：Higham (2002), *Accuracy and Stability of Numerical Algorithms*, 2nd ed., §2.1–2.2、§3.1；查阅 SIAM 公开章节摘录。适用假设、4u 保守界推导及面板详情见 `cr0_2m_to3m_wkb_basis_guard_summary.md`。当前守卫仅处理 WKB 基底逆的局部浮点可分辨性，不是渐近截断误差或整条轨迹误差界。
 - 原始筛选、Reference、逐对 A/B、覆盖/精度/失败图及 manifest 见 `screen_cr0_density_2m_to3m_wkb_guard*`、`validate_cr0_3m_wkb_guard_z8*`、`benchmark_wkb_basis_guard_ab.json`、`cr0_density_2m_to3m_wkb_guard_domain.png` 与对应 manifest。
+
+## CR1 方域配对验证与结果复用边界（2026-11-20）
+
+CR1 `[1e5,7e5]^2` 配对 screen 在旧版 Fast `872a70d` 上 19/19 失败，类别全为 `nonfinite_background_primitive`，在 `b175f0b` 上 19/19 成功；模型实际派生倾斜 `n_t=-0.00125`，样本 H² 正有限。因此该组失败为背景 primitive 的数值表示问题，不是 `H²≤0` 或 cutoff 无效。生产实现用 `sigma = 1 - (d ln H²/dN)/3` 在平滑支重建 sigma 积分，保持 reheating 转折及其前 `sigma=1` 分支；指数落在 binary64 动态范围外时自动用相对背景尺度。此处验证既有统一算法，不为 CR1 参数增加专用分支。
+
+早期 CR1 Reference 结果的 Fast 源哈希与本候选不一致，Fast 复放也未逐位相同，故不复用其误差。当前源哈希下的新 z8 Reference 三点及第三次映射达到最大根差 `1.0923e-4`、最大频谱误差 `8.9352e-4 dex`、最大第二至第三 map 闭合差 `2.9228e-7`。Reference 源码保持原样。复现闭合需沿用首轮结果里的相同 76 个频率节点；再次求 Fast 得到的小幅动态网格变化不应用作对比网格。
+
+`cr1_b175_square_summary.md`、配对/Reference/计时原始 JSON、脚本、PNG 与 manifest 提供具体证据。19 点采样支持相邻 CR1 方域改善，不能证明整个参数矩形连续有效。
