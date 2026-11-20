@@ -3712,3 +3712,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Three current-source z8 Reference samples pass: max closed-root relative error `7.5815e-5`, maximum spectrum difference `6.6046e-4 dex`, closure residual `1.2519e-7`.
 - 500 alternating complete Fast solves give P50/P95 ratios ≤`1.0142/1.0419` including the trusted CR0 point; all pair outputs are bitwise equal.
 - No production source changed. Evidence extends the sampled CR0 density×tilt area only; not a continuum proof.
+
+
+## CR0 high-density adjacent slice 8M–9M — 2026-11-21
+
+- Paired old/current Fast screen on 19 lattice/interior/independent Sobol points gives `0/19→19/19`; old failures are exclusively `nonfinite_background_primitive`. New outputs have finite cutoff, positive finite H², full 75-frequency grid, zero warnings.
+- Three current-source z8 Reference checks pass: max closed-root relative error `5.3722e-5`, max same-root spectrum difference `6.2685e-4 dex`, max map closure `1.0789e-7`.
+- 500-pair full-solve ratios stay within budget: new-region max P50/P95 `0.9934/1.0167`, trusted control `0.9942/0.9975`; outputs are bitwise equal.
+- No production Fast/Reference source changed. Result is finite sampled evidence for the unified CR0 mechanism.

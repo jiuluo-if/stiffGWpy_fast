@@ -1995,7 +1995,7 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 - [x] z8 Reference 三代表点全部过线，最大 root error `7.5815e-5`、最大频谱差 `6.6046e-4 dex`、最大闭合残差 `1.2519e-7`。
 - [x] 500-pair full Fast A/B：新区域最大 P50/P95 比 `1.0073/1.0267`；可信 CR0 `1.0142/1.0419`；root/frequency/spectrum 逐位一致。
 - [x] 脚本 Ruff 通过，图已视觉检查；Reference 与生产源未改。
-- [ ] 最终刷新本轮 manifest 并随本阶段证据推送，确认 CI。
+- [x] 证据、manifest 和图已提交推送为 `ade2a34c01a24f53ed63c55f3b9bf3e5f3ca0f28`；远端匹配，Actions `44774274231` 成功（9/9）。
 
 ### Boundary
 
@@ -2004,3 +2004,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 ### Next Step
 
 如果本轮 CI 通过，继续 CR0 `[8e6,9e6]×n_t[-.5,0]` 筛查，保留统一拒收条件。
+
+
+## Round 75 — CR0 density continuation 8M–9M
+
+- [x] 旧/当前 Fast 同输入 19 点（lattice/interior + seed `20261135` Sobol）`0/19→19/19`；旧失败均为 `nonfinite_background_primitive`。
+- [x] 数学筛查：H² 正有限，`N_inf` 有限，75频点，0 warnings，physical guard 接受。
+- [x] z8 Reference 三代表点均通过，max root error `5.3722e-5`、max spectrum error `6.2685e-4 dex`、max closure `1.0789e-7`。
+- [x] 500 对完整 Fast A/B：新区域最大 P50/P95 `0.9934/1.0167`，可信点 `0.9942/0.9975`，所有输出逐位一致。
+- [x] 研究脚本 Ruff 通过，覆盖/精度/计时图视觉检查通过；源码与 Reference 未改。
+- [ ] 更新记录、生成并核验 8M–9M manifest，提交/推送并核对 Actions。
+
+### Boundary
+
+有限样本证据；不声称连续矩形认证。
+
+### Next Step
+
+若 CI 通过，继续筛查 `[9e6,10e6]×n_t[-.5,0]`，并在任何有效性、精度或性能边界失败时停止外推。
