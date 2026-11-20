@@ -1892,3 +1892,17 @@ CR1 的 `T_re×kappa10` 矩形在 lattice/interior 和独立 Sobol 这些有限�
 推送本轮证据并核对 CI 后，从 pinned old-Fast 真实失败记录选择新的 CR0/CR1 相邻二维切片，先检查数学有效性，再重复同输入区域 screen、独立留出、精度和完整运行成本门槛。
 
 - 验证细节：全量 pytest 441 passed, 9 deselected; canonical Ruff/Mypy、compileall、sdist/wheel 通过。显式路径 Mypy 调用不适用于此项目配置，使用 .github/workflows/ci.yml 的根目录 python -m mypy 后通过。
+
+## Round 69 — CR1 低温高 `kappa10` 相邻区与 WKB 扫描融合
+
+- [x] 以 `872a70d` 旧 Fast 与当前 Fast 配对筛查 `T_re∈[1750,2000] × kappa10∈[.0125,.015]`：3×3+2 个内部点 `0/11→11/11`，8 点独立 Sobol `1/8→8/8`；旧 18 个失败均为 `nonfinite_background_primitive`，候选完整频谱 `19/19`。
+- [x] 写下两个指数的 float64 `Psi` 可表示范围交集；增加 `±inf` 稳定背景测试，保持 NaN 和真实 H² 无效 fail-closed。
+- [x] 在原背景数组生成循环中融合 WKB 守卫全局摘要，严格保留身份替换路径的原扫描。先红后绿的测试捕获末节点左极限导数遗漏，修复后摘要等价测试通过。
+- [x] 对 `fda343d` 逐点 replay 19 输入：根/频率摘要/频谱均逐位一致；复用 Reference 源哈希匹配的 z8 与第三 map 数据。最大根代理 `1.7512e-4`，最大谱差 `9.0787e-4 dex`，第二至第三 map 最大闭合 `6.1895e-8`。
+- [x] 最终源完整进程 A/B：TBB/2线程/BLAS1/goal/physical guard。500 对可信 CR0 P50/P95 比 `0.9963/1.0110`，旧版成功区内点 `0.9984/0.9929`；100 对低角点 `0.9982/0.9980`、独立 Sobol `0.9984/1.0079`。新旧输出相同。
+- [x] 全量 pytest `445 passed, 9 deselected, 2 warnings`；Ruff、Mypy、compileall、打包通过。保存复现脚本、19 点原始 screen、精度复用证据、100/500 对时序、图、报告与 manifest。
+- [ ] 确认 Git 邮箱并提交本轮代码/测试/证据，推送到 `fast_v0.2`；核验远端 SHA 和 Actions。
+
+### Boundary
+
+数据是有限样本相邻区域证据，不是连续域证明。精度复用以 Fast 根、频率和谱逐位相同且 Reference 源码哈希不变为前提。Reference 生产代码未修改。

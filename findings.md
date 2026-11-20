@@ -3640,3 +3640,9 @@ The classification is distinct from exact zero, positive-tensor linear underflow
 机制沿用统一背景实现：对正 H² 平滑支用 `sigma = 1 - (d ln H²/dN)/3` 的恒等式构造 sigma 积分，指数越出 binary64 动态范围时使用相对背景尺度；再加热前分支仍严格取 `sigma=1`，物理 kink 不做平滑。本轮只验证新的 CR1 切片，不改生产源或 Reference。有限样本支持区域改善，不证明连续矩形。
 
 `cr1_b175_reheat_kappa_summary.md`、paired lattice/Sobol、z8 Reference、第三 map closure、base-corner exact replay、100-pair A/B、PNG 和 manifest 保存结果。机器复核确认 5 个源码及 20 个 artifact SHA-256 匹配；Ruff 与 `git diff --check` 通过。
+
+## WKB 全局摘要复用：候选等价性与端点审计
+
+守卫 kernel 原先从 `Phi_grid` 与 `sigma` 再扫描一次，以得到单调标记、`max(ΔPhi,0)` 与 `max|1.5sigma−1|`。候选在构造这些源数组时同步累计完全相同统计量；只有直接积分背景路径标记摘要有效。若出现 H² 身份替代或异常路径则禁用摘要并走原扫描。小网格等价测试逐元素对比两条 kernel 路径；额外端点回归测试覆盖最后节点左右极限不相同的情形。
+
+指数表示范围按两个指数约束求交，不使用有限替代值处理 NaN；NaN 留在非有限失败路径，正负无穷触发稳定背景尺度替代。最终 19 点候选与 fda 根、频率摘要、频谱逐位一致；两类扩域 A/B 和可信控制均未超过 P50/P95 5% 回退门槛。具体源/工件 SHA 和计时原始样本由 candidate manifest 保存。

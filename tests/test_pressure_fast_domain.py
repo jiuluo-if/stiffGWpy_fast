@@ -98,6 +98,76 @@ def test_unrepresentable_s2_scales_do_not_materialize_exponentials():
     assert np.array_equal(s2inv, np.ones_like(psi))
 
 
+def test_infinite_primitive_exponent_selects_relative_scale_before_exp():
+    import numpy as np
+
+    from stiffgwpy_fast.exact_background import _primitive_scales
+
+    psi = np.array([0.0, np.inf, -np.inf])
+    s2, s2inv, relative_used, auto_overflow = _primitive_scales(
+        psi, relative_scale=False
+    )
+
+    assert relative_used
+    assert auto_overflow
+    assert np.array_equal(s2, np.ones_like(psi))
+    assert np.array_equal(s2inv, np.ones_like(psi))
+
+
+def test_fast_primitive_integral_overflow_selects_h2_identity():
+    import numpy as np
+
+    from stiffgwpy_fast.exact_background import _fast_phi_s2_fill
+
+    nodes = np.array([-1.0e308, -9.0e307])
+    node_sigma = np.zeros(2)
+    panel = np.empty(1)
+    node_work = np.empty(2)
+    panel_work = np.empty(1)
+    phi = np.empty(2)
+    phi_mid = np.empty(1)
+    s2 = np.empty(2)
+    s2inv = np.empty(2)
+
+    _, relative_used, identity_required, _, _, _, _ = _fast_phi_s2_fill(
+        nodes, node_sigma, node_sigma, -1, 0.0, 0.0, 0.0, 0.0,
+        panel, panel_work, panel_work.copy(), node_work, panel_work.copy(),
+        phi, phi_mid, s2, s2inv,
+    )
+
+    assert relative_used
+    assert identity_required
+    assert np.array_equal(s2, np.ones_like(s2))
+    assert np.array_equal(s2inv, np.ones_like(s2inv))
+
+
+def test_fast_wkb_summary_includes_both_one_sided_final_node_values():
+    import numpy as np
+
+    from stiffgwpy_fast.exact_background import _fast_phi_s2_fill
+
+    nodes = np.array([0.0, 1.0])
+    nodes_left = np.array([1.0, 100.0])
+    nodes_right = np.array([1.0, 1.0])
+    h_arr = np.empty(1)
+    mid_sigma = np.empty(1)
+    integral = np.empty(1)
+    F_nodes = np.empty(2)
+    F_mid = np.empty(1)
+    Phi_grid = np.empty(2)
+    Phi_mid = np.empty(1)
+    S2 = np.empty(2)
+    S2inv = np.empty(2)
+
+    summary = _fast_phi_s2_fill(
+        nodes, nodes_left, nodes_right, -1, 0.0, 0.0, 0.0, 0.0,
+        h_arr, mid_sigma, integral, F_nodes, F_mid,
+        Phi_grid, Phi_mid, S2, S2inv,
+    )
+
+    assert summary[6] == 149.0
+
+
 def test_finite_success_includes_local_accuracy_budget_without_claiming_certification():
     params = {
         'Omega_bh2': 0.0223828,

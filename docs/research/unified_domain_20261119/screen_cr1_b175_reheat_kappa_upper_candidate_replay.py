@@ -1,0 +1,82 @@
+"""Paired CR1 screen for the higher-kappa lower-T adjacent rectangle."""
+from __future__ import annotations
+
+import importlib.util
+import itertools
+import json
+from pathlib import Path
+
+from scipy.stats import qmc
+
+HERE = Path(__file__).resolve().parent
+RUNNER = HERE / "screen_h2_identity_region.py"
+spec = importlib.util.spec_from_file_location("cr1_upper_kappa_runner", RUNNER)
+if spec is None or spec.loader is None:
+    raise RuntimeError("could not load pinned-baseline paired screen")
+screen = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(screen)
+
+BASE = {
+    "Omega_bh2": 7.0e5,
+    "Omega_ch2": 7.0e5,
+    "H0": 67.32117,
+    "DN_eff": 0.0,
+    "A_s": 2.100549e-9,
+    "r": 0.01,
+    "n_t": 0.0,
+    "cr": 1.0,
+    "T_re": 1875.0,
+    "DN_re": 10.0,
+    "kappa10": 0.01375,
+}
+T_RANGE = (1750.0, 2000.0)
+K_RANGE = (0.0125, 0.015)
+T_GRID = (1750.0, 1875.0, 2000.0)
+K_GRID = (0.0125, 0.01375, 0.015)
+SEED = 20261129
+
+
+def run(name: str, rectangle: list[dict[str, float]], holdouts: list[dict[str, float]]) -> None:
+    screen.BASE_PARAMS = dict(BASE)
+    screen.RECTANGLE = rectangle
+    screen.HOLDOUTS = holdouts
+    screen.OUTPUT = HERE / name
+    screen.BASELINE_PARTIAL = screen.OUTPUT.with_name(
+        screen.OUTPUT.stem + "_baseline_partial.json"
+    )
+    screen.main()
+    data = json.loads(screen.OUTPUT.read_text(encoding="utf-8"))
+    data["params_contract"]["derived_tilt_rule"] = "CR1 model-derived consistency tilt"
+    data["params_contract"]["region"] = {
+        "Omega_bh2": 7.0e5,
+        "Omega_ch2": 7.0e5,
+        "T_re": list(T_RANGE),
+        "kappa10": list(K_RANGE),
+    }
+    screen.OUTPUT.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
+def main() -> None:
+    rectangle = [
+        {"T_re": t_re, "kappa10": kappa}
+        for t_re, kappa in itertools.product(T_GRID, K_GRID)
+    ]
+    holdouts = [
+        {"T_re": 1781.25, "kappa10": 0.013125},
+        {"T_re": 1968.75, "kappa10": 0.0146875},
+    ]
+    run("screen_cr1_b175_reheat_kappa_upper_candidate_lattice.json", rectangle, holdouts)
+
+    unit = qmc.Sobol(d=2, scramble=True, seed=SEED).random_base2(m=3)
+    sobol = [
+        {
+            "T_re": float(T_RANGE[0] + (T_RANGE[1] - T_RANGE[0]) * point[0]),
+            "kappa10": float(K_RANGE[0] + (K_RANGE[1] - K_RANGE[0]) * point[1]),
+        }
+        for point in unit
+    ]
+    run("screen_cr1_b175_reheat_kappa_upper_candidate_sobol.json", [], sobol)
+
+
+if __name__ == "__main__":
+    main()

@@ -2110,3 +2110,12 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - 5 source hashes and 20 artifact hashes verified; report, scripts, raw JSON, manifest and figure are in `docs/research/unified_domain_20261119/cr1_b175_reheat_kappa_*` and matching screen/validate/close/replay/benchmark files.
 - Evidence covers finite samples only; no continuum claim. Production Fast code is unchanged in this tranche.
 - 本轮交付门禁：`python -m pytest -q` 为 `441 passed, 9 deselected, 2 warnings`；仓库 CI 标准 Ruff、根目录无参数 `python -m mypy`、compileall 与 `python -m build` sdist/wheel 均通过。手动向 mypy 指定两个文件触发的额外告警不属于仓库标准配置，改用 CI 命令后 `Success: no issues found in 2 source files`。
+
+## 2026-11-20 — CR1 低温高 κ 邻接区与 WKB 摘要复用优化
+
+- 对 `cr=1`、实际派生 `n_t=-0.00125`、`Omega_bh2=Omega_ch2=7e5` 的 `T_re∈[1750,2000] × kappa10∈[.0125,.015]` 做同输入配对筛查：格点/内部点 `0/11→11/11`，独立 Sobol `1/8→8/8`，总计旧版 18 个 `nonfinite_background_primitive` 失败变为候选 19/19 成功；旧版另 1 点原本成功。
+- 为去掉 WKB 尾部屏障对完整背景数组的重复扫描，在现有 `fast_phi_s2` 生成循环中累计 `Phi` 单调性、最大正向步长与最大绝热导数，并仅在原始背景路径将等价摘要传给 WKB kernel。H² 身份替代路径传无效标记并保留原数组扫描。同步用 `Psi` 与 `S2/S2inv` 可表示区间交集减少指数范围比较；未改变方程、守卫或输出。
+- 测试先红后绿发现并修复了摘要漏计末节点左侧单边 sigma 的问题。最终 19 点相对 `fda343d` 根/频率摘要/频谱逐位复放；max root 和谱差均 0。Reference raw arrays 与 Reference 源码哈希 `4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536` 经复核未变，按逐位输入输出复用已有 z8 与第三 map 核验。
+- 精度最大根误差代理 `1.7512e-4`、谱误差 `9.0787e-4 dex`、第三 map 最大根差 `1.7513e-4`、second-to-third map 闭合 `6.1895e-8`。
+- TBB、2 Numba threads、CPU `[0,1]`、BLAS1、goal grid、`physical_guard=True` 的隔离持久进程 A/B：相对本轮起点 fda，500 对可信 CR0 P50/P95 `0.9963/1.0110`，500 对扩域旧成功点 `0.9984/0.9929`；新增低角点与 Sobol 100 对分别 `0.9982/0.9980`、`0.9984/1.0079`。输出全部逐位相同。
+- 最终源码全量 pytest `445 passed, 9 deselected, 2 warnings`；Ruff、Mypy、compileall、sdist/wheel build 通过。有限样本证据不构成连续域认证。复现脚本、逐位 replay、完整运行原始数据、Reference arrays、图与哈希见 `docs/research/unified_domain_20261119/cr1_b175_reheat_kappa_upper_candidate_manifest.json`。
