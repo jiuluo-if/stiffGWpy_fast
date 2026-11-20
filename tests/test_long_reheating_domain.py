@@ -84,6 +84,26 @@ def test_wkb_tail_screen_accepts_an_equivalent_precomputed_background_summary():
     np.testing.assert_array_equal(summarized_tails, scanned_tails)
 
 
+def test_reference_fixed_point_map_adds_to_original_input_dn_eff():
+    import importlib.util
+    from pathlib import Path
+
+    runner_path = (
+        Path(__file__).resolve().parents[1]
+        / "docs"
+        / "research"
+        / "unified_domain_20261119"
+        / "close_cr0_3m_reference_origin_corrected.py"
+    )
+    spec = importlib.util.spec_from_file_location("reference_origin_helper", runner_path)
+    assert spec is not None and spec.loader is not None
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+
+    assert runner._reference_total_from_map(0.2, 0.3) == 0.5
+    assert runner._reference_total_from_map(0.0, 0.3) == 0.3
+
+
 def test_fused_wkb_screen_marks_a_nonadiabatic_segment_that_reaches_the_terminal_node():
     phi = np.array([0.0, 0.1, 0.2])
     sigma = np.array([1.0, 1.0, 100.0])
