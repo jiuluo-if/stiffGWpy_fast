@@ -28,6 +28,7 @@ def main() -> None:
     reference = load("validate_cr0_b175_amplitude_tilt_z8.json")
     closure = load("close_reference_cr0_b175_amplitude_tilt_z8.json")
     benchmark = load("benchmark_cr0_b175_amplitude_tilt_wkb_ab_100pairs.json")
+    replay = load("replay_cr0_b175_amplitude_tilt_after_output_guard.json")
     close_by_id = {row["case_id"]: row for row in closure["cases"]}
 
     fig, axes = plt.subplots(1, 3, figsize=(14.5, 4.5), constrained_layout=True)
@@ -124,6 +125,8 @@ def main() -> None:
             "benchmark_cr0_b175_amplitude_tilt_wkb_ab.py",
             "benchmark_cr0_b175_amplitude_tilt_wkb_ab_100pairs.json",
             "benchmark_cr1_b175_wkb_guard_ab.py",
+            "replay_cr0_b175_amplitude_tilt_after_output_guard.py",
+            "replay_cr0_b175_amplitude_tilt_after_output_guard.json",
             "cr0_b175_amplitude_tilt_summary.md",
             Path(__file__).name,
             FIGURE.name,
@@ -135,6 +138,7 @@ def main() -> None:
         "candidate_commit": "c3c6ab3fc34e705ebdea3d16739740a227d1acb7",
         "source_hashes_referenced_from_raw_validation": True,
         "source_sha256": source_hashes,
+        "post_classification_replay_source_sha256": replay["current_source_sha256"],
         "reference_code_modified": False,
         "artifacts_sha256": {
             name: sha256(path) for name, path in artifact_paths.items()

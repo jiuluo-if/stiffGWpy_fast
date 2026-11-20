@@ -34,4 +34,6 @@
 
 额外回归断言覆盖输出表示边界：本参数点 14 个 `Ogw_today` 线性零格的 `log10OmegaGW` 仍有限，范围 `[-367.439,-325.375]`，均低于最小 subnormal 的 `log10=-323.306`；`r=0,cr=0` 的精确零谱仍为全 `-inf`。新增断言和 exact-zero/final-underflow 两项复测 `3 passed`，Ruff 通过。
 
+之后的 log-power 越界分类修复使 Fast 源哈希变化。按 `replay_cr0_b175_amplitude_tilt_after_output_guard.py` 显式把目标 worktree 放到导入路径首位，重放 19 个配对参数后仍全部成功且根逐点相同；五个 Reference 点的频率数组和 Fast log 谱都与原始数组逐位相同。兼容复放使用的新源码哈希另列在 manifest 的 `post_classification_replay_source_sha256`。
+
 这是一个 CR0 二维矩形的有限采样证据，不是连续域证明。原始数据、复现脚本、Reference arrays、map closure、计时、图和哈希清单见本目录 `screen_cr0_b175_amplitude_tilt*`、`validate_cr0_b175_amplitude_tilt_z8*`、`close_reference_cr0_b175_amplitude_tilt_z8*`、`benchmark_cr0_b175_amplitude_tilt_wkb_ab_100pairs*` 与 `cr0_b175_amplitude_tilt_manifest.json`。

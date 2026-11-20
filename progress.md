@@ -2094,3 +2094,9 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - The pressure-domain classifier now maps this reason to `unrepresentable_final_output` and retains `failure_detail`. The red test for reason mapping plus evaluator detail both failed before this script fix.
 - Related verification after the fix: `29 passed`; Ruff, project `python -m mypy`, compileall and diff check passed. `Reference` unchanged. This repairs failure telemetry/typing; it is not counted as a domain expansion.
 - Next: rerun the CR0 strip's affected-source replay after this Fast source change; then continue the distinct valid failure-domain search and keep positive final-overflow separate from intermediate overflow and `H²≤0`.
+
+## 2026-11-20 — CR0 区域在输出分类修复后的源码复放
+
+- 当前源码相对 CR0 条带证据的代码变更仅涉及张量 log-power 非有限分类与 pressure detail 输出。为了保留哈希边界，新增 after-guard replay artifact，不把 `c3c6ab3` Reference 直接贴到新源码哈希上。
+- 初次 replay 脚本从主 worktree 导入了另一份 `stiffgwpy_fast`，产生错误 `4.056 dex` 谱差；复核发现脚本未把目标 repo 根加入 `sys.path`。修正为先插入当前 checkout 根后重跑：19 个 lattice/interior/Sobol 参数当前全部成功、根逐点相同；五个 Reference 参数的频率网格和 Fast log 谱均逐位相同，max delta `0.0`。旧错误 replay 输出已覆盖，不作为证据。
+- 正确 replay 记录当前 worktree commit 和 `exact_background.py/fast_sgwb.py/freq_adaptive.py/_wkb_transfer.py/reference.py` 哈希；Reference 源码仍与前序 z8 工件相同。脚本、JSON、摘要与 CR0 manifest 的 post-classification replay source hash 已归档。

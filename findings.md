@@ -3626,3 +3626,7 @@ CR1 `[1e5,7e5]^2` 配对 screen 在旧版 Fast `872a70d` 上 19/19 失败，类�
 CR0 `n_t=1e308`, `r=.01`, `A_s=2.100549e-9` has finite `N_inf` and positive H², so the screen does not reject a mathematical cutoff or background. Its tensor log-power multiplication overflows float64 before the DN map; Fast previously returned only generic `nonfinite`, obscuring that the output spectrum itself was not representable. A new red regression confirmed the old reason. Fast now stops at the log-power boundary with `nonrepresentable_output/tensor_power_log_out_of_range`; expected multiply overflow is locally silenced after classification is moved to the caller. The pressure survey records `unrepresentable_final_output` and copies the detail.
 
 The classification is distinct from exact zero, positive-tensor linear underflow recovered through finite `log10OmegaGW`, invalid CR1 cutoff, nonpositive H², and nonfinite propagation. The appropriate related tests (`29 passed`), Ruff, project Mypy, compileall and diff check pass. No Reference code changed. This change is not an expansion result.
+
+## Fast source path integrity for the CR0 amplitude strip replay
+
+`c3c6ab3` 的 CR0 条带 Reference 证据不能默认套用到之后改过分类代码的源码。一次 replay script 在不插入目标 repo 路径时导入了主工作区的另一份 `stiffgwpy_fast`，误报恒定 `4.056 dex` 差值。独立内联复现和修正后的脚本明确以目标 worktree 根优先导入，19 个 screen root 完全相同，五组 Reference 输入的同频率 log 谱逐位相同（max delta `0`）。原误报结果已由正确输出覆盖。将 replay 当前源码哈希单列，保留原始 CR0 证据的 `c3c6ab3` 源哈希，避免混用。

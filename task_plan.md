@@ -1867,3 +1867,10 @@ This is finite coverage evidence for one CR0 rectangle. It does not certify the 
 ### Boundary
 
 This fixes output-failure classification and does not expand the numerical domain. Reference remains unchanged; overall domain-expansion goal stays active.
+
+## Round 67 follow-up — replay CR0 precision after classification-only source change
+
+- [x] Replay all 19 CR0 lattice/interior/Sobol inputs at the post-guard source; all succeed with roots identical to the paired baseline of the prior accepted candidate.
+- [x] Replay the five same-root Reference cases and verify current Fast frequency arrays and log spectra are bitwise identical to saved arrays.
+- [x] Fix the replay harness import path so it selects the target worktree; discard the earlier wrong-worktree `4.056 dex` replay.
+- [ ] Continue the wider domain audit; current output-overflow classification repair is a maintenance fix, not a new domain claim.
