@@ -62,6 +62,11 @@ def test_fast_recovers_blue_spectrum_after_nonzero_tensor_product_underflows():
     assert model.freq_grid_requested == "goal"
     assert model.freq_grid_used == "construct"
     assert np.any(model.Ogw_today > 0.0)
+    linear_underflow = model.Ogw_today == 0.0
+    assert np.any(linear_underflow)
+    assert np.isfinite(model.log10OmegaGW[linear_underflow]).all()
+    log10_min_subnormal = np.log10(np.nextafter(0.0, 1.0))
+    assert np.all(model.log10OmegaGW[linear_underflow] < log10_min_subnormal)
 
 
 def test_nonzero_tensor_final_energy_underflow_is_not_reported_as_success():
