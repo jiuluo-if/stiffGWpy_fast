@@ -2100,16 +2100,16 @@ Finite sampled region evidence; no claim that every point in the box has been ce
 
 - [x] Broad 13M–14M Fast screen: 19 inputs old/current `0/19→19/19`; old failures all `nonfinite_background_primitive`, candidate background valid.
 - [x] At exact 14M/low-tilt, current Fast solves, but unchanged Cartesian and Prüfer Reference at z8/rtol1e-9 both fail with `Required step size is less than spacing between numbers`.
-- [x] Narrow accepted box to 13M–13.75M; dedicated 19-point lattice/interior/Sobol screen `0/19→19/19`.
-- [x] z8 Reference for both 13.75M tilt endpoints and an independent Sobol point, plus 13.25M interior, passes: max root error `4.3419e-5`, spectrum `6.7529e-4 dex`, closure `2.5683e-7`.
-- [x] Narrow-box 500-pair full A/B passes: new region max P50/P95 `1.0036/1.0014`; trusted control `1.0075/1.0192`; bitwise outputs.
+- [x] Narrow accepted box after the Reference-edge probe to 13M–13.984375M; dedicated 19-point lattice/interior/Sobol screen `0/19→19/19`.
+- [x] z8 Reference at 13.984375M both tilt endpoints + independent Sobol, plus 13.25M interior, passes; max root error `4.5618e-5`, spectrum `6.7808e-4 dex`, closure `1.8183e-7`. Boundary probes 13.875/13.9375/13.96875/13.984375 low-tilt pass; 14M high-tilt passes while 14M low-tilt fails both backends.
+- [x] Narrow-box 500-pair full A/B passes: expanded region max P50/P95 `1.0036/1.0080`; trusted control `1.0075/1.0191`; bitwise outputs.
 - [x] Reference source hash and acceptance settings unchanged; failure diagnostic retained; figure and focused Ruff pass.
 - [ ] Submit narrow accepted box + 14M Reference failure diagnostic and verify Actions.
 
 ### Boundary
 
-The 14M face remains excluded from accepted precision coverage. The result is finite-sample support for `[13M,13.75M]`, not a continuum certificate.
+The exact 14M low-tilt face remains excluded from accepted precision coverage. The finite-sample accepted rectangle is `[13M,13.984375M]`, not a continuum certificate.
 
 ### Next Step
 
-If delivery CI passes, inspect `[13.75M,14.5M]` only as an exploratory extension; stop at Reference feasibility boundaries without changing Reference settings or code.
+If delivery CI passes, map Reference feasibility near the 14M face in a second tilt slice; keep any Reference failure classified and do not change its settings or code.

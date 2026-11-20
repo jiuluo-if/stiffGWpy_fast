@@ -2238,3 +2238,11 @@ The current production source remains unchanged; added one tested Reference-orig
 - Dedicated `[13M,13.75M]` screen `0/19→19/19`; z8 Reference for both upper tilt endpoints, independent Sobol and a 13.25M interior sample passes. Max root `4.341852e-5`, spectrum `6.752912e-4 dex`, closure `2.568274e-7`.
 - 500-pair full Fast A/B P50/P95 max for expanded samples `1.003520/1.001338`, trusted CR0 `1.007496/1.019105`; bitwise equal outputs.
 - Figure visually checked; all focused scripts Ruff pass. Manifest valid; commit/push/CI pending.
+
+
+## Round 80 continuation — upper Reference feasibility probes
+
+- 14M high tilt z8 Reference passes (`root=1.4663e-5`, spectrum `6.0406e-4 dex`).
+- Low-tilt probes at 13.875M, 13.9375M, 13.96875M, and 13.984375M all pass; 13.984375M high tilt also passes. Exact 14M low tilt fails Cartesian and Prüfer with required-step-size-under-spacing; no Reference code/setting changed.
+- Dedicated accepted box `[13M,13.984375M]`: paired old/current `0/19→19/19`; z8 Reference max root `4.561744e-5`, max spectrum `6.780782e-4 dex`, max closure `1.818292e-7`; 500-pair full Fast A/B max P50/P95 `1.003520/1.007964` on new points, `1.007496/1.019105` on trusted CR0.
+- Manifest/source/artifact hashes all pass; submitted for CI.

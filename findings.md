@@ -3760,3 +3760,10 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - At 14M low tilt, Cartesian and Prüfer z8 Reference both fail tensor integration due to `Required step size is less than spacing between numbers`. This is a Reference numerical failure, not proof of physical invalidity or a Fast failure, and is not counted as precision success.
 - A dedicated 13M–13.75M screen gives old/current `0/19→19/19`; Reference at both 13.75M tilt endpoints, one independent Sobol holdout and one 13.25M interior sample all meet root/spectrum/map gates. Max root error `4.3419e-5`, max spectrum difference `6.7529e-4 dex`.
 - 500-pair full-solve P50/P95 ratios including trusted CR0 stay below 5%; all outputs match bitwise. No production code changed.
+
+
+## CR0 Reference boundary refinement — accepted 13M–13.984375M rectangle — 2026-11-21
+
+- Repeated Reference probes show low-tilt inputs at 13.875M, 13.9375M, 13.96875M and 13.984375M integrate successfully; at 13.984375M, both tilt endpoints pass. The 14M high-tilt point also passes, while the exact 14M low-tilt point fails both Cartesian and Prüfer Reference due step underflow.
+- A dedicated 13M–13.984375M old/current screen has `0/19→19/19`. z8 Reference at both upper endpoints plus independent Sobol and interior holdout passes root/spectrum/map checks. 500-pair Fast A/B including trusted CR0 remains within 5% and bitwise equivalent.
+- Treat 14M low tilt as Reference-integration-limited, not physically invalid. No changes to solver or Reference code/acceptance settings.
