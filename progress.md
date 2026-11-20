@@ -2141,3 +2141,5 @@ Both 4M tilt corners and independent high-density Sobol Reference samples pass: 
 ### Round 70 progress — final local gates
 
 The current production source remains unchanged; added one tested Reference-origin helper regression and research runners. Final full pytest: `446 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall, and sdist/wheel build pass. Old Fast to current Fast coverage and current-source References pass the sampled CR0 3M–4M rectangle gates. Manifest hash verification and commit/push/CI remain.
+
+- Round 70 delivery: commit `b62215bca7cb93ed6dc23d950f6cbaa1562e35f4` pushed to `fast_v0.2`; remote SHA matches. GitHub Actions `44760579377` completed successfully (9/9 jobs). The sample-supported CR0 density interval now reaches 4e6 for the tested negative-tilt slice; this remains finite-sample evidence.

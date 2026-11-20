@@ -1920,7 +1920,7 @@ The accepted sampled CR0 region currently ends at `Omega_bh2=3e6`, with independ
 - [x] Full Fast source-baseline A/B: new upper corner P50/P95 `0.9910/0.9901`, Sobol `1.0063/1.0152`, trusted CR0 `0.9920/0.9919`; outputs bitwise equal. Existing 500-pair trusted gate remains below 5%.
 - [x] Create coverage/accuracy/performance figure, raw-data and source-hash manifest; red/green regression catches the Reference-origin mapping rule. Production source/Reference code unchanged.
 - [x] Final local verification: pytest `446 passed, 9 deselected, 2 warnings`; Ruff, Mypy, compileall and wheel/sdist build pass.
-- [ ] Commit/push this evidence tranche and closure regression test to `fast_v0.2`; verify remote SHA and final Actions.
+- [x] Commit/push evidence and closure regression as `b62215bca7cb93ed6dc23d950f6cbaa1562e35f4`; remote `fast_v0.2` matches, Actions `44760579377` passed all 9 jobs.
 
 ### Selection rationale
 
