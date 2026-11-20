@@ -2254,3 +2254,14 @@ The current production source remains unchanged; added one tested Reference-orig
 - Wider 13.75M–14M exploratory screen passes Fast but is excluded from accuracy coverage because its 13.75M low-tilt Reference fails.
 - 500-pair persistent TBB Fast A/B: max new-region P50/P95 `1.005285/1.015309`; trusted control `1.000268/0.983095`; outputs bitwise identical. First cold solve ratio `1.0403`.
 - Focused Ruff and plot inspection pass; production Fast/Reference source unchanged. Full result, manifest generation, project checks, commit/push and CI remain.
+
+- Round 81 delivered as `0c8e89598396631d1f09a777df6cfb9dcc953cc3`; remote matched and Actions `44817470306` passed all 9 jobs.
+
+
+# Round 82 progress — CR0 14M negative-tilt continuation
+
+- Midpoint tilt `n_t=-0.0234375` Reference probes at density 13.875M, 13.9375M and 14M all passed: max root residual `1.635380e-5`, max spectrum error `6.378088e-4 dex`.
+- New `[13.875M,14M]×[-0.0234375,0]` paired Fast screen `0/19→19/19`; all old failures `nonfinite_background_primitive`; finite positive H², full 75 frequency output, zero warnings.
+- Independent Sobol Reference holdout passed with residual `1.532614e-5` and spectrum error `6.338575e-4 dex`. One additional 14M edge closure map also passed, residual `6.852899e-8`.
+- 500-pair complete Fast A/B max new-region P50/P95 `1.004954/1.019098`; trusted CR0 `0.999444/0.997584`; bitwise outputs, first cold solve about 1.01% slower.
+- Plot inspected; manifest generation and delivery checks, commit/push and CI remain.

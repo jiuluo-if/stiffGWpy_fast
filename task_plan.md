@@ -2123,7 +2123,7 @@ Continue mapping Reference feasibility near the 14M face; keep any Reference fai
 - [x] Broader 13.75M–14M Fast-only screen also `0/19→19/19`, but its lower-density/low-tilt Reference fails; excluded from accepted precision box.
 - [x] 500-pair complete Fast A/B: new-region max P50/P95 `1.005285/1.015309`; trusted control `1.000268/0.983095`; roots, spectra and frequency grids bitwise equal. Cold first solve ratio `1.0403`.
 - [x] Coverage/accuracy/runtime figure inspected; focused Ruff passes. Fast and Reference production source unchanged.
-- [ ] Verify manifest, run applicable test/lint/package checks, commit/push and confirm CI.
+- [x] Manifest verified; tests `446 passed, 9 deselected`, Cobaya `1 passed`; Ruff, Mypy, compileall, sdist/wheel, and diff check passed. Commit `0c8e89598396631d1f09a777df6cfb9dcc953cc3` pushed; Actions `44817470306` passed 9/9.
 
 ### Boundary
 
@@ -2132,3 +2132,21 @@ Finite sample evidence for `[13.875M,14M]×[-0.015625,0]`, not a continuum certi
 ### Next Step
 
 After delivery checks, continue the 14M boundary toward more negative tilt only where selected Reference root/spectrum checks and paired Fast performance remain within the existing gates.
+
+
+## Round 82 — CR0 14M edge, tilt extension to -0.0234375
+
+- [x] At the candidate box `[13.875M,14M]×[-0.0234375,0]`, paired old/current Fast lattice/interior/Sobol screen `0/19→19/19`; all old failures `nonfinite_background_primitive`; sampled H² positive finite, finite cutoff, 75 frequencies, zero warnings.
+- [x] Selected Reference maps at both density endpoints and an interior point: max root residual `1.63538e-5`, max spectrum difference `6.37809e-4 dex`.
+- [x] Independent Sobol Reference holdout: root residual `1.53261e-5`, spectrum difference `6.33857e-4 dex`; one extra 14M boundary closure map succeeds with residual `6.85290e-8`.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `1.004954/1.019098`; trusted control `0.999444/0.997584`; outputs bitwise equal. First cold solve ratio `1.0101`.
+- [x] Plot inspected and focused Ruff passes; production Fast/Reference source unchanged.
+- [ ] Verify manifest and delivery checks, commit/push and confirm CI.
+
+### Boundary
+
+Finite sampled evidence for the expanded box, not a continuum certificate. Reference accuracy is checked on selected samples; the broader low-density face remains excluded.
+
+### Next Step
+
+After delivery, probe toward more negative tilt near 14M; stop at the first Reference or performance boundary without changing Reference settings.

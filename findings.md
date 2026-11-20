@@ -3775,3 +3775,10 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - 更宽 `[13.75e6,14e6]×[-0.015625,0]` Fast 屏幕也 `0/19→19/19`，但 `13.75e6,-0.015625` Reference 失败；该宽盒不属于精度验收范围。
 - 500 对完整 Fast A/B（基线 `59a23ae`，候选 `d4ee1b9`）新增区域最大 P50/P95 比 `1.005285/1.015309`；可信控制 `1.000268/0.983095`。root、频点和谱逐位一致。首个冷启动求解约慢 4.03%。
 - 见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to14m_nearzero015_summary.md` 与配套 manifest/原始 JSON/图。证据为有限采样，不是连续域证明。
+
+## 2026-11-21 — CR0 14M 倾斜带延至 -0.0234375
+
+- `[13.875e6,14e6]×[-0.0234375,0]` 19 点旧/新 Fast `0/19→19/19`，旧失败仍全为 `nonfinite_background_primitive`；当前 H² 正有限、75 频点、零 warning。
+- Reference 三个边界/内部点最大 root 残差 `1.635380e-5`、最大谱差 `6.378088e-4 dex`；独立 Sobol 点 `1.532614e-5` 与 `6.338575e-4 dex`。14M 端额外闭合映射成功，残差 `6.852899e-8`。
+- 500 对完整 Fast A/B（`59a23ae`→`d4ee1b9`）新增区域最大 P50/P95 `1.004954/1.019098`，可信 CR0 控制 `0.999444/0.997584`，root/网格/谱逐位一致；冷启动首解约慢 1.01%。
+- 细节见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to14m_nt0234375_summary.md` 及 manifest、原始数据和图。有限采样，不作连续域证明。
