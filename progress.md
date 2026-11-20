@@ -2298,3 +2298,14 @@ The current production source remains unchanged; added one tested Reference-orig
 - Accepted Reference samples max root residual `1.543869e-5`, spectrum error `6.382504e-4 dex`; independent holdout `1.279228e-5`, `6.279721e-4 dex`. Extra closure at 13.9375M passes at `1.852572e-7`.
 - 500-pair full Fast A/B max new-region P50/P95 `0.998120/0.991825`; trusted control `0.994934/0.967881`; outputs bitwise equal.
 - Figure inspected; manifest and delivery checks, commit/push and CI remain.
+
+- Round 85 delivered as `7c63e54de1146d35d535a3d717f6de6957ad706d`; remote matched and Actions `44831399029` passed 9/9.
+
+
+# Round 86 progress — CR0 density edge near 14M
+
+- Expanded the density face for the `n_t=-0.0302734375` region from 13.9375M to 13.984375M; at 14M the first Reference map still fails and remains outside accuracy claims.
+- New `[13.875M,13.984375M]×[-0.0302734375,0]` paired old/current Fast screen: `0/19→19/19`; all old failures `nonfinite_background_primitive`; positive finite H², complete 75-frequency outputs and zero warnings.
+- Three density Reference checks plus independent Sobol: max root residual `1.647384e-5`, max spectrum error `6.382504e-4 dex`; 13.984375M second closure residual `1.086720e-7`.
+- 500-pair complete Fast A/B max new-region P50/P95 `0.997097/1.000816`; trusted control `1.002412/0.991652`; bitwise outputs.
+- Figure inspected; manifest, commit/push and CI remain.

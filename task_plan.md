@@ -2195,7 +2195,7 @@ After delivery, test the next more-negative tilt only with the same rectangle, h
 - [x] The same tilt at 14M fails on the first Reference map, so exclude that corner and report the density-dependent edge.
 - [x] 500-pair full Fast A/B: max new-region P50/P95 `0.998120/0.991825`; trusted control `0.994934/0.967881`; bitwise outputs.
 - [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
-- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+- [x] Manifest verified; focused Ruff passed. Commit `7c63e54de1146d35d535a3d717f6de6957ad706d` pushed; Actions `44831399029` passed 9/9.
 
 ### Boundary
 
@@ -2204,3 +2204,21 @@ Finite sampled evidence for a density-limited adjacent sub-box; no claim of a la
 ### Next Step
 
 After delivery, bisect the density edge at `n_t=-0.0302734375` between 13.9375M and 14M using the same Reference and Fast gates.
+
+
+## Round 86 — CR0 negative-tilt density edge to 13.984375M
+
+- [x] At `[13.875M,13.984375M]×[-0.0302734375,0]`, paired Fast lattice/interior/Sobol screen `0/19→19/19`; all old failures `nonfinite_background_primitive`; current H² positive finite, finite cutoff, 75 frequencies, zero warnings.
+- [x] z8 Reference at lower/interior/upper density plus independent Sobol: max root residual `1.64738e-5`, max spectrum error `6.38250e-4 dex`; 13.984375M second-map residual `1.08672e-7`.
+- [x] 14M same-tilt first Reference map remains failed and excluded from accepted box.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `0.997097/1.000816`; trusted control `1.002412/0.991652`; bitwise equal outputs.
+- [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
+- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+
+### Boundary
+
+Finite sampled evidence for the density-limited box; not a continuum certificate. The measured 14M outer corner remains excluded at this tilt.
+
+### Next Step
+
+After delivery, probe the same tilt between 13.984375M and 14M and preserve the Reference integration boundary.

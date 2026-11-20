@@ -1,0 +1,330 @@
+{
+  "status": "validated_finite_sample_cr0_density_to_13p984375m_at_minus_0p0302734375",
+  "source_base_commit": "7c63e54de1146d35d535a3d717f6de6957ad706d",
+  "old_failure_baseline_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "performance_baseline_commit": "59a23aec2300f08b50124d7f35dec4b228388d37",
+  "production_source_changed": false,
+  "reference_code_modified": false,
+  "source_sha256": {
+    "current_worktree": {
+      "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+      "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+      "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+      "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc",
+      "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+    },
+    "performance_baseline_59a23ae": {
+      "exact_background.py": "57740c71121ea0da063326887ae9cedf8e554889b5bde3b546636483218eb86a",
+      "fast_sgwb.py": "da3e3ca2898f0fcb6e1bb27c463c0b72e8e4e01bff92f1b9e70fbb6d4b2830e3",
+      "freq_adaptive.py": "29191346482b2fde81d8c9e44619736e63d10193b2a43ad42ebefe0c498e4c04",
+      "_wkb_transfer.py": "9fcb10055b2c9ac79b76bbbc2659c07d6eda0b82213218288eaa7bc087b7845e",
+      "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+    },
+    "reference_used": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "accepted_region": {
+    "Omega_bh2": [
+      13875000.0,
+      13984375.0
+    ],
+    "Omega_ch2": 0.1201075,
+    "cr": 0.0,
+    "n_t": [
+      -0.0302734375,
+      0.0
+    ],
+    "r": 0.01,
+    "T_re": 2000.0,
+    "kappa10": 0.01,
+    "tilt_contract": "CR0 input n_t is independent"
+  },
+  "paired_screen": {
+    "point_count": 19,
+    "old_successes": 0,
+    "candidate_successes": 19,
+    "old_failure_reasons": [
+      "nonfinite_background_primitive"
+    ],
+    "candidate_positive_finite_h2_all": true,
+    "candidate_min_sampled_h2": 0.45321399345993996,
+    "candidate_finite_cutoff_all": true,
+    "candidate_frequency_count_all_75": true,
+    "candidate_warning_count_max": 0,
+    "sobol_seed": 20261152,
+    "sobol_point_count": 8
+  },
+  "reference_checks": {
+    "z_tail": 8.0,
+    "rtol": 1e-09,
+    "accepted_density_cases": [
+      {
+        "case_id": "lower_density_edge",
+        "params": {
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 13875000.0,
+          "n_t": -0.0302734375
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 58.578375599994615,
+        "fast_root": 1.313760592053724,
+        "reference_mapped_root": 1.3137789680056637,
+        "root_relative_error": 1.3987095536738654e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.0006266071231344483
+      },
+      {
+        "case_id": "interior",
+        "params": {
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01,
+          "Omega_bh2": 13937500.0,
+          "n_t": -0.0302734375
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 59.25725749999401,
+        "fast_root": 1.3203219378563837,
+        "reference_mapped_root": 1.3203423222057509,
+        "root_relative_error": 1.5438685123019342e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.0006382503612112345
+      },
+      {
+        "params": {
+          "Omega_bh2": 13984375.0,
+          "Omega_ch2": 0.1201075,
+          "H0": 67.32117,
+          "DN_eff": 0.0,
+          "A_s": 2.100549e-09,
+          "r": 0.01,
+          "n_t": -0.0302734375,
+          "cr": 0.0,
+          "T_re": 2000.0,
+          "DN_re": 10.0,
+          "kappa10": 0.01
+        },
+        "fast_success": true,
+        "fast_failure_reason": null,
+        "reference_status": "success",
+        "reference_seconds": 59.676502100002836,
+        "fast_root": 1.3252413737908346,
+        "reference_mapped_root": 1.325263205959327,
+        "root_relative_error": 1.6473835834431337e-05,
+        "spectrum_valid_count": 75,
+        "spectrum_max_abs_dex": 0.000618952862854627
+      }
+    ],
+    "independent_sobol_holdout": {
+      "case_id": "holdout_05",
+      "params": {
+        "Omega_bh2": 13973292.0814713,
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "n_t": -0.0020208089126754203,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01
+      },
+      "fast_success": true,
+      "fast_failure_reason": null,
+      "reference_status": "success",
+      "reference_seconds": 59.40818639999634,
+      "fast_root": 1.4485221560288943,
+      "reference_mapped_root": 1.4485425045894613,
+      "root_relative_error": 1.4047610272059068e-05,
+      "fixed_point_residual": 1.4047610271752491e-05,
+      "spectrum_valid_count": 75,
+      "spectrum_max_abs_dex": 0.0006223925944368602
+    },
+    "upper_density_second_closure_step": {
+      "status": "success",
+      "mapped_dn_gw": 1.3252630619403958,
+      "seconds": 59.58385719999933
+    },
+    "excluded_14m_case": {
+      "case_id": "upper_density_edge",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "r": 0.01,
+        "cr": 0.0,
+        "T_re": 2000.0,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 14000000.0,
+        "n_t": -0.0302734375
+      },
+      "fast_success": true,
+      "fast_failure_reason": null,
+      "reference_status": "integration_failure",
+      "reference_seconds": 58.90062089999992,
+      "exception_type": "RuntimeError",
+      "message": "reference tensor integration failed: Required step size is less than spacing between numbers."
+    },
+    "max_accepted_root_residual": 1.6473835834431337e-05,
+    "max_accepted_spectrum_error_dex": 0.0006382503612112345
+  },
+  "performance": {
+    "resources": {
+      "affinity": [
+        0,
+        1
+      ],
+      "numba_threads": 2,
+      "threading_layer": "tbb",
+      "blas_threads": 1,
+      "persistent_processes": 2,
+      "alternating_pairs_per_case": 500,
+      "warmups_per_side": 3,
+      "separate_numba_caches": true,
+      "physical_guard": true,
+      "frequency_grid": "goal"
+    },
+    "500_pair_full_solver": [
+      {
+        "case_id": "new_region_lower_density_low_tilt",
+        "pairs": 500,
+        "base_p50_seconds": 0.034375949999230215,
+        "current_p50_seconds": 0.03421170000001439,
+        "p50_ratio": 0.9952219502524438,
+        "base_p95_seconds": 0.0360075600015989,
+        "current_p95_seconds": 0.03603694000375981,
+        "p95_ratio": 1.000815939823737,
+        "paired_ratio_p95": 1.0486667870214514,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": true,
+          "base_seconds": 20.58494470000005,
+          "current_seconds": 20.714953399998194,
+          "base_root": 1.313760592053724,
+          "current_root": 1.313760592053724
+        }
+      },
+      {
+        "case_id": "new_region_interior",
+        "pairs": 500,
+        "base_p50_seconds": 0.03422879999561701,
+        "current_p50_seconds": 0.0340653499988548,
+        "p50_ratio": 0.9952247815645556,
+        "base_p95_seconds": 0.03591394999857584,
+        "current_p95_seconds": 0.0356800999983534,
+        "p95_ratio": 0.9934886026117508,
+        "paired_ratio_p95": 1.0468220549165135,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": false,
+          "base_seconds": 0.0358226000025752,
+          "current_seconds": 0.03517920000012964,
+          "base_root": 1.3842908238494016,
+          "current_root": 1.3842908238494016
+        }
+      },
+      {
+        "case_id": "new_region_independent_sobol",
+        "pairs": 500,
+        "base_p50_seconds": 0.03413815000021714,
+        "current_p50_seconds": 0.03403904999868246,
+        "p50_ratio": 0.9970970892818137,
+        "base_p95_seconds": 0.03564631499975803,
+        "current_p95_seconds": 0.03542317000028561,
+        "p95_ratio": 0.9937400261577126,
+        "paired_ratio_p95": 1.0458019986940439,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": false,
+          "base_seconds": 0.03690629999618977,
+          "current_seconds": 0.035156699996150564,
+          "base_root": 1.4485221560288943,
+          "current_root": 1.4485221560288943
+        }
+      },
+      {
+        "case_id": "trusted_physical_cr0_control",
+        "pairs": 500,
+        "base_p50_seconds": 0.0054304500008584,
+        "current_p50_seconds": 0.0054435499987448566,
+        "p50_ratio": 1.0024123227143948,
+        "base_p95_seconds": 0.00618159999430645,
+        "current_p95_seconds": 0.006129994994989828,
+        "p95_ratio": 0.9916518378147805,
+        "paired_ratio_p95": 1.1307473732375999,
+        "root_relative_delta_max": 0.0,
+        "frequency_digest_mismatch_pairs": 0,
+        "spectrum_absdiff_max_dex": 0.0,
+        "first_call": {
+          "fresh_process_compile": false,
+          "base_seconds": 4.653014700001222,
+          "current_seconds": 4.66956129999744,
+          "base_root": 0.002369295934602997,
+          "current_root": 0.002369295934602997
+        }
+      }
+    ],
+    "max_new_region_p50_ratio": 0.9970970892818137,
+    "max_new_region_p95_ratio": 1.000815939823737,
+    "trusted_control": {
+      "pairs": 500,
+      "p50_ratio": 1.0024123227143948,
+      "p95_ratio": 0.9916518378147805,
+      "root_relative_delta_max": 0.0,
+      "frequency_digest_mismatch_pairs": 0,
+      "spectrum_absdiff_max_dex": 0.0
+    }
+  },
+  "continuum_claim": false,
+  "artifact_sha256": {
+    "screen_h2_identity_region.py": "f33747a9c3bf7f644a02ff2625dac99341998ed778a15afb060c4f34bcbde359",
+    "screen_cr0_density_13p875m_to13p984375m_nt0302734375_slice.py": "237520840692a84052e839695503effb62ef28f91db6cd7f09ddc02fb40e5729",
+    "screen_cr0_density_13p875m_to13p984375m_nt0302734375_slice.json": "0f67fe5bd4a2ed44022912c1bb91882a603316d78a889d8984ae9bd173e6e62f",
+    "screen_cr0_density_13p875m_to13p984375m_nt0302734375_slice_sobol.py": "68eebe862606908a948daf31906dbd5d4869bc222c0087fb201465da36073f42",
+    "screen_cr0_density_13p875m_to13p984375m_nt0302734375_slice_sobol.json": "0d10e873068872e26ef7711a8082e5933d50520f4594e99d1dd2ead6e09e20a7",
+    "probe_cr0_density_14m_nt0302734375_reference.py": "6abad058c0887233fe4beac1c3c9c76565630cd16d38a39c22bb832600c882b8",
+    "probe_cr0_density_14m_nt0302734375_reference.json": "fe69fe72cc0145671f1faf6f851336b1d832c67956c738de7475a89e7156ea48",
+    "probe_cr0_density_13p984375m_nt0302734375_reference.py": "f15d3dc663ecd115afc5a9303c5dfdf7a61ffb1fa9e5ca8611af78df06fce22c",
+    "probe_cr0_density_13p984375m_nt0302734375_reference.json": "ce4fcdeaaf50dc53b3232900d9fdb56286ce17c3cb3969fdb1e6e96ac23847d7",
+    "probe_cr0_density_13p984375m_nt0302734375_closure_step.py": "c81985292dd2395952df8dd1fd22617cacb4e85a575b841134173175e1420f49",
+    "probe_cr0_density_13p984375m_nt0302734375_closure_step.json": "590c5e9bed70bc89c4a8997df6308486954e9609c5b72766411537016b45735c",
+    "probe_cr0_density_13p875m_to13p9375m_nt0302734375_sobol_reference.py": "2cb9b914c7dcb154df82fff91085d08051623ef8a64b4c590fe5374053b89d8b",
+    "probe_cr0_density_13p875m_to13p9375m_nt0302734375_sobol_reference.json": "6d98c6681dbe47756fe3f3571a235496d3deb080a0dbf38c1408518315101c5e",
+    "probe_cr0_density_13p9375m_nt0302734375_closure_step.py": "f40892705133cdcfb612246105e9278d1e71cd3e2c1d5eea0117dc63b5edbbd6",
+    "probe_cr0_density_13p9375m_nt0302734375_closure_step.json": "76b5fd21d6c658f9c07b7e42dbc83fc78927333cd27bbd6cfc7d16ebb490b3a5",
+    "benchmark_cr0_density_13m_to13_984375m_self_ab_500pairs.py": "88421ea26128965625d3aae097ceb4c3500b48a5cf8ac02819cf92a814ba0aaa",
+    "benchmark_cr0_density_13p875m_to13p984375m_nt0302734375_self_ab_500pairs.py": "423c1f7f95dc73d7a88af7e23ba84d3c14428a6be5946048660a42ec8576a6b9",
+    "benchmark_cr0_density_13p875m_to13p984375m_nt0302734375_self_ab_tbb_500pairs.json": "6f05279401003ae2eb91a103df2e9f8677c6266111d5da747ad73bb1af06e609",
+    "plot_cr0_density_13p875m_to13p984375m_nt0302734375_slice.py": "84881aefb11e59e838a4732ef8517e3322a50cbef6858c490de690e6da728108",
+    "cr0_density_13p875m_to13p984375m_nt0302734375_slice.png": "9fe60145d2ed77fe2a3cdc44991bd05461e93d2dd190dbe0f9a7644fc89637b8",
+    "cr0_density_13p875m_to13p984375m_nt0302734375_summary.md": "175ce8b77f5a4f12f348a5961b89f2bf3ed0dacd7867207574d10058cd5a49c3",
+    "make_cr0_density_13p875m_to13p984375m_nt0302734375_manifest.py": "2ff952f0cb2618c97042956b652606440ee54951f4628e78d00e88f5e9259ccb"
+  },
+  "manifest_self_hash_included": false
+}

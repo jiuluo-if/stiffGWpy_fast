@@ -3805,3 +3805,10 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - 相同倾斜在 14M 的首次 Reference 映射步长下溢；不纳入精度扩域盒。明确记录随密度变化的外边界，避免把失败角点包含进矩形验收声明。
 - 500 对完整 Fast A/B 新区域最大 P50/P95 `0.998120/0.991825`，可信控制 `0.994934/0.967881`，输出逐位相同。
 - 详细证据见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p9375m_nt0302734375_summary.md` 与同目录 manifest/原始文件/图。
+
+## 2026-11-21 — CR0 负倾斜子盒密度上界至 13.984375M
+
+- 新盒 `[13.875e6,13.984375e6]×[-0.0302734375,0]` old/current Fast 成对屏幕 `0/19→19/19`，旧失败全为 `nonfinite_background_primitive`；当前 H² 正有限、75 频点、零 warning。
+- Reference 低/内/高密度样本和 Sobol holdout 最大 root 残差 `1.647384e-5`，最大谱差 `6.382504e-4 dex`；13.984375M 第二次闭合残差 `1.086720e-7`。14M 相同倾斜首个 Reference 映射失败，继续排除。
+- 500 对 Fast A/B 新区域最大 P50/P95 `0.997097/1.000816`，可信控制 `1.002412/0.991652`，输出逐位相同。
+- 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p984375m_nt0302734375_summary.md` 和原始筛选、Reference、计时、manifest、图。
