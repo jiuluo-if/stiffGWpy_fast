@@ -1800,4 +1800,19 @@ Next, investigate the 1.4M boundary root discrepancy with a generic transfer/int
 
 ### Next Step
 
-Derive a normalized two-component tensor state with independent accumulated log scale, including the exact relation for initial conditions, analytic WKB handoff, phase-resolved tail blending, terminal energy, and the log-domain frequency integral. Write focused equivalence/underflow tests before integrating it into `solve_kernel`; compare warm P50/P95 and trusted-region spectra before accepting any candidate.
+Use the real JIT exception trace, not the earlier output-only hypothesis, to find a generic WKB basis/turning or condition-number boundary. Red test first; the previous unit-amplitude retry and normalized-state extension were rejected.
+
+## Round 63 — WKB basis determinant representability guard
+
+- [x] Trace the JIT failure to `_transfer_order` dividing by a WKB3 basis determinant rounded to zero on the captured CR0 3M panel.
+- [x] Add an IEEE-754 determinant error-bound gate and route unresolved inverses through the existing phase-substep fallback; retain exact parameter-independent dispatch.
+- [x] Paired old/current Fast lattice, interior and Sobol screen over `[2e6,3e6] × n_t[-.5,0]`: `0/19→19/19`, all baseline failures `nonfinite_background_primitive`, positive finite H2, physical guard admitted.
+- [x] Same-Fast-root z8 Reference checks at 3M `n_t=0`, 3M `n_t=-.5`, and an upper-density Sobol holdout: all pass root `2e-4` and spectrum `1e-3 dex` gates.
+- [x] Exact old-helper/current-helper 32-pair full-solve A/B on two trusted points and one new-region point: all measured P50/P95 regressions <5%; frequencies, roots and spectra bitwise equal.
+- [x] Focused WKB tests `6 passed`; full pytest `438 passed, 9 deselected`; Ruff, Mypy, compileall, sdist/wheel build and installed-wheel guard smoke pass.
+- [x] Generate source/artifact hashes and QA the coverage/outcome/precision/runtime figure.
+- [ ] Verify final staged hashes and Git identity, commit/push both Fast refs, then verify GitHub Actions.
+
+### Boundary
+
+The paired lattice, two interior points, eight Sobol holdouts and three Reference points are finite coverage evidence; this does not prove the full continuum. `cr>0` remains unaudited in this tranche.

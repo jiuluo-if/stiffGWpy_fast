@@ -3584,5 +3584,15 @@ Raw screens, direct Reference arrays, A/B samples, source hashes, manifest and f
 
 - 在固定 `cr=0, n_t=0` 的 `Omega_bh2=3e6` 样本上，旧 Fast 因 `nonfinite_background_primitive` 失败；当前背景保持正有限 H²，但 Fast 在末端因 `final_spectrum_underflow` 返回失败。自洽映射的 `DN_gw[-1]` 仍是有限正数，说明失败发生在最终逐频谱装配。
 - 先写了输出恢复红测，确认 `SGWB_iter_fast` 返回 `None`。尝试在该特定失败后重跑已有对数振幅路径，候选未通过：单位振幅传播的 75 个频点中 18 个低频末端传递量仍为零，失败被正确分类为 `nonpositive_log_amplitude_transfer`。因此仅在输出层切换已有对数振幅算法不能修复此区域。
-- 传播诊断显示受影响频率为 `log10(f/Hz)=-12.81…-18.46`，初态 `z0≈-6.91`，所以不是初态指数直接下溢；损失发生在长程传递状态动态范围。可能的后续方案是传播规范化二维状态及独立对数增益，并把尺度延伸到末端能量和对数频率积分；需保留相位尾部匹配尺度后再写候选测试。
-- 已撤掉未验证的重试改动和红测；生产源保持不变，不将该 3M 切片计为 Fast 求值域成功。`
+- 传播诊断显示受影响频率为 `log10(f/Hz)=-12.81…-18.46`，初态 `z0≈-6.91`。当时推测是长程状态动态范围问题；后续用真实 JIT 路径定位到 WKB 基矩阵除零导致并行模未完成，该动态范围推测已被证伪，见下方 Round 63。
+- 已撤掉未验证的重试改动和红测；当时没有将该 3M 切片计为求值域成功。后续真实 JIT 诊断定位到 WKB 基矩阵除零，见 Round 63。
+
+## 2026-11-20 — CR0 2M–3M WKB basis conditioning guard
+
+- WKB3 `B0` 逆矩阵的行列式由两项乘积相减。加入基于 float64 项级舍入界的拒绝条件：当 `|det| <= 4u(|p|+|q|)`、结果非有限或行列式落入 subnormal 区时拒绝 WKB 候选，让现有相位子步继续。同一实际面板在加守卫前抛 `ZeroDivisionError`：`z0=8.326819262766648`、`z1=13.006402132438978`、`h=5.853210263495612e-4`；WKB3 两个乘积均下溢为零，WKB2 行列式仍约 `-2.032`。
+- TDD：WKB3 focused contract `4 passed` 的原测试加新案例后 `5 passed`；端到端 3M `n_t=0` test 复现 75 个频率模完成、`DN_gw[-1]=0.3121571825`。旧失败时只有部分模进入终端装配，观测到的 `0.002371` 是无效部分映射，不能作为根基准。
+- 固定 `cr=0`、其余背景参数同高密度扫描，在 `[2e6,3e6]×n_t[-.5,0]` 的 3×3 格点加两内点、8点 scrambled Sobol 中，基线 `872a70d` 为 `0/11 + 0/8`，候选 `19/19`；旧失败均为 `nonfinite_background_primitive`。所有候选 H² 正且有限、物理 guard 接受，H² 最小 `0.4532139925`，频率节点 75。
+- 未改 Reference 的 z8/r tol=1e-9 核验：3M `n_t=-.5` 与 Sobol 上边界留出相对根误差最大 `1.7505e-5`，同 Fast 根谱差最大 `7.7100e-4 dex`；另有 3M `n_t=0` 同根检查谱差 `7.5822e-4 dex`。先前把 Fast 根处 Fast 谱与闭合到不同 DN 根后的 Reference 谱比较，产生 `5.41e-3 dex`，属混根口径，现已更正为同根比较。三个直接检查均在验收门内，且有限点不证明整个连续矩形。
+- 对未改 helper 的精确旧/新源同进程 A/B：32 交替完整求解、两可信控制和一个 2.5M 新点，P50 最大回退 `1.01%`、P95 最大回退 `3.67%`；根、频率和谱逐位相同。新增区域 18 个非冷启动 screen 的 P50/P95 为 `90.9/94.6 ms`。冷首调基线/候选分别 `18.97/18.54 s`，包含一次性 JIT。
+- 文献方法依据：Higham (2002), *Accuracy and Stability of Numerical Algorithms*, 2nd ed., §2.1–2.2、§3.1；查阅 SIAM 公开章节摘录。适用假设、4u 保守界推导及面板详情见 `cr0_2m_to3m_wkb_basis_guard_summary.md`。当前守卫仅处理 WKB 基底逆的局部浮点可分辨性，不是渐近截断误差或整条轨迹误差界。
+- 原始筛选、Reference、逐对 A/B、覆盖/精度/失败图及 manifest 见 `screen_cr0_density_2m_to3m_wkb_guard*`、`validate_cr0_3m_wkb_guard_z8*`、`benchmark_wkb_basis_guard_ab.json`、`cr0_density_2m_to3m_wkb_guard_domain.png` 与对应 manifest。
