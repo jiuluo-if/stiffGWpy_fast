@@ -2077,3 +2077,12 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - CR1 上方区域 32 对 pilot 的高角点 P95 比 `1.052`；保留原始 JSON 后扩展到 100 对。Side-wise 候选/旧核最大 P50/P95 比为 `1.0041/1.0239`，根、频率和谱逐位相同。成对 P95 仍观测到尾部尖峰（Sobol `1.0702`），摘要中保留此计时波动风险；冷首调高角点基线/候选 `19.68/18.64 s`。
 - 生产源码与 Reference 源码未改。图表、复现脚本、paired screen、当前源码 Reference、map closure、32/100 对 benchmark、双 manifest 与摘要归档在 `docs/research/unified_domain_20261119/cr1_b175_adjacent_*`、`screen_cr1_b175_{adjacent,upper}_*` 及相邻 validate/benchmark 文件中。有限采样，不构成连续域证明。
 - 当前 paired CR1 邻接扩域精度与 side-wise 运行门槛均通过；上边界更宽方块因精度失败而拒绝。下一步继续寻找另一片旧 Fast 有效失败区域，并检查零极限与不可表示输出分类。
+
+## 2026-11-20 — CR0 正倾斜 × 小幅度二维扩域
+
+- 当前 `c3c6ab3` 同源码 paired CR0 screen：`log10(r)∈[-12,-8] × n_t∈[.05,.1]`，固定 `Omega_bh2=1e6`、`Omega_ch2=.1201075`。3×3 网格 + 2 内部点为旧版/当前版 `0/11→11/11`；独立 scrambled Sobol（seed `20261123`）`0/8→8/8`。旧版 19 点均 `nonfinite_background_primitive`，H²正有限；候选全成功，`N_inf` 有限、75 节点完整、无警告、物理 guard 接受。
+- 现源码 z8 Reference 五点（四角 + Sobol）最大首映射根误差 `1.61197e-4`、同 Fast 根最大谱差 `8.02530e-4 dex`；高倾斜两端及 Sobol 的第三次 map 根误差最大 `1.61218e-4`，最大第二至第三次闭合 `3.89572e-8`。Reference SHA `4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536`，源码未改。
+- 100 对旧/当前 WKB helper 全求解 A/B：side-wise P50/P95 最大比 `1.0267/1.0145`，根/频率/谱逐位一致；成对时间比 P95 尖峰为 `1.156/1.182`，保留时间抖动风险。候选屏幕 P50 `77.3 ms`。
+- 分类审计的 12 项定向测试通过；新增一条 underflow 输出断言，确认 14 个线性 `Ogw_today=0` 的 bins 对应有限 log 谱 `[-367.439,-325.375]`，小于最小 subnormal 的 log 下界 `-323.306`。精确零路径另测为全 `-inf`。新断言及 exact-zero/final-underflow 两项复跑 `3 passed`；Ruff 通过。
+- 区域屏幕、原始 Reference arrays、map closure、100 对 benchmark、图和 manifest 已存于 `cr0_b175_amplitude_tilt_*`；manifest 覆核 current Fast/Reference/test 源码哈希。生产 Fast 与 Reference 方程未改。
+- 这是 finite sampling，不证明连续矩形。下一步检查正向最终溢出与不可表示输出分类，再选另一片旧版 Fast 失败区域；保持当前精度/性能区域不退化。

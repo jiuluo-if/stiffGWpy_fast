@@ -1842,3 +1842,16 @@ This tranche adds finite evidence for one CR1 square at source commit `b175f0b`;
 ### Boundary
 
 The `[7e5,8e5]²` evidence is finite and sampled; it is not a mathematical continuum certificate. The larger upper box is not accepted. No production source or Reference code changed this tranche.
+
+## Round 66 — CR0 positive-tilt / small-amplitude strip
+
+- [x] Pair the `872a70d` baseline with current `c3c6ab3` over `log10(r)∈[-12,-8] × n_t[.05,.1]`: lattice + interior and independent Sobol give `0/19→19/19`; all old failures `nonfinite_background_primitive`, H² positive finite, cutoff valid.
+- [x] Run current-source z8 Reference on four corners plus independent holdout; max first-map root error `1.61197e-4`, max spectrum error `8.02530e-4 dex`; close high-tilt endpoints and holdout to third map, max root `1.61218e-4`, closure `3.89572e-8`.
+- [x] Run 100 alternating old/current helper pairs at a high-amplitude/high-tilt case and independent Sobol point; side-wise P50/P95 max ratios `1.0267/1.0145`, output arrays identical; retain the paired-tail jitter note.
+- [x] Recheck zero/cutoff/H²/underflow categories with 12 targeted tests. Add a regression distinguishing exact-zero `-inf` from finite log spectra whose linear underflow bins are zero; 3 focused tests and Ruff pass.
+- [x] Produce raw screens, same-source Reference artifacts, timing arrays, figure, source/test SHA manifest and verify hashes.
+- [ ] Find a real final-output overflow case and verify it is distinguished from intermediate overflow and H² failure; then move to another old-Fast valid failure slice.
+
+### Boundary
+
+This is finite coverage evidence for one CR0 rectangle. It does not certify the continuum. Positive final-overflow classification remains to be resolved; no production source or Reference code changed in this tranche.

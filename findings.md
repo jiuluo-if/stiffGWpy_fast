@@ -3612,3 +3612,11 @@ CR1 `[1e5,7e5]^2` 配对 screen 在旧版 Fast `872a70d` 上 19/19 失败，类�
 向上 screen 到 `[7e5,1.3e6]^2` 时 Fast 仍 19/19 返回，但代表性 z8 Reference 上 `(1.3M,1.3M)` root error `6.7009e-4`、谱差 `1.1025e-3 dex`，独立上方 Sobol root/spectrum `6.0345e-4/1.0878e-3`；中点 root error `4.4352e-4`。所以更宽块明确拒绝为有效域。此处显示数值成功与精度验收必须分开统计。
 
 低 P50 且大样本 P95 pass 的 helper A/B 与有噪 pilot 均保存，100 对 side-wise 最大 P50/P95 ratios 为 `1.0041/1.0239`，成对 P95 tail 仍存在。来源、原始 JSON、图和摘要见 `cr1_b175_adjacent_summary.md` 及 manifest；有限点不证明整个盒子。
+
+## CR0 小幅度正倾斜有效域与线性/对数输出分界（2026-11-20）
+
+当前提交 `c3c6ab3` 在 CR0 `log10(r)∈[-12,-8]`, `n_t∈[.05,.1]`、固定高 `Omega_bh2=1e6` 的二维条带中，将旧版 `872a70d` 的 19 个 `nonfinite_background_primitive` 失败全部求解成功。网格+内部点 `0/11→11/11`，scrambled Sobol `0/8→8/8`；H² 正有限，cutoff 有限，派生倾斜保持独立输入，不使用 CR1 一致性约束。五点当前源 z8 Reference 的 max root discrepancy `1.61197e-4`、max same-root spectrum error `8.02530e-4 dex`；高倾斜端及 Sobol 的第三 map 核验 max root error `1.61218e-4`、max second-to-third closure `3.89572e-8`。
+
+另确认正量 underflow 与精确零有不同输出语义：对 `r=1e-316,n_t=17.38,cr=0`，Fast 成功并给出有限 `log10OmegaGW`；14 个线性 `Ogw_today` 为零的格点 log 值在 `[-367.439,-325.375]`，低于 binary64 最小 subnormal 的 log 门槛，而 `r=0,cr=0` 仍返回精确零谱（全 `-inf`）。在既有 underflow 成功测试中增加这一条边界断言，避免误把正量线性 underflow 分类成 exact-zero。分类测试复跑 `3 passed`，Reference 未改。
+
+性能 100 对 A/B side-wise P50/P95 最大 `1.0267/1.0145`，输出逐位相同；paired-ratio P95 tail 为 `1.156/1.182`，记录为测时抖动风险而不省略。详情、源和原始数据见 `cr0_b175_amplitude_tilt_summary.md` 与对应 manifest。该结果覆盖有限点，不证明连续域；正向 final overflow 的可复现分类仍需单独审计。

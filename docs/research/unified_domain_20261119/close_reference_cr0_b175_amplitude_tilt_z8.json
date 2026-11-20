@@ -1,0 +1,55 @@
+{
+  "status": "complete_cr0_amplitude_tilt_reference_map_closure",
+  "reference_code_modified": false,
+  "z_tail": 8.0,
+  "same_saved_frequency_grids": true,
+  "source_sha256": {
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "fast_sgwb.py": "94936840905af9029504e369f312e0a6330ba03ef5fc2e104da5e0c9a9be9a42",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "cases": [
+    {
+      "case_id": "low_amplitude_high_tilt",
+      "fast_root": 2.213416757293793e-11,
+      "first_reference_map_at_fast_root": 2.2137736110618042e-11,
+      "second_reference_map": 2.2137735931710326e-11,
+      "third_reference_map": 2.2137735931710326e-11,
+      "first_to_second_closure_relative": 8.081572377839486e-09,
+      "second_to_third_closure_relative": 0.0,
+      "fast_root_relative_to_third_map": 0.00016118896636057778,
+      "reference_map_seconds": [
+        126.66148040000007,
+        126.5923272
+      ]
+    },
+    {
+      "case_id": "high_amplitude_high_tilt",
+      "fast_root": 2.2134167572937952e-07,
+      "first_reference_map_at_fast_root": 2.2137736023586132e-07,
+      "second_reference_map": 2.2137735803566304e-07,
+      "third_reference_map": 2.2137736567213701e-07,
+      "first_to_second_closure_relative": 9.938678020347173e-09,
+      "second_to_third_closure_relative": 3.449527892105077e-08,
+      "fast_root_relative_to_third_map": 0.00016121766852328446,
+      "reference_map_seconds": [
+        128.96455240000068,
+        129.54262050000034
+      ]
+    },
+    {
+      "case_id": "independent_sobol_holdout",
+      "fast_root": 1.3237195894517577e-07,
+      "first_reference_map_at_fast_root": 1.3239249913317517e-07,
+      "second_reference_map": 1.3239250476778392e-07,
+      "third_reference_map": 1.3239249961015094e-07,
+      "first_to_second_closure_relative": 4.2559877228748734e-08,
+      "second_to_third_closure_relative": 3.895713878926522e-08,
+      "fast_root_relative_to_third_map": 0.00015514976328463367,
+      "reference_map_seconds": [
+        127.48157230000106,
+        126.52185689999897
+      ]
+    }
+  ]
+}
