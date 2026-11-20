@@ -2159,7 +2159,7 @@ After delivery, probe toward more negative tilt near 14M; stop at the first Refe
 - [x] Independent Sobol Reference holdout: residual `1.47631e-5`, spectrum error `6.35914e-4 dex`; a second 14M closure map succeeds with residual `2.24471e-7`.
 - [x] 500-pair full Fast A/B: max new-region P50/P95 `1.009029/1.010746`; trusted control `1.002937/1.005692`; outputs bitwise equal; cold first solve ratio `1.0040`.
 - [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
-- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+- [x] Manifest and focused Ruff passed. Commit `cc2bb36c82d977878bee3b0439c6dd3ef1eab3a6` pushed; Actions `44824664497` passed 9/9.
 
 ### Boundary
 
@@ -2168,3 +2168,21 @@ Finite sampled evidence for `[13.875M,14M]×[-0.02734375,0]`; this is not a cont
 ### Next Step
 
 After delivery, bracket the next more-negative tilt near 14M using unchanged Reference settings and full rectangle/holdout evidence.
+
+
+## Round 84 — CR0 14M edge, tilt extension to -0.029296875
+
+- [x] Paired Fast lattice/interior/Sobol screen `0/19→19/19`; all old failures `nonfinite_background_primitive`; current samples H² positive finite, cutoff finite, 75 frequencies, zero warnings.
+- [x] Three z8 Reference density samples: max root residual `1.69152e-5`, max spectrum error `6.38555e-4 dex`.
+- [x] Independent Sobol Reference holdout: residual `1.37634e-5`, spectrum error `6.37074e-4 dex`; extra 14M closure iteration fails with the unchanged step-size-under-spacing error and is explicitly retained.
+- [x] 500-pair full Fast A/B: max new-region P50/P95 `1.008956/1.019034`; trusted control `1.002286/0.990220`; outputs bitwise equal; cold first solve candidate is faster.
+- [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
+- [ ] Verify manifest/delivery checks, commit/push and confirm CI.
+
+### Boundary
+
+Finite sampled evidence for `[13.875M,14M]×[-0.029296875,0]`; this is not a continuum certificate. The 14M point meets first-map residual/spectrum checks, but an additional Reference closure call fails.
+
+### Next Step
+
+After delivery, test the next more-negative tilt only with the same rectangle, holdout, Reference and full-solver performance gates.

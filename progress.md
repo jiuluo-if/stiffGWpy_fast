@@ -2276,3 +2276,14 @@ The current production source remains unchanged; added one tested Reference-orig
 - Independent Sobol Reference point passed (`root=1.476309e-5`, `spectrum=6.359141e-4 dex`); second 14M edge closure map passed (`2.244712e-7`).
 - 500-pair full Fast A/B: new-region max P50/P95 `1.009029/1.010746`; trusted control `1.002937/1.005692`; outputs bitwise equal; cold first solve about 0.40% slower.
 - Plot inspected; manifest and delivery checks, commit/push and CI remain.
+
+- Round 83 delivered as `cc2bb36c82d977878bee3b0439c6dd3ef1eab3a6`; remote matched and Actions `44824664497` passed 9/9.
+
+
+# Round 84 progress — CR0 14M tilt boundary
+
+- Midpoint tilt `n_t=-0.029296875` Reference probes at 13.875M, 13.9375M and 14M passed first-map checks; max root residual `1.691517e-5`, max spectrum error `6.385554e-4 dex`.
+- Candidate box `[13.875M,14M]×[-0.029296875,0]` paired old/current Fast screen `0/19→19/19`; all old failures `nonfinite_background_primitive`; current finite positive H² and complete 75-frequency outputs.
+- Independent Sobol Reference holdout passed (`root=1.376345e-5`, `spectrum=6.370737e-4 dex`). An extra 14M closure map failed with the unchanged Reference step-size limit; raw failure retained.
+- 500-pair full Fast A/B max new-region P50/P95 `1.008956/1.019034`; trusted control `1.002286/0.990220`; outputs bitwise equal.
+- Figure inspected; manifest, commit/push and CI remain.

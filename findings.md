@@ -3789,3 +3789,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - 三个 Reference 边界/内部点最大 root 残差 `1.664865e-5`、最大谱差 `6.383734e-4 dex`；独立 Sobol 点为 `1.476309e-5` 与 `6.359141e-4 dex`。14M 边界的第二个 Reference 映射通过，残差 `2.244712e-7`。
 - 500 对完整 Fast A/B（`59a23ae`→`d4ee1b9`）：新增区域 P50/P95 最大比 `1.009029/1.010746`；可信 CR0 控制 `1.002937/1.005692`；root、频率网格和谱逐位一致；首个冷启动求解约慢 0.40%。
 - 原始证据和有限样本图见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to14m_nt02734375_summary.md` 及同目录 manifest/JSON/PNG。
+
+## 2026-11-21 — CR0 14M 倾斜带延至 -0.029296875
+
+- `[13.875e6,14e6]×[-0.029296875,0]` 的 19 点 old/current Fast 对照 `0/19→19/19`，旧失败仍全部是 `nonfinite_background_primitive`；当前 H² 正有限、频点完整且无 warning。
+- 三个 z8 Reference 密度样本最大 root 残差 `1.691517e-5`、最大谱差 `6.385554e-4 dex`；独立 Sobol 留出 `1.376345e-5`、`6.370737e-4 dex`。
+- 14M 角点的额外 Reference 闭合调用步长下溢；已记录并保留失败分类。首次 Reference 映射误差仍低于原定门槛。
+- 500 对完整 Fast A/B（`59a23ae`→`d4ee1b9`）新增区域最大 P50/P95 `1.008956/1.019034`，可信控制 `1.002286/0.990220`，输出逐位相同。
+- 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to14m_nt029296875_summary.md` 及对应原始 JSON、manifest 和图。
