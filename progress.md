@@ -2159,3 +2159,13 @@ The current production source remains unchanged; added one tested Reference-orig
 - Three Reference cases pass z8: max root `1.432291e-4`, max same-root spectrum `7.305270e-4 dex`, max closure `6.608344e-8`; Reference source unchanged.
 - 500-pair full Fast A/B: new-region max P50/P95 `0.997719/1.002801`; trusted CR0 `1.000347/1.007013`; bitwise-identical outputs. The 100-pair trusted-control P95 outlier `1.052542` was rechecked at 500 pairs and did not persist.
 - Scripts Ruff pass. The figure `cr0_density_5m_to6m_domain.png` is rendered and visually checked. Manifest and delivery checks remain.
+
+- Round 72 delivery: `83b8e113eb69cb444f11486b8d212ad9c6069591` pushed to `fast_v0.2`; remote SHA matches. Actions `44768420649` completed successfully, 9/9 jobs.
+
+
+## Round 73 progress — CR0 density 6M–7M
+
+- Old/current paired screen: `0/19→19/19`, all old failures `nonfinite_background_primitive`; H² positive/finite, `N_inf` finite, 75 frequency points and zero warnings.
+- Three current z8 Reference cases: max root relative error `9.742327e-5`, max spectrum error `6.934864e-4 dex`, max map closure `1.211435e-7`.
+- 500-pair complete Fast A/B ratios: new-region P50/P95 maxima `0.995385/1.000488`; trusted CR0 `0.995721/0.984890`; all outputs bitwise equal.
+- `cr0_density_6m_to7m_domain.png` visually checked; scripts Ruff pass. Manifest/commit/CI remain.

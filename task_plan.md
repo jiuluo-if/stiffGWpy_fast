@@ -1959,7 +1959,7 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 - [x] 当前源码 z8 Reference 检查 6M 两个 tilt 端点和独立 Sobol；最大根误差 `1.4323e-4`、最大谱差 `7.3053e-4 dex`、最大 map residual `6.6084e-8`。
 - [x] Complete Fast A/B 扩域两点与可信控制各 500 对：最大 P50/P95 比 `1.0004/1.0071`，roots/frequencies/spectra 全部逐位相同。100 对先导出现的可信控制 P95 `1.0525` 由 500 对复测解除，原始先导保留。
 - [x] 图已视觉复核，研究脚本 Ruff 通过，Reference/生产代码未改。Round 71 commit `6371a8a` 与 CI `44764980102` (9/9) 已通过。
-- [ ] 更新哈希清单并提交/推送 5M–6M 证据，等待 CI。
+- [x] 哈希清单、5M–6M证据已提交推送为 `83b8e113eb69cb444f11486b8d212ad9c6069591`；远端一致，Actions `44768420649` 9/9 通过。
 
 ### Boundary
 
@@ -1968,3 +1968,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 ### Next Step
 
 若本轮 CI 通过，继续筛查 CR0 `[6e6,7e6] × n_t[-.5,0]`，保留数学有效性、错误分类、Reference、性能与独立留出门槛。
+
+
+## Round 73 — CR0 density continuation 6M–7M
+
+- [x] 同输入 old/current screen：3×3 lattice + 2 interior、seed `20261133` 的独立 8 点 Sobol，旧版 `0/19`、当前 `19/19`；旧失败全为 `nonfinite_background_primitive`。
+- [x] 新点 cutoff 有限、H² 正有限（最小 `0.4532139935`）、75 个频率、零 warning、physical guard 通过。
+- [x] 当前源 z8 Reference 三点最大 root error `9.7424e-5`、最大 spectrum error `6.9349e-4 dex`、最大 map closure `1.2115e-7`。
+- [x] 500-pair full Fast A/B：新区域 P50/P95 最大比 `0.9954/1.0005`，可信点 `0.9958/0.9849`；每对根、频率摘要和频谱逐位相同。
+- [x] 研究脚本 Ruff 通过，图已视觉检查，Reference/生产源码未改。报告、原始数据和 manifest 已生成。
+- [ ] 最终刷新系列 manifest 哈希，提交并推送本轮材料，确认对应 CI。
+
+### Boundary
+
+有限样本结果支持邻接区域改善，不构成 `[6e6,7e6]×[-.5,0]` 连续域证明。
+
+### Next Step
+
+通过交付 CI 后继续 CR0 `[7e6,8e6]×n_t[-.5,0]` 低成本筛查；保持数学有效性与精度/速度拒收条件。

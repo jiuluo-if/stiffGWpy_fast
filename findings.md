@@ -3696,3 +3696,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Three current-source z8 Reference validations pass: max closed-root relative error `1.4323e-4`, max spectrum difference `7.3053e-4 dex`, max closure residual `6.6084e-8`. Reference source/criteria unchanged.
 - 500 alternating full-solve pairs across two new points and a trusted CR0 point give max side-wise P50/P95 ratios `1.0004/1.0071`; all paired output roots, frequency digests and spectra are bitwise equal. A noisy 100-pair control P95 `1.0525` was explicitly rechecked at 500 pairs and is retained in raw evidence.
 - This extends sampled CR0 density×tilt coverage to 6M without production-source change. Finite samples are evidence, not a continuum proof.
+
+
+## CR0 high-density adjacent slice 6M–7M — 2026-11-21
+
+- Paired Fast screen on 19 lattice/interior/independent Sobol cases: pinned old Fast `0/19`, current `19/19`; all old failures `nonfinite_background_primitive`. Candidate background cutoff is finite, H² positive/finite, full 75-frequency spectrum finite and no warnings.
+- Three current-source z8 Reference cases pass: max closed-root relative error `9.7424e-5`, max same-root spectrum difference `6.9349e-4 dex`, max closure residual `1.2115e-7`.
+- 500 alternating full-solver pairs show max new-region side-wise P50/P95 ratios `0.9954/1.0005`; trusted CR0 `0.9958/0.9849`. Roots, frequency digests and spectra match bitwise.
+- No production code changed in this validation tranche. This is finite-sample evidence for another adjacent CR0 density×tilt slice only.
