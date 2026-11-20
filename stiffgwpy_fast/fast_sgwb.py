@@ -1703,27 +1703,33 @@ def _defer_nonadiabatic_wkb_tail(
 @njit(cache=True)
 def _defer_nonadiabatic_wkb_tails_kernel(
     candidate_tails, z0s, j0s, Phi_grid, sigma, phase_weight,
-    has_phase_weight, epsilon_limit,
+    has_phase_weight, epsilon_limit, summary_valid=False,
+    summary_monotone_phi=True, summary_max_dphi=0.0,
+    summary_max_derivative=0.0,
 ):
     """Fused per-mode WKB screen; avoid allocating/scanning NumPy arrays per mode."""
     n_modes = candidate_tails.size
     n_nodes = Phi_grid.size
     log_limit = math.log(epsilon_limit)
-    monotone_phi = True
-    max_dphi = 0.0
-    max_derivative = 0.0
-    for i in range(1, n_nodes):
-        delta_phi = Phi_grid[i] - Phi_grid[i - 1]
-        if delta_phi < 0.0:
-            monotone_phi = False
-        if delta_phi > max_dphi:
-            max_dphi = delta_phi
-        derivative = abs(1.5 * sigma[i] - 1.0)
+    monotone_phi = summary_monotone_phi
+    max_dphi = summary_max_dphi
+    max_derivative = summary_max_derivative
+    if not summary_valid:
+        monotone_phi = True
+        max_dphi = 0.0
+        max_derivative = 0.0
+        for i in range(1, n_nodes):
+            delta_phi = Phi_grid[i] - Phi_grid[i - 1]
+            if delta_phi < 0.0:
+                monotone_phi = False
+            if delta_phi > max_dphi:
+                max_dphi = delta_phi
+            derivative = abs(1.5 * sigma[i] - 1.0)
+            if derivative > max_derivative:
+                max_derivative = derivative
+        derivative = abs(1.5 * sigma[0] - 1.0)
         if derivative > max_derivative:
             max_derivative = derivative
-    derivative = abs(1.5 * sigma[0] - 1.0)
-    if derivative > max_derivative:
-        max_derivative = derivative
     min_tail = candidate_tails[0]
     for mode in range(1, n_modes):
         if candidate_tails[mode] < min_tail:
@@ -3264,6 +3270,13 @@ def _SGWB_iter_fast_impl(
                     if phase_weight is None
                     else np.asarray(phase_weight, dtype=np.float64)
                 )
+                background_summary = getattr(
+                    m, "_fast_wkb_global_summary", None
+                )
+                if background_summary is None:
+                    summary_args = (False, True, 0.0, 0.0)
+                else:
+                    summary_args = (True, *background_summary)
                 (
                     m._fast_nonadiabatic_handoff_selected,
                     m._fast_nonadiabatic_handoff_unresolved,
@@ -3271,6 +3284,7 @@ def _SGWB_iter_fast_impl(
                     candidate_tail_z, z0s, j0s, Phi_grid, m.sigma,
                     phase_values, phase_weight is not None,
                     _WKB_ADIABATICITY_LIMIT,
+                    *summary_args,
                 )
                 m._fast_adaptive_handoff_selected = int(np.count_nonzero(candidate_tail_z > z_tail))
                 m._fast_adaptive_handoff_fraction = float(

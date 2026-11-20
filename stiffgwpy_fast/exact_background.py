@@ -29,6 +29,8 @@ __all__ = ['sigma_vec', 'H2_vec', 'exact_phi_s2', 'build_transition_grid',
 ln10 = math.log(10.0)
 _LOG_FLOAT_MAX = math.log(float(np.finfo(np.float64).max))
 _LOG_FLOAT_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
+_PSI_MIN_FLOAT_RANGE = max(_LOG_FLOAT_MIN_SUBNORMAL, -2.0 * _LOG_FLOAT_MAX)
+_PSI_MAX_FLOAT_RANGE = min(_LOG_FLOAT_MAX, -2.0 * _LOG_FLOAT_MIN_SUBNORMAL)
 _H2_IDENTITY_PANEL_VARIATION_LIMIT = 5.0e-2
 
 
@@ -209,15 +211,10 @@ def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
 
 def _primitive_scales(psi, relative_scale):
     psi = np.asarray(psi, dtype=np.float64)
-    finite = bool(np.isfinite(psi).all())
+    psi_min = float(np.min(psi))
+    psi_max = float(np.max(psi))
     auto_scale = bool(
-        finite
-        and (
-            np.any(psi > _LOG_FLOAT_MAX)
-            or np.any(psi < _LOG_FLOAT_MIN_SUBNORMAL)
-            or np.any(-0.5 * psi > _LOG_FLOAT_MAX)
-            or np.any(-0.5 * psi < _LOG_FLOAT_MIN_SUBNORMAL)
-        )
+        psi_min < _LOG_FLOAT_MIN_SUBNORMAL or psi_max > _LOG_FLOAT_MAX
     )
     use_relative = bool(relative_scale or auto_scale)
     if use_relative:
@@ -609,8 +606,15 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
                       Phi_grid, Phi_mid, S2, S2inv, relative_scale=False):
     n = len(Nv)
     steep_panel = False
+    max_derivative = 0.0
     for i in range(n - 1):
         h_arr[i] = Nv[i + 1] - Nv[i]
+        derivative = abs(1.5 * nodes_left[i] - 1.0)
+        if derivative > max_derivative:
+            max_derivative = derivative
+        derivative = abs(1.5 * nodes_right[i + 1] - 1.0)
+        if derivative > max_derivative:
+            max_derivative = derivative
         if (abs(nodes_right[i + 1] - nodes_left[i]) * h_arr[i]
                 > _H2_IDENTITY_PANEL_VARIATION_LIMIT):
             steep_panel = True
@@ -628,14 +632,25 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
         integral[kink_index] = left_integral + right_integral
     F_nodes[0] = 0.0
     compensation = 0.0
-    all_psi_finite = math.isfinite(3.0 * F_nodes[0] - 4.0 * Nv[0])
     outside_float_range = False
+    N0 = Nv[0]
+    derivative = abs(1.5 * nodes_left[0] - 1.0)
+    if derivative > max_derivative:
+        max_derivative = derivative
+    derivative = abs(1.5 * nodes_right[0] - 1.0)
+    if derivative > max_derivative:
+        max_derivative = derivative
+    derivative = abs(1.5 * nodes_left[n - 1] - 1.0)
+    if derivative > max_derivative:
+        max_derivative = derivative
     psi0 = 3.0 * F_nodes[0] - 4.0 * Nv[0]
-    if math.isfinite(psi0) and (
-            psi0 > _LOG_FLOAT_MAX or psi0 < _LOG_FLOAT_MIN_SUBNORMAL
-            or -0.5 * psi0 > _LOG_FLOAT_MAX
-            or -0.5 * psi0 < _LOG_FLOAT_MIN_SUBNORMAL):
+    if psi0 < _PSI_MIN_FLOAT_RANGE or psi0 > _PSI_MAX_FLOAT_RANGE:
         outside_float_range = True
+    Phi_grid[0] = 1.5 * F_nodes[0] - Nv[0] + N0
+    monotone_phi = True
+    max_dphi = 0.0
+    S2[0] = 1.0 if relative_scale else np.exp(psi0)
+    S2inv[0] = 1.0 if relative_scale else np.exp(-0.5 * psi0)
     for i in range(n - 1):
         if relative_scale:
             increment = integral[i] - compensation
@@ -644,35 +659,40 @@ def _fast_phi_s2_fill(Nv, nodes_left, nodes_right, kink_index,
         else:
             F_nodes[i + 1] = F_nodes[i] + integral[i]
         psi = 3.0 * F_nodes[i + 1] - 4.0 * Nv[i + 1]
-        if not math.isfinite(psi):
-            all_psi_finite = False
-        elif (psi > _LOG_FLOAT_MAX or psi < _LOG_FLOAT_MIN_SUBNORMAL
-              or -0.5 * psi > _LOG_FLOAT_MAX
-              or -0.5 * psi < _LOG_FLOAT_MIN_SUBNORMAL):
+        if psi < _PSI_MIN_FLOAT_RANGE or psi > _PSI_MAX_FLOAT_RANGE:
             outside_float_range = True
+        Phi_grid[i + 1] = 1.5 * F_nodes[i + 1] - Nv[i + 1] + N0
+        delta_phi = Phi_grid[i + 1] - Phi_grid[i]
+        if delta_phi < 0.0:
+            monotone_phi = False
+        if delta_phi > max_dphi:
+            max_dphi = delta_phi
+        S2[i + 1] = 1.0 if relative_scale else np.exp(psi)
+        S2inv[i + 1] = 1.0 if relative_scale else np.exp(-0.5 * psi)
         F_mid[i] = F_nodes[i] + h_arr[i] * (
             nodes_left[i] + 4.0 * (0.75 * nodes_left[i]
                                     + 0.25 * nodes_right[i + 1])
             + mid_sigma[i]) / 12.0
-    N0 = Nv[0]
-    relative_used = all_psi_finite and (relative_scale or outside_float_range)
-    auto_overflow = all_psi_finite and outside_float_range and not relative_scale
+        Phi_mid[i] = 1.5 * F_mid[i] - 0.5 * (Nv[i] + Nv[i + 1]) + N0
+    relative_used = relative_scale or outside_float_range
+    auto_overflow = outside_float_range and not relative_scale
     identity_required = auto_overflow or steep_panel
-    for i in range(n):
-        Phi_grid[i] = 1.5 * F_nodes[i] - Nv[i] + N0
-        Psi = 3.0 * F_nodes[i] - 4.0 * Nv[i]
-        S2[i] = 1.0 if relative_used else np.exp(Psi)
-        S2inv[i] = 1.0 if relative_used else np.exp(-0.5 * Psi)
+    if auto_overflow:
+        for i in range(n):
+            S2[i] = 1.0
+            S2inv[i] = 1.0
     has_panel_defect = False
     for i in range(n - 1):
-        Phi_mid[i] = 1.5 * F_mid[i] - 0.5 * (Nv[i] + Nv[i + 1]) + N0
         if identity_required and not (
             i == kink_index and 0.0 < kink_fraction < 1.0
         ):
             defect = Phi_grid[i + 1] - 2.0 * Phi_mid[i] + Phi_grid[i]
             if abs(defect) > 1.0e-5:
                 has_panel_defect = True
-    return left_integral, relative_used, identity_required, has_panel_defect
+    return (
+        left_integral, relative_used, identity_required, has_panel_defect,
+        monotone_phi, max_dphi, max_derivative,
+    )
 
 
 def _fast_phi_s2_workspace(m, n):
@@ -711,6 +731,7 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
     """
     Nv = np.asarray(Nv, dtype=np.float64)
     if Nv.size < 2:
+        m._fast_wkb_global_summary = None
         return (np.zeros_like(Nv), np.zeros_like(Nv), np.ones_like(Nv),
                 np.ones_like(Nv), -1, 0.0, 0.0)
     nodes_left, nodes_right = _sigma_node_limits(Nv, m, DN_eff, sigma_nodes)
@@ -747,12 +768,16 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
             kink_fraction = 0.0
 
     workspace = _fast_phi_s2_workspace(m, Nv.size)
-    left_integral, relative_used, identity_required, has_panel_defect = _fast_phi_s2_fill(
+    (
+        left_integral, relative_used, identity_required, has_panel_defect,
+        monotone_phi, max_dphi, max_derivative,
+    ) = _fast_phi_s2_fill(
         Nv, nodes_left, nodes_right, kink_index, kink_fraction,
         sig_left, sig_re, sig_right, workspace['h_arr'],
         workspace['mid_sigma'], workspace['integral'], workspace['F_nodes'],
         workspace['F_mid'], workspace['Phi_grid'], workspace['Phi_mid'],
         workspace['S2'], workspace['S2inv'], relative_scale)
+    m._fast_wkb_global_summary = None
     if identity_required:
         replacement = _replace_overflowed_primitive(
             m, Nv, DN_eff, 0.5 * (Nv[:-1] + Nv[1:]),
@@ -773,6 +798,10 @@ def fast_phi_s2_split(m, Nv, DN_eff, sigma_nodes=None, *, relative_scale=False):
         phi_re = 0.0
     m._fast_relative_background_required = bool(relative_used)
     m._fast_panel_curvature_defect = bool(has_panel_defect)
+    if not identity_required:
+        m._fast_wkb_global_summary = (
+            bool(monotone_phi), float(max_dphi), float(max_derivative)
+        )
     return (workspace['Phi_grid'], workspace['Phi_mid'],
             workspace['S2'], workspace['S2inv'],
             kink_index, float(kink_fraction), float(phi_re))

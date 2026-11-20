@@ -63,6 +63,27 @@ def test_fused_wkb_tail_screen_matches_the_scalar_definition():
     assert tails[1] == 5.0
 
 
+def test_wkb_tail_screen_accepts_an_equivalent_precomputed_background_summary():
+    phi = np.array([0.0, 0.2, 0.3, 0.4, 1.0])
+    sigma = np.array([1.0, 100.0, 1.0, 1.0, 1.0])
+    z0s = np.array([4.8, 4.8])
+    j0s = np.array([0, 0], dtype=np.int64)
+    phases = np.array([0.0, 1.0])
+    scanned_tails = np.array([5.0, 5.0])
+    summarized_tails = scanned_tails.copy()
+
+    scanned = _defer_nonadiabatic_wkb_tails_kernel(
+        scanned_tails, z0s, j0s, phi, sigma, phases, True, 0.02
+    )
+    summarized = _defer_nonadiabatic_wkb_tails_kernel(
+        summarized_tails, z0s, j0s, phi, sigma, phases, True, 0.02,
+        True, True, 0.6, 148.5,
+    )
+
+    assert summarized == scanned
+    np.testing.assert_array_equal(summarized_tails, scanned_tails)
+
+
 def test_fused_wkb_screen_marks_a_nonadiabatic_segment_that_reaches_the_terminal_node():
     phi = np.array([0.0, 0.1, 0.2])
     sigma = np.array([1.0, 1.0, 100.0])
