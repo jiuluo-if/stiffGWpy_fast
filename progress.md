@@ -2100,3 +2100,13 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - 当前源码相对 CR0 条带证据的代码变更仅涉及张量 log-power 非有限分类与 pressure detail 输出。为了保留哈希边界，新增 after-guard replay artifact，不把 `c3c6ab3` Reference 直接贴到新源码哈希上。
 - 初次 replay 脚本从主 worktree 导入了另一份 `stiffgwpy_fast`，产生错误 `4.056 dex` 谱差；复核发现脚本未把目标 repo 根加入 `sys.path`。修正为先插入当前 checkout 根后重跑：19 个 lattice/interior/Sobol 参数当前全部成功、根逐点相同；五个 Reference 参数的频率网格和 Fast log 谱均逐位相同，max delta `0.0`。旧错误 replay 输出已覆盖，不作为证据。
 - 正确 replay 记录当前 worktree commit 和 `exact_background.py/fast_sgwb.py/freq_adaptive.py/_wkb_transfer.py/reference.py` 哈希；Reference 源码仍与前序 z8 工件相同。脚本、JSON、摘要与 CR0 manifest 的 post-classification replay source hash 已归档。
+
+## 2026-11-20 — CR1 `T_re×kappa10` paired 区域证据（Round 68）
+
+- Pinned 旧版与当前版同输入，`Omega_bh2=Omega_ch2=7e5`、`T_re∈[2000,2500]`、`kappa10∈[.01,.015]`、`cr=1`。实际 tilt `-.00125`，有限 `N_inf`、正有限 H²；lattice/interior `0/11→11/11`，独立 Sobol `0/8→8/8`，19 个旧失败全为 `nonfinite_background_primitive`。
+- 当前源 z8 Reference 四点 max root proxy `1.54486e-4`、max same-root spectrum `8.07271e-4 dex`；两点 third-map max root delta `1.54487e-4`、second→third map closure `1.05017e-8`。
+- 100 alternating full-solve pairs, two points: maximum side-wise P50/P95 ratios `0.9997/0.9887`; root/frequency/spectrum outputs match exactly. Paired P95 ratios `1.0717/1.0685` indicate measurable tail timing noise.
+- Current-source replay of shared base corner is bitwise exact; saved Reference arrays are reusable. Reference source remains byte-identical.
+- 5 source hashes and 20 artifact hashes verified; report, scripts, raw JSON, manifest and figure are in `docs/research/unified_domain_20261119/cr1_b175_reheat_kappa_*` and matching screen/validate/close/replay/benchmark files.
+- Evidence covers finite samples only; no continuum claim. Production Fast code is unchanged in this tranche.
+- 本轮交付门禁：`python -m pytest -q` 为 `441 passed, 9 deselected, 2 warnings`；仓库 CI 标准 Ruff、根目录无参数 `python -m mypy`、compileall 与 `python -m build` sdist/wheel 均通过。手动向 mypy 指定两个文件触发的额外告警不属于仓库标准配置，改用 CI 命令后 `Success: no issues found in 2 source files`。

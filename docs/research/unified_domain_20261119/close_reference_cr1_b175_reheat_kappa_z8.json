@@ -1,0 +1,42 @@
+{
+  "status": "complete_cr1_reheat_kappa_reference_map_closure",
+  "reference_code_modified": false,
+  "z_tail": 8.0,
+  "same_saved_frequency_grids": true,
+  "source_sha256": {
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "fast_sgwb.py": "554d197b8c2271d85bf9ffb59f89ad51809af4da75a3e34cc6fc8d1e6a91534a",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "cases": [
+    {
+      "case_id": "low_reheat_high_kappa",
+      "fast_root": 0.024886781977603637,
+      "first_reference_map_at_fast_root": 0.024890627230575318,
+      "second_reference_map": 0.024890627268723955,
+      "third_reference_map": 0.024890627258890793,
+      "first_to_second_closure_relative": 1.532650688761412e-09,
+      "second_to_third_closure_relative": 3.950548116004515e-10,
+      "fast_root_relative_to_third_map": 0.00015448711867163163,
+      "reference_map_seconds": [
+        69.27231499999834,
+        71.15507409999918
+      ]
+    },
+    {
+      "case_id": "independent_sobol_holdout",
+      "fast_root": 0.02590607891934515,
+      "first_reference_map_at_fast_root": 0.025908225989609353,
+      "second_reference_map": 0.02590822540351818,
+      "third_reference_map": 0.025908225675597737,
+      "first_to_second_closure_relative": 2.2621818476331615e-08,
+      "second_to_third_closure_relative": 1.0501666930339476e-08,
+      "fast_root_relative_to_third_map": 8.286002598040948e-05,
+      "reference_map_seconds": [
+        69.45516240000143,
+        71.43590359999871
+      ]
+    }
+  ]
+}

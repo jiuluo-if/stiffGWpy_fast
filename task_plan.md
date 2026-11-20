@@ -1874,3 +1874,21 @@ This fixes output-failure classification and does not expand the numerical domai
 - [x] Replay the five same-root Reference cases and verify current Fast frequency arrays and log spectra are bitwise identical to saved arrays.
 - [x] Fix the replay harness import path so it selects the target worktree; discard the earlier wrong-worktree `4.056 dex` replay.
 - [ ] Continue the wider domain audit; current output-overflow classification repair is a maintenance fix, not a new domain claim.
+
+## Round 68 — CR1 再加热温度 × `kappa10` 区域复核
+
+- [x] 以 pinned Fast `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45` 对照当前 `8e71fb74cadc50c1e3493a877cd19975a47e984b`，固定 `Omega_bh2=Omega_ch2=7e5`、`cr=1`，在 `T_re∈[2000,2500] × kappa10∈[.01,.015]` 跑 3×3 lattice + 2 interior 和 seed `20261126` 的独立 8 点 Sobol：旧版 `0/19`、候选 `19/19`；旧失败全是 `nonfinite_background_primitive`，19 点 H² 正有限、派生 `n_t=-.00125`、`N_inf` 有限。
+- [x] 当前源码 z8 Reference 四点最大根误差代理 `1.54486e-4`、最大谱误差 `8.07271e-4 dex`；两代表点第三映射闭合根误差最大 `1.54487e-4`、第二至第三映射闭合最大 `1.05017e-8`。共享 base corner 当前源码 replay 的 root、频率网格、Fast log spectrum 逐位相同，故复用已匹配的 Reference 数组。
+- [x] 两点各 100 组交替完整 solve 的 side-wise 候选/旧 helper P50/P95 最大比 `0.9997/0.9887`，根/频率/谱逐位一致。paired P95 比约 `1.072/1.068` 的调度尾部尖峰保留并披露；不得将 side-wise pass 解释为无计时风险。
+- [x] 核对 5 个源码与 20 个 artifact 哈希、Reference 源哈希未变；本轮图已视觉检查，相关脚本 Ruff 及 diff check 通过。区域结论是有限样本覆盖，不是连续域证明；生产源码无改动。
+- [ ] 仅提交本轮报告、图、manifest、原始屏幕/Reference/闭合/replay/A-B 数据及脚本，确认 Git 身份并推送两个 Fast refs；等待 Actions 完成。
+
+### Boundary
+
+CR1 的 `T_re×kappa10` 矩形在 lattice/interior 和独立 Sobol 这些有限点上支持旧失败→新成功；不能据此断言整个连续矩形均可解。paired timing 的 P95 尖峰仍是计时限制。扩域来自当前统一背景稳定机制，不是新参数特判；生产方程、Reference 和验收门槛未变。
+
+### Next Step
+
+推送本轮证据并核对 CI 后，从 pinned old-Fast 真实失败记录选择新的 CR0/CR1 相邻二维切片，先检查数学有效性，再重复同输入区域 screen、独立留出、精度和完整运行成本门槛。
+
+- 验证细节：全量 pytest 441 passed, 9 deselected; canonical Ruff/Mypy、compileall、sdist/wheel 通过。显式路径 Mypy 调用不适用于此项目配置，使用 .github/workflows/ci.yml 的根目录 python -m mypy 后通过。

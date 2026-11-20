@@ -3630,3 +3630,13 @@ The classification is distinct from exact zero, positive-tensor linear underflow
 ## Fast source path integrity for the CR0 amplitude strip replay
 
 `c3c6ab3` 的 CR0 条带 Reference 证据不能默认套用到之后改过分类代码的源码。一次 replay script 在不插入目标 repo 路径时导入了主工作区的另一份 `stiffgwpy_fast`，误报恒定 `4.056 dex` 差值。独立内联复现和修正后的脚本明确以目标 worktree 根优先导入，19 个 screen root 完全相同，五组 Reference 输入的同频率 log 谱逐位相同（max delta `0`）。原误报结果已由正确输出覆盖。将 replay 当前源码哈希单列，保留原始 CR0 证据的 `c3c6ab3` 源哈希，避免混用。
+
+## 2026-11-20 — Round 68 CR1 `T_re×kappa10` 扩域证据
+
+固定 `Omega_bh2=Omega_ch2=7e5`、`cr=1`，检查 `T_re∈[2000,2500] × kappa10∈[.01,.015]`。CR1 约束给出实际 `n_t=-0.00125`；该 tilt 的 `N_inf` 有限，样本 H² 正有限。相对 pinned Fast `872a70d`，3×3 lattice + 两内部点和独立 8 点 Sobol 合计 `0/19→19/19`，旧失败统一为 `nonfinite_background_primitive`。当前 Fast 输出全 76 个频率、没有 warning，warm screen P50 约 95 ms。
+
+当前 Fast 源码 z8 Reference 的四点最大根误差代理 `1.54486e-4`、最大同根谱误差 `8.07271e-4 dex`；两点延伸第三次映射后最大 Fast 根差 `1.54487e-4`，第二至第三次闭合 `1.05017e-8`。共享 base corner 先用当前源码逐位复放，再复用相同 Reference 数组。100 对完整 A/B side-wise 最大 P50/P95 比 `0.9997/0.9887`；成对 P95 比 `1.072/1.068` 仍有尾部调度抖动，应一并报告。
+
+机制沿用统一背景实现：对正 H² 平滑支用 `sigma = 1 - (d ln H²/dN)/3` 的恒等式构造 sigma 积分，指数越出 binary64 动态范围时使用相对背景尺度；再加热前分支仍严格取 `sigma=1`，物理 kink 不做平滑。本轮只验证新的 CR1 切片，不改生产源或 Reference。有限样本支持区域改善，不证明连续矩形。
+
+`cr1_b175_reheat_kappa_summary.md`、paired lattice/Sobol、z8 Reference、第三 map closure、base-corner exact replay、100-pair A/B、PNG 和 manifest 保存结果。机器复核确认 5 个源码及 20 个 artifact SHA-256 匹配；Ruff 与 `git diff --check` 通过。
