@@ -3620,3 +3620,9 @@ CR1 `[1e5,7e5]^2` 配对 screen 在旧版 Fast `872a70d` 上 19/19 失败，类�
 另确认正量 underflow 与精确零有不同输出语义：对 `r=1e-316,n_t=17.38,cr=0`，Fast 成功并给出有限 `log10OmegaGW`；14 个线性 `Ogw_today` 为零的格点 log 值在 `[-367.439,-325.375]`，低于 binary64 最小 subnormal 的 log 门槛，而 `r=0,cr=0` 仍返回精确零谱（全 `-inf`）。在既有 underflow 成功测试中增加这一条边界断言，避免误把正量线性 underflow 分类成 exact-zero。分类测试复跑 `3 passed`，Reference 未改。
 
 性能 100 对 A/B side-wise P50/P95 最大 `1.0267/1.0145`，输出逐位相同；paired-ratio P95 tail 为 `1.156/1.182`，记录为测时抖动风险而不省略。详情、源和原始数据见 `cr0_b175_amplitude_tilt_summary.md` 与对应 manifest。该结果覆盖有限点，不证明连续域；正向 final overflow 的可复现分类仍需单独审计。
+
+## Positive final-spectrum output beyond float64 log range
+
+CR0 `n_t=1e308`, `r=.01`, `A_s=2.100549e-9` has finite `N_inf` and positive H², so the screen does not reject a mathematical cutoff or background. Its tensor log-power multiplication overflows float64 before the DN map; Fast previously returned only generic `nonfinite`, obscuring that the output spectrum itself was not representable. A new red regression confirmed the old reason. Fast now stops at the log-power boundary with `nonrepresentable_output/tensor_power_log_out_of_range`; expected multiply overflow is locally silenced after classification is moved to the caller. The pressure survey records `unrepresentable_final_output` and copies the detail.
+
+The classification is distinct from exact zero, positive-tensor linear underflow recovered through finite `log10OmegaGW`, invalid CR1 cutoff, nonpositive H², and nonfinite propagation. The appropriate related tests (`29 passed`), Ruff, project Mypy, compileall and diff check pass. No Reference code changed. This change is not an expansion result.

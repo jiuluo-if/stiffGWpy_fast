@@ -1855,3 +1855,15 @@ The `[7e5,8e5]²` evidence is finite and sampled; it is not a mathematical conti
 ### Boundary
 
 This is finite coverage evidence for one CR0 rectangle. It does not certify the continuum. Positive final-overflow classification remains to be resolved; no production source or Reference code changed in this tranche.
+
+## Round 67 — final tensor log-power representability classification
+
+- [x] Prove the prior generic `nonfinite` class on a finite-cutoff, positive-H² CR0 extreme-tilt case (`n_t=1e308`) with a failing regression test.
+- [x] Fail before continuing when the per-frequency tensor log power is nonfinite; classify as `nonrepresentable_output/tensor_power_log_out_of_range`, restore input DN state and avoid an exact-zero success.
+- [x] Map the classification into the pressure-domain report as `unrepresentable_final_output` and preserve its detail; keep expected overflow local and warning-free.
+- [x] Verify relevant Fast, physics, pressure tests (`29 passed`), Ruff, project Mypy, compileall and diff check.
+- [ ] Replay the accepted CR0 amplitude/tilt domain against the updated source hash, then continue with another old-Fast valid failure slice.
+
+### Boundary
+
+This fixes output-failure classification and does not expand the numerical domain. Reference remains unchanged; overall domain-expansion goal stays active.

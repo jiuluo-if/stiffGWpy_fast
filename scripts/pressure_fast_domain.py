@@ -157,6 +157,8 @@ def _classify_reason(reason: str | None) -> str:
         return "frequency_grid_failure"
     if reason == "tensor_amplitude_underflow":
         return "floating_point_underflow"
+    if reason == "nonrepresentable_output":
+        return "unrepresentable_final_output"
     if reason:
         return "solver_failure"
     return "unknown_failure"
@@ -184,6 +186,7 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
     result = {
         "label": item["label"], "params": params, "parameter_sha256": digest,
         "status": None, "classification": None, "reason": None,
+        "failure_detail": None,
         "derived": {}, "runtime_s": None, "n_freq": None,
         "DN_gw": None, "spectrum_finite_bins": None,
         "fast_accuracy_status": None, "fast_accuracy_budget": None,
@@ -225,6 +228,7 @@ def evaluate(item: dict, max_n_inf: float, threads: int) -> dict:
             )
         result["warnings"] = [str(w.message) for w in caught]
         result["reason"] = model.fast_failure_reason
+        result["failure_detail"] = getattr(model, "fast_failure_detail", None)
         result["background_failure_index"] = getattr(
             model, "_fast_background_failure_index", None
         )

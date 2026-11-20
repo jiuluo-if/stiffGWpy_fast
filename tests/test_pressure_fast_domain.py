@@ -64,6 +64,24 @@ def test_background_primitive_overflow_keeps_its_failure_class():
     assert _classify_reason('nonfinite_background_primitive') == 'nonfinite_background_primitive'
 
 
+def test_final_output_unrepresentability_has_its_own_classification():
+    from scripts.pressure_fast_domain import _classify_reason
+
+    assert _classify_reason('nonrepresentable_output') == 'unrepresentable_final_output'
+
+
+def test_pressure_evaluator_preserves_unrepresentable_output_detail():
+    params = dict(BASE, n_t=1.0e308)
+
+    result = evaluate({'label': 'blue_tilt_output_out_of_range', 'params': params},
+                      max_n_inf=120.0, threads=1)
+
+    assert result['status'] == 'failed'
+    assert result['classification'] == 'unrepresentable_final_output'
+    assert result['reason'] == 'nonrepresentable_output'
+    assert result['failure_detail'] == 'tensor_power_log_out_of_range'
+
+
 def test_unrepresentable_s2_scales_do_not_materialize_exponentials():
     import numpy as np
 

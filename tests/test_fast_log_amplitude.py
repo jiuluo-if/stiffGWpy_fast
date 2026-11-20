@@ -94,6 +94,30 @@ def test_nonzero_tensor_final_energy_underflow_is_not_reported_as_success():
     assert not model.SGWB_converge
 
 
+def test_tensor_power_log_overflow_is_classified_as_unrepresentable_output():
+    model = _underflow_model(r=0.01, n_t=1.0e308)
+    assert model.derived_param["N_inf"] is not None
+    model.gen_expansion()
+    from stiffgwpy_fast.exact_background import H2_vec
+
+    h2 = H2_vec(model.Nv, model, model.cosmo_param["DN_eff"])
+    assert np.isfinite(h2).all()
+    assert np.all(h2 > 0.0)
+
+    result = FS.SGWB_iter_fast(
+        model,
+        config=FS.resolve_config("fast", threads=1),
+        tol=1e-6,
+        physical_guard=False,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "nonrepresentable_output"
+    assert model.fast_failure_detail == "tensor_power_log_out_of_range"
+    assert model.cosmo_param["DN_eff"] == 0.0
+    assert not model.SGWB_converge
+
+
 def test_cr_positive_nonzero_underflow_keeps_consistency_background_finite():
     model = _underflow_model(cr=1.0, r=1e-316)
 

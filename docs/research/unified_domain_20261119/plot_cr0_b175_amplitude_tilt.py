@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[2]
 FIGURE = HERE / "cr0_b175_amplitude_tilt_evidence.png"
 MANIFEST = HERE / "cr0_b175_amplitude_tilt_manifest.json"
 REPORT = HERE / "cr0_b175_amplitude_tilt_summary.md"
@@ -107,8 +106,10 @@ def main() -> None:
     plt.close(fig)
 
     source_hashes = {
-        name: sha256(REPO / "stiffgwpy_fast" / name)
-        for name in ("exact_background.py", "fast_sgwb.py", "_wkb_transfer.py", "reference.py")
+        "exact_background.py": reference["source_sha256"]["exact_background.py"],
+        "fast_sgwb.py": reference["source_sha256"]["fast_sgwb.py"],
+        "_wkb_transfer.py": benchmark["candidate_helper_sha256"],
+        "reference.py": reference["source_sha256"]["reference.py"],
     }
     artifact_paths = {
         name: HERE / name for name in (
@@ -128,13 +129,11 @@ def main() -> None:
             FIGURE.name,
         )
     }
-    for name in ("tests/test_physics_limits.py", "tests/test_fast_log_amplitude.py",
-                 "tests/test_pressure_fast_domain.py"):
-        artifact_paths[name] = REPO / name
     manifest = {
         "status": "finite_sample_cr0_amplitude_tilt_region_evidence",
         "baseline_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
         "candidate_commit": "c3c6ab3fc34e705ebdea3d16739740a227d1acb7",
+        "source_hashes_referenced_from_raw_validation": True,
         "source_sha256": source_hashes,
         "reference_code_modified": False,
         "artifacts_sha256": {

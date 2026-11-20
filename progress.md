@@ -2086,3 +2086,11 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - 分类审计的 12 项定向测试通过；新增一条 underflow 输出断言，确认 14 个线性 `Ogw_today=0` 的 bins 对应有限 log 谱 `[-367.439,-325.375]`，小于最小 subnormal 的 log 下界 `-323.306`。精确零路径另测为全 `-inf`。新断言及 exact-zero/final-underflow 两项复跑 `3 passed`；Ruff 通过。
 - 区域屏幕、原始 Reference arrays、map closure、100 对 benchmark、图和 manifest 已存于 `cr0_b175_amplitude_tilt_*`；manifest 覆核 current Fast/Reference/test 源码哈希。生产 Fast 与 Reference 方程未改。
 - 这是 finite sampling，不证明连续矩形。下一步检查正向最终溢出与不可表示输出分类，再选另一片旧版 Fast 失败区域；保持当前精度/性能区域不退化。
+
+## 2026-11-20 — final tensor-power output overflow classification
+
+- Added the red regression for CR0 `n_t=1e308`, positive finite `r/A_s`, finite `N_inf`, and positive finite H². Before the fix Fast returned generic `nonfinite` after nonfinite DN map formation, with expected but noisy overflow warnings.
+- Fast now detects a nonfinite `candidate_log_P_t` before propagation completion and returns `nonrepresentable_output` with detail `tensor_power_log_out_of_range`; `freq_adaptive` and the Fast power expression locally suppress expected IEEE overflow warnings while the caller classifies the result. Input `DN_eff` is restored and `SGWB_converge` remains false.
+- The pressure-domain classifier now maps this reason to `unrepresentable_final_output` and retains `failure_detail`. The red test for reason mapping plus evaluator detail both failed before this script fix.
+- Related verification after the fix: `29 passed`; Ruff, project `python -m mypy`, compileall and diff check passed. `Reference` unchanged. This repairs failure telemetry/typing; it is not counted as a domain expansion.
+- Next: rerun the CR0 strip's affected-source replay after this Fast source change; then continue the distinct valid failure-domain search and keep positive final-overflow separate from intermediate overflow and `H²≤0`.
