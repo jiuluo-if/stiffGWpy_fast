@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import itertools
 from pathlib import Path
@@ -19,11 +20,11 @@ HIGH = 7.0e5
 BASE = {"T_re": 2000.0, "cr": 1.0}
 
 
-def run(output_name: str, rectangle, holdouts) -> None:
+def run(prefix: str, family: str, rectangle, holdouts) -> None:
     screen.BASE_PARAMS.update(BASE)
     screen.RECTANGLE = rectangle
     screen.HOLDOUTS = holdouts
-    screen.OUTPUT = HERE / output_name
+    screen.OUTPUT = HERE / f"{prefix}_{family}.json"
     screen.BASELINE_PARTIAL = screen.OUTPUT.with_name(
         screen.OUTPUT.stem + "_baseline_partial.json"
     )
@@ -31,24 +32,35 @@ def run(output_name: str, rectangle, holdouts) -> None:
 
 
 def main() -> None:
-    grid = (LOW, (LOW + HIGH) / 2.0, HIGH)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--low", type=float, default=LOW)
+    parser.add_argument("--high", type=float, default=HIGH)
+    parser.add_argument("--seed", type=int, default=20261120)
+    parser.add_argument("--prefix", default="screen_cr1_b175_square")
+    args = parser.parse_args()
+    if not (0.0 < args.low < args.high):
+        parser.error("require 0 < --low < --high")
+    grid = (args.low, (args.low + args.high) / 2.0, args.high)
     rectangle = [
         {"Omega_bh2": ob, "Omega_ch2": oc}
         for ob, oc in itertools.product(grid, repeat=2)
     ]
+    span = args.high - args.low
     interior = [
-        {"Omega_bh2": 2.5e5, "Omega_ch2": 4.0e5},
-        {"Omega_bh2": 5.5e5, "Omega_ch2": 2.0e5},
+        {"Omega_bh2": args.low + 0.25 * span,
+         "Omega_ch2": args.low + 0.50 * span},
+        {"Omega_bh2": args.low + 0.75 * span,
+         "Omega_ch2": args.low + span / 6.0},
     ]
-    run("screen_cr1_b175_square_lattice.json", rectangle, interior)
+    run(args.prefix, "lattice", rectangle, interior)
 
-    unit = qmc.Sobol(d=2, scramble=True, seed=20261120).random_base2(m=3)
+    unit = qmc.Sobol(d=2, scramble=True, seed=args.seed).random_base2(m=3)
     sobol = [
-        {"Omega_bh2": float(LOW + (HIGH - LOW) * point[0]),
-         "Omega_ch2": float(LOW + (HIGH - LOW) * point[1])}
+        {"Omega_bh2": float(args.low + (args.high - args.low) * point[0]),
+         "Omega_ch2": float(args.low + (args.high - args.low) * point[1])}
         for point in unit
     ]
-    run("screen_cr1_b175_square_sobol.json", [], sobol)
+    run(args.prefix, "sobol", [], sobol)
 
 
 if __name__ == "__main__":

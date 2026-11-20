@@ -3604,3 +3604,11 @@ CR1 `[1e5,7e5]^2` 配对 screen 在旧版 Fast `872a70d` 上 19/19 失败，类�
 早期 CR1 Reference 结果的 Fast 源哈希与本候选不一致，Fast 复放也未逐位相同，故不复用其误差。当前源哈希下的新 z8 Reference 三点及第三次映射达到最大根差 `1.0923e-4`、最大频谱误差 `8.9352e-4 dex`、最大第二至第三 map 闭合差 `2.9228e-7`。Reference 源码保持原样。复现闭合需沿用首轮结果里的相同 76 个频率节点；再次求 Fast 得到的小幅动态网格变化不应用作对比网格。
 
 `cr1_b175_square_summary.md`、配对/Reference/计时原始 JSON、脚本、PNG 与 manifest 提供具体证据。19 点采样支持相邻 CR1 方域改善，不能证明整个参数矩形连续有效。
+
+## CR1 上边界筛查：solver success 不等于精度有效（2026-11-20）
+
+在 `cr=1` 实际派生倾斜、有限 cutoff 和正 H² 条件下，当前源码 `51c9030` 于邻接 `[7e5,8e5]^2` 的 paired grid/interior/Sobol 样本将旧 Fast 19 个 `nonfinite_background_primitive` 失败全部求解成功。边界 `1.5M/1.6M` 总密度和独立 Sobol 高和留出三点的当前源码第三次 Reference map 核验均通过：最大 root error `1.8543e-4`、max same-root spectrum error `9.1571e-4 dex`、second-to-third closure `1.7022e-7`。
+
+向上 screen 到 `[7e5,1.3e6]^2` 时 Fast 仍 19/19 返回，但代表性 z8 Reference 上 `(1.3M,1.3M)` root error `6.7009e-4`、谱差 `1.1025e-3 dex`，独立上方 Sobol root/spectrum `6.0345e-4/1.0878e-3`；中点 root error `4.4352e-4`。所以更宽块明确拒绝为有效域。此处显示数值成功与精度验收必须分开统计。
+
+低 P50 且大样本 P95 pass 的 helper A/B 与有噪 pilot 均保存，100 对 side-wise 最大 P50/P95 ratios 为 `1.0041/1.0239`，成对 P95 tail 仍存在。来源、原始 JSON、图和摘要见 `cr1_b175_adjacent_summary.md` 及 manifest；有限点不证明整个盒子。

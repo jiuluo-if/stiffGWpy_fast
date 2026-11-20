@@ -1,0 +1,55 @@
+{
+  "status": "complete_cr1_adjacent_reference_map_closure",
+  "reference_code_modified": false,
+  "z_tail": 8.0,
+  "same_saved_frequency_grids": true,
+  "source_sha256": {
+    "exact_background.py": "c55ff5755615a0eaa5a2f4c7ddbd938f84ffa1fe1cf722866c7b04225752e313",
+    "fast_sgwb.py": "94936840905af9029504e369f312e0a6330ba03ef5fc2e104da5e0c9a9be9a42",
+    "reference.py": "4e2eb80709da944923206a840c0864d454faad9b51dc3fb9ebfda90abe460536"
+  },
+  "cases": [
+    {
+      "case_id": "boundary_diagonal_1500k",
+      "fast_root": 0.15515061564490315,
+      "first_reference_map_at_fast_root": 0.1551298269884209,
+      "second_reference_map": 0.1551298092128008,
+      "third_reference_map": 0.15512981956634705,
+      "first_to_second_closure_relative": 1.1458545702583529e-07,
+      "second_to_third_closure_relative": 6.674117375700033e-08,
+      "fast_root_relative_to_third_map": 0.00013405597076196848,
+      "reference_map_seconds": [
+        133.92627979999997,
+        135.07049600000028
+      ]
+    },
+    {
+      "case_id": "boundary_diagonal_1600k",
+      "fast_root": 0.1656954998243787,
+      "first_reference_map_at_fast_root": 0.16566479219079222,
+      "second_reference_map": 0.16566480912813566,
+      "third_reference_map": 0.16566478092971823,
+      "first_to_second_closure_relative": 1.0223863193138254e-07,
+      "second_to_third_closure_relative": 1.7021371275263738e-07,
+      "fast_root_relative_to_third_map": 0.00018542803417886353,
+      "reference_map_seconds": [
+        134.84464730000036,
+        135.44921260000046
+      ]
+    },
+    {
+      "case_id": "adjacent_independent_sobol_upper_sum",
+      "fast_root": 0.16404843947988995,
+      "first_reference_map_at_fast_root": 0.16401934915391392,
+      "second_reference_map": 0.1640193665670174,
+      "third_reference_map": 0.16401934528977372,
+      "first_to_second_closure_relative": 1.0616492339514365e-07,
+      "second_to_third_closure_relative": 1.2972398866472468e-07,
+      "fast_root_relative_to_third_map": 0.00017738267437194532,
+      "reference_map_seconds": [
+        135.46381060000022,
+        135.8140645000003
+      ]
+    }
+  ]
+}

@@ -2068,3 +2068,12 @@ The verified expansion claim is limited to the two sampled cr0 slices; no contin
 - 一次 Reference 复跑 Fast 根产生了轻微变化的动态频率网格；闭合验证已改为固定首轮 Reference 记录的同一频率数组，再逐次迭代 Reference map。图表经视觉检查，Ruff 与 `git diff --check` 通过，哈希 manifest 覆核通过。
 - 报告、原始配对数据、三个 Reference 样本、第三次映射闭合、A/B、复现脚本及图在 `docs/research/unified_domain_20261119/cr1_b175_square_*`、`screen_cr1_b175_square*`、`validate_cr1_b175_square_z8*`、`close_reference_cr1_b175_square_z8*` 和 `benchmark_cr1_b175_wkb_guard_ab*`。
 - 这是 CR1 方域的有限样本证据，不是连续认证；本轮未改生产源代码。下一步沿 CR1 失败边界做邻接矩形与独立留出，并继续核验未覆盖的有效切片。
+
+## 2026-11-20 — CR1 邻接方块与精度边界
+
+- 当前 `51c9030` 源码哈希下，将 CR1 配对采样扩展到邻接 `[7e5,8e5]^2`：3×3 网格 + 2 内部点 `0/11→11/11`，seed `20261122` 的 8 点独立 Sobol `0/8→8/8`。旧版 19/19 为 `nonfinite_background_primitive`，且 H² 正有限；候选 19/19 成功，76 频率点、无警告。CR1 实际倾斜 `-0.00125`，`N_inf=68.81383977` 有限。
+- 同源码 z8 Reference 在对角和 `1.5M`、`1.6M` 与邻接 Sobol 高和留出三点逐次映射至第三次：最大 Fast 根相对误差 `1.8543e-4`，最大同 Fast 根谱差 `9.1571e-4 dex`，最大第二至第三 map 闭合差 `1.7022e-7`，均过门槛。最高和 Sobol 的根差 `1.7738e-4`、谱差 `9.1032e-4 dex`。
+- 继续 screen `[7e5,1.3e6]^2` 得到 `0/19→19/19` 求解成功，但精度拒绝此整块：`(1.3M,1.3M)` 根/谱误差 `6.7009e-4 / 1.1025e-3 dex`；上方独立 Sobol `6.0345e-4 / 1.0878e-3 dex`；`(1M,1M)` 根误差 `4.4352e-4`。报告只接纳相邻 `[7e5,8e5]^2` 样本范围。
+- CR1 上方区域 32 对 pilot 的高角点 P95 比 `1.052`；保留原始 JSON 后扩展到 100 对。Side-wise 候选/旧核最大 P50/P95 比为 `1.0041/1.0239`，根、频率和谱逐位相同。成对 P95 仍观测到尾部尖峰（Sobol `1.0702`），摘要中保留此计时波动风险；冷首调高角点基线/候选 `19.68/18.64 s`。
+- 生产源码与 Reference 源码未改。图表、复现脚本、paired screen、当前源码 Reference、map closure、32/100 对 benchmark、双 manifest 与摘要归档在 `docs/research/unified_domain_20261119/cr1_b175_adjacent_*`、`screen_cr1_b175_{adjacent,upper}_*` 及相邻 validate/benchmark 文件中。有限采样，不构成连续域证明。
+- 当前 paired CR1 邻接扩域精度与 side-wise 运行门槛均通过；上边界更宽方块因精度失败而拒绝。下一步继续寻找另一片旧 Fast 有效失败区域，并检查零极限与不可表示输出分类。

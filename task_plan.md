@@ -1829,3 +1829,16 @@ The paired lattice, two interior points, eight Sobol holdouts and three Referenc
 ### Boundary
 
 This tranche adds finite evidence for one CR1 square at source commit `b175f0b`; it is not a continuum certificate and changes no production code. The broad objective remains active.
+
+## Round 65 — CR1 adjacent boundary and accuracy-rejected upper box
+
+- [x] Re-run a pinned-baseline/current-source paired CR1 3×3 lattice + interior points and independent Sobol in `[7e5,8e5]²`: `0/19→19/19`, old failures are `nonfinite_background_primitive`, positive finite H² and finite model cutoff.
+- [x] Run same-source z8 Reference and third-map closure at two diagonal sums and an independent upper-sum Sobol point; max root error `1.8543e-4`, max spectrum error `9.1571e-4 dex`, max second-to-third map closure `1.7022e-7`.
+- [x] Screen the broader `[7e5,1.3e6]²` and reject it as an accuracy domain even though Fast returns all samples: representative root error reaches `6.7009e-4` and spectrum error `1.1025e-3 dex`.
+- [x] Keep the 32-pair pilot showing a high-corner P95 ratio `1.052`; run 100 alternating pairs. Final side-wise P50/P95 ratios stay below 5%, roots/frequencies/spectra are identical; record paired-tail timing variation.
+- [x] Produce and visually inspect the paired coverage/precision/performance figure; verify current source hashes and raw-data manifests; Ruff and diff checks pass.
+- [ ] Select another distinct old-Fast failure slice or classification boundary (exact zero, invalid cutoff, nonpositive H², and unrepresentable outputs) without weakening the accepted CR1 accuracy region.
+
+### Boundary
+
+The `[7e5,8e5]²` evidence is finite and sampled; it is not a mathematical continuum certificate. The larger upper box is not accepted. No production source or Reference code changed this tranche.
