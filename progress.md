@@ -2199,3 +2199,13 @@ The current production source remains unchanged; added one tested Reference-orig
 - Three current z8 Reference checks: max root `5.128512e-5`, spectrum `6.200100e-4 dex`, map closure `4.878594e-8`.
 - 500-pair full Fast A/B: new-region P50/P95 max `0.997726/1.000134`, trusted control `1.001976/1.004674`; all outputs bitwise equal.
 - Figure `cr0_density_9m_to10m_domain.png` visually inspected; scripts Ruff pass. Commit/CI remain.
+
+- Round 76 delivery: commit `68819b9da78af7e28138e48245d6ace7a95c73bd` is on `fast_v0.2`; remote matches and Actions `44779543332` passed 9/9.
+
+
+## Round 77 progress — CR0 density 10M–11M
+
+- Screen `0/19→19/19`, old failure reason exclusively `nonfinite_background_primitive`; current points all positive finite H², finite cutoff, full 75-node output and zero warnings.
+- z8 Reference max root error `4.542079e-5`, spectrum `6.890632e-4 dex`, map closure `9.605813e-8`.
+- 500-pair complete Fast A/B max new-region P50/P95 `1.000023/1.006664`, trusted CR0 `1.002703/0.996804`, all outputs bitwise equal.
+- Figure checked and scripts Ruff pass. Manifest, commit and CI remain.

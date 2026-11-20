@@ -3728,3 +3728,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Current-source z8 Reference at three representative cases passes: maximum root error `5.1286e-5`, spectrum error `6.2001e-4 dex`, map-closure residual `4.0239e-8`.
 - 500-pair full Fast A/B ratios are ≤`1.0020/1.0047` at P50/P95 including the trusted point; all output roots, frequency digests and spectra match bitwise.
 - No production Fast or Reference code changed. Evidence is finite-sample only.
+
+
+## CR0 high-density adjacent slice 10M–11M — 2026-11-21
+
+- Pinned old Fast fails `0/19`; current unified Fast succeeds `19/19` on the same lattice/interior/independent Sobol inputs. Old failures all classify as `nonfinite_background_primitive`; candidate H² is positive and finite and the 75-frequency results are complete.
+- Three z8 Reference checks pass with max root error `4.5421e-5`, maximum same-root spectrum error `6.8907e-4 dex`, and maximum map closure `9.6059e-8`.
+- 500-pair full-solver performance ratios meet the gate: new-region P50/P95 max `1.0001/1.0067`, trusted CR0 `1.0028/0.9969`; results match bitwise.
+- No production code changed. This is finite-sample evidence for the shared CR0 density×tilt mechanism.

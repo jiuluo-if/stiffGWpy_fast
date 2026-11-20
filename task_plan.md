@@ -2040,3 +2040,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 ### Next Step
 
 CI 通过后继续 CR0 `[10e6,11e6]×n_t[-.5,0]` 屏幕；继续按相同数学有效性、精度和性能规则判断。
+
+
+## Round 77 — CR0 density continuation 10M–11M
+
+- [x] Old/current paired screen 19 inputs: `0/19→19/19`; old failures all `nonfinite_background_primitive`.
+- [x] H² positive finite, cutoff finite, 75 frequencies, no warnings; CR0 tilt remains input-defined.
+- [x] Three current-source z8 Reference points pass: maximum root error `4.5421e-5`, spectrum error `6.8907e-4 dex`, map closure `9.6059e-8`.
+- [x] 500-pair complete-solve A/B: new region max P50/P95 `1.0001/1.0067`, trusted CR0 `1.0028/0.9969`; paired outputs are bitwise equal.
+- [x] Figure visual inspection and focused Ruff pass; Reference and production Fast source unchanged.
+- [ ] Finalize manifest, push evidence and verify Actions.
+
+### Boundary
+
+Only sampled coverage, not continuous-domain certification.
+
+### Next Step
+
+On successful CI continue `[11e6,12e6]×n_t[-.5,0]` screen with the same finite-background, Reference and 5% performance checks.
