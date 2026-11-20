@@ -2246,3 +2246,11 @@ The current production source remains unchanged; added one tested Reference-orig
 - Low-tilt probes at 13.875M, 13.9375M, 13.96875M, and 13.984375M all pass; 13.984375M high tilt also passes. Exact 14M low tilt fails Cartesian and Prüfer with required-step-size-under-spacing; no Reference code/setting changed.
 - Dedicated accepted box `[13M,13.984375M]`: paired old/current `0/19→19/19`; z8 Reference max root `4.561744e-5`, max spectrum `6.780782e-4 dex`, max closure `1.818292e-7`; 500-pair full Fast A/B max P50/P95 `1.003520/1.007964` on new points, `1.007496/1.019105` on trusted CR0.
 - Manifest/source/artifact hashes all pass; submitted for CI.
+# Round 81 progress — CR0 near-zero-tilt extension to 14M
+
+- Refreshed the working branch to remote `d4ee1b9c8f9fad401c5e22c2316094a608074727`; preserved the pre-refresh 413-item dirty workspace in local stash `stash@{0}` and left it unapplied.
+- Paired Fast screens for `[13.875M,14M]×[-0.015625,0]`: 11 lattice/interior + 8 independent Sobol cases, old/current `0/19→19/19`; all old failures are `nonfinite_background_primitive`; current H² positive finite, 75 frequencies and zero warnings.
+- Three selected z8 Reference maps: max root residual `1.580519e-5`, max spectrum error `6.358214e-4 dex`. Independent Sobol map: residual `1.300343e-5`, spectrum error `6.359313e-4 dex`; a repeated additional closure map fails at the unchanged Reference step-size limit and is recorded.
+- Wider 13.75M–14M exploratory screen passes Fast but is excluded from accuracy coverage because its 13.75M low-tilt Reference fails.
+- 500-pair persistent TBB Fast A/B: max new-region P50/P95 `1.005285/1.015309`; trusted control `1.000268/0.983095`; outputs bitwise identical. First cold solve ratio `1.0403`.
+- Focused Ruff and plot inspection pass; production Fast/Reference source unchanged. Full result, manifest generation, project checks, commit/push and CI remain.

@@ -3767,3 +3767,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Repeated Reference probes show low-tilt inputs at 13.875M, 13.9375M, 13.96875M and 13.984375M integrate successfully; at 13.984375M, both tilt endpoints pass. The 14M high-tilt point also passes, while the exact 14M low-tilt point fails both Cartesian and Prüfer Reference due step underflow.
 - A dedicated 13M–13.984375M old/current screen has `0/19→19/19`. z8 Reference at both upper endpoints plus independent Sobol and interior holdout passes root/spectrum/map checks. 500-pair Fast A/B including trusted CR0 remains within 5% and bitwise equivalent.
 - Treat 14M low tilt as Reference-integration-limited, not physically invalid. No changes to solver or Reference code/acceptance settings.
+# 2026-11-21 — CR0 高密度近零倾斜边界
+
+- `fast_v0.2` 远端最新基线为 `d4ee1b9c8f9fad401c5e22c2316094a608074727`。旧 Fast 失败基线仍为 `872a70dc5ab3bb2ff9d3c0d78f05850341b42a45`。
+- `[13.875e6,14e6]×[-0.015625,0]` 同输入 Fast 屏幕：19 点旧版 `0/19`、当前 `19/19`；所有旧失败为 `nonfinite_background_primitive`。当前点 H² 正有限、截止有限、75 频点、零 warning。
+- 代表性 z8 Reference 样本最大 root 残差 `1.580519e-5`，最大谱差 `6.358214e-4 dex`。独立 Sobol holdout 在 Fast 根处残差 `1.300343e-5`、谱差 `6.359313e-4 dex`。同一点继续一次额外 Reference 映射会因 `Required step size is less than spacing between numbers` 失败；不把深迭代 Reference 闭合描述为成功。
+- 更宽 `[13.75e6,14e6]×[-0.015625,0]` Fast 屏幕也 `0/19→19/19`，但 `13.75e6,-0.015625` Reference 失败；该宽盒不属于精度验收范围。
+- 500 对完整 Fast A/B（基线 `59a23ae`，候选 `d4ee1b9`）新增区域最大 P50/P95 比 `1.005285/1.015309`；可信控制 `1.000268/0.983095`。root、频点和谱逐位一致。首个冷启动求解约慢 4.03%。
+- 见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to14m_nearzero015_summary.md` 与配套 manifest/原始 JSON/图。证据为有限采样，不是连续域证明。

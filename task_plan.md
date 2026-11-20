@@ -2104,7 +2104,7 @@ Finite sampled region evidence; no claim that every point in the box has been ce
 - [x] z8 Reference at 13.984375M both tilt endpoints + independent Sobol, plus 13.25M interior, passes; max root error `4.5618e-5`, spectrum `6.7808e-4 dex`, closure `1.8183e-7`. Boundary probes 13.875/13.9375/13.96875/13.984375 low-tilt pass; 14M high-tilt passes while 14M low-tilt fails both backends.
 - [x] Narrow-box 500-pair full A/B passes: expanded region max P50/P95 `1.0036/1.0080`; trusted control `1.0075/1.0191`; bitwise outputs.
 - [x] Reference source hash and acceptance settings unchanged; failure diagnostic retained; figure and focused Ruff pass.
-- [ ] Submit narrow accepted box + 14M Reference failure diagnostic and verify Actions.
+- [x] Narrow accepted box + 14M Reference failure diagnostic were committed in `d4ee1b9c8f9fad401c5e22c2316094a608074727`; remote matched and Actions `44792572850` passed 9/9.
 
 ### Boundary
 
@@ -2112,4 +2112,23 @@ The exact 14M low-tilt face remains excluded from accepted precision coverage. T
 
 ### Next Step
 
-If delivery CI passes, map Reference feasibility near the 14M face in a second tilt slice; keep any Reference failure classified and do not change its settings or code.
+Continue mapping Reference feasibility near the 14M face; keep any Reference failure classified and do not change its settings or code.
+
+
+## Round 81 — CR0 13.875M–14M near-zero-tilt edge
+
+- [x] On the same 19 accepted-box inputs, old/current Fast screen `0/19→19/19`; all old failures `nonfinite_background_primitive`. Sampled H² positive finite, finite cutoff, 75 frequencies, zero warnings.
+- [x] Selected z8 Reference maps at lower/upper density and interior: max root residual `1.58052e-5`, max spectrum error `6.35822e-4 dex`.
+- [x] Independent Sobol holdout at Fast root: root/fixed-point residual `1.30034e-5`, max spectrum error `6.35931e-4 dex`; a further Reference closure map fails with step-underflow and is retained as a limitation.
+- [x] Broader 13.75M–14M Fast-only screen also `0/19→19/19`, but its lower-density/low-tilt Reference fails; excluded from accepted precision box.
+- [x] 500-pair complete Fast A/B: new-region max P50/P95 `1.005285/1.015309`; trusted control `1.000268/0.983095`; roots, spectra and frequency grids bitwise equal. Cold first solve ratio `1.0403`.
+- [x] Coverage/accuracy/runtime figure inspected; focused Ruff passes. Fast and Reference production source unchanged.
+- [ ] Verify manifest, run applicable test/lint/package checks, commit/push and confirm CI.
+
+### Boundary
+
+Finite sample evidence for `[13.875M,14M]×[-0.015625,0]`, not a continuum certificate. Reference integration is not robust for the wider low-density face and one additional Sobol closure iteration.
+
+### Next Step
+
+After delivery checks, continue the 14M boundary toward more negative tilt only where selected Reference root/spectrum checks and paired Fast performance remain within the existing gates.
