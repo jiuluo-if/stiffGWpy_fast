@@ -1736,7 +1736,37 @@ This round preserves existing sampled successes and materially reduces cost in t
 
 ### Next Step
 
-Finish final validation and provenance for the production WKB3 change, then push only the validated solver/test/evidence files and verify CI.
+Advance the next baseline Fast failure region on CR0 high density or a distinct CR1 slice; do not expand beyond the Reference/performance evidence collected.
+
+## Round 61 — CR0 density continuation to 2e6
+
+- [x] Extend the paired old/current Fast screen from `Omega_bh2=1e6` to `[1e6,2e6]`, keeping `cr=0` and independently varying `n_t∈[-.5,0]`; use a 3×3 lattice, two interior points, and an independent 8-point scrambled Sobol set.
+- [x] Confirm pinned old Fast baseline `872a70d` returns `nonfinite_background_primitive` on all 19 samples while current Fast succeeds on all 19 with positive finite H², finite `N_inf`, and physical-guard acceptance.
+- [x] Directly validate four representative new-region points with unchanged z8 Reference; maximum closed-root error `7.261e-5`, maximum spectrum error `8.085e-4 dex`, maximum closure residual `7.732e-8`.
+- [x] Compare current WKB3 Fast with same-source pre-WKB `63aee9d` using 64 alternating full solves: roots equal to roundoff, frequency grids bitwise equal, max spectrum shift `5.45e-9 dex`; the new-region P50/P95 are 25.6–27.4/26.4–28.6 ms and ratios to pre-WKB are 0.25–0.39.
+- [x] Produce coverage, failure-class, precision, timing, and source/artifact hash evidence. Keep the claim as finite sampled coverage; the Reference points do not certify every point inside the rectangle.
+- [ ] Commit/push this evidence tranche with the corrected progress ledger; verify both target refs and CI.
+
+### Next Step
+
+Use pinned old Fast failure scans to choose another mathematically valid adjacent CR0 or CR1 slice, then require paired lattice/Sobol coverage and selected Reference checks before claiming further expansion.
+
+## Round 61 — CR0 density continuation to `Omega_bh2=2e6`
+
+- [x] Extend the pinned-old/current Fast comparison to the CR0 box `[1e6,2e6] × n_t[-.5,0]`: 3×3 lattice plus two interior points and independent 8-point scrambled Sobol.
+- [x] Old baseline `872a70d` fails `0/11 + 0/8` as `nonfinite_background_primitive`; current `702d543` succeeds `11/11 + 8/8`. All 19 current samples have finite positive H², finite `N_inf`, and pass the physical guard.
+- [x] Direct z8 Reference at four corners/holdout: max closed-root error `7.261e-5`, max spectrum error `8.085e-4 dex`, max closure residual `7.732e-8`; Reference code and thresholds unchanged.
+- [x] Pre-WKB/current production A/B (`63aee9d` vs `702d543`), 64 alternating full solves, two trusted CR0 controls plus four new-region representatives: roots equal to roundoff, frequency hashes exact, max spectrum shift `5.45e-9 dex`; current p50/p95 ratios `0.25–0.39` to pre-WKB, new-region absolute warm P50/P95 `26.7–27.4 / 27.8–28.6 ms`.
+- [x] Create raw data, source/artifact hash manifest, paired coverage/failure-class/precision chart, and research summary. Finite sampling is reported as evidence, not continuous certification.
+- [ ] Commit/push only this evidence tranche and planning ledger; verify both target refs and CI.
+
+### Boundary
+
+The parameter rectangle is supported by a finite lattice, internal samples, Sobol holdouts and four direct Reference points. It is not a proof over every point in the rectangle; the reference checks do not cover its continuum. Production Fast source is unchanged in this round.
+
+### Next Step
+
+Select the next adjacent region from current old-Fast failure records, first validating mathematical H² positivity and physical guard, then repeat the paired lattice/Sobol and selected-reference gates.
 
 
 ## 2026-11-19 continuation — CR1 high corner and qualified lower rectangle

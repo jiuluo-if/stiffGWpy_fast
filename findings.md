@@ -3559,3 +3559,23 @@ At fixed `Omega_bh2=1e6`, `Omega_ch2=0.1201075`, `cr=0`, `T_re=2000`, `kappa10=.
 在 64 组交替完整求解中，两个可信 CR1 案例 warm P50/P95 比都低于 1.05；三个 CR0 蓝倾斜代表点的 warm P50/P95 时间比为 0.37–0.45。每对根逐位相同，谱差最大 `2.433e-9 dex`。历史 CR0 蓝倾斜 z10 Reference 对应根误差最大 `4.8712e-6`、谱误差最大 `7.2099e-4 dex`；以新旧候选谱差作上界余量，仍通过正式限值。首次含 JIT 完整求解候选 `10.173s` vs 基线 `7.376s`，一次性编译代价 +38%，应继续显式披露。
 
 该优化的3个 CR0 输入 old/current 均成功，故不是新的求值域扩展。对应旧版背景数值失败→当前背景稳定实现成功的 CR0 区域数据仍使用既有区域报告/清单；WKB3 的贡献是降低该高倾斜片区的传播成本。两处初期 A/B 无效：第一处用了旧 `48bbb96` 混合比较；第二处 Numba 缓存沿用同一路径的已编译全局。最终报告使用 `63aee9d` 同源隔离副本与新鲜缓存路径。
+
+## 2026-11-20 — CR0 high-density extension evidence
+
+The current Fast extends the sampled `cr=0`, fixed-background slice from the prior 1e6 upper density to `Omega_bh2=2e6`, with independent `n_t∈[-.5,0]`. The paired historical baseline `872a70d` fails all 11 grid/interior points and all 8 scrambled Sobol points with `nonfinite_background_primitive`; current source `702d543` succeeds on all 19, with finite positive H2, finite N_inf, and physical guard accepted. This is paired old-failure→new-success evidence rather than a Reference-count-only change.
+
+Direct z8 Reference at `(2e6,0)`, `(2e6,-.5)`, `(1e6,0)`, and an independent Sobol holdout gives max closed-root relative error `7.2607e-5`, max spectrum error `8.0846e-4 dex`, and max closure residual `7.7315e-8`. It uses unchanged Reference source. Four selected points do not certify all values in the two-dimensional rectangle.
+
+Warm performance A/B compares current WKB3 Fast to the same stable-background source at `63aee9d` without WKB3. Across new-region points, candidate/base P50 and P95 ratios are `0.30–0.34`; candidate runs `26.7–27.4 ms` P50 and `27.8–28.6 ms` P95. Roots are equal to roundoff, frequency grids match exactly, and spectra differ by at most `5.45e-9 dex`. The existing-region 750k control has `25.6/26.4 ms`, placing new points in the same measured warm-cost range. An isolated first JIT call is slower (`19.29 s` vs `9.60 s`), which remains a disclosed limitation.
+
+The coverage, outcome class, root/spectrum precision plot and file hashes are in `docs/research/unified_domain_20261119/cr0_high_density_extension_{summary.md,domain.png,manifest.json}` with raw paired screens, Reference arrays and A/B samples alongside.
+
+## 2026-11-20 — CR0 high-density continuation validated
+
+The sampled CR0 slice extends the previously verified density×tilt area to `Omega_bh2∈[1e6,2e6]`, with `n_t∈[-.5,0]` independent at fixed `cr=0`. Against old Fast baseline `872a70d`, the 3×3 lattice plus two interior points gives `0/11→11/11`; an independent scrambled Sobol design (seed 20261123) gives `0/8→8/8`. Every old failure is `nonfinite_background_primitive`; current Fast has finite positive H², finite `N_inf`, and physical guard acceptance for all 19 samples.
+
+Four selected direct z8 Reference checks (both upper-density tilt corners, the lower-density zero-tilt corner, and one independent Sobol holdout) have max closed-root error `7.2607e-5`, max spectrum error `8.0846e-4 dex`, and max map closure residual `7.7315e-8`. Reference code and thresholds are unchanged. This is finite sampled evidence, not a continuum proof.
+
+A separate 64-pair alternating full-solve A/B against the stable-background pre-WKB Fast source at `63aee9d` confirms WKB3 keeps the newly sampled region efficient: candidate P50/P95 are 26.7–27.4/27.8–28.6 ms and about 0.30–0.34 of baseline; roots match to roundoff, frequency grids are bitwise equal, max spectrum shift is `5.45e-9 dex`. A fresh-module first solve includes a larger one-time JIT cost (candidate 19.29 s vs baseline 9.60 s); warm gates pass, but this cold-start cost remains a limitation.
+
+Raw screens, direct Reference arrays, A/B samples, source hashes, manifest and figure are in `docs/research/unified_domain_20261119/`. Current production source was unchanged; this turn expands verified usage evidence for an already deployed Fast mechanism.
