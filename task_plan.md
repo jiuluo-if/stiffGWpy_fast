@@ -1986,3 +1986,21 @@ The earlier positive-tilt screen already shows `n_t=.2–.3` failing the root ga
 ### Next Step
 
 通过交付 CI 后继续 CR0 `[7e6,8e6]×n_t[-.5,0]` 低成本筛查；保持数学有效性与精度/速度拒收条件。
+
+
+## Round 74 — CR0 density continuation 7M–8M
+
+- [x] 同输入旧/当前 Fast：lattice/interior + seed `20261134` 独立 8 点 Sobol 共 19 点，`0/19→19/19`，旧失败全为 `nonfinite_background_primitive`。
+- [x] 当前样本均有正有限 H²（最小 `0.4532139935`）、有限 `N_inf`、完整 75 频率且零 warning。
+- [x] z8 Reference 三代表点全部过线，最大 root error `7.5815e-5`、最大频谱差 `6.6046e-4 dex`、最大闭合残差 `1.2519e-7`。
+- [x] 500-pair full Fast A/B：新区域最大 P50/P95 比 `1.0073/1.0267`；可信 CR0 `1.0142/1.0419`；root/frequency/spectrum 逐位一致。
+- [x] 脚本 Ruff 通过，图已视觉检查；Reference 与生产源未改。
+- [ ] 最终刷新本轮 manifest 并随本阶段证据推送，确认 CI。
+
+### Boundary
+
+有限采样、三 Reference 代表点和指定硬件计时不构成 7M–8M 连续域认证或跨硬件承诺。
+
+### Next Step
+
+如果本轮 CI 通过，继续 CR0 `[8e6,9e6]×n_t[-.5,0]` 筛查，保留统一拒收条件。

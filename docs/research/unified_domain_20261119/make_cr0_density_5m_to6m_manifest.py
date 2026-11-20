@@ -31,9 +31,6 @@ ARTIFACT_FILES = (
     "cr0_density_5m_to6m_domain.png",
     "cr0_density_5m_to6m_summary.md",
     "make_cr0_density_5m_to6m_manifest.py",
-    "progress.md",
-    "findings.md",
-    "task_plan.md",
 )
 
 

@@ -39,9 +39,6 @@ ARTIFACT_FILES = (
     "cr0_density_3m_to4m_summary.md",
     "make_cr0_density_3m_to4m_manifest.py",
     "tests/test_long_reheating_domain.py",
-    "progress.md",
-    "findings.md",
-    "task_plan.md",
 )
 
 
