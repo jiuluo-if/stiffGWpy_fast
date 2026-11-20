@@ -2075,7 +2075,7 @@ On successful CI for Round 78, continue `[12e6,13e6]×n_t[-.5,0]` with the same 
 
 ### Next Step
 
-CI 通过后继续检查 CR0 `[12e6,13e6]×n_t[-.5,0]`；若精度/性能门槛失败，保留边界证据，不作参数特判。
+继续 CR0 `[13e6,14e6]` 探索；Reference 无法积分的边界必须排除于已验收精度域。
 
 
 ## Round 79 — CR0 density continuation 12M–13M
@@ -2085,7 +2085,7 @@ CI 通过后继续检查 CR0 `[12e6,13e6]×n_t[-.5,0]`；若精度/性能门槛�
 - [x] Three current z8 Reference cases pass: max root relative error `4.2549e-5`, max spectrum error `6.7689e-4 dex`, map residual `8.6884e-8`.
 - [x] 500-pair full Fast A/B: new-region max P50/P95 `1.0030/1.0170`; trusted CR0 `1.0051/1.0221`; paired outputs bitwise identical.
 - [x] Figure and focused Ruff checks pass; production Fast and Reference source unchanged.
-- [ ] Commit/push the verified region package and wait for CI.
+- [x] 12M–13M 已推送为 `495900bda96756ec6cb82efd8e9dc62a171069a7`；远端匹配，Actions `44787045193` 成功（9/9）。
 
 ### Boundary
 
@@ -2093,4 +2093,23 @@ Finite sampled region evidence; no claim that every point in the box has been ce
 
 ### Next Step
 
-If CI succeeds, continue `[13e6,14e6]×n_t[-.5,0]` and preserve current boundary classifications.
+继续 13M–14M Reference 边界审计；若独立 Reference 后端均失败，收窄已验收域并记录失败分类。
+
+
+## Round 80 — 13M–14M Reference boundary and accepted subregion
+
+- [x] Broad 13M–14M Fast screen: 19 inputs old/current `0/19→19/19`; old failures all `nonfinite_background_primitive`, candidate background valid.
+- [x] At exact 14M/low-tilt, current Fast solves, but unchanged Cartesian and Prüfer Reference at z8/rtol1e-9 both fail with `Required step size is less than spacing between numbers`.
+- [x] Narrow accepted box to 13M–13.75M; dedicated 19-point lattice/interior/Sobol screen `0/19→19/19`.
+- [x] z8 Reference for both 13.75M tilt endpoints and an independent Sobol point, plus 13.25M interior, passes: max root error `4.3419e-5`, spectrum `6.7529e-4 dex`, closure `2.5683e-7`.
+- [x] Narrow-box 500-pair full A/B passes: new region max P50/P95 `1.0036/1.0014`; trusted control `1.0075/1.0192`; bitwise outputs.
+- [x] Reference source hash and acceptance settings unchanged; failure diagnostic retained; figure and focused Ruff pass.
+- [ ] Submit narrow accepted box + 14M Reference failure diagnostic and verify Actions.
+
+### Boundary
+
+The 14M face remains excluded from accepted precision coverage. The result is finite-sample support for `[13M,13.75M]`, not a continuum certificate.
+
+### Next Step
+
+If delivery CI passes, inspect `[13.75M,14.5M]` only as an exploratory extension; stop at Reference feasibility boundaries without changing Reference settings or code.

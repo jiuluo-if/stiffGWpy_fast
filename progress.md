@@ -2229,3 +2229,12 @@ The current production source remains unchanged; added one tested Reference-orig
 - Current z8 Reference: max root `4.254815e-5`, max spectrum `6.768858e-4 dex`, max map closure `8.688372e-8`.
 - 500-pair complete Fast A/B max new-region P50/P95 `1.002961/1.016985`; trusted CR0 `1.001568/1.022094`; outputs bitwise equal.
 - Figure checked; targeted scripts Ruff pass. Package/commit/CI remain.
+
+
+## Round 80 progress — Reference boundary and 13M–13.75M accepted slice
+
+- Broad exploratory screen to 14M: old/current `0/19→19/19`; all old failures `nonfinite_background_primitive`; current screen points valid.
+- At exact 14M low tilt, Reference Cartesian and Prüfer both return `Required step size is less than spacing between numbers`; raw diagnostic preserves settings/source hashes. Exclude this face from accuracy claims.
+- Dedicated `[13M,13.75M]` screen `0/19→19/19`; z8 Reference for both upper tilt endpoints, independent Sobol and a 13.25M interior sample passes. Max root `4.341852e-5`, spectrum `6.752912e-4 dex`, closure `2.568274e-7`.
+- 500-pair full Fast A/B P50/P95 max for expanded samples `1.003520/1.001338`, trusted CR0 `1.007496/1.019105`; bitwise equal outputs.
+- Figure visually checked; all focused scripts Ruff pass. Manifest valid; commit/push/CI pending.

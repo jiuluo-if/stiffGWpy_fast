@@ -3752,3 +3752,11 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - Three z8 Reference validations pass: max root error `4.2549e-5`, max spectrum difference `6.7689e-4 dex`, maximum map closure `8.6884e-8`.
 - 500 alternating full-solver pairs show P50/P95 ratios under 5% on new region and trusted control; roots, frequency digests and spectra are bitwise identical.
 - No production source changed. The result extends finite-sample CR0 density×tilt coverage only.
+
+
+## CR0 density 13M–14M Reference boundary; accepted 13M–13.75M box — 2026-11-21
+
+- Broad same-input 13M–14M Fast screen is `0/19→19/19`; old failures all `nonfinite_background_primitive` and current Fast backgrounds pass positivity/finiteness checks.
+- At 14M low tilt, Cartesian and Prüfer z8 Reference both fail tensor integration due to `Required step size is less than spacing between numbers`. This is a Reference numerical failure, not proof of physical invalidity or a Fast failure, and is not counted as precision success.
+- A dedicated 13M–13.75M screen gives old/current `0/19→19/19`; Reference at both 13.75M tilt endpoints, one independent Sobol holdout and one 13.25M interior sample all meet root/spectrum/map gates. Max root error `4.3419e-5`, max spectrum difference `6.7529e-4 dex`.
+- 500-pair full-solve P50/P95 ratios including trusted CR0 stay below 5%; all outputs match bitwise. No production code changed.
