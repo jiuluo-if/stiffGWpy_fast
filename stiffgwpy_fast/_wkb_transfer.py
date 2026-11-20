@@ -10,6 +10,8 @@ import math
 
 from numba import njit
 
+_FLOAT64_MIN_NORMAL = 2.2250738585072014e-308
+
 
 @njit(cache=True, inline="always")
 def _phase_primitive(w: float, alpha: float) -> float:
@@ -98,7 +100,21 @@ def _transfer_order(
         ) / 8.0
     a11, a12, a21, a22 = _basis(z_start, 0.0, q, alpha, 0.0, order)
     b11, b12, b21, b22 = _basis(z_end, h_step, q, alpha, phase, order)
-    determinant = a11 * a22 - a12 * a21
+    diagonal_product = a11 * a22
+    off_diagonal_product = a12 * a21
+    determinant = diagonal_product - off_diagonal_product
+    determinant_error = 4.0 * 2.220446049250313e-16 * (
+        abs(diagonal_product) + abs(off_diagonal_product)
+    )
+    if (
+        not math.isfinite(determinant)
+        or not math.isfinite(determinant_error)
+        or abs(determinant) < _FLOAT64_MIN_NORMAL
+        or abs(determinant) <= determinant_error
+    ):
+        # The inverse is not resolved to float64 precision.  Signal an invalid
+        # WKB candidate so the caller uses its existing phase-substep transfer.
+        return math.nan, math.nan
     c1 = (a22 * x - a12 * y) / determinant
     c2 = (-a21 * x + a11 * y) / determinant
     return b11 * c1 + b12 * c2, b21 * c1 + b22 * c2

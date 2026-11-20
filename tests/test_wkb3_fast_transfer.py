@@ -90,3 +90,24 @@ def test_fast_wkb3_preserves_turning_point_fallback():
 
     assert not actual[2]
     np.testing.assert_array_equal(actual[:2], expected)
+
+
+def test_fast_wkb3_falls_back_when_basis_determinant_is_unresolvable():
+    state = (7.9204345835059, -6.552423781291261)
+    z_start = 8.326819262766648
+    z_end = 13.006402132438978
+    h_step = 0.0005853210263495612
+
+    actual = _phase_segment_wkb3(
+        *state,
+        z_start,
+        z_end,
+        h_step,
+        phase_max=0.25,
+        error_tolerance=1.0e-5,
+        min_substeps=64,
+    )
+    expected = _phase_segment_base(*state, z_start, z_end, h_step, 0.25)
+
+    assert not actual[2]
+    np.testing.assert_array_equal(actual[:2], expected)
