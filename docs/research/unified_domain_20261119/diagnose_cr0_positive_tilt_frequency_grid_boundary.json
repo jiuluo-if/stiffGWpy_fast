@@ -1,0 +1,275 @@
+{
+  "status": "complete_fast_frequency_grid_sensitivity_screen",
+  "reference_code_modified": false,
+  "reference_maps_run": 0,
+  "grids": {
+    "production": "goal freq_res=1",
+    "denser": "grid_independent freq_res=2"
+  },
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "cases": [
+    {
+      "T_re": 2000.0,
+      "n_t": 0.05,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 1.3136835699681318e-07,
+        "Nf": 75,
+        "seconds": 0.24843770000734366,
+        "quadrature_error_rel": 0.056441741488330845
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 1.276640260162974e-07,
+        "Nf": 392,
+        "seconds": 0.09317819999705534,
+        "quadrature_error_rel": 0.000936331572479505
+      },
+      "root_relative_grid_shift": 0.029016247537445607
+    },
+    {
+      "T_re": 2000.0,
+      "n_t": 0.065,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 1.4560328935375688e-07,
+        "Nf": 75,
+        "seconds": 0.01488650000828784,
+        "quadrature_error_rel": 0.051985793839104
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 1.4174867991201494e-07,
+        "Nf": 392,
+        "seconds": 0.093436200011638,
+        "quadrature_error_rel": 0.00089055342166052
+      },
+      "root_relative_grid_shift": 0.027193265179855916
+    },
+    {
+      "T_re": 2000.0,
+      "n_t": 0.08,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 1.6798688442626159e-07,
+        "Nf": 75,
+        "seconds": 0.016824100006488152,
+        "quadrature_error_rel": 0.04610299634438952
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 1.639742793446988e-07,
+        "Nf": 392,
+        "seconds": 0.09241180001117755,
+        "quadrature_error_rel": 0.0008365216784470737
+      },
+      "root_relative_grid_shift": 0.024470942013580542
+    },
+    {
+      "T_re": 3500.0,
+      "n_t": 0.05,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 1.6276917690815905e-07,
+        "Nf": 75,
+        "seconds": 0.01603820000309497,
+        "quadrature_error_rel": 0.05898433583166688
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 1.6090708596179304e-07,
+        "Nf": 402,
+        "seconds": 0.09370479999051895,
+        "quadrature_error_rel": 0.0008399683161460639
+      },
+      "root_relative_grid_shift": 0.011572460810135863
+    },
+    {
+      "T_re": 3500.0,
+      "n_t": 0.065,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 2.0281066890143392e-07,
+        "Nf": 75,
+        "seconds": 0.0153753000049619,
+        "quadrature_error_rel": 0.04958129248467657
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 2.0084878654014912e-07,
+        "Nf": 402,
+        "seconds": 0.09231300000101328,
+        "quadrature_error_rel": 0.0007668260596687568
+      },
+      "root_relative_grid_shift": 0.00976795725321759
+    },
+    {
+      "T_re": 3500.0,
+      "n_t": 0.08,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 2.7112801759124607e-07,
+        "Nf": 75,
+        "seconds": 0.014944099995773286,
+        "quadrature_error_rel": 0.039216762136686144
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 2.6905497488604965e-07,
+        "Nf": 402,
+        "seconds": 0.09274639999784995,
+        "quadrature_error_rel": 0.0006933280900001005
+      },
+      "root_relative_grid_shift": 0.007704903825229019
+    },
+    {
+      "T_re": 5000.0,
+      "n_t": 0.05,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 2.139191738515905e-07,
+        "Nf": 75,
+        "seconds": 0.01598480000393465,
+        "quadrature_error_rel": 0.04598363778237765
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 2.1453271112178395e-07,
+        "Nf": 408,
+        "seconds": 0.09603249999054242,
+        "quadrature_error_rel": 0.0007218539335911055
+      },
+      "root_relative_grid_shift": 0.0028598774843485784
+    },
+    {
+      "T_re": 5000.0,
+      "n_t": 0.065,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 2.9682217577753377e-07,
+        "Nf": 75,
+        "seconds": 0.015830399992410094,
+        "quadrature_error_rel": 0.03515545438161293
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 2.9741913942053007e-07,
+        "Nf": 408,
+        "seconds": 0.09960149999824353,
+        "quadrature_error_rel": 0.0006422558071564477
+      },
+      "root_relative_grid_shift": 0.0020071460234851843
+    },
+    {
+      "T_re": 5000.0,
+      "n_t": 0.08,
+      "goal": {
+        "success": true,
+        "failure": null,
+        "root": 4.424139974426261e-07,
+        "Nf": 75,
+        "seconds": 0.015256099999533035,
+        "quadrature_error_rel": 0.025500991376734918
+      },
+      "grid_independent": {
+        "success": true,
+        "failure": null,
+        "root": 4.429732892088403e-07,
+        "Nf": 408,
+        "seconds": 0.09691019999445416,
+        "quadrature_error_rel": 0.0005793924763833542
+      },
+      "root_relative_grid_shift": 0.0012625857581911417
+    }
+  ],
+  "frequency_ladder_grid_independent": [
+    {
+      "T_re": 2000.0,
+      "n_t": 0.065,
+      "freq_res": 1.15,
+      "success": true,
+      "failure": null,
+      "root": 1.417283438351913e-07,
+      "Nf": 226,
+      "seconds": 0.05986049999773968,
+      "quadrature_error_rel": 0.002489319166098616
+    },
+    {
+      "T_re": 2000.0,
+      "n_t": 0.065,
+      "freq_res": 2.3,
+      "success": true,
+      "failure": null,
+      "root": 1.4174780006645156e-07,
+      "Nf": 451,
+      "seconds": 0.10949889999756124,
+      "quadrature_error_rel": 0.0005947034134651379
+    },
+    {
+      "T_re": 2000.0,
+      "n_t": 0.065,
+      "freq_res": 4.6,
+      "success": true,
+      "failure": null,
+      "root": 1.4174666689519112e-07,
+      "Nf": 902,
+      "seconds": 0.2022378999972716,
+      "quadrature_error_rel": 7.470941866941778e-05
+    },
+    {
+      "T_re": 5000.0,
+      "n_t": 0.065,
+      "freq_res": 1.15,
+      "success": true,
+      "failure": null,
+      "root": 2.97404374837869e-07,
+      "Nf": 235,
+      "seconds": 0.0654427000117721,
+      "quadrature_error_rel": 0.0015217889298629
+    },
+    {
+      "T_re": 5000.0,
+      "n_t": 0.065,
+      "freq_res": 2.3,
+      "success": true,
+      "failure": null,
+      "root": 2.974204875032883e-07,
+      "Nf": 469,
+      "seconds": 0.11567420000210404,
+      "quadrature_error_rel": 0.00038837209957454495
+    },
+    {
+      "T_re": 5000.0,
+      "n_t": 0.065,
+      "freq_res": 4.6,
+      "success": true,
+      "failure": null,
+      "root": 2.974207106301162e-07,
+      "Nf": 938,
+      "seconds": 0.22370909999881405,
+      "quadrature_error_rel": 4.432837757459911e-05
+    }
+  ],
+  "frequency_ladder_caveat": "Fast-only; same-grid Reference was run only at 204 nodes for T_re=5000, n_t=0.065; no convergence certification is implied."
+}

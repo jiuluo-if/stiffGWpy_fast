@@ -2315,3 +2315,11 @@ The current production source remains unchanged; added one tested Reference-orig
 - 500-pair Fast A/B max new-region P50/P95 `0.993932/0.989277`; trusted control `1.001524/0.979470`; outputs bitwise equal.
 - Three exploratory point probes outside the accepted box through 13.99951171875M pass Reference map and one closure step, but have no area screen or performance claim.
 - Figure inspected; combined Round 87–88 manifest, delivery checks, commit/push and CI remain.
+
+
+# Round 89 progress — CR0 positive-tilt reheat frequency-convergence rejection
+
+- The exploratory CR0 positive-tilt boxes had passed 75-node goal-grid paired screens and same-goal-grid spot checks, but a direct Fast grid-sensitivity screen invalidates those accuracy claims: across nine `(T_re, n_t)` points in `T_re={2,3.5,5} TeV × n_t={0.05,0.065,0.08}`, roots from the 75-node goal grid differ from 392–408-node grid-independent Fast by `1.26e-3` to `2.90e-2` relative.
+- Fast-only 235/469/938-node ladders converge for two representative `n_t=0.065` points: at `T_re=2 TeV`, roots are `1.4172834e-7, 1.4174780e-7, 1.4174667e-7`; at `T_re=5 TeV`, `2.9740437e-7, 2.9742049e-7, 2.9742071e-7`. The 75-node roots differ from the dense Fast limits by about `2.7%` and `0.2%`, respectively.
+- This is frequency-support sensitivity, not a background or propagation failure. `eval_freqs` is intentionally likelihood-output-only and existing regression tests require it not to alter self-consistent `DN_gw`; appending those output nodes cannot repair the integral.
+- Reject the positive-tilt reheat expansion for precision claims pending a uniform error-controlled integration mechanism that meets both root accuracy and the 5% runtime gate. No production Fast or Reference source changed; no new Reference maps were run for this screen. Raw nodes, ratios and source hashes are in `docs/research/unified_domain_20261119/diagnose_cr0_positive_tilt_frequency_grid_boundary.json`; same-grid 204-node Reference evidence is in `diagnose_cr0_positive_tilt_frequency_grid_independent.json`.
