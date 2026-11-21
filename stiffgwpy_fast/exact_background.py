@@ -53,10 +53,69 @@ def _stable_closed_h2_base(Omh2, Osh2, h2_today_anchor, delta_N):
     ``Om*(1-q) + Osh*(exp(3x)-q) + anchor*q``. ``expm1`` and ``sinh`` retain
     the small-x differences needed at the present-day closure.
     """
-    decay = np.exp(-3.0 * delta_N)
+    exponent = 3.0 * delta_N
+    decay = np.exp(-exponent)
+    with np.errstate(over="ignore", invalid="ignore"):
+        stiff_difference = 2.0 * Osh2 * np.sinh(exponent)
+    overflow = ~np.isfinite(stiff_difference)
+    if np.any(overflow):
+        stiff_term = _scaled_exp_product(Osh2, exponent[overflow])
+        stiff_difference[overflow] = stiff_term - Osh2 * decay[overflow]
     return (Omh2 * (-np.expm1(-3.0 * delta_N))
-            + 2.0 * Osh2 * np.sinh(3.0 * delta_N)
+            + stiff_difference
             + h2_today_anchor * decay)
+
+
+def _scaled_exp_product(coefficient, exponent):
+    """Evaluate ``coefficient * exp(exponent)`` without an overflowing exp.
+
+    The logarithmic path is only used when the exponential itself is outside
+    float64 range; a finite product is retained when the coefficient rescales it.
+    """
+    exponent = np.asarray(exponent, dtype=np.float64)
+    if coefficient == 0.0:
+        return np.zeros_like(exponent)
+    log_magnitude = math.log(abs(float(coefficient))) + exponent
+    with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+        magnitude = np.exp(log_magnitude)
+    return np.copysign(magnitude, coefficient)
+
+
+def _stiff_h2_terms(Osh2, e3N, delta_N):
+    """Return the stiff H2 and sigma terms, scaling overflowing exp(3x)."""
+    with np.errstate(over="ignore", invalid="ignore"):
+        stiff_h2 = Osh2 * e3N
+        stiff_sigma = 2.0 * Osh2 * e3N
+    overflow = ~np.isfinite(e3N)
+    if np.any(overflow):
+        stiff_h2[overflow] = _scaled_exp_product(Osh2, 3.0 * delta_N[overflow])
+        with np.errstate(over="ignore", invalid="ignore"):
+            stiff_sigma[overflow] = 2.0 * stiff_h2[overflow]
+    return stiff_h2, stiff_sigma
+
+
+def _sigma_over_h2(other_numerator, stiff_h2, stiff_sigma, h2):
+    """Form ``(other + 2*stiff)/H2`` without overflowing a finite ratio."""
+    other_numerator = np.asarray(other_numerator, dtype=np.float64)
+    stiff_h2 = np.asarray(stiff_h2, dtype=np.float64)
+    stiff_sigma = np.asarray(stiff_sigma, dtype=np.float64)
+    h2 = np.asarray(h2, dtype=np.float64)
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        numerator = other_numerator + stiff_sigma
+        ratio = numerator / h2
+    recover = (
+        ~np.isfinite(numerator)
+        & np.isfinite(other_numerator)
+        & np.isfinite(stiff_h2)
+        & np.isfinite(h2)
+        & (h2 > 0.0)
+    )
+    if np.any(recover):
+        ratio[recover] = (
+            other_numerator[recover] / h2[recover]
+            + 2.0 * (stiff_h2[recover] / h2[recover])
+        )
+    return ratio
 
 
 def _fd_from_ref():
@@ -89,12 +148,22 @@ def sigma_vec(N, m, DN_eff):
     Nr = N[running]
     delta_N = N_inf - Nr
     eN = np.exp(delta_N)
-    e3N = eN * eN * eN
+    with np.errstate(over="ignore", invalid="ignore"):
+        e3N = eN * eN * eN
+    stiff_h2, stiff_sigma = _stiff_h2_terms(Osh2, e3N, delta_N)
+    overflowed_e3 = ~np.isfinite(e3N)
+    decay = np.exp(-3.0 * delta_N)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        inverse_e3 = 1.0 / e3N
+        lambda_term = OLh2_base / e3N
+    if np.any(overflowed_e3):
+        inverse_e3[overflowed_e3] = decay[overflowed_e3]
+        lambda_term[overflowed_e3] = OLh2_base * decay[overflowed_e3]
     if stable_closure:
         closed_h2_base = _stable_closed_h2_base(
             Omh2, Osh2, h2_today_anchor, delta_N
         )
-    extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
+    extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
     nu = gp.nu_today / eN
     Omega_ph2 = gp.Omega_ph2
     Omega_nh2 = gp.Omega_nh2
@@ -109,10 +178,10 @@ def sigma_vec(N, m, DN_eff):
                   + extra_radiation_h2[m1])
         else:
             H2 = (Omh2 + Omega_mnuh2 + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN[m1]
-                  + Osh2 * e3N[m1] + extra_radiation_h2[m1] + OLh2_base / e3N[m1])
-        out[m1] = (Omh2 + Omega_mnuh2
-                   + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1]
-                   + 2.0 * Osh2 * e3N[m1]) / H2
+                  + stiff_h2[m1] + extra_radiation_h2[m1] + lambda_term[m1])
+        sigma_other = (Omh2 + Omega_mnuh2
+                       + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1])
+        out[m1] = _sigma_over_h2(sigma_other, stiff_h2[m1], stiff_sigma[m1], H2)
     m2 = (~m1) & (nu >= 0.1)
     if m2.any():
         lognu = np.log10(nu[m2])
@@ -124,20 +193,20 @@ def sigma_vec(N, m, DN_eff):
                   + extra_radiation_h2[m2])
         else:
             H2 = (Omh2 + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN[m2]
-                  + Osh2 * e3N[m2] + extra_radiation_h2[m2] + OLh2_base / e3N[m2])
-        out[m2] = (Omh2
-                   + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m2]
-                   + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN[m2]
-                   + 2.0 * Osh2 * e3N[m2]) / H2
+                  + stiff_h2[m2] + extra_radiation_h2[m2] + lambda_term[m2])
+        sigma_other = (Omh2
+                       + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m2]
+                       + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN[m2])
+        out[m2] = _sigma_over_h2(sigma_other, stiff_h2[m2], stiff_sigma[m2], H2)
     m3 = (~m1) & (~m2) & (Nr > N_inf - gp.N_fin)
     if m3.any():
         if stable_closure:
             H2 = closed_h2_base[m3] + Otrh2_base * eN[m3] + extra_radiation_h2[m3]
         else:
-            H2 = (Omh2 + Otrh2_base * eN[m3] + Osh2 * e3N[m3]
-                  + extra_radiation_h2[m3] + OLh2_base / e3N[m3])
-        out[m3] = (Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN[m3]
-                   + 2.0 * Osh2 * e3N[m3]) / H2
+            H2 = (Omh2 + Otrh2_base * eN[m3] + stiff_h2[m3]
+                  + extra_radiation_h2[m3] + lambda_term[m3])
+        sigma_other = Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN[m3]
+        out[m3] = _sigma_over_h2(sigma_other, stiff_h2[m3], stiff_sigma[m3], H2)
     m4 = (~m1) & (~m2) & (~m3) & (Nr >= N_inf - gp.N_max)
     if m4.any():
         Nl = N_inf - Nr[m4]
@@ -147,19 +216,19 @@ def sigma_vec(N, m, DN_eff):
             H2 = (closed_h2_base[m4] + Omega_ph2 * rho_i * eN[m4]
                   + extra_radiation_h2[m4])
         else:
-            H2 = (Omh2 + Omega_ph2 * rho_i * eN[m4] + Osh2 * e3N[m4]
-                  + extra_radiation_h2[m4] + OLh2_base / e3N[m4])
-        out[m4] = (Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN[m4]
-                   + 2.0 * Osh2 * e3N[m4]) / H2
+            H2 = (Omh2 + Omega_ph2 * rho_i * eN[m4] + stiff_h2[m4]
+                  + extra_radiation_h2[m4] + lambda_term[m4])
+        sigma_other = Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN[m4]
+        out[m4] = _sigma_over_h2(sigma_other, stiff_h2[m4], stiff_sigma[m4], H2)
     m5 = (~m1) & (~m2) & (~m3) & (~m4)
     if m5.any():
         if stable_closure:
             H2 = closed_h2_base[m5] + Otreh2_base * eN[m5] + extra_radiation_h2[m5]
         else:
-            H2 = (Omh2 + Otreh2_base * eN[m5] + Osh2 * e3N[m5]
-                  + extra_radiation_h2[m5] + OLh2_base / e3N[m5])
-        out[m5] = (Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN[m5]
-                   + 2.0 * Osh2 * e3N[m5]) / H2
+            H2 = (Omh2 + Otreh2_base * eN[m5] + stiff_h2[m5]
+                  + extra_radiation_h2[m5] + lambda_term[m5])
+        sigma_other = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN[m5]
+        out[m5] = _sigma_over_h2(sigma_other, stiff_h2[m5], stiff_sigma[m5], H2)
     sigma[running] = out
     return sigma
 
@@ -190,9 +259,19 @@ def H2_vec(N, m, DN_eff):
         dtype=float,
         count=N.size,
     )
-    e3N = eN * eN * eN
-    extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
     delta_N = N_inf - N
+    with np.errstate(over="ignore", invalid="ignore"):
+        e3N = eN * eN * eN
+    stiff_h2, _ = _stiff_h2_terms(Osh2, e3N, delta_N)
+    overflowed_e3 = ~np.isfinite(e3N)
+    decay = np.exp(-3.0 * delta_N)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        inverse_e3 = 1.0 / e3N
+        lambda_term = OLh2_base / e3N
+    if np.any(overflowed_e3):
+        inverse_e3[overflowed_e3] = decay[overflowed_e3]
+        lambda_term[overflowed_e3] = OLh2_base * decay[overflowed_e3]
+    extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
     if stable_closure:
         closed_h2_base = _stable_closed_h2_base(
             Omh2, Osh2, h2_today_anchor, delta_N
@@ -213,8 +292,8 @@ def H2_vec(N, m, DN_eff):
         else:
             out[high_nu] = (Omh2 + gp.Omega_mnuh2
                             + (gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2) * eN[high_nu]
-                            + Osh2 * e3N[high_nu] + extra_radiation_h2[high_nu]
-                            + OLh2_base / e3N[high_nu])
+                            + stiff_h2[high_nu] + extra_radiation_h2[high_nu]
+                            + lambda_term[high_nu])
     thermal_nu = (~high_nu) & (nu >= 0.1)
     if np.any(thermal_nu):
         rho_nu = fd_rho(np.log10(nu[thermal_nu]))
@@ -226,8 +305,8 @@ def H2_vec(N, m, DN_eff):
             out[thermal_nu] = (Omh2
                                + (gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2)
                                * eN[thermal_nu]
-                               + Osh2 * e3N[thermal_nu] + extra_radiation_h2[thermal_nu]
-                               + OLh2_base / e3N[thermal_nu])
+                               + stiff_h2[thermal_nu] + extra_radiation_h2[thermal_nu]
+                               + lambda_term[thermal_nu])
     relativistic = (~high_nu) & (~thermal_nu) & (N > N_inf - gp.N_fin)
     if np.any(relativistic):
         if stable_closure:
@@ -236,8 +315,8 @@ def H2_vec(N, m, DN_eff):
                                  + extra_radiation_h2[relativistic])
         else:
             out[relativistic] = (Omh2 + Otrh2_base * eN[relativistic]
-                                 + Osh2 * e3N[relativistic] + extra_radiation_h2[relativistic]
-                                 + OLh2_base / e3N[relativistic])
+                                 + stiff_h2[relativistic] + extra_radiation_h2[relativistic]
+                                 + lambda_term[relativistic])
     thermal_grid = ((~high_nu) & (~thermal_nu) & (~relativistic)
                     & (N >= N_inf - gp.N_max))
     if np.any(thermal_grid):
@@ -249,8 +328,8 @@ def H2_vec(N, m, DN_eff):
                                  + extra_radiation_h2[thermal_grid])
         else:
             out[thermal_grid] = (Omh2 + gp.Omega_ph2 * rho_nu * eN[thermal_grid]
-                                 + Osh2 * e3N[thermal_grid] + extra_radiation_h2[thermal_grid]
-                                 + OLh2_base / e3N[thermal_grid])
+                                 + stiff_h2[thermal_grid] + extra_radiation_h2[thermal_grid]
+                                 + lambda_term[thermal_grid])
     early = ~(high_nu | thermal_nu | relativistic | thermal_grid)
     if np.any(early):
         if stable_closure:
@@ -258,8 +337,8 @@ def H2_vec(N, m, DN_eff):
                           + extra_radiation_h2[early])
         else:
             out[early] = (Omh2 + Otreh2_base * eN[early]
-                          + Osh2 * e3N[early] + extra_radiation_h2[early]
-                          + OLh2_base / e3N[early])
+                          + stiff_h2[early] + extra_radiation_h2[early]
+                          + lambda_term[early])
     return out
 
 

@@ -415,6 +415,85 @@ def test_fast_preserves_h2_closure_at_extreme_matter_density_in_fast_profile():
     assert np.isfinite(model.log10OmegaGW).all()
     assert model._fast_h2_identity_used
 
+
+def test_fast_scales_stiff_exponential_when_its_product_is_representable():
+    import math
+
+    from stiffgwpy_fast.exact_background import H2_vec, sigma_vec
+
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1.0e-300,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1.0e95,
+        DN_re=10.0,
+        kappa10=1.0e-2,
+    )
+    derived = model.derived_param
+    n_re_abs = derived['N_inf'] - derived['N_re']
+    lookback = derived['N_re']
+    omega_stiff = derived['Omega_sh2']
+    log_stiff_h2 = math.log(omega_stiff) + 3.0 * lookback
+    assert log_stiff_h2 < math.log(np.finfo(np.float64).max)
+    expected_stiff_h2 = math.exp(log_stiff_h2)
+
+    h2_re = H2_vec(np.asarray([n_re_abs]), model, 0.0)[0]
+    assert np.isfinite(h2_re)
+    assert h2_re == pytest.approx(expected_stiff_h2, rel=2e-14)
+    sigma_re = sigma_vec(np.asarray([n_re_abs]), model, 0.0)[0]
+    assert sigma_re == pytest.approx(2.0, rel=2e-14)
+
+    result = FS.SGWB_iter_fast(
+        model,
+        config=FS.resolve_config('fast', threads=2),
+        tol=1e-6,
+        physical_guard=True,
+    )
+    assert result is model
+    assert np.isfinite(model.log10OmegaGW).all()
+
+
+def test_sigma_ratio_stays_finite_when_its_numerator_is_not_representable():
+    from stiffgwpy_fast.exact_background import H2_vec, sigma_vec
+
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1.0e-300,
+        n_t=0.0,
+        cr=0.0,
+        T_re=10.0 ** 99.2,
+        DN_re=10.0,
+        kappa10=1.0e-2,
+    )
+    n_re_abs = model.derived_param['N_inf'] - model.derived_param['N_re']
+    h2 = H2_vec(np.asarray([n_re_abs]), model, 0.0)[0]
+    sigma = sigma_vec(np.asarray([n_re_abs]), model, 0.0)[0]
+
+    assert np.isfinite(h2)
+    assert h2 > np.finfo(np.float64).max / 2.0
+    assert np.isfinite(sigma)
+    assert sigma == pytest.approx(2.0, rel=2e-14)
+
+    result = FS.SGWB_iter_fast(
+        model,
+        config=FS.resolve_config('fast', threads=2, freq_grid='adaptive'),
+        tol=1e-6,
+        freq_grid_target=1e-6,
+        physical_guard=True,
+    )
+    assert result is model
+    assert np.isfinite(model.log10OmegaGW).all()
+
+
 def test_fast_reports_invalid_derived_cutoff_after_outer_update(monkeypatch):
     model = LCDM_SG(
         Omega_bh2=0.0223828,

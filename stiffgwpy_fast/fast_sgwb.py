@@ -893,6 +893,24 @@ def cubic_any(x, breaks, c):
 
 
 # ================= expansion generation in Numba / Numba 膨胀史生成 =================
+_LOG_MAX_FLOAT = math.log(np.finfo(np.float64).max)
+_LOG_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
+_H2_SIGMA_RATIO_SCALE_THRESHOLD = 0.25 * np.finfo(np.float64).max
+
+
+@njit(cache=True, inline="always")
+def _scaled_exp_product_numba(coefficient, exponent):
+    """Evaluate c*exp(x) in the log domain when exp(x) alone overflows."""
+    if coefficient == 0.0:
+        return 0.0
+    log_value = math.log(abs(coefficient)) + exponent
+    if log_value > _LOG_MAX_FLOAT:
+        return math.copysign(math.inf, coefficient)
+    if log_value < _LOG_MIN_SUBNORMAL:
+        return math.copysign(0.0, coefficient)
+    return math.copysign(math.exp(log_value), coefficient)
+
+
 @njit(cache=True)
 def gen_kernel(
     Nv,
@@ -928,18 +946,35 @@ def gen_kernel(
     for i in range(index_re, n):
         delta_N = Nlast - Nv[i]
         eN = math.exp(delta_N)
-        e3N = eN * eN * eN
+        three_delta = 3.0 * delta_N
+        decay = math.exp(-three_delta)
+        if three_delta <= _LOG_MAX_FLOAT:
+            e3N = eN * eN * eN
+            inverse_e3 = 1.0 / e3N
+            stiff_h2 = Osh2 * e3N
+            lambda_term = OLh2_base / e3N
+        else:
+            inverse_e3 = decay
+            stiff_h2 = _scaled_exp_product_numba(Osh2, three_delta)
+            lambda_term = OLh2_base * decay
         if stable_h2_closure:
-            closed_h2_base = (
-                Omh2 * (-math.expm1(-3.0 * delta_N))
-                + 2.0 * Osh2 * math.sinh(3.0 * delta_N)
-                + H2_today_anchor * math.exp(-3.0 * delta_N)
-            )
+            if three_delta <= _LOG_MAX_FLOAT:
+                closed_h2_base = (
+                    Omh2 * (-math.expm1(-three_delta))
+                    + 2.0 * Osh2 * math.sinh(three_delta)
+                    + H2_today_anchor * decay
+                )
+            else:
+                closed_h2_base = (
+                    Omh2 * (-math.expm1(-three_delta))
+                    + stiff_h2 - Osh2 * decay
+                    + H2_today_anchor * decay
+                )
         # Keep the large extra-radiation term out of the present-day closure
         # subtraction.  At eN=1 these contributions cancel analytically; adding
         # Oerh2 and OLh2 separately loses the finite H0^2 term when DN_eff is large.
         # 将额外辐射与今天的闭合项合并计算；eN=1 时两者解析抵消，分开相加会在大 DN_eff 时丢失有限的 H0^2。
-        extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
+        extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
         nu = nu_today / eN
         if nu > 100.0:
             if stable_h2_closure:
@@ -950,10 +985,10 @@ def gen_kernel(
                 H2 = (
                     Omh2 + Omega_mnuh2
                     + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN
-                    + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+                    + stiff_h2 + extra_radiation_h2 + lambda_term
                 )
-            sigma_numerator = (
-                Omh2 + Omega_mnuh2 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + 2.0 * Osh2 * e3N
+            sigma_other = (
+                Omh2 + Omega_mnuh2 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
             )
         elif nu >= 0.1:
             lnnu = math.log10(nu)
@@ -967,20 +1002,19 @@ def gen_kernel(
                 H2 = (
                     Omh2
                     + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN
-                    + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+                    + stiff_h2 + extra_radiation_h2 + lambda_term
                 )
-            sigma_numerator = (
+            sigma_other = (
                 Omh2
                 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
                 + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN
-                + 2.0 * Osh2 * e3N
             )
         elif Nv[i] > Nlast - N_fin:
             if stable_h2_closure:
                 H2 = closed_h2_base + Otrh2_base * eN + extra_radiation_h2
             else:
-                H2 = Omh2 + Otrh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            sigma_numerator = Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N
+                H2 = Omh2 + Otrh2_base * eN + stiff_h2 + extra_radiation_h2 + lambda_term
+            sigma_other = Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN
         elif Nv[i] >= Nlast - N_max:
             Nl = Nlast - Nv[i]
             rho_i = cubic_any(Nl, TH_X, TH_C_RHO)
@@ -988,19 +1022,26 @@ def gen_kernel(
             if stable_h2_closure:
                 H2 = closed_h2_base + Omega_ph2 * rho_i * eN + extra_radiation_h2
             else:
-                H2 = Omh2 + Omega_ph2 * rho_i * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            sigma_numerator = Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN + 2.0 * Osh2 * e3N
+                H2 = Omh2 + Omega_ph2 * rho_i * eN + stiff_h2 + extra_radiation_h2 + lambda_term
+            sigma_other = Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN
         else:
             if stable_h2_closure:
                 H2 = closed_h2_base + Otreh2_base * eN + extra_radiation_h2
             else:
-                H2 = Omh2 + Otreh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            sigma_numerator = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N
+                H2 = Omh2 + Otreh2_base * eN + stiff_h2 + extra_radiation_h2 + lambda_term
+            sigma_other = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN
         # H² 非正时实数膨胀率与 sigma 均无定义；返回节点号，避免除零或对数域异常。
         # Nonpositive H² has no real expansion rate at this node; report it before division/log.
         if H2 <= 0.0:
             return i + 1
-        Sv[i] = sigma_numerator / H2
+        if H2 >= _H2_SIGMA_RATIO_SCALE_THRESHOLD:
+            Sv[i] = sigma_other / H2 + 2.0 * (stiff_h2 / H2)
+        else:
+            if three_delta <= _LOG_MAX_FLOAT:
+                sigma_numerator = sigma_other + 2.0 * Osh2 * e3N
+            else:
+                sigma_numerator = sigma_other + 2.0 * stiff_h2
+            Sv[i] = sigma_numerator / H2
         f_hor[i] = -0.5 * Nv[i] + 0.5 * math.log(H2)
     fv_re = f_hor[index_re]
     Nv_re = Nv[index_re]
@@ -1386,10 +1427,6 @@ def _scale_frequency_rows_by_log(values, log_scale):
 
 
 # ================= stepping, assembly and kernel / 步进、组装与计算核 =================
-_LOG_MAX_FLOAT = math.log(np.finfo(np.float64).max)
-_LOG_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
-
-
 def _uniform_step_terminal_width(Nv, h):
     """Return the final interval if all preceding grid steps equal ``h``.
 
