@@ -2400,7 +2400,7 @@ Search for a different formal Fast failure family whose unchanged Reference back
 - [x] Independent x-coordinate Prüfer full-grid runs on one representative per slice, including a second root-map closure pass using the original input `DN_eff`, pass the root (`1.1852e−4`, `3.4292e−5`) and maximum-spectrum (`3.6131e−4 dex`, `1.4572e−4 dex`) limits.
 - [x] Focused regression set: 37 passed, 5 deselected. Trusted A/B: 48 warmed samples per case, roots bitwise equal, P50/P95 ratios all below 1.05. Empty-cache first default solve is separately recorded at 12.442 s HEAD vs 13.360 s candidate.
 - [x] Local gates: default full pytest `447 passed, 10 deselected`; focused suite `37 passed, 5 deselected`; Ruff, Mypy, compileall, validation manifest, compatibility smoke, sdist/wheel build, archive-boundary check and installed-wheel smoke all passed.
-- [ ] Obtain GitHub CI after a scoped commit/push; verify configured author/committer identity and remote branch head.
+- [x] GitHub Actions run `44913561500` for source commit `cf3eee6e6427f257418dab0a5ad754ae52ed2726` passed all 9 CI jobs. Commit author and committer are both `2966684515@qq.com`; remote `fast/fast_v0.2` matched the commit SHA after push.
 
 ### Current limits
 
