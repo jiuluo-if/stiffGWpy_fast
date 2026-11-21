@@ -2192,6 +2192,57 @@ def solve_kernel(
                     Ogw[m, slot] = 3.0 * op + oj
 
 
+def _solve_kernel_mode_subset(solve_args, mode_indices, **kernel_kwargs):
+    """Solve selected independent frequency rows and merge them into outputs.
+
+    Adaptive support refinement can reuse old modes when the background and
+    ``DN_eff`` are unchanged. Shared time/background arrays are not copied.
+
+    中文：只传播新增频率行并合并结果；背景和 ``DN_eff`` 不变时复用旧模态。
+    """
+    indices = np.asarray(mode_indices, dtype=np.int64)
+    if indices.ndim != 1:
+        raise ValueError("mode_indices must be a one-dimensional index array")
+    n_modes = len(solve_args[5])
+    if np.any(indices < 0) or np.any(indices >= n_modes):
+        raise IndexError("mode index is outside the frequency support")
+    if indices.size == 0:
+        return
+    if indices.size == n_modes and np.array_equal(
+        indices, np.arange(n_modes, dtype=np.int64)
+    ):
+        solve_kernel(*solve_args, **kernel_kwargs)
+        return
+
+    args = list(solve_args)
+    for position in (5, 6, 7, 10, 22, 27, 28):
+        values = args[position]
+        if values is not None:
+            args[position] = np.asarray(values)[indices].copy()
+    output_buffers = {}
+    for position in (16, 17, 18):
+        full_output = args[position]
+        selected_output = np.zeros(
+            (indices.size, full_output.shape[1]), dtype=full_output.dtype
+        )
+        output_buffers[position] = (full_output, selected_output)
+        args[position] = selected_output
+
+    selected_handoff = args[22]
+    selected_tail_state = args[28]
+    kwargs = dict(kernel_kwargs)
+    if kwargs.get("z_tail_by_mode") is not None:
+        kwargs["z_tail_by_mode"] = np.asarray(kwargs["z_tail_by_mode"])[indices]
+    solve_kernel(*args, **kwargs)
+
+    for position, (full_output, selected_output) in output_buffers.items():
+        full_output[indices] = selected_output
+    if selected_handoff is not None:
+        solve_args[22][indices] = selected_handoff
+    if selected_tail_state is not None:
+        solve_args[28][indices] = selected_tail_state
+
+
 # ================= Simpson weights / Simpson 预计算权重 =================
 @njit(cache=True)
 def simpson_row(Xf, h, a, b, W):
@@ -2884,6 +2935,8 @@ def _SGWB_iter_fast_impl(
     adaptive_grid = None
     adaptive_done = freq_grid != "adaptive"
     freq_grid_error = 0.0
+    frequency_solution_cache = None
+    frequency_refinement_reuse_pending = False
     kink_index = -1
     kink_fraction = 0.0
     phi_re = 0.0
@@ -2969,12 +3022,18 @@ def _SGWB_iter_fast_impl(
                 )[0]
                 support_grid = np.asarray(m.f, dtype=float)
             elif freq_grid == "adaptive":
-                from .freq_adaptive import grid_independent_freqs
+                from .freq_adaptive import goal_oriented_freqs, grid_independent_freqs
 
                 if adaptive_grid is None:
-                    adaptive_grid = grid_independent_freqs(
-                        m, freq_res, allow_log_amplitude=log_amplitude_mode
-                    )[0]
+                    if log_amplitude_mode:
+                        adaptive_grid = grid_independent_freqs(
+                            m, freq_res, allow_log_amplitude=True
+                        )[0]
+                    else:
+                        adaptive_grid = goal_oriented_freqs(
+                            m, freq_res, seed_n=64, max_points=120,
+                            eval_freqs=None,
+                        )
                 m.f = np.sort(np.asarray(adaptive_grid, dtype=float))[::-1]
                 support_grid = np.asarray(m.f, dtype=float)
             elif freq_grid == "goal":
@@ -3292,6 +3351,52 @@ def _SGWB_iter_fast_impl(
                 )
                 if m._fast_adaptive_handoff_selected > 0:
                     tail_z_by_mode = candidate_tail_z
+            assemble = 1 if outer_full_reuse else (0 if _iter == 0 else 1)
+            mode_indices_to_solve = None
+            reuse_cached_modes = bool(
+                freq_grid == "adaptive"
+                and frequency_refinement_reuse_pending
+                and frequency_solution_cache is not None
+                and not log_amplitude_mode
+                and phase_weight is None
+                and assemble == frequency_solution_cache["assemble"]
+                and float(m.cosmo_param["DN_eff"])
+                == frequency_solution_cache["DN_eff"]
+                and n_coarse == frequency_solution_cache["n_coarse"]
+                and h == frequency_solution_cache["h"]
+                and z_tail == frequency_solution_cache["z_tail"]
+                and phase_max == frequency_solution_cache["phase_max"]
+                and col_step == frequency_solution_cache["col_step"]
+                and relative_scale == frequency_solution_cache["relative_scale"]
+                and kink_index == frequency_solution_cache["kink_index"]
+                and kink_fraction == frequency_solution_cache["kink_fraction"]
+                and phi_re == frequency_solution_cache["phi_re"]
+                and np.array_equal(Nv, frequency_solution_cache["Nv"])
+                and np.array_equal(f_hor, frequency_solution_cache["f_hor"])
+                and np.array_equal(m.sigma, frequency_solution_cache["sigma"])
+                and np.array_equal(Phi_grid, frequency_solution_cache["Phi_grid"])
+                and np.array_equal(Phi_mid, frequency_solution_cache["Phi_mid"])
+                and np.array_equal(S2, frequency_solution_cache["S2"])
+                and np.array_equal(S2inv, frequency_solution_cache["S2inv"])
+                and (
+                    (h_arr is None and frequency_solution_cache["h_arr"] is None)
+                    or (
+                        h_arr is not None
+                        and frequency_solution_cache["h_arr"] is not None
+                        and np.array_equal(h_arr, frequency_solution_cache["h_arr"])
+                    )
+                )
+                and (
+                    (Phi_quarters is None and frequency_solution_cache["Phi_quarters"] is None)
+                    or (
+                        Phi_quarters is not None
+                        and frequency_solution_cache["Phi_quarters"] is not None
+                        and np.array_equal(
+                            Phi_quarters, frequency_solution_cache["Phi_quarters"]
+                        )
+                    )
+                )
+            )
             _fresh_buffers = False
             if Ogw is None or Ogw.shape[0] != Nf or Ogw.shape[1] != n_coarse:
                 # Zero-fill, not np.empty: solve_kernel starts each channel at
@@ -3308,6 +3413,43 @@ def _SGWB_iter_fast_impl(
                 Opgw = np.zeros((Nf, n_coarse))
                 handoff_eps = np.full(Nf, -1.0)
                 _fresh_buffers = True
+            if reuse_cached_modes:
+                old_freqs = frequency_solution_cache["freqs"]
+                old_indices = np.searchsorted(-freqs, -old_freqs).astype(np.int64)
+                old_indices_valid = (
+                    old_indices.size <= Nf
+                    and np.all(old_indices >= 0)
+                    and np.all(old_indices < Nf)
+                    and np.array_equal(freqs[old_indices], old_freqs)
+                )
+                cached_tail_z = frequency_solution_cache["tail_z_by_mode"]
+                tail_z_matches = (
+                    tail_z_by_mode is None and cached_tail_z is None
+                ) or (
+                    old_indices_valid
+                    and tail_z_by_mode is not None
+                    and cached_tail_z is not None
+                    and np.array_equal(tail_z_by_mode[old_indices], cached_tail_z)
+                )
+                if (
+                    old_indices_valid
+                    and tail_z_matches
+                ):
+                    Ogw[old_indices] = frequency_solution_cache["Ogw"]
+                    Oj[old_indices] = frequency_solution_cache["Oj"]
+                    Opgw[old_indices] = frequency_solution_cache["Opgw"]
+                    if handoff_eps is not None:
+                        handoff_eps[old_indices] = frequency_solution_cache["handoff_eps"]
+                    if tail_state is not None:
+                        tail_state[old_indices] = frequency_solution_cache["tail_state"]
+                    mode_indices_to_solve = np.setdiff1d(
+                        np.arange(Nf, dtype=np.int64), old_indices, assume_unique=True
+                    )
+                else:
+                    reuse_cached_modes = False
+            if not reuse_cached_modes:
+                frequency_refinement_reuse_pending = False
+                frequency_solution_cache = None
             # phase_max caps the per-(sub-)step phase increment dTheta = e^z dh
             # (horizon-crossing adaptive step control); Sv supplies sigma at the
             # handoff node for the damping-corrected WKB amplitude, handoff_eps
@@ -3317,7 +3459,6 @@ def _SGWB_iter_fast_impl(
             # |1.5*sigma-1|*e^{-z}。
             # 首轮完整求解才能启用下面的稳定背景快捷路径；所有兼容路径继续保留
             # 历史上的首轮仅探测行为。
-            assemble = 1 if outer_full_reuse else (0 if _iter == 0 else 1)
             solve_args = (
                 Nv,
                 Phi_grid,
@@ -3377,15 +3518,76 @@ def _SGWB_iter_fast_impl(
                     {} if Phi_quarters is None
                     else {"Phi_quarters": Phi_quarters}
                 )
-                if relative_scale:
-                    solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode,
-                                 relative_background=(Phi_grid - Nv, f_hor),
-                                 **quarter_kwargs)
-                elif tail_z_by_mode is None:
-                    solve_kernel(*solve_args, **quarter_kwargs)
-                else:
-                    solve_kernel(*solve_args, z_tail_by_mode=tail_z_by_mode,
-                                 **quarter_kwargs)
+                if mode_indices_to_solve is None:
+                    if relative_scale:
+                        solve_kernel(
+                            *solve_args,
+                            z_tail_by_mode=tail_z_by_mode,
+                            relative_background=(Phi_grid - Nv, f_hor),
+                            **quarter_kwargs,
+                        )
+                    elif tail_z_by_mode is None:
+                        solve_kernel(*solve_args, **quarter_kwargs)
+                    else:
+                        solve_kernel(
+                            *solve_args,
+                            z_tail_by_mode=tail_z_by_mode,
+                            **quarter_kwargs,
+                        )
+                elif mode_indices_to_solve.size:
+                    kernel_kwargs = dict(quarter_kwargs)
+                    if relative_scale:
+                        kernel_kwargs["relative_background"] = (Phi_grid - Nv, f_hor)
+                    if tail_z_by_mode is not None:
+                        kernel_kwargs["z_tail_by_mode"] = tail_z_by_mode
+                    _solve_kernel_mode_subset(
+                        solve_args, mode_indices_to_solve, **kernel_kwargs
+                    )
+                if (
+                    freq_grid == "adaptive"
+                    and not log_amplitude_mode
+                    and phase_weight is None
+                ):
+                    frequency_solution_cache = {
+                        "DN_eff": float(m.cosmo_param["DN_eff"]),
+                        "assemble": assemble,
+                        "n_coarse": n_coarse,
+                        "h": h,
+                        "z_tail": z_tail,
+                        "phase_max": phase_max,
+                        "col_step": col_step,
+                        "relative_scale": relative_scale,
+                        "kink_index": kink_index,
+                        "kink_fraction": kink_fraction,
+                        "phi_re": phi_re,
+                        "Nv": np.asarray(Nv).copy(),
+                        "f_hor": np.asarray(f_hor).copy(),
+                        "sigma": np.asarray(m.sigma).copy(),
+                        "Phi_grid": np.asarray(Phi_grid).copy(),
+                        "Phi_mid": np.asarray(Phi_mid).copy(),
+                        "S2": np.asarray(S2).copy(),
+                        "S2inv": np.asarray(S2inv).copy(),
+                        "h_arr": None if h_arr is None else np.asarray(h_arr).copy(),
+                        "Phi_quarters": (
+                            None
+                            if Phi_quarters is None
+                            else np.asarray(Phi_quarters).copy()
+                        ),
+                        "freqs": np.asarray(freqs).copy(),
+                        "tail_z_by_mode": (
+                            None
+                            if tail_z_by_mode is None
+                            else np.asarray(tail_z_by_mode).copy()
+                        ),
+                        "Ogw": Ogw,
+                        "Oj": Oj,
+                        "Opgw": Opgw,
+                        "handoff_eps": handoff_eps,
+                        "tail_state": tail_state,
+                    }
+                    frequency_refinement_reuse_pending = False
+                elif reuse_cached_modes:
+                    frequency_refinement_reuse_pending = False
             if log_amplitude_mode:
                 if not (
                     np.isfinite(Ogw).all()
@@ -3531,6 +3733,7 @@ def _SGWB_iter_fast_impl(
                             if add.size > room:
                                 add = add[np.linspace(0, add.size - 1, room).astype(int)]
                             adaptive_grid = np.unique(np.concatenate([adaptive_grid, add]))
+                            frequency_refinement_reuse_pending = True
                             continue
                 adaptive_done = True
             if abs((gp.Neff0 + DN_eff_orig + DN_gw_new) / (gp.Neff0 + DN_eff_orig + DN_gw_list[-1]) - 1) < tol:
