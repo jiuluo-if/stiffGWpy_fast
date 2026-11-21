@@ -3827,4 +3827,5 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - 低/内/上密度和独立 Sobol Reference 最大 root 残差 `1.673852e-5`、最大谱差 `6.382504e-4 dex`；13.99609375M 第二步闭合残差 `1.151040e-8`。
 - 14M 同倾斜 Reference 首次映射仍失败，排除在验收域外。新扩域只声称有限样本覆盖。
 - 500 对完整 Fast A/B 新区域最大 P50/P95 `0.993932/0.989277`，可信 CR0 控制 `1.001524/0.979470`，输出逐位相同。
+- 盒外三个单点探针到 13.99951171875M 的 Reference 两步映射均成功；仅作边界点记录，不纳入连续子盒扩展声明。
 - 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p99609375m_nt0302734375_summary.md` 及配套证据。

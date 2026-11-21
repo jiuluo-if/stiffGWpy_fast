@@ -221,6 +221,107 @@
       "mapped_dn_gw": 1.3264929962905256,
       "seconds": 58.94156140000268
     },
+    "additional_point_probes_outside_accepted_box": [
+      {
+        "case": {
+          "params": {
+            "Omega_bh2": 13998046.875,
+            "Omega_ch2": 0.1201075,
+            "H0": 67.32117,
+            "DN_eff": 0.0,
+            "A_s": 2.100549e-09,
+            "r": 0.01,
+            "n_t": -0.0302734375,
+            "cr": 0.0,
+            "T_re": 2000.0,
+            "DN_re": 10.0,
+            "kappa10": 0.01
+          },
+          "fast_success": true,
+          "fast_failure_reason": null,
+          "reference_status": "success",
+          "reference_seconds": 59.44329799999832,
+          "fast_root": 1.3266759374229493,
+          "reference_mapped_root": 1.326697924158621,
+          "root_relative_error": 1.6572525871409552e-05,
+          "spectrum_valid_count": 75,
+          "spectrum_max_abs_dex": 0.0006091220780835016
+        },
+        "second_map": {
+          "status": "success",
+          "mapped_dn_gw": 1.3266978388056532,
+          "seconds": 58.79508199999691
+        },
+        "second_map_residual": 6.433489624245632e-08,
+        "region_screened_as_rectangle": false
+      },
+      {
+        "case": {
+          "params": {
+            "Omega_bh2": 13999023.4375,
+            "Omega_ch2": 0.1201075,
+            "H0": 67.32117,
+            "DN_eff": 0.0,
+            "A_s": 2.100549e-09,
+            "r": 0.01,
+            "n_t": -0.0302734375,
+            "cr": 0.0,
+            "T_re": 2000.0,
+            "DN_re": 10.0,
+            "kappa10": 0.01
+          },
+          "fast_success": true,
+          "fast_failure_reason": null,
+          "reference_status": "success",
+          "reference_seconds": 58.85463509999681,
+          "fast_root": 1.3267784010303527,
+          "reference_mapped_root": 1.326801029276515,
+          "root_relative_error": 1.7054739680697738e-05,
+          "spectrum_valid_count": 75,
+          "spectrum_max_abs_dex": 0.0006085998234208745
+        },
+        "second_map": {
+          "status": "success",
+          "mapped_dn_gw": 1.3268003683805578,
+          "seconds": 60.374147699993046
+        },
+        "second_map_residual": 4.981125820010745e-07,
+        "region_screened_as_rectangle": false
+      },
+      {
+        "case": {
+          "params": {
+            "Omega_bh2": 13999511.71875,
+            "Omega_ch2": 0.1201075,
+            "H0": 67.32117,
+            "DN_eff": 0.0,
+            "A_s": 2.100549e-09,
+            "r": 0.01,
+            "n_t": -0.0302734375,
+            "cr": 0.0,
+            "T_re": 2000.0,
+            "DN_re": 10.0,
+            "kappa10": 0.01
+          },
+          "fast_success": true,
+          "fast_failure_reason": null,
+          "reference_status": "success",
+          "reference_seconds": 59.064517299993895,
+          "fast_root": 1.3268296325864501,
+          "reference_mapped_root": 1.3268520441453306,
+          "root_relative_error": 1.689077465674285e-05,
+          "spectrum_valid_count": 75,
+          "spectrum_max_abs_dex": 0.0006074347209246156
+        },
+        "second_map": {
+          "status": "success",
+          "mapped_dn_gw": 1.3268517641616588,
+          "seconds": 59.09204590000445
+        },
+        "second_map_residual": 2.1101352793505046e-07,
+        "region_screened_as_rectangle": false
+      }
+    ],
     "excluded_14m_case": {
       "case_id": "upper_density_edge",
       "params": {
@@ -380,6 +481,18 @@
     "probe_cr0_density_13p99609375m_nt0302734375_reference.json": "db5cede266cefda3b813c35294c1c43e925671425d9a65a56e7bf2d50e7e6221",
     "probe_cr0_density_13p99609375m_nt0302734375_closure_step.py": "21644d046b2c34f027c3805848792239d6f3dd60fbd067ff566977b83c21bb42",
     "probe_cr0_density_13p99609375m_nt0302734375_closure_step.json": "36edb5111a99670f7a5ce0af9f74be3b12a9f3a640bda92013413ff6bd06f25b",
+    "probe_cr0_density_13p998046875m_nt0302734375_reference.py": "69a1d2d7e7a773743b19dfd11375ed593f070771f016226d88f9ddb4dbbce498",
+    "probe_cr0_density_13p998046875m_nt0302734375_reference.json": "25f69e2b87990e5a357aadb5630786b1c14a51315b018a73cc68da0c6e37ecd5",
+    "probe_cr0_density_13p998046875m_nt0302734375_closure_step.py": "e2d33863cf68ea5b8b34b3be8f5f5f5d683bff3bfe4e2e7f53b1b7cee821dafd",
+    "probe_cr0_density_13p998046875m_nt0302734375_closure_step.json": "4b47cfa59c8121828d39964d44b22077d5e0af14bdc1a83af694eb84f2889011",
+    "probe_cr0_density_13p9990234375m_nt0302734375_reference.py": "56ebfea4b4872e65c6e4091e3533561e5f0c3f38a87da1c9db5370aa0b024215",
+    "probe_cr0_density_13p9990234375m_nt0302734375_reference.json": "ede4287b6bd44814a01de65d902ab7fd76692a51501b3ca4625d68c4c6f5fd51",
+    "probe_cr0_density_13p9990234375m_nt0302734375_closure_step.py": "ccd928e2f9e2607e5ba253cfe3056e03cf4ca58c079cf0e3dd7010c3eeb1661d",
+    "probe_cr0_density_13p9990234375m_nt0302734375_closure_step.json": "a40265644eede5a6cfa9abe48262be31a34d8b0bef175318ab43c31c8b13ad50",
+    "probe_cr0_density_13p99951171875m_nt0302734375_reference.py": "98d4b772593ec7a96b4ce4f0fceb7f1eefdc06239f20ba1c14cfc89726475471",
+    "probe_cr0_density_13p99951171875m_nt0302734375_reference.json": "930400b6876ce76951dcc56c0e40c169a01c2ea4e3dca77397db3c07acf97bb0",
+    "probe_cr0_density_13p99951171875m_nt0302734375_closure_step.py": "9d8111754c3a7a2f9392143837d39c59de720495f89ee3cdc32acd040ded9040",
+    "probe_cr0_density_13p99951171875m_nt0302734375_closure_step.json": "afc1fdb57c03c0627dcc4547bdbd10f560fac84398a14f463f8631bd7c6d4802",
     "probe_cr0_density_13p875m_to13p9921875m_nt0302734375_sobol_reference.py": "746b38d98acd9de3654ded9c8daa021108c11ea4af2ba315c36b784d8b829031",
     "probe_cr0_density_13p875m_to13p9921875m_nt0302734375_sobol_reference.json": "3b87062e5c83fd8147caae5eb3ee9014f2bbd19c944e9edb158a531d58751411",
     "benchmark_cr0_density_13m_to13_984375m_self_ab_500pairs.py": "88421ea26128965625d3aae097ceb4c3500b48a5cf8ac02819cf92a814ba0aaa",
@@ -387,8 +500,8 @@
     "benchmark_cr0_density_13p875m_to13p99609375m_nt0302734375_self_ab_tbb_500pairs.json": "1af18a5bb9e47bfe36138391b68f6ec6ff992517d3caab260acd1616e342b30a",
     "plot_cr0_density_13p875m_to13p99609375m_nt0302734375_slice.py": "0593ec34cc3c953c80a170b7043ba432f5f928603c44322f6dcfc29d38e30bc8",
     "cr0_density_13p875m_to13p99609375m_nt0302734375_slice.png": "6adc41e6bb43dd48e798f18a176a73775535020cc89fafa78b1c9d9c4557fee7",
-    "cr0_density_13p875m_to13p99609375m_nt0302734375_summary.md": "78faf65c8059c70bdb1bae1b5761168c3dcf304e9c4c7ae170e33441bd944725",
-    "make_cr0_density_13p875m_to13p99609375m_nt0302734375_manifest.py": "8b47f0ad53eee60d00c2d3e54cf38c71717846787654c8eec385ec417e395d1e"
+    "cr0_density_13p875m_to13p99609375m_nt0302734375_summary.md": "6c5cd8893f2ebd9e266517fb60efd725ef6dcd7b8d78c9ab9c96a31e1a55ff47",
+    "make_cr0_density_13p875m_to13p99609375m_nt0302734375_manifest.py": "2d820f904a0503e94a964aa8edd4ddf4601866d8cff03fde0cc2beee9776f888"
   },
   "manifest_self_hash_included": false
 }

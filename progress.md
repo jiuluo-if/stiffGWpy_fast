@@ -2313,4 +2313,5 @@ The current production source remains unchanged; added one tested Reference-orig
 
 - `[13.875M,13.99609375M]×[-0.0302734375,0]` paired Fast screen `0/19→19/19`; Reference boundary/interior/Sobol max root `1.673852e-5`, spectrum `6.382504e-4 dex`; second upper-edge closure residual `1.151040e-8`.
 - 500-pair Fast A/B max new-region P50/P95 `0.993932/0.989277`; trusted control `1.001524/0.979470`; outputs bitwise equal.
+- Three exploratory point probes outside the accepted box through 13.99951171875M pass Reference map and one closure step, but have no area screen or performance claim.
 - Figure inspected; combined Round 87–88 manifest, delivery checks, commit/push and CI remain.

@@ -2248,6 +2248,7 @@ After delivery, test a density closer to 14M on this same tilt edge with unchang
 - [x] Selected Reference density points plus independent Sobol: max root residual `1.67385e-5`, max spectrum error `6.38250e-4 dex`; 13.99609375M second-map residual `1.15104e-8`.
 - [x] Same-tilt 14M Reference mapping still fails and remains excluded.
 - [x] 500-pair full Fast A/B: max new-region P50/P95 `0.993932/0.989277`; trusted control `1.001524/0.979470`; outputs bitwise equal.
+- [x] Three exploratory density points from 13.998046875M to 13.99951171875M pass first and second Reference maps; they are retained as point probes without rectangle claims.
 - [x] Figure inspected; focused Ruff passes; production Fast/Reference source unchanged.
 - [ ] Verify both manifests/delivery checks, commit/push and confirm CI for the consolidated 13.9921875M–13.99609375M density-edge tranche.
 
@@ -2257,4 +2258,4 @@ Finite sample evidence through 13.99609375M; the 14M outer corner remains exclud
 
 ### Next Step
 
-After delivery, test the next density midpoint between 13.99609375M and 14M under the unchanged Reference settings.
+After delivery, either screen a new adjacent terminal density tile or move to the separate `cr>0` admissible domain; preserve the observed 14M Reference failure as the current CR0 outer limit.

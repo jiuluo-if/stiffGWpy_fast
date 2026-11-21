@@ -36,6 +36,18 @@ ARTIFACT_FILES = (
     "probe_cr0_density_13p99609375m_nt0302734375_reference.json",
     "probe_cr0_density_13p99609375m_nt0302734375_closure_step.py",
     "probe_cr0_density_13p99609375m_nt0302734375_closure_step.json",
+    "probe_cr0_density_13p998046875m_nt0302734375_reference.py",
+    "probe_cr0_density_13p998046875m_nt0302734375_reference.json",
+    "probe_cr0_density_13p998046875m_nt0302734375_closure_step.py",
+    "probe_cr0_density_13p998046875m_nt0302734375_closure_step.json",
+    "probe_cr0_density_13p9990234375m_nt0302734375_reference.py",
+    "probe_cr0_density_13p9990234375m_nt0302734375_reference.json",
+    "probe_cr0_density_13p9990234375m_nt0302734375_closure_step.py",
+    "probe_cr0_density_13p9990234375m_nt0302734375_closure_step.json",
+    "probe_cr0_density_13p99951171875m_nt0302734375_reference.py",
+    "probe_cr0_density_13p99951171875m_nt0302734375_reference.json",
+    "probe_cr0_density_13p99951171875m_nt0302734375_closure_step.py",
+    "probe_cr0_density_13p99951171875m_nt0302734375_closure_step.json",
     "probe_cr0_density_13p875m_to13p9921875m_nt0302734375_sobol_reference.py",
     "probe_cr0_density_13p875m_to13p9921875m_nt0302734375_sobol_reference.json",
     "benchmark_cr0_density_13m_to13_984375m_self_ab_500pairs.py",
@@ -68,6 +80,18 @@ def main() -> None:
     closure_984 = read_json("probe_cr0_density_13p984375m_nt0302734375_closure_step.json")
     closure_992 = read_json("probe_cr0_density_13p9921875m_nt0302734375_closure_step.json")
     closure_996 = read_json("probe_cr0_density_13p99609375m_nt0302734375_closure_step.json")
+    outer_point_probes = []
+    for density in ("13p998046875", "13p9990234375", "13p99951171875"):
+        probe = read_json(f"probe_cr0_density_{density}m_nt0302734375_reference.json")["case"]
+        closure_probe = read_json(f"probe_cr0_density_{density}m_nt0302734375_closure_step.json")
+        outer_point_probes.append({
+            "case": probe,
+            "second_map": closure_probe["closure_step"],
+            "second_map_residual": abs(
+                closure_probe["closure_step"]["mapped_dn_gw"] - probe["reference_mapped_root"]
+            ) / closure_probe["closure_step"]["mapped_dn_gw"],
+            "region_screened_as_rectangle": False,
+        })
     timing = read_json("benchmark_cr0_density_13p875m_to13p99609375m_nt0302734375_self_ab_tbb_500pairs.json")
     trusted = next(r for r in timing["cases"] if r["case_id"] == "trusted_physical_cr0_control")
     accepted_refs = [r for r in low_refs if r["reference_status"] == "success"] + [upper_984, upper_992, upper_996]
@@ -121,6 +145,7 @@ def main() -> None:
             "13p984375m_second_closure_step": closure_984["closure_step"],
             "13p9921875m_second_closure_step": closure_992["closure_step"],
             "13p99609375m_second_closure_step": closure_996["closure_step"],
+            "additional_point_probes_outside_accepted_box": outer_point_probes,
             "excluded_14m_case": excluded_14m,
             "max_accepted_root_residual": max(root_errors),
             "max_accepted_spectrum_error_dex": max(spectrum_errors),
