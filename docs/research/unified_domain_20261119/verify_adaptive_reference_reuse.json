@@ -1,0 +1,32 @@
+{
+  "status": "complete",
+  "reference_rerun": false,
+  "source_sha256": {
+    "fast_sgwb.py": "013214fc7063ef73d8e5a91b4274d8b82987aa6d0b66a40faf25f49b182a40fe",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6",
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc"
+  },
+  "checks": [
+    {
+      "reference_file": "validate_adaptive_frequency_cr0_density_reference.json",
+      "fast_success": true,
+      "frequency_support_equal": true,
+      "fast_root_equal": true,
+      "fast_total_DN_eff_equal": true,
+      "frequency_count": 265,
+      "reference_status": "success",
+      "reference_source_sha256": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+    },
+    {
+      "reference_file": "validate_adaptive_frequency_holdout_reference.json",
+      "fast_success": true,
+      "frequency_support_equal": true,
+      "fast_root_equal": true,
+      "fast_total_DN_eff_equal": true,
+      "frequency_count": 269,
+      "reference_status": "success",
+      "reference_source_sha256": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+    }
+  ]
+}

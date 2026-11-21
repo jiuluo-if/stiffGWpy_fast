@@ -540,6 +540,110 @@ def test_freq_grid_convergence(fast_settings):
     assert chg24 < chg12
 
 
+@pytest.mark.slow
+def test_adaptive_goal_frequency_refinement_reuses_existing_mode_rows(monkeypatch):
+    """Adaptive support refinement repropagates only inserted modes."""
+    from stiffgwpy_fast import freq_adaptive as FA
+
+    params = {
+        'Omega_bh2': 13_890_136.71875,
+        'Omega_ch2': 0.1201075,
+        'H0': 67.32117,
+        'DN_eff': 0.0,
+        'A_s': 2.100549e-9,
+        'r': 1e-2,
+        'n_t': -0.022705078125,
+        'cr': 0.0,
+        'T_re': 2e3,
+        'DN_re': 10.0,
+        'kappa10': 1e-2,
+    }
+    model = LCDM_SG(**params)
+    FS.gen_fast(model, 0.005, kink_split=True)
+    goal_grid = FA.goal_oriented_freqs(
+        model, 1.0, seed_n=64, max_points=120
+    )
+    original_grid_builder = FA.grid_independent_freqs
+    original_goal_builder = FA.goal_oriented_freqs
+    monkeypatch.setattr(FA, 'goal_oriented_freqs', lambda *args, **kwargs: goal_grid)
+
+    def unexpected_grid_independent_seed(*args, **kwargs):
+        raise AssertionError('adaptive goal mode must use the sparse goal seed')
+
+    monkeypatch.setattr(FA, 'grid_independent_freqs', unexpected_grid_independent_seed)
+
+    original_subset_solver = FS._solve_kernel_mode_subset
+    original_kernel = FS.solve_kernel
+    subset_mode_counts = []
+
+    def track_subset_modes(solve_args, mode_indices, **kwargs):
+        subset_mode_counts.append((len(mode_indices), len(solve_args[5])))
+        return original_subset_solver(solve_args, mode_indices, **kwargs)
+
+    monkeypatch.setattr(FS, '_solve_kernel_mode_subset', track_subset_modes)
+    config = FS.resolve_config('fast', threads=2, freq_grid='adaptive')
+    evaluation_nodes = np.array([-1.73, -0.42, 0.37, 1.21])
+    assert FS.SGWB_iter_fast(
+        model,
+        config=config,
+        tol=1e-6,
+        physical_guard=True,
+        freq_grid_target=1e-6,
+        freq_grid_max_points=500,
+        eval_freqs=evaluation_nodes,
+    ) is model
+
+    final_frequency_count = len(model.f)
+    assert final_frequency_count > len(goal_grid)
+    assert np.all(np.isin(evaluation_nodes, model.f))
+    assert subset_mode_counts
+    assert any(selected < support for selected, support in subset_mode_counts)
+
+    recompute = _make_model(**params)
+
+    def recompute_all_modes(solve_args, mode_indices, **kwargs):
+        return original_kernel(*solve_args, **kwargs)
+
+    monkeypatch.setattr(FS, '_solve_kernel_mode_subset', recompute_all_modes)
+    assert FS.SGWB_iter_fast(
+        recompute,
+        config=config,
+        tol=1e-6,
+        physical_guard=True,
+        freq_grid_target=1e-6,
+        freq_grid_max_points=500,
+        eval_freqs=evaluation_nodes,
+    ) is recompute
+    assert np.array_equal(model.f, recompute.f)
+    assert np.array_equal(model.DN_gw, recompute.DN_gw)
+    assert np.array_equal(model.log10OmegaGW, recompute.log10OmegaGW)
+
+    monkeypatch.setattr(FS, '_solve_kernel_mode_subset', original_subset_solver)
+    monkeypatch.setattr(FA, 'grid_independent_freqs', original_grid_builder)
+    monkeypatch.setattr(FA, 'goal_oriented_freqs', original_goal_builder)
+    dense = _make_model(**params)
+    dense_config = FS.resolve_config(
+        'fast', threads=2, freq_grid='grid_independent'
+    )
+    assert FS.SGWB_iter_fast(
+        dense,
+        config=dense_config,
+        tol=1e-6,
+        physical_guard=True,
+        freq_res=4.6,
+        eval_freqs=model.f,
+    ) is dense
+    assert abs(model.DN_gw[-1] - dense.DN_gw[-1]) / dense.DN_gw[-1] <= 2e-4
+    dense_indices = np.searchsorted(-dense.f, -model.f)
+    assert np.array_equal(dense.f[dense_indices], model.f)
+    finite = np.isfinite(model.log10OmegaGW) & np.isfinite(
+        dense.log10OmegaGW[dense_indices]
+    )
+    assert np.max(
+        np.abs(model.log10OmegaGW[finite] - dense.log10OmegaGW[dense_indices][finite])
+    ) <= 1e-3
+
+
 def test_estimate_local_error_categories(fast_settings):
     """A real production solve must produce an 11-category local a-posteriori
     error budget with sane (positive, classified) entries."""
@@ -575,10 +679,14 @@ def test_estimate_local_error_missing_telemetry():
         assert cat['value'] >= 0.0
 
 
-def test_wrapper_wires_production_preset_and_local_budget():
+def test_wrapper_wires_production_preset_and_local_budget(monkeypatch):
     """The SGWB_iter wrapper must forward the fast preset (kink split
     transition + goal frequency grid) and attach the local error budget,
     eval status and telemetry."""
+    def unexpected_mode_subset(*args, **kwargs):
+        raise AssertionError('the default goal hot path must call solve_kernel directly')
+
+    monkeypatch.setattr(FS, '_solve_kernel_mode_subset', unexpected_mode_subset)
     m = _make_model()
     m.SGWB_iter(engine='fast', accuracy_mode='fast', tol=1e-7)
     assert m.SGWB_converge

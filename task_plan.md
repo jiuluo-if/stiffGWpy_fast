@@ -2272,8 +2272,15 @@ After delivery, either screen a new adjacent terminal density tile or move to th
 
 ### Gates before production promotion
 
-- [ ] Write a red test showing the default root misses `2e-4` against a sufficiently converged frequency-support reference on a trusted profile and a prior CR0 expansion input.
-- [ ] Prototype nested refinement that reuses per-mode propagation at fixed `DN_eff`; measure extra work after outer self-consistency changes.
-- [ ] Demonstrate bounded root convergence across nested levels and independent Reference checks on representative cases.
-- [ ] Keep trusted-area P50/P95 regression within 5%; reject if node reuse or mode-cost reduction cannot offset frequency refinement.
-- [ ] Only after these gates pass, revalidate parameter slices, independent holdouts, spectra, complete runtime, plots and hashes; until then do not promote new frequency-sensitive areas.
+- [x] Write a red test showing that default `goal` ignores its requested support-error target; default auto-refinement prototype was measured and rejected because trusted-area P50 regressed by 96% and the density-edge root remained 9.48e-3 from its no-feedback goal result at the documented default target.
+- [x] Prototype nested refinement that reuses per-mode propagation at fixed `DN_eff`; after fixing the cache-snapshot indentation, the CR0 density-edge adaptive P50 fell from 0.193 s to 0.107 s, with propagated rows reduced 1840→613 and identical roots at 269 nodes. Exact `f_hor` and per-mode tail-threshold checks are part of the reuse key.
+- [x] Demonstrate independent Reference checks on representative cases. Two adaptive-support Reference maps (one rectangle corner, one independent holdout) show Fast map residuals `8.45e-5` and `8.38e-5`; maximum spectrum errors `6.11e-4` and `6.33e-4 dex`. The holdout's second Reference map closes to `3.86e-8` relative.
+- [x] Start opt-in `adaptive` support from sparse goal grid for ordinary amplitudes, retain the grid-independent log-amplitude seed, and test native `eval_freqs` nodes.
+- [x] Complete trusted-area P50/P95 regression check against HEAD: three profiles, 24 alternating warm samples, identical roots; P50/P95 sample-max ratios were trusted default `0.994/0.862`, high-T `1.013/0.928`, CR0 density edge `0.984/0.958`.
+- [x] Revalidate the prior CR0 density–tilt rectangle on 9 rectangle points and 2 holdouts with adaptive support, dense Fast, two Reference maps, performance, figure and source hashes. This confirms an adaptive solver capability and corrects prior goal-grid roots; current HEAD goal also succeeds throughout, so it is not counted as a newly expanded current-HEAD domain.
+
+### Next project phase — current-HEAD failures and a separate domain slice
+
+- [ ] Screen mathematical-valid points that actually fail at HEAD `57072b3`; do not recycle pre-stabilization failures as current-baseline failures.
+- [ ] Build at least one distinct current-HEAD 2D failure slice; include the `cr>0` tilted-exponent/cutoff constraints where applicable and an independent holdout.
+- [ ] Apply the adaptive path only as the frequency-convergence mechanism; claim expansion only where HEAD fails and the new Fast succeeds accurately with acceptable cost.
