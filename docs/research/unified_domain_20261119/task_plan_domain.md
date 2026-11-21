@@ -21,3 +21,13 @@
 - 更宽低温矩形 `[1500,1750]×[.0125,.015]` 因两个 Reference 根误差约 `2.53e-4` 和 `2.69e-4` 超门槛而拒绝，不计作可求解区域。图、原始数据、哈希及复现脚本在 `cr1_nearby_reheat_kappa_*` 和 `screen/validate/close_reference_cr1_low_reheat_kappa_*`。Reference 生产代码未修改。
 - 本轮只扩展了已发布 Fast 能力的有限采样证据，不改生产算法；有限样本不能认证整个矩形。
 - 下一步：沿实际 CR1 倾斜继续研究 `r×T_re` 参数片，先用 Fast 便宜筛查定位精度合格的旧失败邻区，再做 Reference 与完整 A/B；同时保留 `cr=0` 既有可信样本作为控制。
+
+
+## 2026-11-21 CR1 log-wide continuation
+
+- 完成 CR1 `r×T_re` 对数宽域候选：固定 `kappa10=.01`、`cr=1`，`T_re∈[1750,2000]`、`r∈[4e-43,.005]`；`n_t=-r/8`，Sobol 在 `log10(r)` 均匀抽样。旧 Fast 19 点中 1 点成功、18 点以 `nonfinite_background_primitive` 失败；当前 Fast 19/19 成功。
+- 从 CR1 派生 `Delta_N` 解得 `N_inf≥N_re` 的真实 `r_min`；固定参数下 101 个温度点最大 `r_min=3.6020e-43`，取 `4e-43` 且最小 `Delta_N=.03493`。全样本 `H²` 正有限，实际倾斜全为负，不触发蓝倾 cutoff。
+- 七个代表点的当前 Fast/Reference 根最大差（含第三次 map 闭合）`1.2886e-4`，对 Reference 原始正线性 `Ogw-Oj` 取对数后的最大谱差 `8.7991e-4 dex`。Reference 的 `-40` 对数下限只影响小信号日志输出；未修改 Reference，采用其原始线性输出。
+- 旧版唯一成功中段点的旧根 Reference 相对误差 `5.304%`，当前根 `1.172e-5`；旧/新频率数组相同。500 对完整 Fast A/B 最大新增区 P50/P95 比 `1.0231/1.0250`，可信 CR0 控制点 `0.9993/0.9810`。
+- `r=.04` 与 `.0205` 的高倾斜端 Reference 探点未过根/谱精度门槛，不纳入接受区。证据、失败边界、图与 SHA 在 `cr1_r_logwide_*` 及所列复用的 `cr1_r_lowstrip_*` 文件。有限样本不等于连续认证；生产算法和 Reference 均未修改。
+- 下一步：在 `r≤.005` 已验收范围外，沿 CR1 高 `r` 方向从 `.005` 起细化 Reference 精度边界；每次扩宽仍需验证相邻区、log-Sobol 留出和性能，勿将 `.0205/.04` 探点外推成边界证明。
