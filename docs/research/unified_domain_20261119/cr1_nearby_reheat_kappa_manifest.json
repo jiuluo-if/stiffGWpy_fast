@@ -1,0 +1,70 @@
+{
+  "status": "validated_finite_sample_adjacent_cr1_rectangle",
+  "accepted_region": {
+    "cr": 1.0,
+    "r": 0.01,
+    "derived_nt": -0.00125,
+    "T_re": [
+      1687.5,
+      1750.0
+    ],
+    "kappa10": [
+      0.0125,
+      0.015
+    ],
+    "fixed_densities": {
+      "Omega_bh2": 700000.0,
+      "Omega_ch2": 700000.0
+    }
+  },
+  "old_failure_baseline_commit": "872a70dc5ab3bb2ff9d3c0d78f05850341b42a45",
+  "performance_baseline_commit": "d4ee1b9c8f9fad401c5e22c2316094a608074727",
+  "reference_code_modified": false,
+  "production_code_changed_this_tranche": false,
+  "continuum_claim": false,
+  "sample_counts": {
+    "paired_old_success": 0,
+    "paired_current_success": 19,
+    "reference_points": 3,
+    "independent_sobol_holdouts": 8
+  },
+  "max_root_relative_to_third_reference_map": 0.0001942824847016016,
+  "max_spectrum_abs_error_dex": 0.0009223931316419964,
+  "performance_500_pairs": {
+    "new_region_p50_ratio_max": 0.967568735844922,
+    "new_region_p95_ratio_max": 0.9771221044934549,
+    "trusted_cr0_p50_ratio": 0.9963020173479681,
+    "trusted_cr0_p95_ratio": 0.9901314618289662
+  },
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc",
+    "LCDM_stiff_Neff.py": "35b0b91348bbeb5df8ee77e627ff3faa65cfc51a32416fb9c9556c1bca3e66c4",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "artifact_sha256": {
+    "screen_cr1_nearby_reheat_kappa.py": "8c9ec76c77ee99b1dabde03981ebea77952f8163101c94b20e73eba0d418ba03",
+    "screen_cr1_nearby_reheat_kappa_lattice.json": "0324e0c04a04a3dd7d33ae3fbafc76c22cf3f606c33b1c616747028f55a9e419",
+    "screen_cr1_nearby_reheat_kappa_sobol.json": "d5baeaccbd321596d0ea18ce7a91b065ee26f5fd7aaeedc86473773ab0bea63e",
+    "validate_cr1_nearby_reheat_kappa_z8.py": "700331f1bbc5cde59a27001a20259bceb5fc67eead3552a6ec3faa2b1dab962e",
+    "validate_cr1_nearby_reheat_kappa_z8.json": "b5ffc684520adf422a9f506cc35290ba0195927fe06c409198290849cd758651",
+    "close_reference_cr1_nearby_reheat_kappa_z8.py": "5aac488c7e457a89116b48c8def732025060a118629dff5ccb448059409a0b11",
+    "close_reference_cr1_nearby_reheat_kappa_z8.json": "eebea7ae0cf9ebd5b8cf3c2b6df00b7309d5c65511810e073573119d9054e285",
+    "benchmark_cr1_nearby_reheat_kappa_ab.py": "e14554ed89512681dab37507bc692417280de9837b3be235a3807623e30a978e",
+    "benchmark_cr1_nearby_reheat_kappa_ab_500pairs.json": "feaad784d43382be4198b26786362a8ca8f0a502f8293eab69bd23a716f0e7dc",
+    "plot_cr1_nearby_reheat_kappa.py": "3a46fd33e66224427b1f6bf79dfdc1f89e26224998c0a2022982c9d57d5c5fb9",
+    "make_cr1_nearby_reheat_kappa_manifest.py": "2cb8e283c671a99f3d4b822c3467ffab850063a2f5525e3df4bbf71bd67c4c4e",
+    "cr1_nearby_reheat_kappa_evidence.png": "cc142201f93e870a0f89db2dab07254e38f46b0dd02a0beeb69c77618dc410a9",
+    "cr1_nearby_reheat_kappa_summary.md": "b760061c1ac1068271e05b1f7a2c6e2a7b81e4ed471731bdad16ed5fc9712d93",
+    "screen_cr1_low_reheat_kappa.py": "e3977b91214bc7bac034285d69231626bf9fc5563ccae563ce64d8e6d908e5c9",
+    "screen_cr1_low_reheat_kappa_lattice.json": "12826c3c0b9ba1bb67ae449d948b123ef6a6f68d832d8bf723a53df93d36e9d8",
+    "screen_cr1_low_reheat_kappa_sobol.json": "c42d4716bca1dd11964c0379725ca13c7a11e4aae6ad52e11aa33f30af60a6ed",
+    "validate_cr1_low_reheat_kappa_z8.py": "9dbc2b28e870aba5d025c6643758740d74dc020d1deaec358f54d9410084d9bb",
+    "validate_cr1_low_reheat_kappa_z8.json": "98d78d4ada117b5d36305ad336e9aea4ee3674e2532fe4b8459c96f4399b0726",
+    "close_reference_cr1_low_reheat_kappa_z8.py": "69f2056917f9865b5cd585facb127fb0054dffa9b8a07d902a7923350161f207",
+    "close_reference_cr1_low_reheat_kappa_z8.json": "be6083a84c54592efded1f1f89d074d32072927bd990a605d1eec920d641ee0f"
+  },
+  "manifest_self_hash_included": false
+}

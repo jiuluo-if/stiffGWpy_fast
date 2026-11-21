@@ -12,3 +12,12 @@
 - 本轮本地门禁通过：423 tests、Ruff、Mypy、compileall、打包、归档边界和 wheel smoke。
 - 交付完成：commit `55ec264cb7a18d9bb75dcf39909a448eb866f18a` 已推送至 `fast_v0.2`，GitHub Actions `44474144299` 全 9 项通过。
 - 下一步：恢复宽频支持区求值域研究；当前 underflow 分类修正不视为扩域成果。
+
+
+## 2026-11-21 continuation state
+
+- `cr>0` 新增低温相邻切片：固定 `r=.01`，实际派生 `n_t=-r/8=-.00125`；有限采样区间 `T_re∈[1687.5,1750]×kappa10∈[.0125,.015]` 的 paired screen 为旧版 `0/19`、当前版 `19/19`。旧失败均是正有限 `H²` 下的 `nonfinite_background_primitive`。
+- 三个当前源码 z8 Reference 代表样本根误差最大 `1.942825e-4`、谱误差最大 `9.223931e-4 dex`；Sobol 留出第三次 map closure `8.504492e-8`。同机 500 对完整 Fast A/B 中新增区和可信 CR0 P50/P95 比均小于 1；当前生产源码与 `d4ee1b9` 完全相同。
+- 更宽低温矩形 `[1500,1750]×[.0125,.015]` 因两个 Reference 根误差约 `2.53e-4` 和 `2.69e-4` 超门槛而拒绝，不计作可求解区域。图、原始数据、哈希及复现脚本在 `cr1_nearby_reheat_kappa_*` 和 `screen/validate/close_reference_cr1_low_reheat_kappa_*`。Reference 生产代码未修改。
+- 本轮只扩展了已发布 Fast 能力的有限采样证据，不改生产算法；有限样本不能认证整个矩形。
+- 下一步：沿实际 CR1 倾斜继续研究 `r×T_re` 参数片，先用 Fast 便宜筛查定位精度合格的旧失败邻区，再做 Reference 与完整 A/B；同时保留 `cr=0` 既有可信样本作为控制。

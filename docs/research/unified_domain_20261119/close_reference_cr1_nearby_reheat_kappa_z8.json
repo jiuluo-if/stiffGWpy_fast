@@ -1,0 +1,26 @@
+{
+  "status": "complete_cr1_nearby_reheat_kappa_reference_map_closure",
+  "reference_code_modified": false,
+  "z_tail": 8.0,
+  "same_saved_frequency_grid": true,
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "case": {
+    "case_id": "independent_sobol_holdout",
+    "fast_root": 0.1332724386699591,
+    "first_reference_map_at_fast_root": 0.1332465669620792,
+    "second_reference_map": 0.13324656253085632,
+    "third_reference_map": 0.13324655119891426,
+    "first_to_second_closure_relative": 3.325581391713019e-08,
+    "second_to_third_closure_relative": 8.504491823182733e-08,
+    "fast_root_relative_to_third_map": 0.0001942824847016016,
+    "reference_map_seconds": [
+      71.39271290000033,
+      70.3299748999998
+    ]
+  }
+}
