@@ -58,3 +58,13 @@
 - 高 `r` 邻片 `[1875,2250]×[.01,.015]` 和窄片 `[1875,2250]×[.01,.01125]` 因代表 Reference 根差失败而拒绝，不计入扩域结果。
 - 当前与既有 `T_re∈[1875,2000]×r∈[.005,.01]` 形成相邻温度片。有限格点与 Sobol 支持扩展，不构成连续域认证。原始 screen、Reference、闭合、性能、图和 SHA 位于 `cr1_r_temperature_extension_*`。
 - 下一步：回到历史 402 点真实失败记录，沿 `cr=0` 的另一独立参数维度筛选新的相邻矩形；保留当前 CR1 片和可信 CR0 样本作为回归控制。
+
+## 2026-11-21 CR0 高密度负倾斜温度轴续展
+
+- 固定 `cr=0`、`Omega_bh2=1e6`、`Omega_ch2=.1201075`、`r=.01`、`A_s=2.100549e-9`、`kappa10=.01`、`DN_re=10`，筛查 `T_re∈[4e3,1e7] GeV × n_t∈[-.5,-.25]`。CR0 下 `n_t` 独立，且区域全为非正倾斜。`Omega_bh2` 超出 Cobaya prior，但方程数值可解；所有样本的 `H²` 正有限、`N_inf` 有限并通过 `physical_guard=True`。
+- 同输入 paired lattice、内部点、独立 Sobol 共 19 点：旧 Fast `2/19` 成功、`17/19` `nonfinite_background_primitive`；当前 `19/19` 成功。旧版成功 lattice/Sobol 点均保留，并通过当前 Reference 核验。
+- 7 个当前源码 z8 Reference 样本最大首映射根差 `1.88163e-4`、谱差 `8.81429e-4 dex`。最紧 `(T_re=1e7,n_t=-.25)` 二至三次 map 闭合 `3.27e-8`、Fast 根相对第三次 map 差 `1.88135e-4`。
+- 500 对完整 Fast A/B 七个区域/留出/控制输入全部 root、频率摘要和谱逐位相同；区域最大 P50/P95 比 `1.0153/1.0211`。可信标准 CR0 对照因首轮 P95 接近门槛加测 1000 对， pooled 1500 对比为 `1.0020/1.0244`；高密度可信控制 `0.9590/0.9513`。生产 Fast、Reference 未改。
+- `n_t≤0` 到零的更宽候选有 3 个 `shared_Neff_guard` 拒绝；正倾斜高温 19 点也全被同一 guard 拒绝。`log10(kappa10)×n_t` 候选旧/新 Fast 均成功，未发现扩域，不计入成果。三组筛查均保留原始分类数据。
+- 证据图、原始 screen/Reference、闭合、性能 A/B、control 复测及 SHA manifest 位于 `cr0_density_reheat_negative_tilt_*`。当前只接受有限样本支持的参数盒，不认证连续区域。
+- 下一步：继续从 402 点真实有效失败集合寻找另一个物理 guard 通过的切片；先排除已存在 H²、N_eff、资源与截止拒绝，随后要求旧 Fast 同输入失败、新 Fast 成功及独立 Reference 精度。

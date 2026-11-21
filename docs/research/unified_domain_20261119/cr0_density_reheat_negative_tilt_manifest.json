@@ -1,0 +1,213 @@
+{
+  "status": "validated_finite_sample_cr0_density_reheat_negative_tilt_region",
+  "accepted_region": {
+    "Omega_bh2": 1000000.0,
+    "Omega_ch2": 0.1201075,
+    "T_re_GeV": [
+      4000.0,
+      10000000.0
+    ],
+    "n_t": [
+      -0.5,
+      -0.25
+    ],
+    "fixed_parameters": {
+      "cr": 0.0,
+      "H0": 67.32117,
+      "DN_eff": 0.0,
+      "A_s": 2.100549e-09,
+      "r": 0.01,
+      "DN_re": 10.0,
+      "kappa10": 0.01
+    },
+    "Cobaya_Omega_bh2_prior": [
+      0.01,
+      0.04
+    ],
+    "outside_Cobaya_Omega_bh2_prior": true,
+    "physical_guard": true,
+    "blue_tilt_cutoff_branch": false,
+    "continuum_claim": false
+  },
+  "paired_screen": {
+    "points": 19,
+    "old_success": 2,
+    "old_failures_by_reason": {
+      "nonfinite_background_primitive": 17
+    },
+    "current_success": 19,
+    "current_failure_reasons": {},
+    "H2_positive_finite_all": true,
+    "N_inf_finite_all": true,
+    "H2_minimum_sampled": 0.45321399299427867,
+    "N_inf_range": [
+      48.465709759074116,
+      56.29118614027336
+    ]
+  },
+  "rejected_probe_summaries": {
+    "wider_nt_to_zero": {
+      "current_shared_Neff_guard_rejects": 3,
+      "included_in_accepted_domain": false
+    },
+    "positive_tilt_high_reheat": {
+      "points": 19,
+      "current_shared_Neff_guard_rejects": 19,
+      "included_in_accepted_domain": false
+    },
+    "kappa10_10_to_100_by_negative_tilt": {
+      "old_success": 19,
+      "current_success": 19,
+      "new_old_failure_coverage": 0
+    }
+  },
+  "accuracy": {
+    "reference_samples": 7,
+    "max_first_map_root_error": 0.00018816274142543398,
+    "max_positive_linear_spectrum_error_dex": 0.000881429422888047,
+    "tight_corner_second_to_third_closure": 3.270657303864116e-08,
+    "tight_corner_fast_root_error_to_third_map": 0.0001881345258120699,
+    "root_gate": 0.0002,
+    "spectrum_gate_dex": 0.001
+  },
+  "performance": {
+    "base_commit": "d4ee1b9c8f9fad401c5e22c2316094a608074727",
+    "candidate_commit": "67a02040f85180341fbada64d6bba6672fb2b0c3",
+    "pairs_per_case": 500,
+    "regional_p50_ratio_max": 1.0152527347296294,
+    "regional_p95_ratio_max": 1.0211092145408016,
+    "trusted_cr0_high_density_control": {
+      "p50_ratio": 0.9590098262648239,
+      "p95_ratio": 0.9513077433658463
+    },
+    "trusted_cr0_standard_control_pooled": {
+      "pairs": 1500,
+      "p50_ratio": 1.001971153466689,
+      "p95_ratio": 1.0243766966162606,
+      "baseline_p50_seconds": 0.0053521999943768606,
+      "current_p50_seconds": 0.0053627500019501895,
+      "baseline_p95_seconds": 0.005986045003373874,
+      "current_p95_seconds": 0.006131965006352402
+    },
+    "root_delta_max": 0.0,
+    "frequency_digest_mismatch_pairs": 0,
+    "spectrum_absdiff_max_dex": 0.0,
+    "first_call_records": {
+      "new_low_T_low_tilt_corner": {
+        "fresh_process_compile": true,
+        "base_seconds": 20.668217499987804,
+        "current_seconds": 21.06035630000406,
+        "base_root": 0.04443280459694988,
+        "current_root": 0.04443280459694988
+      },
+      "new_low_T_high_tilt_corner": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.03157449999707751,
+        "current_seconds": 0.031027300006826408,
+        "base_root": 0.06613156773736183,
+        "current_root": 0.06613156773736183
+      },
+      "new_high_T_low_tilt_corner": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.031035599997267127,
+        "current_seconds": 0.0316022999904817,
+        "base_root": 0.044821082019561156,
+        "current_root": 0.044821082019561156
+      },
+      "new_high_T_high_tilt_corner": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.032941800003754906,
+        "current_seconds": 0.03430490000755526,
+        "base_root": 0.15844119521766478,
+        "current_root": 0.15844119521766478
+      },
+      "retained_old_success_lattice": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.030408799997530878,
+        "current_seconds": 0.029763700003968552,
+        "base_root": 0.0602792950451241,
+        "current_root": 0.0602792950451241
+      },
+      "retained_old_success_sobol": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.03127790000871755,
+        "current_seconds": 0.030999399998108856,
+        "base_root": 0.052477699546039966,
+        "current_root": 0.052477699546039966
+      },
+      "independent_sobol_holdout": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.031250900006853044,
+        "current_seconds": 0.029442099999869242,
+        "base_root": 0.06791012845779569,
+        "current_root": 0.06791012845779569
+      },
+      "trusted_cr0_standard_control": {
+        "fresh_process_compile": false,
+        "base_seconds": 4.879743500001496,
+        "current_seconds": 4.8915960000013,
+        "base_root": 0.002369295964041269,
+        "current_root": 0.002369295964041269
+      },
+      "trusted_cr0_high_density_control": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.031164500003797002,
+        "current_seconds": 0.02864920000138227,
+        "base_root": 0.0455552629798268,
+        "current_root": 0.0455552629798268
+      }
+    },
+    "warm_resources": {
+      "affinity": [
+        0,
+        1
+      ],
+      "numba_threads": 2,
+      "threading_layer": "tbb",
+      "blas_threads": 1,
+      "persistent_processes": 2,
+      "alternating_pairs_per_case": 500,
+      "warmups_per_side": 3,
+      "separate_numba_caches": true,
+      "physical_guard": true,
+      "frequency_grid": "goal"
+    }
+  },
+  "reference_code_modified": false,
+  "production_code_changed_this_tranche": false,
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc",
+    "LCDM_stiff_Neff.py": "35b0b91348bbeb5df8ee77e627ff3faa65cfc51a32416fb9c9556c1bca3e66c4",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "artifact_sha256": {
+    "cr0_density_reheat_negative_tilt_summary.md": "615a694741d2725cfc7dc91d9792c552ffc55fa9adcc83d4b65f1af67e8be156",
+    "cr0_density_reheat_negative_tilt_evidence.png": "99c3257be468cdf8d1189bbd1a5ee4b1c55a15705a1252815ec80b3cd5e0051b",
+    "plot_cr0_density_reheat_negative_tilt.py": "d46d770cc62946e1899f6bf9fce643b6e95e4d1fd13081f8e53306dbb6190457",
+    "make_cr0_density_reheat_negative_tilt_manifest.py": "67a476971b2f493032a69e612c862871ae5861ac69f23965d842c6905602c6bd",
+    "screen_cr0_density_reheat_negative_tilt.py": "3a1110cd442cd620f3c586f2d9cbd9e697c38e4a1fae9f77d6a6ece2aeff25ab",
+    "screen_cr0_density_reheat_negative_tilt_lattice.json": "2377459380fae55b464f2924f7b51805a020247d0c80deaa040fbdc96b309fee",
+    "screen_cr0_density_reheat_negative_tilt_sobol.json": "557d74e46b0b2464421a259829a882db43a8e65b7244860457d3a0ba0c714d67",
+    "validate_cr0_density_reheat_negative_tilt_z8.py": "21be84e3a90c9b6d1b50ba78549ac41b507b3a25e008b126441b410bfa12aab4",
+    "validate_cr0_density_reheat_negative_tilt_z8.json": "2f2c5798912c69c9e38b283ae69772ab728895b46372f81d039ddb6c7220b332",
+    "close_reference_cr0_density_reheat_negative_tilt_z8.py": "4350bb0e611b7b391072da26f29f64b8d84834969d8dcca05744ff0ce69080a1",
+    "close_reference_cr0_density_reheat_negative_tilt_z8.json": "8b44723c8ec748551e9b9c5263c17315c497531cf20b1d9e7e00410130e2798e",
+    "benchmark_cr0_density_reheat_negative_tilt_ab.py": "80f7cf3131208bf37096fece06a9b6c539d04b1cf894beae7613222025c006a0",
+    "benchmark_cr0_density_reheat_negative_tilt_ab_500pairs.json": "91ab0339cbe1096565f19f7893c5e5d671c18c8ae6055759b8725fe5abf00476",
+    "benchmark_cr0_reheat_trusted_control_1000pairs.py": "2972564ae81eefb1772f970b666987cc56464661b1cb1e7753657bbd73cde90e",
+    "benchmark_cr0_reheat_trusted_control_1000pairs.json": "d21f22e2a6f8a64ddc856d25311b19136e32af8744e243ac59a25e330b16390b",
+    "screen_cr0_density_reheat_tilt.py": "fa21d635db530de1f5b15382a7382a6a3b773628d4d96421d6cf8f75e10c2eff",
+    "screen_cr0_density_reheat_tilt_lattice.json": "d5aa062c43c679db25dfea5fd66a2921d8c98b5e0b6f071e3462fb6454d7c646",
+    "screen_cr0_density_reheat_tilt_sobol.json": "2db836ad8f3f31d10035a770f42009545f5816a08846f26a2915aaada3365172",
+    "screen_cr0_tilt_temperature.py": "d39ae96e7443855c15e9bc8117306fea6c2c16e0d109b54855bfd2ce0dc22705",
+    "screen_cr0_kappa_tilt_extension.py": "123aebc2c215a8151df0da3b66f91addfb4f7d29a602c922dfb3e0dc62e6df1e",
+    "screen_cr0_kappa_tilt_extension_lattice.json": "0253cdfa631d0f00db070e6b3cee364f2538589a2b2182a59e679d0672cb521e",
+    "screen_cr0_kappa_tilt_extension_sobol.json": "3928b0d4d6ccb92161a3ab83d020c85fb8861d30e185df688ea623f66942b620",
+    "screen_cr0_tilt_temperature_lattice.json": "5654abf5b8589bfd673ca4e36cc1ab624943c81798908fcdf5b90f8efe5495aa",
+    "screen_cr0_tilt_temperature_sobol.json": "d68ffad8c21a08838a659e2d2fc50d769f61497a37791fcbba199d06ae1d36a4"
+  },
+  "manifest_self_hash_included": false
+}
