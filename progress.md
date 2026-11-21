@@ -2347,3 +2347,76 @@ The current production source remains unchanged; added one tested Reference-orig
 - Final alternating HEAD/candidate goal-hot-path A/B on three profiles (24 warm samples, two threads) had identical roots and P50/P95-sample-max ratios: trusted default `0.994/0.862`, trusted high-T `1.013/0.928`, CR0 density edge `0.984/0.958`. P50 regression stayed below 5% and all sampled P95 values improved. The current source hash is `013214fc7063ef73d8e5a91b4274d8b82987aa6d0b66a40faf25f49b182a40fe`.
 - The 11-point first spectrum interpolation test was superseded by exact shared native `eval_freqs`; raw data and source hashes are saved with the Reference and benchmark artifacts. After the cache-key tightening, both Reference supports, roots and total `DN_eff` were rechecked bitwise against the saved Reference inputs; the expensive Reference calculations did not need repeating. The initial temporary source-switch benchmark harness damaged the working source; candidate code was reconstructed, source-import verified, and focused plus full tests rerun successfully.
 - Remaining project work: identify valid failures of the current HEAD itself (not the pre-stabilization baseline), investigate the separate `cr>0` admissible region, and obtain multiple current-HEAD 2D slice improvements before claiming domain expansion. This adaptive optimization has not been committed or pushed yet.
+
+
+# Round 92 progress — reject unverified H² cancellation repair
+
+- Current-HEAD mathematical counterexample found at `Omega_bh2=1e16`: exact closure is positive (`h²=0.45321399301688997`), while legacy Fast computes zero. Candidate rectangle `Omega_bh2∈[1e16,2e16]`, `H0∈[60,75]` gave 17/17 sampled legacy failures.
+- Failing test reproduced `H2_vec(N_inf)=0`; temporary stable-identity implementation yielded 17/17 Fast successes with positive sampled H². Adaptive root 536→1091 nodes converged to `1.40e-5` relative, with shared native nodes bitwise equal.
+- Unchanged Reference at the same point returns H² zero and sigma infinity; spectrum validation is unavailable. Adaptive support interpolation max difference `2.77e-3 dex` also exceeds gate. Candidate and test edits were restored; no expansion or commit is claimed.
+- Next: query saved 402-point pressure data for current-HEAD-valid failures and seek a separate region with an unchanged Reference route.
+
+
+# Round 93 progress — current-HEAD replay of historical pressure failures
+
+- The historical 402-line scan mixes successes, invalid math, resource skips and failures; its old labels cannot be reused as current-baseline evidence.
+- 62 selected positive finite-input historical failures were replayed. Some remain current `nonpositive_h2`/`nonfinite`, but arise on extreme-amplitude/iterate paths and have no independent accuracy evidence; high-tilt high-kappa controls can produce huge roots or physical-guard rejection.
+- No code change or domain claim. Next screen should be newly generated, bounded CR0 and `cr>0` slices, with unchanged Reference seed viability established first.
+
+
+# Round 95 progress — reject compatibility-profile false positives
+
+- The CR1 `nonpositive_h2` seed was an artifact of calling Fast without the formal `fast` config. With `resolve_config("fast",threads=2)`, the seed converges; the proposed regression test passed immediately and was removed. No code change.
+- Fresh 64-point CR0/CR1 Sobol screens under formal Fast found no numerical solver failures among mathematically admissible samples. Guard and derived-cutoff refusals remain separately counted.
+- Formal-profile replay of 62 positive finite-input historical failures still identifies extreme H² closure/representation cases, but unchanged Reference shares the H² cancellation at the most promising high-density region. No expansion claim. Continue with same-config failures and Reference-viable boundaries only.
+
+
+# Round 96 progress — CR1 derived-cutoff boundary
+
+- A 48-point CR1 screen was constructed directly from the model-derived `Delta_N=0` cutoff, with two small positive Delta_N offsets across T_re and kappa10. Derived tilt remained `-r/8`, and N_inf was finite on all retained samples.
+- Formal Fast with physical guard accepted 42/48 and classified 6 as `shared_Neff_guard`; there were no numerical solver failures. Unmodified Reference present-day H² remained finite/positive.
+- No source change or expansion claim. This confirms the CR1 cutoff face itself is not a current Fast failure. Continue searching formal-profile failures with Reference-viable backgrounds.
+
+
+# Round 97 progress — formal stress failures remain closure/representation limited
+
+- Formal Fast replay of the historical mixed stress rows shows remaining numerical failures at unbounded closure scales; the most promising H² cases share precision loss with unchanged Reference.
+- A rescaled-amplitude H0 sweep succeeded through `H0=1e100`; no H0-only expansion area was found. CR1 cutoff samples remain Fast-solvable.
+- No production source changed. Continue with mathematically valid boundary searches and require independent Reference viability before any candidate implementation.
+
+
+# Round 98 progress — current formal failure subset
+
+- Replayed 54 historical positive finite-input rows with nonnegative `DN_eff` under formal Fast. Residual failures cluster at H² closure scales, extreme amplitude/tilt, and empty frequency support; physical guards and derived cutoffs stay separately classified.
+- With the standard scalar amplitude and a small tensor amplitude, Fast solves through H0=1e100; the archived empty-grid failure is not an H0-only continuous boundary.
+- No new source change or expansion claim. Current formal failures with a viable independent Reference remain unidentified; investigate exact H²/output-representability conditions next.
+
+
+# Round 99 progress — Reference shares the high-density closure boundary
+
+- Paired formal Fast / unchanged Reference over 24 `(Omega_bh2,H0)` samples near closure cancellation. Both gave matching positive H² at 15 points; the Fast solved all 15. Both rounded H² to zero at 9 points, where Reference sigma became infinite and Fast returned `nonpositive_h2`; the mathematical closure remains `h²>0`.
+- This confirms the previously identified H² candidate cannot meet independent Reference precision gates on this sample. No code change; continue search for a distinct Reference-viable failure family.
+
+
+# Round 100 progress — high-stiffness closure is shared
+
+- A 61-point logarithmic kappa10 scan found Fast and unchanged Reference H² closures agree in sign throughout. Both return zero at high stiffness (first sampled near 1e44), while Reference sigma diverges.
+- No Fast-only valid region or candidate arose; no code change. Continue searching distinct formal numerical failure classes.
+
+
+# Round 101 progress — amplitude parameterization cross-check
+
+- Formal CR0 Fast stayed invariant for fixed tensor product `A_t` while `A_s` varied across 600 orders of magnitude, as long as `r` remained representable.
+- The extreme case where `r` underflowed to zero correctly followed the exact-zero definition. No new Fast failure or expansion claim.
+
+
+## Round 102 progress — condition-aware H² closure preserves an extreme CR0 domain
+
+- Added `_h2_closure_needs_scaling` and `_stable_closed_h2_base` in `exact_background.py`, and used the identical condition-aware closure identity in `fast_sgwb.gen_kernel`. For `x=N_inf−N`, `q=e^(−3x)`, `E=e^x`, the matter/stiff/closure sum is exactly `Omega_m(1−q)+Omega_sh(E³−q)+Aq`, evaluated with `expm1` and `sinh`; branch-specific radiation and thermal terms remain as before. H² sign/failure checks remain intact.
+- Regression test reproduces the old `H2_vec(N_inf)=0` against the analytic `h²>0` closure and then verifies full formal Fast output. Focused suite passed `37 passed, 5 deselected`.
+- Two same-input CR0 rectangles were screened against latest pre-change HEAD `160527d`: density×H0 `[1e16,2e16]×[60,75]` and density×T_re `[1e16,2e16]×[1500,2500] GeV`. Each included nine rectangular nodes, two holdouts and eight scrambled Sobol points. Both changed `0/19→19/19`; old reason was `nonpositive_h2` on every sample. Candidate H² remained positive with no warnings; formal goal P50/P95 were `0.383/0.617 s` and `0.390/0.615 s`.
+- An independent x-coordinate Prüfer verifier uses the exact background, algebraic z(x), phase state and normalized log amplitude; normal-density low/high-frequency controls match unchanged Reference Prüfer at `5.02e−5 dex` and `7.44e−9 dex`. It leaves `reference.py` byte-identical at SHA256 `9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6`.
+- Full adaptive-grid checks at `(Omega_bh2,H0,T_re)=(1e16,67.32117,2000)` and `(1.5e16,67.32117,2500)` include 265/277 frequencies and a second self-consistency map. Root relative errors are `1.1852e−4` and `3.4292e−5`; max spectrum errors are `3.6131e−4 dex` and `1.4572e−4 dex`; second-map root changes are `4.46e−14` and `2.00e−14` relative. A final audit corrected the verifier to add each mapped root to the saved original input `DN_eff`, rather than the post-solve mutated model field; both full maps were rerun.
+- Trusted alternating A/B on 48 warm samples per case gives bitwise-equal roots, frequency nodes and full-spectrum hashes; P50/P95 ratios: default `0.985/0.974`, highT `1.016/1.041`, accepted CR0 density edge `1.017/1.011`. Three independent empty-cache first default solves had HEAD `[11.732,11.102,11.810] s` and candidate `[11.259,13.553,11.303] s` (median ratio `0.963`); one candidate cold sample is slower and retained. A 24-sample preliminary batch had one P95 estimate at `1.057`; the longer 48-sample run was below 1.05 in all three regions.
+- Coverage/precision plot and raw arrays/hashes are in `docs/research/unified_domain_20261119/cr0_extreme_density_expansion.png` and adjacent JSON artifacts. No continuous accuracy certification is claimed. Remaining `exp(N_inf−N)`, S2/S2inv and output-representability work is outside this accepted tranche.
+- Pending: full pytest, Ruff, Mypy, package build, GitHub CI, final diff/identity check, scoped commit and push to `fast_v0.2`.

@@ -2284,3 +2284,128 @@ After delivery, either screen a new adjacent terminal density tile or move to th
 - [ ] Screen mathematical-valid points that actually fail at HEAD `57072b3`; do not recycle pre-stabilization failures as current-baseline failures.
 - [ ] Build at least one distinct current-HEAD 2D failure slice; include the `cr>0` tilted-exponent/cutoff constraints where applicable and an independent holdout.
 - [ ] Apply the adaptive path only as the frequency-convergence mechanism; claim expansion only where HEAD fails and the new Fast succeeds accurately with acceptable cost.
+
+
+## Round 92 — high-density H² closure candidate rejected
+
+- [x] Reproduced current-HEAD cancellation failure: at `Omega_bh2=1e16`, `H0=67.32117`, `cr=0`, the raw equations give `H²(N_inf)=h²=0.45321399301688997`, while the current Fast closure evaluates to zero. Across a sampled `Omega_bh2=[1e16,2e16] × H0=[60,75]` rectangle, the legacy closure was zero at 17/17 lattice/Sobol samples.
+- [x] A TDD prototype used `Omh²*(-expm1(-3ΔN)) + H²_anchor*exp(-3ΔN)` and corrected the unneeded post-present midpoint probe. All 17 Fast solves completed with positive finite H² and finite 75-node outputs.
+- [x] Adaptive Fast root converged from 536 to 1091 nodes within `1.40e-5` relative; common native-node spectra matched to roundoff.
+- [x] Reject this candidate for promotion: the unchanged Reference shares the closure cancellation and returns `(H², sigma)=(0, inf)` at the same input; the available adaptive spectrum interpolation comparison reaches `2.77e-3 dex`, above the `1e-3 dex` gate. No independent full-spectrum accuracy certificate is available. Production/test edits were restored; do not count this as expanded coverage.
+
+### Next Step
+
+Use the current `160527d` source as baseline and inspect actual failed, mathematically valid cases from the saved 402-point pressure scan. Select only failures whose independent accuracy check is viable without changing Reference equations.
+
+
+## Round 93 — current-HEAD audit of the saved 402-point pressure scan
+
+- [x] Reclassified the saved scan before reuse: it contains mathematical-invalid inputs, physical/`shared_Neff_guard` refusals, resource preflight skips, and numerical failures; the historical failure label alone does not establish an eligible expansion sample.
+- [x] Re-ran 62 positive finite-input historical failure cases on current HEAD. Several remain `nonpositive_h2`/`nonfinite`, but the selected cases include extreme amplitudes and self-consistent iterates outside the physical guard; no accuracy-qualified adjacent region was established.
+- [x] The high-stiffness representative with `r=0.01, n_t=0.5` reaches extremely large Fast roots when it succeeds at lower `kappa10`; it is not an acceptable route to claim useful coverage.
+- [x] No source or Reference change retained. Together with Round 92, no new candidate met independent precision gates; the saved scan is an audit lead, not expansion evidence.
+
+### Next Step
+
+Generate a fresh current-HEAD failure set in bounded, mathematically admissible CR0 and derived-tilt CR>0 slices. Require positive finite background and viable unchanged-Reference checks at seed points before spending on a full rectangle or performance study.
+
+
+## Round 94 — current CR1 shared-background iterate boundary
+
+- [x] Fresh current-HEAD Sobol screen: CR0 64 points yielded 28 Fast success and 36 `nonpositive_h2`; these include enormous matter densities and are not promoted without Reference feasibility. CR1 yielded 56 success, 4 invalid derived cutoff, 2 invalid iterate cutoff and 2 `nonpositive_h2`.
+- [x] For both CR1 failures, actual `n_t=-r/8`, positive finite initial H², finite `N_inf≈53`, and unchanged Reference gives finite positive H² at today. The first self-consistent update reaches `DN_eff≈2.20e10` / `2.59e10`; next iteration reports `nonpositive_h2` inside the sigma-integral identity. A one-frequency Reference propagation at the first iterate completes.
+- [ ] Write a red regression for the terminal-grid midpoint domain error; after the minimal endpoint-safe fix, require full Fast self-consistency and same-root Reference validation before building a CR1 adjacent 2D slice.
+
+
+## Round 95 — correct the failure-screen solver profile
+
+- [x] A CR1 point previously labeled `nonpositive_h2` under the compatibility `SGWB_iter_fast` default was rerun with the formal `resolve_config("fast", threads=2)` profile and converged. The proposed test passed immediately and was removed; no red test or source fix is claimed.
+- [x] Repeated the 64-point bounded Sobol screens with the formal Fast profile. CR0: 37 success / 27 `shared_Neff_guard`; disabling that guard gives 64/64 success. CR1: 30 success / 30 guard / 4 invalid derived cutoff; with guard disabled 60 success / 4 invalid cutoff. No formal-profile numerical failure was found in these screens.
+- [x] Replayed 62 positive finite-input historical pressure failures on formal Fast. Outcomes include 25 physical guard refusals, 19 `nonpositive_h2`, 3 success, 4 empty-grid `IndexError`, 4 nonfinite, 2 underflow and 2 overflow outcomes. The remaining H² failures lie on extreme closure/cutoff parameters where the unchanged Reference has the same loss of closure precision; no accuracy-qualified region is established.
+- [x] The prior Round 94 CR1 iterate diagnosis applies only to the low-level compatibility profile and is not evidence of a current formal-Fast failure.
+
+### Next Step
+
+Keep searching only in the formal public Fast configuration. Prioritize parameter boundaries where the unchanged Reference remains numerically usable; treat compatibility-profile failures and guard/cutoff refusals as separate records.
+
+
+## Round 96 — formal Fast CR1 cutoff-edge screen
+
+- [x] Constructed 48 cutoff-adjacent CR1 inputs by deriving `r_cut` from the model's own `Delta_N=0` relation, then setting `Delta_N≈1e-12` or `1e-5`. Across `T_re={0.1,1,10,1e3,1e6,1e9} GeV` and `kappa10={1e-3,1e-2,1,100}`, every retained point has finite positive `N_inf` and actual `n_t=-r/8`; no parameter point was clipped.
+- [x] Under formal Fast `resolve_config("fast", threads=2)` and `physical_guard=True`, 42/48 solved and 6 returned `shared_Neff_guard`; no numerical failure. Unmodified Reference background at `N_inf` was finite and positive for every reported sample.
+- [x] This checks the real CR1 exponent/cutoff boundary but is not a domain expansion or spectrum validation; current formal Fast already solves these points.
+
+### Next Step
+
+Concentrate on current formal-Fast numerical failures outside shared Reference closure cancellation; use boundary-derived grids rather than broad uniform Sobol sweeps, and require same-input Reference feasibility before implementing.
+
+
+## Round 97 — triage remaining formal-profile stress failures
+
+- [x] Replayed the 402-point positive finite-input failure subset under formal Fast and retained raw labels. The reproducible `nonpositive_h2` outcomes are at extreme density/stiff closure scales, tiny H0 closure scales, or other unbounded stress inputs; the same closure loss is present in unchanged Reference where sampled.
+- [x] Rechecked historical empty-grid H0 stress with `r=1e-30`: formal Fast succeeds through `H0=1e100` when the tensor product remains numerically admissible; the earlier empty-grid exception was coupled to extreme amplitude/frequency-support stress, not a broad H0-only region.
+- [x] CR1 cutoff-edge screen from Round 96 produced no numerical failures. No Reference-viable current formal-Fast failure rectangle has emerged, and no code change is justified.
+
+### Next Step
+
+Continue targeted domain search around the remaining CR0/CR1 closure-representability boundaries. Only promote a candidate if the unchanged Reference can evaluate the exact same mathematical region and independent spectrum/root checks fit the acceptance limits.
+
+
+## Round 98 — isolate current formal failures from legacy stress inputs
+
+- [x] Replayed the 54 historical finite, positive-input failures with `DN_eff>=0` under the formal `fast` profile. Non-guard failures are concentrated at enormous `Omega_bh2/Omega_ch2/kappa10`, tiny `H0`, extreme spectral amplitude/tilt, or a frequency constructor with no sampled interval.
+- [x] Tested the high-H0 empty-grid lead with `A_s` fixed and `r=1e-30`: formal Fast succeeds through `H0=1e100`; larger H0 alone is not a failure region when tensor amplitude remains scaled.
+- [x] The remaining H² closure failures still coincide with loss of closure in unchanged Reference; empty-grid and nonfinite cases do not yet establish a Reference-verified adjacent domain. No candidate source change retained.
+
+### Next Step
+
+Continue source-level search around mathematical H² and final-output representability boundaries. If the only current failures continue to share an unmodified Reference limitation, record the limitation and do not promote an unverified candidate.
+
+
+## Round 99 — paired H² closure boundary against Reference
+
+- [x] Compared current `H2_vec(N_inf)`, unchanged `Reference.background_at(N_inf)` and formal Fast status on an `8 × 3` grid: `Omega_bh2={1e15,2e15,3e15,4e15,5e15,6e15,8e15,1e16}` and `H0={60,67.32117,75}`. The input uses positive finite densities, `cr=0`, `r=1e-30`, and finite cutoff.
+- [x] For all 15 sampled pairs with current Fast H² positive, Reference H² matched exactly and formal Fast solved. For the other 9 pairs, both H² implementations returned zero and Fast classified `nonpositive_h2`; Reference emitted divide-by-zero warnings and infinite sigma. No region exists in this sampled rectangle where Fast fails but unchanged Reference remains usable.
+- [x] This confirms a shared floating-point closure boundary, not an independent Reference pass; no candidate or expansion claim.
+
+### Next Step
+
+Continue searching for a distinct failure family with a viable unchanged Reference. If none appears, avoid promoting the shared-closure H² candidate without an independent full-spectrum verifier.
+
+
+## Round 100 — high-stiffness closure cross-check
+
+- [x] Scanned 61 logarithmic `kappa10` values from `1e35` to `1e50` at standard positive densities, CR0, finite cutoff and tiny nonzero tensor amplitude. Compared current `H2_vec(N_inf)` with unchanged `Reference.background_at(N_inf)` before running propagation.
+- [x] No Fast/Reference sign mismatch occurred. Both returned positive closure at lower stiffness, then both rounded H² to zero from about `kappa10=1e44` onward; Reference sigma simultaneously diverges.
+- [x] This is the same shared closure-representability barrier as the high-matter case, not an independently verifiable Fast-only failure. No production candidate retained.
+
+### Next Step
+
+Search for a different formal Fast failure family whose unchanged Reference background and mode integration remain viable; do not spend more on the same shared H² closure candidate without an independent full-spectrum route.
+
+
+## Round 101 — tensor-amplitude parameterization invariance
+
+- [x] Under formal Fast and fixed CR0 background/cutoff, varied `A_s` from `1e-300` to `1e300` while preserving the representable product `A_t=rA_s=2.100549e-29`. For all representable positive `r`, Fast returned the same root (`2.5199019349e-13`), 75-node spectrum and zero warnings.
+- [x] At `A_s=1e300`, the compensating `r` itself underflows to exact zero in float64; Fast correctly follows the exact-zero branch. This is input nonrepresentability, not a Fast solver expansion.
+- [x] No amplitude-parameterization numerical failure or candidate found.
+
+### Next Step
+
+## Round 102 — stable high-density closure identity and paired expansion
+
+- [x] Red test reproduces `H2_vec(N_inf)=0` at `Omega_bh2=1e16` although the original equations give `H2(N_inf)=h²>0`; then candidate returns the positive closure and completes formal Fast.
+- [x] Derived and applied the unified identity `Omega_m(1−q)+Omega_sh(E³−q)+Aq`, with `q=e^(−3x)`, `E=e^x`, and condition-number activation. The exact-background and Fast kernel use the same branch-preserving formula; Reference source is unchanged.
+- [x] Paired current-HEAD/candidate screens on two independent CR0 slices: density×H0 and density×T_re. Each has a 3×3 lattice, two interior holdouts and eight independent Sobol points. Both slices improve `0/19→19/19`; all baseline failures are `nonpositive_h2`.
+- [x] Independent x-coordinate Prüfer full-grid runs on one representative per slice, including a second root-map closure pass using the original input `DN_eff`, pass the root (`1.1852e−4`, `3.4292e−5`) and maximum-spectrum (`3.6131e−4 dex`, `1.4572e−4 dex`) limits.
+- [x] Focused regression set: 37 passed, 5 deselected. Trusted A/B: 48 warmed samples per case, roots bitwise equal, P50/P95 ratios all below 1.05. Empty-cache first default solve is separately recorded at 12.442 s HEAD vs 13.360 s candidate.
+- [x] Local gates: default full pytest `447 passed, 10 deselected`; focused suite `37 passed, 5 deselected`; Ruff, Mypy, compileall, validation manifest, compatibility smoke, sdist/wheel build, archive-boundary check and installed-wheel smoke all passed.
+- [ ] Obtain GitHub CI after a scoped commit/push; verify configured author/committer identity and remote branch head.
+
+### Current limits
+
+This is finite-sample Fast coverage, not continuous solver certification. The two new samples validate independent spectra on their complete adaptive native grids. The broader exp/S2 dynamic-range families remain open and are not claimed fixed by this closure change.
+
+### Next Step
+
+Complete repo-wide required checks and remote CI for this narrowly scoped candidate. If any gate fails, repair or reject before pushing; do not promote unfinished dynamic-range work as part of this result.

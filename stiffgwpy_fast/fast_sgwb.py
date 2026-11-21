@@ -905,6 +905,8 @@ def gen_kernel(
     Otrh2_base,
     Otreh2_base,
     OLh2_base,
+    H2_today_anchor,
+    stable_h2_closure,
     Omega_mnuh2,
     Omega_ph2,
     Omega_nh2,
@@ -924,8 +926,15 @@ def gen_kernel(
     n = len(Nv)
     Nlast = Nv[n - 1]
     for i in range(index_re, n):
-        eN = math.exp(Nlast - Nv[i])
+        delta_N = Nlast - Nv[i]
+        eN = math.exp(delta_N)
         e3N = eN * eN * eN
+        if stable_h2_closure:
+            closed_h2_base = (
+                Omh2 * (-math.expm1(-3.0 * delta_N))
+                + 2.0 * Osh2 * math.sinh(3.0 * delta_N)
+                + H2_today_anchor * math.exp(-3.0 * delta_N)
+            )
         # Keep the large extra-radiation term out of the present-day closure
         # subtraction.  At eN=1 these contributions cancel analytically; adding
         # Oerh2 and OLh2 separately loses the finite H0^2 term when DN_eff is large.
@@ -933,11 +942,16 @@ def gen_kernel(
         extra_radiation_h2 = Oerh2 * (eN - 1.0 / e3N)
         nu = nu_today / eN
         if nu > 100.0:
-            H2 = (
-                Omh2 + Omega_mnuh2
-                + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN
-                + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            )
+            if stable_h2_closure:
+                H2 = (closed_h2_base + Omega_mnuh2
+                      + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN
+                      + extra_radiation_h2)
+            else:
+                H2 = (
+                    Omh2 + Omega_mnuh2
+                    + (Omega_ph2 + 2.0 / 3.0 * Omega_nh2) * eN
+                    + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+                )
             sigma_numerator = (
                 Omh2 + Omega_mnuh2 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN + 2.0 * Osh2 * e3N
             )
@@ -945,11 +959,16 @@ def gen_kernel(
             lnnu = math.log10(nu)
             rho_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_RHO)
             p_nu = cubic_uniform(lnnu, FD_X0, FD_DX, FD_C_P)
-            H2 = (
-                Omh2
-                + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN
-                + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
-            )
+            if stable_h2_closure:
+                H2 = (closed_h2_base
+                      + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN
+                      + extra_radiation_h2)
+            else:
+                H2 = (
+                    Omh2
+                    + (Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * Omega_nh2) * eN
+                    + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+                )
             sigma_numerator = (
                 Omh2
                 + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN
@@ -957,16 +976,25 @@ def gen_kernel(
                 + 2.0 * Osh2 * e3N
             )
         elif Nv[i] > Nlast - N_fin:
-            H2 = Omh2 + Otrh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            if stable_h2_closure:
+                H2 = closed_h2_base + Otrh2_base * eN + extra_radiation_h2
+            else:
+                H2 = Omh2 + Otrh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
             sigma_numerator = Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N
         elif Nv[i] >= Nlast - N_max:
             Nl = Nlast - Nv[i]
             rho_i = cubic_any(Nl, TH_X, TH_C_RHO)
             rhop_i = cubic_any(Nl, TH_X, TH_C_RHOP)
-            H2 = Omh2 + Omega_ph2 * rho_i * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            if stable_h2_closure:
+                H2 = closed_h2_base + Omega_ph2 * rho_i * eN + extra_radiation_h2
+            else:
+                H2 = Omh2 + Omega_ph2 * rho_i * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
             sigma_numerator = Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN + 2.0 * Osh2 * e3N
         else:
-            H2 = Omh2 + Otreh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
+            if stable_h2_closure:
+                H2 = closed_h2_base + Otreh2_base * eN + extra_radiation_h2
+            else:
+                H2 = Omh2 + Otreh2_base * eN + Osh2 * e3N + extra_radiation_h2 + OLh2_base / e3N
             sigma_numerator = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN + 2.0 * Osh2 * e3N
         # H² 非正时实数膨胀率与 sigma 均无定义；返回节点号，避免除零或对数域异常。
         # Nonpositive H² has no real expansion rate at this node; report it before division/log.
@@ -1005,6 +1033,11 @@ def gen_fast(m, h=0.01, kink_split=False):
     Otrh2_base = gp.Omega_orh2
     Otreh2_base = gp.Omega_ph2 * gp.rho_th[-1]
     OLh2_base = d["h"] ** 2 - Omh2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 - gp.Omega_ph2 - Osh2
+    H2_today_anchor = d["h"] ** 2 - gp.Omega_mnuh2 - gp.Omega_nh2 * 2 / 3 - gp.Omega_ph2
+    stable_h2_closure = (
+        np.finfo(np.float64).eps * (abs(Omh2) + abs(Osh2))
+        > math.sqrt(np.finfo(np.float64).eps) * abs(H2_today_anchor)
+    )
     # Use the *continuous* present-day anchor N_inf (not the grid-quantised
     # floor(N_inf/h)*h) so the fast path is anchored identically to the
     # continuous-sigma reference.  The floor(N_inf/h)*h anchor attenuates the
@@ -1041,6 +1074,8 @@ def gen_fast(m, h=0.01, kink_split=False):
         Otrh2_base,
         Otreh2_base,
         OLh2_base,
+        H2_today_anchor,
+        stable_h2_closure,
         gp.Omega_mnuh2,
         gp.Omega_ph2,
         gp.Omega_nh2,

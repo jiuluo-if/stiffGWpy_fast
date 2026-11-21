@@ -3829,3 +3829,57 @@ Paired 100 complete-Fast solves against source commit `59a23ae` (same production
 - 500 对完整 Fast A/B 新区域最大 P50/P95 `0.993932/0.989277`，可信 CR0 控制 `1.001524/0.979470`，输出逐位相同。
 - 盒外三个单点探针到 13.99951171875M 的 Reference 两步映射均成功；仅作边界点记录，不纳入连续子盒扩展声明。
 - 详见 `docs/research/unified_domain_20261119/cr0_density_13p875m_to13p99609375m_nt0302734375_summary.md` 及配套证据。
+
+
+## 2026-11-21 — H² closure cancellation candidate (rejected)
+
+For `x=N_inf-N>=0`, the matter-plus-Λ pair can be written exactly as `Omega_mh2*(1-exp(-3x)) + H2_anchor*exp(-3x)`, where `H2_anchor=h²-Omega_mnuh²-(2/3)Omega_nh²-Omega_ph²-Omega_sh²`. Replacing `1-exp(-3x)` with `-expm1(-3x)` preserves the positive present-day closure under extreme matter density. A 17-point CR0 rectangle/Sobol screen produced 17 old-formula failures and 17 prototype Fast successes. This was correctly held back because unchanged `reference.background_at` also rounded H² to zero and full-spectrum validation was absent; the prototype was reverted at that stage.
+
+## 2026-11-21 — CR0 极端闭合恒等式通过独立核验
+
+后续改用统一的物质/刚性/闭合恒等式，并在稳定回看坐标下独立变换 Prüfer 状态。两个不同的 19 点 CR0 参数矩形均由当前 HEAD `0/19` 成功扩至候选 `19/19`；两个代表点的完整自适应频率映射通过自洽根、最大频谱误差门槛和独立根映射闭合检查。该证据只适用于 Round 102 中记录的精确源码及样本，不构成连续域认证。
+
+
+## 2026-11-21 — pressure-scan current-HEAD recheck
+
+The saved 402-point pressure file is a historical mixed stress scan, not a current Fast failure set. A selected 62 positive finite-input rows were replayed on current HEAD; failures that remain are predominantly extreme-iterate/background or guard-adjacent cases, and no precision-qualified continuous rectangle emerged. Negative density, invalid cutoffs, N_inf resource preflight, and the 14M Reference step-underflow face remain excluded from expansion evidence. The next search must create bounded CR0/derived-tilt CR>0 samples at current HEAD and confirm Reference viability before full scans.
+
+
+## 2026-11-21 — bounded current-HEAD CR1 iterate failure seeds
+
+A fresh 64-point Sobol scan with standard density/H0 ranges, model-derived `cr>0` tilt (`n_t=-r/8`) and finite `N_inf` found two `nonpositive_h2` failures. At both inputs the initial physical interval has positive sampled H² and unchanged Reference reports finite positive today H². Instrumenting CR1 case 0 showed the first outer map updates `DN_eff` to `2.2006318754e10`; the next failure arises in `_h2_identity_primitives` during the H² integral, not at the initial background. A fixed-DN, one-frequency unchanged Reference probe at that iterate returned normally. The likely issue is a candidate primitive check evaluating an unused midpoint beyond terminal `N_inf`; full Reference and domain checks remain outstanding. Other screen failures (`invalid_derived_cutoff`, `invalid_iterate_cutoff`) stay separately classified.
+
+
+## 2026-11-21 — formal Fast profile correction
+
+The prior fresh Sobol screen called low-level `SGWB_iter_fast` without `resolve_config("fast")`; its two CR1 `nonpositive_h2` cases were compatibility-profile failures. With the formal Fast config both complete. The attempted regression test passed immediately, so it was deleted and no production edit was made. Formal-profile bounded Sobol reruns found only physical guard refusals and mathematically invalid derived cutoffs: CR0 37/64 success with guard, 64/64 without; CR1 30/64 success with guard and 4 invalid cutoffs, 60/64 success without guard and the same 4 invalid cutoffs. The historical pressure replay's residual numerical failures are at extreme closure/representation boundaries, with no usable same-input Reference spectrum check.
+
+
+## 2026-11-21 — CR1 cutoff-edge formal Fast check
+
+Derived `r_cut` from the model's own `cr>0` Delta_N expression for 24 `(T_re,kappa10)` combinations and placed samples at `Delta_N≈1e-12` and `1e-5`. All retained CR1 tilts are the true `-r/8`, with finite `N_inf`; formal Fast produced 42 successes and 6 `shared_Neff_guard` refusals, with no numerical failures. Unchanged Reference H² at the present was positive for all 48. This is a boundary audit only, not expansion/accuracy evidence.
+
+
+## 2026-11-21 — current formal-Fast stress-failure triage
+
+The residual formal-profile failures in the positive-input subset of the old 402 scan cluster around extreme density/stiff/H0 closure cancellation, or extreme amplitude/frequency support. A high-H0 control at `r=1e-30` succeeds through `H0=1e100` under formal Fast, so the historical empty grid is not a general H0-only boundary. The CR1 derived-cutoff grid also had no numerical failures. No remaining failure region is currently both Reference-viable and accuracy-qualified.
+
+
+## 2026-11-21 — formal failure subset and scaled H0 controls
+
+Replayed 54 historical finite positive-input rows under the formal Fast profile with nonnegative `DN_eff`. Residual failure classes reduce to extreme closure scales (`nonpositive_h2`), huge/empty frequency-support cases (`IndexError`), nonfinite maps and explicit amplitude underflow/overflow. A rescaled `r=1e-30` control succeeds up to `H0=1e100`, so the historical empty-grid exception at huge H0 is coupled to other amplitude/support extremes, not a broad H0-only patch. No adjacent region with both a current Fast failure and a viable unchanged Reference was found.
+
+
+## 2026-11-21 — paired H² closure boundary
+
+An 8-density × 3-H0 formal Fast/Reference screen around the matter-Lambda cancellation boundary gave exact agreement: 15 points had positive H² in both and formal Fast success; 9 had H²=0 in both, with Reference sigma infinite and Fast `nonpositive_h2`. At these sampled points the raw positive closure is known analytically (`H²(N_inf)=h²>0`), so both double-precision implementations share the same defect. This is not a Reference-verified Fast expansion area.
+
+
+## 2026-11-21 — high-stiffness Reference cross-check
+
+Across 61 log-spaced `kappa10∈[1e35,1e50]` values at standard CR0 densities, Fast H2 and unchanged Reference H2 at today had zero opposite-sign cases. Both lose the finite closure at about `kappa10≈1e44` and Reference sigma becomes infinite. This excludes high-stiffness closure cancellation as an independently Reference-verifiable candidate.
+
+
+## 2026-11-21 — amplitude product invariance check
+
+With CR0 and fixed background, Fast output was invariant as `A_s` ranged from `1e-300` to `1e300` while preserving representable `A_t=rA_s=2.100549e-29`: same root and 75-node support. At `A_s=1e300` the compensating `r` underflowed to exactly zero, and the exact-zero route was taken. This is not a solver failure or domain expansion.
