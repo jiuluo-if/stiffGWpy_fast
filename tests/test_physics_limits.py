@@ -382,6 +382,39 @@ def test_fast_reports_nonpositive_background_h2_without_leaking_division_error(m
     assert model.fast_failure_reason == 'nonpositive_h2'
     assert not calls
 
+
+def test_fast_preserves_h2_closure_at_extreme_matter_density_in_fast_profile():
+    from stiffgwpy_fast.exact_background import H2_vec
+
+    model = LCDM_SG(
+        Omega_bh2=1.0e16,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1.0e-16,
+        n_t=0.0,
+        cr=0.0,
+        T_re=2.0e3,
+        DN_re=10.0,
+        kappa10=1.0e-2,
+    )
+    expected_h2_today = model.derived_param['h'] ** 2
+    h2_today = H2_vec(
+        np.asarray([model.derived_param['N_inf']]), model, 0.0
+    )[0]
+
+    assert h2_today == pytest.approx(expected_h2_today, rel=2e-15)
+    result = FS.SGWB_iter_fast(
+        model,
+        config=FS.resolve_config('fast', threads=2),
+        tol=1e-6,
+        physical_guard=False,
+    )
+    assert result is model
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert model._fast_h2_identity_used
+
 def test_fast_reports_invalid_derived_cutoff_after_outer_update(monkeypatch):
     model = LCDM_SG(
         Omega_bh2=0.0223828,
