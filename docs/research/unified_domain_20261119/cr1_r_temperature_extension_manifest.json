@@ -1,0 +1,164 @@
+{
+  "status": "validated_finite_sample_cr1_temperature_extension",
+  "accepted_region": {
+    "T_re": [
+      2000.0,
+      2250.0
+    ],
+    "r": [
+      0.005,
+      0.01
+    ],
+    "kappa10": 0.01,
+    "fixed_parameters": {
+      "cr": 1.0,
+      "Omega_bh2": 700000.0,
+      "Omega_ch2": 700000.0,
+      "H0": 67.32117,
+      "DN_eff": 0.0,
+      "A_s": 2.100549e-09,
+      "DN_re": 10.0
+    },
+    "derived_tilt": "n_t=-r/8; red throughout",
+    "continuum_claim": false
+  },
+  "paired_screen": {
+    "points": 19,
+    "old_success": 1,
+    "old_failures_by_reason": {
+      "nonfinite_background_primitive": 18
+    },
+    "current_success": 19,
+    "current_failure_reasons": {},
+    "h2_positive_finite_all": true,
+    "N_inf_finite_all": true
+  },
+  "accuracy": {
+    "reference_sample_count": 4,
+    "max_first_map_root_error": 0.00016740466402696488,
+    "max_positive_linear_spectrum_error_dex": 0.0008620375692771631,
+    "sobol_closure_second_to_third": 6.73479841199251e-09,
+    "sobol_fast_root_error_to_third_map": 0.0001675318587398537,
+    "root_gate": 0.0002,
+    "spectrum_gate_dex": 0.001
+  },
+  "performance": {
+    "base_commit": "d4ee1b9c8f9fad401c5e22c2316094a608074727",
+    "candidate_commit": "c0bde6469293905413a9309a7c3cc04a4d1531cd",
+    "pairs_per_case": 500,
+    "p50_ratio_min_max": [
+      0.9954311821221057,
+      1.0051585777843035
+    ],
+    "p95_ratio_min_max": [
+      0.9918170741258784,
+      1.0199381702508654
+    ],
+    "paired_ratio_p95_max_diagnostic": 1.2018197392176515,
+    "root_delta_max": 0.0,
+    "frequency_digest_mismatch_pairs": 0,
+    "spectrum_absdiff_max_dex": 0.0,
+    "first_call_records": {
+      "new_low_r_high_T_corner": {
+        "fresh_process_compile": true,
+        "base_seconds": 22.398735100010526,
+        "current_seconds": 21.96072830000776,
+        "base_root": 0.07287151470465121,
+        "current_root": 0.07287151470465121
+      },
+      "retained_old_fast_success": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.036649699992267415,
+        "current_seconds": 0.03927809999731835,
+        "base_root": 0.10926403435164293,
+        "current_root": 0.10926403435164293
+      },
+      "shared_high_r_high_T_edge": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.037828499989700504,
+        "current_seconds": 0.03666259998863097,
+        "base_root": 0.14560528759449293,
+        "current_root": 0.14560528759449293
+      },
+      "new_region_interior": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.03879979999328498,
+        "current_seconds": 0.03708139999071136,
+        "base_root": 0.10900400329420395,
+        "current_root": 0.10900400329420395
+      },
+      "independent_sobol_high_r": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.038512099999934435,
+        "current_seconds": 0.03807380000944249,
+        "base_root": 0.13767792797933653,
+        "current_root": 0.13767792797933653
+      },
+      "independent_sobol_low_r": {
+        "fresh_process_compile": false,
+        "base_seconds": 0.036320200000773184,
+        "current_seconds": 0.036290500007453375,
+        "base_root": 0.13427292389790524,
+        "current_root": 0.13427292389790524
+      },
+      "trusted_physical_cr0_control": {
+        "fresh_process_compile": false,
+        "base_seconds": 5.417476700007683,
+        "current_seconds": 5.2356490999954985,
+        "base_root": 0.002369295934602997,
+        "current_root": 0.002369295934602997
+      }
+    },
+    "warm_resources": {
+      "affinity": [
+        0,
+        1
+      ],
+      "numba_threads": 2,
+      "threading_layer": "tbb",
+      "blas_threads": 1,
+      "persistent_processes": 2,
+      "alternating_pairs_per_case": 500,
+      "warmups_per_side": 3,
+      "separate_numba_caches": true,
+      "physical_guard": true,
+      "frequency_grid": "goal"
+    }
+  },
+  "reference_code_modified": false,
+  "production_code_changed_this_tranche": false,
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "_wkb_transfer.py": "cf1344eaa8bd38ea7896800113353098cb516992a10d7553a33c06ab8bba89dc",
+    "LCDM_stiff_Neff.py": "35b0b91348bbeb5df8ee77e627ff3faa65cfc51a32416fb9c9556c1bca3e66c4",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "artifact_sha256": {
+    "cr1_r_temperature_extension_summary.md": "8dd7415673a02448c51e41998df0ddcf37ae5736932943fddbf742ce274b678a",
+    "cr1_r_temperature_extension_evidence.png": "1f87239af68625f363bd04d6ab4b0e6ac02e99c0a822d2615467841203c077df",
+    "plot_cr1_r_temperature_extension.py": "6cc98e253492b307f3107854c0354915df7bb0f8c440674c317372502d90ead4",
+    "make_cr1_r_temperature_extension_manifest.py": "a594313c7d19dcbef6601e754cc835cc6313fddface85860aa694bc4ddd774f1",
+    "screen_cr1_r_temperature_extension.py": "6caea36b7d36a3b413bddf9859f143dae79488f442e2281a08ef3856609bfa75",
+    "screen_cr1_r_temperature_extension_lattice.json": "a41ee36dafd8603884851e95d3833a9ed0c0ea77e93c00627620428e9d1ad36b",
+    "screen_cr1_r_temperature_extension_sobol.json": "98afd84e2787717227f617ccb4b047285ff8e6507f0aa20142e7b7e3aa3956f9",
+    "validate_cr1_r_temperature_extension_z8.py": "a45f77a0a6c41520118bbd8b002ac9eaff89aba3c56f86fc5b1c9317a244ca9b",
+    "validate_cr1_r_temperature_extension_z8.json": "33a3d4d1ce21064cb5ec68809ab30ae3e2a8020b00f55a7d502be06fd1c36daa",
+    "close_reference_cr1_r_temperature_extension_sobol_z8.py": "4cd900e33f45f5976eeceba4849fd5452336d1ad3e60c8f2429269ad984096b4",
+    "close_reference_cr1_r_temperature_extension_sobol_z8.json": "6272051ffa475c24f9ce9d1b586e5b03a055361a0021165b817d2a5efd80c87d",
+    "benchmark_cr1_r_temperature_extension_ab.py": "131c7805e98c695ee708207f2b01e8e3fc325c54b7144bc19d0830189cb522e6",
+    "benchmark_cr1_r_temperature_extension_ab_500pairs.json": "a0aa84c363f36fae5f1d641aa2af1df3f91e8d0f50207a3b49852f6f9c7f380f",
+    "screen_cr1_r_nextband.py": "8c0b5cb38adfec125b4ee6d24c13c9c64ab3258dd0abc9254223d2946a9f9d5e",
+    "screen_cr1_r_nextband_lattice.json": "0e2e257ce66d15254e307d5213828a437415f039371a10892bb7be522c809ff1",
+    "screen_cr1_r_nextband_sobol.json": "fe5165eb76a4ed937dcb3e7e6edb8e4f79cfb4e80f89f90d3ecde709416294c3",
+    "validate_cr1_r_nextband_z8.py": "6f85ab81462d61592c33e847c1cede346ff0e8fe22546667b82ad8589dc79fb5",
+    "validate_cr1_r_nextband_z8.json": "ba20b0771582f0da4afc61ad68fa35b0169bb68c35007b0d5204b8cc038312e2",
+    "screen_cr1_r_narrowband.py": "92f5706f23d9695326bc743dbba041e5c0431319f972a17a348f5131d0772942",
+    "screen_cr1_r_narrowband_lattice.json": "cde88f8464dd6c949b146914fe96dc9ed2b7e280ea0e03f8efbd034ff6668a4c",
+    "screen_cr1_r_narrowband_sobol.json": "8ab96ee52576fb6e567ee0d32434226e91b17fde2353d727252cda6fe25b172d",
+    "validate_cr1_r_narrowband_z8.py": "3fef9d1d841bfc3ad230c34ab258bda6affb53a53cef405a9dca659081a16cf8",
+    "validate_cr1_r_narrowband_z8.json": "792fb9674da113b2616134dd9072c9f30c74f4a5ddc60324f2f8ef8921a51ed2"
+  },
+  "manifest_self_hash_included": false
+}
