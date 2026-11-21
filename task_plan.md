@@ -2259,3 +2259,21 @@ Finite sample evidence through 13.99609375M; the 14M outer corner remains exclud
 ### Next Step
 
 After delivery, either screen a new adjacent terminal density tile or move to the separate `cr>0` admissible domain; preserve the observed 14M Reference failure as the current CR0 outer limit.
+
+
+## Round 91 — nested, error-controlled Fast frequency support
+
+### Evidence and hypothesis
+
+- The public Fast preset integrates on the 75-node `goal` support and does not enter the opt-in curvature-adaptive refinement path. A same-grid Reference check therefore does not measure frequency-support error.
+- Same-input Fast-only support ladders show `goal` root shifts from `4.37e-4` to `2.82e-2` on trusted controls and CR0 expansion samples; selected 226–1242-node levels approach one another. These are diagnostics, not Reference certificates.
+- A one-shot local PCHIP/Simpson midpoint score is non-monotone in the self-consistent root. Existing curvature refinement can approach the dense-grid Fast root, but repeated complete solves have no acceptable cost evidence.
+- Candidate literature: [Keshavarzzadeh, Kirby & Narayan, JCP 400 (2020)](https://doi.org/10.1016/j.jcp.2019.108979), §§1, 2.2–2.3, 3.4, 4.2.2. It develops nested rules for expensive evaluations and demonstrates node reuse for a parameterized ODE; it assumes smooth integrands and moment-matched positive-weight rules, so it does not directly certify the SGWB reheating feature or finite blue-tilt cutoff.
+
+### Gates before production promotion
+
+- [ ] Write a red test showing the default root misses `2e-4` against a sufficiently converged frequency-support reference on a trusted profile and a prior CR0 expansion input.
+- [ ] Prototype nested refinement that reuses per-mode propagation at fixed `DN_eff`; measure extra work after outer self-consistency changes.
+- [ ] Demonstrate bounded root convergence across nested levels and independent Reference checks on representative cases.
+- [ ] Keep trusted-area P50/P95 regression within 5%; reject if node reuse or mode-cost reduction cannot offset frequency refinement.
+- [ ] Only after these gates pass, revalidate parameter slices, independent holdouts, spectra, complete runtime, plots and hashes; until then do not promote new frequency-sensitive areas.

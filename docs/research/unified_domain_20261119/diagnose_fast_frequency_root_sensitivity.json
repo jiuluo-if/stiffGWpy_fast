@@ -1,0 +1,648 @@
+{
+  "status": "complete_fast_frequency_support_sensitivity_screen",
+  "reference_code_modified": false,
+  "reference_maps_run": 0,
+  "accuracy_claim": false,
+  "grid_specs": [
+    {
+      "grid": "goal",
+      "freq_res": 1.0
+    },
+    {
+      "grid": "grid_independent",
+      "freq_res": 1.15
+    },
+    {
+      "grid": "grid_independent",
+      "freq_res": 2.3
+    },
+    {
+      "grid": "grid_independent",
+      "freq_res": 4.6
+    }
+  ],
+  "source_sha256": {
+    "exact_background.py": "b3e8800a52c165edbf9d2612c1a314e38a6657dcb3f9d4fe7667b75c084b16a3",
+    "fast_sgwb.py": "6ee48f5bba2de3ff0dd3d061da333c3e2e6f75d6cf111207c9b68c50591b3251",
+    "freq_adaptive.py": "ee417a2f45c5c747fce36c95a0a124fc4a21824cc8d03431735a4f77f0cca28f",
+    "reference.py": "9066adcf69f95398405e77e5a5d47942573041f13d0a0ee1554c4bd119eb17f6"
+  },
+  "cases": [
+    {
+      "case_id": "trusted_default",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "r": 0.01,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "T_re": 2000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.002263647412442458,
+          "Nf": 76,
+          "seconds_single_run": 0.24484000001393724,
+          "quadrature_error_rel": 0.0031181626589166086,
+          "relative_to_finest_fast": 0.0006076159285623008
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.0022623660454800998,
+          "Nf": 278,
+          "seconds_single_run": 0.022402700007660314,
+          "quadrature_error_rel": 0.00135231893876679,
+          "relative_to_finest_fast": 4.120901629877866e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.00226226540245155,
+          "Nf": 556,
+          "seconds_single_run": 0.04236979999404866,
+          "quadrature_error_rel": 0.0001542993721877631,
+          "relative_to_finest_fast": 3.278557297560809e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.002262272819442611,
+          "Nf": 1112,
+          "seconds_single_run": 0.08189030000357889,
+          "quadrature_error_rel": 2.0986728420197223e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "trusted_lowT",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "r": 0.01,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "T_re": 10.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 5.310586417114764e-08,
+          "Nf": 76,
+          "seconds_single_run": 0.005706299998564646,
+          "quadrature_error_rel": 0.015111315504036013,
+          "relative_to_finest_fast": 0.028167396449346797
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 5.160202939476875e-08,
+          "Nf": 251,
+          "seconds_single_run": 0.023428300002706237,
+          "quadrature_error_rel": 0.0029837758074882014,
+          "relative_to_finest_fast": 0.0009479171012707305
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 5.164804557968159e-08,
+          "Nf": 502,
+          "seconds_single_run": 0.04646870000578929,
+          "quadrature_error_rel": 0.0008512488492557992,
+          "relative_to_finest_fast": 5.701095041919153e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 5.165099025172593e-08,
+          "Nf": 1004,
+          "seconds_single_run": 0.08982320000359323,
+          "quadrature_error_rel": 0.0001263518824967524,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "trusted_highT",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "r": 0.01,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "T_re": 10000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.05643308426890006,
+          "Nf": 76,
+          "seconds_single_run": 0.008315700004459359,
+          "quadrature_error_rel": 0.003473360855718157,
+          "relative_to_finest_fast": 0.0008494162411674859
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.05638285327071979,
+          "Nf": 286,
+          "seconds_single_run": 0.02077380000264384,
+          "quadrature_error_rel": 0.0009698522491442565,
+          "relative_to_finest_fast": 4.143822580416554e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.056385053365856315,
+          "Nf": 572,
+          "seconds_single_run": 0.04022389999590814,
+          "quadrature_error_rel": 0.00020137648390750585,
+          "relative_to_finest_fast": 2.419200677462726e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.05638518977294561,
+          "Nf": 1144,
+          "seconds_single_run": 0.07889150000119116,
+          "quadrature_error_rel": 2.343532422331873e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "trusted_stiff",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "r": 0.1,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "T_re": 2000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.014984334916826615,
+          "Nf": 76,
+          "seconds_single_run": 0.0085042999999132,
+          "quadrature_error_rel": 0.004142888142692381,
+          "relative_to_finest_fast": 0.0004370820254167648
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.014978320826045432,
+          "Nf": 280,
+          "seconds_single_run": 0.022364999997080304,
+          "quadrature_error_rel": 0.0015529105062034119,
+          "relative_to_finest_fast": 3.554805907392055e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.014977804661976865,
+          "Nf": 559,
+          "seconds_single_run": 0.043244200001936406,
+          "quadrature_error_rel": 0.0001984793050022211,
+          "relative_to_finest_fast": 1.0860907937378231e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.014977788394738779,
+          "Nf": 1119,
+          "seconds_single_run": 0.08530489999975543,
+          "quadrature_error_rel": 2.1628052651949444e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "trusted_high_kappa",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 1.0,
+        "r": 0.01,
+        "n_t": 0.0,
+        "cr": 1.0,
+        "T_re": 2000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.22570645394689462,
+          "Nf": 77,
+          "seconds_single_run": 0.008785600002738647,
+          "quadrature_error_rel": 0.003468458136436056,
+          "relative_to_finest_fast": 0.0005760579310498166
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.22556671386216592,
+          "Nf": 286,
+          "seconds_single_run": 0.021834700004546903,
+          "quadrature_error_rel": 0.0009851485447255417,
+          "relative_to_finest_fast": 4.342184308941491e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.22557655313047922,
+          "Nf": 571,
+          "seconds_single_run": 0.04137420000915881,
+          "quadrature_error_rel": 0.00015615833575617052,
+          "relative_to_finest_fast": 1.9647676670981937e-07
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.22557650880993613,
+          "Nf": 1142,
+          "seconds_single_run": 0.08251689998724032,
+          "quadrature_error_rel": 2.4316585162908704e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "negative_tilt_low_reheat",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 1000000.0,
+        "r": 0.01,
+        "n_t": -0.5,
+        "cr": 0.0,
+        "T_re": 4000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.04443280459694988,
+          "Nf": 75,
+          "seconds_single_run": 0.04084669999429025,
+          "quadrature_error_rel": 0.05599396729735509,
+          "relative_to_finest_fast": 0.005885452174343849
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.04469530455908026,
+          "Nf": 232,
+          "seconds_single_run": 0.061790199993993156,
+          "quadrature_error_rel": 0.0014953942263386854,
+          "relative_to_finest_fast": 1.2425847857815674e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.04469595603949564,
+          "Nf": 464,
+          "seconds_single_run": 0.11036929998954292,
+          "quadrature_error_rel": 0.00037109706753172183,
+          "relative_to_finest_fast": 2.1500080762403683e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.044695859943035786,
+          "Nf": 929,
+          "seconds_single_run": 0.20537640000111423,
+          "quadrature_error_rel": 4.229500643185187e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "negative_tilt_high_reheat",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 1000000.0,
+        "r": 0.01,
+        "n_t": -0.25,
+        "cr": 0.0,
+        "T_re": 10000000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.15844119521766478,
+          "Nf": 76,
+          "seconds_single_run": 0.02950550000241492,
+          "quadrature_error_rel": 0.054325928504887426,
+          "relative_to_finest_fast": 0.0020515441829755923
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.15877394760557276,
+          "Nf": 311,
+          "seconds_single_run": 0.06831119999696966,
+          "quadrature_error_rel": 0.001732004120568267,
+          "relative_to_finest_fast": 4.431056758973647e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.15876655118623428,
+          "Nf": 621,
+          "seconds_single_run": 0.12253939999209251,
+          "quadrature_error_rel": 0.00016703152097380006,
+          "relative_to_finest_fast": 2.2760871452552207e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.15876691255356304,
+          "Nf": 1242,
+          "seconds_single_run": 0.25028569999267347,
+          "quadrature_error_rel": 2.746115485255161e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "negative_tilt_high_reheat_corner",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 1000000.0,
+        "r": 0.01,
+        "n_t": -0.5,
+        "cr": 0.0,
+        "T_re": 10000000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 0.044821082019561156,
+          "Nf": 76,
+          "seconds_single_run": 0.030871700000716373,
+          "quadrature_error_rel": 0.10848056696451551,
+          "relative_to_finest_fast": 0.0028049689492794325
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 0.044698306723557776,
+          "Nf": 311,
+          "seconds_single_run": 0.0751315999950748,
+          "quadrature_error_rel": 0.0027792425243077304,
+          "relative_to_finest_fast": 5.80545208710476e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 0.0446956261004416,
+          "Nf": 621,
+          "seconds_single_run": 0.13135199999669567,
+          "quadrature_error_rel": 0.00027365184407511045,
+          "relative_to_finest_fast": 1.9204297472147075e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 0.044695711935416375,
+          "Nf": 1242,
+          "seconds_single_run": 0.250685799997882,
+          "quadrature_error_rel": 4.191888192576116e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "negative_tilt_high_density",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 13890136.71875,
+        "r": 0.01,
+        "n_t": -0.022705078125,
+        "cr": 0.0,
+        "T_re": 2000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 1.3471835465217215,
+          "Nf": 75,
+          "seconds_single_run": 0.03455329999269452,
+          "quadrature_error_rel": 0.0692126256436501,
+          "relative_to_finest_fast": 0.010597245165263601
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 1.3328155996394278,
+          "Nf": 226,
+          "seconds_single_run": 0.07853420000174083,
+          "quadrature_error_rel": 0.002457828252826133,
+          "relative_to_finest_fast": 0.00018095025986345002
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 1.3330436573565312,
+          "Nf": 451,
+          "seconds_single_run": 0.14073319999442901,
+          "quadrature_error_rel": 0.0005493439995923755,
+          "relative_to_finest_fast": 9.871492431594898e-06
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 1.3330568166168073,
+          "Nf": 902,
+          "seconds_single_run": 0.27156490000197664,
+          "quadrature_error_rel": 5.988646858745987e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    },
+    {
+      "case_id": "positive_tilt_reheat",
+      "params": {
+        "Omega_ch2": 0.1201075,
+        "H0": 67.32117,
+        "DN_eff": 0.0,
+        "A_s": 2.100549e-09,
+        "DN_re": 10.0,
+        "kappa10": 0.01,
+        "Omega_bh2": 1000000.0,
+        "r": 1e-08,
+        "n_t": 0.065,
+        "cr": 0.0,
+        "T_re": 5000.0
+      },
+      "grid_results": [
+        {
+          "grid": "goal",
+          "freq_res": 1.0,
+          "success": true,
+          "failure": null,
+          "root": 2.9682217577753377e-07,
+          "Nf": 75,
+          "seconds_single_run": 0.017758499991032295,
+          "quadrature_error_rel": 0.03515545438161293,
+          "relative_to_finest_fast": 0.002012418204886786
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 1.15,
+          "success": true,
+          "failure": null,
+          "root": 2.97404374837869e-07,
+          "Nf": 235,
+          "seconds_single_run": 0.06859899999108166,
+          "quadrature_error_rel": 0.0015217889298629,
+          "relative_to_finest_fast": 5.4924864554928135e-05
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 2.3,
+          "success": true,
+          "failure": null,
+          "root": 2.974204875032883e-07,
+          "Nf": 469,
+          "seconds_single_run": 0.11889979999978095,
+          "quadrature_error_rel": 0.00038837209957454495,
+          "relative_to_finest_fast": 7.502060882930427e-07
+        },
+        {
+          "grid": "grid_independent",
+          "freq_res": 4.6,
+          "success": true,
+          "failure": null,
+          "root": 2.974207106301162e-07,
+          "Nf": 938,
+          "seconds_single_run": 0.2206933000124991,
+          "quadrature_error_rel": 4.432837757459911e-05,
+          "relative_to_finest_fast": 0.0
+        }
+      ]
+    }
+  ],
+  "caveat": "Fast-only grid sensitivity screen. The finest grid is not a Reference oracle or a continuum error certificate. Timings are single runs, not performance A/B evidence."
+}
