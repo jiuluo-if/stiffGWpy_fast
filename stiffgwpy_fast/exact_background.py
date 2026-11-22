@@ -33,6 +33,7 @@ _PSI_MIN_FLOAT_RANGE = max(_LOG_FLOAT_MIN_SUBNORMAL, -2.0 * _LOG_FLOAT_MAX)
 _PSI_MAX_FLOAT_RANGE = min(_LOG_FLOAT_MAX, -2.0 * _LOG_FLOAT_MIN_SUBNORMAL)
 _H2_IDENTITY_PANEL_VARIATION_LIMIT = 5.0e-2
 _H2_CLOSURE_REL_ROUNDOFF_LIMIT = math.sqrt(np.finfo(np.float64).eps)
+_LOG_FLOAT64_ROUNDOFF_MARGIN = -math.log(np.finfo(np.float64).eps)
 
 
 def _h2_closure_needs_scaling(Omh2, Osh2, h2_today_anchor):
@@ -94,7 +95,8 @@ def _stiff_h2_terms(Osh2, e3N, delta_N):
     return stiff_h2, stiff_sigma
 
 
-def _sigma_over_h2(other_numerator, stiff_h2, stiff_sigma, h2):
+def _sigma_over_h2(other_numerator, stiff_h2, stiff_sigma, h2,
+                   delta_N, Osh2, Omh2, h2_today_anchor, OLh2_base):
     """Form ``(other + 2*stiff)/H2`` without overflowing a finite ratio."""
     other_numerator = np.asarray(other_numerator, dtype=np.float64)
     stiff_h2 = np.asarray(stiff_h2, dtype=np.float64)
@@ -115,6 +117,24 @@ def _sigma_over_h2(other_numerator, stiff_h2, stiff_sigma, h2):
             other_numerator[recover] / h2[recover]
             + 2.0 * (stiff_h2[recover] / h2[recover])
         )
+    unrepresented = ~np.isfinite(ratio) & ~np.isfinite(h2)
+    if Osh2 > 0.0:
+        for index in np.flatnonzero(unrepresented):
+            delta = float(delta_N[index])
+            if delta < 0.0:
+                continue
+            log_stiff = math.log(float(Osh2)) + 3.0 * delta
+            terms = [
+                float(other_numerator[index]), float(Omh2),
+                float(h2_today_anchor) * math.exp(-3.0 * delta),
+                float(OLh2_base) * math.exp(-3.0 * delta),
+            ]
+            log_other = max(
+                (math.log(abs(term)) for term in terms if term != 0.0),
+                default=-math.inf,
+            )
+            if log_stiff - log_other > _LOG_FLOAT64_ROUNDOFF_MARGIN:
+                ratio[index] = 2.0
     return ratio
 
 
@@ -181,7 +201,10 @@ def sigma_vec(N, m, DN_eff):
                   + stiff_h2[m1] + extra_radiation_h2[m1] + lambda_term[m1])
         sigma_other = (Omh2 + Omega_mnuh2
                        + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m1])
-        out[m1] = _sigma_over_h2(sigma_other, stiff_h2[m1], stiff_sigma[m1], H2)
+        out[m1] = _sigma_over_h2(
+            sigma_other, stiff_h2[m1], stiff_sigma[m1], H2,
+            delta_N[m1], Osh2, Omh2, h2_today_anchor, OLh2_base,
+        )
     m2 = (~m1) & (nu >= 0.1)
     if m2.any():
         lognu = np.log10(nu[m2])
@@ -197,7 +220,10 @@ def sigma_vec(N, m, DN_eff):
         sigma_other = (Omh2
                        + 4.0 / 3.0 * (Omega_ph2 + 2.0 / 3.0 * Omega_nh2 + Oerh2) * eN[m2]
                        + (rho_nu + p_nu) * Omega_nh2 / 3.0 * eN[m2])
-        out[m2] = _sigma_over_h2(sigma_other, stiff_h2[m2], stiff_sigma[m2], H2)
+        out[m2] = _sigma_over_h2(
+            sigma_other, stiff_h2[m2], stiff_sigma[m2], H2,
+            delta_N[m2], Osh2, Omh2, h2_today_anchor, OLh2_base,
+        )
     m3 = (~m1) & (~m2) & (Nr > N_inf - gp.N_fin)
     if m3.any():
         if stable_closure:
@@ -206,7 +232,10 @@ def sigma_vec(N, m, DN_eff):
             H2 = (Omh2 + Otrh2_base * eN[m3] + stiff_h2[m3]
                   + extra_radiation_h2[m3] + lambda_term[m3])
         sigma_other = Omh2 + 4.0 / 3.0 * (Otrh2_base + Oerh2) * eN[m3]
-        out[m3] = _sigma_over_h2(sigma_other, stiff_h2[m3], stiff_sigma[m3], H2)
+        out[m3] = _sigma_over_h2(
+            sigma_other, stiff_h2[m3], stiff_sigma[m3], H2,
+            delta_N[m3], Osh2, Omh2, h2_today_anchor, OLh2_base,
+        )
     m4 = (~m1) & (~m2) & (~m3) & (Nr >= N_inf - gp.N_max)
     if m4.any():
         Nl = N_inf - Nr[m4]
@@ -219,7 +248,10 @@ def sigma_vec(N, m, DN_eff):
             H2 = (Omh2 + Omega_ph2 * rho_i * eN[m4] + stiff_h2[m4]
                   + extra_radiation_h2[m4] + lambda_term[m4])
         sigma_other = Omh2 + (Omega_ph2 * rhop_i + 4.0 / 3.0 * Oerh2) * eN[m4]
-        out[m4] = _sigma_over_h2(sigma_other, stiff_h2[m4], stiff_sigma[m4], H2)
+        out[m4] = _sigma_over_h2(
+            sigma_other, stiff_h2[m4], stiff_sigma[m4], H2,
+            delta_N[m4], Osh2, Omh2, h2_today_anchor, OLh2_base,
+        )
     m5 = (~m1) & (~m2) & (~m3) & (~m4)
     if m5.any():
         if stable_closure:
@@ -228,7 +260,10 @@ def sigma_vec(N, m, DN_eff):
             H2 = (Omh2 + Otreh2_base * eN[m5] + stiff_h2[m5]
                   + extra_radiation_h2[m5] + lambda_term[m5])
         sigma_other = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN[m5]
-        out[m5] = _sigma_over_h2(sigma_other, stiff_h2[m5], stiff_sigma[m5], H2)
+        out[m5] = _sigma_over_h2(
+            sigma_other, stiff_h2[m5], stiff_sigma[m5], H2,
+            delta_N[m5], Osh2, Omh2, h2_today_anchor, OLh2_base,
+        )
     sigma[running] = out
     return sigma
 
@@ -342,6 +377,77 @@ def H2_vec(N, m, DN_eff):
     return out
 
 
+def _h2_nonstiff_abs_bound(m, DN_eff, delta):
+    """Bound all non-stiff H2 terms by summing their absolute magnitudes."""
+    d = m.derived_param
+    omh2 = float(d["Omega_mh2"])
+    osh2 = float(d["Omega_sh2"])
+    anchor = float(d["h"] ** 2 - gp.Omega_mnuh2
+                   - gp.Omega_nh2 * 2.0 / 3.0 - gp.Omega_ph2)
+    olh2 = float(d["h"] ** 2 - omh2 - gp.Omega_mnuh2
+                 - gp.Omega_nh2 * 2.0 / 3.0 - gp.Omega_ph2 - osh2)
+    oerh2 = (gp.Omega_ph2 * 7.0 / 8.0 * (4.0 / 11.0) ** (4.0 / 3.0)
+             * float(DN_eff))
+    decay = math.exp(-3.0 * delta)
+    expansion = math.exp(delta)
+    bound = (abs(omh2) + abs(osh2) * decay + abs(anchor) * decay
+             + abs(olh2) * decay + abs(oerh2) * decay)
+    nu = gp.nu_today / expansion
+    if nu > 100.0:
+        fluid = (abs(gp.Omega_mnuh2)
+                 + abs(gp.Omega_ph2 + 2.0 / 3.0 * gp.Omega_nh2) * expansion)
+    elif nu >= 0.1:
+        fd_rho, _ = _fd_from_ref()
+        rho_nu = float(fd_rho(math.log10(nu)))
+        fluid = abs(gp.Omega_ph2 + (2.0 / 3.0 + rho_nu / 3.0) * gp.Omega_nh2) * expansion
+    elif delta < gp.N_fin:
+        fluid = abs(gp.Omega_orh2 + oerh2) * expansion
+    elif delta <= gp.N_max:
+        fluid = abs(gp.Omega_ph2 * float(gp.spl_rho(delta)) + oerh2) * expansion
+    else:
+        fluid = abs(gp.Omega_ph2 * float(gp.rho_th[-1]) + oerh2) * expansion
+    return bound + fluid
+
+
+def _log_H2_vec(N, m, DN_eff):
+    """Return log(H2), retaining positive stiff-dominated values above float64.
+
+    H2 itself is still reported as nonfinite by :func:`H2_vec` when it cannot
+    be represented.  Fast background consumers need its logarithm for sigma
+    ratios and horizon frequencies, so this helper recovers only the regime
+    where a conservative bound proves that the positive stiff term dominates
+    every other term by more than float64 roundoff.
+    """
+    values = np.asarray(N, dtype=np.float64)
+    with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+        h2 = H2_vec(values, m, DN_eff)
+    result = np.full(values.shape, np.nan, dtype=np.float64)
+    valid = np.isfinite(h2) & (h2 > 0.0)
+    result[valid] = np.log(h2[valid])
+    needs_log_scale = ~np.isfinite(h2)
+    if not np.any(needs_log_scale):
+        return result
+
+    d = m.derived_param
+    osh2 = float(d["Omega_sh2"])
+    if osh2 <= 0.0:
+        return result
+    log_roundoff_margin = -math.log(np.finfo(np.float64).eps)
+    n_inf = float(d["N_inf"])
+    for index in np.flatnonzero(needs_log_scale):
+        delta = n_inf - float(values[index])
+        if delta < 0.0:
+            continue
+        log_stiff = math.log(osh2) + 3.0 * delta
+        other_bound = _h2_nonstiff_abs_bound(m, DN_eff, delta)
+        if not math.isfinite(other_bound) or other_bound < 0.0:
+            continue
+        log_other_bound = math.log(other_bound) if other_bound > 0.0 else -math.inf
+        if log_stiff - log_other_bound > log_roundoff_margin:
+            result[index] = log_stiff
+    return result
+
+
 def _sigma_node_limits(Nv, m, DN_eff, sigma_nodes=None):
     """Return continuous sigma at grid nodes with explicit kink limits.
 
@@ -401,40 +507,49 @@ def _h2_identity_primitives(m, Nv, DN_eff, midpoints, *, relative_scale=False):
     post_nodes = nodes >= n_re
     post_mids = mids >= n_re
     try:
-        h2_anchor = float(H2_vec(np.asarray([anchor_n]), m, DN_eff)[0])
-        h2_nodes = H2_vec(nodes[post_nodes], m, DN_eff)
-        h2_mids = H2_vec(mids[post_mids], m, DN_eff)
+        log_h2_anchor = float(_log_H2_vec(np.asarray([anchor_n]), m, DN_eff)[0])
+        log_h2_nodes = _log_H2_vec(nodes[post_nodes], m, DN_eff)
+        log_h2_mids = _log_H2_vec(mids[post_mids], m, DN_eff)
     except (OverflowError, ValueError, FloatingPointError):
-        h2_anchor = float("nan")
-        h2_nodes = np.full(int(np.count_nonzero(post_nodes)), np.nan)
-        h2_mids = np.full(int(np.count_nonzero(post_mids)), np.nan)
+        log_h2_anchor = float("nan")
+        log_h2_nodes = np.full(int(np.count_nonzero(post_nodes)), np.nan)
+        log_h2_mids = np.full(int(np.count_nonzero(post_mids)), np.nan)
 
-    valid_anchor = math.isfinite(h2_anchor) and h2_anchor > 0.0
-    valid_nodes = np.isfinite(h2_nodes).all() and np.all(h2_nodes > 0.0)
-    valid_mids = np.isfinite(h2_mids).all() and np.all(h2_mids > 0.0)
+    valid_anchor = math.isfinite(log_h2_anchor)
+    valid_nodes = np.isfinite(log_h2_nodes).all()
+    valid_mids = np.isfinite(log_h2_mids).all()
     if not (valid_anchor and valid_nodes and valid_mids):
-        finite_nonpositive = (
-            (math.isfinite(h2_anchor) and h2_anchor <= 0.0)
-            or np.any(np.isfinite(h2_nodes) & (h2_nodes <= 0.0))
-            or np.any(np.isfinite(h2_mids) & (h2_mids <= 0.0))
-        )
-        failure = "nonpositive_h2" if finite_nonpositive else "nonfinite_background"
+        failure = "nonfinite_background"
+
+        def is_nonpositive_h2(N):
+            try:
+                with np.errstate(over="ignore", invalid="ignore"):
+                    value = float(H2_vec(np.asarray([N]), m, DN_eff)[0])
+            except (OverflowError, ValueError, FloatingPointError):
+                return False
+            return math.isfinite(value) and value <= 0.0
+
         if not valid_anchor:
             failure_index = int(np.searchsorted(nodes, anchor_n, side="left"))
+            if is_nonpositive_h2(anchor_n):
+                failure = "nonpositive_h2"
         elif not valid_nodes:
-            failure_index = int(np.flatnonzero(~(np.isfinite(h2_nodes) & (h2_nodes > 0.0)))[0])
+            bad_index = int(np.flatnonzero(~np.isfinite(log_h2_nodes))[0])
+            failure_index = int(np.flatnonzero(post_nodes)[bad_index])
+            if is_nonpositive_h2(nodes[failure_index]):
+                failure = "nonpositive_h2"
         else:
-            failure_index = max(
-                0,
-                int(np.flatnonzero(~(np.isfinite(h2_mids) & (h2_mids > 0.0)))[0]),
-            )
+            bad_index = int(np.flatnonzero(~np.isfinite(log_h2_mids))[0])
+            failure_index = max(0, int(np.searchsorted(nodes, mids[bad_index])))
+            if is_nonpositive_h2(mids[bad_index]):
+                failure = "nonpositive_h2"
         return None, failure, failure_index
 
-    log_anchor = math.log(h2_anchor)
+    log_anchor = log_h2_anchor
     F_nodes = nodes - n0
     F_mids = mids - n0
-    F_nodes[post_nodes] -= (np.log(h2_nodes) - log_anchor) / 3.0
-    F_mids[post_mids] -= (np.log(h2_mids) - log_anchor) / 3.0
+    F_nodes[post_nodes] -= (log_h2_nodes - log_anchor) / 3.0
+    F_mids[post_mids] -= (log_h2_mids - log_anchor) / 3.0
     phi_nodes = 1.5 * F_nodes - nodes + n0
     phi_mids = 1.5 * F_mids - mids + n0
     psi = 3.0 * F_nodes - 4.0 * nodes

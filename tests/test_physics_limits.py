@@ -494,7 +494,7 @@ def test_sigma_ratio_stays_finite_when_its_numerator_is_not_representable():
     assert np.isfinite(model.log10OmegaGW).all()
 
 
-def test_fast_classifies_unrepresentable_scaled_stiff_h2():
+def test_fast_solves_unrepresentable_stiff_h2_with_finite_log_background():
     from stiffgwpy_fast.exact_background import H2_vec
 
     model = LCDM_SG(
@@ -521,8 +521,11 @@ def test_fast_classifies_unrepresentable_scaled_stiff_h2():
         freq_grid_target=1e-6,
         physical_guard=True,
     )
-    assert result is None
-    assert model.fast_failure_reason == 'nonfinite_background'
+    assert result is model
+    assert model.fast_failure_reason is None
+    assert np.isfinite(model.DN_gw).all()
+    assert np.isfinite(model.f).all()
+    assert np.isfinite(model.log10OmegaGW).all()
 
 
 def test_fast_reports_invalid_derived_cutoff_after_outer_update(monkeypatch):

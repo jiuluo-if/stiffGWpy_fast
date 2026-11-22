@@ -895,6 +895,7 @@ def cubic_any(x, breaks, c):
 # ================= expansion generation in Numba / Numba 膨胀史生成 =================
 _LOG_MAX_FLOAT = math.log(np.finfo(np.float64).max)
 _LOG_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
+_LOG_FLOAT64_ROUNDOFF_MARGIN = -math.log(np.finfo(np.float64).eps)
 _H2_SIGMA_RATIO_SCALE_THRESHOLD = 0.25 * np.finfo(np.float64).max
 
 
@@ -909,6 +910,47 @@ def _scaled_exp_product_numba(coefficient, exponent):
     if log_value < _LOG_MIN_SUBNORMAL:
         return math.copysign(0.0, coefficient)
     return math.copysign(math.exp(log_value), coefficient)
+
+
+@njit(cache=True, inline="always")
+def _log_add_exp_numba(left, right):
+    if left == -math.inf:
+        return right
+    if right == -math.inf:
+        return left
+    if left >= right:
+        return left + math.log1p(math.exp(right - left))
+    return right + math.log1p(math.exp(left - right))
+
+
+@njit(cache=True)
+def _stiff_dominated_log_h2(Osh2, three_delta, sigma_other,
+                            Omh2, H2_today_anchor, OLh2_base):
+    """Return log(H2) when the stiff term dominates float64 by a roundoff margin."""
+    if (not math.isfinite(Osh2) or not math.isfinite(three_delta)
+            or not math.isfinite(sigma_other) or not math.isfinite(Omh2)
+            or not math.isfinite(H2_today_anchor) or not math.isfinite(OLh2_base)
+            or Osh2 <= 0.0):
+        return False, 0.0
+    log_stiff = math.log(Osh2) + three_delta
+    if not math.isfinite(log_stiff) or log_stiff <= _LOG_MAX_FLOAT:
+        return False, 0.0
+    log_other = -math.inf
+    if sigma_other != 0.0:
+        log_other = _log_add_exp_numba(log_other, math.log(abs(sigma_other)))
+    if Omh2 != 0.0:
+        log_other = _log_add_exp_numba(log_other, math.log(abs(Omh2)))
+    if H2_today_anchor != 0.0:
+        log_other = _log_add_exp_numba(
+            log_other, math.log(abs(H2_today_anchor)) - three_delta
+        )
+    if OLh2_base != 0.0:
+        log_other = _log_add_exp_numba(
+            log_other, math.log(abs(OLh2_base)) - three_delta
+        )
+    if log_stiff - log_other <= _LOG_FLOAT64_ROUNDOFF_MARGIN:
+        return False, 0.0
+    return True, log_stiff
 
 
 @njit(cache=True)
@@ -1030,6 +1072,15 @@ def gen_kernel(
             else:
                 H2 = Omh2 + Otreh2_base * eN + stiff_h2 + extra_radiation_h2 + lambda_term
             sigma_other = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN
+        if not math.isfinite(H2):
+            stiff_dominates, log_h2 = _stiff_dominated_log_h2(
+                Osh2, three_delta, sigma_other, Omh2,
+                H2_today_anchor, OLh2_base,
+            )
+            if stiff_dominates:
+                Sv[i] = 2.0
+                f_hor[i] = -0.5 * Nv[i] + 0.5 * log_h2
+                continue
         # H² 非正时实数膨胀率与 sigma 均无定义；返回节点号，避免除零或对数域异常。
         # Nonpositive H² has no real expansion rate at this node; report it before division/log.
         if H2 <= 0.0:
@@ -3318,6 +3369,12 @@ def _SGWB_iter_fast_impl(
                 kink_index = -1
                 kink_fraction = 0.0
                 phi_re = 0.0
+            # A background primitive may auto-select the relative S2 gauge
+            # even when Nv itself is within float64.  Propagation and tail
+            # assembly must use that same gauge.
+            relative_scale = relative_scale or bool(
+                getattr(m, "_fast_relative_background_required", False)
+            )
             if getattr(m, "_fast_background_failure", None) is not None:
                 m.fast_failure_reason = m._fast_background_failure
                 break

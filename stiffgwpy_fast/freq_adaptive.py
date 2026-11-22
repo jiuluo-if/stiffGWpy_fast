@@ -247,7 +247,7 @@ def grid_independent_freqs(m, freq_res=1.0, *, allow_log_amplitude=False):
     import math as _m
 
     from . import global_param as gp
-    from .exact_background import H2_vec
+    from .exact_background import _log_H2_vec
 
     d = m.derived_param
     N_inf = d['N_inf']
@@ -268,13 +268,13 @@ def grid_independent_freqs(m, freq_res=1.0, *, allow_log_amplitude=False):
     def h2_at(N):
         N = float(N)
         if N not in h2_cache:
-            h2_cache[N] = float(H2_vec(np.array([N]), m, dn)[0])
+            h2_cache[N] = float(_log_H2_vec(np.array([N]), m, dn)[0])
         return h2_cache[N]
 
-    H2_last = h2_at(N_inf)
-    raw_last = -0.5 * N_inf + 0.5 * _m.log(H2_last)
-    H2_re = h2_at(N_re_abs)
-    raw_re = -0.5 * N_re_abs + 0.5 * _m.log(H2_re)
+    log_h2_last = h2_at(N_inf)
+    raw_last = -0.5 * N_inf + 0.5 * log_h2_last
+    log_h2_re = h2_at(N_re_abs)
+    raw_re = -0.5 * N_re_abs + 0.5 * log_h2_re
     Delta_f = _m.log(2.0 * _m.pi / d['H_0'])
     ln10v = _m.log(10.0)
 
@@ -285,7 +285,7 @@ def grid_independent_freqs(m, freq_res=1.0, *, allow_log_amplitude=False):
         if N < N_re_abs:
             raw = raw_re - 0.5 * (N - N_re_abs)
         else:
-            raw = -0.5 * N + 0.5 * _m.log(h2_at(N))
+            raw = -0.5 * N + 0.5 * h2_at(N)
         return (raw - raw_last - Delta_f) / ln10v
 
     fmax = f_hor_cont(0.0)
