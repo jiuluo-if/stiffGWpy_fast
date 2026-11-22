@@ -152,6 +152,15 @@ class LCDM_SN:
 
             'kappa_s': self.cosmo_param['kappa10'] * (1e-2/T_i)**4 * math.exp(6*(N_i-N_10))              # AlterBBN 初始温度 T_i 处的 kappa_stiff。
         }
+        if self.cosmo_param['kappa10'] > 0.0:
+            derived_dict['log_Omega_sh2'] = (
+                math.log(Omega_ph2) + math.log(self.cosmo_param['kappa10'])
+                + 4.0 * math.log(1e-2*a_10/TCMB_GeV) + 2.0 * math.log(a_10)
+            )
+        elif self.cosmo_param['kappa10'] == 0.0:
+            derived_dict['log_Omega_sh2'] = -math.inf
+        else:
+            derived_dict['log_Omega_sh2'] = math.nan
 
         if self.cosmo_param['T_re'] >= T_max:
             derived_dict['N_re'] = N_max + math.log(self.cosmo_param['T_re']/T_max)

@@ -36,6 +36,15 @@ _H2_CLOSURE_REL_ROUNDOFF_LIMIT = math.sqrt(np.finfo(np.float64).eps)
 _LOG_FLOAT64_ROUNDOFF_MARGIN = -math.log(np.finfo(np.float64).eps)
 
 
+def _background_exp(value):
+    """Keep scalar ``math.exp`` rounding while representing overflow as inf."""
+    if value > _LOG_FLOAT_MAX:
+        return math.inf
+    if value < _LOG_FLOAT_MIN_SUBNORMAL:
+        return 0.0
+    return math.exp(value)
+
+
 def _h2_closure_needs_scaling(Omh2, Osh2, h2_today_anchor):
     """Estimate whether matter/stiff closure subtraction loses sqrt(eps).
 
@@ -47,7 +56,8 @@ def _h2_closure_needs_scaling(Omh2, Osh2, h2_today_anchor):
             > _H2_CLOSURE_REL_ROUNDOFF_LIMIT * abs(h2_today_anchor))
 
 
-def _stable_closed_h2_base(Omh2, Osh2, h2_today_anchor, delta_N):
+def _stable_closed_h2_base(Omh2, Osh2, h2_today_anchor, delta_N,
+                           log_Osh2=None):
     """Evaluate matter + stiff + Lambda without subtracting large closures.
 
     For ``x = N_inf - N`` and ``q = exp(-3x)``, the exact identity is
@@ -56,9 +66,15 @@ def _stable_closed_h2_base(Omh2, Osh2, h2_today_anchor, delta_N):
     """
     exponent = 3.0 * delta_N
     decay = np.exp(-exponent)
-    with np.errstate(over="ignore", invalid="ignore"):
-        stiff_difference = 2.0 * Osh2 * np.sinh(exponent)
+    if Osh2 == 0.0 and log_Osh2 is not None and math.isfinite(log_Osh2):
+        with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+            stiff_difference = np.exp(log_Osh2 + exponent)
+    else:
+        with np.errstate(over="ignore", invalid="ignore"):
+            stiff_difference = 2.0 * Osh2 * np.sinh(exponent)
     overflow = ~np.isfinite(stiff_difference)
+    if Osh2 == 0.0 and log_Osh2 is not None and math.isfinite(log_Osh2):
+        overflow[:] = False
     if np.any(overflow):
         stiff_term = _scaled_exp_product(Osh2, exponent[overflow])
         stiff_difference[overflow] = stiff_term - Osh2 * decay[overflow]
@@ -82,7 +98,7 @@ def _scaled_exp_product(coefficient, exponent):
     return np.copysign(magnitude, coefficient)
 
 
-def _stiff_h2_terms(Osh2, e3N, delta_N):
+def _stiff_h2_terms(Osh2, e3N, delta_N, log_Osh2=None):
     """Return the stiff H2 and sigma terms, scaling overflowing exp(3x)."""
     with np.errstate(over="ignore", invalid="ignore"):
         stiff_h2 = Osh2 * e3N
@@ -92,11 +108,16 @@ def _stiff_h2_terms(Osh2, e3N, delta_N):
         stiff_h2[overflow] = _scaled_exp_product(Osh2, 3.0 * delta_N[overflow])
         with np.errstate(over="ignore", invalid="ignore"):
             stiff_sigma[overflow] = 2.0 * stiff_h2[overflow]
+    if Osh2 == 0.0 and log_Osh2 is not None and math.isfinite(log_Osh2):
+        with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+            stiff_h2 = np.exp(log_Osh2 + 3.0 * delta_N)
+            stiff_sigma = 2.0 * stiff_h2
     return stiff_h2, stiff_sigma
 
 
 def _sigma_over_h2(other_numerator, stiff_h2, stiff_sigma, h2,
-                   delta_N, Osh2, Omh2, h2_today_anchor, OLh2_base):
+                   delta_N, Osh2, Omh2, h2_today_anchor, OLh2_base,
+                   *, log_Osh2=None, model=None, DN_eff=0.0):
     """Form ``(other + 2*stiff)/H2`` without overflowing a finite ratio."""
     other_numerator = np.asarray(other_numerator, dtype=np.float64)
     stiff_h2 = np.asarray(stiff_h2, dtype=np.float64)
@@ -118,21 +139,13 @@ def _sigma_over_h2(other_numerator, stiff_h2, stiff_sigma, h2,
             + 2.0 * (stiff_h2[recover] / h2[recover])
         )
     unrepresented = ~np.isfinite(ratio) & ~np.isfinite(h2)
-    if Osh2 > 0.0:
+    if log_Osh2 is not None and math.isfinite(log_Osh2) and model is not None:
         for index in np.flatnonzero(unrepresented):
             delta = float(delta_N[index])
             if delta < 0.0:
                 continue
-            log_stiff = math.log(float(Osh2)) + 3.0 * delta
-            terms = [
-                float(other_numerator[index]), float(Omh2),
-                float(h2_today_anchor) * math.exp(-3.0 * delta),
-                float(OLh2_base) * math.exp(-3.0 * delta),
-            ]
-            log_other = max(
-                (math.log(abs(term)) for term in terms if term != 0.0),
-                default=-math.inf,
-            )
+            log_stiff = log_Osh2 + 3.0 * delta
+            log_other = _log_h2_nonstiff_abs_bound(model, DN_eff, delta)
             if log_stiff - log_other > _LOG_FLOAT64_ROUNDOFF_MARGIN:
                 ratio[index] = 2.0
     return ratio
@@ -167,10 +180,17 @@ def sigma_vec(N, m, DN_eff):
     running = N >= N_re_abs
     Nr = N[running]
     delta_N = N_inf - Nr
-    eN = np.exp(delta_N)
+    eN = np.fromiter(
+        (_background_exp(float(delta)) for delta in delta_N),
+        dtype=np.float64,
+        count=delta_N.size,
+    )
     with np.errstate(over="ignore", invalid="ignore"):
         e3N = eN * eN * eN
-    stiff_h2, stiff_sigma = _stiff_h2_terms(Osh2, e3N, delta_N)
+    log_Osh2 = float(d.get('log_Omega_sh2', -math.inf))
+    stiff_h2, stiff_sigma = _stiff_h2_terms(
+        Osh2, e3N, delta_N, log_Osh2=log_Osh2
+    )
     overflowed_e3 = ~np.isfinite(e3N)
     decay = np.exp(-3.0 * delta_N)
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -181,9 +201,12 @@ def sigma_vec(N, m, DN_eff):
         lambda_term[overflowed_e3] = OLh2_base * decay[overflowed_e3]
     if stable_closure:
         closed_h2_base = _stable_closed_h2_base(
-            Omh2, Osh2, h2_today_anchor, delta_N
+            Omh2, Osh2, h2_today_anchor, delta_N, log_Osh2=log_Osh2
         )
-    extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
+    if Oerh2 == 0.0:
+        extra_radiation_h2 = np.zeros_like(eN)
+    else:
+        extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
     nu = gp.nu_today / eN
     Omega_ph2 = gp.Omega_ph2
     Omega_nh2 = gp.Omega_nh2
@@ -204,6 +227,7 @@ def sigma_vec(N, m, DN_eff):
         out[m1] = _sigma_over_h2(
             sigma_other, stiff_h2[m1], stiff_sigma[m1], H2,
             delta_N[m1], Osh2, Omh2, h2_today_anchor, OLh2_base,
+            log_Osh2=log_Osh2, model=m, DN_eff=DN_eff,
         )
     m2 = (~m1) & (nu >= 0.1)
     if m2.any():
@@ -223,6 +247,7 @@ def sigma_vec(N, m, DN_eff):
         out[m2] = _sigma_over_h2(
             sigma_other, stiff_h2[m2], stiff_sigma[m2], H2,
             delta_N[m2], Osh2, Omh2, h2_today_anchor, OLh2_base,
+            log_Osh2=log_Osh2, model=m, DN_eff=DN_eff,
         )
     m3 = (~m1) & (~m2) & (Nr > N_inf - gp.N_fin)
     if m3.any():
@@ -235,6 +260,7 @@ def sigma_vec(N, m, DN_eff):
         out[m3] = _sigma_over_h2(
             sigma_other, stiff_h2[m3], stiff_sigma[m3], H2,
             delta_N[m3], Osh2, Omh2, h2_today_anchor, OLh2_base,
+            log_Osh2=log_Osh2, model=m, DN_eff=DN_eff,
         )
     m4 = (~m1) & (~m2) & (~m3) & (Nr >= N_inf - gp.N_max)
     if m4.any():
@@ -251,6 +277,7 @@ def sigma_vec(N, m, DN_eff):
         out[m4] = _sigma_over_h2(
             sigma_other, stiff_h2[m4], stiff_sigma[m4], H2,
             delta_N[m4], Osh2, Omh2, h2_today_anchor, OLh2_base,
+            log_Osh2=log_Osh2, model=m, DN_eff=DN_eff,
         )
     m5 = (~m1) & (~m2) & (~m3) & (~m4)
     if m5.any():
@@ -263,6 +290,7 @@ def sigma_vec(N, m, DN_eff):
         out[m5] = _sigma_over_h2(
             sigma_other, stiff_h2[m5], stiff_sigma[m5], H2,
             delta_N[m5], Osh2, Omh2, h2_today_anchor, OLh2_base,
+            log_Osh2=log_Osh2, model=m, DN_eff=DN_eff,
         )
     sigma[running] = out
     return sigma
@@ -286,18 +314,21 @@ def H2_vec(N, m, DN_eff):
     stable_closure = _h2_closure_needs_scaling(Omh2, Osh2, h2_today_anchor)
     N_inf = d['N_inf']
     fd_rho, _ = _fd_from_ref()
-    # Preserve the legacy scalar ``math.exp`` result across platforms while
-    # batching the much more expensive spline evaluation below.
-    # 保留旧版逐点 ``math.exp`` 的跨平台结果，仅批量处理耗时更高的样条插值。
-    eN = np.fromiter(
-        (math.exp(N_inf - float(Ni)) for Ni in N),
-        dtype=float,
-        count=N.size,
-    )
     delta_N = N_inf - N
+    # np.exp reports an unrepresentable e^delta as +inf; callers that need
+    # log(H2) can still recover a proven stiff-dominated value below.
+    # np.exp 将不可表示的 e^delta 保留为 +inf，后续 log(H2) 可在证明刚性项主导后恢复。
+    eN = np.fromiter(
+        (_background_exp(float(delta)) for delta in delta_N),
+        dtype=np.float64,
+        count=delta_N.size,
+    )
     with np.errstate(over="ignore", invalid="ignore"):
         e3N = eN * eN * eN
-    stiff_h2, _ = _stiff_h2_terms(Osh2, e3N, delta_N)
+    log_Osh2 = float(d.get('log_Omega_sh2', -math.inf))
+    stiff_h2, _ = _stiff_h2_terms(
+        Osh2, e3N, delta_N, log_Osh2=log_Osh2
+    )
     overflowed_e3 = ~np.isfinite(e3N)
     decay = np.exp(-3.0 * delta_N)
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -306,10 +337,13 @@ def H2_vec(N, m, DN_eff):
     if np.any(overflowed_e3):
         inverse_e3[overflowed_e3] = decay[overflowed_e3]
         lambda_term[overflowed_e3] = OLh2_base * decay[overflowed_e3]
-    extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
+    if Oerh2 == 0.0:
+        extra_radiation_h2 = np.zeros_like(eN)
+    else:
+        extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
     if stable_closure:
         closed_h2_base = _stable_closed_h2_base(
-            Omh2, Osh2, h2_today_anchor, delta_N
+            Omh2, Osh2, h2_today_anchor, delta_N, log_Osh2=log_Osh2
         )
     nu = gp.nu_today / eN
     out = np.empty_like(N)
@@ -409,6 +443,55 @@ def _h2_nonstiff_abs_bound(m, DN_eff, delta):
     return bound + fluid
 
 
+def _log_h2_nonstiff_abs_bound(m, DN_eff, delta):
+    """Log-bound non-stiff H2 terms without materializing ``exp(delta)``."""
+    d = m.derived_param
+    omh2 = float(d["Omega_mh2"])
+    osh2 = float(d["Omega_sh2"])
+    anchor = float(d["h"] ** 2 - gp.Omega_mnuh2
+                   - gp.Omega_nh2 * 2.0 / 3.0 - gp.Omega_ph2)
+    olh2 = float(d["h"] ** 2 - omh2 - gp.Omega_mnuh2
+                 - gp.Omega_nh2 * 2.0 / 3.0 - gp.Omega_ph2 - osh2)
+    oerh2 = (gp.Omega_ph2 * 7.0 / 8.0 * (4.0 / 11.0) ** (4.0 / 3.0)
+             * float(DN_eff))
+
+    def log_abs(value):
+        return math.log(abs(value)) if value != 0.0 else -math.inf
+
+    def log_add(left, right):
+        if left == -math.inf:
+            return right
+        if right == -math.inf:
+            return left
+        larger = max(left, right)
+        return larger + math.log1p(math.exp(min(left, right) - larger))
+
+    log_constant = log_add(log_abs(omh2), log_abs(gp.Omega_mnuh2))
+    thermal_rho = float(np.max(np.abs(gp.rho_th)))
+    thermal_rhop = float(np.max(np.abs(gp.rhop_th)))
+    log_radiation_coefficient = -math.inf
+    for coefficient in (
+        gp.Omega_ph2 * (1.0 + thermal_rho + thermal_rhop),
+        gp.Omega_nh2 * (2.0 + thermal_rho + thermal_rhop),
+        oerh2,
+        gp.Omega_orh2,
+        gp.Omega_ph2 * float(gp.rho_th[-1]),
+    ):
+        log_radiation_coefficient = log_add(
+            log_radiation_coefficient, log_abs(coefficient)
+        )
+    log_decaying_coefficient = log_add(
+        float(d.get('log_Omega_sh2', -math.inf)), log_abs(anchor)
+    )
+    for coefficient in (olh2, oerh2):
+        log_decaying_coefficient = log_add(
+            log_decaying_coefficient, log_abs(coefficient)
+        )
+
+    bound = log_add(log_constant, log_radiation_coefficient + delta)
+    return log_add(bound, log_decaying_coefficient - 3.0 * delta)
+
+
 def _log_H2_vec(N, m, DN_eff):
     """Return log(H2), retaining positive stiff-dominated values above float64.
 
@@ -429,8 +512,8 @@ def _log_H2_vec(N, m, DN_eff):
         return result
 
     d = m.derived_param
-    osh2 = float(d["Omega_sh2"])
-    if osh2 <= 0.0:
+    log_osh2 = float(d.get("log_Omega_sh2", -math.inf))
+    if not math.isfinite(log_osh2):
         return result
     log_roundoff_margin = -math.log(np.finfo(np.float64).eps)
     n_inf = float(d["N_inf"])
@@ -438,11 +521,14 @@ def _log_H2_vec(N, m, DN_eff):
         delta = n_inf - float(values[index])
         if delta < 0.0:
             continue
-        log_stiff = math.log(osh2) + 3.0 * delta
-        other_bound = _h2_nonstiff_abs_bound(m, DN_eff, delta)
-        if not math.isfinite(other_bound) or other_bound < 0.0:
-            continue
-        log_other_bound = math.log(other_bound) if other_bound > 0.0 else -math.inf
+        log_stiff = log_osh2 + 3.0 * delta
+        if delta <= _LOG_FLOAT_MAX and float(d["Omega_sh2"]) > 0.0:
+            other_bound = _h2_nonstiff_abs_bound(m, DN_eff, delta)
+            if not math.isfinite(other_bound) or other_bound < 0.0:
+                continue
+            log_other_bound = math.log(other_bound) if other_bound > 0.0 else -math.inf
+        else:
+            log_other_bound = _log_h2_nonstiff_abs_bound(m, DN_eff, delta)
         if log_stiff - log_other_bound > log_roundoff_margin:
             result[index] = log_stiff
     return result

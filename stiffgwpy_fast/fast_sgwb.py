@@ -914,6 +914,15 @@ def _scaled_exp_product_numba(coefficient, exponent):
 
 
 @njit(cache=True, inline="always")
+def _exp_from_log_numba(log_value):
+    if log_value > _LOG_MAX_FLOAT:
+        return math.inf
+    if log_value < _LOG_MIN_SUBNORMAL:
+        return 0.0
+    return math.exp(log_value)
+
+
+@njit(cache=True, inline="always")
 def _log_add_exp_numba(left, right):
     if left == -math.inf:
         return right
@@ -925,30 +934,37 @@ def _log_add_exp_numba(left, right):
 
 
 @njit(cache=True)
-def _stiff_dominated_log_h2(Osh2, three_delta, sigma_other,
-                            Omh2, H2_today_anchor, OLh2_base):
+def _stiff_dominated_log_h2(Osh2, log_Osh2, three_delta, delta,
+                            sigma_other, Omh2, H2_today_anchor,
+                            OLh2_base, coefficient_bound):
     """Return log(H2) when the stiff term dominates float64 by a roundoff margin."""
-    if (not math.isfinite(Osh2) or not math.isfinite(three_delta)
-            or not math.isfinite(sigma_other) or not math.isfinite(Omh2)
+    if (not math.isfinite(log_Osh2) or not math.isfinite(three_delta)
+            or not math.isfinite(delta) or not math.isfinite(Omh2)
             or not math.isfinite(H2_today_anchor) or not math.isfinite(OLh2_base)
-            or Osh2 <= 0.0):
+            or not math.isfinite(coefficient_bound) or coefficient_bound <= 0.0
+            or math.isnan(sigma_other)):
         return False, 0.0
-    log_stiff = math.log(Osh2) + three_delta
+    log_stiff = log_Osh2 + three_delta
     if not math.isfinite(log_stiff) or log_stiff <= _LOG_MAX_FLOAT:
         return False, 0.0
-    log_other = -math.inf
-    if sigma_other != 0.0:
-        log_other = _log_add_exp_numba(log_other, math.log(abs(sigma_other)))
-    if Omh2 != 0.0:
-        log_other = _log_add_exp_numba(log_other, math.log(abs(Omh2)))
-    if H2_today_anchor != 0.0:
-        log_other = _log_add_exp_numba(
-            log_other, math.log(abs(H2_today_anchor)) - three_delta
-        )
-    if OLh2_base != 0.0:
-        log_other = _log_add_exp_numba(
-            log_other, math.log(abs(OLh2_base)) - three_delta
-        )
+    if not math.isinf(sigma_other):
+        log_other = -math.inf
+        if sigma_other != 0.0:
+            log_other = _log_add_exp_numba(log_other, math.log(abs(sigma_other)))
+        if Omh2 != 0.0:
+            log_other = _log_add_exp_numba(log_other, math.log(abs(Omh2)))
+        if H2_today_anchor != 0.0:
+            log_other = _log_add_exp_numba(
+                log_other, math.log(abs(H2_today_anchor)) - three_delta
+            )
+        if OLh2_base != 0.0:
+            log_other = _log_add_exp_numba(
+                log_other, math.log(abs(OLh2_base)) - three_delta
+            )
+    else:
+        # For delta >= log(float64.max), a conservative sum of every
+        # non-stiff coefficient times exp(delta) bounds all other branches.
+        log_other = math.log(coefficient_bound) + delta
     if log_stiff - log_other <= _LOG_FLOAT64_ROUNDOFF_MARGIN:
         return False, 0.0
     return True, log_stiff
@@ -968,6 +984,8 @@ def gen_kernel(
     OLh2_base,
     H2_today_anchor,
     stable_h2_closure,
+    log_Osh2,
+    nonstiff_coefficient_bound,
     Omega_mnuh2,
     Omega_ph2,
     Omega_nh2,
@@ -998,15 +1016,20 @@ def gen_kernel(
             lambda_term = OLh2_base / e3N
         else:
             inverse_e3 = decay
-            stiff_h2 = _scaled_exp_product_numba(Osh2, three_delta)
+            stiff_h2 = (
+                _exp_from_log_numba(log_Osh2 + three_delta)
+                if Osh2 == 0.0 and math.isfinite(log_Osh2)
+                else _scaled_exp_product_numba(Osh2, three_delta)
+            )
             lambda_term = OLh2_base * decay
         if stable_h2_closure:
             if three_delta <= _LOG_MAX_FLOAT:
-                closed_h2_base = (
-                    Omh2 * (-math.expm1(-three_delta))
-                    + 2.0 * Osh2 * math.sinh(three_delta)
-                    + H2_today_anchor * decay
-                )
+                if Osh2 == 0.0 and math.isfinite(log_Osh2):
+                    stiff_difference = stiff_h2
+                else:
+                    stiff_difference = 2.0 * Osh2 * math.sinh(three_delta)
+                closed_h2_base = (Omh2 * (-math.expm1(-three_delta))
+                                  + stiff_difference + H2_today_anchor * decay)
             else:
                 closed_h2_base = (
                     Omh2 * (-math.expm1(-three_delta))
@@ -1017,7 +1040,10 @@ def gen_kernel(
         # subtraction.  At eN=1 these contributions cancel analytically; adding
         # Oerh2 and OLh2 separately loses the finite H0^2 term when DN_eff is large.
         # 将额外辐射与今天的闭合项合并计算；eN=1 时两者解析抵消，分开相加会在大 DN_eff 时丢失有限的 H0^2。
-        extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
+        if Oerh2 == 0.0:
+            extra_radiation_h2 = 0.0
+        else:
+            extra_radiation_h2 = Oerh2 * (eN - inverse_e3)
         nu = nu_today / eN
         if nu > 100.0:
             if stable_h2_closure:
@@ -1075,8 +1101,8 @@ def gen_kernel(
             sigma_other = Omh2 + 4.0 / 3.0 * (Otreh2_base + Oerh2) * eN
         if not math.isfinite(H2):
             stiff_dominates, log_h2 = _stiff_dominated_log_h2(
-                Osh2, three_delta, sigma_other, Omh2,
-                H2_today_anchor, OLh2_base,
+                Osh2, log_Osh2, three_delta, delta_N, sigma_other, Omh2,
+                H2_today_anchor, OLh2_base, nonstiff_coefficient_bound,
             )
             if stiff_dominates:
                 Sv[i] = 2.0
@@ -1090,7 +1116,10 @@ def gen_kernel(
             Sv[i] = sigma_other / H2 + 2.0 * (stiff_h2 / H2)
         else:
             if three_delta <= _LOG_MAX_FLOAT:
-                sigma_numerator = sigma_other + 2.0 * Osh2 * e3N
+                stiff_sigma = (2.0 * stiff_h2 if Osh2 == 0.0
+                               and math.isfinite(log_Osh2)
+                               else 2.0 * Osh2 * e3N)
+                sigma_numerator = sigma_other + stiff_sigma
             else:
                 sigma_numerator = sigma_other + 2.0 * stiff_h2
             Sv[i] = sigma_numerator / H2
@@ -1131,6 +1160,20 @@ def gen_fast(m, h=0.01, kink_split=False):
         np.finfo(np.float64).eps * (abs(Omh2) + abs(Osh2))
         > math.sqrt(np.finfo(np.float64).eps) * abs(H2_today_anchor)
     )
+    log_Osh2 = float(d.get("log_Omega_sh2", -math.inf))
+    thermal_rho_bound = float(np.max(np.abs(gp.rho_th)))
+    thermal_rhop_bound = float(np.max(np.abs(gp.rhop_th)))
+    nonstiff_coefficient_bound = (
+        abs(Omh2) + abs(gp.Omega_mnuh2) + abs(H2_today_anchor)
+        + abs(OLh2_base) + abs(Osh2) + abs(Oerh2) + abs(Otrh2_base)
+        + abs(Otreh2_base)
+        + 4.0 / 3.0 * abs(gp.Omega_ph2)
+        * (1.0 + thermal_rho_bound + thermal_rhop_bound)
+        + 4.0 / 3.0 * abs(gp.Omega_nh2)
+        * (2.0 + thermal_rho_bound + thermal_rhop_bound)
+    )
+    if math.isfinite(nonstiff_coefficient_bound):
+        nonstiff_coefficient_bound = max(1.0, nonstiff_coefficient_bound)
     # Use the *continuous* present-day anchor N_inf (not the grid-quantised
     # floor(N_inf/h)*h) so the fast path is anchored identically to the
     # continuous-sigma reference.  The floor(N_inf/h)*h anchor attenuates the
@@ -1169,6 +1212,8 @@ def gen_fast(m, h=0.01, kink_split=False):
         OLh2_base,
         H2_today_anchor,
         stable_h2_closure,
+        log_Osh2,
+        nonstiff_coefficient_bound,
         gp.Omega_mnuh2,
         gp.Omega_ph2,
         gp.Omega_nh2,
@@ -2126,6 +2171,23 @@ def _square_times_power_numba(value, power, divisor):
 
 
 @njit(cache=True, inline="always")
+def _log_square_times_power_numba(log_abs_value, power, divisor):
+    """Evaluate exp(2*log_abs_value)*power/divisor in float64 range."""
+    if math.isnan(log_abs_value) or math.isnan(power) or math.isnan(divisor):
+        return math.nan
+    if power == 0.0 or log_abs_value == -math.inf:
+        return 0.0
+    if power < 0.0 or divisor <= 0.0:
+        return math.nan
+    log_moment = 2.0 * log_abs_value + math.log(power) - math.log(divisor)
+    if log_moment > _LOG_MAX_FLOAT:
+        return math.inf
+    if log_moment < _LOG_MIN_SUBNORMAL:
+        return 0.0
+    return math.exp(log_moment)
+
+
+@njit(cache=True, inline="always")
 def _mode_state(x, y, index, start, log_gain, relative_background):
     if relative_background is None:
         return x, y
@@ -2326,10 +2388,30 @@ def solve_kernel(
                     horizon = relative_background[1]
                     decay = (Nv[kend] - Nv[kk2]) - last_z
                     log_q = z0 + (horizon[j0] - horizon[kk2]) * ln10
-                    th = coeff * math.exp(decay)
-                    xf = coeff * math.exp(decay + log_q)
-                    oj = -th * th / 3.0 * Pt
-                    op = xf * xf / 36.0 * Pt
+                    if coeff == 0.0:
+                        oj = 0.0
+                        op = 0.0
+                    else:
+                        log_coeff_decay = math.log(coeff) + decay
+                        log_xf = log_coeff_decay + log_q
+                        direct_tail_safe = (
+                            decay <= _LOG_MAX_FLOAT
+                            and decay + log_q <= _LOG_MAX_FLOAT
+                            and 2.0 * log_coeff_decay <= _LOG_MAX_FLOAT
+                            and 2.0 * log_xf <= _LOG_MAX_FLOAT
+                        )
+                        if direct_tail_safe:
+                            th = coeff * math.exp(decay)
+                            xf = coeff * math.exp(decay + log_q)
+                            oj = -th * th / 3.0 * Pt
+                            op = xf * xf / 36.0 * Pt
+                        else:
+                            oj = -_log_square_times_power_numba(
+                                log_coeff_decay, Pt, 3.0
+                            )
+                            op = _log_square_times_power_numba(
+                                log_xf, Pt, 36.0
+                            )
                     Oj[m, slot] = oj
                     Opgw[m, slot] = op
                     Ogw[m, slot] = 3.0 * op + oj
@@ -3287,7 +3369,9 @@ def _SGWB_iter_fast_impl(
                         P_t = np.ones(freqs.shape, dtype=np.float64)
                     else:
                         log_P_t = None
-                        P_t = A_t * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
+                        P_t = A_t * np.power(
+                            (10**freqs) / gp.f_piv, m.derived_param["nt"]
+                        )
                 else:
                     log_amplitude_mode = False
                     log_P_t = None
