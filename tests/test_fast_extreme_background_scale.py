@@ -3,6 +3,7 @@ import numpy as np
 from stiffgwpy_fast import exact_background, fast_sgwb
 from stiffgwpy_fast.exact_background import H2_vec
 from stiffgwpy_fast.fast_sgwb import SGWB_iter_fast, gen_fast, resolve_config
+from stiffgwpy_fast.global_param import N_10
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
@@ -76,6 +77,86 @@ def test_stiff_dominance_refuses_nan_remainder_estimates():
     )
 
     assert not recovered
+
+
+def test_extreme_reheating_keeps_log_of_unrepresentable_reheat_stiff_density():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-300,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1e200,
+        DN_re=10.0,
+        kappa10=0.01,
+    )
+
+    derived = model.derived_param
+
+    assert np.isfinite(derived["N_inf"])
+    assert np.isposinf(model.rhostiff_re)
+    assert np.isfinite(model.log_rhostiff_re)
+
+
+def test_reheating_stiff_density_recovers_underflowed_prefactor_product():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-300,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1e145,
+        DN_re=10.0,
+        kappa10=1e-320,
+    )
+
+    _derived = model.derived_param
+    assert model.rhostiff_re > 0.0
+    assert np.isfinite(model.rhostiff_re)
+    assert np.isfinite(model.log_rhostiff_re)
+    assert np.isclose(np.log(model.rhostiff_re), model.log_rhostiff_re, atol=2e-13)
+
+
+def test_fast_solves_when_reheat_exponential_overflows_but_density_is_finite():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-300,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1e155,
+        DN_re=10.0,
+        kappa10=1e-100,
+    )
+
+    derived = model.derived_param
+    assert np.isfinite(derived["N_inf"])
+    assert np.isfinite(model.rhostiff_re)
+    assert np.isfinite(model.log_rhostiff_re)
+    assert 2.0 * (derived["N_re"] - N_10) > np.log(np.finfo(np.float64).max)
+
+    result = SGWB_iter_fast(
+        model,
+        config=resolve_config("fast", threads=2, freq_grid="adaptive"),
+        tol=1e-6,
+        freq_grid_target=1e-6,
+        physical_guard=True,
+    )
+
+    assert result is model
+    assert model.fast_failure_reason is None
+    assert np.isfinite(model.DN_gw).all()
+    assert np.isfinite(model.f).all()
+    assert np.isfinite(model.log10OmegaGW).all()
 
 
 def test_auto_relative_primitive_scale_is_used_by_tensor_propagation(monkeypatch):

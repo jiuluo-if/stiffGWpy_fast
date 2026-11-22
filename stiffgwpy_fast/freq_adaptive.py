@@ -106,8 +106,20 @@ def construct_fast_frequency_grid(m, freq_res=1.0, log_amplitude=None):
         f = np.concatenate((f, np.arange(f[-1] - 0.05, m.f_re - 1.0, -0.05 / r)))
         f = np.concatenate((f, np.arange(f[-1] - 0.2, m.f_re - 3.0, -0.2 / r)))
 
-    if m.rhostiff_re > m.rhorad_re:
+    stiff_offset = None
+    if (m.rhorad_re > 0.0
+            and m.log_rhostiff_re > math.log(m.rhorad_re)):
+        log_ratio = m.log_rhostiff_re - math.log(m.rhorad_re)
+        if (m.rhostiff_re > 0.0 and math.isfinite(m.rhostiff_re)
+                and log_ratio <= math.log(np.finfo(np.float64).max)):
+            ratio = float(m.rhostiff_re) / float(m.rhorad_re)
+            if math.isfinite(ratio) and ratio > 0.0:
+                stiff_offset = math.log10(ratio)
+        if stiff_offset is None:
+            stiff_offset = log_ratio / math.log(10.0)
+    elif m.rhostiff_re > m.rhorad_re:
         stiff_offset = math.log10(m.rhostiff_re / m.rhorad_re)
+    if stiff_offset is not None:
         f = np.concatenate((f, np.arange(f[-1] - 1.0, m.f_re - stiff_offset + 1.0, -1.0 / r)))
         f = np.concatenate((f, np.arange(f[-1] - 0.2, m.f_re - stiff_offset - 2.0, -0.2 / r)))
 

@@ -161,13 +161,56 @@ class LCDM_SN:
             derived_dict['rho_re'] = spl_rho(derived_dict['N_re'])
         self.rhorad_re = (derived_dict['rho_re'] + 7/8*(4/11)**(4/3)*self.cosmo_param['DN_eff']) * (TCMB_GeV*math.exp(N_10))**4
         # 再加热温度处的辐射密度系数，含额外辐射，单位为 GeV^4。
-        self.rhostiff_re = self.cosmo_param['kappa10'] * 1e-8 * math.exp(2*(derived_dict['N_re']-N_10))
+        stiff_log_exponent = 2.0 * (derived_dict['N_re'] - N_10)
+        if self.cosmo_param['kappa10'] > 0.0:
+            self.log_rhostiff_re = (
+                math.log(self.cosmo_param['kappa10']) + math.log(1e-8)
+                + stiff_log_exponent
+            )
+            log_float_max = math.log(np.finfo(np.float64).max)
+            log_float_min = math.log(float(np.nextafter(0.0, 1.0)))
+            raw_prefactor = self.cosmo_param['kappa10'] * 1e-8
+            if (stiff_log_exponent <= log_float_max and raw_prefactor > 0.0
+                    and log_float_min <= self.log_rhostiff_re <= log_float_max):
+                # Preserve the ordinary-range evaluation order and rounding.
+                self.rhostiff_re = (
+                    raw_prefactor * math.exp(stiff_log_exponent)
+                )
+            elif self.log_rhostiff_re > log_float_max:
+                self.rhostiff_re = math.inf
+            elif self.log_rhostiff_re < log_float_min:
+                self.rhostiff_re = 0.0
+            else:
+                self.rhostiff_re = math.exp(self.log_rhostiff_re)
+        elif self.cosmo_param['kappa10'] == 0.0:
+            self.log_rhostiff_re = -math.inf
+            self.rhostiff_re = 0.0
+        else:
+            # Retain the signed legacy expression for nonphysical negative kappa.
+            self.log_rhostiff_re = math.nan
+            self.rhostiff_re = (
+                self.cosmo_param['kappa10'] * 1e-8
+                * math.exp(stiff_log_exponent)
+            )
         # 再加热温度处的刚性物质密度系数，单位为 GeV^4。
 
         derived_dict['N_inf'] = None
         if self.cosmo_param['cr'] > 0:
             if self.cosmo_param['r'] > 0:
                 tensor_amplitude = derived_dict['A_t']
+                density_sum = self.rhorad_re + self.rhostiff_re
+                if math.isfinite(density_sum) and density_sum > 0.0:
+                    log_density_sum = math.log(density_sum)
+                elif (self.rhostiff_re > 0.0 and self.rhorad_re >= 0.0
+                      and math.isfinite(self.log_rhostiff_re)):
+                    log_radiation = (
+                        math.log(self.rhorad_re) if self.rhorad_re > 0.0 else -math.inf
+                    )
+                    larger = max(self.log_rhostiff_re, log_radiation)
+                    smaller = min(self.log_rhostiff_re, log_radiation)
+                    log_density_sum = larger + math.log1p(math.exp(smaller - larger))
+                else:
+                    log_density_sum = math.nan
                 if tensor_amplitude > 0.0:
                     derived_dict['V_inf'] = (
                         (1.5 * tensor_amplitude) ** .25 * math.pi ** .5 * M_Pl
@@ -175,9 +218,11 @@ class LCDM_SN:
                     Delta_N = (
                         (N_10 - derived_dict['N_re']) * 4 / 3
                         + math.log(M_Pl) * 4 / 3
-                        + math.log(
-                            45 / 2 * tensor_amplitude
-                            / (self.rhorad_re + self.rhostiff_re)
+                        + (
+                            math.log(45 / 2 * tensor_amplitude / density_sum)
+                            if math.isfinite(density_sum) and density_sum > 0.0
+                            else math.log(45 / 2) + math.log(tensor_amplitude)
+                            - log_density_sum
                         ) / 3
                     )
                 elif self.cosmo_param['A_s'] > 0.0:
@@ -194,9 +239,11 @@ class LCDM_SN:
                         (N_10 - derived_dict['N_re']) * 4 / 3
                         + math.log(M_Pl) * 4 / 3
                         + (
-                            math.log(45 / 2)
-                            + log_tensor_amplitude
-                            - math.log(self.rhorad_re + self.rhostiff_re)
+                            math.log(45 / 2) + log_tensor_amplitude
+                            - math.log(density_sum)
+                            if math.isfinite(density_sum) and density_sum > 0.0
+                            else math.log(45 / 2) + log_tensor_amplitude
+                            - log_density_sum
                         ) / 3
                     )
                 else:

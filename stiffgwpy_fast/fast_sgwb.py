@@ -3272,7 +3272,12 @@ def _SGWB_iter_fast_impl(
                     log_amplitude_mode = False
                     log_P_t = None
                     P_t = A_t * np.power((10**freqs) / gp.f_piv, m.derived_param["nt"])
-                fp_freq = np.power(10.0, freqs)
+                fp_freq = np.full(freqs.shape, math.inf, dtype=np.float64)
+                representable_frequency = freqs <= math.log10(np.finfo(np.float64).max)
+                with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+                    fp_freq[representable_frequency] = np.power(
+                        10.0, freqs[representable_frequency]
+                    )
                 Xf = np.flip(freqs)
                 hf = np.diff(Xf)
                 Wmat = np.zeros((Nf, Nf))

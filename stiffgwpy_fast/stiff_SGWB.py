@@ -677,9 +677,24 @@ class LCDM_SG(LCDM_SN):
             f = cat((f, np.arange(f[-1]-.05, self.f_re-1, -.05/r)), axis=None)         # 远离 f_re 后的频率段。
             f = cat((f, np.arange(f[-1]-.2, self.f_re-3, -.2/r)), axis=None)
 
-        if self.rhostiff_re > self.rhorad_re:
-            f = cat((f, np.arange(f[-1]-1, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)+1, -1/r)), axis=None)     # 再加热后、刚性物质主导结束前的频率段。
-            f = cat((f, np.arange(f[-1]-.2, self.f_re-math.log10(self.rhostiff_re/self.rhorad_re)-2, -.2/r)), axis=None)   # 穿过 T_sr 对应的谱踝部。
+        log10_stiff_radiation_ratio = None
+        if self.rhorad_re > 0.0 and self.log_rhostiff_re > math.log(self.rhorad_re):
+            log_ratio = self.log_rhostiff_re - math.log(self.rhorad_re)
+            if (self.rhostiff_re > 0.0 and math.isfinite(self.rhostiff_re)
+                    and log_ratio <= math.log(np.finfo(np.float64).max)):
+                ratio = float(self.rhostiff_re) / float(self.rhorad_re)
+                if math.isfinite(ratio) and ratio > 0.0:
+                    log10_stiff_radiation_ratio = math.log10(ratio)
+            if log10_stiff_radiation_ratio is None:
+                log10_stiff_radiation_ratio = log_ratio / math.log(10.0)
+        elif self.rhostiff_re > self.rhorad_re:
+            # Preserve the existing failure semantics for nonphysical signed radiation.
+            log10_stiff_radiation_ratio = math.log10(
+                self.rhostiff_re / self.rhorad_re
+            )
+        if log10_stiff_radiation_ratio is not None:
+            f = cat((f, np.arange(f[-1]-1, self.f_re-log10_stiff_radiation_ratio+1, -1/r)), axis=None)     # 再加热后、刚性物质主导结束前的频率段。
+            f = cat((f, np.arange(f[-1]-.2, self.f_re-log10_stiff_radiation_ratio-2, -.2/r)), axis=None)   # 穿过 T_sr 对应的谱踝部。
 
         f = f[f>=fcmb]
         f = cat((f, np.arange(f[-1]-1, fcmb, -1/r)), axis=None)                         # 辐射主导期，从 z_eq 之前延伸至枢轴频率。
