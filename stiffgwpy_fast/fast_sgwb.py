@@ -895,6 +895,7 @@ def cubic_any(x, breaks, c):
 # ================= expansion generation in Numba / Numba 膨胀史生成 =================
 _LOG_MAX_FLOAT = math.log(np.finfo(np.float64).max)
 _LOG_MIN_SUBNORMAL = math.log(float(np.nextafter(0.0, 1.0)))
+_SQRT_MAX_FLOAT = math.sqrt(np.finfo(np.float64).max)
 _LOG_FLOAT64_ROUNDOFF_MARGIN = -math.log(np.finfo(np.float64).eps)
 _H2_SIGMA_RATIO_SCALE_THRESHOLD = 0.25 * np.finfo(np.float64).max
 
@@ -2098,11 +2099,30 @@ def _apply_phase_resolved_terminal(
 def assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus):
     Th = coeff * eNz * ev_minus[kk2]
     xf = Th * fp_i * fp_minus[kk2]
-    oj = -Th * Th / 3.0 * Pt
-    Op = xf * xf / 36.0 * Pt
+    oj = -_square_times_power_numba(Th, Pt, 3.0)
+    Op = _square_times_power_numba(xf, Pt, 36.0)
     Oj[m, slot] = oj
     Opgw[m, slot] = Op
     Ogw[m, slot] = 3.0 * Op + oj
+
+
+@njit(cache=True, inline="always")
+def _square_times_power_numba(value, power, divisor):
+    """Evaluate value²*power/divisor without overflowing the unscaled square."""
+    if abs(value) <= _SQRT_MAX_FLOAT:
+        return value * value / divisor * power
+    if math.isnan(value) or math.isnan(power) or math.isnan(divisor):
+        return math.nan
+    if power == 0.0:
+        return 0.0
+    if not math.isfinite(value):
+        return math.inf
+    log_moment = 2.0 * math.log(abs(value)) + math.log(power) - math.log(divisor)
+    if log_moment > _LOG_MAX_FLOAT:
+        return math.inf
+    if log_moment < _LOG_MIN_SUBNORMAL:
+        return 0.0
+    return math.exp(log_moment)
 
 
 @njit(cache=True, inline="always")

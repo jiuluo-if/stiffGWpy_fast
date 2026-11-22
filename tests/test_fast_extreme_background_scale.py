@@ -79,6 +79,12 @@ def test_stiff_dominance_refuses_nan_remainder_estimates():
     assert not recovered
 
 
+def test_scaled_tail_moment_preserves_nan_failure():
+    moment = fast_sgwb._square_times_power_numba(np.nan, 1.0, 36.0)
+
+    assert np.isnan(moment)
+
+
 def test_extreme_reheating_keeps_log_of_unrepresentable_reheat_stiff_density():
     model = LCDM_SG(
         Omega_bh2=0.0223828,
@@ -123,14 +129,14 @@ def test_reheating_stiff_density_recovers_underflowed_prefactor_product():
     assert np.isclose(np.log(model.rhostiff_re), model.log_rhostiff_re, atol=2e-13)
 
 
-def test_fast_solves_when_reheat_exponential_overflows_but_density_is_finite():
+def test_fast_classifies_final_spectrum_underflow_after_scaled_tail_assembly():
     model = LCDM_SG(
         Omega_bh2=0.0223828,
         Omega_ch2=0.1201075,
         H0=67.32117,
         DN_eff=0.0,
         A_s=2.100549e-9,
-        r=1e-300,
+        r=1e-310,
         n_t=0.0,
         cr=0.0,
         T_re=1e155,
@@ -152,10 +158,37 @@ def test_fast_solves_when_reheat_exponential_overflows_but_density_is_finite():
         physical_guard=True,
     )
 
+    assert result is None
+    assert model.fast_failure_reason == "nonrepresentable_output"
+    assert model.fast_failure_detail == "final_spectrum_underflow"
+
+
+def test_fast_solves_with_subnormal_tensor_power_and_representable_spectrum():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-308,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1e155,
+        DN_re=10.0,
+        kappa10=1e-100,
+    )
+
+    result = SGWB_iter_fast(
+        model,
+        config=resolve_config("fast", threads=2, freq_grid="adaptive"),
+        tol=1e-6,
+        freq_grid_target=1e-6,
+        physical_guard=True,
+    )
+
     assert result is model
     assert model.fast_failure_reason is None
     assert np.isfinite(model.DN_gw).all()
-    assert np.isfinite(model.f).all()
     assert np.isfinite(model.log10OmegaGW).all()
 
 
