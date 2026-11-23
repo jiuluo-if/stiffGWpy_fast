@@ -1259,7 +1259,7 @@ def _correct_kink_background(m):
 
     中文：修正内部转折分段与最近网格节点约定之间的差异，并返回精确转折所在区间及其相对位置。
     """
-    from .exact_background import H2_vec
+    from .exact_background import H2_vec, _log_H2_vec
 
     d = m.derived_param
     n_re = float(d["N_inf"] - d["N_re"])
@@ -1277,9 +1277,26 @@ def _correct_kink_background(m):
     # gen_kernel 从最近网格点开始再加热后分支；若该点仍在物质主导一侧，就恢复转换前的 sigma，
     # 并用精确的 N_re 锚定转换前的 f_hor。
     m.sigma[index] = 1.0
-    H2_re, H2_last = H2_vec(np.array([n_re, m.Nv[-1]]), m, m.cosmo_param["DN_eff"])
-    raw_re = -0.5 * n_re + 0.5 * math.log(float(H2_re))
-    raw_last = -0.5 * float(m.Nv[-1]) + 0.5 * math.log(float(H2_last))
+    h2_values = H2_vec(np.array([n_re, m.Nv[-1]]), m, m.cosmo_param["DN_eff"])
+    log_h2_values = np.empty(2, dtype=np.float64)
+    for i, (node, h2) in enumerate(zip((n_re, float(m.Nv[-1])), h2_values)):
+        value = float(h2)
+        if math.isfinite(value) and value > 0.0:
+            log_h2_values[i] = math.log(value)
+        elif value == math.inf:
+            log_h2_values[i] = _log_H2_vec(
+                np.asarray([node]), m, m.cosmo_param["DN_eff"]
+            )[0]
+        else:
+            log_h2_values[i] = math.nan
+            if math.isfinite(value) and value <= 0.0:
+                m._fast_background_failure = "nonpositive_h2"
+                m._fast_background_failure_detail = "H2 <= 0 at reheating match"
+                m._fast_background_failure_index = index
+    if getattr(m, "_fast_background_failure", None) is not None:
+        return index, fraction
+    raw_re = -0.5 * n_re + 0.5 * log_h2_values[0]
+    raw_last = -0.5 * float(m.Nv[-1]) + 0.5 * log_h2_values[1]
     f_re = (raw_re - raw_last - math.log(2.0 * math.pi / d["H_0"])) / ln10
     m.f_hor[: index + 1] = f_re - 0.5 * (m.Nv[: index + 1] - n_re) / ln10
     m.f_re = f_re
@@ -3409,6 +3426,9 @@ def _SGWB_iter_fast_impl(
                     m.fast_failure_reason = m._fast_background_failure
                     break
                 kink_index, kink_fraction = _correct_kink_background(m)
+                if m._fast_background_failure is not None:
+                    m.fast_failure_reason = m._fast_background_failure
+                    break
             else:
                 gen_fast(m, h, kink_split=kink_split)
                 if m._fast_background_failure is not None:

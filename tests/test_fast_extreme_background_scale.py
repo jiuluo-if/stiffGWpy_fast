@@ -383,6 +383,62 @@ def test_background_grid_uses_log_h2_when_eN_intermediate_overflows():
     assert np.isfinite(model.log10OmegaGW).all()
 
 
+def test_kink_correction_uses_finite_log_h2_when_reheating_h2_overflows():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=10.0**-308.5,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1.3433671849651832e205,
+        DN_re=10.0,
+        kappa10=8.583753417093368e-102,
+    )
+    config = resolve_config("fast", threads=2, freq_grid="adaptive")
+    generated = gen_fast(model, config.h)
+    assert generated is not None
+
+    n_re_abs = model.derived_param["N_inf"] - model.derived_param["N_re"]
+    log_h2_re = exact_background._log_H2_vec(np.array([n_re_abs]), model, 0.0)[0]
+    assert np.isfinite(log_h2_re)
+    assert not np.isfinite(exact_background.H2_vec(np.array([n_re_abs]), model, 0.0)[0])
+
+    fast_sgwb._correct_kink_background(model)
+
+    assert np.isfinite(model.f_hor).all()
+
+
+def test_kink_correction_preserves_nonpositive_h2_classification(monkeypatch):
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=10.0**-308.5,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1.3433671849651832e205,
+        DN_re=10.0,
+        kappa10=8.583753417093368e-102,
+    )
+    config = resolve_config("fast", threads=2)
+    gen_fast(model, config.h)
+    monkeypatch.setattr(
+        exact_background,
+        "H2_vec",
+        lambda values, *_args: np.array([-1.0, 0.45]),
+    )
+
+    fast_sgwb._correct_kink_background(model)
+
+    assert model._fast_background_failure == "nonpositive_h2"
+    assert model._fast_background_failure_detail == "H2 <= 0 at reheating match"
+
+
 def test_reheating_stiff_density_recovers_underflowed_prefactor_product():
     model = LCDM_SG(
         Omega_bh2=0.0223828,
