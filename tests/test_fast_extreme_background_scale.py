@@ -87,6 +87,35 @@ def test_scaled_tail_moment_preserves_nan_failure():
     assert np.isnan(moment)
 
 
+def test_log_scaled_state_energy_matches_unscaled_quadratic_moments():
+    s2 = 2.5
+    xh, yh, zz = 0.3, -0.7, 0.2
+    state_scale = 1.7
+    power = 0.02
+    expected = [np.zeros((1, 1)) for _ in range(3)]
+    actual = [np.zeros((1, 1)) for _ in range(3)]
+    log_base_signal = np.full(1, -math.inf)
+
+    fast_sgwb.assemble_main(
+        *expected, 0, 0, s2, state_scale * xh, state_scale * yh, zz, power
+    )
+    fast_sgwb.assemble_main_log_scaled(
+        *actual, 0, 0, 0, s2, xh, yh, zz,
+        math.log(state_scale), math.log(power), log_base_signal,
+    )
+
+    for observed, reference in zip(actual, expected):
+        np.testing.assert_allclose(observed, reference, rtol=2e-15, atol=0.0)
+    assert math.isclose(
+        log_base_signal[0], math.log(expected[0][0, 0] - expected[1][0, 0]),
+        rel_tol=0.0, abs_tol=2e-15,
+    )
+
+
+def test_signed_log_moment_does_not_hide_nan_behind_zero_sign():
+    assert np.isnan(fast_sgwb._signed_exp_from_log(math.nan, 0.0))
+
+
 def test_log_scaled_tail_moment_keeps_representable_final_product():
     moment = fast_sgwb._log_square_times_power_numba(
         math.log(1e200), 2.1e-309, 36.0
@@ -178,6 +207,65 @@ def test_fast_preserves_subnormal_tail_spectrum_at_unrepresentable_reheat():
     assert result is model
     assert model.fast_failure_reason is None
     assert np.isfinite(model.log10OmegaGW).all()
+
+
+def test_fast_scales_tensor_state_before_unrepresentable_transfer_amplitude():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-308,
+        n_t=0.0,
+        cr=0.0,
+        T_re=10.0**307.25,
+        DN_re=10.0,
+        kappa10=1e-308,
+    )
+    assert np.isfinite(model.derived_param["N_inf"])
+    assert np.isfinite(exact_background._log_H2_vec(np.array([0.0]), model, 0.0)).all()
+
+    result = SGWB_iter_fast(
+        model,
+        config=resolve_config("fast", threads=2, freq_grid="adaptive"),
+        tol=1e-6,
+        freq_grid_target=1e-6,
+        physical_guard=True,
+    )
+
+    assert result is model
+    assert model.fast_failure_reason is None
+    assert np.isfinite(model.DN_gw).all()
+    assert np.isfinite(model.log10OmegaGW).all()
+
+
+def test_fast_classifies_log_scaled_final_spectrum_underflow():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=1e-314,
+        n_t=0.0,
+        cr=0.0,
+        T_re=10.0**307.25,
+        DN_re=10.0,
+        kappa10=1e-308,
+    )
+
+    result = SGWB_iter_fast(
+        model,
+        config=resolve_config("fast", threads=2, freq_grid="adaptive"),
+        tol=1e-6,
+        freq_grid_target=1e-6,
+        physical_guard=True,
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "nonrepresentable_output"
+    assert model.fast_failure_detail == "final_spectrum_underflow"
 
 
 def test_background_grid_uses_log_h2_when_eN_intermediate_overflows():

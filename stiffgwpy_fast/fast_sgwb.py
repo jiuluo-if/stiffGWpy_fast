@@ -2094,6 +2094,62 @@ def assemble_main(Ogw, Oj, Opgw, m, slot, s2, xh, yh, zz, Pt):
     Opgw[m, slot] = s2 * (-5.0 * xh * xh + 7.0 * yh * yh) / 72.0 * Pt
 
 
+@njit(cache=True, inline="always")
+def _signed_exp_from_log(log_abs_value, sign):
+    if math.isnan(log_abs_value) or math.isnan(sign):
+        return math.nan
+    if sign == 0.0 or log_abs_value == -math.inf:
+        return 0.0
+    if log_abs_value > _LOG_MAX_FLOAT:
+        return math.copysign(math.inf, sign)
+    if log_abs_value < _LOG_MIN_SUBNORMAL:
+        return math.copysign(0.0, sign)
+    return math.copysign(math.exp(log_abs_value), sign)
+
+
+@njit(cache=True)
+def assemble_main_log_scaled(
+    Ogw, Oj, Opgw, m, slot, terminal_slot, s2, xh, yh, zz,
+    state_log_scale, log_power, log_base_signal_out,
+):
+    """Assemble quadratic moments without restoring an unrepresentable state."""
+    if s2 <= 0.0:
+        Ogw[m, slot] = 0.0
+        Oj[m, slot] = 0.0
+        Opgw[m, slot] = 0.0
+        if slot == terminal_slot:
+            log_base_signal_out[m] = -math.inf
+        return
+    log_common = math.log(s2) + 2.0 * state_log_scale + log_power
+    base = (xh * xh + yh * yh) / 24.0
+    if slot == terminal_slot:
+        log_base_signal_out[m] = (
+            -math.inf if base == 0.0 else log_common + math.log(base)
+        )
+    g = _signed_exp_from_log(
+        -math.inf if base == 0.0 else log_common + math.log(base), 1.0
+    )
+    if xh == 0.0 or yh == 0.0:
+        oj = 0.0
+    else:
+        log_oj = (
+            log_common + math.log(abs(xh)) + math.log(abs(yh))
+            - zz - math.log(3.0)
+        )
+        oj_sign = 1.0 if ((xh > 0.0) == (yh > 0.0)) else -1.0
+        oj = _signed_exp_from_log(log_oj, oj_sign)
+    op_coefficient = (-5.0 * xh * xh + 7.0 * yh * yh) / 72.0
+    if op_coefficient == 0.0:
+        op = 0.0
+    else:
+        op = _signed_exp_from_log(
+            log_common + math.log(abs(op_coefficient)), op_coefficient
+        )
+    Oj[m, slot] = oj
+    Ogw[m, slot] = g + oj
+    Opgw[m, slot] = op
+
+
 @njit(cache=True)
 def _apply_phase_resolved_terminal(
     Ogw, Oj, Opgw, phase_weight, tail_state, S2, Nv, Phi_grid,
@@ -2231,6 +2287,8 @@ def solve_kernel(
     z_tail_by_mode=None,
     relative_background=None,
     Phi_quarters=None,
+    log_power_scale=None,
+    log_base_signal_out=None,
 ):
     """Integrate independent modes and write their coarse output rows.
 
@@ -2267,11 +2325,29 @@ def solve_kernel(
                 slot = k // col_step
                 if slot >= n_coarse - 1:
                     slot = n_coarse - 1
-                ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
-                assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], ax, ay, zz, Pt)
+                if log_power_scale is not None:
+                    state_log_scale = (
+                        log_gain + relative_background[0][k] - relative_background[0][j0]
+                    )
+                    assemble_main_log_scaled(
+                        Ogw, Oj, Opgw, m, slot, n_coarse - 1, S2[k], xh, yh, zz,
+                        state_log_scale, log_power_scale[m], log_base_signal_out,
+                    )
+                else:
+                    ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
+                    assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], ax, ay, zz, Pt)
         elif k == nv - 1:
-            ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
-            assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], ax, ay, zz, Pt)
+            if log_power_scale is not None:
+                state_log_scale = (
+                    log_gain + relative_background[0][k] - relative_background[0][j0]
+                )
+                assemble_main_log_scaled(
+                    Ogw, Oj, Opgw, m, n_coarse - 1, n_coarse - 1, S2[k],
+                    xh, yh, zz, state_log_scale, log_power_scale[m], log_base_signal_out,
+                )
+            else:
+                ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
+                assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], ax, ay, zz, Pt)
         if zz < mode_z_tail:
             while k < nv - 1 and zz < mode_z_tail:
                 if h_arr is not None:
@@ -2326,12 +2402,38 @@ def solve_kernel(
                         slot = k // col_step
                         if slot >= n_coarse - 1:
                             slot = n_coarse - 1
-                        ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
-                        assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], ax, ay, zz, Pt)
+                        if log_power_scale is not None:
+                            state_log_scale = (
+                                log_gain + relative_background[0][k]
+                                - relative_background[0][j0]
+                            )
+                            assemble_main_log_scaled(
+                                Ogw, Oj, Opgw, m, slot, n_coarse - 1, S2[k],
+                                xh, yh, zz, state_log_scale, log_power_scale[m],
+                                log_base_signal_out,
+                            )
+                        else:
+                            ax, ay = _mode_state(
+                                xh, yh, k, j0, log_gain, relative_background
+                            )
+                            assemble_main(Ogw, Oj, Opgw, m, slot, S2[k], ax, ay, zz, Pt)
                     next_assembly_k += col_step
                 elif k == nv - 1:
-                    ax, ay = _mode_state(xh, yh, k, j0, log_gain, relative_background)
-                    assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], ax, ay, zz, Pt)
+                    if log_power_scale is not None:
+                        state_log_scale = (
+                            log_gain + relative_background[0][k]
+                            - relative_background[0][j0]
+                        )
+                        assemble_main_log_scaled(
+                            Ogw, Oj, Opgw, m, n_coarse - 1, n_coarse - 1,
+                            S2[k], xh, yh, zz, state_log_scale,
+                            log_power_scale[m], log_base_signal_out,
+                        )
+                    else:
+                        ax, ay = _mode_state(
+                            xh, yh, k, j0, log_gain, relative_background
+                        )
+                        assemble_main(Ogw, Oj, Opgw, m, n_coarse - 1, S2[k], ax, ay, zz, Pt)
                 if zz < mode_z_tail:
                     lxh = xh
                     lyh = yh
@@ -2345,7 +2447,13 @@ def solve_kernel(
                     kend = j0
         else:
             kend = j0
-        lxh, lyh = _mode_state(lxh, lyh, kend, j0, last_gain, relative_background)
+        if log_power_scale is None:
+            lxh, lyh = _mode_state(lxh, lyh, kend, j0, last_gain, relative_background)
+            tail_state_log_scale = 0.0
+        else:
+            tail_state_log_scale = (
+                last_gain + relative_background[0][kend] - relative_background[0][j0]
+            )
         if tail_state is not None and phase_weight[m] > 0.0 and kend < nv - 1:
             tail_state[m, 0] = lxh
             tail_state[m, 1] = lyh
@@ -2354,12 +2462,30 @@ def solve_kernel(
         if kend < nv - 1:
             s2k = S2[kend]
             e_z = math.exp(-last_z)
-            if Sv is not None:
+            if log_power_scale is not None:
+                if Sv is not None:
+                    gamma = _tail_match_gamma(Sv[kend])
+                    amp2 = (
+                        lxh * lxh
+                        + lyh * lyh * (1.0 + gamma * gamma * e_z * e_z)
+                        + 2.0 * gamma * lxh * lyh * e_z
+                    )
+                else:
+                    amp2 = lxh * lxh + lyh * lyh
+                if amp2 > 0.0 and s2k > 0.0:
+                    log_coeff = (
+                        0.5 * (math.log(0.5) + math.log(s2k) + math.log(amp2))
+                        + tail_state_log_scale
+                    )
+                else:
+                    log_coeff = -math.inf
+            elif Sv is not None:
                 gamma = _tail_match_gamma(Sv[kend])
                 amp2 = lxh * lxh + lyh * lyh * (1.0 + gamma * gamma * e_z * e_z) + 2.0 * gamma * lxh * lyh * e_z
             else:
                 amp2 = lxh * lxh + lyh * lyh
-            coeff = math.sqrt(0.5 * s2k * amp2)
+            if log_power_scale is None:
+                coeff = math.sqrt(0.5 * s2k * amp2)
             eNz = math.exp(Nv[kend] - last_z) if relative_background is None else 0.0
             if handoff_eps is not None:
                 if Sv is not None:
@@ -2382,7 +2508,28 @@ def solve_kernel(
                 kk2 = col_step * slot
                 if slot == n_coarse - 1:
                     kk2 = nv - 1
-                if relative_background is None:
+                if log_power_scale is not None:
+                    horizon = relative_background[1]
+                    decay = (Nv[kend] - Nv[kk2]) - last_z
+                    log_q = z0 + (horizon[j0] - horizon[kk2]) * ln10
+                    log_coeff_decay = log_coeff + decay
+                    log_power = log_power_scale[m]
+                    if kk2 == nv - 1 and log_base_signal_out is not None:
+                        log_base_signal_out[m] = (
+                            2.0 * (log_coeff_decay + log_q)
+                            + log_power - math.log(12.0)
+                        )
+                    oj = _signed_exp_from_log(
+                        2.0 * log_coeff_decay + log_power - math.log(3.0), -1.0
+                    )
+                    op = _signed_exp_from_log(
+                        2.0 * (log_coeff_decay + log_q)
+                        + log_power - math.log(36.0), 1.0
+                    )
+                    Oj[m, slot] = oj
+                    Opgw[m, slot] = op
+                    Ogw[m, slot] = 3.0 * op + oj
+                elif relative_background is None:
                     assemble_tail(Ogw, Oj, Opgw, m, slot, kk2, coeff, eNz, fp_i, Pt, ev_minus, fp_minus)
                 else:
                     horizon = relative_background[1]
@@ -2456,8 +2603,15 @@ def _solve_kernel_mode_subset(solve_args, mode_indices, **kernel_kwargs):
     selected_handoff = args[22]
     selected_tail_state = args[28]
     kwargs = dict(kernel_kwargs)
+    full_log_base = kwargs.get("log_base_signal_out")
+    selected_log_base = None
     if kwargs.get("z_tail_by_mode") is not None:
         kwargs["z_tail_by_mode"] = np.asarray(kwargs["z_tail_by_mode"])[indices]
+    if kwargs.get("log_power_scale") is not None:
+        kwargs["log_power_scale"] = np.asarray(kwargs["log_power_scale"])[indices]
+    if full_log_base is not None:
+        selected_log_base = np.asarray(full_log_base)[indices].copy()
+        kwargs["log_base_signal_out"] = selected_log_base
     solve_kernel(*args, **kwargs)
 
     for position, (full_output, selected_output) in output_buffers.items():
@@ -2466,6 +2620,8 @@ def _solve_kernel_mode_subset(solve_args, mode_indices, **kernel_kwargs):
         solve_args[22][indices] = selected_handoff
     if selected_tail_state is not None:
         solve_args[28][indices] = selected_tail_state
+    if selected_log_base is not None:
+        full_log_base[indices] = selected_log_base
 
 
 # ================= Simpson weights / Simpson 预计算权重 =================
@@ -3546,6 +3702,22 @@ def _SGWB_iter_fast_impl(
                     if tail_state is None or tail_state.shape[0] != Nf:
                         tail_state = np.zeros((Nf, 4), dtype=np.float64)
                         tail_state[:, 3] = -1.0
+            log_power_scale = None
+            if (
+                log_amplitude_mode
+                and relative_scale
+                and log_P_t is not None
+                and (phase_weight is None or not np.any(phase_weight > 0.0))
+            ):
+                # Apply primordial power to the normalized mode state before
+                # quadratic assembly. Restoring unit-power transfer moments
+                # first can overflow even when the physical spectrum is finite.
+                log_power_scale = log_P_t
+            log_base_signal_out = (
+                np.full(Nf, -math.inf, dtype=np.float64)
+                if log_power_scale is not None
+                else None
+            )
             tail_z_by_mode = None
             adaptive_defer_below = getattr(
                 m, "_fast_adaptive_handoff_below", _DEFAULT_ADAPTIVE_HANDOFF_BELOW
@@ -3756,24 +3928,27 @@ def _SGWB_iter_fast_impl(
                     {} if Phi_quarters is None
                     else {"Phi_quarters": Phi_quarters}
                 )
+                kernel_kwargs = dict(quarter_kwargs)
+                if log_power_scale is not None:
+                    kernel_kwargs["log_power_scale"] = log_power_scale
+                    kernel_kwargs["log_base_signal_out"] = log_base_signal_out
                 if mode_indices_to_solve is None:
                     if relative_scale:
                         solve_kernel(
                             *solve_args,
                             z_tail_by_mode=tail_z_by_mode,
                             relative_background=(Phi_grid - Nv, f_hor),
-                            **quarter_kwargs,
+                            **kernel_kwargs,
                         )
                     elif tail_z_by_mode is None:
-                        solve_kernel(*solve_args, **quarter_kwargs)
+                        solve_kernel(*solve_args, **kernel_kwargs)
                     else:
                         solve_kernel(
                             *solve_args,
                             z_tail_by_mode=tail_z_by_mode,
-                            **quarter_kwargs,
+                            **kernel_kwargs,
                         )
                 elif mode_indices_to_solve.size:
-                    kernel_kwargs = dict(quarter_kwargs)
                     if relative_scale:
                         kernel_kwargs["relative_background"] = (Phi_grid - Nv, f_hor)
                     if tail_z_by_mode is not None:
@@ -3834,19 +4009,34 @@ def _SGWB_iter_fast_impl(
                 ):
                     m.fast_failure_reason = "nonfinite"
                     break
-                base_signal_today = _terminal_base_signal(
-                    Ogw[:, -1], Oj[:, -1], Opgw[:, -1], handoff_eps
-                )
-                if not np.isfinite(base_signal_today).all():
-                    m.fast_failure_reason = "nonfinite"
-                    break
-                if np.any(base_signal_today <= 0.0):
-                    # A nonzero transfer must stay positive in log scaling:
-                    # 非零张量传递量进入对数缩放前必须保持正值。
-                    m.fast_failure_reason = "nonpositive_log_amplitude_transfer"
-                    break
-                log10_base_signal_today = np.full(Nf, -np.inf, dtype=np.float64)
-                log10_base_signal_today[:] = np.log10(base_signal_today)
+                if log_power_scale is not None:
+                    if np.isnan(log_base_signal_out).any() or np.isposinf(log_base_signal_out).any():
+                        m.fast_failure_reason = "nonfinite"
+                        break
+                    if np.any(log_base_signal_out > _LOG_MAX_FLOAT):
+                        m.fast_failure_reason = "nonrepresentable_output"
+                        m.fast_failure_detail = "final_spectrum_overflow"
+                        break
+                    if np.any(log_base_signal_out < _LOG_MIN_SUBNORMAL):
+                        m.fast_failure_reason = "nonrepresentable_output"
+                        m.fast_failure_detail = "final_spectrum_underflow"
+                        break
+                    log10_base_signal_today = log_base_signal_out / math.log(10.0)
+                    base_signal_today = None
+                else:
+                    base_signal_today = _terminal_base_signal(
+                        Ogw[:, -1], Oj[:, -1], Opgw[:, -1], handoff_eps
+                    )
+                    if not np.isfinite(base_signal_today).all():
+                        m.fast_failure_reason = "nonfinite"
+                        break
+                    if np.any(base_signal_today <= 0.0):
+                        # A nonzero transfer must stay positive in log scaling:
+                        # 非零张量传递量进入对数缩放前必须保持正值。
+                        m.fast_failure_reason = "nonpositive_log_amplitude_transfer"
+                        break
+                    log10_base_signal_today = np.full(Nf, -np.inf, dtype=np.float64)
+                    log10_base_signal_today[:] = np.log10(base_signal_today)
                 log10_base_signal_before_phase = log10_base_signal_today.copy()
             if phase_weight is not None and tail_state is not None:
                 active_phase_modes = (phase_weight > 0.0) & (tail_state[:, 3] >= 0.0)
@@ -3867,9 +4057,10 @@ def _SGWB_iter_fast_impl(
                     base_signal_today[phase_changed] = np.power(
                         10.0, log10_base_signal_today[phase_changed]
                     )
-                _scale_frequency_rows_by_log(Ogw, log_P_t)
-                _scale_frequency_rows_by_log(Oj, log_P_t)
-                _scale_frequency_rows_by_log(Opgw, log_P_t)
+                if log_power_scale is None:
+                    _scale_frequency_rows_by_log(Ogw, log_P_t)
+                    _scale_frequency_rows_by_log(Oj, log_P_t)
+                    _scale_frequency_rows_by_log(Opgw, log_P_t)
             if frequency_quadrature == "simpson":
                 g2_last = (
                     np.dot(W_support_last, (Ogw[integration_indices, -1] - Oj[integration_indices, -1])[::-1]) * ln10
@@ -3904,8 +4095,18 @@ def _SGWB_iter_fast_impl(
                     )
                     * ln10
                 )
+            if log_power_scale is not None:
+                g2_last = _integrate_log_scaled_dn_map(
+                    integration_freqs,
+                    np.ones(integration_indices.size, dtype=np.float64),
+                    log_base_signal_out[integration_indices],
+                    frequency_quadrature,
+                    ln10,
+                    1.0,
+                    W_support_last,
+                )
             DN_gw_new = gp.Neff0 * g2_last / Omega_nu
-            if log_amplitude_mode:
+            if log_amplitude_mode and log_power_scale is None:
                 DN_gw_new = _integrate_log_scaled_dn_map(
                     integration_freqs,
                     base_signal_today[integration_indices],
@@ -3944,8 +4145,16 @@ def _SGWB_iter_fast_impl(
                 # 频率加密判据按对 Delta N_eff 积分的贡献加权：用 PCHIP 对 log10(Omega_GW)
                 # 的二阶导数估计区间插值误差，再乘以该区间的积分权重份额；这样低幅值尾部
                 # 不会仅因局部曲率较大而主导加密判定。
-                Om_cur = np.maximum(Ogw[:, -1] - Oj[:, -1], 1e-300)
-                lo_cur = np.log10(Om_cur)
+                if log_power_scale is None:
+                    Om_cur = np.maximum(Ogw[:, -1] - Oj[:, -1], 1e-300)
+                    lo_cur = np.log10(Om_cur)
+                else:
+                    lo_cur = log10_base_signal_today
+                    with np.errstate(under="ignore"):
+                        Om_cur = np.exp(
+                            (log10_base_signal_today - np.max(log10_base_signal_today))
+                            * math.log(10.0)
+                        )
                 srt = np.argsort(freqs)
                 x = freqs[srt]
                 y = lo_cur[srt]
@@ -4052,7 +4261,13 @@ def _SGWB_iter_fast_impl(
     m.Oj_today = Oj[:, -1].copy()
     if zero_tensor_limit:
         m.log10OmegaGW = np.full(m.Ogw_today.shape, -np.inf, dtype=np.float64)
-    elif log_amplitude_mode and log10_base_signal_today is not None:
+    elif log_amplitude_mode and log_power_scale is not None:
+        m.log10OmegaGW = log_base_signal_out / math.log(10.0)
+    elif (
+        log_amplitude_mode
+        and log_power_scale is None
+        and log10_base_signal_today is not None
+    ):
         m.log10OmegaGW = log10_base_signal_today + log_P_t / math.log(10.0)
     else:
         final_spectrum = m.Ogw_today - m.Oj_today
