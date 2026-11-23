@@ -130,6 +130,71 @@ def test_log_scaled_history_preserves_signed_products_and_nan_scale():
     assert np.isnan(result[3])
 
 
+def test_log_scaled_history_keeps_ordinary_nodes_on_the_direct_product_path():
+    values = np.array([1e-300, 1e-319, 1e300])
+    log_scale = np.array([0.25, 710.0, -1000.0])
+    numerator = 1e308
+    denominator = 1e4
+    log_prefactor = math.log(numerator / denominator)
+
+    result = fast_sgwb._scale_array_by_log_exponent(
+        values, log_scale, log_prefactor, numerator, denominator
+    )
+
+    ordinary = numerator * (values[0] * math.exp(log_scale[0])) / denominator
+    assert result[0] == ordinary
+    assert math.isclose(
+        result[1],
+        math.exp(math.log(abs(values[1])) + log_scale[1] + log_prefactor),
+        rel_tol=2e-14,
+    )
+    assert math.isclose(
+        result[2],
+        math.exp(math.log(abs(values[2])) + log_scale[2] + log_prefactor),
+        rel_tol=2e-14,
+    )
+
+
+def test_log_scaled_history_recovers_when_the_scaled_value_intermediate_overflows():
+    value = 1e300
+    scale = 100.0
+    numerator = 1.0
+    denominator = 1e308
+    log_prefactor = math.log(numerator / denominator)
+
+    result = fast_sgwb._scale_array_by_log_exponent(
+        np.array([value]),
+        np.array([scale]),
+        log_prefactor,
+        numerator,
+        denominator,
+    )[0]
+
+    expected = math.exp(math.log(value) + scale + log_prefactor)
+    assert math.isfinite(result)
+    assert math.isclose(result, expected, rel_tol=2e-14)
+
+
+def test_log_scaled_history_recovers_when_the_scaled_value_intermediate_underflows():
+    value = 1e-300
+    scale = -100.0
+    numerator = 1e308
+    denominator = 1.0
+    log_prefactor = math.log(numerator / denominator)
+
+    result = fast_sgwb._scale_array_by_log_exponent(
+        np.array([value]),
+        np.array([scale]),
+        log_prefactor,
+        numerator,
+        denominator,
+    )[0]
+
+    expected = math.exp(math.log(value) + scale + log_prefactor)
+    assert math.isfinite(result)
+    assert math.isclose(result, expected, rel_tol=2e-14)
+
+
 def test_log_scaled_tail_moment_keeps_representable_final_product():
     moment = fast_sgwb._log_square_times_power_numba(
         math.log(1e200), 2.1e-309, 36.0

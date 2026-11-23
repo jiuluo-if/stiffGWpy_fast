@@ -2108,8 +2108,10 @@ def _signed_exp_from_log(log_abs_value, sign):
 
 
 @njit(cache=True)
-def _scale_array_by_log_exponent(values, log_scale, log_prefactor):
-    """Apply a positive exponential scale without materializing the factor."""
+def _scale_array_by_log_exponent(
+    values, log_scale, log_prefactor, numerator=1.0, denominator=1.0
+):
+    """Apply a positive exponential scale, using logs only when needed."""
     result = np.empty(values.size, dtype=np.float64)
     for i in range(values.size):
         value = values[i]
@@ -2117,6 +2119,16 @@ def _scale_array_by_log_exponent(values, log_scale, log_prefactor):
             result[i] = math.nan
         elif value == 0.0:
             result[i] = value
+        elif (
+            (numerator != 1.0 or denominator != 1.0)
+            and _LOG_MIN_SUBNORMAL <= log_scale[i] < _LOG_MAX_FLOAT
+        ):
+            direct = numerator * (value * math.exp(log_scale[i])) / denominator
+            if math.isfinite(direct) and direct != 0.0:
+                result[i] = direct
+            else:
+                log_abs = math.log(abs(value)) + log_scale[i] + log_prefactor
+                result[i] = _signed_exp_from_log(log_abs, value)
         else:
             log_abs = math.log(abs(value)) + log_scale[i] + log_prefactor
             result[i] = _signed_exp_from_log(log_abs, value)
@@ -4278,7 +4290,11 @@ def _SGWB_iter_fast_impl(
         dn_gw_log_scale < _LOG_MIN_SUBNORMAL
     ):
         m.DN_gw = _scale_array_by_log_exponent(
-            g2_fine, dn_gw_log_scale, math.log(gp.Neff0 / Omega_nu)
+            g2_fine,
+            dn_gw_log_scale,
+            math.log(gp.Neff0 / Omega_nu),
+            gp.Neff0,
+            Omega_nu,
         )
     else:
         m.DN_gw = gp.Neff0 * np.multiply(g2_fine, np.exp(dn_gw_log_scale)) / Omega_nu
