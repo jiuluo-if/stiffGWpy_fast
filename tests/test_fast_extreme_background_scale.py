@@ -1,11 +1,12 @@
 import math
+import warnings
 
 import numpy as np
 
 from stiffgwpy_fast import exact_background, fast_sgwb
 from stiffgwpy_fast.exact_background import H2_vec
 from stiffgwpy_fast.fast_sgwb import SGWB_iter_fast, gen_fast, resolve_config
-from stiffgwpy_fast.global_param import N_10
+from stiffgwpy_fast.global_param import N_10, Neff0, Omega_nh2
 from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
@@ -114,6 +115,19 @@ def test_log_scaled_state_energy_matches_unscaled_quadratic_moments():
 
 def test_signed_log_moment_does_not_hide_nan_behind_zero_sign():
     assert np.isnan(fast_sgwb._signed_exp_from_log(math.nan, 0.0))
+
+
+def test_log_scaled_history_preserves_signed_products_and_nan_scale():
+    values = np.array([1e-319, -1e-319, 0.0, 0.0])
+    log_scale = np.array([710.0, 710.0, 710.0, math.nan])
+
+    result = fast_sgwb._scale_array_by_log_exponent(values, log_scale, 11.3)
+
+    expected_magnitude = math.exp(math.log(1e-319) + 710.0 + 11.3)
+    assert math.isclose(result[0], expected_magnitude, rel_tol=2e-14)
+    assert math.isclose(result[1], -expected_magnitude, rel_tol=2e-14)
+    assert result[2] == 0.0
+    assert np.isnan(result[3])
 
 
 def test_log_scaled_tail_moment_keeps_representable_final_product():
@@ -438,3 +452,50 @@ def test_auto_relative_primitive_scale_is_used_by_tensor_propagation(monkeypatch
     assert abs(float(scaled.DN_gw[-1]) - baseline_root) <= 1e-12 * baseline_root
     assert np.array_equal(scaled.f, baseline.f)
     assert np.max(np.abs(scaled.log10OmegaGW - baseline_spectrum)) <= 1e-10
+
+
+def test_fast_combines_history_scale_before_exponentiating_at_extreme_reheat():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=10.0**-308.5,
+        n_t=0.0,
+        cr=0.0,
+        T_re=1e200,
+        DN_re=10.0,
+        kappa10=10.0**-91.5,
+    )
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        result = SGWB_iter_fast(
+            model,
+            config=resolve_config("fast", threads=2, freq_grid="adaptive"),
+            tol=1e-6,
+            freq_grid_target=1e-6,
+            physical_guard=True,
+        )
+
+    assert result is model
+    assert model.fast_failure_reason is None
+    assert np.isfinite(model.DN_gw).all()
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert not any("overflow encountered in exp" in str(item.message) for item in caught)
+
+    scale = 2.0 * (model.f_hor - model.f_hor[-1]) * math.log(10.0)
+    scale += 2.0 * (model.Nv - model.Nv[-1])
+    overflow_indices = np.flatnonzero(scale >= math.log(np.finfo(np.float64).max))
+    assert overflow_indices.size > 0
+    omega_nu = Omega_nh2 / model.derived_param["h"] ** 2
+    expected_log = (
+        np.log(model.g2[overflow_indices])
+        + scale[overflow_indices]
+        + math.log(Neff0 / omega_nu)
+    )
+    expected = np.exp(expected_log)
+    np.testing.assert_allclose(
+        model.DN_gw[overflow_indices], expected, rtol=2e-14, atol=0.0
+    )

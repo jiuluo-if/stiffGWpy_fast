@@ -2108,6 +2108,22 @@ def _signed_exp_from_log(log_abs_value, sign):
 
 
 @njit(cache=True)
+def _scale_array_by_log_exponent(values, log_scale, log_prefactor):
+    """Apply a positive exponential scale without materializing the factor."""
+    result = np.empty(values.size, dtype=np.float64)
+    for i in range(values.size):
+        value = values[i]
+        if math.isnan(value) or math.isnan(log_scale[i]) or math.isnan(log_prefactor):
+            result[i] = math.nan
+        elif value == 0.0:
+            result[i] = value
+        else:
+            log_abs = math.log(abs(value)) + log_scale[i] + log_prefactor
+            result[i] = _signed_exp_from_log(log_abs, value)
+    return result
+
+
+@njit(cache=True)
 def assemble_main_log_scaled(
     Ogw, Oj, Opgw, m, slot, terminal_slot, s2, xh, yh, zz,
     state_log_scale, log_power, log_base_signal_out,
@@ -4253,7 +4269,27 @@ def _SGWB_iter_fast_impl(
     pchip_fine(idx_out.astype(np.float64), w2c, nv, w2_fine)
     m.g2 = g2_fine
     m.w2 = w2_fine
-    m.DN_gw = gp.Neff0 * np.multiply(g2_fine, np.exp(2 * (f_hor - f_hor[-1]) * gp.ln10 + 2 * (Nv - Nv[-1]))) / Omega_nu
+    dn_gw_log_scale = 2 * (f_hor - f_hor[-1]) * gp.ln10 + 2 * (Nv - Nv[-1])
+    if not np.isfinite(dn_gw_log_scale).all() or not np.isfinite(g2_fine).all():
+        m.fast_failure_reason = "nonfinite"
+        m.fast_failure_detail = "dn_gw_history_input"
+        return None
+    if np.any(dn_gw_log_scale >= _LOG_MAX_FLOAT) or np.any(
+        dn_gw_log_scale < _LOG_MIN_SUBNORMAL
+    ):
+        m.DN_gw = _scale_array_by_log_exponent(
+            g2_fine, dn_gw_log_scale, math.log(gp.Neff0 / Omega_nu)
+        )
+    else:
+        m.DN_gw = gp.Neff0 * np.multiply(g2_fine, np.exp(dn_gw_log_scale)) / Omega_nu
+    if np.isnan(m.DN_gw).any():
+        m.fast_failure_reason = "nonfinite"
+        m.fast_failure_detail = "dn_gw_history_nan"
+        return None
+    if np.isinf(m.DN_gw).any():
+        m.fast_failure_reason = "nonrepresentable_output"
+        m.fast_failure_detail = "dn_gw_history_overflow"
+        return None
     if log_amplitude_mode:
         m.DN_gw[-1] = DN_gw_new
     m.Ogw_today = Ogw[:, -1].copy()
