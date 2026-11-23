@@ -2107,31 +2107,42 @@ def _signed_exp_from_log(log_abs_value, sign):
     return math.copysign(math.exp(log_abs_value), sign)
 
 
-@njit(cache=True)
 def _scale_array_by_log_exponent(
     values, log_scale, log_prefactor, numerator=1.0, denominator=1.0
 ):
-    """Apply a positive exponential scale, using logs only when needed."""
+    """Apply an exponential scale, vectorizing representable products."""
+    values = np.asarray(values, dtype=np.float64).reshape(-1)
+    log_scale = np.asarray(log_scale, dtype=np.float64).reshape(-1)
     result = np.empty(values.size, dtype=np.float64)
-    for i in range(values.size):
-        value = values[i]
-        if math.isnan(value) or math.isnan(log_scale[i]) or math.isnan(log_prefactor):
-            result[i] = math.nan
-        elif value == 0.0:
-            result[i] = value
-        elif (
-            (numerator != 1.0 or denominator != 1.0)
-            and _LOG_MIN_SUBNORMAL <= log_scale[i] < _LOG_MAX_FLOAT
-        ):
-            direct = numerator * (value * math.exp(log_scale[i])) / denominator
-            if math.isfinite(direct) and direct != 0.0:
-                result[i] = direct
-            else:
-                log_abs = math.log(abs(value)) + log_scale[i] + log_prefactor
-                result[i] = _signed_exp_from_log(log_abs, value)
-        else:
-            log_abs = math.log(abs(value)) + log_scale[i] + log_prefactor
-            result[i] = _signed_exp_from_log(log_abs, value)
+    invalid = np.isnan(values) | np.isnan(log_scale) | math.isnan(log_prefactor)
+    zero = (~invalid) & (values == 0.0)
+    result[invalid] = math.nan
+    result[zero] = values[zero]
+    direct_done = invalid | zero
+
+    if numerator != 1.0 or denominator != 1.0:
+        direct_indices = np.flatnonzero(
+            (~direct_done)
+            & (log_scale >= _LOG_MIN_SUBNORMAL)
+            & (log_scale < _LOG_MAX_FLOAT)
+        )
+        if direct_indices.size:
+            with np.errstate(over="ignore", under="ignore", invalid="ignore", divide="ignore"):
+                direct = (
+                    numerator
+                    * (values[direct_indices] * np.exp(log_scale[direct_indices]))
+                    / denominator
+                )
+            direct_ok = np.isfinite(direct) & (direct != 0.0)
+            result[direct_indices[direct_ok]] = direct[direct_ok]
+            direct_done[direct_indices[direct_ok]] = True
+
+    log_indices = np.flatnonzero(~direct_done)
+    if log_indices.size:
+        with np.errstate(over="ignore", under="ignore", invalid="ignore"):
+            log_abs = np.log(np.abs(values[log_indices])) + log_scale[log_indices] + log_prefactor
+            magnitude = np.exp(log_abs)
+        result[log_indices] = np.copysign(magnitude, values[log_indices])
     return result
 
 
