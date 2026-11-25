@@ -4067,6 +4067,8 @@ def _SGWB_iter_fast_impl(
                     and np.isfinite(Opgw).all()
                 ):
                     m.fast_failure_reason = "nonfinite"
+                    if freq_grid == "goal":
+                        m.fast_failure_detail = "goal_log_amplitude_transfer_nonfinite"
                     break
                 if log_power_scale is not None:
                     if np.isnan(log_base_signal_out).any() or np.isposinf(log_base_signal_out).any():
@@ -4510,7 +4512,10 @@ def SGWB_iter_fast(
         raise TypeError("physical_guard must be a bool, got %r" % physical_guard)
     lock = _NUMBA_CONFIG_LOCK if config is None or not _numba_layer_is_threadsafe() else nullcontext()
     with lock:
-        return _SGWB_iter_fast_impl(
+        requested_grid = freq_grid
+        if requested_grid is None:
+            requested_grid = config.freq_grid if config is not None else get_config().freq_grid
+        result = _SGWB_iter_fast_impl(
             m,
             tol=tol,
             freq_res=freq_res,
@@ -4525,6 +4530,33 @@ def SGWB_iter_fast(
             frequency_quadrature=frequency_quadrature,
             physical_guard=physical_guard,
         )
+        if (
+            result is not None
+            or requested_grid != "goal"
+            or m.fast_failure_reason != "nonfinite"
+            or m.fast_failure_detail != "goal_log_amplitude_transfer_nonfinite"
+        ):
+            return result
+
+        result = _SGWB_iter_fast_impl(
+            m,
+            tol=tol,
+            freq_res=freq_res,
+            sigma_exact=sigma_exact,
+            transition_refine=transition_refine,
+            kink_split=kink_split,
+            freq_grid="adaptive",
+            config=config,
+            freq_grid_target=min(float(freq_grid_target), 1.0e-6),
+            freq_grid_max_points=freq_grid_max_points,
+            eval_freqs=eval_freqs,
+            frequency_quadrature=frequency_quadrature,
+            physical_guard=physical_guard,
+        )
+        if result is m:
+            m.freq_grid_requested = requested_grid
+            m.freq_grid_used = "adaptive"
+        return result
 
 
 def _phase_tail_state_for_weights(phase_weight, tail_state):

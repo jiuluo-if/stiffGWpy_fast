@@ -620,3 +620,35 @@ def test_fast_combines_history_scale_before_exponentiating_at_extreme_reheat():
     np.testing.assert_allclose(
         model.DN_gw[overflow_indices], expected, rtol=2e-14, atol=0.0
     )
+
+
+def test_default_goal_routes_extreme_log_amplitude_through_adaptive_fast_grid():
+    model = LCDM_SG(
+        Omega_bh2=0.0223828,
+        Omega_ch2=0.1201075,
+        H0=67.32117,
+        DN_eff=0.0,
+        A_s=2.100549e-9,
+        r=3.16227766016838e-309,
+        n_t=0.0,
+        cr=0.0,
+        T_re=3.254341723530487e208,
+        DN_re=10.0,
+        kappa10=6.832620318215421e-108,
+    )
+
+    result = SGWB_iter_fast(
+        model,
+        config=resolve_config("fast", threads=2),
+        tol=1e-6,
+        physical_guard=True,
+    )
+
+    assert result is model
+    assert model.freq_grid_requested == "goal"
+    assert model.freq_grid_used == "adaptive"
+    assert model.f.size >= 200
+    assert np.isfinite(model.log10OmegaGW).all()
+    assert np.isfinite(model.DN_gw).all()
+    reference_root = 0.00013600663980211394
+    assert abs(float(model.DN_gw[-1]) - reference_root) / reference_root <= 2e-4
