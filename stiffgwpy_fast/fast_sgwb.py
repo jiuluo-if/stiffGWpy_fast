@@ -86,6 +86,8 @@ _MAX_THREADS = numba_config.NUMBA_NUM_THREADS
 _THREADS = get_num_threads()
 _NUMBA_CONFIG_LOCK = RLock()
 _WKB3_ERROR_TOLERANCE = 1.0e-5
+_STATE_RESIDUAL_REL_TOLERANCE = 1.0e-2
+_STATE_RESIDUAL_PANEL_DEFECT = 5.0e-1
 _WKB3_MIN_SUBSTEPS = 64
 
 
@@ -1570,6 +1572,12 @@ def _uniform_step_terminal_width(Nv, h):
 
 @njit(cache=True)
 def scaled_step(xh, yh, z_mid, h):
+    xn, yn, _ = _scaled_step_with_w(xh, yh, z_mid, h)
+    return xn, yn
+
+
+@njit(cache=True, inline="always")
+def _scaled_step_with_w(xh, yh, z_mid, h):
     w = math.exp(z_mid)
     w2 = w * w
     if w2 > 1.0:
@@ -1584,7 +1592,7 @@ def scaled_step(xh, yh, z_mid, h):
         x = Om * h
         c = 1.0 + 0.5 * x * x
         si = h * (1.0 + x * x / 6.0)
-    return (c - si) * xh - w * si * yh, w * si * xh + (c + si) * yh
+    return (c - si) * xh - w * si * yh, w * si * xh + (c + si) * yh, w
 
 
 @njit(cache=True, inline="always")
@@ -1700,6 +1708,57 @@ def _phase_segment_quarters(xh, yh, z_start, z_quarter, z_mid,
     return _phase_segment(
         xh, yh, z_three_quarter, z_end, h_quarter, phase_max
     )
+
+
+@njit(cache=True, inline="always")
+def _phase_segment_quarters_with_residual(
+    xh, yh, z_start, z_quarter, z_mid,
+    z_three_quarter, z_end, h_step, phase_max,
+):
+    """Advance four background panels and integrate their endpoint defect.
+
+    The defect is a cheap local indicator for ``U'=A(z)U``. It reuses the
+    already-required four transfers and adds no state propagation.
+    """
+    h_quarter = 0.25 * h_step
+    residual_x = 0.0
+    residual_y = 0.0
+    residual_valid = True
+    boundaries = (z_start, z_quarter, z_mid, z_three_quarter, z_end)
+    for q in range(4):
+        za = boundaries[q]
+        zb = boundaries[q + 1]
+        zbar = 0.5 * (za + zb)
+        xa, ya = xh, yh
+        if _phase_substeps(h_quarter, zbar, phase_max) == 1:
+            xh, yh, wbar = _scaled_step_with_w(xh, yh, zbar, h_quarter)
+            da = wbar * (za - zbar)
+            db = wbar * (zb - zbar)
+            residual_x += -0.5 * h_quarter * (da * ya + db * yh)
+            residual_y += 0.5 * h_quarter * (da * xa + db * xh)
+        else:
+            residual_valid = False
+            xh, yh = _phase_segment(xh, yh, za, zb, h_quarter, phase_max)
+    if not residual_valid:
+        residual_x = 0.0
+        residual_y = 0.0
+    return xh, yh, residual_x, residual_y
+
+
+@njit(cache=True, inline="always")
+def _phase_segment_with_midpoint(
+    xh, yh, z_start, z_mid, z_end, h_step, phase_max
+):
+    """Advance one half-step using its sampled background midpoint."""
+    n_sub = _phase_substeps(h_step, z_mid, phase_max)
+    if n_sub == 1:
+        return scaled_step(xh, yh, z_mid, h_step)
+    h_sub = h_step / n_sub
+    dz_half = 0.5 * (z_end - z_start)
+    for s in range(n_sub):
+        z_sub_mid = z_start + dz_half * (2.0 * s + 1.0) / n_sub
+        xh, yh = scaled_step(xh, yh, z_sub_mid, h_sub)
+    return xh, yh
 
 
 @njit(cache=True, inline="always")
@@ -2433,10 +2492,36 @@ def solve_kernel(
                         if abs(defect) > 1.0e-5:
                             z_quarter = z0 + Phi_quarters[0, k] - Phi0
                             z_three_quarter = z0 + Phi_quarters[1, k] - Phi0
-                            xh, yh = _phase_segment_quarters(
-                                xh, yh, z_node, z_quarter, z_mid_step,
-                                z_three_quarter, z_end_exact, h_step, phase_max,
-                            )
+                            if abs(defect) > _STATE_RESIDUAL_PANEL_DEFECT:
+                                x_start, y_start = xh, yh
+                                xh, yh, residual_x, residual_y = (
+                                    _phase_segment_quarters_with_residual(
+                                        xh, yh, z_node, z_quarter, z_mid_step,
+                                        z_three_quarter, z_end_exact, h_step, phase_max,
+                                    )
+                                )
+                                residual_size = math.hypot(residual_x, residual_y)
+                                state_size = math.hypot(xh, yh)
+                                if (
+                                    not math.isfinite(residual_size)
+                                    or not math.isfinite(state_size)
+                                    or residual_size > _STATE_RESIDUAL_REL_TOLERANCE
+                                    * max(state_size, 1.0e-300)
+                                ):
+                                    half_step = 0.5 * h_step
+                                    xh, yh = _phase_segment_with_midpoint(
+                                        x_start, y_start, z_node, z_quarter,
+                                        z_mid_step, half_step, phase_max,
+                                    )
+                                    xh, yh = _phase_segment_with_midpoint(
+                                        xh, yh, z_mid_step, z_three_quarter,
+                                        z_end_exact, half_step, phase_max,
+                                    )
+                            else:
+                                xh, yh = _phase_segment_quarters(
+                                    xh, yh, z_node, z_quarter, z_mid_step,
+                                    z_three_quarter, z_end_exact, h_step, phase_max,
+                                )
                         else:
                             xh, yh = _phase_segment(
                                 xh, yh, z_node, z_end, h_step, phase_max

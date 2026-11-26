@@ -1,5 +1,8 @@
 """Keep every high-density mode when a WKB basis inverse is unresolvable."""
 
+import json
+from pathlib import Path
+
 import numpy as np
 
 from stiffgwpy_fast.fast_sgwb import SGWB_iter_fast, resolve_config
@@ -32,7 +35,30 @@ def test_fast_completes_high_density_modes_after_wkb_inverse_fallback():
     assert model.fast_failure_reason is None
     assert np.isfinite(model.log10OmegaGW).all()
     assert np.isfinite(model.DN_gw).all()
-    np.testing.assert_allclose(model.DN_gw[-1], 0.3121571825306297, rtol=2.0e-7, atol=0.0)
+    reference_path = (
+        Path(__file__).resolve().parents[1]
+        / "LOCAL_RESEARCH_REFERENCE"
+    )
+    reference = json.loads(reference_path.read_text(encoding="utf-8"))["cases"][0]
+    closed_root = float(reference["closed_reference_root"])
+    root_error = abs(float(model.DN_gw[-1]) - closed_root) / abs(closed_root)
+    assert root_error <= 2.0e-4
+
+    raw = reference["raw"]
+    reference_freqs = np.asarray(raw["freqs_log10_hz"])
+    reference_spectrum = np.asarray(raw["reference_log10_OmegaGW_at_fast_root"])
+    candidate_freqs = np.asarray(model.f)
+    order = np.argsort(reference_freqs)
+    reference_at_candidate_freqs = np.interp(
+        candidate_freqs,
+        reference_freqs[order],
+        reference_spectrum[order],
+    )
+    spectrum_error = np.abs(
+        np.asarray(model.log10OmegaGW) - reference_at_candidate_freqs
+    )
+    assert float(np.max(spectrum_error)) <= 1.0e-3
+
     linear_spectrum = model.Ogw_today - model.Oj_today
     assert np.all(linear_spectrum > 0.0)
     representable = linear_spectrum > 0.0
