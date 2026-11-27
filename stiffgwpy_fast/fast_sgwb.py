@@ -3874,15 +3874,19 @@ def _SGWB_iter_fast_impl(
                 if panel_curvature_defect:
                     from .exact_background import fast_phi_s2_quarters
 
-                    Phi_quarters = fast_phi_s2_quarters(
-                        m,
-                        Nv,
-                        m.cosmo_param["DN_eff"],
-                        phi_grid=Phi_grid,
-                        kink_index=kink_index,
-                        kink_fraction=kink_fraction,
-                        sigma_nodes=m.sigma,
-                    )
+                    m._fast_quarter_sampling_masked = True
+                    try:
+                        Phi_quarters = fast_phi_s2_quarters(
+                            m,
+                            Nv,
+                            m.cosmo_param["DN_eff"],
+                            phi_grid=Phi_grid,
+                            kink_index=kink_index,
+                            kink_fraction=kink_fraction,
+                            sigma_nodes=m.sigma,
+                        )
+                    finally:
+                        m._fast_quarter_sampling_masked = False
                     if not np.isfinite(Phi_quarters).all():
                         m.fast_failure_reason = "nonfinite_background_primitive"
                         m._fast_background_failure = m.fast_failure_reason

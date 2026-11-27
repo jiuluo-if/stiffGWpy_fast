@@ -1197,6 +1197,15 @@ def fast_phi_s2_quarters(
     if 0 <= int(kink_index) < h.size and 0.0 < float(kink_fraction) < 1.0:
         smooth[int(kink_index)] = False
     result = np.zeros((2, h.size), dtype=np.float64)
+    workspace = getattr(m, "_fast_phi_s2_workspace", None)
+    if (
+        getattr(m, "_fast_quarter_sampling_masked", False)
+        and workspace is not None
+        and workspace.get("n") == nodes.size
+        and np.shares_memory(phi, workspace["Phi_grid"])
+    ):
+        defect = phi[1:] - 2.0 * workspace["Phi_mid"] + phi[:-1]
+        smooth &= np.abs(defect) > 1.0e-5
     active = np.flatnonzero(smooth)
     if active.size == 0:
         return result
