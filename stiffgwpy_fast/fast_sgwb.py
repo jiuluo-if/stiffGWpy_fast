@@ -3297,6 +3297,54 @@ def pchip_fine(idx_out, y, nv, out):
         out[p] = ((c0 * dx + c1) * dx + d0) * dx + y0
 
 
+def _fast_parameter_domain_reason(params):
+    """Return a concise rejection reason for physically undefined inputs.
+
+    中文：在进入 Fast 背景/传播核前检查由参数定义直接决定的物理域约束；
+    数值表示失败和求解器失败仍交给后续计算分类。
+    """
+    try:
+        values = {
+            name: float(params[name])
+            for name in (
+                "Omega_bh2", "Omega_ch2", "H0", "DN_eff", "A_s", "r",
+                "cr", "T_re", "kappa10",
+            )
+        }
+    except (KeyError, TypeError, ValueError, OverflowError):
+        return None
+    if not all(math.isfinite(value) for value in values.values()):
+        return "cosmological parameters must be finite"
+    if values["H0"] <= 0.0:
+        return "H0 must be positive"
+    if values["T_re"] <= 0.0:
+        return "T_re must be positive"
+    for name in ("Omega_bh2", "Omega_ch2"):
+        if values[name] < 0.0:
+            return f"{name} is a physical density and cannot be negative"
+    if values["A_s"] < 0.0:
+        return "A_s must be non-negative"
+    if values["kappa10"] < 0.0:
+        return "kappa10 is a density ratio and cannot be negative"
+    if values["cr"] <= 0.0:
+        try:
+            dn_re = float(params["DN_re"])
+            n_t = float(params["n_t"])
+        except (KeyError, TypeError, ValueError, OverflowError):
+            return None
+        if not math.isfinite(n_t):
+            return "n_t must be finite when cr <= 0"
+        if not math.isfinite(dn_re):
+            return "DN_re must be finite when cr <= 0"
+        if dn_re < 0.0:
+            return "DN_re is a duration and cannot be negative"
+    elif values["r"] <= 0.0:
+        return "r must be positive when cr > 0"
+    if gp.Neff0 + values["DN_eff"] < 0.0:
+        return "DN_eff makes the total effective neutrino count negative"
+    return None
+
+
 def _SGWB_iter_fast_impl(
     m,
     tol=1e-4,
@@ -3374,6 +3422,12 @@ def _SGWB_iter_fast_impl(
     if r < 0 or (r == 0 and not zero_tensor_limit):
         m.fast_failure_reason = "invalid_r"
         print("Must set a positive r to calculate the inflationary GWs!")
+        return None
+    domain_reason = _fast_parameter_domain_reason(m.cosmo_param)
+    if domain_reason is not None:
+        m.fast_failure_reason = "invalid_parameter_domain"
+        m.fast_failure_detail = domain_reason
+        m.SGWB_converge = False
         return None
     derived = m.derived_param
     if derived["N_inf"] is None:

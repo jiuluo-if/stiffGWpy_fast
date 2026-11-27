@@ -56,6 +56,38 @@ def test_pchip_frequency_integral_handles_descending_native_grid():
     assert FS.integrate_frequency_pchip(freqs, integrand) == pytest.approx(2.0)
 
 
+def test_fast_rejects_negative_baryon_density_before_propagation():
+    model = _make_model(Omega_bh2=-1.0e-12, Omega_ch2=0.1201075)
+
+    result = FS.SGWB_iter_fast(
+        model,
+        tol=1.0e-6,
+        config=FS.resolve_config("fast", threads=1),
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "invalid_parameter_domain"
+    assert "Omega_bh2" in model.fast_failure_detail
+
+
+@pytest.mark.parametrize(
+    "parameter,value",
+    [("n_t", float("nan")), ("DN_re", float("inf"))],
+)
+def test_fast_rejects_nonfinite_free_branch_parameters(parameter, value):
+    model = _make_model(cr=0, **{parameter: value})
+
+    result = FS.SGWB_iter_fast(
+        model,
+        tol=1.0e-6,
+        config=FS.resolve_config("fast", threads=1),
+    )
+
+    assert result is None
+    assert model.fast_failure_reason == "invalid_parameter_domain"
+    assert parameter in model.fast_failure_detail
+
+
 def test_frequency_quadrature_methods_cover_q1_candidates():
     """Q1 methods integrate a quadratic spectrum on descending nodes."""
     freqs = np.array([1.0, 0.75, 0.5, 0.25, 0.0])

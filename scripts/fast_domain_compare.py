@@ -746,6 +746,53 @@ def _json_safe(value):
     return str(value)
 
 
+def _parameter_domain_reason(params: dict) -> str | None:
+    """Reject inputs outside the model's physical parameter definitions."""
+    required = (
+        "Omega_bh2", "Omega_ch2", "H0", "DN_eff", "A_s", "r", "cr",
+        "T_re", "kappa10",
+    )
+    if any(name not in params for name in required):
+        return None
+    try:
+        values = {name: float(params[name]) for name in required}
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if not all(math.isfinite(value) for value in values.values()):
+        return "cosmological parameters must be finite"
+    if values["H0"] <= 0.0:
+        return "H0 must be positive"
+    if values["T_re"] <= 0.0:
+        return "T_re must be positive"
+    for name in ("Omega_bh2", "Omega_ch2"):
+        if values[name] < 0.0:
+            return f"{name} is a physical density and cannot be negative"
+    if values["A_s"] < 0.0 or values["r"] < 0.0:
+        return "A_s and r must be non-negative power parameters"
+    if values["kappa10"] < 0.0:
+        return "kappa10 is a density ratio and cannot be negative"
+    cr = values["cr"]
+    if cr <= 0.0:
+        try:
+            dn_re = float(params["DN_re"])
+            n_t = float(params["n_t"])
+        except (KeyError, TypeError, ValueError, OverflowError):
+            return None
+        if not math.isfinite(n_t):
+            return "n_t must be finite when cr <= 0"
+        if not math.isfinite(dn_re):
+            return "DN_re must be finite when cr <= 0"
+        if dn_re < 0.0:
+            return "DN_re is a duration and cannot be negative"
+    elif values["r"] <= 0.0:
+        return "r must be positive when cr > 0"
+    from stiffgwpy_fast.global_param import Neff0
+
+    if Neff0 + values["DN_eff"] < 0.0:
+        return "DN_eff makes the total effective neutrino count negative"
+    return None
+
+
 def _worker_evaluate(case: dict, max_n_inf: float, threads: int, fast, LCDM_SG) -> dict:
     params = case["params"]
     digest = parameter_fingerprint(params)
@@ -770,6 +817,14 @@ def _worker_evaluate(case: dict, max_n_inf: float, threads: int, fast, LCDM_SG) 
     }
     started = time.perf_counter()
     try:
+        domain_reason = _parameter_domain_reason(params)
+        if domain_reason is not None:
+            result.update(
+                status="mathematically_invalid",
+                classification="mathematically_invalid",
+                reason=domain_reason,
+            )
+            return result
         model = LCDM_SG(**params)
         derived = model.derived_param
         n_inf = _safe_float(derived.get("N_inf"))
@@ -830,7 +885,10 @@ def _worker_evaluate(case: dict, max_n_inf: float, threads: int, fast, LCDM_SG) 
         result["reason"] = getattr(model, "fast_failure_reason", None)
         result["failure_detail"] = getattr(model, "fast_failure_detail", None)
         if output is None:
-            if result["reason"] in ("invalid_r", "invalid_cutoff", "shared_Neff_guard"):
+            if result["reason"] in (
+                "invalid_r", "invalid_cutoff", "invalid_parameter_domain",
+                "shared_Neff_guard",
+            ):
                 result["status"] = "mathematically_invalid"
                 result["classification"] = "mathematically_invalid"
             else:

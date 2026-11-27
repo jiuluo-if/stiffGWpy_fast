@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from scripts import fast_domain_compare as scanner
 from scripts.fast_domain_compare import (
     build_comparison_config,
     classify_pair,
@@ -27,7 +28,8 @@ from scripts.fast_domain_compare import (
     success_runtime_ratio,
     write_case_manifest,
 )
-from stiffgwpy_fast import FastSolverConfig
+from stiffgwpy_fast import FastSolverConfig, fast_sgwb
+from stiffgwpy_fast.stiff_SGWB import LCDM_SG
 
 
 def test_classify_pair_separates_solver_and_domain_outcomes():
@@ -450,3 +452,73 @@ def test_case_manifest_round_trip_and_rejects_modified_parameters(tmp_path):
 
     with pytest.raises(ValueError, match="parameter SHA-256 mismatch"):
         read_case_manifest(path)
+
+
+@pytest.mark.parametrize(
+    "parameter,value",
+    [
+        ("H0", -1.0),
+        ("H0", 0.0),
+        ("T_re", 0.0),
+        ("Omega_bh2", -1.0),
+        ("Omega_ch2", -1.0),
+        ("A_s", -1.0),
+        ("r", -1.0),
+        ("kappa10", -1.0),
+        ("DN_eff", -100.0),
+    ],
+)
+def test_worker_classifies_out_of_domain_physical_inputs(parameter, value):
+    params = {**scanner.BASE_PARAMS, parameter: value}
+    case = {
+        "label": "invalid_h0",
+        "sample_kind": "region_boundary",
+        "region_id": "invalid_domain",
+        "sample_index": 0,
+        "seed": 1,
+        "params": params,
+        "parameter_sha256": parameter_fingerprint(params),
+    }
+
+    result = scanner._worker_evaluate(
+        case, max_n_inf=120.0, threads=1, fast=fast_sgwb, LCDM_SG=LCDM_SG
+    )
+
+    assert result["status"] == "mathematically_invalid"
+    assert result["classification"] == "mathematically_invalid"
+
+
+@pytest.mark.parametrize(
+    "parameter,value",
+    [("n_t", float("nan")), ("DN_re", float("inf"))],
+)
+def test_parameter_domain_reason_rejects_nonfinite_free_branch_values(
+    parameter, value
+):
+    params = {**scanner.BASE_PARAMS, parameter: value}
+
+    reason = scanner._parameter_domain_reason(params)
+
+    assert reason is not None
+    assert parameter in reason
+
+
+def test_worker_classifies_negative_free_branch_reheating_duration():
+    params = {**scanner.BASE_PARAMS, "DN_re": -1.0}
+    case = {
+        "label": "invalid_negative_dn_re",
+        "sample_kind": "region_boundary",
+        "region_id": "invalid_domain",
+        "sample_index": 0,
+        "seed": 1,
+        "params": params,
+        "parameter_sha256": parameter_fingerprint(params),
+    }
+
+    result = scanner._worker_evaluate(
+        case, max_n_inf=120.0, threads=1, fast=fast_sgwb, LCDM_SG=LCDM_SG
+    )
+
+    assert result["status"] == "mathematically_invalid"
+    assert result["classification"] == "mathematically_invalid"
+    assert result["reason"] == "DN_re is a duration and cannot be negative"

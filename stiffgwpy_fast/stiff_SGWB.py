@@ -397,7 +397,8 @@ class LCDM_SG(LCDM_SN):
                 # retrying LSODA would only waste time and obscure telemetry.
                 # 两种引擎都会拒绝这个确定性非物理点；重试 LSODA 不会改变结果，只会增加耗时并掩盖遥测。
                 self.fast_guard_rejections = getattr(self, 'fast_guard_rejections', 0) + 1
-            elif result is None and reason in ('invalid_r', 'invalid_cutoff'):
+            elif result is None and reason in (
+                    'invalid_r', 'invalid_cutoff', 'invalid_parameter_domain'):
                 # Input/cutoff validation failures are also deterministic
                 # physical rejections, not recoverable numerical failures.
                 # 输入/截断验证失败同样是确定性的物理拒绝，不属于可恢复的数值失败。
@@ -421,7 +422,7 @@ class LCDM_SG(LCDM_SN):
             if result is None:
                 if reason == 'shared_Neff_guard':
                     status = 'FAST_GUARD_REJECTED'
-                elif reason in ('invalid_r', 'invalid_cutoff'):
+                elif reason in ('invalid_r', 'invalid_cutoff', 'invalid_parameter_domain'):
                     status = 'FAST_PHYSICAL_REJECTED'
                 elif fallback_attempted:
                     status = 'LSODA_FALLBACK_FAILED'
@@ -430,7 +431,8 @@ class LCDM_SG(LCDM_SN):
                 _mark_eval_status(self, status)
             if (result is None and auto_escalate and escalate_to_reference
                     and reason not in ('shared_Neff_guard', 'invalid_r',
-                                       'invalid_cutoff', 'exception')):
+                                       'invalid_cutoff', 'invalid_parameter_domain',
+                                       'exception')):
                 # An explicit Reference escalation also recovers numerical Fast
                 # failures. Deterministic input/guard rejections and raised
                 # implementation exceptions retain their existing semantics.

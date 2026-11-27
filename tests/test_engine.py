@@ -225,7 +225,9 @@ def test_shared_guard_rejection_does_not_retry_lsoda(monkeypatch):
     assert f.fast_failures == 0
 
 
-@pytest.mark.parametrize('reason', ['invalid_r', 'invalid_cutoff'])
+@pytest.mark.parametrize(
+    'reason', ['invalid_r', 'invalid_cutoff', 'invalid_parameter_domain']
+)
 def test_invalid_physical_rejection_does_not_retry_lsoda(monkeypatch, reason):
     """Deterministic input validation failures are not numerical fallbacks."""
     wrapper = LCDM_SG.SGWB_iter
@@ -237,6 +239,9 @@ def test_invalid_physical_rejection_does_not_retry_lsoda(monkeypatch, reason):
             self.fast_evals = self.fast_failures = 0
             self.fast_physical_rejections = 0
             self.lsoda_fallbacks = self.lsoda_evals = 0
+
+        def reset(self):
+            calls.append('reset')
 
         def SGWB_iter(self, engine='lsoda', fallback=False, **kwargs):
             calls.append(engine)

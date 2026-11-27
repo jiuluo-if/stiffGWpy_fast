@@ -350,7 +350,7 @@ def test_fast_outer_reuse_recomputes_when_frequency_grid_changes():
     assert np.all(model.Ogw_today - model.Oj_today > 0.0)
     assert model.DN_gw[-1] > 0.0
 
-def test_fast_reports_nonpositive_background_h2_without_leaking_division_error(monkeypatch):
+def test_fast_rejects_negative_density_before_background_propagation(monkeypatch):
     model = LCDM_SG(
         Omega_bh2=-1e100,
         Omega_ch2=0.1201075,
@@ -379,7 +379,8 @@ def test_fast_reports_nonpositive_background_h2_without_leaking_division_error(m
     )
 
     assert result is None
-    assert model.fast_failure_reason == 'nonpositive_h2'
+    assert model.fast_failure_reason == 'invalid_parameter_domain'
+    assert 'Omega_bh2' in model.fast_failure_detail
     assert not calls
 
 
