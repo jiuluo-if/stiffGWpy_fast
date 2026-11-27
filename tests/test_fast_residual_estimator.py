@@ -35,7 +35,7 @@ def test_residual_half_step_subdivision_uses_both_endpoints():
 def test_fast_controls_internal_cr1_root_error_from_saved_reference():
     root = Path(__file__).resolve().parents[1]
     artifact = root / (
-        "LOCAL_RESEARCH_REFERENCE"
+        "tests/data/"
         "validate_cr1_t0p004_0p005_r0000000000010641088010743262_"
         "0000000000010675_unseen_holdout_T00475_rlo_z10.json"
     )

@@ -72,8 +72,6 @@ it, and a deterministic physical guard is not retried as a numerical failure.
 
 ## Dated profiles
 
-Older plain-grid and transition-refine comparisons are retained under
-`docs/` as historical experiments. Their convergence tables describe those
-recorded configurations only. See [`experiment_catalog.md`](experiment_catalog.md)
-to locate each dated result and [`benchmarks.md`](benchmarks.md) for the latest
-fixed-resource full-path timing profile.
+Historical experiment records are maintained in the local research archive.
+Accuracy and runtime statements should be made only for configurations that
+have been independently reproduced; see [accuracy boundaries](accuracy.md).

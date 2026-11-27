@@ -38,7 +38,7 @@ For concurrent evaluations within one process, `workqueue` parallel calls are
 serialized because that backend is not thread-safe. Before Numba initializes
 the backend, calls are serialized conservatively. Explicit per-call configs on
 initialized TBB/OpenMP backends can run concurrently; legacy calls without a
-config remain serialized. See the [backend throughput comparison](benchmarks.md).
+config remain serialized.
 
 
 ## `eval_freqs`
@@ -96,13 +96,12 @@ The LVK likelihood loads the selected cross-correlation table once and caches
 its fixed log-frequency and data columns in `initialize()`. During evaluation,
 it applies cubic interpolation only to bins inside the theory frequency
 support; bins outside remain zero model values. The chi-square reduction uses
-NumPy's float64 pairwise sum. The focused benchmark in
-[`benchmarks.md`](benchmarks.md) records this single-call comparison and its
-numerical difference; it is not a full MCMC timing result.
+NumPy's float64 pairwise sum. Treat this adapter behavior as a single-call implementation detail, not as a
+claim about full MCMC throughput.
 
 LVK 交叉相关似然在 `initialize()` 中只读取一次数据表，并缓存固定的对数频率和数据列。每次计算只对
 理论频率范围内的 bin 做三次插值，范围外保留零模型值；卡方归约使用 NumPy float64 成对求和。
-[`benchmarks.md`](benchmarks.md) 记录了单次似然对比及数值差值，这不等于完整 MCMC 的耗时对比。
+此适配器行为属于单次似然调用的实现细节，不代表完整 MCMC 吞吐量。
 
 The serial adapter only requires the `cobaya` extra. Install the separate
 `mpi` extra when the execution environment actually needs `mpi4py`.

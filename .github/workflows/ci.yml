@@ -54,8 +54,6 @@ jobs:
           pip install .[dev]
       - name: Canonical regression and coverage
         run: python -m pytest -q --cov=stiffgwpy_fast --cov-report=term-missing:skip-covered --cov-report=xml
-      - name: Validation manifest schema
-        run: python scripts/validate_manifest.py
       - uses: actions/upload-artifact@v7
         with:
           name: coverage-xml

@@ -37,7 +37,7 @@ def test_fast_completes_high_density_modes_after_wkb_inverse_fallback():
     assert np.isfinite(model.DN_gw).all()
     reference_path = (
         Path(__file__).resolve().parents[1]
-        / "LOCAL_RESEARCH_REFERENCE"
+        / "tests/data/validate_cr0_3m_wkb_guard_z8_multi.json"
     )
     reference = json.loads(reference_path.read_text(encoding="utf-8"))["cases"][0]
     closed_root = float(reference["closed_reference_root"])
